@@ -1,5 +1,7 @@
 from sparktk.loggers import loggers
 from sparktk.frame import Frame
+from sparktk.jconvert import JConvert
+
 #from sparktk.rdd import TkRDD
 from py4j.java_gateway import is_instance_of
 logger = loggers.set("debug", __name__)
@@ -10,6 +12,7 @@ class Context(object):
 
     def __init__(self, spark_context):
         self.sc = spark_context
+        self.jconvert = JConvert(spark_context)
         self._jtk = self.sc._jvm.org.trustedanalytics.at.interfaces.TK(self.sc._jsc)
         self._loggers = loggers
         self._loggers.set_spark(self.sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time

@@ -3,7 +3,7 @@ package org.trustedanalytics.at.file
 import org.apache.commons.csv.{ CSVFormat, CSVParser, CSVPrinter }
 import org.apache.commons.lang.NotImplementedException
 import org.trustedanalytics.at.schema.Schema
-import org.trustedanalytics.at.serial.PythonSerialization.toRowRdd
+import org.trustedanalytics.at.jconvert.PythonConvert.toRowRdd
 import scala.collection.JavaConversions.asScalaIterator
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark.SparkContext

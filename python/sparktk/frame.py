@@ -1,135 +1,105 @@
 
-from collections import namedtuple
 from sparktk.inspect import inspect_settings, RowsInspection
 from sparktk.row import Row
-#from sparktk.rdd import TkRDD
 from pyspark.rdd import RDD
 from sparktk.dtypes import dtypes
-from sparktk.schema import *
+from sparktk.pyframe import PythonFrame
+
+from collections import namedtuple
 
 TakeResult = namedtuple("TakeResult", ['data', 'schema'])
 
-class _PythonFrame(object):
-    def __init__(self, rdd, schema=None):
-        self.rdd = rdd
-        self.schema = schema
-
-def serialization(sc):
-    return sc._jvm.org.trustedanalytics.at.serial.PythonSerialization
-
-def _srdd_to_jrdd(srdd, sc):
-    """converts a Scala RDD serialized from Scala usage to a Java RDD serialized for Python RDD usage"""
-    return serialization(sc).scalaToPython(srdd)
-
-
-def _jrdd_to_srdd(jrdd, schema, sc):
-    """converts a Java RDD serialized from Python RDD usage to a Scala RDD serialized for Scala RDD usage"""
-    return serialization(sc).pythonToScala(jrdd, schema_to_scala(schema, sc))
-
-def _scala_to_python(scala_frame, sc):
-    from sparktk import Context
-    c = Context(sc)
-    print "Scala frame rdd = %s, %s" % (scala_frame.rdd, c.jtypestr(scala_frame.rdd))
-    python_rdd = serialization(sc).scalaToPython(scala_frame.rdd)
-    python_schema = schema_from_scala(scala_frame.schema, sc)
-    return _PythonFrame(python_rdd, python_schema)
-
-def _python_to_scala(python_frame, sc):
-    scala_schema = schema_to_scala(python_frame.schema, sc)
-    scala_rdd = serialization(sc).pythonToScala(python_frame.rdd._jrdd, scala_schema)
-    return _create_scala_frame(sc, scala_rdd, scala_schema)
-
-
-def _create_scala_frame(sc, scala_rdd, scala_schema):
-    return sc._jvm.org.trustedanalytics.at.interfaces.Frame(scala_rdd, scala_schema)
-
-
 class Frame(object):
+
     def __init__(self, context, data, schema=None):
         self._context = context
         if self._context.is_scala_rdd(data):
-            schema = schema_to_scala(schema, self._context.sc)
-            self._frame = self._context.sc._jvm.org.trustedanalytics.at.interfaces.Frame(data, schema)
+            scala_schema = self._context.jconvert.schema_to_scala(schema)
+            self._frame = self._context.jconvert.create_scala_frame(data, scala_schema)
         else:
             if not isinstance(data, RDD):
                 data = self._context.sc.parallelize(data)
             if schema:
                 self.validate_pyrdd_schema(data, schema)
-            self._frame = _PythonFrame(data, schema)
+            self._frame = PythonFrame(data, schema)
 
     def validate_pyrdd_schema(self, pyrdd, schema):
         pass
 
     @property
-    def _is_frame_scala(self):
+    def _is_scala(self):
+        """answers whether the current frame is backed by a Scala Frame (alternative is a _PythonFrame)"""
         return self._context.is_jvm_instance_of(self._frame, self._context.sc._jvm.org.trustedanalytics.at.interfaces.Frame)
 
     @property
     def _scala(self):
-        if not self._is_frame_scala:
-            self._frame = _python_to_scala(self._frame, self._context.sc)
+        """gets frame backend as Scala Frame, causes conversion if it is current not"""
+        if not self._is_scala:
+            self._frame = self._context.jconvert.frame_to_scala(self._frame)
         return self._frame
 
     @property
     def _python(self):
-        if self._is_frame_scala:
-            rdd = _scala_to_python(self._frame, self._context.sc)
-            self._frame = _PythonFrame(rdd, self.schema)
+        """gets frame backend as _PythonFrame, causes conversion if it is current not"""
+        if self._is_scala:
+            rdd = self._context.jconvert.frame_to_python(self._frame)
+            self._frame = PythonFrame(rdd, self.schema)
         return self._frame
 
-    def create_scala_frame(self, data, schema):
-        return self._context.sc._jvm.org.trustedanalytics.at.interfaces.Frame(data, schema)
+    def _get_scala_row_to_python_converter(self, schema):
+        """gets a converter for going from scala value to python value, according to dtype"""
+        row_schema = schema
 
-    @property
-    def schema(self):
-        if self._is_frame_scala:
-            return schema_from_scala(self._frame.schema(), self._context.sc)  # need ()'s on scala Frame because of def
-        return self._frame.schema
+        def to_dtype(value, dtype):
+            try:
+                return dtypes.cast(value, dtype)
+            except:
+                return None
+
+        def scala_row_to_python(scala_row):
+            num_cols = scala_row.length()
+            return [to_dtype(scala_row.get(i), row_schema[i][1]) for i in xrange(num_cols)]
+        return scala_row_to_python
+
+    ##########################################################################
+    # API
+    ##########################################################################
 
     @property
     def rdd(self):
+        """pyspark RDD  (causes conversion if currently backed by a Scala RDD)"""
         return self._python.rdd
 
+    @property
+    def schema(self):
+        if self._is_scala:
+            return self._context.jconvert.schema_to_python(self._frame.schema())  # need ()'s on schema because it's a def in scala
+        return self._frame.schema
+
     def append_csv_file(self, file_name, schema, separator=','):
-        self._scala.appendCsvFile(file_name, schema_to_scala(schema, self._context.sc), separator)
+        self._scala.appendCsvFile(file_name, self._context.jconvert.schema_to_scala(schema), separator)
 
     def export_to_csv(self, file_name):
         self._scala.exportToCsv(file_name)
 
     def count(self):
-        #if self._is_frame_scala:
+        if self._is_scala:
             return int(self._scala.count())
-        #print "thus far!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        #return self._python.rdd.count()
-
-    @staticmethod
-    def convert_to_python(value, dtype):
-        try:
-            return dtypes.cast(value, dtype)
-        except:
-            return None
-
-    def get_row_converter(self, schema):
-        row_schema = schema
-
-        def scala_row_to_python(scala_row):
-            num_cols = scala_row.length()
-            return [self.convert_to_python(scala_row.get(i), row_schema[i][1]) for i in xrange(num_cols)]
-        return scala_row_to_python
+        return self.rdd.count()
 
     def take(self, n):
-        if self._is_frame_scala:
-            print "take SCALA side!!!!!!!!!!!!!!!!!!!!!"
+        if self._is_scala:
             scala_data = self._scala.take(n)
-            data = map(self.get_row_converter(self.schema), scala_data)
+            data = map(self._get_scala_row_to_python_converter(self.schema), scala_data)
         else:
             data = self._python.rdd.take(n)
 
         return TakeResult(data=data, schema=self.schema)
 
-    def bin_column(self, column_name, cutoffs):
-        #column = self._context.sc._jvm.org.trustedanalytics.at.interfaces.Column()
-        self._scala.binColumn4(column_name, cutoffs) #//, True, False, None)
+    def bin_column(self, column_name, cutoffs, include_lowest=True, strict_binning = False, bin_column_name = None):
+        """bin_column doc..."""
+        self._scala.binColumn(column_name, self._context.jconvert.list_to_scala_double(cutoffs), include_lowest, strict_binning, bin_column_name)
+
 
     # @api
     # @has_udf_arg

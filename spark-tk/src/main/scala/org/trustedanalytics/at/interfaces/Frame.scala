@@ -12,7 +12,7 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.trustedanalytics.at.file.{ LineParserArguments, Csv }
 import org.trustedanalytics.at.frame.{ TakeTrait, BinColumnTrait }
 import org.trustedanalytics.at.schema.{ FrameSchema, Schema }
-import org.trustedanalytics.at.serial.PythonSerialization
+import org.trustedanalytics.at.jconvert.PythonConvert
 
 import scala.collection.mutable
 
@@ -31,33 +31,14 @@ import java.util.{ ArrayList => JArrayList }
 //--------------------------------------------------------------------------------------
 
 case class ImmutableFrame(rdd: RDD[Row], schema: Schema)
-//case class ImmutableFrame(rdd: RDD[Array[Any]], schema: Schema)
 
 //--------------------------------------------------------------------------------------
 
 class TK(jsc: JavaSparkContext) extends Serializable {
 
   private val sc = jsc.sc
-  private val a = Array[Int](10, 11, 12, 13)
 
-  def createEmptyFrame(): Frame = {
-    //new Frame(sc.emptyRDD: RDD[Row], null)
-    val schema = FrameSchema()
-    new Frame(PythonSerialization.toRowRdd(sc.emptyRDD: RDD[Array[Any]], schema), schema)
-  }
-
-  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
-    PythonSerialization.frameSchemaToScala(pythonSchema)
-  }
-
-  def getArray(): Array[Int] = a
-
-  //def xcount(jrdd: JavaRDD[Row]): Long = jrdd.count()
-
-  //def xtake(jrdd: JavaRDD[Row]): String = jrdd.rdd.map(row => s"$row").collect().mkString("|")
-
-  def sayHello(): String = "Hello from TK"
-
+  def helloWorld(): String = "Hello from TK"
 }
 
 //--------------------------------------------------------------------------------------
@@ -82,7 +63,7 @@ class Frame(r: RDD[Row], s: Schema) extends BaseFrame // named "r" and "s" becau
    */
   //def this(rdd: JavaRDD[Row], schema: Schema) = {
   def this(jrdd: JavaRDD[Array[Any]], schema: Schema) = {
-    this(PythonSerialization.toRowRdd(jrdd.rdd, schema), schema)
+    this(PythonConvert.toRowRdd(jrdd.rdd, schema), schema)
   }
 
   //  def this(jrdd: JavaRDD[Array[Any]], pythonStringSchema: util.ArrayList[util.ArrayList[String]]) = {

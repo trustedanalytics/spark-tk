@@ -18,13 +18,7 @@ trait BaseFrame {
 
   protected def execute(transform: FrameTransform): RDD[Row] = {
     frameState = transform.work(frameState)
-    println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    if (frameState.rdd != null) {
-      val c = frameState.rdd.count()
-      println(s"frameState! count=$c")
-      println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    }
-    frameState.rdd.saveAsTextFile("/home/blbarker/tmp/transform")
+    //frameState.rdd.saveAsTextFile("/home/blbarker/tmp/transform")
     frameState.rdd
   }
 

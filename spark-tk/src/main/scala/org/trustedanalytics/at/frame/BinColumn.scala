@@ -10,17 +10,17 @@ import java.util.{ ArrayList => JArrayList }
 
 trait BinColumnTrait extends BaseFrame {
 
-  implicit def toScalaList[T](j: JArrayList[T]): List[T] = j.asScala.toList
+  //implicit def toScalaList[T](j: JArrayList[T]): List[T] = j.asScala.toList
 
-  def binColumn2(column: String) = {
-    binColumn(column, List[Double](0.3, 0.3, 0.4))
-  }
-  def binColumn3(column: String, cutoffs: List[Double]) = {
-    binColumn(column, cutoffs)
-  }
-  def binColumn4(column: String, cutoffs: JArrayList[Double]) = {
-    binColumn(column, cutoffs.asScala.toList)
-  }
+  //  def binColumn(column: String,
+  //                cutoffs: JArrayList[Double],
+  //                includeLowest: Boolean,
+  //                strictBinning: Boolean,
+  //                binColumnName: Option[String]): Unit = {
+  //
+  //    execute(BinColumn(column, cutoffs.asScala.toList, includeLowest, strictBinning, binColumnName))
+  //  }
+
   def binColumn(column: String,
                 cutoffs: List[Double],
                 includeLowest: Boolean = true,

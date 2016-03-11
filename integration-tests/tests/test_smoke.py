@@ -5,15 +5,15 @@ import os
 root = "/home/blbarker/tmp"
 victims = [os.path.join(root, f) for f in ["prdd", "jrdd", "raa", "rdd", "export", "binned", "transform", "scala_take"]]
 
-# def test_smoke_sparktk(tk_context):
-#     f = tk_context.to_frame([1,2, 3, 4])
-#     assert f.count() == 4
-#
-#
-# def test_smoke_take(tk_context):
-#     f = tk_context.to_frame([[1, "one"], [2, "two"], [3, "three"]])
-#     t = f.take(2)
-#     print "take=%s" % str(t)
+def test_smoke_sparktk(tk_context):
+    f = tk_context.to_frame([1,2, 3, 4])
+    assert f.count() == 4
+
+
+def test_smoke_take(tk_context):
+    f = tk_context.to_frame([[1, "one"], [2, "two"], [3, "three"]])
+    t = f.take(2)
+    print "take=%s" % str(t)
 
 def test_bin(tk_context):
     rm_files()
@@ -29,17 +29,17 @@ def test_bin(tk_context):
                              [10, "ten"]],
                             [("a", int), ("b", str)])
     #print f.count()
-    f.bin_column("a", [0.3, 0.3, 0.4])
-    print "jtypestr for f._frame=%s" % tk_context.jtypestr(f._frame)
-    print "jtypestr for f._frame.rdd=%s" % tk_context.jtypestr(f._frame.rdd())
-    print "jtypestr for f._frame.schema=%s" % tk_context.jtypestr(f._frame.schema())
-    tk_context.jtypestr(f._frame)
-    print "schema=%s" % f.schema
-    t = f.take(4)
-    print "take=%s" % str(t)
-    cat_hdfs(os.path.join(root, "binned"))
-    cat_hdfs(os.path.join(root, "transform"))
-    cat_hdfs(os.path.join(root, "scala_take"))
+    f.bin_column("a", [0.1, 0.1, 0.8])
+    # print "jtypestr for f._frame=%s" % tk_context.jtypestr(f._frame)
+    # print "jtypestr for f._frame.rdd=%s" % tk_context.jtypestr(f._frame.rdd())
+    # print "jtypestr for f._frame.schema=%s" % tk_context.jtypestr(f._frame.schema())
+    # tk_context.jtypestr(f._frame)
+    # print "schema=%s" % f.schema
+    # t = f.take(4)
+    # print "take=%s" % str(t)
+    # cat_hdfs(os.path.join(root, "binned"))
+    # cat_hdfs(os.path.join(root, "transform"))
+    # cat_hdfs(os.path.join(root, "scala_take"))
     print f.inspect()
 
 
