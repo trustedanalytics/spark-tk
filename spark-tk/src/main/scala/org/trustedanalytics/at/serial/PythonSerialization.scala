@@ -1,13 +1,16 @@
-package org.trustedanalytics.at.interfaces
+package org.trustedanalytics.at.serial
 
 import java.util.{ ArrayList => JArrayList }
-import net.razorvine.pickle.objects.ArrayConstructor
-import net.razorvine.pickle.{ Unpickler, Pickler }
+
+import net.razorvine.pickle.Pickler
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.trustedanalytics.at.schema.Schema
+import org.apache.spark.sql.execution.EvaluatePython
+import org.trustedanalytics.at.schema.{ Column, DataTypes, FrameSchema, Schema }
+
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 object PythonSerialization extends Serializable {
@@ -18,23 +21,83 @@ object PythonSerialization extends Serializable {
    *
    * (private function taken from Spark's org.apache.spark.api.python.SerDeUtil)
    */
-  def javaToPython(jrdd: JavaRDD[_]): JavaRDD[Array[Byte]] = {
+  def javaToPython(jrdd: JavaRDD[Row]): JavaRDD[Array[Byte]] = {
     //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
     scalaToPython(jrdd.rdd) //.mapPartitions { iter => new AutoBatchedPickler(iter) }
   }
 
-  def scalaToPython(rdd: RDD[_]): JavaRDD[Array[Byte]] = {
+  def scalaToPython(rdd: RDD[Row]): JavaRDD[Array[Byte]] = {
     //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
-    rdd.mapPartitions { iter => new AutoBatchedPickler(iter) }
+    println("In scalaToPython...")
+    //val raa = toAnyRDD(schema, rdd)
+    EvaluatePython.javaToPython(null) //rdd)
+    //rdd.mapPartitions { iter => EvaluatePython.rowToArray}
+    //rdd.mapPartitions { iter => new AutoBatchedPickler(iter) }
+  }
+
+  def toAnyRDD(rdd: RDD[Row], schema: Schema): RDD[Array[Any]] = {
+    val anyRDD: RDD[Array[Any]] = rdd.map(row => {
+      val rowArray = new Array[Any](row.length)
+      row.toSeq.zipWithIndex.map {
+        case (o, i) =>
+          o match {
+            case null => null
+            case _ =>
+              val colType = schema.column(i).dataType
+              //val dType: DataType = colType.scalaType
+              try {
+                rowArray(i) = o.asInstanceOf[colType.ScalaType]
+                //rowArray(i) = EvaluatePython.toJava(o, dType)
+              }
+              catch {
+                case e: Exception => null
+              }
+          }
+      }.toArray
+      //new GenericRow(rowArray)
+    })
+    anyRDD
+  }
+
+  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
+    println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    println("Hello from frameSchematoScala")
+    println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+    val columns = pythonSchema.asScala.map { item =>
+      val list = item.asScala.toList
+      require(list.length == 2, "Schema entries must be tuples of size 2 (name, dtype)")
+      Column(list.head, DataTypes.toDataType(list(1)))
+    }.toList
+    FrameSchema(columns)
+  }
+
+  def frameSchemaToPython(scalaSchema: Schema): JArrayList[JArrayList[String]] = {
+    val pythonSchema = new JArrayList[JArrayList[String]]()
+    scalaSchema.columns.map {
+      case Column(name, dtype) =>
+        val c = new JArrayList[String]()
+        c.add(name)
+        c.add(dtype.toString)
+        pythonSchema.add(c)
+    }
+    pythonSchema
   }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], schema: Schema): RDD[Row] = {
+    jrdd.saveAsTextFile("/home/blbarker/tmp/jrdd")
     val raa: JavaRDD[Array[Any]] = pythonToJava(jrdd)
-    toRowRdd(raa.rdd, schema)
+    jrdd.saveAsTextFile("/home/blbarker/tmp/raa")
+    val rdd = toRowRdd(raa.rdd, schema)
+    rdd.saveAsTextFile("/home/blbarker/tmp/rdd")
+    rdd
   }
 
+  //  def pj(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Any] = {
+  //    SerDeUtil.pythonToJava(jrdd, batched = true)
+  //  }
+
   def pythonToJava(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Array[Any]] = {
-    val j = SerDeUtil.pythonToJava(jrdd, batched = false)
+    val j = SerDeUtil.pythonToJava(jrdd, batched = true)
     SerDeUtil.toJavaArrayAny(j)
     //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
     // jrdd.rdd.mapPartitions { iter => new AutoBatchedPickler(iter) }
@@ -49,7 +112,12 @@ object PythonSerialization extends Serializable {
             case null => null
             case _ =>
               val colType = schema.column(i).dataType
-              rowArray(i) = o.asInstanceOf[colType.ScalaType]
+              try {
+                rowArray(i) = o.asInstanceOf[colType.ScalaType]
+              }
+              catch {
+                case e: Exception => null
+              }
           }
       }
       new GenericRow(rowArray)
@@ -89,18 +157,15 @@ object PythonSerialization extends Serializable {
 import java.nio.ByteOrder
 import java.util.{ ArrayList => JArrayList }
 
+import net.razorvine.pickle.{ Pickler, Unpickler }
 import org.apache.spark.api.java.JavaRDD
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{ Logging, SparkException }
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.util.Failure
-import scala.util.Try
-
-import net.razorvine.pickle.{ Unpickler, Pickler }
-
-import org.apache.spark.{ Logging, SparkException }
-import org.apache.spark.rdd.RDD
+import scala.util.{ Failure, Try }
 
 /** Utilities for serialization / deserialization between Python and Java, using Pickle. */
 //private[spark] object SerDeUtil extends Logging {
@@ -177,10 +242,11 @@ object SerDeUtil extends Logging {
   //    }.toJavaRDD()
   //  }
 
-  def toJavaArrayAny(jrdd: JavaRDD[Any]): JavaRDD[Array[Any]] = {
+  def toJavaArrayAny(jrdd: RDD[Any]): JavaRDD[Array[Any]] = {
     toArrayAny(jrdd).toJavaRDD()
   }
-  def toArrayAny(rdd: RDD[Any]): RDD[Array[Any]] = {
+
+  def toArrayAny(rdd: RDD[_]): RDD[Array[Any]] = {
     rdd.map {
       case objs: JArrayList[_] =>
         objs.map(item => item.asInstanceOf[Any]).toArray

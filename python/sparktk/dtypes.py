@@ -121,6 +121,7 @@ _primitive_alias_type_to_type_table = {
 }
 
 _primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _primitive_alias_type_to_type_table.iteritems()])
+_primitive_alias_str_to_type_table["string"] = unicode
 
 
 def get_float_constructor(float_type):
@@ -361,5 +362,4 @@ class _DataTypes(object):
 
 dtypes = _DataTypes()
 #valid_data_types = dtypes  # consider for backwards comp
-
 

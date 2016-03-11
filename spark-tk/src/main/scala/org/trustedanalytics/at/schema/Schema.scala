@@ -341,6 +341,8 @@ trait Schema {
     columnNames.mkString(", ")
   }
 
+  override def toString: String = columns.mkString(", ")
+
   // TODO: add a rename column method, since renaming columns shows up in Edge and Vertex schema it is more complicated
 
   /**

@@ -1,14 +1,22 @@
 package org.trustedanalytics.at.interfaces
 
+import java.util
+import java.util.ArrayList
+
 import net.razorvine.pickle.Pickler
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.{ JavaRDD, JavaSparkContext }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
+import org.trustedanalytics.at.file.{ LineParserArguments, Csv }
+import org.trustedanalytics.at.frame.{ TakeTrait, BinColumnTrait }
 import org.trustedanalytics.at.schema.{ FrameSchema, Schema }
+import org.trustedanalytics.at.serial.PythonSerialization
 
 import scala.collection.mutable
+
+import java.util.{ ArrayList => JArrayList }
 
 //import org.apache.spark.SparkContext
 //import org.apache.spark.sql.Row
@@ -30,12 +38,19 @@ case class ImmutableFrame(rdd: RDD[Row], schema: Schema)
 class TK(jsc: JavaSparkContext) extends Serializable {
 
   private val sc = jsc.sc
+  private val a = Array[Int](10, 11, 12, 13)
 
   def createEmptyFrame(): Frame = {
     //new Frame(sc.emptyRDD: RDD[Row], null)
     val schema = FrameSchema()
     new Frame(PythonSerialization.toRowRdd(sc.emptyRDD: RDD[Array[Any]], schema), schema)
   }
+
+  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
+    PythonSerialization.frameSchemaToScala(pythonSchema)
+  }
+
+  def getArray(): Array[Int] = a
 
   //def xcount(jrdd: JavaRDD[Row]): Long = jrdd.count()
 
@@ -49,27 +64,39 @@ class TK(jsc: JavaSparkContext) extends Serializable {
 
 //--------------------------------------------------------------------------------------
 
-class Frame(rdd: RDD[Row], schema: Schema) extends BaseFrame
+class Frame(r: RDD[Row], s: Schema) extends BaseFrame // named "r" and "s" because naming them "rdd" and "schema" masks the base members "rdd" and "schema" in this scope
     //class Frame(rdd: RDD[Array[Any]], schema: Schema) extends BaseFrame
     with AddColumnsTrait
     with AppendCsvFile
+    with BinColumnTrait
     with CountTrait
-    with Save {
-  init(rdd, schema)
+    with ExportToCsvTrait
+    with Save
+    with TakeTrait {
+  init(r, s)
 
   /**
    * (typically called from pyspark, with jrdd)
-   * @param rdd
+   * @param jrdd
    * @param schema
    */
   //def this(rdd: JavaRDD[Row], schema: Schema) = {
-  def this(rdd: JavaRDD[Array[Any]], schema: Schema) = {
-    this(PythonSerialization.toRowRdd(rdd.rdd, schema), schema)
+  def this(jrdd: JavaRDD[Array[Any]], schema: Schema) = {
+    this(PythonSerialization.toRowRdd(jrdd.rdd, schema), schema)
   }
 
-  def take(n: Int) = {
-    rdd.take(n)
-  }
+  //  def this(jrdd: JavaRDD[Array[Any]], pythonStringSchema: util.ArrayList[util.ArrayList[String]]) = {
+  //    this(jrdd, PythonSerialization.frameSchemaToScala(pythonStringSchema))
+  //  }
+
+  //  def take(n: Int): scala.Array[Row] = {
+  //    rdd.saveAsTextFile("/home/blbarker/tmp/scala_take")
+  //    rdd.take(n)
+  //  }
+
+  //  def takeForPython(n: Int): scala.Array[Seq[Any]] = {
+  //    take(n).map { row => row.toSeq }
+  //  }
 }
 
 //class Frome(rdd: JavaRDD[Array[Any]]) {
@@ -87,20 +114,40 @@ trait AppendCsvFile extends BaseFrame {
    * Add those columns
    */
   //def appendCsvFile(fileName: String, separator: Char): RDD[Row] = { //func: Array[Any] => Seq[Any], schema: Schema): Unit = {
-  def appendCsvFile(fileName: String, separator: Char): RDD[Row] = { //Array[Any]] = { //func: Array[Any] => Seq[Any], schema: Schema): Unit = {
-    execute(AppendCsvFileTransform(rdd.context, fileName, LineParserArguments(separator, null, None)))
+  def appendCsvFile(fileName: String, parserArgs: LineParserArguments): RDD[Row] = { //Array[Any]] = { //func: Array[Any] => Seq[Any], schema: Schema): Unit = {
+    execute(AppendCsvFileTransform(rdd.context, fileName, parserArgs))
   }
 }
 
-case class AppendCsvFileTransform(sc: SparkContext, fileName: String, lineParserArguments: LineParserArguments) extends FrameTransform { //} func: Array[Any] => Seq[Any], schema: Schema) extends FrameTransform {
+case class AppendCsvFileTransform(sc: SparkContext, fileName: String, parserArgs: LineParserArguments) extends FrameTransform { //} func: Array[Any] => Seq[Any], schema: Schema) extends FrameTransform {
 
   override def work(immutableFrame: ImmutableFrame): ImmutableFrame = {
-    val raa = LoadRddFunctions.loadAndParseLines(sc, fileName, lineParserArguments)
-    LoadRddFunctions.toRowRddWithAllStringFields(raa) match {
-      case (rdd, schema) => ImmutableFrame(rdd, schema)
-    }
+    val rdd = Csv.importCsvFile(sc, fileName, parserArgs)
+    ImmutableFrame(rdd, parserArgs.schema)
   }
 
+}
+
+//--------------------------------------------------------------------------------------
+
+trait ExportToCsvTrait extends BaseFrame {
+
+  // This isn't necessary to enable ATK, as it will all happen with pyspark.
+
+  /**
+   * Add those columns
+   */
+  //def appendCsvFile(fileName: String, separator: Char): RDD[Row] = { //func: Array[Any] => Seq[Any], schema: Schema): Unit = {
+  def exportToCsv(fileName: String) = {
+    execute(ExportToCsv(rdd.context, fileName))
+  }
+}
+
+case class ExportToCsv(sc: SparkContext, fileName: String) extends FrameSummarization[Unit] { //}, schema: Schema, lineParserArguments: LineParserArguments) extends FrameTransform { //} func: Array[Any] => Seq[Any], schema: Schema) extends FrameTransform {
+
+  override def work(immutableFrame: ImmutableFrame): Unit = {
+    Csv.exportCsvFile(immutableFrame.rdd, fileName, ',')
+  }
 }
 
 //--------------------------------------------------------------------------------------

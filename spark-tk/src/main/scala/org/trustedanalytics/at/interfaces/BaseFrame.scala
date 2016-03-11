@@ -24,6 +24,7 @@ trait BaseFrame {
       println(s"frameState! count=$c")
       println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     }
+    frameState.rdd.saveAsTextFile("/home/blbarker/tmp/transform")
     frameState.rdd
   }
 

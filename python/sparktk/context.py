@@ -1,6 +1,6 @@
 from sparktk.loggers import loggers
 from sparktk.frame import Frame
-from sparktk.rdd import ObjectScalaRDD
+#from sparktk.rdd import TkRDD
 from py4j.java_gateway import is_instance_of
 logger = loggers.set("debug", __name__)
 
@@ -19,21 +19,21 @@ class Context(object):
         """"""
         return self._loggers
 
-    def to_frame(self, item, schema=None):
-        if self.is_python_rdd(item):
-            return Frame(self, item, schema)
-        elif self.is_java(item):
-            if self.is_scala_rdd(item):
-                return Frame(self, ObjectScalaRDD(item, self.sc), schema)
-            else:
-                try:
-                    t = self.jtypestr(item)
-                except:
-                    t = "<cannot determine>"
-                raise TypeError("Cannot create frame from Java type %s" % t)
-        else:
-            rdd = self.sc.parallelize(item)
-        return Frame(self, rdd, schema)
+    def to_frame(self, data, schema=None):
+        # if self.is_python_rdd(item):
+        #     return Frame(self, item, schema)
+        # elif self.is_java(item):
+        #     if self.is_scala_rdd(item):
+        #         return Frame(self, TkRDD(item, schema, self.sc), schema)
+        #     else:
+        #         try:
+        #             t = self.jtypestr(item)
+        #         except:
+        #             t = "<cannot determine>"
+        #         raise TypeError("Cannot create frame from Java type %s" % t)
+        # else:
+        #     rdd = self.sc.parallelize(item)
+        return Frame(self, data, schema)
 
     def is_java(self, item):
         import py4j
@@ -44,10 +44,12 @@ class Context(object):
         return isinstance(item, RDD)
 
     def is_scala_rdd(self, item):
-        return is_instance_of(self.sc._gateway, item, self.sc._jvm.org.apache.spark.rdd.RDD)
+        return self.is_jvm_instance_of(item, self.sc._jvm.org.apache.spark.rdd.RDD)
 
-    # def is_java_rdd(self, item):
-    #     return is_instance_of(self.sc._gateway, item, self.sc._jvm.org.apache.spark.api.java.JavaRDD)
+    def is_jvm_instance_of(self, item, scala_type):
+        if self.is_java(item):
+            return is_instance_of(self.sc._gateway, item, scala_type)
+        return False
 
     def jhelp(self, item):
         """shortcut to py4j's help method"""
