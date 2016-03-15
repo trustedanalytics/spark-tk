@@ -40,11 +40,28 @@ class JConvert(object):
         """converts a Java RDD serialized from Python RDD usage to a Scala RDD serialized for Scala RDD usage"""
         return self.scala.pythonToScala(jrdd, scala_schema)
 
-    def list_to_scala_double(self, item):
-        return self.scala.toScalaListDouble(item)
+    def list_to_scala_double(self, python_list):
+        return self.scala.toScalaListDouble([float(item) for item in python_list])
 
-    def list_to_scala_string(self, item):
-        return self.scala.toScalaListString(item)
+    def list_to_scala_string(self, python_list):
+        return self.scala.toScalaListString([unicode(item) for item in python_list])
 
+    def to_scala_vector_double(self, python_list):
+        return self.scala.toScalaVectorDouble([float(item) for item in python_list])
 
+    def to_scala_vector_string(self, python_list):
+        return self.scala.toScalaVectorString([unicode(item) for item in python_list])
 
+    def scala_map_string_int_to_python(self, m):
+        return dict([(entry[0], int(entry[1])) for entry in list(self.scala.scalaMapStringIntToPython(m))])
+
+    def to_option(self, item):
+        if item is None:
+            return self.scala.noneOption()
+        if isinstance(item, basestring):
+            return self.scala.someOptionString(item)
+        if dtypes.is_int(item):
+            return self.scala.someOptionInt(item)
+        if dtypes.is_float(item):
+            return self.scala.someOptionDouble(item)
+        raise NotImplementedError("Convert to scala Option[T] of type %s is not supported" % type(item))

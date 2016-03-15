@@ -7,6 +7,8 @@ jars = [
         '/home/blbarker/dev/tap-at/spark-tk/target/spark-tk-1.0-SNAPSHOT.jar',
         '/home/blbarker/.m2/repository/org/apache/commons/commons-csv/1.0/commons-csv-1.0.jar',
         '/home/blbarker/.m2/repository/io/spray/spray-json_2.10/1.2.6/spray-json_2.10-1.2.6.jar',
+        '/home/blbarker/.m2/repository/org/apache/mahout/mahout-math/0.9-cdh5.5.0/mahout-math-0.9-cdh5.5.0.jar',
+        '/home/blbarker/.m2/repository/com/google/guava/guava/14.0.1/guava-14.0.1.jar',
 ]
 
 jars_comma = ",".join(jars)

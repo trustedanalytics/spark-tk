@@ -1,21 +1,23 @@
 from setup import tk_context
+from sparktk.dtypes import float32
+from sparktk.models.kmeans import KMeansModel
 
 import os
 
 root = "/home/blbarker/tmp"
 victims = [os.path.join(root, f) for f in ["prdd", "jrdd", "raa", "rdd", "export", "binned", "transform", "scala_take"]]
 
-def test_smoke_sparktk(tk_context):
+def est_smoke_sparktk(tk_context):
     f = tk_context.to_frame([1,2, 3, 4])
     assert f.count() == 4
 
 
-def test_smoke_take(tk_context):
+def est_smoke_take(tk_context):
     f = tk_context.to_frame([[1, "one"], [2, "two"], [3, "three"]])
     t = f.take(2)
     print "take=%s" % str(t)
 
-def test_bin(tk_context):
+def est_bin(tk_context):
     rm_files()
     f = tk_context.to_frame([[1, "one"],
                              [2, "two"],
@@ -29,7 +31,7 @@ def test_bin(tk_context):
                              [10, "ten"]],
                             [("a", int), ("b", str)])
     #print f.count()
-    f.bin_column("a", [0.1, 0.1, 0.8])
+    f.bin_column("a", [5, 8, 10.0, 30.0, 50, 80]) #, bin_column_name="briton")
     # print "jtypestr for f._frame=%s" % tk_context.jtypestr(f._frame)
     # print "jtypestr for f._frame.rdd=%s" % tk_context.jtypestr(f._frame.rdd())
     # print "jtypestr for f._frame.schema=%s" % tk_context.jtypestr(f._frame.schema())
@@ -97,3 +99,34 @@ def est_serial(tk_context):
     for file_name in files:
         cat_hdfs(file_name)
 
+def test_kmeans(tk_context):
+    frame = tk_context.to_frame([[2,"ab"],[1,"cd"],[7,"ef"],[1,"gh"],[9,"ij"],[2,"kl"],[0,"mn"],[6,"op"],[5,"qr"]],
+                                [("data", float),("name", str)])
+    print frame.inspect()
+    model = KMeansModel(tk_context, frame, ["data"], [1], 3)
+    print "KMeansModel...\n%s" % model
+
+    model.predict(frame)
+    print "==============================================================="
+    print frame.inspect()
+
+
+"""G
+[8]   5.0  qr
+           >>> model = ta.KMeansModel()
+                       <progress>
+>>> train_output = model.train(frame, ["data"], [1], 3)
+                   <progress>
+                   <skip>
+>>> train_output
+{u'within_set_sum_of_squared_error': 5.3, u'cluster_size': {u'Cluster:1': 5, u'Cluster:3': 2, u'Cluster:2': 2}}
+</skip>
+>>> train_output.has_key('within_set_sum_of_squared_error')
+True
+>>> predicted_frame = model.predict(frame, ["data"])
+                      <progress>
+>>> predicted_frame.column_names
+    [u'data', u'name', u'distance_from_cluster_1', u'distance_from_cluster_2', u'distance_from_cluster_3', u'predicted_cluster']
+    >>> model.publish()
+    <progress>
+"""

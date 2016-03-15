@@ -10,17 +10,6 @@ import java.util.{ ArrayList => JArrayList }
 
 trait BinColumnTrait extends BaseFrame {
 
-  //implicit def toScalaList[T](j: JArrayList[T]): List[T] = j.asScala.toList
-
-  //  def binColumn(column: String,
-  //                cutoffs: JArrayList[Double],
-  //                includeLowest: Boolean,
-  //                strictBinning: Boolean,
-  //                binColumnName: Option[String]): Unit = {
-  //
-  //    execute(BinColumn(column, cutoffs.asScala.toList, includeLowest, strictBinning, binColumnName))
-  //  }
-
   def binColumn(column: String,
                 cutoffs: List[Double],
                 includeLowest: Boolean = true,
@@ -49,26 +38,12 @@ case class BinColumn(column: String, //column: Column,
                      binColumnName: Option[String]) extends FrameTransform {
 
   override def work(immutableFrame: ImmutableFrame): ImmutableFrame = {
-    // get column index
-    val columnIndex = 0
-    val cuts = if (cutoffs == null) { List[Double](0.3, 0.3, 0.4) } else { cutoffs }
-    //    val frame: SparkFrame = arguments.frame
-    //    val columnIndex = frame.schema.columnIndex(arguments.columnName)
-    //    frame.schema.requireColumnIsNumerical(arguments.columnName)
-
-    //   val binColumnName = arguments.binColumnName.getOrElse(frame.schema.getNewColumnName(arguments.columnName + "_binned"))
-
-    // run the operation and save results
-    //val updatedSchema = frame.schema.addColumn(binColumnName, DataTypes.int32)
-    //val binnedRdd = DiscretizationFunctions.binColumns(columnIndex, cutoffs, includeLowest, strictBinning, null)
-    //val rdd: RDD[Row] = LoadRddFunctions.toRowRDD(immutableFrame.schema, immutableFrame.rdd)
-    //val binnedRdd = DiscretizationFunctions.binColumns(columnIndex, cutoffs, includeLowest, strictBinning, immutableFrame.rdd)
-    val binnedRdd = DiscretizationFunctions.binColumns(columnIndex, cuts, includeLowest, strictBinning, immutableFrame.rdd)
-
-    binnedRdd.saveAsTextFile("/home/blbarker/tmp/binned")
-    ImmutableFrame(binnedRdd, immutableFrame.schema.copy(columns = immutableFrame.schema.columns :+ Column("binned", "int32")))
-    //ImmutableFrame(null, immutableFrame.schema.copy(columns = immutableFrame.schema.columns :+ Column("binned", "int32")))
-    //frame.save(new FrameRdd(updatedSchema, binnedRdd))
+    val columnIndex = immutableFrame.schema.columnIndex(column)
+    immutableFrame.schema.requireColumnIsNumerical(column)
+    val newColumnName = binColumnName.getOrElse(immutableFrame.schema.getNewColumnName(column + "_binned"))
+    val binnedRdd = DiscretizationFunctions.binColumns(columnIndex, cutoffs, includeLowest, strictBinning, immutableFrame.rdd)
+    //binnedRdd.saveAsTextFile("/home/blbarker/tmp/binned")
+    ImmutableFrame(binnedRdd, immutableFrame.schema.copy(columns = immutableFrame.schema.columns :+ Column(newColumnName, "int32")))
   }
 
 }

@@ -19,12 +19,37 @@ object PythonConvert extends Serializable {
 
   def toScalaListString(x: JArrayList[String]): List[String] = x.asScala.toList
 
+  def toScalaVectorDouble(x: JArrayList[Double]): Vector[Double] = x.asScala.toVector
+
+  def toScalaVectorString(x: JArrayList[String]): Vector[String] = x.asScala.toVector
+
+  def noneOption() = None
+  def someOptionString(s: String) = Some(s)
+  def someOptionInt(i: Int) = Some(i)
+  def someOptionDouble(d: Double) = Some(d)
+
+  def scalaMapStringIntToPython(m: Map[String, Int]) = {
+    scalaMapToPython[String, Int](m)
+  }
+
+  def scalaMapToPython[K, V](m: Map[K, V]): JArrayList[JArrayList[String]] = {
+    val pythonMap = new JArrayList[JArrayList[String]]()
+    m.map {
+      case (k, v) =>
+        val entry = new JArrayList[String]()
+        entry.add(k.toString)
+        entry.add(v.toString)
+        pythonMap.add(entry)
+    }
+    pythonMap
+  }
+
   def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
     val columns = pythonSchema.asScala.map { item =>
       val list = item.asScala.toList
       require(list.length == 2, "Schema entries must be tuples of size 2 (name, dtype)")
       Column(list.head, DataTypes.toDataType(list(1)))
-    }.toList
+    }.toVector
     FrameSchema(columns)
   }
 

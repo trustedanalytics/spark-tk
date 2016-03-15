@@ -6,7 +6,8 @@ import org.trustedanalytics.at.schema.Schema
 
 trait BaseFrame {
 
-  private var frameState: ImmutableFrame = null
+  //private var frameState: ImmutableFrame = null
+  var frameState: ImmutableFrame = null
 
   def rdd: RDD[Row] = if (frameState != null) frameState.rdd else null
   def schema: Schema = if (frameState != null) frameState.schema else null

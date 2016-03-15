@@ -12,6 +12,7 @@ import scala.collection.mutable
 import scala.util.Try
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.JavaConversions._
+import scala.language.implicitConversions
 
 //import org.trustedanalytics.atk.domain.DomainJsonProtocol.dateTimeFormat
 

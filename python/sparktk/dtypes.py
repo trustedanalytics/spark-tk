@@ -266,6 +266,14 @@ class _DataTypes(object):
         return data_type in _primitive_alias_type_to_type_table
 
     @staticmethod
+    def is_int(data_type):
+        return data_type in [int, int32, int64]
+
+    @staticmethod
+    def is_float(data_type):
+        return data_type in [float, float32, float64]
+
+    @staticmethod
     def get_from_type(data_type):
         """
         Returns the data type for the given type (often it will return the same type)

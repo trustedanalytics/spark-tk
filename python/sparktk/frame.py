@@ -96,9 +96,13 @@ class Frame(object):
 
         return TakeResult(data=data, schema=self.schema)
 
-    def bin_column(self, column_name, cutoffs, include_lowest=True, strict_binning = False, bin_column_name = None):
+    def bin_column(self, column_name, cutoffs, include_lowest=True, strict_binning=False, bin_column_name=None):
         """bin_column doc..."""
-        self._scala.binColumn(column_name, self._context.jconvert.list_to_scala_double(cutoffs), include_lowest, strict_binning, bin_column_name)
+        self._scala.binColumn(column_name,
+                              self._context.jconvert.list_to_scala_double([float(c) for c in cutoffs]),
+                              include_lowest,
+                              strict_binning,
+                              self._context.jconvert.to_option(bin_column_name))
 
 
     # @api

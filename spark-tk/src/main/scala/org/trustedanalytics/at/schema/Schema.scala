@@ -156,9 +156,9 @@ object Column {
  * Schema for a data frame. Contains the columns with names and data types.
  * @param columns the columns in the data frame
  */
-case class FrameSchema(columns: List[Column] = List[Column]()) extends Schema {
+case class FrameSchema(columns: Vector[Column] = Vector[Column]()) extends Schema {
 
-  override def copy(columns: List[Column]): FrameSchema = {
+  override def copy(columns: Vector[Column]): FrameSchema = {
     new FrameSchema(columns)
   }
 
@@ -219,14 +219,14 @@ object Schema {
    * @param outputVectorLength optional parameter for a vector datatype
    * @return a new FrameSchema
    */
-  def create(dataColumnNames: List[String],
+  def create(dataColumnNames: Seq[String],
              dType: DataType,
              outputVectorLength: Option[Long] = None): FrameSchema = {
     val outputColumns = outputVectorLength match {
       case Some(length) => List(Column(dataColumnNames.head, DataTypes.vector(length)))
       case _ => dataColumnNames.map(name => Column(name, dType))
     }
-    FrameSchema(outputColumns)
+    FrameSchema(outputColumns.toVector)
   }
 }
 
@@ -235,7 +235,7 @@ object Schema {
  */
 trait Schema {
 
-  val columns: List[Column]
+  val columns: Vector[Column]
 
   require(columns != null, "columns must not be null")
   require({
@@ -243,14 +243,11 @@ trait Schema {
     distinct.length == columns.length
   }, s"invalid schema, column names cannot be duplicated: $columns")
 
-  /**
-   * Map of names to columns
-   */
-  private lazy val namesToColumns = columns.map(col => (col.name, col)).toMap
+  private lazy val namesToIndices: Map[String, Int] = (for ((col, i) <- columns.zipWithIndex) yield (col.name, i)).toMap
 
-  def copy(columns: List[Column]): Schema
+  def copy(columns: Vector[Column]): Schema
 
-  def columnNames: List[String] = {
+  def columnNames: Vector[String] = {
     columns.map(col => col.name)
   }
 
@@ -258,13 +255,17 @@ trait Schema {
    * True if this schema contains the supplied columnName
    */
   def hasColumn(columnName: String): Boolean = {
-    namesToColumns.contains(columnName)
+    namesToIndices.contains(columnName)
   }
 
   /**
    * True if this schema contains all of the supplied columnNames
    */
-  def hasColumns(columnNames: Seq[String]): Boolean = {
+  //  def hasColumns(columnNames: Seq[String]): Boolean = {
+  //    columnNames.forall(hasColumn)
+  //  }
+
+  def hasColumns(columnNames: Iterable[String]): Boolean = {
     columnNames.forall(hasColumn)
   }
 
@@ -322,7 +323,7 @@ trait Schema {
    *
    * List cannot be empty
    */
-  def requireColumnsAreVectorizable(columnNames: List[String]): Unit = {
+  def requireColumnsAreVectorizable(columnNames: Seq[String]): Unit = {
     require(columnNames.nonEmpty, "single vector column, or one or more numeric columns required")
     if (columnNames.size > 1) {
       requireColumnsOfNumericPrimitives(columnNames)
@@ -379,7 +380,7 @@ trait Schema {
    */
   def copySubset(columnNames: Seq[String]): Schema = {
     val indices = columnIndices(columnNames)
-    val columnSubset = indices.map(i => columns(i)).toList
+    val columnSubset = indices.map(i => columns(i)).toVector
     copy(columnSubset)
   }
 
@@ -402,7 +403,7 @@ trait Schema {
    */
   def union(schema: Schema): Schema = {
     // check for conflicts
-    val newColumns: List[Column] = schema.columns.filterNot(c => {
+    val newColumns: Vector[Column] = schema.columns.filterNot(c => {
       hasColumn(c.name) && {
         require(hasColumnWithType(c.name, c.dataType), s"columns with same name ${c.name} didn't have matching types"); true
       }
@@ -426,7 +427,8 @@ trait Schema {
    * @return complete column info
    */
   def column(columnName: String): Column = {
-    namesToColumns.getOrElse(columnName, throw new IllegalArgumentException(s"No column named $columnName choose between: $columnNamesAsString"))
+    val i = namesToIndices.getOrElse(columnName, throw new IllegalArgumentException(s"No column named $columnName choose between: $columnNamesAsString"))
+    columns(i)
   }
 
   /**
@@ -449,7 +451,7 @@ trait Schema {
    *
    * List can be empty.
    */
-  def columns(columnNames: List[String]): List[Column] = {
+  def columns(columnNames: Iterable[String]): Iterable[Column] = {
     columnNames.map(column)
   }
 
@@ -564,7 +566,7 @@ trait Schema {
    * @param columnNames the names to remove
    * @return a new copy of the Schema with the columns removed
    */
-  def dropColumns(columnNames: List[String]): Schema = {
+  def dropColumns(columnNames: Iterable[String]): Schema = {
     var newSchema = this
     if (columnNames != null) {
       columnNames.foreach(columnName => {
@@ -640,7 +642,7 @@ trait Schema {
    * @param columnNames the names you want to occur first, in the order you want
    * @return the updated schema
    */
-  def reorderColumns(columnNames: List[String]): Schema = {
+  def reorderColumns(columnNames: Vector[String]): Schema = {
     validateColumnsExist(columnNames)
     val reorderedColumns = columnNames.map(name => column(name))
     val additionalColumns = columns.filterNot(column => columnNames.contains(column.name))
@@ -652,7 +654,7 @@ trait Schema {
    * @param columnNamesToExclude columns you want to filter
    * @return the other columns, if any
    */
-  def columnsExcept(columnNamesToExclude: List[String]): List[Column] = {
+  def columnsExcept(columnNamesToExclude: Seq[String]): Seq[Column] = {
     this.columns.filter(column => !columnNamesToExclude.contains(column.name))
   }
 
@@ -661,7 +663,7 @@ trait Schema {
    * @param columnNamesToExclude column names you want to filter
    * @return the other column names, if any
    */
-  def columnNamesExcept(columnNamesToExclude: List[String]): List[String] = {
+  def columnNamesExcept(columnNamesToExclude: Seq[String]): Seq[String] = {
     for { c <- columns if !columnNamesToExclude.contains(c.name) } yield c.name
   }
 
