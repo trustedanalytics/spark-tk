@@ -12,7 +12,6 @@ import org.trustedanalytics.at.schema.DataTypes.DataType
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
-
 object KMeans {
 
   /**
@@ -52,8 +51,9 @@ object KMeans {
     val vectorRDD = trainFrameRdd.toDenseVectorRDDWithWeights(columns, scalings)
     val model = sparkKMeans.run(vectorRDD)
     val centroids: Array[Array[Double]] = model.clusterCenters.map(_.toArray) // Make centroids easy for Python
-    val sizes = KMeans.computeClusterSizes(model, trainFrameRdd, columns, scalings)
-    val ssew = model.computeCost(vectorRDD)
+
+    // this step is expensive, make optional
+    val wsse = model.computeCost(vectorRDD)
     trainFrameRdd.unpersist()
 
     //Writing the kmeansModel as JSON
@@ -61,27 +61,7 @@ object KMeans {
     //val model: Model = arguments.model
     //model.data = jsonModel.toJson.asJsObject
 
-    KMeans(columns, scalings, k, maxIterations, epsilon, initializationMode, sizes, centroids, ssew, model)
-  }
-
-  /**
-   * Computes the number of elements belonging to each cluster given the trained model and names of the frame's columns storing the observations
-   * @param kmeansModel The trained KMeans Model
-   * @param trainFrameRdd A Frame Rdd formed by observations used for training
-   * @param observationColumns The columns of frame storing the observations
-   * @param columnScalings The scalings of the observations
-   * @return A map storing the cluster number and number of elements it contains
-   */
-  def computeClusterSizes(kmeansModel: SparkKMeansModel, trainFrameRdd: FrameRdd, observationColumns: Seq[String], columnScalings: Seq[Double]): Array[Int] = {
-
-    val predictRDD = trainFrameRdd.mapRows(row => {
-      val array = row.valuesAsArray(observationColumns).map(row => DataTypes.toDouble(row))
-      val columnWeightsArray = columnScalings.toArray
-      val doubles = array.zip(columnWeightsArray).map { case (x, y) => x * y }
-      val point = Vectors.dense(doubles)
-      kmeansModel.predict(point)
-    })
-    predictRDD.map(row => (row.toString, 1)).reduceByKey(_ + _).collect().map { case (k, v) => v }
+    KMeans(columns, scalings, k, maxIterations, epsilon, initializationMode, centroids, wsse, None, model)
   }
 }
 
@@ -94,9 +74,9 @@ object KMeans {
  * @param initializationMode The initialization technique for the algorithm.  It could be either "random" to
  *                           choose random points as initial clusters, or "k-means||" to use a parallel variant
  *                           of k-means++.  Default is "k-means||"
- * @param sizes An array of length k containing the number of elements in each cluster
  * @param centroids An array of length k containing the centroid of each cluster
- * @param ssew  Within cluster sum of squared errors
+ * @param wsse  Within cluster sum of squared errors
+ * @param _sizes An array of length k containing the number of elements in each cluster
  */
 case class KMeans private (columns: Seq[String],
                            scalings: Seq[Double],
@@ -104,13 +84,40 @@ case class KMeans private (columns: Seq[String],
                            maxIterations: Int,
                            epsilon: Double,
                            initializationMode: String,
-                           sizes: Array[Int],
                            centroids: Array[Array[Double]],
-                           ssew: Double,
+                           wsse: Double,
+                           private var _sizes: Option[Array[Int]] = None,
                            private val model: SparkKMeansModel) extends Serializable {
+
+  def sizes = _sizes
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
+  }
+
+  /**
+   * Computes the number of elements belonging to each cluster given the trained model and names of the frame's columns storing the observations
+   * @param frame A frame of observations used for training
+   * @param observationColumns The columns of frame storing the observations (uses column names from train by default)
+   * @return An array of length k of the cluster sizes
+   */
+  def computeClusterSizes(frame: Frame, observationColumns: Option[Vector[String]] = None): Array[Int] = {
+    val cols = observationColumns.getOrElse(columns)
+    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val predictRDD = frameRdd.mapRows(row => {
+      val array = row.valuesAsArray(cols).map(row => DataTypes.toDouble(row))
+      val columnWeightsArray = scalings.toArray
+      val doubles = array.zip(columnWeightsArray).map { case (x, y) => x * y }
+      val point = Vectors.dense(doubles)
+      model.predict(point)
+    })
+    val clusterSizes = predictRDD.map(row => (row.toString, 1)).reduceByKey(_ + _).collect().map { case (k, v) => v }
+    _sizes = Some(clusterSizes)
+    clusterSizes
+  }
+
+  def transform(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
+    // add distance columns
   }
 
   /**
@@ -120,14 +127,9 @@ case class KMeans private (columns: Seq[String],
    *                           Default is to predict the clusters over columns the KMeans model was trained on.
    *                           The columns are scaled using the same values used when training the model
    */
-  def predict(frame: Frame, observationColumns: Option[Vector[String]]): Unit = {
+  def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
     require(frame != null, "frame is required")
-    //val frame: SparkFrame = arguments.frame
-    //val model: Model = arguments.model
 
-    //Extracting the KMeansModel from the stored JsObject
-    //val kmeansData = model.data.convertTo[KMeansData]
-    //val kmeansModel = kmeansData.kMeansModel
     if (observationColumns.isDefined) {
       require(scalings.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
@@ -160,17 +162,15 @@ case class KMeans private (columns: Seq[String],
       columnNames += colName
       columnTypes += DataTypes.float64
     }
-    columnNames += "predict"
+    columnNames += "cluster"
     columnTypes += DataTypes.int32
 
     val newColumns = columnNames.toList.zip(columnTypes.toList.map(x => x: DataType))
     val updatedSchema = frame.schema.addColumns(newColumns.map { case (name, dataType) => Column(name, dataType) })
 
-    println(s"updatedSchema=$updatedSchema")
-
     frame.frameState = ImmutableFrame(predictionsRDD, updatedSchema)
 
-    // todo: change to use scala Frame AddColumnj
+    // todo: change to use scala Frame AddColumns
   }
 }
 

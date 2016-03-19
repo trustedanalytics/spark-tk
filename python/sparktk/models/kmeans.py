@@ -13,12 +13,12 @@ class KMeansModel(SimpleObj):
 
     @property
     def columns(self):
-        #return list(self._scala.columns())
+        #return list(self._scala.columns())  todo - get the from-scala to convert
         return self._columns
 
     @property
     def scalings(self):
-        # return list(self._scala.scalings())
+        # return list(self._scala.scalings())  todo - get the from-scala to convert
         return self._scalings
 
     @property
@@ -35,15 +35,20 @@ class KMeansModel(SimpleObj):
 
     @property
     def sizes(self):
-        return list(self._scala.sizes())
+        sizes = self._context.jconvert.from_option(self._scala.sizes())
+        return list(sizes) if sizes else None
+
+    def compute_sizes(self, frame):
+        self._scala.computeClusterSizes(frame._scala, self._context.jconvert.to_option(None))
+        return self.sizes
 
     @property
     def centroids(self):
         return [list(item) for item in list(self._scala.centroids())]
 
     @property
-    def ssew(self):
-        return self._scala.ssew()
+    def wsse(self):
+        return self._scala.wsse()
 
     def predict(self, frame, columns=None):
         if columns is not None:

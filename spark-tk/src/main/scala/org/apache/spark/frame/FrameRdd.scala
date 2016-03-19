@@ -646,18 +646,22 @@ object FrameRdd {
   def schemaToStructType(schema: Schema): StructType = {
     val fields: Seq[StructField] = schema.columns.map {
       column =>
-        StructField(column.name.replaceAll("\\s", ""), column.dataType match {
-          case x if x.equals(DataTypes.int32) => IntegerType
-          case x if x.equals(DataTypes.int64) => LongType
-          case x if x.equals(DataTypes.float32) => FloatType
-          case x if x.equals(DataTypes.float64) => DoubleType
-          case x if x.equals(DataTypes.string) => StringType
-          // todo, bring back: case x if x.equals(DataTypes.datetime) => StringType
-          case x if x.isVector => VectorType
-          case x if x.equals(DataTypes.ignore) => StringType
-        }, nullable = true)
+        StructField(column.name.replaceAll("\\s", ""), schemaDataTypeToSqlDataType(column.dataType), nullable = true)
     }
     StructType(fields)
+  }
+
+  def schemaDataTypeToSqlDataType(dataType: org.trustedanalytics.at.schema.DataTypes.DataType): org.apache.spark.sql.types.DataType = {
+    dataType match {
+      case x if x.equals(DataTypes.int32) => IntegerType
+      case x if x.equals(DataTypes.int64) => LongType
+      case x if x.equals(DataTypes.float32) => FloatType
+      case x if x.equals(DataTypes.float64) => DoubleType
+      case x if x.equals(DataTypes.string) => StringType
+      // todo, bring back: case x if x.equals(DataTypes.datetime) => StringType
+      case x if x.isVector => VectorType
+      case x if x.equals(DataTypes.ignore) => StringType
+    }
   }
 
   /**

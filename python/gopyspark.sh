@@ -1,22 +1,42 @@
+#!/usr/bin/env bash
 
-#set default_spark_home=/opt/cloudera/parcels/CDH/lib/spark/python
-#set spark_tk_jar=/home/blbarker/explore/at/spark-tk/target/spark-tk-1.0-SNAPSHOT.jar
+# Launches PySpark shell enabled to run spark-tk
 
-export SPARK_TK_JAR=/home/blbarker/dev/tap-at/spark-tk/target/spark-tk-1.0-SNAPSHOT.jar
-echo SPARK_TK_JAR=$SPARK_TK_JAR
+# todo - move to a bin folder
 
-#export SPARK_CLASSPATH=$SPARK_CLASSPATH:$SPARK_TK_JAR
-#echo SPARK_CLASSPATH=$SPARK_CLASSPATH
+NAME="[`basename $0`]"
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+echo "$NAME DIR=$DIR"
 
-export GUAVA_JAR=/home/blbarker/.m2/repository/com/google/guava/guava/14.0.1/guava-14.0.1.jar
-export MAHOUT_MATH_JAR=/home/blbarker/.m2/repository/org/apache/mahout/mahout-math/0.9-cdh5.5.0/mahout-math-0.9-cdh5.5.0.jar
-export CSV_JAR=/home/blbarker/.m2/repository/org/apache/commons/commons-csv/1.0/commons-csv-1.0.jar
-export JSON_JAR=/home/blbarker/.m2/repository/io/spray/spray-json_2.10/1.2.6/spray-json_2.10-1.2.6.jar
+export SPARK_TK_DIR=$DIR/../spark-tk
+echo "$NAME SPARK_TK_DIR=$SPARK_TK_DIR"
 
-export PYSPARK_PYTHON=/usr/bin/python2.7
-export PYSPARK_DRIVER_PYTHON=/usr/bin/python2.7
+export SPARK_TK_JAR=$SPARK_TK_DIR/target/*
+export SPARK_TK_DEP_JARS=$SPARK_TK_DIR/target/dependencies/*
 
+if [ -z "$PYSPARK_BIN" ]; then
+    #export PYSPARK_BIN=pyspark
+    export PYSPARK_BIN=~/spark-1.5.0/bin/pyspark
+fi
+echo $NAME PYSPARK_BIN=$PYSPARK_BIN
 
-IPYTHON=1 ~/spark-1.5.0/bin/pyspark --master local[4] --jars $SPARK_TK_JAR,$CSV_JAR,$JSON_JAR,$MAHOUT_MATH_JAR,$GUAVA_JAR --driver-class-path "$SPARK_TK_JAR:$CSV_JAR:$JSON_JAR:$MAHOUT_MATH_JAR:$GUAVA_JAR"
-#IPYTHON=1 /opt/cloudera/parcels/CDH/bin/pyspark --master local[4] --jars $SPARK_TK_JAR,$CSV_JAR,$JSON_JAR --driver-class-path "$SPARK_TK_JAR:$CSV_JAR:$JSON_JAR"
+if [ -z "$PYSPARK_MASTER" ]; then
+    export PYSPARK_MASTER=local[4]
+fi
+echo $NAME PYSPARK_MASTER=$PYSPARK_MASTER
+
+if [ -z "$PYSPARK_PYTHON" ]; then
+    export PYSPARK_PYTHON=/usr/bin/python2.7
+fi
+echo $NAME PYSPARK_PYTHON=$PYSPARK_PYTHON
+
+if [ -z "$PYSPARK_DRIVER_PYTHON" ]; then
+    export PYSPARK_DRIVER_PYTHON=/usr/bin/python2.7
+fi
+echo $NAME PYSPARK_DRIVER_PYTHON=$PYSPARK_DRIVER_PYTHON
+
+#IPYTHON=1 $PYSPARK_BIN --master local[4] --jars $SPARK_TK_JAR,$SPARK_TK_DEP_JARS --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
+echo $NAME IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
+IPYTHON=1 $PYSPARK_BIN --master local[4] --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
+
 

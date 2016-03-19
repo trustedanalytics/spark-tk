@@ -11,17 +11,19 @@ TakeResult = namedtuple("TakeResult", ['data', 'schema'])
 
 class Frame(object):
 
-    def __init__(self, context, data, schema=None):
+    def __init__(self, context, source, schema=None):
         self._context = context
-        if self._context.is_scala_rdd(data):
+        if self._context.is_scala_frame(source):
+            self._frame = source
+        elif self._context.is_scala_rdd(source):
             scala_schema = self._context.jconvert.schema_to_scala(schema)
-            self._frame = self._context.jconvert.create_scala_frame(data, scala_schema)
+            self._frame = self._context.jconvert.create_scala_frame(source, scala_schema)
         else:
-            if not isinstance(data, RDD):
-                data = self._context.sc.parallelize(data)
+            if not isinstance(source, RDD):
+                source = self._context.sc.parallelize(source)
             if schema:
-                self.validate_pyrdd_schema(data, schema)
-            self._frame = PythonFrame(data, schema)
+                self.validate_pyrdd_schema(source, schema)
+            self._frame = PythonFrame(source, schema)
 
     def validate_pyrdd_schema(self, pyrdd, schema):
         pass
@@ -29,7 +31,7 @@ class Frame(object):
     @property
     def _is_scala(self):
         """answers whether the current frame is backed by a Scala Frame (alternative is a _PythonFrame)"""
-        return self._context.is_jvm_instance_of(self._frame, self._context.sc._jvm.org.trustedanalytics.at.interfaces.Frame)
+        return self._context.is_scala_frame(self._frame)
 
     @property
     def _scala(self):
@@ -60,6 +62,7 @@ class Frame(object):
             num_cols = scala_row.length()
             return [to_dtype(scala_row.get(i), row_schema[i][1]) for i in xrange(num_cols)]
         return scala_row_to_python
+
 
     ##########################################################################
     # API
@@ -104,6 +107,8 @@ class Frame(object):
                               strict_binning,
                               self._context.jconvert.to_option(bin_column_name))
 
+    def save(self, path):
+        self._scala.save(path)
 
     # @api
     # @has_udf_arg
@@ -234,22 +239,23 @@ class Frame(object):
 
         """
         # For further examples, see :ref:`example_frame.add_columns`.
-        #self._backend.add_columns(self, func, schema, columns_accessed)
+
         row = Row(self.schema)
+
         def add_columns_func(r):
             row._set_data(r)
             return func(row)
         if isinstance(schema, list):
-            self._rdd = self.rdd.map(lambda r: r + add_columns_func(r))
-            self.schema.extend(schema)
+            self._python.rdd = self._python.rdd.map(lambda r: r + add_columns_func(r))
+            self._python.schema.extend(schema)
         else:
-            self._rdd = self.rdd.map(lambda r: r + [add_columns_func(r)])
-            self.schema.append(schema)
+            self._python.rdd = self._python.rdd.map(lambda r: r + [add_columns_func(r)])
+            self._python.schema.append(schema)
 
     # @api
     # @has_udf_arg
     # @arg('predicate', 'function', "|UDF| which evaluates a row to a boolean; rows that answer True are dropped from the Frame")
-    def __drop_rows(self, predicate):
+    def drop_rows(self, predicate):
         """
         Erase any row in the current frame which qualifies.
 
@@ -285,7 +291,7 @@ class Frame(object):
         def drop_rows_func(r):
             row._set_data(r)
             return not predicate(row)
-        self._rdd = self.rdd.filter(drop_rows_func)
+        self._python.rdd = self._python.rdd.filter(drop_rows_func)
 
     # @api
     # @has_udf_arg
@@ -323,10 +329,11 @@ class Frame(object):
         More information on a |UDF| can be found at :doc:`/ds_apir`.
         """
         row = Row(self.schema)
+
         def filter_func(r):
             row._set_data(r)
             return predicate(row)
-        self._rdd = self.rdd.filter(filter_func)
+        self._python.rdd = self._python.rdd.filter(filter_func)
 
 
     # @api

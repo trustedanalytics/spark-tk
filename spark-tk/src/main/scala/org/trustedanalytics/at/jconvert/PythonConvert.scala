@@ -2,6 +2,9 @@ package org.trustedanalytics.at.jconvert
 
 import java.util.{ ArrayList => JArrayList }
 
+import org.apache.spark.frame.FrameRdd
+import org.apache.spark.sql.types.DataType
+
 //import net.razorvine.pickle.Pickler
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
@@ -27,6 +30,8 @@ object PythonConvert extends Serializable {
   def someOptionString(s: String) = Some(s)
   def someOptionInt(i: Int) = Some(i)
   def someOptionDouble(d: Double) = Some(d)
+
+  def fromOption(o: Option[Any]): Any = o.orNull
 
   def scalaMapStringIntToPython(m: Map[String, Int]) = {
     scalaMapToPython[String, Int](m)
@@ -85,37 +90,32 @@ object PythonConvert extends Serializable {
     //rdd.mapPartitions { iter => new AutoBatchedPickler(iter) }
   }
 
-  def toAnyRDD(rdd: RDD[Row], schema: Schema): RDD[Array[Any]] = {
-    val anyRDD: RDD[Array[Any]] = rdd.map(row => {
-      val rowArray = new Array[Any](row.length)
-      row.toSeq.zipWithIndex.map {
-        case (o, i) =>
-          o match {
-            case null => null
-            case _ =>
-              val colType = schema.column(i).dataType
-              //val dType: DataType = colType.scalaType
-              try {
-                rowArray(i) = o.asInstanceOf[colType.ScalaType]
-                //rowArray(i) = EvaluatePython.toJava(o, dType)
-              }
-              catch {
-                case e: Exception => null
-              }
-          }
-      }.toArray
-      //new GenericRow(rowArray)
-    })
-    anyRDD
-  }
+  //  def toAnyRDD(rdd: RDD[Row], schema: Schema): RDD[Array[Any]] = {
+  //    val anyRDD: RDD[Array[Any]] = rdd.map(row => {
+  //      val rowArray = new Array[Any](row.length)
+  //      row.toSeq.zipWithIndex.map {
+  //        case (o, i) =>
+  //          o match {
+  //            case null => null
+  //            case _ =>
+  //              val colType = schema.column(i).dataType
+  //              val dType: DataType = FrameRdd.schemaDataTypeToSqlDataType(colType)
+  //              try {
+  //                rowArray(i) = EvaluatePython.toJava(o, dType)
+  //              }
+  //              catch {
+  //                case e: Exception => null
+  //              }
+  //          }
+  //      }.toArray
+  //      //new GenericRow(rowArray)
+  //    })
+  //    anyRDD
+  //  }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], schema: Schema): RDD[Row] = {
-    //jrdd.saveAsTextFile("/home/blbarker/tmp/jrdd")
     val raa: JavaRDD[Array[Any]] = pythonToJava(jrdd)
-    //jrdd.saveAsTextFile("/home/blbarker/tmp/raa")
-    val rdd = toRowRdd(raa.rdd, schema)
-    //rdd.saveAsTextFile("/home/blbarker/tmp/rdd")
-    rdd
+    toRowRdd(raa.rdd, schema)
   }
 
   def pythonToJava(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Array[Any]] = {
@@ -133,7 +133,7 @@ object PythonConvert extends Serializable {
             case _ =>
               val colType = schema.column(i).dataType
               try {
-                rowArray(i) = o.asInstanceOf[colType.ScalaType]
+                rowArray(i) = colType.parse(o).get
               }
               catch {
                 case e: Exception => null

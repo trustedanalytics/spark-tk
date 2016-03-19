@@ -6,11 +6,12 @@ import java.util.ArrayList
 import net.razorvine.pickle.Pickler
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.{ JavaRDD, JavaSparkContext }
+import org.apache.spark.frame.FrameRdd
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.trustedanalytics.at.file.{ LineParserArguments, Csv }
-import org.trustedanalytics.at.frame.{ TakeTrait, BinColumnTrait }
+import org.trustedanalytics.at.file.{ Load, LineParserArguments, Csv }
+import org.trustedanalytics.at.frame.{ SaveTrait, TakeTrait, BinColumnTrait }
 import org.trustedanalytics.at.schema.{ FrameSchema, Schema }
 import org.trustedanalytics.at.jconvert.PythonConvert
 
@@ -39,6 +40,11 @@ class TK(jsc: JavaSparkContext) extends Serializable {
   private val sc = jsc.sc
 
   def helloWorld(): String = "Hello from TK"
+
+  def loadFrame(path: String): Frame = {
+    val frameRdd: FrameRdd = Load.loadParquet(path, sc)
+    new Frame(frameRdd, frameRdd.frameSchema)
+  }
 }
 
 //--------------------------------------------------------------------------------------
@@ -52,7 +58,7 @@ class Frame(r: RDD[Row], s: Schema) extends BaseFrame // named "r" and "s" becau
     with BinColumnTrait
     with CountTrait
     with ExportToCsvTrait
-    with Save
+    with SaveTrait
     with TakeTrait {
   init(r, s)
 
@@ -83,8 +89,6 @@ class Frame(r: RDD[Row], s: Schema) extends BaseFrame // named "r" and "s" becau
 //class Frome(rdd: JavaRDD[Array[Any]]) {
 //  def see(): String = "I see you"
 //}
-
-trait Save {}
 //--------------------------------------------------------------------------------------
 
 trait AppendCsvFile extends BaseFrame {

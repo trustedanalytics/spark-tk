@@ -65,3 +65,6 @@ class JConvert(object):
         if dtypes.is_float(item):
             return self.scala.someOptionDouble(item)
         raise NotImplementedError("Convert to scala Option[T] of type %s is not supported" % type(item))
+
+    def from_option(self, item):
+        return self.scala.fromOption(item)

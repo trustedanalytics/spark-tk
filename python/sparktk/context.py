@@ -38,6 +38,9 @@ class Context(object):
         #     rdd = self.sc.parallelize(item)
         return Frame(self, data, schema)
 
+    def load_frame(self, path):
+        return Frame(self, self._jtk.loadFrame(path))
+
     def is_java(self, item):
         import py4j
         return isinstance(item, py4j.java_gateway.JavaObject)
@@ -48,6 +51,9 @@ class Context(object):
 
     def is_scala_rdd(self, item):
         return self.is_jvm_instance_of(item, self.sc._jvm.org.apache.spark.rdd.RDD)
+
+    def is_scala_frame(self, item):
+        return self.is_jvm_instance_of(item, self.sc._jvm.org.trustedanalytics.at.interfaces.Frame)
 
     def is_jvm_instance_of(self, item, scala_type):
         if self.is_java(item):

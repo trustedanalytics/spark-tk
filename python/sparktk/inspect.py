@@ -385,7 +385,8 @@ def _get_col_sizes(rows, row_index, row_count, header_sizes, formatters):
         if r < len(rows):
             row = rows[r]
             for c in xrange(len(sizes)):
-                entry = unicode(formatters[c](row[c]))
+                value = row[c]
+                entry = unicode(formatters[c](value))
                 lines = entry.splitlines()
                 max = 0
                 for line in lines:

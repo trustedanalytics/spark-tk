@@ -1,6 +1,0 @@
-write [B@721d6dad
-  found arr [B@721d6dad
-write [B@7cda9d9e
-  found arr [B@7cda9d9e
-write [B@78e506dd
-  found arr [B@78e506dd
