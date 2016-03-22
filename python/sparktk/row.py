@@ -43,6 +43,8 @@ class Row(object):
         return self.__data
 
     def _set_data(self, value):
+        if isinstance(value, tuple):
+            value = list(value)
         self.__data = value
 
     def keys(self):

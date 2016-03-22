@@ -76,42 +76,49 @@ object PythonConvert extends Serializable {
    *
    * (private function taken from Spark's org.apache.spark.api.python.SerDeUtil)
    */
-  def javaToPython(jrdd: JavaRDD[Row]): JavaRDD[Array[Byte]] = {
-    //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
-    scalaToPython(jrdd.rdd) //.mapPartitions { iter => new AutoBatchedPickler(iter) }
-  }
+  //  def javaToPython(jrdd: JavaRDD[Row]): JavaRDD[Array[Byte]] = {
+  //    //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
+  //    scalaToPython(jrdd.rdd) //.mapPartitions { iter => new AutoBatchedPickler(iter) }
+  //  }
 
-  def scalaToPython(rdd: RDD[Row]): JavaRDD[Array[Byte]] = {
+  def scalaToPython(rdd: RDD[Row], schema: Schema): JavaRDD[Array[Byte]] = {
     //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
     println("In scalaToPython...")
-    //val raa = toAnyRDD(schema, rdd)
-    EvaluatePython.javaToPython(null) //rdd)
+    //SerDeUtil.javaToPython(rdd.toJavaRDD())
+
+    //# these two lines work, but rows show up as tuples...
+    val raa: RDD[Any] = toAnyRDD(rdd, schema) // , rdd)
+    EvaluatePython.javaToPython(raa)
+
+    // don't know about these two lines:
     //rdd.mapPartitions { iter => EvaluatePython.rowToArray}
     //rdd.mapPartitions { iter => new AutoBatchedPickler(iter) }
   }
 
-  //  def toAnyRDD(rdd: RDD[Row], schema: Schema): RDD[Array[Any]] = {
-  //    val anyRDD: RDD[Array[Any]] = rdd.map(row => {
-  //      val rowArray = new Array[Any](row.length)
-  //      row.toSeq.zipWithIndex.map {
-  //        case (o, i) =>
-  //          o match {
-  //            case null => null
-  //            case _ =>
-  //              val colType = schema.column(i).dataType
-  //              val dType: DataType = FrameRdd.schemaDataTypeToSqlDataType(colType)
-  //              try {
-  //                rowArray(i) = EvaluatePython.toJava(o, dType)
-  //              }
-  //              catch {
-  //                case e: Exception => null
-  //              }
-  //          }
-  //      }.toArray
-  //      //new GenericRow(rowArray)
-  //    })
-  //    anyRDD
-  //  }
+  def toAnyRDD(rdd: RDD[Row], schema: Schema): RDD[Any] = {
+    val anyRDD: RDD[Any] = rdd.map(row => {
+      //      val rowArray = new Array[Any](row.length)
+      //      row.toSeq.zipWithIndex.map {
+      //        case (o, i) =>
+      //          o match {
+      //            case null => null
+      //            case _ => rowArray(i) = o
+      //            //              val colType = schema.column(i).dataType
+      //            //              val dType: DataType = FrameRdd.schemaDataTypeToSqlDataType(colType)
+      //            //              try {
+      //            //                rowArray(i) = EvaluatePython.fromJava(o, dType)
+      //            //              }
+      //            //              catch {
+      //            //                case e: Exception => null
+      //            //              }
+      //          }
+      //      }.toArray
+      //      rowArray
+      row.toSeq.toArray
+      //new GenericRow(rowArray)
+    })
+    anyRDD
+  }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], schema: Schema): RDD[Row] = {
     val raa: JavaRDD[Array[Any]] = pythonToJava(jrdd)

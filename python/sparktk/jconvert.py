@@ -1,5 +1,6 @@
 from sparktk.pyframe import PythonFrame
 from sparktk.dtypes import dtypes
+import pyspark
 
 class JConvert(object):
     """Handles conversions going to and from Scala"""
@@ -14,8 +15,14 @@ class JConvert(object):
 
     def frame_to_python(self, scala_frame):
         """converts a Scala Frame to a PythonFrame"""
-        python_rdd = self.scala.scalaToPython(scala_frame.rdd)
-        python_schema = self.schema_to_python(scala_frame.schema)
+        scala_schema = scala_frame.schema()
+        java_rdd = self.scala.scalaToPython(scala_frame.rdd(), scala_schema)
+        python_schema = self.schema_to_python(scala_schema)
+        # todo: figure out serialization such that we don't get tuples back, but lists, to avoid this full pass :(
+        def to_list(row):
+            return list(row)
+        python_rdd = pyspark.rdd.RDD(java_rdd, self.sc).map(to_list)
+
         return PythonFrame(python_rdd, python_schema)
 
     def frame_to_scala(self, python_frame):

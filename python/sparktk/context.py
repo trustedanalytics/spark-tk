@@ -15,7 +15,7 @@ class Context(object):
         self.jconvert = JConvert(spark_context)
         self._jtk = self.sc._jvm.org.trustedanalytics.at.interfaces.TK(self.sc._jsc)
         self._loggers = loggers
-        self._loggers.set_spark(self.sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
+        #self._loggers.set_spark(self.sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     @property
     def loggers(self):

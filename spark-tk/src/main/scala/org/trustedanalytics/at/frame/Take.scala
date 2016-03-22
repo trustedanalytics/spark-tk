@@ -8,6 +8,8 @@ trait TakeTrait extends BaseFrame {
   def take(n: Int): scala.Array[Row] = {
     execute(Take(n))
   }
+
+  //def takePython(n: Int): scala.Array[Any]Scala.Array[Byte]]
 }
 
 /**

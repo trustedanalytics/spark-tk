@@ -11,10 +11,16 @@ import json
 import re
 
 # alias numpy types
-float32 = np.float32
-float64 = np.float64
-int32 = np.int32
-int64 = np.int64
+# todo: bring back the numpy types
+# this is temporary until the serialization gets completely figured out...
+# float32 = np.float32
+# float64 = np.float64
+# int32 = np.int32
+# int64 = np.int64
+float32 = float
+float64 = float
+int32 = int
+int64 = long
 
 from datetime import datetime
 import dateutil.parser as datetime_parser
@@ -319,7 +325,11 @@ class _DataTypes(object):
             def constructor(value):
                 if value is None:
                     return None
-                return to_type(value)
+                try:
+                    return to_type(value)
+                except Exception as e:
+                    print "ERROR for value %s.  %s" % (value, e)
+                    raise
             return constructor
 
     @staticmethod
