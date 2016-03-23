@@ -1,14 +1,7 @@
-from collections import namedtuple
-
 from pyspark.rdd import RDD
-from decorator import decorator
-
-from sparktk.inspect import inspect_settings, RowsInspection
 from sparktk.dtypes import dtypes
 from sparktk.pyframe import PythonFrame
 
-
-TakeResult = namedtuple("TakeResult", ['data', 'schema'])
 
 class Frame(object):
 
@@ -89,18 +82,6 @@ class Frame(object):
             return int(self._scala.count())
         return self.rdd.count()
 
-    def take(self, n):
-        if self._is_scala:
-            scala_data = self._scala.take(n)
-            data = map(self._get_scala_row_to_python_converter(self.schema), scala_data)
-        else:
-            data = self._python.rdd.take(n)
-
-        return TakeResult(data=data, schema=self.schema)
-
-    def save(self, path):
-        self._scala.save(path)
-
     # Frame Operations
 
     from sparktk.frameops.add_columns import add_columns
@@ -108,6 +89,8 @@ class Frame(object):
     from sparktk.frameops.drop_rows import drop_rows
     from sparktk.frameops.filter import filter
     from sparktk.frameops.inspect import inspect
+    from sparktk.frameops.save import save
+    from sparktk.frameops.take import take
 
 
 

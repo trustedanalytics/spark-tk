@@ -1,5 +1,5 @@
 
-from sparktk.dtypes import dtypes
+import sparktk.dtypes as dtypes
 
 spaces_between_cols = 2  # consts
 ellipses = '...'
@@ -320,7 +320,7 @@ class RowsInspection(object):
 
 def _get_header_entry(name, data_type, with_type):
     if with_type:
-        return "%s:%s" % (name, dtypes.valid_data_types.to_string(data_type))
+        return "%s:%s" % (name, dtypes.to_string(data_type))
     return name
 
 
@@ -329,12 +329,12 @@ def _get_header_entry_sizes(schema, with_types):
 
 
 def is_type_float(t):
-    tpe = dtypes.valid_data_types.get_from_type(t)
+    tpe = dtypes.dtypes.get_from_type(t)
     return tpe is dtypes.float32 or tpe is dtypes.float64 or isinstance(t, dtypes.vector)
 
 
 def is_type_unicode(t):
-    return dtypes.valid_data_types.get_from_type(t) is unicode
+    return dtypes.dtypes.get_from_type(t) is unicode
 
 
 def pad_left(s, target_len):
@@ -365,6 +365,9 @@ def round_float(f, float_type, num_digits):
     max_len = len(str(value).split('.')[1])
     padding = '0' * (num_digits - max_len)
     template = "%%.%df%s" % (min(num_digits, max_len) or 1, padding)
+    # todo - remove this float_type force and use type passed in...
+    import numpy as np
+    float_type = np.float64
     return template % float_type.round(float_type(f), num_digits)
 
 

@@ -30,6 +30,12 @@ def add_columns(self, func, schema, columns_accessed=None):
 
     .. code::
 
+        >>> frame = tk_context.to_frame([['Fred',39,16,'555-1234'],
+        ...                              ['Susan',33,3,'555-0202'],
+        ...                              ['Thurston',65,26,'555-4510'],
+        ...                              ['Judy',44,14,'555-2183']],
+        ...                             schema=[('name', str), ('age', int), ('tenure', int), ('phone', str)])
+
         >>> frame.inspect()
         [#]  name      age  tenure  phone
         ====================================
@@ -38,8 +44,7 @@ def add_columns(self, func, schema, columns_accessed=None):
         [2]  Thurston   65      26  555-4510
         [3]  Judy       44      14  555-2183
 
-        >>> frame.add_columns(lambda row: row.age - 18, ('adult_years', ta.int32))
-        <progress>
+        >>> frame.add_columns(lambda row: row.age - 18, ('adult_years', int))
 
         >>> frame.inspect()
         [#]  name      age  tenure  phone     adult_years
@@ -55,8 +60,8 @@ def add_columns(self, func, schema, columns_accessed=None):
 
     .. code::
 
-        >>> frame.add_columns(lambda row: [row.tenure / float(row.age), row.tenure / float(row.adult_years)], [("of_age", ta.float32), ("of_adult", ta.float32)])
-        <progress>
+        >>> frame.add_columns(lambda row: [row.tenure / float(row.age), row.tenure / float(row.adult_years)], [("of_age", float), ("of_adult", float)])
+
         >>> frame.inspect(round=2)
         [#]  name      age  tenure  phone     adult_years  of_age  of_adult
         ===================================================================
@@ -81,13 +86,14 @@ def add_columns(self, func, schema, columns_accessed=None):
         ...     return percentage_of_string(row.name, row.of_adult)
 
         >>> frame.add_columns(add_name_by_adult_tenure, ('tenured_name', unicode))
-        <progress>
 
+        <skip>
         >>> frame
         Frame "example_frame"
         row_count = 4
         schema = [name:unicode, age:int32, tenure:int32, phone:unicode, adult_years:int32, of_age:float32, of_adult:float32, tenured_name:unicode]
         status = ACTIVE  (last_read_date = -etc-)
+        </skip>
 
         >>> frame.inspect(columns=['name', 'of_adult', 'tenured_name'], round=2)
         [#]  name      of_adult  tenured_name
@@ -110,7 +116,7 @@ def add_columns(self, func, schema, columns_accessed=None):
         >>> frame.add_columns(lambda row: percentage_of_string(row.name, row.of_age),
         ...                   ('tenured_name_age', unicode),
         ...                   columns_accessed=['name', 'of_age'])
-        <progress>
+
         >>> frame.inspect(round=2)
         [#]  name      age  tenure  phone     adult_years  of_age  of_adult
         ===================================================================

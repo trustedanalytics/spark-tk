@@ -1,5 +1,6 @@
 import pytest
 
+from threading import Lock
 from pyspark import SparkConf, SparkContext
 from sparktk import Context
 import os
@@ -30,19 +31,25 @@ pyspark_submit_args = "--driver-class-path %s pyspark-shell" % jars_colon
 print "[setup.py] Setting $PYSPARK_SUBMIT_ARGS=%s" % pyspark_submit_args
 os.environ["PYSPARK_SUBMIT_ARGS"] = pyspark_submit_args
 
+lock = Lock()
+global_tk_context = None
 
 # Establish a sparktk Context with SparkContext for the test session
 @pytest.fixture(scope="session")
 def tk_context(request):
-    conf = SparkConf().setMaster(master).setAppName("pytest-pyspark-local-testing")
-    print "=" * 80
-    print "SparkConf"
-    print conf.toDebugString()
-    print "=" * 80
+    global global_tk_context
+    with lock:
+        if global_tk_context is None:
+            conf = SparkConf().setMaster(master).setAppName("pytest-pyspark-local-testing")
+            print "=" * 80
+            print "SparkConf"
+            print conf.toDebugString()
+            print "=" * 80
 
-    sc = SparkContext(conf=conf)
-    request.addfinalizer(lambda: sc.stop())
-    return Context(sc)
+            sc = SparkContext(conf=conf)
+            request.addfinalizer(lambda: sc.stop())
+            global_tk_context =  Context(sc)
+    return global_tk_context
 
 
 sandbox_path = "sandbox"

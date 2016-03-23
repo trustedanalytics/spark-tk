@@ -9,11 +9,11 @@ def filter(self, predicate):
 
     Examples
     --------
-        <hide>
-        >>> frame = _frame.copy()
-        <progress>
-
-        </hide>
+        >>> frame = tk_context.to_frame([['Fred',39,16,'555-1234'],
+        ...                              ['Susan',33,3,'555-0202'],
+        ...                              ['Thurston',65,26,'555-4510'],
+        ...                              ['Judy',44,14,'555-2183']],
+        ...                             schema=[('name', str), ('age', int), ('tenure', int), ('phone', str)])
 
         >>> frame.inspect()
         [#]  name      age  tenure  phone
@@ -22,8 +22,9 @@ def filter(self, predicate):
         [1]  Susan      33       3  555-0202
         [2]  Thurston   65      26  555-4510
         [3]  Judy       44      14  555-2183
+
         >>> frame.filter(lambda row: row.tenure >= 15)  # keep only people with 15 or more years tenure
-        <progress>
+
         >>> frame.inspect()
         [#]  name      age  tenure  phone
         ====================================

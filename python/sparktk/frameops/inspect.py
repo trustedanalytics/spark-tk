@@ -55,7 +55,7 @@ def inspect(self,
 
     .. code::
 
-        >>> import trustedanalytics as ta
+        >>> import sparktk as ta
         >>> ta.inspect_settings
         wrap             20
         truncate       None
@@ -92,7 +92,7 @@ def inspect(self,
     ..
     """
     format_settings = inspect_settings.copy(wrap, truncate, round, width, margin, with_types)
-    result = self.take(n) #, offset, selected_columns)
+    result = self.take(n, offset, columns)
     data = result.data
     schema = result.schema
     return RowsInspection(data, schema, offset=offset, format_settings=format_settings)
