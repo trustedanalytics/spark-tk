@@ -71,7 +71,7 @@ this_script_name = os.path.basename(__file__)
 this_script_as_module_name = os.path.splitext(__file__)[0]
 here = os.path.dirname(os.path.abspath(__file__))
 path_to_at_root = os.path.dirname(os.path.dirname(here))
-path_to_frameops = os.path.join(path_to_at_root, "python/sparktk/frameops")
+path_to_frameops = os.path.join(path_to_at_root, "python/sparktk/frame/ops")
 trim_to_at_root_len = len(path_to_at_root) + 1   # +1 for slash
 
 def _trim_test_path(path):

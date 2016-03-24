@@ -1,5 +1,7 @@
 import unittest
-from sparktk.schema import get_indices_for_selected_columns
+
+from sparktk.frame.schema import get_indices_for_selected_columns
+
 
 class TestSchema(unittest.TestCase):
 

@@ -3,5 +3,5 @@ from context import Context
 from dtypes import *
 del context
 
-from inspect import inspect_settings
+from sparktk.frame.ops.inspect import inspect_settings
 

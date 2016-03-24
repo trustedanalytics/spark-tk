@@ -19,6 +19,7 @@ package org.apache.spark.mllib.regression
 import org.apache.spark.SparkException
 import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.mllib.util.NumericParser
+//import org.apache.spark.org.trustedanalytics.at.mllib.regression
 
 import scala.beans.BeanInfo
 
@@ -40,12 +41,12 @@ case class LabeledPointWithFrequency(label: Double, features: Vector, frequency:
 }
 
 /**
- * Parser for [[org.apache.spark.mllib.regression.LabeledPointWithFrequency]].
+ * Parser for [[LabeledPointWithFrequency]].
  */
 object LabeledPointWithFrequency {
   /**
    * Parses a string resulted from `LabeledPointWithFrequency#toString` into
-   * an [[org.apache.spark.mllib.regression.LabeledPointWithFrequency]].
+   * an [[LabeledPointWithFrequency]].
    */
   def parse(s: String): LabeledPointWithFrequency = {
     if (s.startsWith("(")) {

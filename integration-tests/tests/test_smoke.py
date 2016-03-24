@@ -7,6 +7,11 @@ def test_smoke_take(tk_context):
     t = f.take(2)
     print "take=%s" % str(t)
 
+def test_jconvert_option(tk_context):
+    something = "Something"
+    option = tk_context.jutils.convert.to_scala_option(something)
+    back = tk_context.jutils.convert.from_scala_option(option)
+    assert back == something
 
 def test_bin(tk_context):
     f = tk_context.to_frame([[1, "one"],
