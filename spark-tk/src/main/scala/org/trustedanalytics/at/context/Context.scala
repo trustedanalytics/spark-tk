@@ -5,6 +5,7 @@ import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.trustedanalytics.at.frame.Frame
 import org.trustedanalytics.at.frame.ops.Load
 
+// todo: change to TkContext or something similar
 class Context(jsc: JavaSparkContext) extends Serializable {
 
   private val sc = jsc.sc

@@ -1,16 +1,6 @@
 package org.trustedanalytics.at.jvm
 
 import java.util.{ ArrayList => JArrayList }
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
-import org.apache.spark.sql.types.DataType
-
-//import net.razorvine.pickle.Pickler
-import org.apache.spark.api.java.JavaRDD
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.apache.spark.sql.execution.EvaluatePython
-import org.trustedanalytics.at.frame.schema.{ Column, DataTypes, FrameSchema, Schema }
 
 import scala.collection.JavaConverters._
 //import scala.collection.mutable

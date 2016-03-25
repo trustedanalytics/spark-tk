@@ -15,8 +15,7 @@ export SPARK_TK_JAR=$SPARK_TK_DIR/target/*
 export SPARK_TK_DEP_JARS=$SPARK_TK_DIR/target/dependencies/*
 
 if [ -z "$PYSPARK_BIN" ]; then
-    #export PYSPARK_BIN=pyspark
-    export PYSPARK_BIN=~/spark-1.5.0/bin/pyspark
+    export PYSPARK_BIN=pyspark
 fi
 echo $NAME PYSPARK_BIN=$PYSPARK_BIN
 
@@ -35,8 +34,6 @@ if [ -z "$PYSPARK_DRIVER_PYTHON" ]; then
 fi
 echo $NAME PYSPARK_DRIVER_PYTHON=$PYSPARK_DRIVER_PYTHON
 
-#IPYTHON=1 $PYSPARK_BIN --master local[4] --jars $SPARK_TK_JAR,$SPARK_TK_DEP_JARS --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
+
 echo $NAME IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
-IPYTHON=1 $PYSPARK_BIN --master local[4] --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
-
-
+IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
