@@ -1,8 +1,11 @@
-package org.trustedanalytics.at.frame.ops.binning
+package org.trustedanalytics.at.frame.internal.ops.binning
 
-import org.trustedanalytics.at.frame.schema.Column
-import org.trustedanalytics.at.frame.{ BaseFrame, FrameState, FrameTransform }
+import org.trustedanalytics.at.frame.internal.{ FrameState, FrameTransform, BaseFrame }
+import org.trustedanalytics.at.frame.Column
 
+//todo - FrameBinColumn  (remove *Trait)
+//todo - BinColumnTransform  (remove *Trait)
+//todo - FrameBinColumnTranform  (remove *Trait)
 trait BinColumnTrait extends BaseFrame {
 
   def binColumn(column: String,

@@ -1,6 +1,6 @@
-package org.trustedanalytics.at.frame.ops
+package org.trustedanalytics.at.frame.internal.ops
 
-import org.trustedanalytics.at.frame.{ FrameState, FrameSummarization, BaseFrame }
+import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait CountTrait extends BaseFrame {
 

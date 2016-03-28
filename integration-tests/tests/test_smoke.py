@@ -1,5 +1,5 @@
 from setup import tk_context, rm, get_sandbox_path
-from sparktk.models.kmeans import KMeansModel
+from sparktk.models.kmeans import KMeans
 from sparktk.dtypes import int32, float32
 
 def test_smoke_take(tk_context):
@@ -30,20 +30,56 @@ def test_bin(tk_context):
 
 
 def test_kmeans(tk_context):
-    frame = tk_context.to_frame([[2,"ab"],[1,"cd"],[7,"ef"],[1,"gh"],[9,"ij"],[2,"kl"],[0,"mn"],[6,"op"],[5,"qr"]],
-                                [("data", float),("name", str)])
-    print frame.inspect()
-    model = KMeansModel(tk_context, frame, ["data"], [1], 3)
-    print "==============================================================="
-    print str(model)
-    model.predict(frame)
-    print "==============================================================="
-    print frame.inspect()
+
+    import ijdebug
+    ijdebug.start()
+    frame = tk_context.to_frame([[2, "ab"],
+                                 [1,"cd"],
+                                 [7,"ef"],
+                                 [1,"gh"],
+                                 [9,"ij"],
+                                 [2,"kl"],
+                                 [0,"mn"],
+                                 [6,"op"],
+                                 [5,"qr"]],
+                                [("data", float), ("name", str)])
+    model = KMeans.train(tk_context, frame, ["data"], [1], 3, seed=5)
+    assert (model.k == 3)
+
     sizes = model.compute_sizes(frame)
-    print "==============================================================="
-    print "sizes=%s" % sizes
-    print "==============================================================="
-    print str(model)
+    assert (sizes == [4, 1, 4])
+
+    wsse = model.compute_wsse(frame)
+    assert (wsse == 9.75)
+
+    model.predict(frame)
+    frame_inspect = str(frame.inspect())
+    assert (frame_inspect == """[#]  data  name  cluster
+========================
+[0]   2.0  ab          0
+[1]   1.0  cd          0
+[2]   7.0  ef          1
+[3]   1.0  gh          0
+[4]   9.0  ij          1
+[5]   2.0  kl          0
+[6]   0.0  mn          2
+[7]   6.0  op          1
+[8]   5.0  qr          1""")
+
+    model.add_distance_columns(frame)
+    print frame.inspect()
+    frame_inspect = str(frame.inspect())
+    assert (frame_inspect == """[#]  data  name  cluster  distance0  distance1  distance2
+=========================================================
+[0]   2.0  ab          0       0.25    22.5625        4.0
+[1]   1.0  cd          0       0.25    33.0625        1.0
+[2]   7.0  ef          1      30.25     0.0625       49.0
+[3]   1.0  gh          0       0.25    33.0625        1.0
+[4]   9.0  ij          1      56.25     5.0625       81.0
+[5]   2.0  kl          0       0.25    22.5625        4.0
+[6]   0.0  mn          2       2.25    45.5625        0.0
+[7]   6.0  op          1      20.25     0.5625       36.0
+[8]   5.0  qr          1      12.25     3.0625       25.0""")
 
 
 def test_save_load(tk_context):

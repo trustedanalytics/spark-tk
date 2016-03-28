@@ -1,8 +1,8 @@
-package org.trustedanalytics.at.frame.ops
+package org.trustedanalytics.at.frame.internal.ops
 
 import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.sql.DataFrame
-import org.trustedanalytics.at.frame.{ FrameState, FrameSummarization, BaseFrame }
+import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait SaveTrait extends BaseFrame {
 

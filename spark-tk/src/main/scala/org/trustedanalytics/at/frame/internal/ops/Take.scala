@@ -1,7 +1,7 @@
-package org.trustedanalytics.at.frame.ops
+package org.trustedanalytics.at.frame.internal.ops
 
 import org.apache.spark.sql.Row
-import org.trustedanalytics.at.frame.{ FrameState, FrameSummarization, BaseFrame }
+import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait TakeTrait extends BaseFrame {
 

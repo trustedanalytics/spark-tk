@@ -1,10 +1,10 @@
-package org.trustedanalytics.at.frame.ops.export
+package org.trustedanalytics.at.frame.internal.ops.export
 
 import org.apache.commons.csv.{ CSVPrinter, CSVFormat }
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.trustedanalytics.at.frame.{ FrameState, FrameSummarization, BaseFrame }
+import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 import scala.collection.mutable.ArrayBuffer
 

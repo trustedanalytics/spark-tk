@@ -1,7 +1,7 @@
 from sparktk.dtypes import dtypes
 
 def jvm_scala_schema(sc):
-    return sc._jvm.org.trustedanalytics.at.frame.schema.SchemaHelper
+    return sc._jvm.org.trustedanalytics.at.frame.SchemaHelper
 
 def get_schema_for_columns(schema, selected_columns):
     indices = get_indices_for_selected_columns(schema, selected_columns)

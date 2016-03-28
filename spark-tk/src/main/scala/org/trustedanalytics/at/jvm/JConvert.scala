@@ -18,6 +18,7 @@ object JConvert extends Serializable {
   def noneOption() = None
   def someOptionString(s: String) = Some(s)
   def someOptionInt(i: Int) = Some(i)
+  def someOptionLong(long: Long) = Some(long)
   def someOptionDouble(d: Double) = Some(d)
 
   def fromOption(o: Option[Any]): Any = o.orNull

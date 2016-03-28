@@ -61,7 +61,7 @@ class Frame(object):
             # convert PythonFrame to a Scala Frame"""
             sc = self._context.sc
             scala_schema = schema_to_scala(sc, self._frame.schema)
-            scala_rdd = sc._jvm.org.trustedanalytics.at.frame.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
+            scala_rdd = sc._jvm.org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
             self._frame = self.create_scala_frame(sc, scala_rdd, scala_schema)
         return self._frame
 
@@ -71,7 +71,7 @@ class Frame(object):
         if self._is_scala:
             # convert Scala Frame to a PythonFrame"""
             scala_schema = self._frame.schema()
-            java_rdd =  self._context.sc._jvm.org.trustedanalytics.at.frame.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd(), scala_schema)
+            java_rdd =  self._context.sc._jvm.org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd(), scala_schema)
             python_schema = schema_to_python(self._context.sc, scala_schema)
 
             # HACK

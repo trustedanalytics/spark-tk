@@ -1,4 +1,4 @@
-package org.trustedanalytics.at.frame.ops.importx
+package org.trustedanalytics.at.frame.internal.ops.importx
 
 // todo: bring back skip_rows
 // todo: bring back schema validation
@@ -8,8 +8,8 @@ import org.apache.commons.csv.{ CSVFormat, CSVParser }
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.trustedanalytics.at.frame.rdd.PythonJavaRdd
-import org.trustedanalytics.at.frame.schema.Schema
+import org.trustedanalytics.at.frame.Schema
+import org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd
 
 import scala.collection.JavaConversions.asScalaIterator
 

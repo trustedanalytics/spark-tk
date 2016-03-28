@@ -1,9 +1,9 @@
-package org.trustedanalytics.at.frame.ops
+package org.trustedanalytics.at.frame.internal.ops
 
 import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.sql.Row
-import org.trustedanalytics.at.frame.{ RowWrapper, FrameState, FrameTransform, BaseFrame }
-import org.trustedanalytics.at.frame.schema.FrameSchema
+import org.trustedanalytics.at.frame._
+import org.trustedanalytics.at.frame.internal.{ RowWrapper, FrameState, FrameTransform, BaseFrame }
 
 trait AddColumnsTrait extends BaseFrame {
 

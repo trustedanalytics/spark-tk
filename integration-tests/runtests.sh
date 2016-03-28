@@ -21,6 +21,8 @@ if [ -z "$SPARK_HOME" ]; then
 fi
 echo $NAME SPARK_HOME=$SPARK_HOME
 
+echo "$NAME Creating sparktk zip"
+python2.7 zipsparktk.py
 
 cd tests
 
@@ -35,4 +37,5 @@ fi
 
 
 #python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
+#python2.7 -m pytest -s -k test_kmeans
 python2.7 -m pytest

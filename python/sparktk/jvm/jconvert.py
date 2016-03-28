@@ -28,9 +28,11 @@ class JConvert(object):
             return self.scala.noneOption()
         if isinstance(item, basestring):
             return self.scala.someOptionString(item)
-        if dtypes.is_int(item):
+        if type(item) is long:
+            return self.scala.someOptionLong(item)
+        if dtypes.is_int(type(item)):
             return self.scala.someOptionInt(item)
-        if dtypes.is_float(item):
+        if dtypes.is_float(type(item)):
             return self.scala.someOptionDouble(item)
         raise NotImplementedError("Convert to scala Option[T] of type %s is not supported" % type(item))
 

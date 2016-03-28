@@ -1,10 +1,10 @@
 package org.apache.spark.org.trustedanalytics.at.frame
 
 import breeze.linalg.DenseVector
-import org.trustedanalytics.at.frame.RowWrapper
-import org.trustedanalytics.at.frame.rdd.RddUtils
-import org.trustedanalytics.at.frame.schema.DataTypes.{ float32, float64, int32, int64 }
-import org.trustedanalytics.at.frame.schema.{ Column, DataTypes, FrameSchema, Schema }
+import org.trustedanalytics.at.frame._
+import org.trustedanalytics.at.frame.internal.RowWrapper
+import org.trustedanalytics.at.frame.internal.rdd.RddUtils
+import DataTypes.{ float32, float64, int32, int64 }
 
 import scala.collection.immutable.{ Vector => ScalaVector }
 
@@ -652,7 +652,7 @@ object FrameRdd {
     StructType(fields)
   }
 
-  def schemaDataTypeToSqlDataType(dataType: org.trustedanalytics.at.frame.schema.DataTypes.DataType): org.apache.spark.sql.types.DataType = {
+  def schemaDataTypeToSqlDataType(dataType: DataTypes.DataType): org.apache.spark.sql.types.DataType = {
     dataType match {
       case x if x.equals(DataTypes.int32) => IntegerType
       case x if x.equals(DataTypes.int64) => LongType
@@ -669,7 +669,7 @@ object FrameRdd {
    * Converts the spark DataTypes to our schema Datatypes
    * @return our schema DataType
    */
-  def sparkDataTypeToSchemaDataType(dataType: org.apache.spark.sql.types.DataType): org.trustedanalytics.at.frame.schema.DataTypes.DataType = {
+  def sparkDataTypeToSchemaDataType(dataType: org.apache.spark.sql.types.DataType): DataTypes.DataType = {
     val intType = IntegerType.getClass
     val longType = LongType.getClass
     val floatType = FloatType.getClass
@@ -704,7 +704,7 @@ object FrameRdd {
    * @param sparkDataType spark data type
    * @return a DataType
    */
-  def sparkDataTypeToSchemaDataType(sparkDataType: String): org.trustedanalytics.at.frame.schema.DataTypes.DataType = {
+  def sparkDataTypeToSchemaDataType(sparkDataType: String): DataTypes.DataType = {
     if ("intType".equalsIgnoreCase(sparkDataType)) { int32 }
     else if ("longType".equalsIgnoreCase(sparkDataType)) { int64 }
     else if ("floatType".equalsIgnoreCase(sparkDataType)) { float32 }

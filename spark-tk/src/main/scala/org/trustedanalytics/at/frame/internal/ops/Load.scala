@@ -1,4 +1,4 @@
-package org.trustedanalytics.at.frame.ops
+package org.trustedanalytics.at.frame.internal.ops
 
 import org.apache.spark.SparkContext
 import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd

@@ -1,14 +1,18 @@
 import pytest
-
-from threading import Lock
-from pyspark import SparkConf, SparkContext
-from sparktk import Context
+import sys
 import os
 import shutil
+from threading import Lock
 
 d = os.path.dirname
 root_path = d(d(d(__file__)))
 print "[setup.py] root_path = %s" % root_path
+
+python_folder = os.path.join(root_path, "python")
+sys.path.insert(0, python_folder)
+
+from pyspark import SparkConf, SparkContext
+from sparktk import Context
 
 master = "local[2]"
 print "[setup.py] master=%s" % master
@@ -40,9 +44,11 @@ def tk_context(request):
             print conf.toDebugString()
             print "=" * 80
 
-            sc = SparkContext(conf=conf)
+            sc = SparkContext(conf=conf, pyFiles=['../sparktk.zip'])
             request.addfinalizer(lambda: sc.stop())
             global_tk_context =  Context(sc)
+            #import ijdebug
+            #ijdebug.start()
     return global_tk_context
 
 

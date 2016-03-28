@@ -1,4 +1,4 @@
-package org.trustedanalytics.at.frame.ops.binning
+package org.trustedanalytics.at.frame.internal.ops.binning
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row

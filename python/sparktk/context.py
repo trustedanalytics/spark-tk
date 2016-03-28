@@ -11,7 +11,7 @@ class Context(object):
     def __init__(self, spark_context):
         self.sc = spark_context
         self._jutils = JUtils(spark_context)
-        self._jcontext = self.sc._jvm.org.trustedanalytics.at.context.Context(self.sc._jsc)
+        self._jcontext = self.sc._jvm.org.trustedanalytics.at.TkContext(self.sc._jsc)
         self._loggers = loggers
         #self._loggers.set_spark(self.sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
