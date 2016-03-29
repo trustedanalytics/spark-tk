@@ -4,9 +4,10 @@ from sparktk.dtypes import dtypes
 class JConvert(object):
     """Handles misc. conversions going to and from Scala for simple non-primitive types, like lists, option, etc."""
 
-    def __init__(self, sc):
-        self.sc = sc
-        self.scala = sc._jvm.org.trustedanalytics.at.jvm.JConvert
+    def __init__(self, jutils):
+        self.jutils = jutils
+        self.sc = jutils.sc
+        self.scala = self.sc._jvm.org.trustedanalytics.at.jvm.JConvert
 
     def to_scala_list_double(self, python_list):
         return self.scala.toScalaListDouble([float(item) for item in python_list])
@@ -26,6 +27,8 @@ class JConvert(object):
     def to_scala_option(self, item):
         if item is None:
             return self.scala.noneOption()
+        if self.jutils.is_java(item)  :
+            return self.scala.toOption(item)
         if isinstance(item, basestring):
             return self.scala.someOptionString(item)
         if type(item) is long:

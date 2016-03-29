@@ -1,4 +1,4 @@
-package org.trustedanalytics.at.frame.internal.ops.importx
+package org.trustedanalytics.at.frame.internal.ops.importdata
 
 // todo: bring back skip_rows
 // todo: bring back schema validation

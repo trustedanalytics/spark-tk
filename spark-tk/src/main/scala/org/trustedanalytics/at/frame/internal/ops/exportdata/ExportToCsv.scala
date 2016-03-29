@@ -1,4 +1,4 @@
-package org.trustedanalytics.at.frame.internal.ops.export
+package org.trustedanalytics.at.frame.internal.ops.exportdata
 
 import org.apache.commons.csv.{ CSVPrinter, CSVFormat }
 import org.apache.spark.SparkContext
@@ -8,7 +8,7 @@ import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, 
 
 import scala.collection.mutable.ArrayBuffer
 
-trait ExportToCsvTrait extends BaseFrame {
+trait ExportToCsvSummarization extends BaseFrame {
 
   def exportToCsv(fileName: String, separator: Char = ',') = {
     execute(ExportToCsv(fileName, separator))

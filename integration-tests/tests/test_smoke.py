@@ -31,8 +31,6 @@ def test_bin(tk_context):
 
 def test_kmeans(tk_context):
 
-    import ijdebug
-    ijdebug.start()
     frame = tk_context.to_frame([[2, "ab"],
                                  [1,"cd"],
                                  [7,"ef"],
@@ -43,7 +41,7 @@ def test_kmeans(tk_context):
                                  [6,"op"],
                                  [5,"qr"]],
                                 [("data", float), ("name", str)])
-    model = KMeans.train(tk_context, frame, ["data"], [1], 3, seed=5)
+    model = KMeans.train(tk_context, frame, ["data"], 3, seed=5)
     assert (model.k == 3)
 
     sizes = model.compute_sizes(frame)

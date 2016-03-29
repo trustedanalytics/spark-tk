@@ -2,7 +2,7 @@ package org.trustedanalytics.at.frame.internal.ops
 
 import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
-trait CountTrait extends BaseFrame {
+trait CountSummarization extends BaseFrame {
 
   def count(): Long = execute[Long](Count)
 }

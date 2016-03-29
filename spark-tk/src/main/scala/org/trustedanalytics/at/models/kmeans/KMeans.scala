@@ -2,16 +2,14 @@ package org.trustedanalytics.at.models.kmeans
 
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
 import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.{ Vector => LinalgVector }
 import org.apache.spark.org.trustedanalytics.at.VectorUtils
 import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.trustedanalytics.at.frame.internal.{ RowWrapper, FrameState }
+import org.trustedanalytics.at.frame.internal.RowWrapper
 import org.trustedanalytics.at.frame.internal.rdd.RowWrapperFunctions
 import org.trustedanalytics.at.frame._
-import DataTypes.DataType
 
-import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
 object KMeans {
@@ -30,16 +28,18 @@ object KMeans {
    */
   def train(frame: Frame,
             columns: Seq[String],
-            scalings: Seq[Double],
             k: Int = 2,
+            scalings: Option[Seq[Double]] = None,
             maxIterations: Int = 20,
             epsilon: Double = 1e-4,
-            seed: Option[Long] = None,
-            initializationMode: String = "k-means||"): KMeansModel = {
+            initializationMode: String = "k-means||",
+            seed: Option[Long] = None): KMeansModel = {
 
     require(columns != null && columns.nonEmpty, "columns must not be null nor empty")
-    require(scalings != null && scalings.nonEmpty, "scalings must not be null or empty")
-    require(columns.length == scalings.length, "Length of columns and scalings needs to be the same")
+    require(scalings != null, "scalings must not be null")
+    if (scalings.isDefined) {
+      require(columns.length == scalings.get.length, "Length of columns and scalings needs to be the same")
+    }
     require(k > 0, "k must be at least 1")
     require(maxIterations > 0, "maxIterations must be a positive value")
     require(epsilon > 0.0, "epsilon must be a positive value")
@@ -56,7 +56,10 @@ object KMeans {
 
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
     trainFrameRdd.cache()
-    val vectorRDD = trainFrameRdd.toDenseVectorRDDWithWeights(columns, scalings)
+    val vectorRDD = scalings match {
+      case Some(weights) => trainFrameRdd.toDenseVectorRDDWithWeights(columns, weights)
+      case None => trainFrameRdd.toDenseVectorRDD(columns)
+    }
     val model = sparkKMeans.run(vectorRDD)
     val centroids: Array[Array[Double]] = model.clusterCenters.map(_.toArray) // Make centroids easy for Python
     trainFrameRdd.unpersist()
@@ -66,7 +69,14 @@ object KMeans {
     //val model: Model = arguments.model
     //model.data = jsonModel.toJson.asJsObject
 
-    KMeansModel(columns, scalings, k, maxIterations, epsilon, initializationMode, centroids, model)
+    KMeansModel(columns, k, scalings, maxIterations, epsilon, initializationMode, centroids, model)
+  }
+
+  def getDenseVectorRdd(frameRdd: FrameRdd, columns: Seq[String], scalings: Option[Seq[Double]]) = {
+    scalings match {
+      case Some(weights) => frameRdd.toDenseVectorRDDWithWeights(columns, weights)
+      case None => frameRdd.toDenseVectorRDD(columns)
+    }
   }
 }
 
@@ -82,8 +92,8 @@ object KMeans {
  * @param centroids An array of length k containing the centroid of each cluster
  */
 case class KMeansModel private[kmeans] (columns: Seq[String],
-                                        scalings: Seq[Double],
                                         k: Int,
+                                        scalings: Option[Seq[Double]],
                                         maxIterations: Int,
                                         epsilon: Double,
                                         initializationMode: String,
@@ -96,70 +106,93 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
 
   /**
    * Computes the number of elements belonging to each cluster given the trained model and names of the frame's columns storing the observations
-   * @param frame A frame of observations used for training
+   * @param frame A frame containing observations
    * @param observationColumns The columns of frame storing the observations (uses column names from train by default)
    * @return An array of length k of the cluster sizes
    */
   def computeClusterSizes(frame: Frame, observationColumns: Option[Seq[String]] = None): Array[Int] = {
+    require(frame != null, "frame is required")
+    if (observationColumns.isDefined) {
+      require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
+    }
+
+    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val obs = observationColumns.getOrElse(columns)
     val predictRDD = frameRdd.mapRows(row => {
-      val array = row.valuesAsArray(obs).map(row => DataTypes.toDouble(row))
-      val columnWeightsArray = scalings.toArray
-      val doubles = array.zip(columnWeightsArray).map { case (x, y) => x * y }
-      val point = Vectors.dense(doubles)
+      val point = vectorMaker(row)
       model.predict(point)
     })
     val clusterSizes = predictRDD.map(row => (row.toString, 1)).reduceByKey(_ + _).collect().map { case (k, v) => v }
     clusterSizes
   }
 
+  // todo - move to RowWrapper
+  def getRowValuesAsDoubles(featureColumnNames: Seq[String])(row: RowWrapper): Array[Double] = {
+    row.valuesAsArray(featureColumnNames).map(row => DataTypes.toDouble(row))
+  }
+
+  // todo - move to a RowWrapper (or DenseVector lib)
+  /**
+   * Returns a function which will create an appropriate LinalgVector for a RowWrapper, taking into account
+   * optional weights
+   * @param featureColumnNames
+   * @param columnWeights
+   * @return
+   */
+  def getDenseVectorMaker(featureColumnNames: Seq[String], columnWeights: Option[Seq[Double]]): RowWrapper => LinalgVector = {
+
+    def getDenseVector(featureColumnNames: Seq[String])(row: RowWrapper): LinalgVector = {
+      Vectors.dense(getRowValuesAsDoubles(featureColumnNames)(row))
+    }
+
+    def getWeightedDenseVector(featureColumnNames: Seq[String], columnWeights: Array[Double])(row: RowWrapper): LinalgVector = {
+      val values = getRowValuesAsDoubles(featureColumnNames)(row)
+      val scaledValues = values.zip(columnWeights).map { case (x, y) => x * y }
+      Vectors.dense(scaledValues)
+    }
+
+    scalings match {
+      case None => getDenseVector(featureColumnNames)
+      case Some(weights) =>
+        require(weights.length == featureColumnNames.length)
+        getWeightedDenseVector(featureColumnNames, weights.toArray)
+    }
+  }
+
   /**
    * Computes the 'within cluster sum of squared errors' for the given frame
+   * @param frame A frame containing observations
+   * @param observationColumns The columns of frame storing the observations (uses column names from train by default)
+   * @return wsse
    */
-  def computeCost(frame: Frame, observationColumns: Option[Vector[String]] = None): Double = {
+  def computeWsse(frame: Frame, observationColumns: Option[Vector[String]] = None): Double = {
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val vectorRDD = frameRdd.toDenseVectorRDDWithWeights(columns, scalings)
-    model.computeCost(vectorRDD)
+    val vectorRdd = KMeans.getDenseVectorRdd(frameRdd, observationColumns.getOrElse(columns), scalings)
+    model.computeCost(vectorRdd)
   }
 
-  /**
-   *
-   * @param frame
-   * @param observationColumns
-   */
   def addDistanceColumns(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
-    val kmeansColumns = observationColumns.getOrElse(columns)
-    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val predictionsRDD: RDD[Row] = frameRdd.mapRows(row => {
-      val columnsArray = row.valuesAsDenseVector(kmeansColumns).toArray
-      val columnScalingsArray = scalings.toArray
-      val doubles = columnsArray.zip(columnScalingsArray).map { case (x, y) => x * y }
-      val point = Vectors.dense(doubles)
-
-      val clusterCenters = model.clusterCenters
-
-      for (i <- clusterCenters.indices) {
-        val distance: Double = VectorUtils.toMahoutVector(point).getDistanceSquared(VectorUtils.toMahoutVector(clusterCenters(i)))
-        row.addValue(distance)
-      }
-      row.row
-    })
-    var columnNames = new ListBuffer[String]()
-    var columnTypes = new ListBuffer[DataTypes.DataType]()
-    for (i <- model.clusterCenters.indices) {
-      val colName = "distance" + i.toString
-      columnNames += colName
-      columnTypes += DataTypes.float64
+    require(frame != null, "frame is required")
+    if (observationColumns.isDefined) {
+      require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
-    val newColumns = columnNames.toList.zip(columnTypes.toList.map(x => x: DataType))
-    val updatedSchema = frame.schema.addColumns(newColumns.map { case (name, dataType) => Column(name, dataType) })
 
-    frame.frameState = FrameState(predictionsRDD, updatedSchema)
+    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
+    val distanceMapper: RowWrapper => Row = row => {
+      val point = vectorMaker(row)
+      val clusterCenters = model.clusterCenters
+      Row.fromSeq(for (i <- clusterCenters.indices) yield {
+        val distance: Double = VectorUtils.toMahoutVector(point).getDistanceSquared(VectorUtils.toMahoutVector(clusterCenters(i)))
+        distance
+      })
+    }
+
+    val newColumns = (for (i <- model.clusterCenters.indices) yield Column("distance" + i.toString, DataTypes.float64)).toSeq
+    frame.addColumns(distanceMapper, newColumns)
   }
 
   /**
-   *
+   * Adds a column to the frame which indicates the predicted cluster for each observation
    * @param frame - frame to add predictions to
    * @param observationColumns Column(s) containing the observations whose clusters are to be predicted.
    *                           Default is to predict the clusters over columns the KMeans model was trained on.
@@ -167,43 +200,18 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    */
   def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
     require(frame != null, "frame is required")
-
     if (observationColumns.isDefined) {
-      require(scalings.length == observationColumns.get.length, "Number of columns for train and predict should be same")
+      require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
 
-    val kmeansColumns = observationColumns.getOrElse(columns)
-    val scalingValues = scalings
-
-    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val predictionsRDD = frameRdd.mapRows(row => {
-      val columnsArray = row.valuesAsDenseVector(kmeansColumns).toArray
-      val columnScalingsArray = scalingValues.toArray
-      val doubles = columnsArray.zip(columnScalingsArray).map { case (x, y) => x * y }
-      val point = Vectors.dense(doubles)
-
-      val clusterCenters = model.clusterCenters
-
-      //      for (i <- clusterCenters.indices) {
-      //        val distance: Double = VectorUtils.toMahoutVector(point).getDistanceSquared(VectorUtils.toMahoutVector(clusterCenters(i)))
-      //        row.addValue(distance)
-      //      }
+    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
+    val scalingArray = scalings.toArray
+    val predictMapper: RowWrapper => Row = row => {
+      val point = vectorMaker(row)
       val prediction = model.predict(point)
-      row.addValue(prediction)
-    })
+      Row.apply(prediction)
+    }
 
-    //Updating the frame schema
-    var columnNames = new ListBuffer[String]()
-    var columnTypes = new ListBuffer[DataTypes.DataType]()
-    columnNames += "cluster"
-    columnTypes += DataTypes.int32
-
-    val newColumns = columnNames.toList.zip(columnTypes.toList.map(x => x: DataType))
-    val updatedSchema = frame.schema.addColumns(newColumns.map { case (name, dataType) => Column(name, dataType) })
-
-    frame.frameState = FrameState(predictionsRDD, updatedSchema)
-
-    // todo: change to use scala Frame AddColumns
+    frame.addColumns(predictMapper, Seq(Column("cluster", DataTypes.int32)))
   }
 }
-

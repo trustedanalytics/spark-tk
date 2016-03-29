@@ -6,7 +6,7 @@ import org.trustedanalytics.at.frame.Column
 //todo - FrameBinColumn  (remove *Trait)
 //todo - BinColumnTransform  (remove *Trait)
 //todo - FrameBinColumnTranform  (remove *Trait)
-trait BinColumnTrait extends BaseFrame {
+trait BinColumnTransform extends BaseFrame {
 
   def binColumn(column: String,
                 cutoffs: List[Double],

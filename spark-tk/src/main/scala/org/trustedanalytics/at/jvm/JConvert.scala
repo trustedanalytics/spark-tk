@@ -16,6 +16,7 @@ object JConvert extends Serializable {
   def toScalaVectorString(x: JArrayList[String]): Vector[String] = x.asScala.toVector
 
   def noneOption() = None
+  def toOption[T](item: T) = Some(item)
   def someOptionString(s: String) = Some(s)
   def someOptionInt(i: Int) = Some(i)
   def someOptionLong(long: Long) = Some(long)

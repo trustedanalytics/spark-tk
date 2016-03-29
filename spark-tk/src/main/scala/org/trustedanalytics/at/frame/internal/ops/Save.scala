@@ -4,7 +4,7 @@ import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.sql.DataFrame
 import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
-trait SaveTrait extends BaseFrame {
+trait SaveSummarization extends BaseFrame {
 
   def save(path: String): Unit = {
     execute(Save(path))

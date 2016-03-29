@@ -3,7 +3,7 @@ package org.trustedanalytics.at.frame.internal.ops
 import org.apache.spark.sql.Row
 import org.trustedanalytics.at.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
-trait TakeTrait extends BaseFrame {
+trait TakeSummarization extends BaseFrame {
 
   def take(n: Int): scala.Array[Row] = {
     execute(Take(n))

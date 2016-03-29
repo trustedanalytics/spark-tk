@@ -122,7 +122,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @param featureColumnNames Names of the frame's column(s) to be used
    * @return RDD of (org.apache.spark.mllib)Vector
    */
-  def toDenseVectorRDD(featureColumnNames: List[String]): RDD[Vector] = {
+  def toDenseVectorRDD(featureColumnNames: Seq[String]): RDD[Vector] = {
     this.mapRows(row => {
       val array = row.valuesAsArray(featureColumnNames, flattenInputs = true)
       val b = array.map(i => DataTypes.toDouble(i))

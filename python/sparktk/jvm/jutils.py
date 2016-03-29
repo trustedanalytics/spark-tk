@@ -4,7 +4,7 @@ from jconvert import JConvert
 class JUtils(object):
     def __init__(self, sc):
         self.sc = sc
-        self.convert = JConvert(sc)
+        self.convert = JConvert(self)
 
     @staticmethod
     def is_java(item):
