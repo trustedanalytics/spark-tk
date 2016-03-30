@@ -52,7 +52,7 @@ case class AssignSample(samplePercentages: List[Double],
   require(samplePercentages.forall(_ >= 0.0d), "AssignSample requires that all percentages be non-negative.")
   require(samplePercentages.forall(_ <= 1.0d), "AssignSample requires that all percentages be no more than 1.")
 
-  def sumOfPercentages = samplePercentages.sum
+  lazy val sumOfPercentages = samplePercentages.sum
 
   require(sumOfPercentages > 1.0d - 0.000000001,
     "AssignSample:  Sum of provided probabilities falls below one (" + sumOfPercentages + ")")

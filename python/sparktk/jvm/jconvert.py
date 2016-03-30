@@ -37,6 +37,8 @@ class JConvert(object):
             return self.scala.someOptionInt(item)
         if dtypes.is_float(type(item)):
             return self.scala.someOptionDouble(item)
+        if type(item) is list:
+            return self.scala.someOptionList(item)
         raise NotImplementedError("Convert to scala Option[T] of type %s is not supported" % type(item))
 
     def from_scala_option(self, item):
