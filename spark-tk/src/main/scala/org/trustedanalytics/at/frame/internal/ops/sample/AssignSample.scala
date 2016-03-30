@@ -46,8 +46,20 @@ case class AssignSample(samplePercentages: List[Double],
     sampleLabels.get.toArray
   }
 
+  require(samplePercentages != null, "AssignSample requires that the percentages vector be non-null.")
+  require(samplePercentages.nonEmpty, "AssignSample  requires that the percentages vector contain at least one value.")
+
+  require(samplePercentages.forall(_ >= 0.0d), "AssignSample requires that all percentages be non-negative.")
+  require(samplePercentages.forall(_ <= 1.0d), "AssignSample requires that all percentages be no more than 1.")
+
+  def sumOfPercentages = samplePercentages.sum
+
+  require(sumOfPercentages > 1.0d - 0.000000001,
+    "AssignSample:  Sum of provided probabilities falls below one (" + sumOfPercentages + ")")
+  require(sumOfPercentages < 1.0d + 0.000000001,
+    "AssignSample:  Sum of provided probabilities exceeds one (" + sumOfPercentages + ")")
+
   override def work(state: FrameState): FrameState = {
-    def sumOfPercentages = samplePercentages.sum
     def seed = randomSeed.getOrElse(0)
     def outputColumnName = outputColumn.getOrElse(state.schema.getNewColumnName("sample_bin"))
 
@@ -60,5 +72,6 @@ case class AssignSample(samplePercentages: List[Double],
     )
     val updatedSchema = state.schema.addColumn(outputColumnName, DataTypes.string)
     FrameRdd.toFrameRdd(updatedSchema, splitRDD)
+
   }
 }
