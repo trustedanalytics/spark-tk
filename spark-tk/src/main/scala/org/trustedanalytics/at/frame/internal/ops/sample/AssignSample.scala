@@ -50,7 +50,6 @@ case class AssignSample(samplePercentages: List[Double],
     def sumOfPercentages = samplePercentages.sum
     def seed = randomSeed.getOrElse(0)
     def outputColumnName = outputColumn.getOrElse(state.schema.getNewColumnName("sample_bin"))
-    val frameRdd = new FrameRdd(state.schema, state.rdd)
 
     // run the operation
     val splitter = new MLDataSplitter(samplePercentages.toArray, splitLabels, seed)
@@ -59,8 +58,7 @@ case class AssignSample(samplePercentages: List[Double],
     val splitRDD: RDD[Array[Any]] = labeledRDD.map((x: LabeledLine[String, Row]) =>
       (x.entry.toSeq :+ x.label.asInstanceOf[Any]).toArray[Any]
     )
-
     val updatedSchema = state.schema.addColumn(outputColumnName, DataTypes.string)
-    FrameState(FrameRdd.toFrameRdd(updatedSchema, splitRDD), updatedSchema)
+    FrameRdd.toFrameRdd(updatedSchema, splitRDD)
   }
 }
