@@ -491,7 +491,7 @@ object FrameRdd {
    * Implicit conversion of FrameRdd to FrameState.
    */
   implicit def toFrameState(frameRdd: FrameRdd) =
-    FrameState(frameRdd.prev, frameRdd.frameSchema)
+    FrameState(frameRdd, frameRdd.frameSchema)
 
   /**
    * converts a data frame to frame rdd
