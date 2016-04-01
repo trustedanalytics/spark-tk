@@ -11,17 +11,19 @@ class FrameRddTest extends TestingSparkContextWordSpec with Matchers {
   "FrameRdd" should {
 
     /**
-     * Method that accepts FrameState as a parameter (for testing implicit conversion)
+     * Method that accepts FrameState as a parameter (for testing implicit conversion).
+     * @return Returns schema column column and rdd row count.
      */
-    def frameStateColumnCount(frameState: FrameState): Int = {
-      frameState.schema.columns.length
+    def frameStateColumnCount(frameState: FrameState): (Int, Long) = {
+      (frameState.schema.columns.length, frameState.rdd.count())
     }
 
     /**
      * Method that accepts FrameRdd as a parameter (for testing implicit conversion)
+     * @return Returns schema column column and rdd row count.
      */
-    def frameRddColumnCount(frameRdd: FrameRdd): Int = {
-      frameRdd.frameSchema.columns.length
+    def frameRddColumnCount(frameRdd: FrameRdd): (Int, Long) = {
+      (frameRdd.frameSchema.columns.length, frameRdd.count())
     }
 
     "implicitly convert between FrameState and FrameRdd" in {
@@ -32,12 +34,12 @@ class FrameRddTest extends TestingSparkContextWordSpec with Matchers {
       val frameState = FrameState(rows, schema)
 
       // Call both methods with FrameState
-      assert(frameStateColumnCount(frameState) == 2)
-      assert(frameRddColumnCount(frameState) == 2)
+      assert(frameStateColumnCount(frameState) == (2, 100))
+      assert(frameRddColumnCount(frameState) == (2, 100))
 
       // Call both methods with FrameRdd
-      assert(frameRddColumnCount(frameRdd) == 2)
-      assert(frameStateColumnCount(frameRdd) == 2)
+      assert(frameRddColumnCount(frameRdd) == (2, 100))
+      assert(frameStateColumnCount(frameRdd) == (2, 100))
     }
   }
 }
