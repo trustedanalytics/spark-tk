@@ -21,6 +21,7 @@ object JConvert extends Serializable {
   def someOptionInt(i: Int) = Some(i)
   def someOptionLong(long: Long) = Some(long)
   def someOptionDouble(d: Double) = Some(d)
+  def someOptionList(list: JArrayList[Any]) = Some(list.asScala.toList)
 
   def fromOption(o: Option[Any]): Any = o.orNull
 
