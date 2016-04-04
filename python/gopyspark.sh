@@ -14,6 +14,13 @@ echo "$NAME SPARK_TK_DIR=$SPARK_TK_DIR"
 export SPARK_TK_JAR=$SPARK_TK_DIR/target/*
 export SPARK_TK_DEP_JARS=$SPARK_TK_DIR/target/dependencies/*
 
+# todo - build the jars argument as well, until then, this probably won't work on real cluster
+
+if [ -z "$SPARK_HOME" ]; then
+    export SPARK_HOME=/opt/cloudera/parcels/CDH/lib/spark
+fi
+echo $NAME SPARK_HOME=$SPARK_HOME
+
 if [ -z "$PYSPARK_BIN" ]; then
     export PYSPARK_BIN=pyspark
 fi

@@ -122,12 +122,19 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @param featureColumnNames Names of the frame's column(s) to be used
    * @return RDD of (org.apache.spark.mllib)Vector
    */
-  def toDenseVectorRDD(featureColumnNames: Seq[String]): RDD[Vector] = {
+  def toDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
     this.mapRows(row => {
       val array = row.valuesAsArray(featureColumnNames, flattenInputs = true)
       val b = array.map(i => DataTypes.toDouble(i))
       Vectors.dense(b)
     })
+  }
+
+  def toDenseVectorRdd(columns: Seq[String], weights: Option[Seq[Double]]): RDD[Vector] = {
+    weights match {
+      case Some(w) => toDenseVectorRddWithWeights(columns, w)
+      case None => toDenseVectorRdd(columns)
+    }
   }
 
   /**
@@ -136,7 +143,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @return MLLib's MultivariateStatisticalSummary
    */
   def columnStatistics(columnNames: List[String]): MultivariateStatisticalSummary = {
-    val vectorRdd = toDenseVectorRDD(columnNames)
+    val vectorRdd = toDenseVectorRdd(columnNames)
     Statistics.colStats(vectorRdd)
   }
 
@@ -146,7 +153,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @return RDD of (org.apache.spark.mllib)Vector
    */
   def toMeanCenteredDenseVectorRDD(featureColumnNames: List[String]): RDD[Vector] = {
-    val vectorRdd = toDenseVectorRDD(featureColumnNames)
+    val vectorRdd = toDenseVectorRdd(featureColumnNames)
     val columnMeans: Vector = columnStatistics(featureColumnNames).mean
     vectorRdd.map(i => {
       Vectors.dense((new DenseVector(i.toArray) - new DenseVector(columnMeans.toArray)).toArray)
@@ -159,7 +166,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @param columnWeights The weights of the columns
    * @return RDD of (org.apache.spark.mllib)Vector
    */
-  def toDenseVectorRDDWithWeights(featureColumnNames: Seq[String], columnWeights: Seq[Double]): RDD[Vector] = {
+  def toDenseVectorRddWithWeights(featureColumnNames: Seq[String], columnWeights: Seq[Double]): RDD[Vector] = {
     require(columnWeights.length == featureColumnNames.length, "Length of columnWeights and featureColumnNames needs to be the same")
     this.mapRows(row => {
       val array = row.valuesAsArray(featureColumnNames).map(row => DataTypes.toDouble(row))

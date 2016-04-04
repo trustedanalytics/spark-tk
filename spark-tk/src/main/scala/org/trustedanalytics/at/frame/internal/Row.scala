@@ -19,6 +19,7 @@ package org.trustedanalytics.at.frame.internal
 //package org.trustedanalytics.atk.engine.frame
 
 import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors, DenseVector }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.GenericRow
@@ -320,6 +321,16 @@ trait AbstractRow {
    */
   def toArray: Array[Any] = {
     row.toSeq.toArray
+  }
+
+  def toDenseVector(featureColumnNames: Seq[String]): MllibVector = {
+    Vectors.dense(valuesAsDoubleArray(featureColumnNames))
+  }
+
+  def toWeightedDenseVector(featureColumnNames: Seq[String], columnWeights: Array[Double]): MllibVector = {
+    val values = valuesAsDoubleArray(featureColumnNames)
+    val scaledValues = values.zip(columnWeights).map { case (x, y) => x * y }
+    Vectors.dense(scaledValues)
   }
 
   /**

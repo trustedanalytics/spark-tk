@@ -16,6 +16,7 @@
 
 package org.trustedanalytics.at.frame.internal.rdd
 
+import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
@@ -32,6 +33,20 @@ import scala.reflect.ClassTag
  * [[http://stackoverflow.com/questions/22592811/scala-spark-task-not-serializable-java-io-notserializableexceptionon-when]]
  */
 object RddUtils extends Serializable {
+
+  /**
+   * Creates a DenseVectorRDD
+   * @param frameRdd
+   * @param columns
+   * @param weights
+   * @return
+   */
+  def getDenseVectorRdd(frameRdd: FrameRdd, columns: Seq[String], weights: Option[Seq[Double]]) = {
+    weights match {
+      case Some(w) => frameRdd.toDenseVectorRddWithWeights(columns, w)
+      case None => frameRdd.toDenseVectorRdd(columns)
+    }
+  }
 
   /**
    * take an input RDD and return another RDD which contains the subset of the original contents

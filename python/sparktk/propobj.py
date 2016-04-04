@@ -1,7 +1,7 @@
 import json
 
 
-class SimpleObj(object):
+class PropertiesObject(object):
     """Simple object which provides nice repr, to_dict, etc. for attributes and properties"""
 
     def to_dict(self):

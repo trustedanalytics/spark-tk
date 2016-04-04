@@ -22,6 +22,12 @@ trait BaseFrame {
   protected def execute[T](summarization: FrameSummarization[T]): T = {
     summarization.work(frameState)
   }
+
+  protected def execute[T](transform: FrameTransformWithResult[T]): T = {
+    val r = transform.work(frameState)
+    frameState = r.state
+    r.result
+  }
 }
 
 trait FrameOperation extends Product {
@@ -30,6 +36,12 @@ trait FrameOperation extends Product {
 
 trait FrameTransform extends FrameOperation {
   def work(state: FrameState): FrameState
+}
+
+case class FrameTransformReturn[T](state: FrameState, result: T)
+
+trait FrameTransformWithResult[T] extends FrameOperation {
+  def work(state: FrameState): FrameTransformReturn[T]
 }
 
 trait FrameSummarization[T] extends FrameOperation {

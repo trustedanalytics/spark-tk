@@ -1,47 +1,47 @@
-from setup import tk_context, rm, get_sandbox_path
+from setup import tc, rm, get_sandbox_path
 from sparktk.models.kmeans import KMeans
 from sparktk.dtypes import int32, float32
 
-def test_smoke_take(tk_context):
-    f = tk_context.to_frame([[1, "one"], [2, "two"], [3, "three"]])
+def test_smoke_take(tc):
+    f = tc.to_frame([[1, "one"], [2, "two"], [3, "three"]])
     t = f.take(2)
     print "take=%s" % str(t)
 
-def test_jconvert_option(tk_context):
+def test_jconvert_option(tc):
     something = "Something"
-    option = tk_context.jutils.convert.to_scala_option(something)
-    back = tk_context.jutils.convert.from_scala_option(option)
+    option = tc.jutils.convert.to_scala_option(something)
+    back = tc.jutils.convert.from_scala_option(option)
     assert back == something
 
-def test_bin(tk_context):
-    f = tk_context.to_frame([[1, "one"],
-                             [2, "two"],
-                             [3, "three"],
-                             [4, "four"],
-                             [5, "five"],
-                             [6, "six"],
-                             [7, "seven"],
-                             [8, "eight"],
-                             [9, "nine"],
-                             [10, "ten"]],
-                            [("a", int), ("b", str)])
+def test_bin(tc):
+    f = tc.to_frame([[1, "one"],
+                     [2, "two"],
+                     [3, "three"],
+                     [4, "four"],
+                     [5, "five"],
+                     [6, "six"],
+                     [7, "seven"],
+                     [8, "eight"],
+                     [9, "nine"],
+                     [10, "ten"]],
+                    [("a", int), ("b", str)])
     f.bin_column("a", [5, 8, 10.0, 30.0, 50, 80]) #, bin_column_name="super_fred")
     print f.inspect()
 
 
-def test_kmeans(tk_context):
+def test_kmeans(tc):
 
-    frame = tk_context.to_frame([[2, "ab"],
-                                 [1,"cd"],
-                                 [7,"ef"],
-                                 [1,"gh"],
-                                 [9,"ij"],
-                                 [2,"kl"],
-                                 [0,"mn"],
-                                 [6,"op"],
-                                 [5,"qr"]],
-                                [("data", float), ("name", str)])
-    model = KMeans.train(tk_context, frame, ["data"], 3, seed=5)
+    frame = tc.to_frame([[2, "ab"],
+                         [1,"cd"],
+                         [7,"ef"],
+                         [1,"gh"],
+                         [9,"ij"],
+                         [2,"kl"],
+                         [0,"mn"],
+                         [6,"op"],
+                         [5,"qr"]],
+                        [("data", float), ("name", str)])
+    model = KMeans.train(tc, frame, ["data"], 3, seed=5)
     assert (model.k == 3)
 
     sizes = model.compute_sizes(frame)
@@ -80,27 +80,27 @@ def test_kmeans(tk_context):
 [8]   5.0  qr          1      12.25     3.0625       25.0""")
 
 
-def test_save_load(tk_context):
+def test_save_load(tc):
     path = get_sandbox_path("briton1")
     rm(path)
-    frame1 = tk_context.to_frame([[2,"ab"],[1.0,"cd"],[7.4,"ef"],[1.0,"gh"],[9.0,"ij"],[2.0,"kl"],[0,"mn"],[6.0,"op"],[5.0,"qr"]],
-                                [("data", float),("name", str)])
+    frame1 = tc.to_frame([[2,"ab"],[1.0,"cd"],[7.4,"ef"],[1.0,"gh"],[9.0,"ij"],[2.0,"kl"],[0,"mn"],[6.0,"op"],[5.0,"qr"]],
+                         [("data", float),("name", str)])
     frame1_inspect = frame1.inspect()
     frame1.save(path)
-    frame2 = tk_context.load_frame(path)
+    frame2 = tc.load_frame(path)
     frame2_inspect = frame2.inspect()
     assert(frame1_inspect, frame2_inspect)
     assert(str(frame1.schema), str(frame2.schema))
     #print frame2.inspect()
 
 
-def est_np(tk_context):
+def est_np(tc):
     # We can't use numpy numeric types and go successfully to Scala RDDs --the unpickler gets a constructor error:
     # Caused by: net.razorvine.pickle.PickleException: expected zero arguments for construction of ClassDict (for numpy.dtype)
     # todo: get this test working!
     # when it works, go back to dtypes and enable the np types
     import numpy as np
-    f = tk_context.to_frame([[np.int32(1), "one"], [np.int32(2), "two"]], [("a", int), ("b", str)])  # schema intentionally int, not np.int32
+    f = tc.to_frame([[np.int32(1), "one"], [np.int32(2), "two"]], [("a", int), ("b", str)])  # schema intentionally int, not np.int32
     print f.inspect()
     # force to_scala
     f.bin_column("a", [5, 8, 10.0, 30.0, 50, 80])
@@ -108,19 +108,19 @@ def est_np(tk_context):
     print f.inspect()  # chokes when bin_column triggers the switch to scala RDD
 
 
-def test_back_and_forth_py_scala(tk_context):
+def test_back_and_forth_py_scala(tc):
     # python
-    f = tk_context.to_frame([[1, "one"],
-                             [2, "two"],
-                             [3, "three"],
-                             [4, "four"],
-                             [5, "five"],
-                             [6, "six"],
-                             [7, "seven"],
-                             [8, "eight"],
-                             [9, "nine"],
-                             [10, "ten"]],
-                             [("a", int32), ("b", str)])
+    f = tc.to_frame([[1, "one"],
+                     [2, "two"],
+                     [3, "three"],
+                     [4, "four"],
+                     [5, "five"],
+                     [6, "six"],
+                     [7, "seven"],
+                     [8, "eight"],
+                     [9, "nine"],
+                     [10, "ten"]],
+                     [("a", int32), ("b", str)])
     # python
     f.add_columns(lambda row: row.a + 4, ("c", int))
     # scala

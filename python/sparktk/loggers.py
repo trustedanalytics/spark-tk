@@ -6,7 +6,7 @@ import sys
 import inspect
 
 # Constants
-LINE_FORMAT = '%(asctime)s|%(name)s|%(levelname)-5s|%(message)s'
+LINE_FORMAT = '%(asctime)s|%(levelname)-5s|%(name)s|%(message)s'
 
 # add a null handler to root logger to avoid handler warning messages
 class NullHandler(logging.Handler):

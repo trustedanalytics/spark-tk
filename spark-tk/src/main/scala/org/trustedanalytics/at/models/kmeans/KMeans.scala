@@ -1,8 +1,7 @@
 package org.trustedanalytics.at.models.kmeans
 
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
-import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.linalg.{ Vector => LinalgVector }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
 import org.apache.spark.org.trustedanalytics.at.VectorUtils
 import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.sql.Row
@@ -17,9 +16,9 @@ object KMeans {
   /**
    * @param frame The frame containing the data to train on
    * @param columns The columns to train on
-   * @param scalings The scaling value is multiplied by the corresponding value in the observation column
    * @param k Desired number of clusters
-   * @param maxIterations Number of iteration for which the algorithm should run
+   * @param scalings Optional scaling values, each is multiplied by the corresponding value in the observation column
+   * @param maxIterations Number of iterations for which the algorithm should run
    * @param epsilon Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
    *                centers move less than this Euclidean distance, we stop iterating one run
    * @param initializationMode The initialization technique for the algorithm.  It could be either "random" to
@@ -57,8 +56,8 @@ object KMeans {
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
     trainFrameRdd.cache()
     val vectorRDD = scalings match {
-      case Some(weights) => trainFrameRdd.toDenseVectorRDDWithWeights(columns, weights)
-      case None => trainFrameRdd.toDenseVectorRDD(columns)
+      case Some(weights) => trainFrameRdd.toDenseVectorRddWithWeights(columns, weights)
+      case None => trainFrameRdd.toDenseVectorRdd(columns)
     }
     val model = sparkKMeans.run(vectorRDD)
     val centroids: Array[Array[Double]] = model.clusterCenters.map(_.toArray) // Make centroids easy for Python
@@ -71,18 +70,11 @@ object KMeans {
 
     KMeansModel(columns, k, scalings, maxIterations, epsilon, initializationMode, centroids, model)
   }
-
-  def getDenseVectorRdd(frameRdd: FrameRdd, columns: Seq[String], scalings: Option[Seq[Double]]) = {
-    scalings match {
-      case Some(weights) => frameRdd.toDenseVectorRDDWithWeights(columns, weights)
-      case None => frameRdd.toDenseVectorRDD(columns)
-    }
-  }
 }
 
 /**
- * @param scalings The scaling value is multiplied by the corresponding value in the observation column
  * @param k Desired number of clusters
+ * @param scalings Optional scaling values, each is multiplied by the corresponding value in the observation column
  * @param maxIterations Number of iteration for which the algorithm should run
  * @param epsilon Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
  *                centers move less than this Euclidean distance, we stop iterating one run
@@ -105,6 +97,29 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
   }
 
   /**
+   * Helper method that provides a function to create an appropriate MllibVector for a RowWrapper, taking into account optional weights
+   * @param observationColumns
+   * @return
+   */
+  private def getDenseVectorMaker(observationColumns: Seq[String]): RowWrapper => MllibVector = {
+
+    def getDenseVector(columnNames: Seq[String])(row: RowWrapper): MllibVector = {
+      row.toDenseVector(columnNames)
+    }
+
+    def getWeightedDenseVector(columnNames: Seq[String], columnWeights: Array[Double])(row: RowWrapper): MllibVector = {
+      row.toWeightedDenseVector(columnNames, columnWeights)
+    }
+
+    scalings match {
+      case None => getDenseVector(observationColumns)
+      case Some(weights) =>
+        require(weights.length == observationColumns.length)
+        getWeightedDenseVector(observationColumns, weights.toArray)
+    }
+  }
+
+  /**
    * Computes the number of elements belonging to each cluster given the trained model and names of the frame's columns storing the observations
    * @param frame A frame containing observations
    * @param observationColumns The columns of frame storing the observations (uses column names from train by default)
@@ -116,7 +131,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
       require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
 
-    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
+    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns))
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val predictRDD = frameRdd.mapRows(row => {
       val point = vectorMaker(row)
@@ -126,39 +141,6 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
     clusterSizes
   }
 
-  // todo - move to RowWrapper
-  def getRowValuesAsDoubles(featureColumnNames: Seq[String])(row: RowWrapper): Array[Double] = {
-    row.valuesAsArray(featureColumnNames).map(row => DataTypes.toDouble(row))
-  }
-
-  // todo - move to a RowWrapper (or DenseVector lib)
-  /**
-   * Returns a function which will create an appropriate LinalgVector for a RowWrapper, taking into account
-   * optional weights
-   * @param featureColumnNames
-   * @param columnWeights
-   * @return
-   */
-  def getDenseVectorMaker(featureColumnNames: Seq[String], columnWeights: Option[Seq[Double]]): RowWrapper => LinalgVector = {
-
-    def getDenseVector(featureColumnNames: Seq[String])(row: RowWrapper): LinalgVector = {
-      Vectors.dense(getRowValuesAsDoubles(featureColumnNames)(row))
-    }
-
-    def getWeightedDenseVector(featureColumnNames: Seq[String], columnWeights: Array[Double])(row: RowWrapper): LinalgVector = {
-      val values = getRowValuesAsDoubles(featureColumnNames)(row)
-      val scaledValues = values.zip(columnWeights).map { case (x, y) => x * y }
-      Vectors.dense(scaledValues)
-    }
-
-    scalings match {
-      case None => getDenseVector(featureColumnNames)
-      case Some(weights) =>
-        require(weights.length == featureColumnNames.length)
-        getWeightedDenseVector(featureColumnNames, weights.toArray)
-    }
-  }
-
   /**
    * Computes the 'within cluster sum of squared errors' for the given frame
    * @param frame A frame containing observations
@@ -166,8 +148,13 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    * @return wsse
    */
   def computeWsse(frame: Frame, observationColumns: Option[Vector[String]] = None): Double = {
+    require(frame != null, "frame is required")
+    if (observationColumns.isDefined) {
+      require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
+    }
+
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val vectorRdd = KMeans.getDenseVectorRdd(frameRdd, observationColumns.getOrElse(columns), scalings)
+    val vectorRdd = frameRdd.toDenseVectorRdd(observationColumns.getOrElse(columns), scalings)
     model.computeCost(vectorRdd)
   }
 
@@ -177,7 +164,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
       require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
 
-    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
+    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns))
     val distanceMapper: RowWrapper => Row = row => {
       val point = vectorMaker(row)
       val clusterCenters = model.clusterCenters
@@ -204,8 +191,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
       require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
 
-    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
-    val scalingArray = scalings.toArray
+    val vectorMaker = getDenseVectorMaker(observationColumns.getOrElse(columns))
     val predictMapper: RowWrapper => Row = row => {
       val point = vectorMaker(row)
       val prediction = model.predict(point)

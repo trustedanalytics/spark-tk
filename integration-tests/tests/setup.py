@@ -11,45 +11,23 @@ print "[setup.py] root_path = %s" % root_path
 python_folder = os.path.join(root_path, "python")
 sys.path.insert(0, python_folder)
 
-from pyspark import SparkConf, SparkContext
-from sparktk import Context
-
-master = "local[2]"
-print "[setup.py] master=%s" % master
-
-jars = [
-        os.path.join(root_path, 'spark-tk/target/*'),
-        os.path.join(root_path, 'spark-tk/target/dependencies/*'),
-]
-
-jars_comma = ",".join(jars)
-jars_colon = ":".join(jars)
-
-pyspark_submit_args = "--driver-class-path %s pyspark-shell" % jars_colon
-print "[setup.py] Setting $PYSPARK_SUBMIT_ARGS=%s" % pyspark_submit_args
-os.environ["PYSPARK_SUBMIT_ARGS"] = pyspark_submit_args
-
 lock = Lock()
-global_tk_context = None
+global_tc = None
 
 # Establish a sparktk Context with SparkContext for the test session
 @pytest.fixture(scope="session")
-def tk_context(request):
-    global global_tk_context
+def tc(request):
+    global global_tc
     with lock:
-        if global_tk_context is None:
-            conf = SparkConf().setMaster(master).setAppName("pytest-pyspark-local-testing")
-            print "=" * 80
-            print "SparkConf"
-            print conf.toDebugString()
-            print "=" * 80
-
-            sc = SparkContext(conf=conf, pyFiles=['../sparktk.zip'])
+        if global_tc is None:
+            from sparktk import tc as _tc
+            from sparktk import create_sc
+            _tc.loggers.set("d", "sparktk.sparkconf")
+            sc = create_sc(master='local[2]', app_name="pytest-pyspark-local-testing")
             request.addfinalizer(lambda: sc.stop())
-            global_tk_context =  Context(sc)
-            #import ijdebug
-            #ijdebug.start()
-    return global_tk_context
+            _tc.init(sc)
+            global_tc = _tc
+    return global_tc
 
 
 sandbox_path = "sandbox"
