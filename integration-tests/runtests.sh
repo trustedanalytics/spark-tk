@@ -36,6 +36,6 @@ then
 fi
 
 
-python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
-#python2.7 -m pytest -s -k test_kmeans
-#python2.7 -m pytest
+#python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
+#python2.7 -m pytest -s -k test_kmeans  # example to run individual test
+python2.7 -m pytest

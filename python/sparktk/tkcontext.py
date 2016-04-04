@@ -3,12 +3,10 @@ from sparktk.sparkconf import create_sc
 from pyspark import SparkContext
 
 
-
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
 
     def __init__(self):
-        # self._loggers.set_spark(self.sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
         self._sc = None
         self._jtc = None
         self._jutils = None
@@ -21,8 +19,7 @@ class TkContext(object):
         self._sc = sc
         self._jtc = self._sc._jvm.org.trustedanalytics.at.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
-
-        # request.addfinalizer(lambda: sc.stop())  was in int-tests setup.py, house-cleaning for pytest fixture...
+        # self.loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     @property
     def sc(self):

@@ -5,7 +5,8 @@ from sparktk.dtypes import int32, float32
 def test_smoke_take(tc):
     f = tc.to_frame([[1, "one"], [2, "two"], [3, "three"]])
     t = f.take(2)
-    print "take=%s" % str(t)
+    assert t.data == [[1, 'one'], [2, 'two']]
+    #print "take=%s" % str(t)
 
 def test_jconvert_option(tc):
     something = "Something"
@@ -26,7 +27,7 @@ def test_bin(tc):
                      [10, "ten"]],
                     [("a", int), ("b", str)])
     f.bin_column("a", [5, 8, 10.0, 30.0, 50, 80]) #, bin_column_name="super_fred")
-    print f.inspect()
+    #print f.inspect()
 
 
 def test_kmeans(tc):
@@ -65,7 +66,7 @@ def test_kmeans(tc):
 [8]   5.0  qr          1""")
 
     model.add_distance_columns(frame)
-    print frame.inspect()
+    #print frame.inspect()
     frame_inspect = str(frame.inspect())
     assert (frame_inspect == """[#]  data  name  cluster  distance0  distance1  distance2
 =========================================================
@@ -101,11 +102,11 @@ def est_np(tc):
     # when it works, go back to dtypes and enable the np types
     import numpy as np
     f = tc.to_frame([[np.int32(1), "one"], [np.int32(2), "two"]], [("a", int), ("b", str)])  # schema intentionally int, not np.int32
-    print f.inspect()
+    #print f.inspect()
     # force to_scala
     f.bin_column("a", [5, 8, 10.0, 30.0, 50, 80])
     # action
-    print f.inspect()  # chokes when bin_column triggers the switch to scala RDD
+    #print f.inspect()  # chokes when bin_column triggers the switch to scala RDD
 
 
 def test_back_and_forth_py_scala(tc):

@@ -18,7 +18,7 @@ object PythonJavaRdd {
 
   def scalaToPython(rdd: RDD[Row], schema: Schema): JavaRDD[Array[Byte]] = {
     //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
-    println("In scalaToPython...")
+    //println("In scalaToPython...")
     //SerDeUtil.javaToPython(rdd.toJavaRDD())
 
     //# these two lines work, but rows show up as tuples...  // todo - figure out more here
