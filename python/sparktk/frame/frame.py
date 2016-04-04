@@ -119,6 +119,7 @@ class Frame(object):
     # Frame Operations
 
     from sparktk.frame.ops.add_columns import add_columns
+    from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.filter import filter

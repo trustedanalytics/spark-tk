@@ -90,11 +90,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.trustedanalytics.atk</groupId>-->
-            <!--<artifactId>testutils</artifactId>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>testutils</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>

@@ -2,11 +2,12 @@ package org.apache.spark.org.trustedanalytics.at.frame
 
 import breeze.linalg.DenseVector
 import org.trustedanalytics.at.frame._
-import org.trustedanalytics.at.frame.internal.RowWrapper
+import org.trustedanalytics.at.frame.internal.{ FrameState, RowWrapper }
 import org.trustedanalytics.at.frame.internal.rdd.RddUtils
 import DataTypes.{ float32, float64, int32, int64 }
 
 import scala.collection.immutable.{ Vector => ScalaVector }
+import scala.language.implicitConversions
 
 //import org.apache.spark.atk.graph.EdgeWrapper
 //import org.apache.spark.atk.graph.VertexWrapper
@@ -486,6 +487,18 @@ object FrameRdd {
   def toFrameRdd(schema: Schema, rowRDD: RDD[Array[Any]]) = {
     new FrameRdd(schema, FrameRdd.toRowRDD(schema, rowRDD))
   }
+
+  /**
+   * Implicit conversion of FrameState to FrameRdd.
+   */
+  implicit def fromFrameState(frameState: FrameState) =
+    new FrameRdd(frameState.schema, frameState.rdd)
+
+  /**
+   * Implicit conversion of FrameRdd to FrameState.
+   */
+  implicit def toFrameState(frameRdd: FrameRdd) =
+    FrameState(frameRdd, frameRdd.frameSchema)
 
   /**
    * converts a data frame to frame rdd
