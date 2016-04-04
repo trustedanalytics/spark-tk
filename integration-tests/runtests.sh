@@ -21,6 +21,10 @@ if [ -z "$SPARK_HOME" ]; then
 fi
 echo $NAME SPARK_HOME=$SPARK_HOME
 
+if [ -z "$HADOOP_CONF_DIR" ]; then
+    export HADOOP_CONF_DIR="."
+fi
+
 #echo "$NAME Creating sparktk zip"
 #python2.7 zipsparktk.py
 
