@@ -6,12 +6,7 @@ from pyspark import SparkContext
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
 
-    def __init__(self):
-        self._sc = None
-        self._jtc = None
-        self._jutils = None
-
-    def init(self, sc=None, **create_sc_kwargs):
+    def __init__(self, sc=None, **create_sc_kwargs):
         if not sc:
             sc = create_sc(**create_sc_kwargs)
         if type(sc) is not SparkContext:
@@ -23,20 +18,14 @@ class TkContext(object):
 
     @property
     def sc(self):
-        if not self._sc:
-            raise TkContextInitError()
         return self._sc
 
     @property
     def jutils(self):
-        if not self._sc:
-            raise TkContextInitError()
         return self._jutils
 
     @property
     def jtc(self):
-        if not self._sc:
-            raise TkContextInitError()
         return self._jtc
 
     from sparktk.loggers import loggers
@@ -49,11 +38,3 @@ class TkContext(object):
     def load_frame(tc, path):
         from sparktk.frame.frame import load_frame
         return load_frame(tc, path)
-
-
-class TkContextInitError(RuntimeError):
-    def __init__(self):
-        RuntimeError.__init__(self, """TkContext is not initialized with a SparkContext.  Try running...
-    >>> tc.init(sc)""")
-
-

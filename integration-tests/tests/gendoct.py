@@ -195,7 +195,7 @@ def _create_test_text(full_test_path):
     :param full_test_path: string indicating the full path location of the test source file
     """
     path_from_root = _trim_test_path(full_test_path)
-    test_name = 'test_' + replace_invalid_chars(path_from_root)
+    test_name = 'test_docs_' + replace_invalid_chars(path_from_root)
     return """
 def %s(tc):
     test_path = '%s'

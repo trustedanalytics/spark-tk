@@ -246,7 +246,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @param columnNames names to include
    * @return the FrameRdd with only some columns
    */
-  def selectColumns(columnNames: List[String]): FrameRdd = {
+  def selectColumns(columnNames: Seq[String]): FrameRdd = {
     if (columnNames.isEmpty) {
       throw new IllegalArgumentException("list of column names can't be empty")
     }

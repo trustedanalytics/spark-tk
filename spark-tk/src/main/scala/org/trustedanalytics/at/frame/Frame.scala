@@ -16,6 +16,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with BinColumnEqualTransformWithResult
     with BinColumnTransform
     with CountSummarization
+    with DropColumnsTransform
     with ExportToCsvSummarization
     with HistogramSummarization
     with SaveSummarization

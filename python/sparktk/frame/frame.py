@@ -123,6 +123,7 @@ class Frame(object):
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.bin_column_equal_depth import bin_column_equal_depth
     from sparktk.frame.ops.bin_column_equal_width import bin_column_equal_width
+    from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.histogram import histogram
