@@ -179,7 +179,7 @@
           </property>
         </activation>
         <modules>
-          <!--<module>integration-tests</module>-->
+          <module>integration-tests</module>
         </modules>
       </profile>
 
@@ -645,13 +645,6 @@
                   <include>nosetests.xml</include>
                   <include>python-coverage.zip</include>
                 </includes>
-              </fileset>
-              <fileset>
-                <directory>integration-tests/tests</directory>
-                <includes>
-                  <include>**/*_generated.py*</include>
-                </includes>
-                <followSymlinks>false</followSymlinks>
               </fileset>
             </filesets>
           </configuration>
