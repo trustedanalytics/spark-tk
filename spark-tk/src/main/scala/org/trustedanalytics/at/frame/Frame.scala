@@ -5,7 +5,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.at.frame.internal.BaseFrame
 import org.trustedanalytics.at.frame.internal.ops._
-import org.trustedanalytics.at.frame.internal.ops.binning.{ BinColumnTransform, BinColumnEqualTransformWithResult }
+import org.trustedanalytics.at.frame.internal.ops.binning.{ BinColumnTransform, BinColumnEqualTransformWithResult, HistogramSummarization }
 import org.trustedanalytics.at.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.at.frame.internal.ops.exportdata.ExportToCsvSummarization
 import org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd
@@ -17,6 +17,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with BinColumnTransform
     with CountSummarization
     with ExportToCsvSummarization
+    with HistogramSummarization
     with SaveSummarization
     with TakeSummarization {
   init(frameRdd, frameSchema)

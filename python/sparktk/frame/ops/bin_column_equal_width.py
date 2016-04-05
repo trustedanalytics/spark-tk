@@ -86,6 +86,6 @@ def bin_column_equal_width(self, column_name, num_bins=None, bin_column_name=Non
 
     return list(self._scala.binColumnEqual(column_name,
                                self._tc.jutils.convert.to_scala_option(num_bins),
-                               "width",
+                               self._tc.jutils.convert.to_scala_option("equalwidth"),
                                self._tc.jutils.convert.to_scala_option(bin_column_name)))
 

@@ -6,15 +6,15 @@ import org.trustedanalytics.at.frame.Column
 trait BinColumnEqualTransformWithResult extends BaseFrame {
   def binColumnEqual(column: String,
                      numBins: Option[Int] = None,
-                     method: String,
+                     binType: Option[String] = None,
                      binColumnName: Option[String] = None): Array[Double] = {
-    execute(BinColumnEqual(column, numBins, method, binColumnName))
+    execute(BinColumnEqual(column, numBins, binType, binColumnName))
   }
 }
 
 case class BinColumnEqual(column: String,
                           numBins: Option[Int],
-                          method: String,
+                          binType: Option[String],
                           binColumnName: Option[String]) extends FrameTransformWithResult[Array[Double]] {
 
   override def work(state: FrameState): FrameTransformReturn[Array[Double]] = {
@@ -22,9 +22,9 @@ case class BinColumnEqual(column: String,
     state.schema.requireColumnIsNumerical(column)
     val newColumnName = binColumnName.getOrElse(state.schema.getNewColumnName(s"${column}_binned"))
     val calculatedNumBins = HistogramFunctions.getNumBins(numBins, state.rdd)
-    val binnedRdd = method.toLowerCase match {
-      case "depth" => DiscretizationFunctions.binEqualDepth(columnIndex, calculatedNumBins, None, state.rdd)
-      case "width" => DiscretizationFunctions.binEqualWidth(columnIndex, calculatedNumBins, state.rdd)
+    val binnedRdd = binType.getOrElse("equalwidth").toLowerCase match {
+      case "equaldepth" => DiscretizationFunctions.binEqualDepth(columnIndex, calculatedNumBins, None, state.rdd)
+      case "equalwidth" => DiscretizationFunctions.binEqualWidth(columnIndex, calculatedNumBins, state.rdd)
       case default => throw new IllegalArgumentException(s"Unrecognized binning method: ${default}")
     }
 

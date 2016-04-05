@@ -94,5 +94,5 @@ def bin_column_equal_depth(self, column_name, num_bins=None, bin_column_name=Non
     """
     return list(self._scala.binColumnEqual(column_name,
                                self._tc.jutils.convert.to_scala_option(num_bins),
-                               "depth",
+                               self._tc.jutils.convert.to_scala_option("equaldepth"),
                                self._tc.jutils.convert.to_scala_option(bin_column_name)))

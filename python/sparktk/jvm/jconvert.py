@@ -24,6 +24,9 @@ class JConvert(object):
     def scala_map_string_int_to_python(self, m):
         return dict([(entry[0], int(entry[1])) for entry in list(self.scala.scalaMapStringIntToPython(m))])
 
+    def scala_map_string_seq_to_python(self, m):
+        return dict(self.scala.scalaMapStringSeqToPython(m))
+
     def to_scala_option(self, item):
         if item is None:
             return self.scala.noneOption()
