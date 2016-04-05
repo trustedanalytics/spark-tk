@@ -37,5 +37,6 @@ fi
 
 
 #python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
-#python2.7 -m pytest -s -k test_kmeans  # example to run individual test
+#python2.7 -m pytest -k test_kmeans  # example to run individual test
+#python2.7 -m pytest -k test_docs_python_sparktk_frame_ops_drop_columns_py
 python2.7 -m pytest

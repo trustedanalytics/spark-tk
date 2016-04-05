@@ -513,33 +513,33 @@ def inspect(self,
 
     .. code::
 
-        >>> import sparktk as ta
-        >>> ta.inspect_settings
+        >>> import sparktk
+        >>> sparktk.inspect_settings
         wrap             20
         truncate       None
         round          None
         width            80
         margin         None
         with_types    False
-        >>> ta.inspect_settings.width = 120  # changes inspect to use 120 width globally
-        >>> ta.inspect_settings.truncate = 16  # changes inspect to always truncate strings to 16 chars
-        >>> ta.inspect_settings
+        >>> sparktk.inspect_settings.width = 120  # changes inspect to use 120 width globally
+        >>> sparktk.inspect_settings.truncate = 16  # changes inspect to always truncate strings to 16 chars
+        >>> sparktk.inspect_settings
         wrap             20
         truncate         16
         round          None
         width           120
         margin         None
         with_types    False
-        >>> ta.inspect_settings.width = None  # return value back to default
-        >>> ta.inspect_settings
+        >>> sparktk.inspect_settings.width = None  # return value back to default
+        >>> sparktk.inspect_settings
         wrap             20
         truncate         16
         round          None
         width            80
         margin         None
         with_types    False
-        >>> ta.inspect_settings.reset()  # set everything back to default
-        >>> ta.inspect_settings
+        >>> sparktk.inspect_settings.reset()  # set everything back to default
+        >>> sparktk.inspect_settings
         wrap             20
         truncate       None
         round          None

@@ -20,13 +20,13 @@ def tc(request):
     global global_tc
     with lock:
         if global_tc is None:
-            from sparktk import tc as _tc
+            from sparktk import TkContext
             from sparktk import create_sc
-            _tc.loggers.set("d", "sparktk.sparkconf")
+            #from sparktk.loggers import loggers
+            #loggers.set("d", "sparktk.sparkconf")
             sc = create_sc(master='local[2]', app_name="pytest-pyspark-local-testing")
             request.addfinalizer(lambda: sc.stop())
-            _tc.init(sc)
-            global_tc = _tc
+            global_tc = TkContext(sc)
     return global_tc
 
 

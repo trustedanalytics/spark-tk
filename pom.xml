@@ -167,7 +167,6 @@
           </property>
         </activation>
         <modules>
-          <module>testutils</module>
           <module>spark-tk</module>
         </modules>
       </profile>
