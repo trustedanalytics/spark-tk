@@ -9,14 +9,17 @@ class JConvert(object):
         self.sc = jutils.sc
         self.scala = self.sc._jvm.org.trustedanalytics.at.jvm.JConvert
 
+    def list_to_double_list(self, python_list):
+        return [float(item) for item in python_list]
+
     def to_scala_list_double(self, python_list):
-        return self.scala.toScalaListDouble([float(item) for item in python_list])
+        return self.scala.toScalaListDouble(self.list_to_double_list(python_list))
 
     def to_scala_list_string(self, python_list):
         return self.scala.toScalaListString([unicode(item) for item in python_list])
 
     def to_scala_vector_double(self, python_list):
-        return self.scala.toScalaVectorDouble([float(item) for item in python_list])
+        return self.scala.toScalaVectorDouble(self.list_to_double_list(python_list))
 
     def to_scala_vector_string(self, python_list):
         return self.scala.toScalaVectorString([unicode(item) for item in python_list])
@@ -43,6 +46,11 @@ class JConvert(object):
         if type(item) is list:
             return self.scala.someOptionList(item)
         raise NotImplementedError("Convert to scala Option[T] of type %s is not supported" % type(item))
+
+    def to_scala_option_list_double(self, python_list):
+        if python_list is None:
+            return self.scala.noneOption
+        return self.scala.someOptionList(self.list_to_double_list(python_list))
 
     def from_scala_option(self, item):
         return self.scala.fromOption(item)

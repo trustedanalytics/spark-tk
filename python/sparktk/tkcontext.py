@@ -14,7 +14,7 @@ class TkContext(object):
         self._sc = sc
         self._jtc = self._sc._jvm.org.trustedanalytics.at.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
-        # self.loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
+        self.loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     @property
     def sc(self):

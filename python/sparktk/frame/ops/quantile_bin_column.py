@@ -1,5 +1,5 @@
 
-def bin_column_equal_depth(self, column_name, num_bins=None, bin_column_name=None):
+def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
     """
     Classify column into groups with the same frequency.
 
@@ -31,6 +31,14 @@ def bin_column_equal_depth(self, column_name, num_bins=None, bin_column_name=Non
         greater than 2, then the actual number of bins will only be 2.
         This is due to a restriction that elements with an identical value must
         belong to the same bin.
+
+    :param column_name: The column whose values are to be binned.
+    :param num_bins: The maximum number of quantiles.
+                     Default is the Square-root choice
+                     :math:`\lfloor \sqrt{m} \rfloor`, where :math:`m` is the number of rows.
+    :param bin_column_name: The name for the new column holding the grouping labels.
+                            Default is <column_name>_binned
+    :return: a list containing the edges of each bin
 
     Examples
     --------
@@ -64,7 +72,7 @@ def bin_column_equal_depth(self, column_name, num_bins=None, bin_column_name=Non
     Note that each bin will have the same quantity of members (as much as
     possible):
 
-    >>> cutoffs = my_frame.bin_column_equal_depth('a', 5, 'aEDBinned')
+    >>> cutoffs = my_frame.quantile_bin_column('a', 5, 'aEDBinned')
     <progress>
     >>> my_frame.inspect( n=11 )
     [##]  a   aEDBinned
@@ -84,15 +92,8 @@ def bin_column_equal_depth(self, column_name, num_bins=None, bin_column_name=Non
     >>> print cutoffs
     [1.0, 2.0, 5.0, 13.0, 34.0, 89.0]
 
-    :param column_name: The column whose values are to be binned.
-    :param num_bins: The maximum number of bins.
-                     Default is the Square-root choice
-                     :math:`\lfloor \sqrt{m} \rfloor`, where :math:`m` is the number of rows.
-    :param bin_column_name: The name for the new column holding the grouping labels.
-                            Default is <column_name>_binned
-    :return: a list containing the edges of each bin
     """
     return list(self._scala.binColumnEqual(column_name,
-                               self._tc.jutils.convert.to_scala_option(num_bins),
-                               self._tc.jutils.convert.to_scala_option("equaldepth"),
-                               self._tc.jutils.convert.to_scala_option(bin_column_name)))
+                                           self._tc.jutils.convert.to_scala_option(num_bins),
+                                           self._tc.jutils.convert.to_scala_option("equaldepth"),
+                                           self._tc.jutils.convert.to_scala_option(bin_column_name)))

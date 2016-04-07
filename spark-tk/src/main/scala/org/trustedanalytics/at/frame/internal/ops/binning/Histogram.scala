@@ -1,5 +1,6 @@
 package org.trustedanalytics.at.frame.internal.ops.binning
 
+import org.trustedanalytics.at.frame.DataTypes.DataType
 import org.trustedanalytics.at.frame.internal.{ BaseFrame, FrameSummarization, FrameState }
 import org.trustedanalytics.at.frame.DataTypes
 import org.apache.spark.rdd.RDD
@@ -37,7 +38,8 @@ case class Histogram(column: String,
 
     val computedNumBins: Int = HistogramFunctions.getNumBins(numBins, state.rdd)
 
-    computeHistogram(state.rdd, columnIndex, weightColumnIndex, computedNumBins, binType.getOrElse("equalwidth") == "equalwidth")
+    computeHistogram(state.rdd, columnIndex, weightColumnIndex, computedNumBins,
+      binType.getOrElse("equalwidth") == "equalwidth")
   }
 
   /**
