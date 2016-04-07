@@ -30,7 +30,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
     :param bin_column_name: The name for the new binned column.  Default is ``<column_name>_binned``
     :return: a list containing the edges of each bin
 
-     Examples
+    Examples
     --------
     For these examples, we will use a frame with column *a* accessed by a Frame
     object *my_frame*:
