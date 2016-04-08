@@ -1,10 +1,9 @@
 package org.trustedanalytics.at.jvm
 
-import java.util
 import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
 
 import scala.collection.JavaConverters._
-// import scala.collection.mutable
+//import scala.collection.mutable
 
 object JConvert extends Serializable {
 
@@ -32,7 +31,6 @@ object JConvert extends Serializable {
 
   def scalaMapToPython[K, V](m: Map[K, V]): JArrayList[JArrayList[String]] = {
     val pythonMap = new JArrayList[JArrayList[String]]()
-
     m.map {
       case (k, v) =>
         val entry = new JArrayList[String]()
