@@ -22,8 +22,6 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
 
     **Notes**
 
-    #)  Unicode in column names is not supported and will likely cause the
-        drop_frames() method (and others) to fail!
     #)  The num_bins parameter is considered to be the maximum permissible number
         of bins because the data may dictate fewer bins.
         For example, if the column to be binned has a quantity of :math"`X`

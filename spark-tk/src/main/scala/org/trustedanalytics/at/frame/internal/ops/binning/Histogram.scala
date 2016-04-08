@@ -10,7 +10,7 @@ trait HistogramSummarization extends BaseFrame {
   def histogram(column: String,
                 numBins: Option[Int] = None,
                 weightColumnName: Option[String] = None,
-                binType: Option[String] = None): Map[String, Seq[Double]] = {
+                binType: String = "equalwidth"): Map[String, Seq[Double]] = {
     execute(Histogram(column, numBins, weightColumnName, binType))
   }
 }
@@ -18,13 +18,14 @@ trait HistogramSummarization extends BaseFrame {
 case class Histogram(column: String,
                      numBins: Option[Int] = None,
                      weightColumnName: Option[String] = None,
-                     binType: Option[String] = None) extends FrameSummarization[Map[String, Seq[Double]]] {
+
+                     binType: String) extends FrameSummarization[Map[String, Seq[Double]]] {
 
   override def work(state: FrameState): Map[String, Seq[Double]] = {
     val columnIndex: Int = state.schema.columnIndex(column)
     val columnType = state.schema.columnDataType(column)
     require(columnType.isNumerical, s"Invalid column ${column} for histogram.  Expected a numerical data type, but got $columnType.")
-    require(binType.isEmpty || binType == Some("equalwidth") || binType == Some("equaldepth"), s"bin type must be 'equalwidth' or 'equaldepth', not ${binType}.")
+    require(binType == "equalwidth" || binType == "equaldepth", s"bin type must be 'equalwidth' or 'equaldepth', not ${binType}.")
     if (numBins.isDefined)
       require(numBins.get > 0, "the number of bins must be greater than 0")
 
@@ -38,8 +39,7 @@ case class Histogram(column: String,
 
     val computedNumBins: Int = HistogramFunctions.getNumBins(numBins, state.rdd)
 
-    computeHistogram(state.rdd, columnIndex, weightColumnIndex, computedNumBins,
-      binType.getOrElse("equalwidth") == "equalwidth")
+    computeHistogram(state.rdd, columnIndex, weightColumnIndex, computedNumBins, binType == "equalwidth")
   }
 
   /**

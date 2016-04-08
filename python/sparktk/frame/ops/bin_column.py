@@ -7,8 +7,6 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
 
     **Notes**
 
-    #)  Unicode in column names is not supported and will likely cause the
-        drop_frames() method (and others) to fail!
     #)  Bins IDs are 0-index, in other words, the lowest bin number is 0.
     #)  The first and last cutoffs are always included in the bins.
         When *include_lowest* is ``True``, the last bin includes both cutoffs.
@@ -190,7 +188,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
     [10]  89                 2
 
     """
-    if (isinstance(bins, list) == False):
+    if not isinstance(bins, list):
         bins = [bins]
     return list(self._scala.binColumn(column_name,
                                 self._tc.jutils.convert.to_scala_option_list_double(bins),

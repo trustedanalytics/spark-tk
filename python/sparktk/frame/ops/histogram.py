@@ -1,5 +1,25 @@
+from sparktk.propobj import PropertiesObject
 
-def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_type=None):
+class Histogram(PropertiesObject):
+    def __init__(self, cutoffs, hist, density):
+        self._cutoffs = cutoffs
+        self._hist = hist
+        self._density = density
+
+    @property
+    def cutoffs(self):
+        return self._cutoffs
+
+    @property
+    def density(self):
+        return self._density
+
+    @property
+    def hist(self):
+        return self._hist
+
+
+def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_type="equalwidth"):
     """
     Compute the histogram for a column in a frame.
 
@@ -46,17 +66,13 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
 
         >>> hist = frame.histogram("b", num_bins=3)
         <progress>
-
-        >>> hist.keys()
-        [u'hist', u'cutoffs', u'density']
-
-        >>> hist["cutoffs"]
+        >>> hist.cutoffs
         [1.0, 3.6666666666666665, 6.333333333333333, 9.0]
 
-        >>> hist["hist"]
+        >>> hist.hist
         [3.0, 0.0, 2.0]
 
-        >>> hist["density"]
+        >>> hist.density
         [0.6, 0.0, 0.4]
 
     Switching to equal depth gives\:
@@ -66,13 +82,13 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
         >>> hist = frame.histogram("b", num_bins=3, bin_type='equaldepth')
         <progress>
 
-        >>> hist["cutoffs"]
+        >>> hist.cutoffs
         [1.0, 2.0, 7.0, 9.0]
 
-        >>> hist["hist"]
+        >>> hist.hist
         [1.0, 2.0, 2.0]
 
-        >>> hist["density"]
+        >>> hist.density
         [0.2, 0.4, 0.4]
 
     .. only:: html
@@ -83,7 +99,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
     <skip>
             >>> import matplotlib.pyplot as plt
 
-            >>> plt.bar(hist["cutoffs"][:1], hist["hist"], width=hist["cutoffs"][1] - hist["cutoffs"][0])
+            >>> plt.bar(hist,cutoffs[:1], hist.hist, width=hist.cutoffs[1] - hist.cutoffs[0])
     </skip>
     .. only:: latex
 
@@ -93,7 +109,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
     <skip>
             >>> import matplotlib.pyplot as plt
 
-            >>> plt.bar(hist["cutoffs"][:1], hist["hist"], width=hist["cutoffs"][1] -
+            >>> plt.bar(hist.cutoffs[:1], hist.hist, width=hist.cutoffs[1] -
             ... hist["cutoffs"][0])
     </skip>
 
@@ -117,8 +133,9 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
                 A list containing a decimal containing the percentage of
                 observations found in the total set per bin.
     """
-    return self._tc.jutils.convert.scala_map_string_seq_to_python(self._scala.histogram(column_name,
+    dict = self._tc.jutils.convert.scala_map_string_seq_to_python(self._scala.histogram(column_name,
                           self._tc.jutils.convert.to_scala_option(num_bins),
                           self._tc.jutils.convert.to_scala_option(weight_column_name),
-                          self._tc.jutils.convert.to_scala_option(bin_type)))
+                          bin_type))
+    return Histogram(dict["cutoffs"], dict["hist"], dict["density"])
 

@@ -1,7 +1,7 @@
 package org.trustedanalytics.at.frame.internal.ops.binning
 
 import org.trustedanalytics.at.frame.internal.{ FrameState, FrameTransformWithResult, BaseFrame, FrameTransformReturn }
-import org.trustedanalytics.at.frame.Column
+import org.trustedanalytics.at.frame.{ Column, DataTypes }
 
 //todo - FrameBinColumn  (remove *Trait)
 //todo - BinColumnTransform  (remove *Trait)
@@ -43,33 +43,18 @@ case class BinColumn(column: String,
     state.schema.requireColumnIsNumerical(column)
     val newColumnName = binColumnName.getOrElse(state.schema.getNewColumnName(column + "_binned"))
 
-    // Determine the number of bins to create, for equal-width binning.
-    val numBins = if (bins.isEmpty || bins.get.size == 0) {
-      // If no bins were specified, get the default number of bins, based on the number of rows
-      Some(HistogramFunctions.getNumBins(None, state.rdd))
-    }
-    else if (bins.get.size == 1) {
-      // If one bin value is specified, it should be an integer for the number of bins to create
-      require(bins.get(0) % 1 == 0, s"Number of equal-width bins must be a round number, but was ${bins.get(0)}.")
-      Some(bins.get(0).toInt)
-    }
-    else {
-      // Otherwise, when more than one bin value is specified, these are custom cutoffs, not equal-width bins.
-      None
-    }
-
-    val binnedRdd = if (numBins.isDefined) {
-      // If we have numBin defined, bin with equal widths
-      DiscretizationFunctions.binEqualWidth(columnIndex, numBins.get, state.rdd)
-    }
-    else {
-      // Otherwise, bin using the specified cutoffs
-      DiscretizationFunctions.binColumns(columnIndex, bins.get, includeLowest, strictBinning, state.rdd)
+    val binnedRdd = bins match {
+      case None | Some(Nil) =>
+        DiscretizationFunctions.binEqualWidth(columnIndex, HistogramFunctions.getNumBins(None, state.rdd), state.rdd)
+      case Some(List(n)) =>
+        require(n.isValidInt, s"Number of equal-width bins must be a round number, but was ${n}.")
+        DiscretizationFunctions.binEqualWidth(columnIndex, n.toInt, state.rdd)
+      case Some(x) => DiscretizationFunctions.binColumns(columnIndex, x, includeLowest, strictBinning, state.rdd)
     }
 
     // Return frame state and cutoffs array
-    FrameTransformReturn(FrameState(binnedRdd.rdd, state.schema.copy(columns = state.schema.columns :+ Column(newColumnName, "int32"))),
-      binnedRdd.cutoffs)
+    FrameTransformReturn(FrameState(binnedRdd.rdd, state.schema.copy(columns = state.schema.columns :+ Column(newColumnName,
+      DataTypes.int32))), binnedRdd.cutoffs)
   }
 
 }

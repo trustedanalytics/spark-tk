@@ -1,7 +1,7 @@
 package org.trustedanalytics.at.frame.internal.ops.binning
 
 import org.trustedanalytics.at.frame.internal.{ FrameTransformReturn, FrameTransformWithResult, BaseFrame, FrameState }
-import org.trustedanalytics.at.frame.Column
+import org.trustedanalytics.at.frame.{ Column, DataTypes }
 
 trait QuantileBinColumnTransformWithResult extends BaseFrame {
   def quantileBinColumn(column: String,
@@ -11,6 +11,13 @@ trait QuantileBinColumnTransformWithResult extends BaseFrame {
   }
 }
 
+/**
+ * Classify column into groups with the same frequency.
+ * @param column The column whose values are to be binned.
+ * @param numBins The maximum number of quantiles.  Default is the Square-root choice
+ *                :math:`\lfloor \sqrt{m} \rfloor`, where :math:`m` is the number of rows.
+ * @param binColumnName The name for the new column holding the grouping labels. Default is <column>_binned.
+ */
 case class QuantileBinColumn(column: String,
                              numBins: Option[Int],
                              binColumnName: Option[String]) extends FrameTransformWithResult[Array[Double]] {
@@ -22,7 +29,7 @@ case class QuantileBinColumn(column: String,
     val calculatedNumBins = HistogramFunctions.getNumBins(numBins, state.rdd)
     val binnedRdd = DiscretizationFunctions.binEqualDepth(columnIndex, calculatedNumBins, None, state.rdd)
 
-    FrameTransformReturn(FrameState(binnedRdd.rdd, state.schema.copy(columns = state.schema.columns :+ Column(newColumnName, "int32"))), binnedRdd.cutoffs)
+    FrameTransformReturn(FrameState(binnedRdd.rdd, state.schema.copy(columns = state.schema.columns :+ Column(newColumnName, DataTypes.int32))), binnedRdd.cutoffs)
   }
 
 }
