@@ -1,5 +1,4 @@
-import os
-from lazyloader import create_lazy_loader
+from lazyloader import get_lazy_loader
 from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
@@ -28,21 +27,16 @@ class TkContext(object):
         return self._jutils
 
     @property
-    def jtc(self):
-        return self._jtc
-
-    @property
     def models(self):
-        if '_models' not in self.__dict__:
-            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
-            lazy_loader = create_lazy_loader(path)
-            setattr(self, '_models', lazy_loader)
-        return getattr(self, '_models')
+        """access to the various models of sparktk"""
+        return get_lazy_loader(self, "models")
 
-    def to_frame(tc, data, schema=None):
+    def to_frame(self, data, schema=None):
+        """creates a frame from the given data"""
         from sparktk.frame.frame import to_frame
-        return to_frame(tc, data, schema)
+        return to_frame(self, data, schema)
 
-    def load_frame(tc, path):
+    def load_frame(self, path):
+        """loads a previously saved frame"""
         from sparktk.frame.frame import load_frame
-        return load_frame(tc, path)
+        return load_frame(self, path)
