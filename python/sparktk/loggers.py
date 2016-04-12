@@ -3,7 +3,6 @@ Logging - simple helpers for now
 """
 import logging
 import sys
-import inspect
 
 # Constants
 LINE_FORMAT = '%(asctime)s|%(levelname)-5s|%(name)s|%(message)s'
@@ -146,17 +145,27 @@ class Loggers(object):
             pass
         return logger
 
-    def set_spark(self, sc, level):
+    @staticmethod
+    def set_spark(sc, level):
+        from pyspark import SparkContext
+        if not isinstance(sc, SparkContext):
+            raise TypeError("set_spark requires a valid SparkContext object for first arg, received type=%s" % type(sc))
         logger = sc._jvm.org.apache.log4j
+
         if not level:
-            level = "unspecified"
-        new_level = {
+            level = "<unspecified>"
+        valid_levels = {
             "d": logger.Level.DEBUG,
             "e": logger.Level.ERROR,
             "w": logger.Level.WARN,
             "i": logger.Level.INFO,
             "o": logger.Level.OFF,
-        }[level.lower()[0]]
+        }
+        try:
+            new_level = valid_levels[level.lower()[0]]
+        except KeyError:
+            raise ValueError("set_spark did not like level='%s'.  Valid levels include: %s" % (level, sorted(map(lambda lev: str(lev.toString()).lower(), valid_levels.values()))))
+
         logger.LogManager.getLogger("org").setLevel(new_level)
         logger.LogManager.getLogger("akka").setLevel(new_level)
 
@@ -174,7 +183,7 @@ loggers = Loggers()
 #
 # Example:  This sets the module logger to debug for core/frame.py
 #
-# $ export TRUSTEDANALYTICS_LOGGERS='[{"logger_name": "trustedanalytics.core.frame", "level": "debug"}]'
+# $ export SPARK_TK_LOGGERS='[{"logger_name": "sparktk", "level": "debug"}]'
 #
 import os
 loggers_env_name = "SPARK_TK_LOGGERS"

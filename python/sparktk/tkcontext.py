@@ -1,5 +1,8 @@
+import os
+from lazyloader import create_lazy_loader
 from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
+from sparktk.loggers import loggers
 from pyspark import SparkContext
 
 
@@ -14,7 +17,7 @@ class TkContext(object):
         self._sc = sc
         self._jtc = self._sc._jvm.org.trustedanalytics.at.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
-        # self.loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
+        loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     @property
     def sc(self):
@@ -28,8 +31,13 @@ class TkContext(object):
     def jtc(self):
         return self._jtc
 
-    from sparktk.loggers import loggers
-    from sparktk.frame.ops.inspect import inspect_settings
+    @property
+    def models(self):
+        if '_models' not in self.__dict__:
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+            lazy_loader = create_lazy_loader(path)
+            setattr(self, '_models', lazy_loader)
+        return getattr(self, '_models')
 
     def to_frame(tc, data, schema=None):
         from sparktk.frame.frame import to_frame
