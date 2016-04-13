@@ -17,8 +17,10 @@ def create_sc(master=None,
     Many parameters can be overwritten
 
     :param master: spark master setting
-    :param jars: str of jar paths separated by a colon ':'
-    :param py_files: list of str of paths to python dependencies
+    :param jars: str of jar paths separated by a colon ':'  if jars == 'source_code' then jars will be taken from the
+    spark-tk target folder
+    :param py_files: list of str of paths to python dependencies; if py_files == 'source_code' then the current python
+    package will be freshly zipped up and put in the target folder for shipping by spark
     :param spark_home: override $SPARK_HOME
     :param app_name: name of spark app
     :return: pyspark SparkContext
@@ -38,7 +40,7 @@ def create_sc(master=None,
             jars_str = ','.join(jar_files)
             return jars_str, driver_class_path_str
         else:
-            logger.warn("create_sc() could not find jars.  You may need to specify appropriate jar paths")
+            logger.warn("create_sc() could not find jars in %s.  You may need to specify appropriate jar paths", target)
         return None, None
 
     def set_env(name, value):

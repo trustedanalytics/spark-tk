@@ -17,6 +17,8 @@ if [ -z "$HADOOP_CONF_DIR" ]; then
 fi
 echo $NAME HADOOP_CONF_DIR=$HADOOP_CONF_DIR
 
+echo "$NAME Calling clean.sh"
+./clean.sh
 
 cd tests
 

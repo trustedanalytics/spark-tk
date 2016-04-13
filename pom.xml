@@ -172,6 +172,18 @@
       </profile>
 
       <profile>
+        <id>python-unit-tests</id>
+        <activation>
+          <property>
+            <name>!skipTests</name>
+          </property>
+        </activation>
+        <modules>
+          <module>python</module>
+        </modules>
+      </profile>
+
+      <profile>
         <id>integration-tests</id>
         <activation>
           <property>

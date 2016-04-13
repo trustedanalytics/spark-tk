@@ -1,5 +1,5 @@
 from setup import tc, rm, get_sandbox_path
-from sparktk.models.kmeans import KMeans
+import sparktk.models.clustering.kmeans as kmeans
 from sparktk.dtypes import int32, float32
 
 def test_smoke_take(tc):
@@ -42,7 +42,7 @@ def test_kmeans(tc):
                          [6,"op"],
                          [5,"qr"]],
                         [("data", float), ("name", str)])
-    model = KMeans.train(tc, frame, ["data"], 3, seed=5)
+    model = kmeans.train(tc, frame, ["data"], 3, seed=5)
     assert (model.k == 3)
 
     sizes = model.compute_sizes(frame)
