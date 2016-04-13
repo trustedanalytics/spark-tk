@@ -15,6 +15,12 @@ class LazyLoader(object):
     child subpackage or module found in the path.  These properties in turn, when accessed during runtime, create
     more lazy loader blocks for their descendents.  Only when module content is directly accessed does the module
     hierarchy actually get imported.
+
+    Enables interactive script code, tabbing out the dots, like this:
+
+    ``tc.models.clustering.kmeans.train(...)``
+
+    Where nothing is actually loaded until the content of the kmeans module is needed.
     """
     pass
 
@@ -55,7 +61,7 @@ def init_lazy_loader_class(cls, path, package_name):
             elif os.path.isfile(child_path) and child_path.endswith('.py') and not child_name.startswith('_'):
                 add_loader_property(cls, child_name[:-3], child_path, package_name)
             else:
-                logger.info("LazyLoader skipping %s", child_path)
+                logger.debug("LazyLoader skipping %s", child_path)
 
     # If path is a .py file, then this lazy loader class needs properties for the elements of the module
     elif os.path.isfile(path) and path.endswith('.py'):

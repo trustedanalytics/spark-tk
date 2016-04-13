@@ -129,7 +129,7 @@ class Loggers(object):
     def _add_handler_to_logger(logger, handler, handler_name, line_format):
         handler.setLevel(logging.DEBUG)
         handler.name = handler_name
-        formatter = logging.Formatter(line_format)
+        formatter = logging.Formatter(line_format, '%y-%m-%d %H:%M:%S')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
@@ -168,6 +168,22 @@ class Loggers(object):
 
         logger.LogManager.getLogger("org").setLevel(new_level)
         logger.LogManager.getLogger("akka").setLevel(new_level)
+
+
+def log_load(module, logger_name='sparktk'):
+    """
+    intended to log when a module is imported
+
+    Usage is to put a line like this at the top of the .py file:
+
+    ``from sparktk.loggers import log_load; log_load(__name__); del log_load``
+
+    :param module: name of the module, usually __name__
+    :param logger_name: override the logger name
+    """
+    logger = logging.getLogger(logger_name)
+    logger.info("load module %s" % module)
+
 
 loggers = Loggers()
 
