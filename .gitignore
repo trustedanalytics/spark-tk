@@ -6,7 +6,6 @@ BUILD
 .cache
 *.class
 .classpath
-*clean*.sh
 .coverage
 cscope*
 data
