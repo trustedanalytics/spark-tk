@@ -3,7 +3,6 @@ package org.trustedanalytics.at.frame.internal.ops.binning
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.apache.spark.sql._
 
 import scala.math.BigDecimal
 import scala.math._
@@ -64,8 +63,7 @@ object DiscretizationFunctions extends Serializable {
     val cutoffs: Array[Double] = getBinEqualWidthCutoffs(index, numBins, rdd)
 
     // map each data element to its bin id, using cutoffs index as bin id
-    val binnedColumnRdd = binColumns(index, cutoffs.toList, lowerInclusive = true, strictBinning = false, rdd)
-    new RddWithCutoffs(cutoffs, binnedColumnRdd)
+    binColumns(index, cutoffs.toList, lowerInclusive = true, strictBinning = false, rdd)
   }
 
   /**
@@ -78,14 +76,15 @@ object DiscretizationFunctions extends Serializable {
    * @param rdd RDD that contains the column for binning
    * @return new RDD with binned column appended
    */
-  def binColumns(index: Int, cutoffs: List[Double], lowerInclusive: Boolean, strictBinning: Boolean, rdd: RDD[Row]): RDD[Row] = {
-    rdd.map { row: Row =>
+  def binColumns(index: Int, cutoffs: List[Double], lowerInclusive: Boolean, strictBinning: Boolean, rdd: RDD[Row]): RddWithCutoffs = {
+    val binnedColumnRdd: RDD[Row] = rdd.map { row: Row =>
       val element = toDouble(row(index))
       //val element = DataTypes.toDouble(row(index))
       //if lower than first cutoff
       val binIndex = binElement(element, cutoffs, lowerInclusive, strictBinning)
       new GenericRow(row.toSeq.toArray :+ binIndex)
     }
+    new RddWithCutoffs(cutoffs.toArray, binnedColumnRdd)
   }
 
   /**

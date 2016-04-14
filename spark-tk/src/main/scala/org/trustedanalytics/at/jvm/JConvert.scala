@@ -1,6 +1,6 @@
 package org.trustedanalytics.at.jvm
 
-import java.util.{ ArrayList => JArrayList }
+import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
 
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
@@ -39,6 +39,18 @@ object JConvert extends Serializable {
         pythonMap.add(entry)
     }
     pythonMap
+  }
+
+  def scalaMapStringSeqToPython(m: Map[String, Seq[Double]]): JHashMap[String, JArrayList[Double]] = {
+    val hashMap = new JHashMap[String, JArrayList[Double]]()
+
+    m.map {
+      case (k, v) =>
+        val value = new JArrayList[Double](v.asJavaCollection)
+        hashMap.put(k, value)
+    }
+
+    hashMap
   }
 
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {

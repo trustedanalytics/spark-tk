@@ -124,7 +124,9 @@ class Frame(object):
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.filter import filter
+    from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
+    from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.take import take
 
