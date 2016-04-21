@@ -1,9 +1,9 @@
 package org.trustedanalytics.at.frame.internal.ops.sample
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.at.frame._
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.at.frame.internal.{ BaseFrame, FrameState, FrameTransform }
 
 trait AssignSampleTransform extends BaseFrame {

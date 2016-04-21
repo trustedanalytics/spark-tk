@@ -18,13 +18,13 @@ package org.trustedanalytics.at.frame.internal
 
 //package org.trustedanalytics.atk.engine.frame
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors, DenseVector }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.GenericArrayData
 import org.trustedanalytics.at.frame.DataTypes.DataType
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.at.frame.{ DataTypes, Schema }
 
 import scala.collection.mutable.ArrayBuffer

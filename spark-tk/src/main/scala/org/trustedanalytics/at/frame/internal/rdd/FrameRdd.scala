@@ -1,10 +1,10 @@
-package org.apache.spark.org.trustedanalytics.at.frame
+package org.trustedanalytics.at.frame.internal.rdd
 
 import breeze.linalg.DenseVector
+//import FrameOrderingUtils
+import org.trustedanalytics.at.frame.DataTypes.{ float32, float64, int32, int64 }
 import org.trustedanalytics.at.frame._
 import org.trustedanalytics.at.frame.internal.{ FrameState, RowWrapper }
-import org.trustedanalytics.at.frame.internal.rdd.RddUtils
-import DataTypes.{ float32, float64, int32, int64 }
 
 import scala.collection.immutable.{ Vector => ScalaVector }
 import scala.language.implicitConversions

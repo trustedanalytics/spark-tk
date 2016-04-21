@@ -24,7 +24,6 @@ class Loggers(object):
     """
     Collection of loggers to stderr, wrapped for simplicity
     """
-    # todo - WIP, this will get more sophisticated!
 
     # map first character of level to actual level setting, for convenience
     _level_map = {'c': logging.CRITICAL,

@@ -1,7 +1,7 @@
 package org.trustedanalytics.at.frame.internal.ops
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.trustedanalytics.at.frame.internal._
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 
 trait DropColumnsTransform extends BaseFrame {
 

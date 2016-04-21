@@ -16,9 +16,9 @@
 
 package org.trustedanalytics.at.frame.internal.rdd
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 
 import scala.reflect.ClassTag
 

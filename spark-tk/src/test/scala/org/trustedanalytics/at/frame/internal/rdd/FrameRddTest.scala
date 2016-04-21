@@ -1,10 +1,9 @@
-package org.apache.spark.org.trustedanalytics.at.frame
+package org.trustedanalytics.at.frame.internal.rdd
 
-import org.trustedanalytics.at.frame.internal.FrameState
-import org.trustedanalytics.at.testutils._
 import org.scalatest.Matchers
-import org.trustedanalytics.at.frame.{ FrameSchema, Column, DataTypes }
-import org.apache.spark.sql.types.{ StringType, IntegerType }
+import org.trustedanalytics.at.frame.internal.FrameState
+import org.trustedanalytics.at.frame.{ Column, DataTypes, FrameSchema }
+import org.trustedanalytics.at.testutils._
 
 class FrameRddTest extends TestingSparkContextWordSpec with Matchers {
 

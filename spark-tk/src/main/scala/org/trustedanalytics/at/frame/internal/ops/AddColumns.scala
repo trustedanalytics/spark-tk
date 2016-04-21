@@ -1,9 +1,9 @@
 package org.trustedanalytics.at.frame.internal.ops
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.sql.Row
 import org.trustedanalytics.at.frame._
 import org.trustedanalytics.at.frame.internal._
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 
 trait AddColumnsTransform extends BaseFrame {
 

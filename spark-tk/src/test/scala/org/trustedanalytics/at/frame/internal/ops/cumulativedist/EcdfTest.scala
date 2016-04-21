@@ -16,11 +16,11 @@
 
 package org.trustedanalytics.at.frame.internal.ops.cumulativedist
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.apache.spark.sql.Row
 import org.scalatest.Matchers
 import org.trustedanalytics.at.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.at.frame.{ Column, DataTypes, FrameSchema }
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 
 class EcdfTest extends TestingSparkContextWordSpec with Matchers {
 

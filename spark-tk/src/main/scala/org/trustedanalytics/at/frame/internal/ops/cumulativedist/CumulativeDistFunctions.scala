@@ -1,6 +1,6 @@
 package org.trustedanalytics.at.frame.internal.ops.cumulativedist
 
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.at.frame.{ Column, DataTypes }
 import org.apache.spark.sql.Row
 import org.apache.spark.rdd.RDD

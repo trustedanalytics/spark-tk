@@ -1,12 +1,11 @@
 package org.trustedanalytics.at.models.kmeans
 
+import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
-import org.apache.spark.org.trustedanalytics.at.VectorUtils
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{ SQLContext, Row }
 import org.trustedanalytics.at.frame.internal.RowWrapper
-import org.trustedanalytics.at.frame.internal.rdd.RowWrapperFunctions
+import org.trustedanalytics.at.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.at.frame._
 
 import scala.language.implicitConversions
@@ -70,6 +69,7 @@ object KMeans {
 
     KMeansModel(columns, k, scalings, maxIterations, epsilon, initializationMode, centroids, model)
   }
+
 }
 
 /**
@@ -200,4 +200,33 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
 
     frame.addColumns(predictMapper, Seq(Column("cluster", DataTypes.int32)))
   }
+
 }
+
+//object KMeansModel {
+//
+//  def save(sc: SparkContext, model: KMeansModel, path: String): Unit = {
+//    val sqlContext = SQLContext.getOrCreate(sc)
+//    import sqlContext.implicits._
+//    val metadata = compact(render(
+//      ("class" -> thisClassName) ~ ("version" -> thisFormatVersion) ~ ("k" -> model.k)))
+//    sc.parallelize(Seq(metadata), 1).saveAsTextFile(Loader.metadataPath(path))
+//    val dataRDD = sc.parallelize(model.clusterCenters.zipWithIndex).map { case (point, id) =>
+//      Cluster(id, point)
+//    }.toDF()
+//    dataRDD.write.parquet(Loader.dataPath(path))
+//  }
+//
+//  def load(modelBytes: Array[Byte]): KMeansModel = {
+//    KMeansModel(Vector[String]("a", "b"), k=3, scalings=None, maxIterations = 20, epsilon = 1.1, initializationMode = "k-means||", centroids=null, model=null)
+//  }
+//}
+//
+//case class KMeansWellModel(columns: List[String], k: Int) {
+//  def className = productPrefix // gets the "name" of this case class
+//}
+//
+//object KMeansWellModel {
+//  private lazy val dummyModel = KMeansWellModel(Nil, 0)
+//  def className = dummyModel.className
+//}

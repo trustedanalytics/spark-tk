@@ -1,9 +1,9 @@
 package org.trustedanalytics.at
 
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.org.trustedanalytics.at.frame.FrameRdd
 import org.trustedanalytics.at.frame.Frame
 import org.trustedanalytics.at.frame.internal.ops.Load
+import org.trustedanalytics.at.frame.internal.rdd.FrameRdd
 
 class TkContext(jsc: JavaSparkContext) extends Serializable {
 

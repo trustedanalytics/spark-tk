@@ -1,4 +1,4 @@
-package org.apache.spark.org.trustedanalytics.at
+package org.trustedanalytics.at.frame.internal.rdd
 
 /**
  *  Copyright (c) 2015 Intel Corporation 

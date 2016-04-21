@@ -1,4 +1,4 @@
-package org.apache.spark.org.trustedanalytics.at.frame
+package org.trustedanalytics.at.frame.internal.rdd
 
 /**
  *  Copyright (c) 2015 Intel Corporation 
@@ -16,11 +16,10 @@ package org.apache.spark.org.trustedanalytics.at.frame
  *  limitations under the License.
  */
 
+import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{ Column => SparkSqlColumn }
-import org.apache.spark.util
-import org.apache.spark.util.BoundedPriorityQueue
 
 import scala.reflect.ClassTag
 
@@ -48,8 +47,8 @@ object FrameOrderingUtils extends Serializable {
     else {
       val mapRDDs = rdd.mapPartitions { items =>
         // Priority keeps the largest elements, so let's reverse the ordering.
-        val queue = new BoundedPriorityQueue[T](num)(ord.reverse)
-        queue ++= util.collection.Utils.takeOrdered(items, num)(ord)
+        val queue = new SparkAliases.BoundedPriorityQueue[T](num)(ord.reverse)
+        queue ++= SparkAliases.CollectionUtils.takeOrdered(items, num)(ord)
         Iterator.single(queue)
       }
       if (mapRDDs.partitions.length == 0) {

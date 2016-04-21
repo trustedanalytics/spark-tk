@@ -1,10 +1,10 @@
 package org.trustedanalytics.at.frame.internal.rdd
 
 import org.apache.spark.api.java.JavaRDD
+import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.apache.spark.org.trustedanalytics.at.frame.PrivateSparkLib
 import java.util.{ ArrayList => JArrayList }
 import org.trustedanalytics.at.frame.Schema
 
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
 object PythonJavaRdd {
 
   def scalaToPython(rdd: RDD[Row]): JavaRDD[Array[Byte]] = {
-    rdd.map(_.toSeq.asJava).mapPartitions { iter => new PrivateSparkLib.AutoBatchedPickler(iter) }
+    rdd.map(_.toSeq.asJava).mapPartitions { iter => new SparkAliases.AutoBatchedPickler(iter) }
   }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], scalaSchema: Schema): RDD[Row] = {
@@ -26,7 +26,7 @@ object PythonJavaRdd {
   }
 
   private def pythonToJava(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Array[Any]] = {
-    val j = PrivateSparkLib.SerDeUtil.pythonToJava(jrdd, batched = true)
+    val j = SparkAliases.SerDeUtil.pythonToJava(jrdd, batched = true)
     toJavaArrayAnyRdd(j)
   }
 
