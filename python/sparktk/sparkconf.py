@@ -18,7 +18,7 @@ def create_sc(master=None,
 
     :param master: spark master setting
     :param jars: str of jar paths separated by a colon ':'  if jars == 'source_code' then jars will be taken from the
-    spark-tk target folder
+    spark-tk/core/target folder
     :param py_files: list of str of paths to python dependencies; if py_files == 'source_code' then the current python
     package will be freshly zipped up and put in the target folder for shipping by spark
     :param spark_home: override $SPARK_HOME
@@ -31,7 +31,7 @@ def create_sc(master=None,
 
         d = os.path.dirname
         root = os.path.join(d(d(d(os.path.abspath(__file__)))))
-        target = os.path.join(root, 'spark-tk/target')
+        target = os.path.join(root, 'core/target')
         if os.path.isdir(target):
             logger.warn("create_sc() no jars specified, using jars as if running from source code using path %s", root)
             dirs = [target, os.path.join(target, 'dependencies')]  # add locations for jars here

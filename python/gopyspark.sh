@@ -8,11 +8,11 @@ NAME="[`basename $0`]"
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
-export SPARK_TK_DIR=$DIR/../spark-tk
-echo "$NAME SPARK_TK_DIR=$SPARK_TK_DIR"
+export CORE_DIR=$DIR/../core
+echo "$NAME SPARK_TK_DIR=$CORE_DIR"
 
-export SPARK_TK_JAR=$SPARK_TK_DIR/target/*
-export SPARK_TK_DEP_JARS=$SPARK_TK_DIR/target/dependencies/*
+export SPARK_TK_JAR=$CORE_DIR/target/*
+export SPARK_TK_DEP_JARS=$CORE_DIR/target/dependencies/*
 
 # todo - build the jars argument as well, until then, this probably won't work on real cluster
 
