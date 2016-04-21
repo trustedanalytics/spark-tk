@@ -115,14 +115,19 @@ class Frame(object):
     from sparktk.frame.ops.add_columns import add_columns
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
+    from sparktk.frame.ops.cumulative_percent import cumulative_percent
+    from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_rows import drop_rows
+    from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.take import take
+    from sparktk.frame.ops.tally import tally
+    from sparktk.frame.ops.tally_percent import tally_percent
 
 
 

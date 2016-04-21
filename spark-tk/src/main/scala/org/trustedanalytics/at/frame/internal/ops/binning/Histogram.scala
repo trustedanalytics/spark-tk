@@ -18,7 +18,6 @@ trait HistogramSummarization extends BaseFrame {
 case class Histogram(column: String,
                      numBins: Option[Int] = None,
                      weightColumnName: Option[String] = None,
-
                      binType: String) extends FrameSummarization[Map[String, Seq[Double]]] {
 
   override def work(state: FrameState): Map[String, Seq[Double]] = {
