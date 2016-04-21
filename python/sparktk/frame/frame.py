@@ -77,15 +77,9 @@ class Frame(object):
         if self._is_scala:
             # convert Scala Frame to a PythonFrame"""
             scala_schema = self._frame.schema()
-            java_rdd =  self._tc.sc._jvm.org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd(), scala_schema)
+            java_rdd =  self._tc.sc._jvm.org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
-
-            # HACK
-            # todo: figure out serialization such that we don't get tuples back, but lists, to avoid this full pass :(
-
-            def to_list(row):
-                return list(row)
-            python_rdd = RDD(java_rdd, self._tc.sc).map(to_list)
+            python_rdd = RDD(java_rdd, self._tc.sc)
             self._frame = PythonFrame(python_rdd, python_schema)
         return self._frame
 

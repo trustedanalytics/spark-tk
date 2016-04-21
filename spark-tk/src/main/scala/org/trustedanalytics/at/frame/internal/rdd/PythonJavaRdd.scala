@@ -4,30 +4,20 @@ import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.apache.spark.sql.execution.EvaluatePython
 import org.apache.spark.org.trustedanalytics.at.frame.PrivateSparkLib
 import java.util.{ ArrayList => JArrayList }
 import org.trustedanalytics.at.frame.Schema
 
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
  * For converting RDDs between Python and Scala
  */
 object PythonJavaRdd {
 
-  def scalaToPython(rdd: RDD[Row], schema: Schema): JavaRDD[Array[Byte]] = {
-    //def javaToPython(jRDD: JavaRDD[_]): JavaRDD[Array[Byte]] = {
-    //println("In scalaToPython...")
-    //SerDeUtil.javaToPython(rdd.toJavaRDD())
-
-    //# these two lines work, but rows show up as tuples...  // todo - figure out more here
-    val raa: RDD[Any] = toAnyRdd(rdd, schema)
-    EvaluatePython.javaToPython(raa)
-
-    // don't know about these two lines:
-    //rdd.mapPartitions { iter => EvaluatePython.rowToArray}
-    //rdd.mapPartitions { iter => new AutoBatchedPickler(iter) }
+  def scalaToPython(rdd: RDD[Row]): JavaRDD[Array[Byte]] = {
+    rdd.map(_.toSeq.asJava).mapPartitions { iter => new PrivateSparkLib.AutoBatchedPickler(iter) }
   }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], scalaSchema: Schema): RDD[Row] = {
@@ -54,13 +44,6 @@ object PythonJavaRdd {
         obj.asInstanceOf[Array[_]].map(item => item.asInstanceOf[Any]).toArray
       //obj.toList.map(item => item.asInstanceOf[Any]).toArray
     }
-  }
-
-  def toAnyRdd(rdd: RDD[Row], schema: Schema): RDD[Any] = {
-    val anyRdd: RDD[Any] = rdd.map(row => { // todo - Is there a better way to just cast to RDD[Any]?
-      row.toSeq.toArray
-    })
-    anyRdd
   }
 
   def toRowRdd(raa: RDD[Array[Any]], schema: Schema): RDD[org.apache.spark.sql.Row] = {

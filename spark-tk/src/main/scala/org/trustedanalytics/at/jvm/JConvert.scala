@@ -7,21 +7,17 @@ import scala.collection.JavaConverters._
 
 object JConvert extends Serializable {
 
-  def toScalaListDouble(x: JArrayList[Double]): List[Double] = x.asScala.toList
+  def toScalaList[T](x: JArrayList[T]): List[T] = x.asScala.toList
 
-  def toScalaListString(x: JArrayList[String]): List[String] = x.asScala.toList
+  def toScalaVector[T](x: JArrayList[T]): Vector[T] = x.asScala.toVector
 
-  def toScalaVectorDouble(x: JArrayList[Double]): Vector[Double] = x.asScala.toVector
-
-  def toScalaVectorString(x: JArrayList[String]): Vector[String] = x.asScala.toVector
-
-  def noneOption() = None
-  def toOption[T](item: T) = Some(item)
-  def someOptionString(s: String) = Some(s)
-  def someOptionInt(i: Int) = Some(i)
-  def someOptionLong(long: Long) = Some(long)
-  def someOptionDouble(d: Double) = Some(d)
-  def someOptionList(list: JArrayList[Any]) = Some(list.asScala.toList)
+  def toOption[T](item: T) = {
+    item match {
+      case null | None => None
+      case item: JArrayList[T] => Some(toScalaList(item))
+      case _ => Some(item)
+    }
+  }
 
   def fromOption(o: Option[Any]): Any = o.orNull
 
