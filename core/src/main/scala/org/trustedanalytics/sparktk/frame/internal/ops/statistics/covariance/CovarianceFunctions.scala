@@ -1,0 +1,68 @@
+package org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance
+
+import breeze.numerics.abs
+import org.trustedanalytics.sparktk.frame.DataTypes
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.apache.spark.mllib.linalg.{ Matrix }
+import org.apache.spark.mllib.linalg.distributed.RowMatrix
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.expressions.GenericRow
+
+/**
+ * Object for calculating covariance and the covariance matrix
+ */
+
+object CovarianceFunctions extends Serializable {
+
+  /**
+   * Compute covariance for exactly two columns
+   *
+   * @param frameRdd input rdd containing all columns
+   * @param dataColumnNames column names for which we calculate the covariance
+   * @return covariance wrapped in CovarianceReturn
+   */
+  def covariance(frameRdd: FrameRdd,
+                 dataColumnNames: List[String]): Double = {
+
+    // compute and return covariance
+    def rowMatrix: RowMatrix = new RowMatrix(frameRdd.toDenseVectorRdd(dataColumnNames))
+
+    val covariance: Matrix = rowMatrix.computeCovariance()
+
+    val dblVal: Double = covariance.toArray(1)
+
+    if (dblVal.isNaN || abs(dblVal) < .000001) 0 else dblVal
+  }
+
+  /**
+   * Compute covariance for two or more columns
+   *
+   * @param frameRdd input rdd containing all columns
+   * @param dataColumnNames column names for which we calculate the covariance matrix
+   * @param outputVectorLength If specified, output results as a column of type 'vector(vectorOutputLength)'
+   * @return the covariance matrix in a RDD[Rows]
+   */
+  def covarianceMatrix(frameRdd: FrameRdd,
+                       dataColumnNames: List[String],
+                       outputVectorLength: Option[Long] = None): RDD[Row] = {
+
+    def rowMatrix: RowMatrix = new RowMatrix(frameRdd.toDenseVectorRdd(dataColumnNames))
+
+    val covariance: Matrix = rowMatrix.computeCovariance()
+    val vecArray = covariance.toArray.grouped(covariance.numCols).toArray
+    val formatter: Array[Any] => Array[Any] = outputVectorLength match {
+      case Some(length) =>
+        val vectorizer = DataTypes.toVector(length)_
+        x => Array(vectorizer(x))
+        case _ => identity
+    }
+
+    val arrGenericRow = vecArray.map(row => {
+      val formattedRow: Array[Any] = formatter(row.map(x => if (x.isNaN || abs(x) < .000001) 0 else x))
+      new GenericRow(formattedRow)
+    })
+
+    frameRdd.sparkContext.parallelize(arrGenericRow)
+  }
+}

@@ -9,12 +9,24 @@ import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransf
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization, CategoricalSummarySummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
 import org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd
 
 class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params named "frameRdd" and "frameSchema" because naming them "rdd" and "schema" masks the base members "rdd" and "schema" in this scope
     with AddColumnsTransform
     with AssignSampleTransform
     with BinColumnTransformWithResult
+    with CategoricalSummarySummarization
+    with ColumnMedianSummarization
+    with ColumnModeSummarization
+    with ColumnSummaryStatisticsSummarization
+    with CorrelationMatrixSummarization
+    with CorrelationSummarization
+    with CovarianceMatrixSummarization
+    with CovarianceSummarization
     with CountSummarization
     with CumulativePercentTransform
     with CumulativeSumTransform
@@ -22,6 +34,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with EcdfSummarization
     with ExportToCsvSummarization
     with HistogramSummarization
+    with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with SaveSummarization
     with TakeSummarization

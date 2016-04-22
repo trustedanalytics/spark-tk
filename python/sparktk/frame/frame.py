@@ -99,6 +99,26 @@ class Frame(object):
             return schema_to_python(self._tc.sc, self._frame.schema())  # need ()'s on schema because it's a def in scala
         return self._frame.schema
 
+    @property
+    def column_names(self):
+        """
+        Column identifications in the current frame.
+
+        :return: list of names of all the frame's columns
+
+        Returns the names of the columns of the current frame.
+
+        Examples
+        --------
+
+        .. code::
+
+            >>> frame.column_names
+            [u'name', u'age', u'tenure', u'phone']
+
+        """
+        return [name for name, data_type in self.schema]
+
     def append_csv_file(self, file_name, schema, separator=','):
         self._scala.appendCsvFile(file_name, schema_to_scala(self._tc.sc, schema), separator)
 
@@ -115,6 +135,14 @@ class Frame(object):
     from sparktk.frame.ops.add_columns import add_columns
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
+    from sparktk.frame.ops.categorical_summary import categorical_summary
+    from sparktk.frame.ops.column_median import column_median
+    from sparktk.frame.ops.column_mode import column_mode
+    from sparktk.frame.ops.column_summary_statistics import column_summary_statistics
+    from sparktk.frame.ops.correlation import correlation
+    from sparktk.frame.ops.correlation_matrix import correlation_matrix
+    from sparktk.frame.ops.covariance import covariance
+    from sparktk.frame.ops.covariance_matrix import covariance_matrix
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.drop_columns import drop_columns
@@ -124,6 +152,7 @@ class Frame(object):
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
+    from sparktk.frame.ops.quantiles import quantiles
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
