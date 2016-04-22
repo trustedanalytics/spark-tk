@@ -34,16 +34,16 @@ class Frame(object):
     @staticmethod
     def create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
-        return sc._jvm.org.trustedanalytics.at.frame.Frame(scala_rdd, scala_schema)
+        return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema)
 
     def _frame_to_scala(self, python_frame):
         """converts a PythonFrame to a Scala Frame"""
         scala_schema = schema_to_scala(self._tc.sc, python_frame.schema)
-        scala_rdd = self._tc.sc._jvm.org.trustedanalytics.at.frame.rdd.PythonJavaRdd.pythonToScala(python_frame.rdd._jrdd, scala_schema)
+        scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.rdd.PythonJavaRdd.pythonToScala(python_frame.rdd._jrdd, scala_schema)
         return self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
 
     def _is_scala_frame(self, item):
-        return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.trustedanalytics.at.frame.Frame)
+        return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.Frame)
 
     def is_scala_rdd(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.rdd.RDD)
@@ -67,7 +67,7 @@ class Frame(object):
         if self._is_python:
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
-            scala_rdd = self._tc.sc._jvm.org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
+            scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
             self._frame = self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
         return self._frame
 
@@ -77,7 +77,7 @@ class Frame(object):
         if self._is_scala:
             # convert Scala Frame to a PythonFrame"""
             scala_schema = self._frame.schema()
-            java_rdd =  self._tc.sc._jvm.org.trustedanalytics.at.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
+            java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
             python_rdd = RDD(java_rdd, self._tc.sc)
             self._frame = PythonFrame(python_rdd, python_schema)

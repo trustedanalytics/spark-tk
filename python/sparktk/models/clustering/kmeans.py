@@ -22,7 +22,7 @@ def train(tc, frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, see
     :return: KMeansModel
 
     """
-    _scala_obj = tc.sc._jvm.org.trustedanalytics.at.models.kmeans.KMeans
+    _scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.models.kmeans.KMeans
     scala_columns = tc.jutils.convert.to_scala_vector_string(columns)
     if scalings:
         scala_scalings = tc.jutils.convert.to_scala_vector_double(scalings)

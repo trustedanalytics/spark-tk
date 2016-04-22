@@ -7,7 +7,7 @@ class JConvert(object):
     def __init__(self, jutils):
         self.jutils = jutils
         self.sc = jutils.sc
-        self.scala = self.sc._jvm.org.trustedanalytics.at.jvm.JConvert
+        self.scala = self.sc._jvm.org.trustedanalytics.sparktk.jvm.JConvert
 
     def list_to_double_list(self, python_list):
         return [float(item) for item in python_list]

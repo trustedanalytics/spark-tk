@@ -36,6 +36,7 @@ pig_*.log
 /python/.coverage
 /python/nosetests.xml
 integration-tests/tests/*_generated.py*
+integration-tests/tests/sandbox
 .Rhistory
 scratch.py
 sdhu.xml
