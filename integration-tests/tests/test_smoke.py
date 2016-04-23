@@ -42,7 +42,7 @@ def test_kmeans(tc):
                          [6,"op"],
                          [5,"qr"]],
                         [("data", float), ("name", str)])
-    model = kmeans.train(tc, frame, ["data"], 3, seed=5)
+    model = kmeans.train(frame, ["data"], 3, seed=5)
     assert (model.k == 3)
 
     sizes = model.compute_sizes(frame)

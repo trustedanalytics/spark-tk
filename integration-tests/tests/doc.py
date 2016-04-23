@@ -17,6 +17,7 @@
 #
 
 import datetime
+import re
 
 def parse_for_doc(text):
     return str(DocExamplesPreprocessor(text, mode='doc'))
@@ -142,15 +143,17 @@ class DocExamplesPreprocessor(object):
     def _process_line(self, line):
         """processes line and advances fsms as necessary, returns processed line text"""
         stripped = line.lstrip()
-        if stripped and stripped[0] == '<':
-            if self._process_if_tag_pair_tag(stripped):
-                return ''  # return empty string, as tag-pari markup should disappear
+        if stripped:
+            stripped = DocExamplesPreprocessor._strip_markdown_comment(stripped)
+            if stripped[0] == '<':
+                if self._process_if_tag_pair_tag(stripped):
+                    return ''  # return empty string, as tag-pari markup should disappear
 
-            # check for keyword replacement
-            for keyword, replacement in self.replacements:
-                if stripped.startswith(keyword):
-                    line = line.replace(keyword, replacement, 1)
-                    break
+                # check for keyword replacement
+                for keyword, replacement in self.replacements:
+                    if stripped.startswith(keyword):
+                        line = line.replace(keyword, replacement, 1)
+                        break
 
         return line if self.is_state_keep() else ''
 
@@ -177,6 +180,25 @@ class DocExamplesPreprocessor(object):
             self.hide_state = self.keep
             return True
         return False
+
+    markdown_comment_tell = r'[//]:'
+    markdown_comment_re = r'^\[//\]:\s*#\s*\"(.+)\"$'
+    markdown_comment_pattern = re.compile(markdown_comment_re)
+
+    @staticmethod
+    def _strip_markdown_comment(s):
+        """
+        Checks if the given string is formatted as a Markdown comment per Magnus' response here:
+        http://stackoverflow.com/questions/4823468/comments-in-markdown/32190021#32190021
+
+        If it is, the formatting is stripped and only the comment's content is returned
+        If not, the string is returned untouched
+        """
+        if s.startswith(DocExamplesPreprocessor.markdown_comment_tell):
+            m = DocExamplesPreprocessor.markdown_comment_pattern.match(s)
+            if m:
+                return m.group(1)
+        return s
 
     def __str__(self):
         return self.processed
