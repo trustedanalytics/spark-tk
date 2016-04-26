@@ -52,7 +52,7 @@ object CategoricalSummaryFunctions {
 
     mappedRdd.unpersist()
 
-    CategoricalSummaryOutput(rdd.frameSchema.columnNames.head, finalResultWithAdditionalLevels)
+    CategoricalSummaryOutput(rdd.frameSchema.columnNames.head, finalResultWithAdditionalLevels.toArray)
   }
 
   /**

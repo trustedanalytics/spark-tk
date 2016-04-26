@@ -4,7 +4,6 @@ from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
 from pyspark import SparkContext
 
-
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
 
@@ -40,3 +39,5 @@ class TkContext(object):
         """loads a previously saved frame"""
         from sparktk.frame.frame import load_frame
         return load_frame(self, path)
+
+    from sparktk.frame.ops.categorical_summary import CategoricalSummaryInput

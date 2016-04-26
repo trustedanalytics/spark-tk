@@ -5,7 +5,7 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait CategoricalSummarySummarization extends BaseFrame {
 
-  def categoricalSummary(columnInput: List[CategoricalColumnInput]): List[CategoricalSummaryOutput] = {
+  def categoricalSummary(columnInput: List[CategoricalColumnInput]): Array[CategoricalSummaryOutput] = {
     execute(CategoricalSummary(columnInput))
   }
 }
@@ -15,25 +15,25 @@ trait CategoricalSummarySummarization extends BaseFrame {
  *
  * @param columnInput List of Categorical Column Input consisting of column, topk and/or threshold
  */
-case class CategoricalSummary(columnInput: List[CategoricalColumnInput]) extends FrameSummarization[List[CategoricalSummaryOutput]] {
+case class CategoricalSummary(columnInput: List[CategoricalColumnInput]) extends FrameSummarization[Array[CategoricalSummaryOutput]] {
   private val defaultTopK = 10
   private val defaultThreshold = 0.0
 
   require(columnInput.nonEmpty, "Column Input must not be empty. Please provide at least a single Column Input")
 
-  override def work(state: FrameState): List[CategoricalSummaryOutput] = {
+  override def work(state: FrameState): Array[CategoricalSummaryOutput] = {
     // Select each column and invoke summary statistics
     val selectedRdds: List[(FrameRdd, CategoricalColumnInput)] =
-      columnInput.map(elem => ((state: FrameRdd).selectColumn(elem.column), elem)) // NOTE: implicit conversion doesn't work here?
+      columnInput.map(elem => ((state: FrameRdd).selectColumn(elem.column), elem))
 
-    for { rdd <- selectedRdds }
+    (for { rdd <- selectedRdds }
       yield CategoricalSummaryFunctions.getSummaryStatistics(
       rdd._1,
       state.rdd.count.asInstanceOf[Double],
       rdd._2.topK,
       rdd._2.threshold,
       defaultTopK,
-      defaultThreshold)
+      defaultThreshold)).toArray
   }
 }
 
@@ -53,5 +53,5 @@ case class CategoricalColumnInput(column: String, topK: Option[Int], threshold: 
 
 case class LevelData(level: String, frequency: Int, percentage: Double)
 
-case class CategoricalSummaryOutput(column: String, levels: List[LevelData])
+case class CategoricalSummaryOutput(column: String, levels: Array[LevelData])
 
