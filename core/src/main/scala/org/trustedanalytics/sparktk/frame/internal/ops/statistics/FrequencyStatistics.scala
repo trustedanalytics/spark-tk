@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.frame.internal.ops.statistics
 
 import org.apache.spark.AccumulatorParam
 import org.apache.spark.rdd._
+import scala.reflect.ClassTag
 
 /**
  * Object for calculating the frequency statistics of a collection of (data,weight) pairs, represented as an
@@ -13,7 +14,7 @@ import org.apache.spark.rdd._
  * @param maxNumberOfModesReturned Maximum number of items returned in the mode set.
  * @tparam T Value type.
  */
-class FrequencyStatistics[T: ClassManifest](dataWeightPairs: RDD[(T, Double)], maxNumberOfModesReturned: Int)
+class FrequencyStatistics[T: ClassTag](dataWeightPairs: RDD[(T, Double)], maxNumberOfModesReturned: Int)
     extends Serializable {
 
   /**
