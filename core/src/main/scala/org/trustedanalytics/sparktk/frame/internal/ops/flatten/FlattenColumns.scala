@@ -30,8 +30,7 @@ case class FlattenColumns(columns: List[String],
 
   override def work(state: FrameState): FrameState = {
     var flattener: RDD[Row] => RDD[Row] = null
-    val columnIndices = columns.map(c => state.schema.columnIndex(c))
-    val columnDataTypes = columns.map(c => state.schema.columnDataType(c))
+    val (columnIndices, columnDataTypes) = columns.map(c => (state.schema.columnIndex(c), state.schema.columnDataType(c))).unzip
     var schema = state.schema
 
     var stringDelimiterCount = 0 // counter used to track delimiters for string columns
