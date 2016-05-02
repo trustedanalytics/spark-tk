@@ -157,6 +157,7 @@ class Frame(object):
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
+    from sparktk.frame.ops.dot_product import dot_product
 
 
 
