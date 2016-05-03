@@ -19,12 +19,14 @@ package org.trustedanalytics.sparktk.frame.internal.ops.dotproduct
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.{ DataTypes, Column, FrameSchema }
+import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
+import org.trustedanalytics.sparktk.frame.internal.ops.DotProduct
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.frame.internal.VectorFunctions
 import org.trustedanalytics.sparktk.testutils.{ MatcherUtils, TestingSparkContextWordSpec }
 import MatcherUtils._
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
-class DotProductFunctionsTest extends TestingSparkContextWordSpec with Matchers {
+class DotProductTest extends TestingSparkContextWordSpec with Matchers {
   val epsilon = 0.000000001
 
   val inputRows: Array[Row] = Array(
@@ -50,7 +52,7 @@ class DotProductFunctionsTest extends TestingSparkContextWordSpec with Matchers 
       val rdd = sparkContext.parallelize(inputRows)
       val frameRdd = new FrameRdd(inputSchema, rdd)
 
-      val results = DotProductFunctions.dotProduct(frameRdd, List("col_0", "col_1"), List("col_2", "col_3")).collect()
+      val results = DotProduct.dotProduct(frameRdd, List("col_0", "col_1"), List("col_2", "col_3")).collect()
       val dotProducts = results.map(row => row(6).asInstanceOf[Double])
 
       results.size should be(6)
@@ -61,7 +63,7 @@ class DotProductFunctionsTest extends TestingSparkContextWordSpec with Matchers 
       val rdd = sparkContext.parallelize(inputRows)
       val frameRdd = new FrameRdd(inputSchema, rdd)
 
-      val results = DotProductFunctions.dotProduct(frameRdd, List("col_0", "col_1"), List("col_2", "col_3"),
+      val results = DotProduct.dotProduct(frameRdd, List("col_0", "col_1"), List("col_2", "col_3"),
         Some(List(0.1, 0.2)), Some(List(0.3, 0.4))).collect()
       val dotProducts = results.map(row => row(6).asInstanceOf[Double])
 
@@ -73,7 +75,7 @@ class DotProductFunctionsTest extends TestingSparkContextWordSpec with Matchers 
       val rdd = sparkContext.parallelize(inputRows)
       val frameRdd = new FrameRdd(inputSchema, rdd)
 
-      val results = DotProductFunctions.dotProduct(frameRdd, List("col_4"), List("col_5")).collect()
+      val results = DotProduct.dotProduct(frameRdd, List("col_4"), List("col_5")).collect()
       val dotProducts = results.map(row => row(6).asInstanceOf[Double])
 
       results.size should be(6)
@@ -84,7 +86,7 @@ class DotProductFunctionsTest extends TestingSparkContextWordSpec with Matchers 
       val rdd = sparkContext.parallelize(inputRows)
       val frameRdd = new FrameRdd(inputSchema, rdd)
 
-      val results = DotProductFunctions.dotProduct(frameRdd, List("col_4"), List("col_5"),
+      val results = DotProduct.dotProduct(frameRdd, List("col_4"), List("col_5"),
         Some(List(0.1, 0.2)), Some(List(0.3, 0.4))).collect()
       val dotProducts = results.map(row => row(6).asInstanceOf[Double])
 
@@ -97,24 +99,24 @@ class DotProductFunctionsTest extends TestingSparkContextWordSpec with Matchers 
     "compute the dot product" in {
       val leftVector = Vector(1d, 2d, 3d)
       val rightVector = Vector(4d, 5d, 6d)
-      val dotProduct = DotProductFunctions.computeDotProduct(leftVector, rightVector)
+      val dotProduct = VectorFunctions.dotProduct(leftVector, rightVector)
       dotProduct should be(32d)
     }
 
     "throw an IllegalArgumentException if left vector is empty" in {
       intercept[IllegalArgumentException] {
-        DotProductFunctions.computeDotProduct(Vector.empty[Double], Vector(1d, 2d, 3d))
+        VectorFunctions.dotProduct(Vector.empty[Double], Vector(1d, 2d, 3d))
       }
     }
     "throw an IllegalArgumentException if right vector is empty" in {
       intercept[IllegalArgumentException] {
-        DotProductFunctions.computeDotProduct(Vector(1d, 2d, 3d), Vector.empty[Double])
+        VectorFunctions.dotProduct(Vector(1d, 2d, 3d), Vector.empty[Double])
       }
     }
 
     "throw an IllegalArgumentException if vectors are not the same size" in {
       intercept[IllegalArgumentException] {
-        DotProductFunctions.computeDotProduct(Vector(1d, 2d, 3d), Vector(1d, 2d, 3d, 4d))
+        VectorFunctions.dotProduct(Vector(1d, 2d, 3d), Vector(1d, 2d, 3d, 4d))
       }
     }
   }
