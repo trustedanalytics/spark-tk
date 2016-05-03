@@ -1,11 +1,16 @@
 def dot_product(self, left_column_names,right_column_names,dot_product_column_name,default_left_values=None,default_right_values=None):
     """
-    Add column to frame with cumulative sum.
+    Add column to frame with dot_product.
 
-    :param sample_col: The name of the column from which to compute the cumulative sum.
+    :param left_column_names :  Names of columns used to create the left vector (A) for each row.
+                                Names should refer to a single column of type vector, or two or more columns of numeric scalars.
+    :param right_column_names: Names of columns used to create right vector (B) for each row.
+                               Names should refer to a single column of type vector, or two or more columns of numeric scalars.
+    :param dot_product_column_name: Name of column used to store the dot product.
+    :param default_left_values: Default values used to substitute null values in left vector.Default is None.
+    :param default_right_values: Default values used to substitute null values in right vector.Default is None.
 
-    A cumulative sum is computed by sequentially stepping through the rows,
-    observing the column values and keeping track of the cumulative sum for each value.
+    :return returns a frame with give "dot_product" column name
 
     Notes
     -----

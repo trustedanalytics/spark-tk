@@ -7,7 +7,6 @@ import org.trustedanalytics.sparktk.frame.internal.BaseFrame
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
-import org.trustedanalytics.sparktk.frame.internal.ops.dotproduct.{ DotProductTransform }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
