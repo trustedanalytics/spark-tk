@@ -15,7 +15,7 @@
  */
 
 package org.trustedanalytics.sparktk.frame.internal.ops.join
-
+import scala.language.implicitConversions
 /**
  * These implicits can be imported to add join related functions to RDD's
  */

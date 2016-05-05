@@ -19,7 +19,7 @@ package org.trustedanalytics.sparktk.frame.internal.ops.join
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql._
 
-import scala.collection.mutable.{HashMap, MultiMap, Set}
+import scala.collection.mutable.{ HashMap, MultiMap, Set }
 
 /**
  * Broadcast variable for joins
@@ -51,7 +51,7 @@ case class JoinBroadcastVariable(joinParam: RddJoinParam) {
   // Create the broadcast variable for the join
   private def createBroadcastMultiMaps(joinParam: RddJoinParam): Broadcast[MultiMap[Any, Row]] = {
     //Grouping by key to ensure that duplicate keys are not split across different broadcast variables
-    val broadcastList = joinParam.frame.groupByRows(row => row.values(joinParam.joinColumns.toList)).collect().toList
+    val broadcastList = joinParam.frame.groupByRows(row => row.values(joinParam.joinColumns)).collect().toList
     val broadcastMultiMap = listToMultiMap(broadcastList)
     joinParam.frame.sparkContext.broadcast(broadcastMultiMap)
   }

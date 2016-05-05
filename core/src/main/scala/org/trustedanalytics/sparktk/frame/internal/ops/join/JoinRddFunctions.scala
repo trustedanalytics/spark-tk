@@ -19,8 +19,9 @@ package org.trustedanalytics.sparktk.frame.internal.ops.join
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.trustedanalytics.sparktk.frame.{SchemaHelper, FrameSchema, Schema}
+import org.trustedanalytics.sparktk.frame.{ SchemaHelper, FrameSchema }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import scala.language.implicitConversions
 
 /**
  *
@@ -32,6 +33,8 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
  */
 object JoinRddFunctions extends Serializable {
 
+  implicit def joinRddToBroadcastJoinRddFunctions(joinParam: RddJoinParam): BroadcastJoinRddFunctions =
+    new BroadcastJoinRddFunctions(joinParam)
   /**
    * Perform join operation
    *
@@ -39,27 +42,41 @@ object JoinRddFunctions extends Serializable {
    *
    * @param left join parameter for first data frame
    * @param right join parameter for second data frame
-   * @param broadcastJoinThreshold use broadcast variable for join if size of one of the data frames is below threshold
+   * //   * @param broadcastJoinThreshold use broadcast variable for join if size of one of the data frames is below threshold
    * @param how join method
    * @return Joined RDD
    */
   def join(left: RddJoinParam,
            right: RddJoinParam,
            how: String,
-           broadcastJoinThreshold: Long = Long.MaxValue,
-           skewedJoinType: Option[String] = None): FrameRdd = {
+           useBroadcast: Option[String] = None): FrameRdd = {
 
     val joinedRdd = how match {
-      case "left" => leftOuterJoin(left, right, broadcastJoinThreshold, skewedJoinType)
-      case "right" => rightOuterJoin(left, right, broadcastJoinThreshold, skewedJoinType)
+      case "left" => leftOuterJoin(left, right, useBroadcast)
+      case "right" => rightOuterJoin(left, right, useBroadcast)
       case "outer" => fullOuterJoin(left, right)
-      case "inner" => innerJoin(left, right, broadcastJoinThreshold, skewedJoinType)
+      case "inner" => innerJoin(left, right, useBroadcast)
       case other => throw new IllegalArgumentException(s"Method $other not supported. only support left, right, outer and inner.")
     }
 
     createJoinedFrame(joinedRdd, left, right, how)
   }
-
+  //  def join(left: RddJoinParam,
+  //           right: RddJoinParam,
+  //           how: String,
+  //           broadcastJoinThreshold: Long = Long.MaxValue,
+  //           skewedJoinType: Option[String] = None): FrameRdd = {
+  //
+  //    val joinedRdd = how match {
+  //      case "left" => leftOuterJoin(left, right, broadcastJoinThreshold, skewedJoinType)
+  //      case "right" => rightOuterJoin(left, right, broadcastJoinThreshold, skewedJoinType)
+  //      case "outer" => fullOuterJoin(left, right)
+  //      case "inner" => innerJoin(left, right, broadcastJoinThreshold, skewedJoinType)
+  //      case other => throw new IllegalArgumentException(s"Method $other not supported. only support left, right, outer and inner.")
+  //    }
+  //
+  //    createJoinedFrame(joinedRdd, left, right, how)
+  //  }
   /**
    * Perform inner join
    *
@@ -67,19 +84,18 @@ object JoinRddFunctions extends Serializable {
    *
    * @param left join parameter for first data frame
    * @param right join parameter for second data frame
-   * @param broadcastJoinThreshold use broadcast variable for join if size of one of the data frames is below threshold
+   * //   * @param broadcastJoinThreshold use broadcast variable for join if size of one of the data frames is below threshold
    * @return Joined RDD
    */
   def innerJoin(left: RddJoinParam,
                 right: RddJoinParam,
-                broadcastJoinThreshold: Long,
-                skewedJoinType: Option[String] = None): RDD[Row] = {
+                useBroadcast: Option[String] = None): RDD[Row] = {
     // Estimated size in bytes used to determine whether or not to use a broadcast join
-    val leftSizeInBytes = left.estimatedSizeInBytes.getOrElse(Long.MaxValue)
-    val rightSizeInBytes = right.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+    //    val leftSizeInBytes = left.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+    //    val rightSizeInBytes = right.estimatedSizeInBytes.getOrElse(Long.MaxValue)
 
-    if (leftSizeInBytes < broadcastJoinThreshold || rightSizeInBytes < broadcastJoinThreshold) {
-      left.innerBroadcastJoin(right, broadcastJoinThreshold)
+    if (useBroadcast == "left" || useBroadcast == "right") {
+      left.innerBroadcastJoin(right, useBroadcast)
     }
     else {
       val leftFrame = left.frame.toDataFrame
@@ -91,7 +107,27 @@ object JoinRddFunctions extends Serializable {
       joinedFrame.rdd
     }
   }
-
+  //  def innerJoin(left: RddJoinParam,
+  //                right: RddJoinParam,
+  //                broadcastJoinThreshold: Long,
+  //                skewedJoinType: Option[String] = None): RDD[Row] = {
+  //    // Estimated size in bytes used to determine whether or not to use a broadcast join
+  //    val leftSizeInBytes = left.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+  //    val rightSizeInBytes = right.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+  //
+  //    if (leftSizeInBytes < broadcastJoinThreshold || rightSizeInBytes < broadcastJoinThreshold) {
+  //      left.innerBroadcastJoin(right, broadcastJoinThreshold)
+  //    }
+  //    else {
+  //      val leftFrame = left.frame.toDataFrame
+  //      val rightFrame = right.frame.toDataFrame
+  //      val joinedFrame = leftFrame.join(
+  //        rightFrame,
+  //        left.joinColumns
+  //      )
+  //      joinedFrame.rdd
+  //    }
+  //  }
   /**
    * expression maker helps for generating conditions to check when join invoked with composite keys
    *
@@ -139,19 +175,20 @@ object JoinRddFunctions extends Serializable {
    *
    * @param left join parameter for first data frame
    * @param right join parameter for second data frame
-   * @param broadcastJoinThreshold use broadcast variable for join if size of first data frame is below threshold
+   * //   * @param broadcastJoinThreshold use broadcast variable for join if size of first data frame is below threshold
    * @return Joined RDD
    */
   def rightOuterJoin(left: RddJoinParam,
                      right: RddJoinParam,
-                     broadcastJoinThreshold: Long,
-                     skewedJoinType: Option[String] = None): RDD[Row] = {
+                     useBroadcast: Option[String] = None): RDD[Row] = {
     // Estimated size in bytes used to determine whether or not to use a broadcast join
-    val leftSizeInBytes = left.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+    //val leftSizeInBytes = left.estimatedSizeInBytes.getOrElse(Long.MaxValue)
 
-    skewedJoinType match {
-      case x if leftSizeInBytes < broadcastJoinThreshold => left.rightBroadcastJoin(right)
-      case _ =>
+    useBroadcast match {
+      case Some("left") => left.leftBroadcastJoin(right)
+      case Some("right") => left.rightBroadcastJoin(right)
+      case None =>
+
         val leftFrame = left.frame.toDataFrame
         val rightFrame = right.frame.toDataFrame
         val expression = expressionMaker(leftFrame, rightFrame, left.joinColumns, right.joinColumns)
@@ -162,7 +199,26 @@ object JoinRddFunctions extends Serializable {
         joinedFrame.rdd
     }
   }
-
+  //  def rightOuterJoin(left: RddJoinParam,
+  //                     right: RddJoinParam,
+  //                     broadcastJoinThreshold: Long,
+  //                     skewedJoinType: Option[String] = None): RDD[Row] = {
+  //    // Estimated size in bytes used to determine whether or not to use a broadcast join
+  //    val leftSizeInBytes = left.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+  //
+  //    skewedJoinType match {
+  //      case x if leftSizeInBytes < broadcastJoinThreshold => left.rightBroadcastJoin(right)
+  //      case _ =>
+  //        val leftFrame = left.frame.toDataFrame
+  //        val rightFrame = right.frame.toDataFrame
+  //        val expression = expressionMaker(leftFrame, rightFrame, left.joinColumns, right.joinColumns)
+  //        val joinedFrame = leftFrame.join(rightFrame,
+  //          expression,
+  //          joinType = "right"
+  //        )
+  //        joinedFrame.rdd
+  //    }
+  //  }
   /**
    * Perform left-outer join
    *
@@ -170,17 +226,20 @@ object JoinRddFunctions extends Serializable {
    *
    * @param left join parameter for first data frame
    * @param right join parameter for second data frame
-   * @param broadcastJoinThreshold use broadcast variable for join if size of second data frame is below threshold
+   * //   * @param broadcastJoinThreshold use broadcast variable for join if size of second data frame is below threshold
    * @return Joined RDD
    */
   def leftOuterJoin(left: RddJoinParam,
                     right: RddJoinParam,
-                    broadcastJoinThreshold: Long,
-                    skewedJoinType: Option[String] = None): RDD[Row] = {
-    val rightSizeInBytes = right.estimatedSizeInBytes.getOrElse(Long.MaxValue)
-    skewedJoinType match {
-      case x if rightSizeInBytes < broadcastJoinThreshold => left.leftBroadcastJoin(right)
-      case _ =>
+                    useBroadcast: Option[String] = None): RDD[Row] = {
+    //val rightSizeInBytes = right.estimatedSizeInBytes.getOrElse(Long.MaxValue)
+
+    useBroadcast match {
+      case Some("left") => left.leftBroadcastJoin(right)
+      case Some("right") => left.rightBroadcastJoin(right)
+      case None =>
+        //case x if rightSizeInBytes < broadcastJoinThreshold => left.leftBroadcastJoin(right)
+
         val leftFrame = left.frame.toDataFrame
         val rightFrame = right.frame.toDataFrame
         val expression = expressionMaker(leftFrame, rightFrame, left.joinColumns, right.joinColumns)
@@ -190,6 +249,7 @@ object JoinRddFunctions extends Serializable {
         )
 
         joinedFrame.rdd
+      case _ => throw new RuntimeException("useBroadCast is not defined correctly")
     }
   }
 

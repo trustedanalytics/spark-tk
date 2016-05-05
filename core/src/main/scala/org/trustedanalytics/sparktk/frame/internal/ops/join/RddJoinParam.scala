@@ -23,13 +23,19 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
  *
  * @param frame Frame used for join
  * @param joinColumns Join column name
- * @param estimatedSizeInBytes Optional estimated size of RDD in bytes used to determine whether to use a broadcast join
+ * // * @param estimatedSizeInBytes Optional estimated size of RDD in bytes used to determine whether to use a broadcast join
  */
 case class RddJoinParam(frame: FrameRdd,
-                        joinColumns: Seq[String],
-                        estimatedSizeInBytes: Option[Long] = None) {
+                        joinColumns: Seq[String]) {
   require(frame != null, "join frame is required")
   require(joinColumns != null, "join column(s) are required")
-  require(estimatedSizeInBytes.isEmpty || estimatedSizeInBytes.get > 0,
-    "Estimated rdd size in bytes should be empty or greater than zero")
 }
+
+//case class RddJoinParam(frame: FrameRdd,
+//                        joinColumns: Seq[String],
+//                        estimatedSizeInBytes: Option[Long] = None) {
+//  require(frame != null, "join frame is required")
+//  require(joinColumns != null, "join column(s) are required")
+//  require(estimatedSizeInBytes.isEmpty || estimatedSizeInBytes.get > 0,
+//    "Estimated rdd size in bytes should be empty or greater than zero")
+//}

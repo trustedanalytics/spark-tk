@@ -188,7 +188,7 @@ object SchemaHelper {
    * @param rightColumns columns for the right side
    * @return Combined list of columns
    */
-  def join(leftColumns: List[Column], rightColumns: List[Column]): List[Column] = {
+  def join(leftColumns: Seq[Column], rightColumns: Seq[Column]): Seq[Column] = {
 
     val funcAppendLetterForConflictingNames = (left: List[Column], right: List[Column], appendLetter: String) => {
 
@@ -208,8 +208,8 @@ object SchemaHelper {
           column)
     }
 
-    val left = funcAppendLetterForConflictingNames(leftColumns, rightColumns, "L")
-    val right = funcAppendLetterForConflictingNames(rightColumns, leftColumns, "R")
+    val left = funcAppendLetterForConflictingNames(leftColumns.toList, rightColumns.toList, "L")
+    val right = funcAppendLetterForConflictingNames(rightColumns.toList, leftColumns.toList, "R")
 
     left ++ right
   }

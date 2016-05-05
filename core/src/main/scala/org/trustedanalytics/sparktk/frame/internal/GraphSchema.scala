@@ -16,7 +16,7 @@
 
 package org.trustedanalytics.sparktk.frame.internal
 
-import org.trustedanalytics.sparktk.frame.{DataTypes, Column}
+import org.trustedanalytics.sparktk.frame.{ DataTypes, Column }
 
 /**
  * Utility methods and constants used in Schemas for Seamless Graphs
