@@ -1,6 +1,6 @@
 def dot_product(self, left_column_names,right_column_names,dot_product_column_name,default_left_values=None,default_right_values=None):
     """
-    Add column to frame with dot_product.
+    Calculate dot product for each row in current frame.
 
     :param left_column_names :  Names of columns used to create the left vector (A) for each row.
                                 Names should refer to a single column of type vector, or two or more columns of numeric scalars.
@@ -12,9 +12,18 @@ def dot_product(self, left_column_names,right_column_names,dot_product_column_na
 
     :return returns a frame with give "dot_product" column name
 
+
+    Calculate the dot product for each row in a frame using values from two equal-length sequences of columns.
+
+    Dot product is computed by the following formula:
+
+    The dot product of two vectors A=[a_1, a_2, ..., a_n] and B =[b_1, b_2, ..., b_n] is a_1*b_1 + a_2*b_2 + ...+ a_n*b_n
+    The dot product for each row is stored in a new column in the existing frame.
+
     Notes
     -----
-    This method applies only to columns containing numerical data.
+    * This method applies only to columns containing numerical data.
+    * If default_left_values or default_right_values are not specified, any null values will be replaced by zeros.
 
     Examples
     --------
