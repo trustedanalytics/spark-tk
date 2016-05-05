@@ -38,7 +38,7 @@ case class FlattenColumns(columns: List[String],
     for (i <- columns.indices) {
       columnDataTypes(i) match {
         case DataTypes.vector(length) =>
-          schema = state.schema.convertType(columns(i), DataTypes.float64)
+          schema = schema.convertType(columns(i), DataTypes.float64)
         case DataTypes.string =>
           if (delimiters.isDefined && delimiters.get.size > 1) {
             if (delimiters.get.size > stringDelimiterCount) {

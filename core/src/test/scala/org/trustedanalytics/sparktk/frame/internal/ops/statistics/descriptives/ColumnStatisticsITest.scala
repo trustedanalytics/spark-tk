@@ -45,14 +45,14 @@ class ColumnStatisticsITest extends TestingSparkContextWordSpec with Matchers {
 
   "ColumnStatistics.columnMode" should {
     "with no net weight, return none as json" in new ColumnStatisticsTest() {
-      val testMode = ColumnStatistics.columnMode(0, DataTypes.string, Some(7), Some(DataTypes.int32), None, rowRDD)
+      val testMode = ColumnStatistics.columnMode(0, DataTypes.string, Some(7, DataTypes.int32), None, rowRDD)
 
       testMode.modes shouldBe Array.empty[String]
     }
 
     "support weighted mode" in new ColumnStatisticsTest() {
 
-      val testMode = ColumnStatistics.columnMode(0, DataTypes.string, Some(3), Some(DataTypes.int32), None, rowRDD)
+      val testMode = ColumnStatistics.columnMode(0, DataTypes.string, Some(3, DataTypes.int32), None, rowRDD)
 
       testMode.modes shouldBe Array("E")
     }
@@ -82,34 +82,34 @@ class ColumnStatisticsITest extends TestingSparkContextWordSpec with Matchers {
 
   "ColumnStatistics.columnMedian" should {
     "support unweighted float median" in new ColumnStatisticsTest() {
-      val median: ColumnMedianReturn = ColumnStatistics.columnMedian(2, DataTypes.float32, None, None, rowRDD)
+      val median: ColumnMedianReturn = ColumnStatistics.columnMedian(2, DataTypes.float32, None, rowRDD)
 
       median.value shouldBe 2.0
     }
 
     "support weighted float median" in new ColumnStatisticsTest() {
       val median: ColumnMedianReturn =
-        ColumnStatistics.columnMedian(5, DataTypes.float32, Some(6), Some(DataTypes.int32), rowRDD)
+        ColumnStatistics.columnMedian(5, DataTypes.float32, Some(6, DataTypes.int32), rowRDD)
 
       median.value shouldBe 0.0
     }
 
     "support unweighted integer median" in new ColumnStatisticsTest() {
       val median: ColumnMedianReturn =
-        ColumnStatistics.columnMedian(4, DataTypes.int32, None, None, rowRDD)
+        ColumnStatistics.columnMedian(4, DataTypes.int32, None, rowRDD)
 
       median.value shouldBe 2
     }
 
     "support weighted integer median" in new ColumnStatisticsTest() {
       val median: ColumnMedianReturn =
-        ColumnStatistics.columnMedian(4, DataTypes.int32, Some(1), Some(DataTypes.int32), rowRDD)
+        ColumnStatistics.columnMedian(4, DataTypes.int32, Some(1, DataTypes.int32), rowRDD)
 
       median.value shouldBe 2
     }
 
     "with no net weights should return none" in new ColumnStatisticsTest() {
-      val median = ColumnStatistics.columnMedian(0, DataTypes.string, Some(7), Some(DataTypes.int32), rowRDD)
+      val median = ColumnStatistics.columnMedian(0, DataTypes.string, Some(7, DataTypes.int32), rowRDD)
 
       median.value shouldBe None
     }

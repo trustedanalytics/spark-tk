@@ -1,5 +1,5 @@
 
-def sorted_k(self, k, column_names_and_ascending, reduce_tree_depth = None):
+def sorted_k(self, k, column_names_and_ascending, reduce_tree_depth = 2):
     """
     Get a sorted subset of the data.
 
@@ -103,7 +103,6 @@ def sorted_k(self, k, column_names_and_ascending, reduce_tree_depth = None):
     [4]  Drama      1957  12 Angry Men
 
     """
-
     return self._tc.to_frame(self._scala.sortedK(k,
-                         self._tc.jutils.convert.to_scala_list_string_bool_tuple(column_names_and_ascending),
-                         self._tc.jutils.convert.to_scala_option(reduce_tree_depth)))
+                        self._tc.jutils.convert.to_scala_list_string_bool_tuple(column_names_and_ascending),
+                        reduce_tree_depth))

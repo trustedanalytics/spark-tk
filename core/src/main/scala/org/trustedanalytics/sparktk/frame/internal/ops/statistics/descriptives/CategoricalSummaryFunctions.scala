@@ -95,7 +95,7 @@ object CategoricalSummaryFunctions {
   def getMissingCategoryLevel(rdd: RDD[(Any, Int)])(implicit rowCount: Double): LevelData = {
     val missingValuesCount = rdd.filter(matchMissingValues(_))
       .map(_._2).fold(0)(_ + _)
-    LevelData("Missing", missingValuesCount, missingValuesCount / rowCount)
+    LevelData("<Missing>", missingValuesCount, missingValuesCount / rowCount)
   }
 
   // Get the total count for all summary levels which satisfy the user criterion
@@ -105,6 +105,6 @@ object CategoricalSummaryFunctions {
   // Get the "Other" Category Level summary
   def getOtherCategoryLevel(categoricalSummaryLevels: List[LevelData], missingValueCount: Int)(implicit rowCount: Double) = {
     val otherCategoryCount = rowCount - getTotalCountForSummaryLevels(categoricalSummaryLevels) - missingValueCount
-    LevelData("Other", otherCategoryCount.toInt, otherCategoryCount / rowCount)
+    LevelData("<Other>", otherCategoryCount.toInt, otherCategoryCount / rowCount)
   }
 }

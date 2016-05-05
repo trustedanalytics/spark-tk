@@ -1,5 +1,5 @@
 
-def unflatten_columns (self, columns, delimiter=None):
+def unflatten_columns (self, columns, delimiter=","):
     """
     Compacts data from multiple rows based on cell data.
 
@@ -80,4 +80,4 @@ def unflatten_columns (self, columns, delimiter=None):
     if not isinstance(columns, list):
         columns = [columns]
     return self._scala.unflattenColumns(self._tc.jutils.convert.to_scala_list_string(columns),
-                                        self._tc.jutils.convert.to_scala_option(delimiter))
+                                        delimiter)

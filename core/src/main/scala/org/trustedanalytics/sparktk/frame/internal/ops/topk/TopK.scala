@@ -51,19 +51,18 @@ case class TopK(columnName: String,
     val valueDataType = state.schema.columnDataType(columnName)
 
     // get the column index and datatype of the
-    val (weightsColumnIndexOption, weightsDataTypeOption) = weightColumn match {
+    val weightColumnIndexAndType = weightColumn match {
       case Some(c) =>
         val weightsColumnIndex = state.schema.columnIndex(c)
-        (Some(weightsColumnIndex), Some(state.schema.column(weightsColumnIndex).dataType))
-      case None => (None, None)
+        Some(weightsColumnIndex, state.schema.column(weightsColumnIndex).dataType)
+      case None => None
     }
 
     val useBottomK = k < 0
-    val topRdd = TopKRddFunctions.topK(state.rdd, columnIndex, Math.abs(k), useBottomK,
-      weightsColumnIndexOption, weightsDataTypeOption)
+    val topRdd = TopKRddFunctions.topK(state.rdd, columnIndex, Math.abs(k), useBottomK, weightColumnIndexAndType)
 
-    val newSchema = FrameSchema(Vector(Column(columnName, valueDataType), Column("count", DataTypes.float64)))
-
+    val newColumnName = state.schema.getNewColumnName("count")
+    val newSchema = FrameSchema(Vector(Column(columnName, valueDataType), Column(newColumnName, DataTypes.float64)))
     new Frame(topRdd, newSchema)
   }
 }

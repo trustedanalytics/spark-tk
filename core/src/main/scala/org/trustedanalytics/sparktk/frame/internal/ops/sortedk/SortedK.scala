@@ -23,7 +23,7 @@ trait SortedKSummarization extends BaseFrame {
 
   def sortedK(k: Int,
               columnNamesAndAscending: List[(String, Boolean)],
-              reduceTreeDepth: Option[Int] = None): Frame = {
+              reduceTreeDepth: Int = 2): Frame = {
     execute(SortedK(k, columnNamesAndAscending, reduceTreeDepth))
   }
 }
@@ -40,11 +40,11 @@ trait SortedKSummarization extends BaseFrame {
  */
 case class SortedK(k: Int,
                    columnNamesAndAscending: List[(String, Boolean)],
-                   reduceTreeDepth: Option[Int]) extends FrameSummarization[Frame] {
+                   reduceTreeDepth: Int) extends FrameSummarization[Frame] {
 
   require(k > 0, "k should be greater than zero") //TODO: Should we add an upper bound for K
   require(columnNamesAndAscending != null && columnNamesAndAscending.nonEmpty, "one or more columnNames is required")
-  require(reduceTreeDepth.getOrElse(1) >= 1, s"Depth of reduce tree must be greater than or equal to 1")
+  require(reduceTreeDepth >= 1, s"Depth of reduce tree must be greater than or equal to 1")
 
   override def work(state: FrameState): Frame = {
     // return new frame with top-k sorted records

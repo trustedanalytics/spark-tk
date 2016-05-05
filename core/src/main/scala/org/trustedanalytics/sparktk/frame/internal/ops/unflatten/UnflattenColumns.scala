@@ -24,8 +24,8 @@ trait UnflattenColumnsTransform extends BaseFrame {
   private val defaultDelimiter = ","
 
   def unflattenColumns(columns: List[String],
-                       delimiter: Option[String] = None): Unit = {
-    execute(UnflattenColumns(columns, delimiter.getOrElse(defaultDelimiter)))
+                       delimiter: String = ","): Unit = {
+    execute(UnflattenColumns(columns, delimiter))
   }
 }
 
@@ -36,7 +36,6 @@ trait UnflattenColumnsTransform extends BaseFrame {
  */
 case class UnflattenColumns(columns: List[String],
                             delimiter: String) extends FrameTransform {
-
   require(columns != null && columns.nonEmpty, "column list is required for key")
   columns.foreach(x => require(StringUtils.isNotBlank(x), "non empty column names are required."))
   // Parameter validation

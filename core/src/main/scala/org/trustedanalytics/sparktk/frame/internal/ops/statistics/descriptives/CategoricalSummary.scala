@@ -4,51 +4,48 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait CategoricalSummarySummarization extends BaseFrame {
-
-  def categoricalSummary(columnInput: List[CategoricalColumnInput]): Array[CategoricalSummaryOutput] = {
-    execute(CategoricalSummary(columnInput))
+  def categoricalSummary(columns: Seq[String],
+                         topK: Option[Seq[Option[Int]]] = None,
+                         threshold: Option[Seq[Option[Double]]] = None): Array[CategoricalSummaryOutput] = {
+    require(columns.nonEmpty, "Column Input must not be empty. Please provide at least a single Column Input")
+    val topKValues = topK.getOrElse(Seq.fill(columns.size) { None })
+    val thresholdValues = threshold.getOrElse(Seq.fill(columns.size) { None })
+    execute(CategoricalSummary(columns, topKValues, thresholdValues))
   }
 }
 
 /**
  * Compute a summary of the data in a column(s) for categorical or numerical data types.
  *
- * @param columnInput List of Categorical Column Input consisting of column, topk and/or threshold
+ * @param columns List of column names
+ * @param topK Optional parameter for specifying to display levels which are in the top k most frequently
+ *             occurring values for that column.  Default topK is 10.
+ * @param threshold Optional parameter for specifying to display levels which are above the threshold
+ *                  percentage with respect to the total row count.  If both topK and threshold are
+ *                  specified, first performs level pruning based on top k, then filters out levels
+ *                  which satisfy the threshold criterion.  Default threshold is 0.0.
  */
-case class CategoricalSummary(columnInput: List[CategoricalColumnInput]) extends FrameSummarization[Array[CategoricalSummaryOutput]] {
+case class CategoricalSummary(columns: Seq[String],
+                              topK: Seq[Option[Int]],
+                              threshold: Seq[Option[Double]]) extends FrameSummarization[Array[CategoricalSummaryOutput]] {
   private val defaultTopK = 10
   private val defaultThreshold = 0.0
 
-  require(columnInput.nonEmpty, "Column Input must not be empty. Please provide at least a single Column Input")
+  require(topK.size == columns.size,
+    s"The number of top k values (${topK.size}) must match the number of column names provided (${columns.size}).")
+  require(threshold.size == columns.size,
+    s"The number of threshold values (${threshold.size}) must match the number of column names provided (${columns.size}).")
 
   override def work(state: FrameState): Array[CategoricalSummaryOutput] = {
-    // Select each column and invoke summary statistics
-    val selectedRdds: List[(FrameRdd, CategoricalColumnInput)] =
-      columnInput.map(elem => ((state: FrameRdd).selectColumn(elem.column), elem))
-
-    (for { rdd <- selectedRdds }
+    (for ((columnName, topKValue, thresholdValue) <- (columns, topK, threshold).zipped)
       yield CategoricalSummaryFunctions.getSummaryStatistics(
-      rdd._1,
+      (state: FrameRdd).selectColumn(columnName),
       state.rdd.count.asInstanceOf[Double],
-      rdd._2.topK,
-      rdd._2.threshold,
+      topKValue,
+      thresholdValue,
       defaultTopK,
       defaultThreshold)).toArray
   }
-}
-
-/**
- * Class used to specify inputs to categorical summary for each column.  The user must specify the column name and can
- * optionally specify the top_k and/or threshold.  The default is toe display all levels which are in the Top 10.
- *
- * @param column column name
- * @param topK Displays levels which are in the top k more frequently occurring values for that column
- * @param threshold Displays levels which are above the threshold percentage with respect to the total row count.
- */
-case class CategoricalColumnInput(column: String, topK: Option[Int], threshold: Option[Double]) {
-  require(!column.isEmpty && column != null, "Column name should not be empty or null")
-  require(topK.isEmpty || topK.get > 0, "top_k input value should be greater than 0")
-  require(threshold.isEmpty || (threshold.get >= 0.0 && threshold.get <= 1.0), "threshold should be greater than or equal to 0.0 and less than or equal to 1.0")
 }
 
 case class LevelData(level: String, frequency: Int, percentage: Double)

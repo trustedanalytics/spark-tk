@@ -40,7 +40,7 @@ object FrameOrderingUtils extends Serializable {
    * @param reduceTreeDepth Depth of reduce tree (governs number of rounds of reduce tasks)
    * @return an array of top elements
    */
-  def takeOrderedTree[T: ClassTag](rdd: RDD[T], num: Int, reduceTreeDepth: Int = 2)(implicit ord: Ordering[T]): Array[T] = {
+  def takeOrderedTree[T: ClassTag](rdd: RDD[T], num: Int, reduceTreeDepth: Int)(implicit ord: Ordering[T]): Array[T] = {
     if (num == 0) {
       Array.empty[T]
     }

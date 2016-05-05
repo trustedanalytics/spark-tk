@@ -15,14 +15,14 @@ class JConvert(object):
     def to_scala_list_double(self, python_list):
         return self.scala.toScalaList(self.list_to_double_list(python_list))
 
+    def to_scala_list(self, python_list):
+        return self.scala.toScalaList(python_list)
+
     def to_scala_list_string(self, python_list):
         return self.scala.toScalaList([unicode(item) for item in python_list])
 
     def to_scala_list_string_bool_tuple(self, python_list):
-        return self.scala.toScalaList([self.scala.toScalaTwoTuple(unicode(item[0]), item[1]) for item in python_list])
-
-    def to_scala_list_categorical_summary(self, python_list):
-        return self.scala.toScalaList([self.scala.toScalaCategoricalSummary(item[0], item[1], item[2]) for item in python_list])
+        return self.scala.toScalaList([self.scala.toScalaTuple2(unicode(item[0]), item[1]) for item in python_list])
 
     def to_scala_vector_double(self, python_list):
         return self.scala.toScalaVector(self.list_to_double_list(python_list))

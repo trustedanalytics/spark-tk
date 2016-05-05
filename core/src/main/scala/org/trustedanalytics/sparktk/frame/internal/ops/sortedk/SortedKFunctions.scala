@@ -35,7 +35,7 @@ object SortedKFunctions extends Serializable {
   def takeOrdered(frameRdd: FrameRdd,
                   k: Int,
                   columnNamesAndAscending: List[(String, Boolean)],
-                  reduceTreeDepth: Option[Int] = None): FrameRdd = {
+                  reduceTreeDepth: Int): FrameRdd = {
     require(k > 0, "k should be greater than zero") //TODO: Should we add an upper bound for K
     require(columnNamesAndAscending != null && columnNamesAndAscending.nonEmpty, "one or more columnNames is required")
 
@@ -45,12 +45,7 @@ object SortedKFunctions extends Serializable {
     val pairRdd = frameRdd.mapRows(row => (row.values(columnNames.toVector).toList, row.data))
     implicit val keyOrdering = new MultiColumnKeyOrdering(ascendingPerColumn)
 
-    val topRows = if (reduceTreeDepth.isDefined) {
-      FrameOrderingUtils.takeOrderedTree(pairRdd, k, reduceTreeDepth.get)
-    }
-    else {
-      FrameOrderingUtils.takeOrderedTree(pairRdd, k)
-    }
+    val topRows = FrameOrderingUtils.takeOrderedTree(pairRdd, k, reduceTreeDepth)
 
     // ascending is always true here because we control in the ordering
     val topRowsRdd = frameRdd.sparkContext.parallelize(topRows).map { case (key, row) => row }

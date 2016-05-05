@@ -39,5 +39,3 @@ class TkContext(object):
         """loads a previously saved frame"""
         from sparktk.frame.frame import load_frame
         return load_frame(self, path)
-
-    from sparktk.frame.ops.categorical_summary import CategoricalSummaryInput

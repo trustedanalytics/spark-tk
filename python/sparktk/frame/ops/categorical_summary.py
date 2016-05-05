@@ -1,31 +1,14 @@
 from sparktk.propobj import PropertiesObject
+from sparktk.frame.ops.inspect import RowsInspection
 
-class CategoricalSummaryInput(PropertiesObject):
-    """
-    CategoricalSummaryInput class containing optional parameters for each column to categorial_summary
-    """
-    def __init__(self, column_name, top_k=None, threshold=None):
-        if not isinstance(column_name, str):
-            raise TypeError("Argument column_name in the CategoricalSummaryInput class must be a str, but was %s." % type(column_name))
-        if top_k is not None and not isinstance(top_k, int):
-            raise TypeError("Argument top_k in the CategoricalSummaryInput class must be an int, but was %s." % type(top_k))
-        if threshold is not None and not isinstance(threshold, int) and not isinstance(threshold, float):
-            raise TypeError("Argument threshold in the CategoricalSummaryInput class must be numerical, but was %s." % type(threshold))
-        self._column_name = column_name
-        self._top_k = top_k
-        self._threshold = float(threshold) if threshold is not None else threshold
 
-    @property
-    def column_name(self):
-        return self._column_name
+class CategoricalSummaryOutputList(list):
+    def __str__(self):
+        return "\n\n".join([str(item) for item in self])
 
-    @property
-    def top_k(self):
-        return self._top_k
+    def __repr__(self):
+        return str(self)
 
-    @property
-    def threshold(self):
-        return self._threshold
 
 class CategoricalSummaryOutput(PropertiesObject):
     """
@@ -42,6 +25,19 @@ class CategoricalSummaryOutput(PropertiesObject):
     @property
     def levels(self):
         return self._levels
+
+    def __str__(self):
+        rows = []
+        for level_data in self.levels:
+            rows.append([level_data.level, level_data.frequency, level_data.percentage])
+        schema=[("level", str), ("frequency", int), ("percentage", float)]
+        rows = RowsInspection(rows, schema, 0)
+
+        return "column_name = \"{0}\"\n{1}".format(self.column_name, rows)
+
+    def __repr__(self):
+        return str(self)
+
 
 class LevelData(PropertiesObject):
     def __init__(self, scala_result):
@@ -61,7 +57,8 @@ class LevelData(PropertiesObject):
     def percentage(self):
         return self._percentage
 
-def categorical_summary(self, *column_inputs):
+
+def categorical_summary(self, columns, top_k=None, threshold=None):
     """
     Build summary of the data.
 
@@ -123,59 +120,62 @@ def categorical_summary(self, *column_inputs):
     [8]  physical_entity  object
     [9]  physical_entity  causal_agent
 
-    >>> cm = my_frame.categorical_summary(tc.CategoricalSummaryInput('source', top_k=2))
+    >>> cm = my_frame.categorical_summary('source', top_k=2)
     <progress>
 
     >>> cm
-    [column_name = source
-     levels      = [frequency  = 9
-     level      = thing
-     percentage = 0.321428571429, frequency  = 9
-     level      = abstraction
-     percentage = 0.321428571429, frequency  = 0
-     level      = Missing
-     percentage = 0.0, frequency  = 10
-     level      = Other
-     percentage = 0.357142857143]]
+    column_name = "source"
+    [#]  level        frequency  percentage
+    ===========================================
+    [0]  thing                9  0.321428571429
+    [1]  abstraction          9  0.321428571429
+    [2]  <Missing>            0             0.0
+    [3]  <Other>             10  0.357142857143
 
-    >>> cm = my_frame.categorical_summary(tc.CategoricalSummaryInput('source', threshold = 0.5))
+    >>> cm = my_frame.categorical_summary('source', threshold = 0.5)
     <progress>
 
     >>> cm
-    [column_name = source
-     levels      = [frequency  = 0
-     level      = Missing
-     percentage = 0.0, frequency  = 28
-     level      = Other
-     percentage = 1.0]]
+    column_name = "source"
+    [#]  level      frequency  percentage
+    =====================================
+    [0]  <Missing>          0         0.0
+    [1]  <Other>           28         1.0
 
-    >>> cm = my_frame.categorical_summary(tc.CategoricalSummaryInput('source', top_k=2), tc.CategoricalSummaryInput('target', threshold=0.5))
+    >>> cm = my_frame.categorical_summary(['source', 'target'], top_k=[2, None], threshold=[None, 0.5])
     <progress>
 
     >>> cm
-    [column_name = source
-     levels      = [frequency  = 9
-     level      = thing
-     percentage = 0.321428571429, frequency  = 9
-     level      = abstraction
-     percentage = 0.321428571429, frequency  = 0
-     level      = Missing
-     percentage = 0.0, frequency  = 10
-     level      = Other
-     percentage = 0.357142857143], column_name = target
-     levels      = [frequency  = 0
-     level      = Missing
-     percentage = 0.0, frequency  = 28
-     level      = Other
-     percentage = 1.0]]
+    column_name = "source"
+    [#]  level        frequency  percentage
+    ===========================================
+    [0]  thing                9  0.321428571429
+    [1]  abstraction          9  0.321428571429
+    [2]  <Missing>            0             0.0
+    [3]  <Other>             10  0.357142857143
+    <BLANKLINE>
+    column_name = "target"
+    [#]  level      frequency  percentage
+    =====================================
+    [0]  <Missing>          0         0.0
+    [1]  <Other>           28         1.0
 
     """
-    column_input_list = []
-    for column_input in column_inputs:
-        if not isinstance(column_input, CategoricalSummaryInput):
-            raise TypeError("Argument 'column_inputs' must be of type CategoricalSummaryInput, but was %s." % type(column_input))
-        column_input_list.append((unicode(column_input.column_name),
-                                  self._tc.jutils.convert.to_scala_option(column_input.top_k),
-                                  self._tc.jutils.convert.to_scala_option(column_input.threshold)))
-    result_list = list(self._scala.categoricalSummary(self._tc.jutils.convert.to_scala_list_categorical_summary(column_input_list)))
-    return [CategoricalSummaryOutput(item) for item in result_list]
+    if not isinstance(columns, list):
+        columns = [columns]
+    columns = self._tc.jutils.convert.to_scala_list_string(columns)
+
+    if top_k is not None:
+        if not isinstance(top_k, list):
+            top_k = [top_k]
+        top_k = [self._tc.jutils.convert.to_scala_option(item) for item in top_k]
+        top_k = self._tc.jutils.convert.to_scala_list(top_k)
+    if threshold is not None:
+        if not isinstance(threshold, list):
+            threshold = [threshold]
+        threshold = [self._tc.jutils.convert.to_scala_option(item) for item in threshold]
+        threshold = self._tc.jutils.convert.to_scala_list(threshold)
+    result_list = list(self._scala.categoricalSummary(columns,
+                                                      self._tc.jutils.convert.to_scala_option(top_k),
+                                                      self._tc.jutils.convert.to_scala_option(threshold)))
+    return CategoricalSummaryOutputList([CategoricalSummaryOutput(item) for item in result_list])

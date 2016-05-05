@@ -1,5 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives
 
+import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait ColumnMedianSummarization extends BaseFrame {
@@ -25,14 +26,14 @@ case class ColumnMedian(dataColumn: String, weightsColumn: Option[String]) exten
     val valueDataType = state.schema.columnDataType(dataColumn)
 
     // run the operation and return results
-    val (weightsColumnIndexOption, weightsDataTypeOption) = if (weightsColumn.isEmpty) {
-      (None, None)
+    val weightsColumnIndexAndType: Option[(Int, DataType)] = weightsColumn match {
+      case None =>
+        None
+      case Some(weightColumnName) =>
+        Some((state.schema.columnIndex(weightsColumn.get), state.schema.columnDataType(weightsColumn.get)))
     }
-    else {
-      val weightsColumnIndex = state.schema.columnIndex(weightsColumn.get)
-      (Some(weightsColumnIndex), Some(state.schema.columnDataType(weightsColumn.get)))
-    }
-    ColumnStatistics.columnMedian(columnIndex, valueDataType, weightsColumnIndexOption, weightsDataTypeOption, state.rdd)
+
+    ColumnStatistics.columnMedian(columnIndex, valueDataType, weightsColumnIndexAndType, state.rdd)
   }
 }
 

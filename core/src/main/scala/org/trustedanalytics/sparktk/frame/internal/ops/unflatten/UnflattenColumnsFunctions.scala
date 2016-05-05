@@ -28,38 +28,50 @@ object UnflattenColumnsFunctions extends Serializable {
     unflattenRdd.map(row => rowWrapper.create(row))
   }
 
-  private def unflattenRowsForKey(compositeKeyIndex: List[Int], groupedByRows: Iterable[Row], delimiter: String): Array[Any] = {
-
-    val rows = groupedByRows.toList
-    val rowCount = rows.length
-
-    val colsInRow = rows.head.length
+  private def unflattenRowsForKey(compositeKeyIndices: List[Int], groupedByRows: Iterable[Row], delimiter: String): Array[Any] = {
+    val colsInRow = groupedByRows.head.length
     val result = new Array[Any](colsInRow)
 
-    //all but the last line + with delimiter
-    for (i <- 0 to rowCount - 2) {
-      val row = rows(i)
-      addRowToResults(row, compositeKeyIndex, result, delimiter)
-    }
+    val rowIndices = (0 until colsInRow).toList.filter((i: Int) => !compositeKeyIndices.contains(i))
+    val rowIter = groupedByRows.iterator
 
-    //last line, no delimiter
-    val lastRow = rows(rowCount - 1)
-    addRowToResults(lastRow, compositeKeyIndex, result, StringUtils.EMPTY)
+    // first row
+    if (rowIter.hasNext)
+      addFirstRowToResults(rowIter.next(), rowIndices, result, if (rowIter.hasNext) delimiter else StringUtils.EMPTY)
+
+    // add on the rest of the rows
+    while (rowIter.hasNext) {
+      val row = rowIter.next()
+      // Add row, but note that we only include the delimiter, if there's another row after this one.
+      addRowToResults(row, rowIndices, result, if (rowIter.hasNext) delimiter else StringUtils.EMPTY)
+    }
 
     result.filter(_ != null)
   }
 
-  private def addRowToResults(row: Row, compositeKeyIndex: List[Int], results: Array[Any], delimiter: String): Unit = {
-    for (j <- 0 until row.length) {
-      if (!compositeKeyIndex.contains(j)) {
-        val value = row.apply(j) + delimiter
-        if (results(j) == null) {
-          results(j) = value
-        }
-        else {
-          results(j) += value
-        }
-      }
+  /**
+   * Sets the specified row values in the results array.  This is used for the first
+   * @param row
+   * @param rowIndices
+   * @param results
+   * @param delimiter
+   */
+  private def addFirstRowToResults(row: Row, rowIndices: List[Int], results: Array[Any], delimiter: String): Unit = {
+    for (index <- rowIndices) {
+      results(index) = row.apply(index) + delimiter
+    }
+  }
+
+  /**
+   * Appends the specified row values to the results array
+   * @param row Row values
+   * @param indices Indices into the row
+   * @param results Results array
+   * @param delimiter Delimiter to use when appending to the reuslts array
+   */
+  private def addRowToResults(row: Row, indices: List[Int], results: Array[Any], delimiter: String): Unit = {
+    for (index <- indices) {
+      results(index) += row.apply(index) + delimiter
     }
   }
 }

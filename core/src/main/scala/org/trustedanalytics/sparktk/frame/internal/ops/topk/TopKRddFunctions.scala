@@ -46,20 +46,20 @@ private object TopKRddFunctions extends Serializable {
    * @param dataColumnIndex Index of data column
    * @param k Number of entries to return
    * @param useBottomK Return bottom K entries if true, else return top K
-   * @param weightsColumnIndexOption Option for index of column providing the weights. Must be numerical data.
-   * @param weightsTypeOption Option for the datatype of the weights.
+   * @param weightColumnIndexAndType Option for index amd data type of column providing the weights. Must be numerical data.
    * @return Top (or bottom) K distinct values by count for specified column
    */
-  def topK(frameRdd: RDD[Row], dataColumnIndex: Int, k: Int, useBottomK: Boolean = false,
-           weightsColumnIndexOption: Option[Int] = None,
-           weightsTypeOption: Option[DataType] = None): RDD[Row] = {
+  def topK(frameRdd: RDD[Row],
+           dataColumnIndex: Int,
+           k: Int, useBottomK: Boolean = false,
+           weightColumnIndexAndType: Option[(Int, DataType)]): RDD[Row] = {
     require(dataColumnIndex >= 0, "label column index must be greater than or equal to zero")
 
     val dataWeightPairs =
-      ColumnStatistics.getDataWeightPairs(dataColumnIndex, weightsColumnIndexOption, weightsTypeOption, frameRdd)
+      ColumnStatistics.getDataWeightPairs(dataColumnIndex, weightColumnIndexAndType, frameRdd)
         .filter({ case (data, weight) => NumericValidationUtils.isFinitePositive(weight) })
 
-    val distinctCountRDD = dataWeightPairs.reduceByKey((a, b) => a + b)
+    val distinctCountRDD = dataWeightPairs.reduceByKey(_ + _)
 
     //Sort by descending order to get top K
     val isDescendingSort = !useBottomK
@@ -105,18 +105,18 @@ private object TopKRddFunctions extends Serializable {
   /**
    * Merge two sorted sequences while maintaining sort order, and return topK.
    *
-   * @param sortedSeq1 First sorted sequence
-   * @param sortedSeq2 Second sorted sequence
+   * @param sortedSeqA First sorted sequence
+   * @param sortedSeqB Second sorted sequence
    * @param descending Sort in descending order if true, else sort in ascending order
    * @param k Number of top sorted entries to return
    * @return Merged sorted sequence with topK entries
    */
-  private def mergeTopKSortedSeqs(sortedSeq1: Seq[CountPair], sortedSeq2: Seq[CountPair],
+  private def mergeTopKSortedSeqs(sortedSeqA: Seq[CountPair], sortedSeqB: Seq[CountPair],
                                   descending: Boolean = false, k: Int): Seq[CountPair] = {
     // Previously tried recursive and non-recursive merge but Scala sort turned out to be the fastest.
     // Recursive merge was overflowing the stack for large K
     val ordering = if (descending) Ordering[CountPair].reverse else Ordering[CountPair]
-    (sortedSeq1 ++ sortedSeq2).sorted(ordering).take(k)
+    (sortedSeqA ++ sortedSeqB).sorted(ordering).take(k)
 
   }
 }

@@ -24,7 +24,7 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterEach with TestingSparkContextWordSpec {
   "flattenRddByStringColumnIndex" should {
     "create separate rows when flattening entries" in {
-      val carOwnerShips = List(Row("Bob", "Mustang,Camry"), Row("Josh", "Neon,CLK"), Row("Alice", "PT Cruiser,Avalon,F-150"), Row("Tim", "Beatle"), Row("Becky", ""))
+      val carOwnerShips = List(Row("Bob", "Mustang,Camry"), Row("Josh", "Neon,CLK"), Row("Alice", "PT Cruiser,Avalon,F-150"), Row("Tim", "Beetle"), Row("Becky", ""))
       val rdd = sparkContext.parallelize(carOwnerShips)
       val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(1), List(DataTypes.string), List(","))(rdd)
       assertResult(9) {
@@ -39,7 +39,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
       result(4) shouldBe Row("Alice", "PT Cruiser")
       result(5) shouldBe Row("Alice", "Avalon")
       result(6) shouldBe Row("Alice", "F-150")
-      result(7) shouldBe Row("Tim", "Beatle")
+      result(7) shouldBe Row("Tim", "Beetle")
       result(8) shouldBe Row("Becky", "")
     }
 

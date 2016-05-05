@@ -40,6 +40,13 @@ class UnflattenColumnTest extends WordSpec with Matchers with BeforeAndAfterEach
     Array[Any]("Mary", "1/1/2015", "1", "60"),
     Array[Any]("Bob", "1/1/2015", "1", "60"))
 
+  val dailyHeartbeats_4_3 = List(
+    Array[Any]("Mary", "1/1/2015", "1", "60"),
+    Array[Any]("Bob", "1/1/2015", "1", "60"),
+    Array[Any]("Mary", "1/1/2015", "2", "55"),
+    Array[Any]("Sue", "1/1/2015", "1", "65")
+  )
+
   def executeTest(data: List[Array[Any]], rowsInResult: Int): Array[Row] = {
     val schema = FrameSchema(Vector(Column(nameColumn, DataTypes.string),
       Column(dateColumn, DataTypes.string),
@@ -80,6 +87,12 @@ class UnflattenColumnTest extends WordSpec with Matchers with BeforeAndAfterEach
       val rowInResult = 2
       val result = executeTest(dailyHeartbeats_2_2, rowInResult)
 
+      assert(result.length == rowInResult)
+    }
+
+    "compress data from four rows into three rows (dailyHeartbeats_4_3)" in {
+      val rowInResult = 3
+      val result = executeTest(dailyHeartbeats_4_3, rowInResult)
       assert(result.length == rowInResult)
     }
   }

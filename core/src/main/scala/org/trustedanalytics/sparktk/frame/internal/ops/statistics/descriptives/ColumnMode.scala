@@ -1,5 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives
 
+import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait ColumnModeSummarization extends BaseFrame {
@@ -27,19 +28,19 @@ case class ColumnMode(dataColumnName: String,
   override def work(state: FrameState): ColumnModeReturn = {
     // run the operation and return results
     val dataColumn = state.schema.column(dataColumnName)
-    val (weightsColumnIndexOption, weightsDataTypeOption) = if (weightsColumn.isEmpty) {
-      (None, None)
+
+    val weightsColumnIndexAndType: Option[(Int, DataType)] = weightsColumn match {
+      case None =>
+        None
+      case Some(weightColumnName) =>
+        Some((state.schema.columnIndex(weightsColumn.get), state.schema.columnDataType(weightsColumn.get)))
     }
-    else {
-      val weightsColumnIndex = state.schema.columnIndex(weightsColumn.get)
-      (Some(weightsColumnIndex), Some(state.schema.columnDataType(weightsColumn.get)))
-    }
+
     val modeCountOption = maxModesReturned
 
     ColumnStatistics.columnMode(state.schema.columnIndex(dataColumnName),
       dataColumn.dataType,
-      weightsColumnIndexOption,
-      weightsDataTypeOption,
+      weightsColumnIndexAndType,
       modeCountOption,
       state.rdd)
   }

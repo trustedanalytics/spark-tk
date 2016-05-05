@@ -1,9 +1,6 @@
 package org.trustedanalytics.sparktk.jvm
 
 import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
-
-import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalColumnInput
-
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
@@ -51,12 +48,8 @@ object JConvert extends Serializable {
     hashMap
   }
 
-  def toScalaTwoTuple[T](a: T, b: T): (T, T) = {
+  def toScalaTuple2[T](a: T, b: T): (T, T) = {
     (a, b)
-  }
-
-  def toScalaCategoricalSummary(columnName: String, topK: Option[Int], threshold: Option[Double]): CategoricalColumnInput = {
-    return CategoricalColumnInput(columnName, topK, threshold)
   }
 
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
