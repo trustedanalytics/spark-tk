@@ -4,7 +4,7 @@ def sort(self, columns, ascending=True):
     """
     Sort by one or more columns.
 
-    :param columns: Either a column name, list of column names, or list of tuples wher eeach tuple is a name and an
+    :param columns: Either a column name, list of column names, or list of tuples where each tuple is a name and an
                     ascending bool value.
     :param ascending: True for ascending, False for descending
 
@@ -124,37 +124,33 @@ def sort(self, columns, ascending=True):
     else:
         column_names = columns              # list of column names
         columns_ascending = ascending       # boolean summarizing if we are sorting ascending or descending
-        sort_using_scala = False
+
         if isinstance(columns[0], tuple):
-            if isinstance(columns[0][1], bool):
+            are_all_proper_tuples = all(isinstance(c, tuple) and isinstance(c[0], basestring) and isinstance(c[1], bool) for c in columns)
+
+            if not are_all_proper_tuples:
+                raise ValueError("If the columns paramter is a list of tuples, each tuple must have a string (column name)"
+                                 "and a bool (True for ascending).")
+
+            # Check ascending booleans in the tuples to see if they're all the same
+            are_all_same_ascending = all(c[1] == columns[0][1] for c in columns)
+
+            if are_all_same_ascending:
                 columns_ascending = columns[0][1]
-            else:
-                raise ValueError("If the column parameter is a list of tuples, each tuple should have a string"
-                                 "(column name) and bool (ascending), but found %s for the second tuple item." % type(columns[0][1]))
-            column_names = []
-            for column_tuple in columns:
-                if isinstance(column_tuple[0], str):
-                    column_names.append(column_tuple[0])
-                else:
-                    raise ValueError("If the column parameter is a list of tuples, each tuple should have a string"
-                                     "(column name) and bool (ascending), but found %s for the first tuple item." % type(column_tuple[0]))
-                if isinstance(column_tuple[1], bool):
-                    if column_tuple[1] != columns_ascending:
-                        # If the user is mix ascending and descending for different columns, use scala to sort.
-                        sort_using_scala = True
-                        break
-                else:
-                    raise ValueError("If the column parameter is a list of tuples, each tuple should have a string"
-                                     "(column name) and bool (ascending), but found %s for the second tuple item." % type(columns[0][1]))
-        if sort_using_scala:
-            scala_sort(self, columns, ascending)
         else:
+            are_all_same_ascending = True
+
+        if are_all_same_ascending:
             indices = sparktk.frame.schema.get_indices_for_selected_columns(self.schema, column_names)
             self._python.rdd = self.rdd.sortBy(lambda x: tuple([x[index] for index in indices]), ascending=columns_ascending)
 
+        else:
+            # If there are different ascending values between columns, then use scala sort
+            scala_sort(self, columns, ascending)
+
 def scala_sort(self, columns, ascending):
     if isinstance(columns[0], basestring):
-        columns_and_ascending = map(lambda x: (x, ascending),columns)
+        columns_and_ascending = [(c, ascending) for c in columns]
     else:
         columns_and_ascending = columns
     self._scala.sort(self._tc.jutils.convert.to_scala_list_string_bool_tuple(columns_and_ascending))

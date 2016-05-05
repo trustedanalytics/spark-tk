@@ -40,7 +40,7 @@ def rename_columns(self, names):
     if self._is_python:
         new_schema = self._python.schema
         index_list = sparktk.frame.schema.get_indices_for_selected_columns(self.schema, names.keys())
-        for i, index in enumerate(index_list):
+        for index in index_list:
             old_name = new_schema[index][0]
             data_type = new_schema[index][1]
             new_name = names[old_name]

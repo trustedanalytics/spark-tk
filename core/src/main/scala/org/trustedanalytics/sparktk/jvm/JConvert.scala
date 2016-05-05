@@ -49,7 +49,7 @@ object JConvert extends Serializable {
     hashMap
   }
 
-  def toScalaTwoTuple[T](a: T, b: T): (T, T) = {
+  def toScalaTuple2[T](a: T, b: T): (T, T) = {
     (a, b)
   }
 
