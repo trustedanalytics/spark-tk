@@ -145,6 +145,7 @@ class Frame(object):
     from sparktk.frame.ops.covariance_matrix import covariance_matrix
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
+    from sparktk.frame.ops.dot_product import dot_product
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
@@ -163,6 +164,7 @@ class Frame(object):
     from sparktk.frame.ops.tally_percent import tally_percent
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
+
 
 
 
