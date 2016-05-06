@@ -22,7 +22,6 @@ import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Column, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.
 
 class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matchers {
   val idCountryNames: List[Row] = List(
@@ -43,7 +42,7 @@ class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matche
     "create a single broadcast variable when RDD size is less than 2GB" in {
       val countryNames = new FrameRdd(inputSchema, sparkContext.parallelize(idCountryNames))
 
-      val joinParam = RddJoinParam(countryNames, Seq("col_0"), Some(150))
+      val joinParam = RddJoinParam(countryNames, Seq("col_0"))
 
       val broadcastVariable = JoinBroadcastVariable(joinParam)
 
@@ -60,7 +59,8 @@ class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matche
     "create a two broadcast variables when RDD size is equals 3GB" in {
       val countryNames = new FrameRdd(inputSchema, sparkContext.parallelize(idCountryNames))
 
-      val joinParam = RddJoinParam(countryNames, Seq("col_0"), Some(3L * 1024 * 1024 * 1024))
+      val joinParam = RddJoinParam(countryNames, Seq("col_0"))
+      //val joinParam = RddJoinParam(countryNames, Seq("col_0"), Some(3L * 1024 * 1024 * 1024))
 
       val broadcastVariable = JoinBroadcastVariable(joinParam)
 
@@ -75,7 +75,8 @@ class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matche
     "create an empty broadcast variable" in {
       val countryNames = new FrameRdd(inputSchema, sparkContext.parallelize(List.empty[Row]))
 
-      val joinParam = RddJoinParam(countryNames, Seq("col_0"), Some(3L * 1024 * 1024 * 1024))
+      val joinParam = RddJoinParam(countryNames, Seq("col_0"))
+      //val joinParam = RddJoinParam(countryNames, Seq("col_0"), Some(3L * 1024 * 1024 * 1024))
 
       val broadcastVariable = JoinBroadcastVariable(joinParam)
 
@@ -90,7 +91,8 @@ class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matche
     "throw an Exception if column does not exist in frame" in {
       intercept[Exception] {
         val countryNames = new FrameRdd(inputSchema, sparkContext.parallelize(idCountryNames))
-        val joinParam = RddJoinParam(countryNames, Seq("col_bad"), Some(3L * 1024 * 1024 * 1024))
+        val joinParam = RddJoinParam(countryNames, Seq("col_bad"))
+        //val joinParam = RddJoinParam(countryNames, Seq("col_bad"), Some(3L * 1024 * 1024 * 1024))
         JoinBroadcastVariable(joinParam)
       }
     }

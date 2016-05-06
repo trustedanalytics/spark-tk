@@ -65,11 +65,11 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -88,18 +88,21 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(150))
-      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(10000))
+      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(150))
+      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(10000))
+
+      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
+      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
 
       val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "inner")
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -109,61 +112,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
         new GenericRow(Array[Any](2, 100, "b", "India", "b")),
         new GenericRow(Array[Any](3, 47, "a", "Norway", "a")),
         new GenericRow(Array[Any](4, 968, "c", "Oman", "c"))
-      )
-
-      results should contain theSameElementsAs expectedResults
-    }
-
-    "join two RDD with inner join" in {
-
-      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
-      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
-
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "inner")
-      val results = resultFrame.collect()
-
-      resultFrame.frameSchema.columns should equal(List(
-        Column("col_0", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3)
-      ))
-
-      val expectedResults = List(
-        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
-        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
-        new GenericRow(Array[Any](2, 100, "b", "India")),
-        new GenericRow(Array[Any](3, 47, "a", "Norway")),
-        new GenericRow(Array[Any](4, 968, "c", "Oman"))
-      )
-
-      results should contain theSameElementsAs expectedResults
-    }
-
-    "join two RDD with inner join using broadcast variable" in {
-      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
-      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
-
-      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(150))
-      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(10000))
-
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "inner")
-      val results = resultFrame.collect()
-
-      resultFrame.frameSchema.columns should equal(List(
-        Column("col_0", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3)
-      ))
-
-      val expectedResults = List(
-        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
-        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
-        new GenericRow(Array[Any](2, 100, "b", "India")),
-        new GenericRow(Array[Any](3, 47, "a", "Norway")),
-        new GenericRow(Array[Any](4, 968, "c", "Oman"))
       )
 
       results should contain theSameElementsAs expectedResults
@@ -178,11 +126,11 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -202,19 +150,22 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(1500L))
-      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(100L + Int.MaxValue))
+      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
+      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
+
+      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(1500L))
+      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(100L + Int.MaxValue))
 
       // Test join wrapper function
       val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "left")
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -225,65 +176,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
         new GenericRow(Array[Any](3, 47, "a", "Norway", "a")),
         new GenericRow(Array[Any](4, 968, "c", "Oman", "c")),
         new GenericRow(Array[Any](5, 50, "c", null, null))
-      )
-
-      results should contain theSameElementsAs expectedResults
-    }
-
-    "join two RDD with left join" in {
-      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
-      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
-
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "left")
-      val results = resultFrame.collect()
-
-      resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3)
-      ))
-
-      val expectedResults = List(
-        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
-        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
-        new GenericRow(Array[Any](2, 91, "a", null)),
-        new GenericRow(Array[Any](2, 100, "b", "India")),
-        new GenericRow(Array[Any](3, 47, "a", "Norway")),
-        new GenericRow(Array[Any](4, 968, "c", "Oman")),
-        new GenericRow(Array[Any](5, 50, "c", null))
-      )
-
-      results should contain theSameElementsAs expectedResults
-    }
-
-    "join two RDD with left join using broadcast variable" in {
-      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
-      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
-
-      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(1500L))
-      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(100L + Int.MaxValue))
-
-      // Test join wrapper function
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "left")
-      val results = resultFrame.collect()
-
-      resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3)
-      ))
-
-      val expectedResults = List(
-        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
-        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
-        new GenericRow(Array[Any](2, 91, "a", null)),
-        new GenericRow(Array[Any](2, 100, "b", "India")),
-        new GenericRow(Array[Any](3, 47, "a", "Norway")),
-        new GenericRow(Array[Any](4, 968, "c", "Oman")),
-        new GenericRow(Array[Any](5, 50, "c", null))
       )
 
       results should contain theSameElementsAs expectedResults
@@ -299,11 +191,11 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_1_L", DataTypes.int32, 0),
-        Column("col_2_L", DataTypes.str, 1),
-        Column("col_0_R", DataTypes.int32, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_0_R", DataTypes.int32),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -323,19 +215,24 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val broadcastJoinThreshold = 1000
-      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(800))
-      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(4000))
+      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
+      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
 
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right", broadcastJoinThreshold)
+      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right")
+
+      //      val broadcastJoinThreshold = 1000
+      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(800))
+      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(4000))
+      //
+      //      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right", broadcastJoinThreshold)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_1_L", DataTypes.int32, 0),
-        Column("col_2_L", DataTypes.str, 1),
-        Column("col_0_R", DataTypes.int32, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_0_R", DataTypes.int32),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -346,64 +243,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
         new GenericRow(Array[Any](47, "a", 3, "Norway", "a")),
         new GenericRow(Array[Any](968, "c", 4, "Oman", "c")),
         new GenericRow(Array[Any](null, null, 6, "Germany", "c"))
-      )
-
-      results should contain theSameElementsAs expectedResults
-    }
-
-    "join two RDD with right join" in {
-      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
-      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
-
-      val resultFrame = JoinRddFunctions.join(
-        RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "right")
-      val results = resultFrame.collect()
-
-      resultFrame.frameSchema.columns should equal(List(
-        Column("col_1_L", DataTypes.int32, 0),
-        Column("col_0_R", DataTypes.int32, 1),
-        Column("col_1_R", DataTypes.str, 2),
-        Column("col_2_R", DataTypes.str, 3)
-      ))
-
-      val expectedResults = List(
-        new GenericRow(Array[Any](354, 1, "Iceland", "a")),
-        new GenericRow(Array[Any](354, 1, "Ice-land", "a")),
-        new GenericRow(Array[Any](100, 2, "India", "b")),
-        new GenericRow(Array[Any](47, 3, "Norway", "a")),
-        new GenericRow(Array[Any](968, 4, "Oman", "c")),
-        new GenericRow(Array[Any](null, 6, "Germany", "c"))
-      )
-
-      results should contain theSameElementsAs expectedResults
-    }
-
-    "join two RDD with right join using broadcast variable" in {
-      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
-      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
-
-      val broadcastJoinThreshold = 1000
-      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(800))
-      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(4000))
-
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right", broadcastJoinThreshold)
-      val results = resultFrame.collect()
-
-      resultFrame.frameSchema.columns should equal(List(
-        Column("col_1_L", DataTypes.int32, 0),
-        Column("col_0_R", DataTypes.int32, 1),
-        Column("col_1_R", DataTypes.str, 2),
-        Column("col_2_R", DataTypes.str, 3)
-      ))
-
-      val expectedResults = List(
-        new GenericRow(Array[Any](354, 1, "Iceland", "a")),
-        new GenericRow(Array[Any](354, 1, "Ice-land", "a")),
-        new GenericRow(Array[Any](100, 2, "India", "b")),
-        new GenericRow(Array[Any](47, 3, "Norway", "a")),
-        new GenericRow(Array[Any](968, 4, "Oman", "c")),
-        new GenericRow(Array[Any](null, 6, "Germany", "c"))
       )
 
       results should contain theSameElementsAs expectedResults
@@ -418,11 +257,11 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -441,6 +280,191 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
   }
 
   "compositeJoinRDDs" should {
+
+    "join two RDD with inner join" in {
+
+      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
+      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
+
+      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
+        RddJoinParam(countryNames, Seq("col_0", "col_2")), "inner")
+      val results = resultFrame.collect()
+
+      resultFrame.frameSchema.columns should equal(List(
+        Column("col_0", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2", DataTypes.str),
+        Column("col_1_R", DataTypes.str)
+      ))
+
+      val expectedResults = List(
+        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
+        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
+        new GenericRow(Array[Any](2, 100, "b", "India")),
+        new GenericRow(Array[Any](3, 47, "a", "Norway")),
+        new GenericRow(Array[Any](4, 968, "c", "Oman"))
+      )
+
+      results should contain theSameElementsAs expectedResults
+    }
+
+    "join two RDD with inner join using broadcast variable" in {
+      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
+      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
+
+      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"))
+      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
+
+      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(150))
+      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(10000))
+
+      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "inner")
+      val results = resultFrame.collect()
+
+      resultFrame.frameSchema.columns should equal(List(
+        Column("col_0", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2", DataTypes.str),
+        Column("col_1_R", DataTypes.str)
+      ))
+
+      val expectedResults = List(
+        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
+        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
+        new GenericRow(Array[Any](2, 100, "b", "India")),
+        new GenericRow(Array[Any](3, 47, "a", "Norway")),
+        new GenericRow(Array[Any](4, 968, "c", "Oman"))
+      )
+
+      results should contain theSameElementsAs expectedResults
+    }
+
+    "join two RDD with left join" in {
+      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
+      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
+
+      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
+        RddJoinParam(countryNames, Seq("col_0", "col_2")), "left")
+      val results = resultFrame.collect()
+
+      resultFrame.frameSchema.columns should equal(List(
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str)
+      ))
+
+      val expectedResults = List(
+        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
+        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
+        new GenericRow(Array[Any](2, 91, "a", null)),
+        new GenericRow(Array[Any](2, 100, "b", "India")),
+        new GenericRow(Array[Any](3, 47, "a", "Norway")),
+        new GenericRow(Array[Any](4, 968, "c", "Oman")),
+        new GenericRow(Array[Any](5, 50, "c", null))
+      )
+
+      results should contain theSameElementsAs expectedResults
+    }
+
+    "join two RDD with left join using broadcast variable" in {
+      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
+      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
+
+      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"))
+      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
+
+      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(1500L))
+      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(100L + Int.MaxValue))
+
+      // Test join wrapper function
+      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "left")
+      val results = resultFrame.collect()
+
+      resultFrame.frameSchema.columns should equal(List(
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str)
+      ))
+
+      val expectedResults = List(
+        new GenericRow(Array[Any](1, 354, "a", "Iceland")),
+        new GenericRow(Array[Any](1, 354, "a", "Ice-land")),
+        new GenericRow(Array[Any](2, 91, "a", null)),
+        new GenericRow(Array[Any](2, 100, "b", "India")),
+        new GenericRow(Array[Any](3, 47, "a", "Norway")),
+        new GenericRow(Array[Any](4, 968, "c", "Oman")),
+        new GenericRow(Array[Any](5, 50, "c", null))
+      )
+
+      results should contain theSameElementsAs expectedResults
+    }
+
+    "join two RDD with right join" in {
+      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
+      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
+
+      val resultFrame = JoinRddFunctions.join(
+        RddJoinParam(countryCode, Seq("col_0", "col_2")),
+        RddJoinParam(countryNames, Seq("col_0", "col_2")), "right")
+      val results = resultFrame.collect()
+
+      resultFrame.frameSchema.columns should equal(List(
+        Column("col_1_L", DataTypes.int32),
+        Column("col_0_R", DataTypes.int32),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
+      ))
+
+      val expectedResults = List(
+        new GenericRow(Array[Any](354, 1, "Iceland", "a")),
+        new GenericRow(Array[Any](354, 1, "Ice-land", "a")),
+        new GenericRow(Array[Any](100, 2, "India", "b")),
+        new GenericRow(Array[Any](47, 3, "Norway", "a")),
+        new GenericRow(Array[Any](968, 4, "Oman", "c")),
+        new GenericRow(Array[Any](null, 6, "Germany", "c"))
+      )
+
+      results should contain theSameElementsAs expectedResults
+    }
+
+    "join two RDD with right join using broadcast variable" in {
+      val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
+      val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
+
+      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"))
+      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
+
+      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right")
+
+      //      val broadcastJoinThreshold = 1000
+      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(800))
+      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(4000))
+      //
+      //      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right", broadcastJoinThreshold)
+
+      val results = resultFrame.collect()
+
+      resultFrame.frameSchema.columns should equal(List(
+        Column("col_1_L", DataTypes.int32),
+        Column("col_0_R", DataTypes.int32),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
+      ))
+
+      val expectedResults = List(
+        new GenericRow(Array[Any](354, 1, "Iceland", "a")),
+        new GenericRow(Array[Any](354, 1, "Ice-land", "a")),
+        new GenericRow(Array[Any](100, 2, "India", "b")),
+        new GenericRow(Array[Any](47, 3, "Norway", "a")),
+        new GenericRow(Array[Any](968, 4, "Oman", "c")),
+        new GenericRow(Array[Any](null, 6, "Germany", "c"))
+      )
+
+      results should contain theSameElementsAs expectedResults
+    }
+
     "join two RDD with outer join" in {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
@@ -450,10 +474,10 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -481,11 +505,11 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -511,10 +535,10 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -541,11 +565,11 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0),
-        Column("col_1_L", DataTypes.int32, 1),
-        Column("col_2_L", DataTypes.str, 2),
-        Column("col_1_R", DataTypes.str, 3),
-        Column("col_2_R", DataTypes.str, 4)
+        Column("col_0_L", DataTypes.int32),
+        Column("col_1_L", DataTypes.int32),
+        Column("col_2_L", DataTypes.str),
+        Column("col_1_R", DataTypes.str),
+        Column("col_2_R", DataTypes.str)
       ))
 
       val expectedResults = List(
@@ -571,7 +595,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
         new GenericRow(Array[Any](i))
       }).toList
 
-      val inputSchema = FrameSchema(List(Column("col_0", DataTypes.int32)))
+      val inputSchema = FrameSchema(Vector(Column("col_0", DataTypes.int32)))
 
       val rddOneToMillion = new FrameRdd(inputSchema, sparkContext.parallelize(oneToOneHundredThousand))
       val rddFiveHundredThousandsToOneFiftyThousands = new FrameRdd(inputSchema,
@@ -581,7 +605,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
         RddJoinParam(rddFiveHundredThousandsToOneFiftyThousands, Seq("col_0")), "outer")
 
       resultFrame.frameSchema.columns should equal(List(
-        Column("col_0_L", DataTypes.int32, 0)
+        Column("col_0_L", DataTypes.int32)
       ))
       resultFrame.count shouldBe 150000
     }
