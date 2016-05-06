@@ -10,6 +10,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ Cumulati
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
+import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
@@ -41,7 +42,9 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with HistogramSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
+    with RenameColumnsTransform
     with SaveSummarization
+    with SortTransform
     with SortedKSummarization
     with TakeSummarization
     with TallyPercentTransform

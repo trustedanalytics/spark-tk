@@ -30,6 +30,13 @@ class JConvert(object):
     def to_scala_vector_string(self, python_list):
         return self.scala.toScalaVector([unicode(item) for item in python_list])
 
+    def to_scala_string_map(self, python_dict):
+        keys_and_values = []
+        for key in python_dict.keys():
+            keys_and_values.append(key)
+            keys_and_values.append(python_dict[key])
+        return self.scala.toScalaMap(keys_and_values)
+
     def scala_map_string_int_to_python(self, m):
         return dict([(entry[0], int(entry[1])) for entry in list(self.scala.scalaMapStringIntToPython(m))])
 

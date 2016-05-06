@@ -52,6 +52,16 @@ object JConvert extends Serializable {
     (a, b)
   }
 
+  /**
+   * Takes list of keys and values (i.e ["key1", "value1", "key2", "value2"]) and formats
+   * them as a scala map.
+   * @param keysAndValues List of keys and values
+   * @return Map of key to value pairs
+   */
+  def toScalaMap[T](keysAndValues: JArrayList[T]): Map[T, T] = {
+    keysAndValues.asScala.toList.grouped(2).collect { case List(k, v) => k -> v }.toMap
+  }
+
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
   //    val columns = pythonSchema.asScala.map { item =>
   //      val list = item.asScala.toList

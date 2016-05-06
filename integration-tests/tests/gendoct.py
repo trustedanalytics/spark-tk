@@ -218,6 +218,8 @@ def main():
     # Python flatmap --> [item for list in listoflists for item in list]
     test_paths = [test_path for folder_path in [path_to_frameops] for test_path in get_all_example_file_paths(folder_path)]
     filtered_test_paths = filter_exemptions(test_paths)
+    filtered_test_paths.append(os.path.join(path_to_at_root, "README.md"))
+    print "[%s] Test paths considered:\n%s" % (this_script_name, "\n".join(filtered_test_paths))
 
     tests = [_create_test_text(p) for p in filtered_test_paths]
 
