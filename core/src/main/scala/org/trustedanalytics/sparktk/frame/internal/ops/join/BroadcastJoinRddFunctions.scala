@@ -101,7 +101,7 @@ class BroadcastJoinRddFunctions(self: RddJoinParam) extends Logging with Seriali
         }
       })
     }
-    else throw new IllegalArgumentException(s"Provide eithe left or right as broadcast type")
+    else throw new IllegalArgumentException(s"Provide either left or right as broadcast type")
     innerJoinedRDD
   }
 }

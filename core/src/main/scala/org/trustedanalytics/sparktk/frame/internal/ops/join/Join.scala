@@ -24,7 +24,7 @@ trait JoinSummarization extends BaseFrame {
  * @param rightOn Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
  * @param how How to qualify the data to be joined together. Must be one of the following: (left, right, inner or outer).Default is inner
  * @param name Name of the result grouped frame
- * @param useBroadcast If your tables are smaller broadcast is used for join. Specify which table is smaller(left or right). Defualt is None
+ * @param useBroadcast If your tables are smaller broadcast is used for join. Specify which table is smaller(left or right). Default is None
  */
 case class Join(right: Frame,
                 leftOn: List[String],
@@ -33,7 +33,7 @@ case class Join(right: Frame,
                 name: Option[String] = None,
                 useBroadcast: Option[String] = None) extends FrameSummarization[Frame] {
   require(right != null, "right frame is required")
-  require(leftOn != null, "left join column is required")
+  require(leftOn != null || leftOn.isEmpty, "left join column is required")
   require(rightOn != null, "right join column is required")
   require(how != null, "join method is required")
   require(useBroadcast.isEmpty
