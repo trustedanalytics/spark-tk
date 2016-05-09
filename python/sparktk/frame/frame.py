@@ -149,6 +149,7 @@ class Frame(object):
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
+    from sparktk.frame.ops.export_data import export_to_json
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
