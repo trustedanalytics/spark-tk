@@ -33,7 +33,7 @@ case class Join(right: Frame,
                 name: Option[String] = None,
                 useBroadcast: Option[String] = None) extends FrameSummarization[Frame] {
   require(right != null, "right frame is required")
-  require(leftOn != null || leftOn.isEmpty, "left join column is required")
+  require(leftOn != null || leftOn.length !=0, "left join column is required")
   require(rightOn != null, "right join column is required")
   require(how != null, "join method is required")
   require(useBroadcast.isEmpty
