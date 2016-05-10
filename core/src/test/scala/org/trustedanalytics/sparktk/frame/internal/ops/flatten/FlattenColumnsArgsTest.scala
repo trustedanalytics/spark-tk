@@ -24,13 +24,13 @@ class FlattenColumnArgsTest extends WordSpec with Matchers {
   "flatten column" should {
     "create multiple rows by splitting a column" in {
       val row = Row(1, "dog,cat")
-      val flattened = FlattenColumnsFunctions.flattenRowByColumnIndices(List(1), List(DataTypes.string), List(","))(row)
+      val flattened = FlattenColumnsFunctions.flattenRowByColumnIndices(List((1, DataTypes.string, ",")))(row)
       flattened shouldBe Array(Row(1, "dog"), Row(1, "cat"))
     }
 
     "not produce anything else if column is empty" in {
       val row = Row(1, "")
-      val flattened = FlattenColumnsFunctions.flattenRowByColumnIndices(List(1), List(DataTypes.string), List(","))(row)
+      val flattened = FlattenColumnsFunctions.flattenRowByColumnIndices(List((1, DataTypes.string, ",")))(row)
       flattened shouldBe Array(Row(1, ""))
     }
   }

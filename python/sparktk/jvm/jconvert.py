@@ -24,6 +24,9 @@ class JConvert(object):
     def to_scala_list_string_bool_tuple(self, python_list):
         return self.scala.toScalaList([self.scala.toScalaTuple2(unicode(item[0]), item[1]) for item in python_list])
 
+    def to_scala_list_string_option_tuple(self, python_list):
+        return self.scala.toScalaList([self.scala.toScalaTuple2(unicode(item[0]), self.scala.toOption(item[1])) for item in python_list])
+
     def to_scala_vector_double(self, python_list):
         return self.scala.toScalaVector(self.list_to_double_list(python_list))
 

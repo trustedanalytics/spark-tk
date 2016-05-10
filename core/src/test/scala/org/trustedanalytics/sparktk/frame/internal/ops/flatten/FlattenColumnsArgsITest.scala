@@ -26,7 +26,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
     "create separate rows when flattening entries" in {
       val carOwnerShips = List(Row("Bob", "Mustang,Camry"), Row("Josh", "Neon,CLK"), Row("Alice", "PT Cruiser,Avalon,F-150"), Row("Tim", "Beetle"), Row("Becky", ""))
       val rdd = sparkContext.parallelize(carOwnerShips)
-      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(1), List(DataTypes.string), List(","))(rdd)
+      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((1, DataTypes.string, ",")))(rdd)
       assertResult(9) {
         flattened.count()
       }
@@ -48,7 +48,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
       var rdd = sparkContext.parallelize(rows)
 
       // Flatten column 1
-      var flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(1), List(DataTypes.string), List(","))(rdd)
+      var flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((1, DataTypes.string, ",")))(rdd)
       assertResult(7) {
         flattened.count()
       }
@@ -62,7 +62,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
 
       // Flatten column 0
       rdd = sparkContext.parallelize(flattened.take(flattened.count().toInt).toList)
-      flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(0), List(DataTypes.string), List(","))(rdd)
+      flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((0, DataTypes.string, ",")))(rdd)
       assertResult(19) {
         flattened.count()
       }
@@ -85,7 +85,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
       val rdd = sparkContext.parallelize(rows)
 
       // Flatten column 0 and 1
-      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(0, 1), List(DataTypes.string, DataTypes.string), List(",", ","))(rdd)
+      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((0, DataTypes.string, ","), (1, DataTypes.string, ",")))(rdd)
       assertResult(8) {
         flattened.count()
       }
@@ -109,7 +109,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
       val rdd = sparkContext.parallelize(rows)
 
       // Flatten columns 0 and 1
-      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(0, 1), List(DataTypes.string, DataTypes.vector(3)), List(",", ""))(rdd)
+      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((0, DataTypes.string, ","), (1, DataTypes.vector(3), "")))(rdd)
       assertResult(9) {
         flattened.count()
       }
@@ -125,7 +125,7 @@ class FlattenColumnArgsITest extends WordSpec with Matchers with BeforeAndAfterE
       val rows = List(Row("a,b,c", "10,18,20"), Row("d,e", "7,8"), Row("f,g,h", "17,2"), Row("i,j", "37,6,8"))
       val rdd = sparkContext.parallelize(rows)
       // Flatten columns and check row count
-      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(columnIndexes, List(DataTypes.string, DataTypes.string), delimiters)(rdd)
+      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((0, DataTypes.string, ","), (1, DataTypes.string, ",")))(rdd)
       assertResult(11) {
         flattened.count()
       }
@@ -148,7 +148,7 @@ class FlattenVectorColumnArgsITest extends WordSpec with Matchers with BeforeAnd
         Row("pi", Vector[Double](3.14, 6.28, 9.42)),
         Row("neg", Vector[Double](-1.0, -5.5, 8)))
       val rdd = sparkContext.parallelize(vectorShips)
-      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(1), List(DataTypes.vector(3)))(rdd)
+      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((1, DataTypes.vector(3), "")))(rdd)
       assertResult(9) {
         flattened.count()
       }
@@ -170,7 +170,7 @@ class FlattenVectorColumnArgsITest extends WordSpec with Matchers with BeforeAnd
         Row("k,l,m,n", Vector[Double](22, 2, 10)))
       val rdd = sparkContext.parallelize(rows)
       // Flatten columns and check row count
-      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List(0, 1), List(DataTypes.string, DataTypes.vector(3)), List(",", ""))(rdd)
+      val flattened = FlattenColumnsFunctions.flattenRddByColumnIndices(List((0, DataTypes.string, ","), (1, DataTypes.vector(3), "")))(rdd)
       assertResult(16) {
         flattened.count()
       }

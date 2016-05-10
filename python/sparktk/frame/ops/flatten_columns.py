@@ -1,10 +1,10 @@
 
-def flatten_columns (self, columns, delimiters=None):
+def flatten_columns (self, *columns):
     """
     Spread data to multiple rows based on cell data.
 
-    :param columns: The columns to be flattened.
-    :param delimiters: The list of delimiter strings for each column.  Default is comma (,).
+    :param columns: The the name of the column to be flattened, or a tuple with the column name and
+                    delimiter string.  The default delimiter is a comma (,).
 
     Splits cells in the specified columns into multiple rows according to a string delimiter.
     New rows are a full copy of the original row, but the specified columns only contain one value.
@@ -13,7 +13,7 @@ def flatten_columns (self, columns, delimiters=None):
     Examples
     --------
     <hide>
-    >>> frame = tc.to_frame([[1,"solo,mono,single","green,yellow,red"],[2,"duo,double","orange,black"]],
+    >>> frame = tc.to_frame([[1,"solo,mono,single","green|yellow|red"],[2,"duo,double","orange|black"]],
     ...                     [('a',int),('b', str),('c', str)])
     <progress>
 
@@ -31,22 +31,18 @@ def flatten_columns (self, columns, delimiters=None):
         >>> frame.inspect()
         [#]  a  b                 c
         ==========================================
-        [0]  1  solo,mono,single  green,yellow,red
-        [1]  2  duo,double        orange,black
+        [0]  1  solo,mono,single  green|yellow|red
+        [1]  2  duo,double        orange|black
 
-    Now, spread out those sub-strings in column *b* and *c*:
+    Now, spread out those sub-strings in column *b* and *c* by specifying the column names and delmiters:
 
     .. code::
 
-        >>> frame.flatten_columns(['b','c'], ',')
+        >>> frame.flatten_columns(('b', ','), ('c', '|'))
         <progress>
 
     Note that the delimiters parameter is optional, and if no delimiter is specified, the default
-    is a comma (,).  So, in the above example, the delimiter parameter could be omitted.  Also, if
-    the delimiters are different for each column being flattened, a list of delimiters can be
-    provided.  If a single delimiter is provided, it's assumed that we are using the same delimiter
-    for all columns that are being flattened.  If more than one delimiter is provided, the number of
-    delimiters must match the number of string columns being flattened.
+    is a comma (,).  So, in the above example, the delimiter parameter for *b* could be omitted.
 
     Check again:
 
@@ -62,19 +58,17 @@ def flatten_columns (self, columns, delimiters=None):
         [4]  2  double  black
 
     <hide>
-    >>> frame = tc.to_frame([[1,"solo,mono,single","green,yellow,red"],[2,"duo,double","orange,black"]],
+    >>> frame = tc.to_frame([[1,"solo,mono,single","green|yellow|red"],[2,"duo,double","orange|black"]],
     ...                     [('a',int),('b', str),('c', str)])
     <progress>
 
     </hide>
 
-    Alternatively, flatten_columns also accepts a single column name (instead of a list) if just one
-    column is being flattened.  For example, we could have called flatten_column on just column *b*:
-
+    Alternatively, we can flatten a single column *b* using the default comma delimiter:
 
     .. code::
 
-        >>> frame.flatten_columns('b', ',')
+        >>> frame.flatten_columns('b')
         <progress>
 
     Check again:
@@ -84,16 +78,12 @@ def flatten_columns (self, columns, delimiters=None):
         >>> frame.inspect()
         [#]  a  b       c
         ================================
-        [0]  1  solo    green,yellow,red
-        [1]  1  mono    green,yellow,red
-        [2]  1  single  green,yellow,red
-        [3]  2  duo     orange,black
-        [4]  2  double  orange,black
+        [0]  1  solo    green|yellow|red
+        [1]  1  mono    green|yellow|red
+        [2]  1  single  green|yellow|red
+        [3]  2  duo     orange|black
+        [4]  2  double  orange|black
 
     """
-    if not isinstance(columns, list):
-        columns = [columns]
-    if not isinstance(delimiters, list):
-        delimiters = [delimiters]
-    return self._scala.flattenColumns(self._tc.jutils.convert.to_scala_list_string(columns),
-                                      self._tc.jutils.convert.to_scala_option_list_string(delimiters))
+    columns = [c if isinstance(c, tuple) else (c, None) for c in columns]
+    return self._scala.flattenColumns(self._tc.jutils.convert.to_scala_list_string_option_tuple(columns))

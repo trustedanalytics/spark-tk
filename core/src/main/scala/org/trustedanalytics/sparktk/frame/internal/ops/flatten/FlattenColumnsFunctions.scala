@@ -17,37 +17,28 @@ object FlattenColumnsFunctions extends Serializable {
 
   /**
    * Flatten RDD by the column with specified column indices
-   * @param indices column indices
-   * @param dataTypes column dataTypes
-   * @param delimiters separators for splitting string columns
+   * @param columns List of tuples that contain column index, data type, and delimiters.
    * @param rdd RDD for flattening
    * @return new RDD with columns flattened
    */
-  def flattenRddByColumnIndices(indices: List[Int],
-                                dataTypes: List[DataType],
-                                delimiters: List[String] = null)(rdd: RDD[Row]): RDD[Row] = {
-    val flattener = flattenRowByColumnIndices(indices, dataTypes, delimiters)_
+  def flattenRddByColumnIndices(columns: List[(Int, DataType, String)])(rdd: RDD[Row]): RDD[Row] = {
+    val flattener = flattenRowByColumnIndices(columns)_
     rdd.flatMap(row => flattener(row))
   }
 
   /**
    * flatten a row by the column with specified column indices.  Columns must be a string or vector.
-   * @param indices column indices
-   * @param dataTypes column data types
-   * @param delimiters separators for splitting string columns
+   * @param columns List of tuples that contain column index, data type, and delimiter
    * @param row row data
    * @return flattened out row/rows
    */
-  private[frame] def flattenRowByColumnIndices(indices: List[Int],
-                                               dataTypes: List[DataType],
-                                               delimiters: List[String])(row: Row): Array[Row] = {
+  private[frame] def flattenRowByColumnIndices(columns: List[(Int, DataType, String)])(row: Row): Array[Row] = {
     val rowBuffer = new scala.collection.mutable.ArrayBuffer[Row]()
-    for (i <- indices.indices) {
-      val columnIndex = indices(i)
+    for (i <- columns.indices) {
+      val (columnIndex, columnDataType, delimiter) = columns(i)
 
-      dataTypes(i) match {
+      columnDataType match {
         case DataTypes.string =>
-          val delimiter = if (delimiters != null && delimiters(i) != "") delimiters(i) else ","
           val splitItems = row(columnIndex).asInstanceOf[String].split(Pattern.quote(delimiter))
 
           if (splitItems.length > 1) {
@@ -59,9 +50,9 @@ object FlattenColumnsFunctions extends Serializable {
               r(columnIndex) = splitItems(rowIndex)
 
               if (isNewRow) {
-                for (tempColIndex <- indices.indices) {
+                for (tempColIndex <- columns.indices) {
                   if (tempColIndex != i) {
-                    r(indices(tempColIndex)) = null
+                    r(columns(tempColIndex)._1) = null
                   }
                 }
 
@@ -91,9 +82,9 @@ object FlattenColumnsFunctions extends Serializable {
             r(columnIndex) = vectorItems(vectorIndex)
             if (isNewRow) {
               // Empty out other columns that are being flattened in the new row
-              for (tempColIndex <- indices.indices) {
+              for (tempColIndex <- columns.indices) {
                 if (tempColIndex != i) {
-                  r(indices(tempColIndex)) = null
+                  r(columns(tempColIndex)._1) = null
                 }
               }
               // Add new row to the rowBuffer
@@ -103,11 +94,12 @@ object FlattenColumnsFunctions extends Serializable {
               rowBuffer(vectorIndex) = Row.fromSeq(r)
           }
         case _ =>
-          throw new IllegalArgumentException("Flatten column does not support type: " + dataTypes(i).toString)
+          throw new IllegalArgumentException("Flatten column does not support type: " + columnDataType.toString)
       }
 
     }
 
     rowBuffer.toArray
   }
+
 }
