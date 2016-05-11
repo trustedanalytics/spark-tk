@@ -66,18 +66,18 @@ class CategoricalSummaryITest extends TestingSparkContextWordSpec with Matchers 
   }
 
   "getOtherCategoryLevel" should {
-    "return LevelData(\"Other\", 5, 0.25)" in {
+    "return LevelData(\"<Other>\", 5, 0.25)" in {
       implicit val rowCount: Double = 20.0
       val categoricalSummaryLevels = List(LevelData("a", 4, 0.4), LevelData("b", 3, 0.3), LevelData("c", 3, 0.3)): List[LevelData]
       val missingValueCount = 5
-      CategoricalSummaryFunctions.getOtherCategoryLevel(categoricalSummaryLevels, missingValueCount) shouldBe LevelData("Other", 5, 0.25)
+      CategoricalSummaryFunctions.getOtherCategoryLevel(categoricalSummaryLevels, missingValueCount) shouldBe LevelData("<Other>", 5, 0.25)
     }
   }
 
   "getMissingCategoryLevel" should {
-    "return LevelData(\"Missing\", 2, 0.2)" in new CategoricalSummaryTest() {
+    "return LevelData(\"<Missing>\", 2, 0.2)" in new CategoricalSummaryTest() {
       implicit val rowCount: Double = rowRDD.count()
-      CategoricalSummaryFunctions.getMissingCategoryLevel(rowRDD) shouldBe LevelData("Missing", 2, 0.2)
+      CategoricalSummaryFunctions.getMissingCategoryLevel(rowRDD) shouldBe LevelData("<Missing>", 2, 0.2)
     }
   }
 }

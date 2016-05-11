@@ -9,12 +9,15 @@ import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransf
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
-import org.trustedanalytics.sparktk.frame.internal.ops.SortTransform
+import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization, CategoricalSummarySummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd
 
 class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params named "frameRdd" and "frameSchema" because naming them "rdd" and "schema" masks the base members "rdd" and "schema" in this scope
@@ -36,15 +39,19 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with DropColumnsTransform
     with EcdfSummarization
     with ExportToCsvSummarization
+    with FlattenColumnsTransform
     with HistogramSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
     with SaveSummarization
     with SortTransform
+    with SortedKSummarization
     with TakeSummarization
     with TallyPercentTransform
-    with TallyTransform {
+    with TallyTransform
+    with TopKSummarization
+    with UnflattenColumnsTransform {
   init(frameRdd, frameSchema)
 
   /**

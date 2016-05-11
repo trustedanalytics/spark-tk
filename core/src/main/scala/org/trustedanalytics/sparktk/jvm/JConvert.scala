@@ -1,7 +1,6 @@
 package org.trustedanalytics.sparktk.jvm
 
 import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
-
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
