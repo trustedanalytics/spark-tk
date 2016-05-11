@@ -21,8 +21,6 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform,
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait UnflattenColumnsTransform extends BaseFrame {
-  private val defaultDelimiter = ","
-
   def unflattenColumns(columns: List[String],
                        delimiter: String = ","): Unit = {
     execute(UnflattenColumns(columns, delimiter))
