@@ -31,7 +31,7 @@ def top_k(self, column_name, k, weight_column=None):
     </hide>
     Consider the following frame containing four columns.
 
-    >>> frame.inspect(frame.count())
+    >>> frame.inspect(frame.row_count)
     [##]  rank  city         population_2013  population_2010  change  county
     =============================================================================
     [0]      1  Portland              609456           583776  4.40%   Multnomah
