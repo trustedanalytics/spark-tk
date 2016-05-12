@@ -76,7 +76,7 @@ object DiscretizationFunctions extends Serializable {
    * @param rdd RDD that contains the column for binning
    * @return new RDD with binned column appended
    */
-  def binColumns(index: Int, cutoffs: List[Double], lowerInclusive: Boolean, strictBinning: Boolean, rdd: RDD[Row]): RddWithCutoffs = {
+  def binColumns(index: Int, cutoffs: Seq[Double], lowerInclusive: Boolean, strictBinning: Boolean, rdd: RDD[Row]): RddWithCutoffs = {
     val binnedColumnRdd: RDD[Row] = rdd.map { row: Row =>
       val element = toDouble(row(index))
       //val element = DataTypes.toDouble(row(index))
@@ -96,7 +96,7 @@ object DiscretizationFunctions extends Serializable {
    *                      if false smaller vales will be in the first bin and larger values will be in the last
    * @return bin index
    */
-  def binElement(element: Double, cutoffs: List[Double], lowerInclusive: Boolean, strictBinning: Boolean): Int = {
+  def binElement(element: Double, cutoffs: Seq[Double], lowerInclusive: Boolean, strictBinning: Boolean): Int = {
     val min: Int = 0
     val max: Int = cutoffs.length - 2
     //if lower than first cutoff
@@ -134,7 +134,7 @@ object DiscretizationFunctions extends Serializable {
    * @param max highest bin to search
    * @return -1 if item is out of bounds, bin number if found
    */
-  def bSearchRangeLowerInclusive(element: Double, cutoffs: List[Double], min: Int, max: Int): Int = {
+  def bSearchRangeLowerInclusive(element: Double, cutoffs: Seq[Double], min: Int, max: Int): Int = {
     if (max < min) // number not in cutoffs
       return -1
     val mid = (max + min) / 2
@@ -157,7 +157,7 @@ object DiscretizationFunctions extends Serializable {
    * @param max highest bin to search
    * @return -1 if item is out of bounds, bin number if found
    */
-  def bSearchRangeUpperInclusive(element: Double, cutoffs: List[Double], min: Int, max: Int): Int = {
+  def bSearchRangeUpperInclusive(element: Double, cutoffs: Seq[Double], min: Int, max: Int): Int = {
     if (max < min) // number not in cutoffs
       return -1
     val mid = (max + min) / 2

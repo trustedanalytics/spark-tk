@@ -6,7 +6,7 @@ import org.trustedanalytics.sparktk.frame.{ Column, DataTypes }
 trait QuantileBinColumnTransformWithResult extends BaseFrame {
   def quantileBinColumn(column: String,
                         numBins: Option[Int] = None,
-                        binColumnName: Option[String] = None): Array[Double] = {
+                        binColumnName: Option[String] = None): Seq[Double] = {
     execute(QuantileBinColumn(column, numBins, binColumnName))
   }
 }
@@ -20,9 +20,9 @@ trait QuantileBinColumnTransformWithResult extends BaseFrame {
  */
 case class QuantileBinColumn(column: String,
                              numBins: Option[Int],
-                             binColumnName: Option[String]) extends FrameTransformWithResult[Array[Double]] {
+                             binColumnName: Option[String]) extends FrameTransformWithResult[Seq[Double]] {
 
-  override def work(state: FrameState): FrameTransformReturn[Array[Double]] = {
+  override def work(state: FrameState): FrameTransformReturn[Seq[Double]] = {
     val columnIndex = state.schema.columnIndex(column)
     state.schema.requireColumnIsNumerical(column)
     val newColumnName = binColumnName.getOrElse(state.schema.getNewColumnName(s"${column}_binned"))
