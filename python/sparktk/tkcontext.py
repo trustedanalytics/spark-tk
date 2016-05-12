@@ -15,6 +15,7 @@ class TkContext(object):
         self._sc = sc
         self._jtc = self._sc._jvm.org.trustedanalytics.sparktk.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
+        self._scala_sc = self._jutils.get_scala_sc()
         loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     @property
@@ -35,7 +36,32 @@ class TkContext(object):
         from sparktk.frame.frame import to_frame
         return to_frame(self, data, schema)
 
-    def load_frame(self, path):
-        """loads a previously saved frame"""
-        from sparktk.frame.frame import load_frame
-        return load_frame(self, path)
+    def load(self, path):
+        """loads an object from the given path"""
+        scala_obj = self._jtc.load(path)
+        return self._create_python_proxy(scala_obj)
+
+    def _create_python_proxy(self, scala_obj):
+        """Create a python object for the scala_obj
+
+        Convention is such that the python proxy object is available off the TkContext with the SAME
+        path that the object has in Scala, starting with sparktk.
+
+        Example:
+
+        org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
+
+        means a call to
+
+        tc.models.clustering.kmeans.KMeansModel.load(tc, scala_obj)
+
+        The signature is simply the python tc and the reference to the scala obj
+        """
+        name_parts = scala_obj.getClass().getName().split('.')
+        relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
+        if relevant_path == "frame.Frame":
+            return self.to_frame(scala_obj)
+        cmd = "tc.%s.load(tc, scala_obj)" % relevant_path
+        print "cmd=%s" % cmd
+        proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})
+        return proxy

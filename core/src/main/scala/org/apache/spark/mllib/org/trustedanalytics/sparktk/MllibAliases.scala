@@ -6,8 +6,9 @@ import org.apache.spark.mllib.linalg.{ Vectors => SparkVectors, Vector => SparkV
 object MllibAliases {
 
   val Loader = SparkLoader
+  type MllibVector = SparkVector // public, but makes it easier to get at here
+  val MllibVectors = SparkVectors // public, but makes it easier to get at here
   val NumericParser = SparkNumericParser
   def parseNumeric(any: Any): SparkVector = SparkVectors.parseNumeric(any)
-
 }
 

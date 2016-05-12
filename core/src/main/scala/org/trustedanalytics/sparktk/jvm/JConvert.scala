@@ -1,10 +1,17 @@
 package org.trustedanalytics.sparktk.jvm
 
 import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
+import org.apache.spark.SparkContext
+import org.apache.spark.api.java.JavaSparkContext
+
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
 object JConvert extends Serializable {
+
+  def toScalaSparkContext(jsc: JavaSparkContext): SparkContext = {
+    JavaSparkContext.toSparkContext(jsc)
+  }
 
   def toScalaList[T](x: JArrayList[T]): List[T] = x.asScala.toList
 

@@ -23,7 +23,7 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
 
     """
     tc = frame._tc
-    _scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.models.kmeans.KMeans
+    _scala_obj = get_scala_obj(tc)
     scala_columns = tc.jutils.convert.to_scala_vector_string(columns)
     if scalings:
         scala_scalings = tc.jutils.convert.to_scala_vector_double(scalings)
@@ -34,26 +34,34 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     seed = seed if seed is None else long(seed)
     scala_seed = tc.jutils.convert.to_scala_option(seed)
     scala_model = _scala_obj.train(frame._scala, scala_columns, k, scala_scalings, max_iter, epsilon, init_mode, scala_seed)
-    return KMeansModel(tc, columns, scalings, scala_model)
+    return KMeansModel(tc, scala_model)
+
+
+def get_scala_obj(tc):
+    """Gets reference to the scala object"""
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 
 
 class KMeansModel(PropertiesObject):
 
-    def __init__(self, tc, columns, scalings, scala_model):
+    def __init__(self, tc, scala_model):
         self._tc = tc
-        self._columns = columns
-        self._scalings = scalings
+        tc.jutils.validate_is_jvm_instance_of(scala_model, get_scala_obj(tc))
         self._scala = scala_model
+
+    @staticmethod
+    def load(tc, scala_model):
+        return KMeansModel(tc, scala_model)
 
     @property
     def columns(self):
-        #return list(self._scala.columns())  todo - get the from-scala to convert back to python
-        return self._columns
+        return ["data"] #list(self._scala.columns())  todo - get the from-scala to convert back to python
+        #return self._columns
 
     @property
     def scalings(self):
-        # return list(self._scala.scalings())  todo - get the from-scala to convert back to python
-        return self._scalings
+        return None #self._tc.jutils.convert. list(self._scala.scalings())  todo - get the from-scala to convert back to python
+        #return self._scalings
 
     @property
     def k(self):
@@ -69,7 +77,7 @@ class KMeansModel(PropertiesObject):
 
     @property
     def centroids(self):
-        return [list(item) for item in list(self._scala.centroids())]
+        return [list(item) for item in list(self._scala.centroidsAsArrays())]
 
     def compute_sizes(self, frame, columns=None):
         c = self.__columns_to_option(columns)
@@ -91,5 +99,8 @@ class KMeansModel(PropertiesObject):
         if c is not None:
             c = self._tc.jutils.convert.to_scala_vector_string(c)
         return self._tc.jutils.convert.to_scala_option(c)
+
+    def save(self, path):
+        self._scala.save(self._tc._scala_sc, path)
 
 del PropertiesObject
