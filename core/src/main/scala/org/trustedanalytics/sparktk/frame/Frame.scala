@@ -39,7 +39,9 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with CumulativeSumTransform
     with DotProductTransform
     with DropColumnsTransform
+    with DropDuplicatesTransform
     with EcdfSummarization
+    with EntropySummarization
     with ExportToCsvSummarization
     with FlattenColumnsTransform
     with HistogramSummarization
