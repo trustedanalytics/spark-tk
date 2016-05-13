@@ -60,8 +60,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0")),
-        RddJoinParam(countryNames, Seq("col_0")), "inner")
+      val resultFrame = JoinRddFunctions.innerJoin(RddJoinParam(countryCode, Seq("col_0")),
+        RddJoinParam(countryNames, Seq("col_0")), Some("inner"))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -94,7 +94,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
 
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "inner")
+      val resultFrame = JoinRddFunctions.innerJoin(leftJoinParam, rightJoinParam, Some("inner"))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -121,8 +121,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0")),
-        RddJoinParam(countryNames, Seq("col_0")), "left")
+      val resultFrame = JoinRddFunctions.leftJoin(RddJoinParam(countryCode, Seq("col_0")),
+        RddJoinParam(countryNames, Seq("col_0")), false)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -157,7 +157,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(100L + Int.MaxValue))
 
       // Test join wrapper function
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "left")
+      val resultFrame = JoinRddFunctions.leftJoin(leftJoinParam, rightJoinParam, true)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -185,9 +185,9 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(
+      val resultFrame = JoinRddFunctions.rightJoin(
         RddJoinParam(countryCode, Seq("col_0")),
-        RddJoinParam(countryNames, Seq("col_0")), "right")
+        RddJoinParam(countryNames, Seq("col_0")), false)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -218,7 +218,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
 
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right")
+      val resultFrame = JoinRddFunctions.rightJoin(leftJoinParam, rightJoinParam, true)
 
       //      val broadcastJoinThreshold = 1000
       //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(800))
@@ -252,8 +252,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0")),
-        RddJoinParam(countryNames, Seq("col_0")), "outer")
+      val resultFrame = JoinRddFunctions.outerJoin(RddJoinParam(countryCode, Seq("col_0")),
+        RddJoinParam(countryNames, Seq("col_0")))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -286,8 +286,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "inner")
+      val resultFrame = JoinRddFunctions.innerJoin(RddJoinParam(countryCode, Seq("col_0", "col_2")),
+        RddJoinParam(countryNames, Seq("col_0", "col_2")), Some("inner"))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -318,7 +318,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(150))
       //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(10000))
 
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "inner")
+      val resultFrame = JoinRddFunctions.innerJoin(leftJoinParam, rightJoinParam, Some("inner"))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -343,8 +343,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "left")
+      val resultFrame = JoinRddFunctions.leftJoin(RddJoinParam(countryCode, Seq("col_0", "col_2")),
+        RddJoinParam(countryNames, Seq("col_0", "col_2")), false)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -378,7 +378,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(100L + Int.MaxValue))
 
       // Test join wrapper function
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "left")
+      val resultFrame = JoinRddFunctions.leftJoin(leftJoinParam, rightJoinParam, true)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -405,9 +405,9 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(
+      val resultFrame = JoinRddFunctions.rightJoin(
         RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "right")
+        RddJoinParam(countryNames, Seq("col_0", "col_2")), false)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -436,7 +436,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
 
-      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right")
+      val resultFrame = JoinRddFunctions.rightJoin(leftJoinParam, rightJoinParam, true)
 
       //      val broadcastJoinThreshold = 1000
       //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(800))
@@ -469,8 +469,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")),
-        RddJoinParam(countryNames, Seq("col_0", "col_2")), "outer")
+      val resultFrame = JoinRddFunctions.outerJoin(RddJoinParam(countryCode, Seq("col_0", "col_2")),
+        RddJoinParam(countryNames, Seq("col_0", "col_2")))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -501,7 +501,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(emptyIdCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0")), RddJoinParam(countryNames, Seq("col_0")), "outer")
+      val resultFrame = JoinRddFunctions.outerJoin(RddJoinParam(countryCode, Seq("col_0")), RddJoinParam(countryNames, Seq("col_0")))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -531,7 +531,7 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(emptyIdCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0", "col_2")), RddJoinParam(countryNames, Seq("col_0", "col_2")), "outer")
+      val resultFrame = JoinRddFunctions.outerJoin(RddJoinParam(countryCode, Seq("col_0", "col_2")), RddJoinParam(countryNames, Seq("col_0", "col_2")))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -560,8 +560,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(emptyIdCountryNames))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(countryCode, Seq("col_0")),
-        RddJoinParam(countryNames, Seq("col_0")), "outer")
+      val resultFrame = JoinRddFunctions.outerJoin(RddJoinParam(countryCode, Seq("col_0")),
+        RddJoinParam(countryNames, Seq("col_0")))
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -601,8 +601,8 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val rddFiveHundredThousandsToOneFiftyThousands = new FrameRdd(inputSchema,
         sparkContext.parallelize(fiftyThousandToOneFiftyThousands))
 
-      val resultFrame = JoinRddFunctions.join(RddJoinParam(rddOneToMillion, Seq("col_0")),
-        RddJoinParam(rddFiveHundredThousandsToOneFiftyThousands, Seq("col_0")), "outer")
+      val resultFrame = JoinRddFunctions.outerJoin(RddJoinParam(rddOneToMillion, Seq("col_0")),
+        RddJoinParam(rddFiveHundredThousandsToOneFiftyThousands, Seq("col_0")))
 
       resultFrame.frameSchema.columns should equal(List(
         Column("col_0_L", DataTypes.int32)

@@ -33,6 +33,9 @@ class JConvert(object):
     def to_scala_option(self, item):
         return self.scala.toOption(item)
 
+    def to_scala_boolean(self, item):
+        return self.scala.toBoolean(item)
+
     def to_scala_option_list_double(self, python_list):
         if isinstance(python_list, list):
             python_list = self.list_to_double_list(python_list)

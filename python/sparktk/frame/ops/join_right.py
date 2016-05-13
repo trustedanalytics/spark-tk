@@ -1,19 +1,16 @@
-def join(self,
-         right,
-         left_on,
-         right_on=None,
-         how='inner',
-         name=None,
-         useBroadcast=None):
+def join_right(self,
+              right,
+              left_on,
+              right_on=None,
+              use_broadcast_left=False):
     """
-    Join operation on one or two frames, creating a new frame.
+    join_right performs right join(right outer) operation on one or two frames, creating a new frame.
 
     @:param right : Another frame to join with
     @:param left_on :Names of the columns in the left frame used to match up the two frames.
     @:param right_on :Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    @:param how :How to qualify the data to be joined together. Must be one of the following: (left, right, inner or outer).Default is inner
-    @:param name :Name of the result grouped frame
-    @:param useBroadcast: If your tables are smaller broadcast is used for join. Specify which table is smaller(left or right). Defualt is None.
+    @:param use_broadcast_left: If left table is small enough to fit in the memory of a single machine, you can set use_broadcast_left to True to perform broadcast join.
+            Default is False.
 
     @:returns: A new frame with the results of the join
 
@@ -22,19 +19,9 @@ def join(self,
     The frame on the 'right' is another frame.
     This method take column(s) in the left frame and matches its values
     with column(s) in the right frame.
-    Using the default 'how' option ['inner'] will only allow data in the
-    resultant frame if both the left and right frames have the same value
-    in the matching column(s).
-    Using the 'left' 'how' option will allow any data in the resultant
-    frame if it exists in the left frame, but will allow any data from the
-    right frame if it has a value in its column(s) which matches the value in
-    the left frame column(s).
-    Using the 'right' option works similarly, except it keeps all the data
+    'right' join works similarly to join_left, except it keeps all the data
     from the right frame and only the data from the left frame when it
     matches.
-    The 'outer' option provides a frame with data from both frames where
-    the left and right frames did not have the same value in the matching
-    column(s).
 
     Notes
     -----
@@ -101,59 +88,18 @@ def join(self,
     [2]        3  green
     [3]        4  blue
 
-
-    Join them on the 'numbers' column ('inner' join by default)
-
-    >>> j = codes.join(colors, 'numbers')
+    >>> j_right = codes.join_right(colors, 'numbers', use_broadcast_left=True)
     <progress>
 
-    >>> j.inspect()
-    [#]  numbers  color
-    ====================
-    [0]        1  red
-    [1]        1  red
-    [2]        1  red
-    [3]        2  yellow
-    [4]        3  green
-    [5]        3  green
+    >>> j_right.inspect()
+    [#]  numbers_R  color
+    ======================
+    [0]          1  red
+    [1]          2  yellow
+    [2]          3  green
+    [3]          4  blue
 
     (The join adds an extra column *_R which is the join column from the right frame; it may be disregarded)
-
-    Try a 'left' join, which includes all the rows of the codes frame.
-
-    >>> j_left = codes.join(colors, 'numbers', how='left')
-    <progress>
-
-    >>> j_left.inspect()
-    [#]  numbers_L  color
-    ======================
-    [0]          0  None
-    [1]          1  red
-    [2]          1  red
-    [3]          1  red
-    [4]          2  yellow
-    [5]          3  green
-    [6]          3  green
-    [7]          5  None
-
-
-    And an outer join:
-
-    >>> j_outer = codes.join(colors, 'numbers', how='outer')
-    <progress>
-
-    >>> j_outer.inspect()
-    [#]  numbers_L  color
-    ======================
-    [0]          0  None
-    [1]          1  red
-    [2]          1  red
-    [3]          1  red
-    [4]          2  yellow
-    [5]          3  green
-    [6]          3  green
-    [7]          4  blue
-    [8]          5  None
 
     Consider two frames: country_codes_frame and country_names_frame
 
@@ -180,17 +126,18 @@ def join(self,
 
     Join them on the 'col_0' and 'col_2' columns ('inner' join by default)
 
-    >>> composite_join = country_codes_frame.join(country_names_frame, ['col_0', 'col_2'])
+    >>> composite_join_right = country_codes_frame.join_right(country_names_frame, ['col_0', 'col_2'])
     <progress>
 
-    >>> composite_join.inspect()
-    [#]  col_0  col_1_L  col_2  col_1_R
-    ====================================
-    [0]      1      354  a      Iceland
-    [1]      1      354  a      Ice-land
-    [2]      2      100  b      India
-    [3]      3       47  a      Norway
-    [4]      4      968  c      Oman
+    >>> composite_join_right.inspect()
+    [#]  col_1_L  col_0_R  col_1_R   col_2_R
+    ========================================
+    [0]      None       6  Germany   c
+    [1]      354        1  Iceland   a
+    [2]      354        1  Ice-land  a
+    [3]      100        2  India     b
+    [4]       47        3  Norway    a
+    [5]      968        4  Oman      c
 
 
     More examples can be found in the :ref:`user manual
@@ -207,10 +154,8 @@ def join(self,
     if len(left_on) != len(right_on):
         raise ValueError("Please provide equal number of join columns")
 
-    return self._tc.to_frame(self._scala.join(right._scala,
-                                              self._tc.jutils.convert.to_scala_list_string(left_on),
-                                              self._tc.jutils.convert.to_scala_option(
-                                                      self._tc.jutils.convert.to_scala_list_string(right_on)),
-                                              how,
-                                              self._tc.jutils.convert.to_scala_option(name),
-                                              self._tc.jutils.convert.to_scala_option(useBroadcast)))
+    return self._tc.to_frame(self._scala.joinRight(right._scala,
+                                                  self._tc.jutils.convert.to_scala_list_string(left_on),
+                                                  self._tc.jutils.convert.to_scala_option(
+                                                          self._tc.jutils.convert.to_scala_list_string(right_on)),
+                                                  use_broadcast_left))

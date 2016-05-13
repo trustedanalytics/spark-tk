@@ -7,7 +7,7 @@ import org.trustedanalytics.sparktk.frame.internal.BaseFrame
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
-import org.trustedanalytics.sparktk.frame.internal.ops.join.JoinSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinInnerSummarization, JoinLeftSummarization, JoinOuterSummarization, JoinRightSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
@@ -35,7 +35,10 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with EcdfSummarization
     with ExportToCsvSummarization
     with HistogramSummarization
-    with JoinSummarization
+    with JoinInnerSummarization
+    with JoinLeftSummarization
+    with JoinOuterSummarization
+    with JoinRightSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with SaveSummarization
