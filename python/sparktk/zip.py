@@ -1,5 +1,6 @@
 import os
 import zipfile
+import tempfile
 import shutil
 import logging
 logger = logging.getLogger('sparktk')
@@ -28,7 +29,7 @@ def zip_sparktk(archive_dir=None):
     package_name = 'sparktk'
     package_path = os.path.join(package_parent, package_name)
     if archive_dir is None:
-        archive_dir = os.path.join(package_parent, 'target')  # 'python/target'
+        archive_dir = tempfile.mkdtemp()
     archive_name = 'sparktk.zip'
     archive_path = os.path.join(archive_dir, archive_name)
     exclude_dirs = ["tests", "doc"]
