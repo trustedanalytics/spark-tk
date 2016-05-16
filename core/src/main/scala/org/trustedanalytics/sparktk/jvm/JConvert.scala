@@ -25,6 +25,13 @@ object JConvert extends Serializable {
     }
   }
 
+  def toEitherStringInt(item: Any): Either[String, Int] = {
+    item match {
+      case s: String => Left(s)
+      case i: Int => Right(i)
+    }
+  }
+
   def fromOption(o: Option[Any]): Any = o.orNull
 
   def scalaMapStringIntToPython(m: Map[String, Int]) = {
@@ -53,6 +60,12 @@ object JConvert extends Serializable {
     }
 
     hashMap
+  }
+
+  def scalaSeqToPython[T](seq: Seq[T]): JArrayList[T] = {
+    val pythonList = new JArrayList[T]()
+    seq.map(item => pythonList.add(item))
+    pythonList
   }
 
   def toScalaTuple2[T](a: T, b: T): (T, T) = {

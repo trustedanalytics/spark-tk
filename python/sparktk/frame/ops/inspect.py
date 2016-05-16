@@ -509,7 +509,7 @@ def inspect(self,
     **Global Settings**
 
     If not specified, the arguments that control formatting receive default values from
-    'trustedanalytics.inspect_settings'.  Make changes there to affect all calls to inspect.
+    'sparktk.inspect_settings'.  Make changes there to affect all calls to inspect.
 
     .. code::
 

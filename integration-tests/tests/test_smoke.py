@@ -165,4 +165,14 @@ def test_back_and_forth_py_scala(tc):
     assert(results == expected)
 
 
-
+def test_row_count(tc):
+    # create frame
+    f = tc.to_frame([[item] for item in range(0, 10)],[("a", int)])
+    # check row count (python)
+    assert(f._is_python == True)
+    assert(f.row_count == 10)
+    # to scala
+    f._scala
+    # check row count (scala)
+    assert(f._is_python == False)
+    assert(f.row_count == 10)
