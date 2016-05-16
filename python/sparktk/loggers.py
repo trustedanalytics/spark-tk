@@ -73,14 +73,14 @@ class Loggers(object):
             If not specified, DEBUG is used
             To turn OFF the logger, set level to 0 or None
         logger_name: str, optional
-            The name of the logger.  If empty string, then the trustedanalytics root logger is set
+            The name of the logger.  If empty string, then the sparktk root logger is set
         output: file or str, or list of such, optional
             The file object or name of the file to log to.  If empty, then stderr is used
 
         Examples
         --------
         # to enable INFO level logging to file 'log.txt' and no printing to stderr:
-        >>> loggers.set('INFO', 'trustedanalytics.rest.frame','log.txt', False)
+        >>> loggers.set('INFO', 'sparktk.frame','log.txt', False)
         """
         logger_name = logger_name if logger_name != 'root' else ''
         if not level:
@@ -190,7 +190,7 @@ loggers = Loggers()
 # Logging backdoor
 #
 # If env variable is set, we will call loggers.set immediately, so the loggers
-# can run during the rest of the trustedanalytics package import
+# can run during the rest of the sparktk package import
 #
 # The value of this env var is a JSON list containing map, each of which
 # represents a call to loggers.set.  The map holds the **kwargs for the
