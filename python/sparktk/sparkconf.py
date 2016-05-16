@@ -179,14 +179,13 @@ def create_sc(master=None,
     atexit.register(shutil.rmtree, tmp_dir)  # make python delete this folder when it shuts down
 
     py_files.append(path)
-    logger.info("sparkconf using py_files = %s", py_files)
 
-    # todo - add to logging
-    print "=" * 80
-    print "Creating SparkContext with the following SparkConf"
-    print "pyFiles=%s" % str(py_files)
-    print conf.toDebugString()
-    print "=" * 80
+    msg = '\n'.join(["=" * 80,
+                     "Creating SparkContext with the following SparkConf",
+                     "pyFiles=%s" % str(py_files),
+                     conf.toDebugString(),
+                     "=" * 80])
+    logger.info(msg)
 
     sc = SparkContext(conf=conf, pyFiles=py_files)
 

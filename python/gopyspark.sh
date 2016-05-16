@@ -40,7 +40,7 @@ echo "$NAME SPARK_HOME=$SPARK_HOME"
 #echo "$NAME SPARKTK_PYZIP=$SPARKTK_PYZIP"
 
 if [ -z "$PYSPARK_BIN" ]; then
-    export PYSPARK_BIN=pyspark
+    export PYSPARK_BIN=$SPARK_HOME/bin/pyspark
 fi
 echo $NAME PYSPARK_BIN=$PYSPARK_BIN
 
