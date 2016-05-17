@@ -51,7 +51,7 @@ object JoinRddFunctions extends Serializable {
                 right: RddJoinParam,
                 useBroadcast: Option[String] = None): FrameRdd = {
 
-    val joinedRdd = if (useBroadcast == "left" || useBroadcast == "right") {
+    val joinedRdd = if (useBroadcast.isDefined) {
       left.innerBroadcastJoin(right, useBroadcast)
     }
     else {

@@ -24,8 +24,8 @@ trait JoinInnerSummarization extends BaseFrame {
  */
 case class JoinInner(right: Frame,
                      leftOn: List[String],
-                     rightOn: Option[List[String]] = None,
-                     useBroadcast: Option[String] = None) extends FrameSummarization[Frame] {
+                     rightOn: Option[List[String]],
+                     useBroadcast: Option[String]) extends FrameSummarization[Frame] {
 
   require(right != null, "right frame is required")
   require(leftOn != null || leftOn.length != 0, "left join column is required")

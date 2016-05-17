@@ -24,7 +24,7 @@ trait JoinRightSummarization extends BaseFrame {
  */
 case class JoinRight(right: Frame,
                      leftOn: List[String],
-                     rightOn: Option[List[String]] = None,
+                     rightOn: Option[List[String]],
                      useBroadcastLeft: Boolean) extends FrameSummarization[Frame] {
 
   require(right != null, "right frame is required")

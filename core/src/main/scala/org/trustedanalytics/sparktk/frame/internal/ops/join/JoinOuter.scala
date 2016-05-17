@@ -22,7 +22,7 @@ trait JoinOuterSummarization extends BaseFrame {
  */
 case class JoinOuter(right: Frame,
                      leftOn: List[String],
-                     rightOn: Option[List[String]] = None) extends FrameSummarization[Frame] {
+                     rightOn: Option[List[String]]) extends FrameSummarization[Frame] {
 
   require(right != null, "right frame is required")
   require(leftOn != null || leftOn.length != 0, "left join column is required")
