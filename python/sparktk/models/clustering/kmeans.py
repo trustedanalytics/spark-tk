@@ -55,13 +55,14 @@ class KMeansModel(PropertiesObject):
 
     @property
     def columns(self):
-        return ["data"] #list(self._scala.columns())  todo - get the from-scala to convert back to python
-        #return self._columns
+        return list(self._tc.jutils.convert.from_scala_seq(self._scala.columns()))
 
     @property
     def scalings(self):
-        return None #self._tc.jutils.convert. list(self._scala.scalings())  todo - get the from-scala to convert back to python
-        #return self._scalings
+        s = self._tc.jutils.convert.from_scala_option(self._scala.scalings())
+        if s:
+            return list(self._tc.jutils.convert.from_scala_seq(s))
+        return None
 
     @property
     def k(self):

@@ -138,6 +138,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    */
   def computeClusterSizes(frame: Frame, observationColumns: Option[Seq[String]] = None): Array[Int] = {
     require(frame != null, "frame is required")
+    require(observationColumns != null, "observationColumns cannot be null (can be None)")
     if (observationColumns.isDefined) {
       require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
@@ -159,6 +160,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    */
   def computeWsse(frame: Frame, observationColumns: Option[Vector[String]] = None): Double = {
     require(frame != null, "frame is required")
+    require(observationColumns != null, "observationColumns cannot be null (can be None)")
     if (observationColumns.isDefined) {
       require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }
@@ -175,6 +177,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    */
   def addDistanceColumns(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
     require(frame != null, "frame is required")
+    require(observationColumns != null, "observationColumns cannot be null (can be None)")
     if (observationColumns.isDefined) {
       require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
     }

@@ -2,14 +2,14 @@ package org.trustedanalytics.sparktk.saveload
 
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.sparktk.frame.internal.ops.Load
+import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 
 object Loaders {
 
   def load(sc: SparkContext, path: String): Any = {
     val (id: String, version: Int, tkMetaJson: JValue) = TkSaveLoad.loadTk(sc, path)
-    val loader = loaders.getOrElse(id, throw new RuntimeException(s"Could not find a registered loader for '$id' stored at $path"))
+    val loader = loaders.getOrElse(id, throw new RuntimeException(s"Could not find a registered loader for '$id' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}"))
     loader(sc, path, version, tkMetaJson)
   }
 
@@ -32,8 +32,7 @@ object Loaders {
    * formatId -> loader function
    */
   private lazy val loaders: Map[String, LoaderType] = Map(
-    "Frame" -> Load.loadFrameParquet,
+    Frame.formatId -> Frame.load,
     KMeansModel.formatId -> KMeansModel.load
   )
-
 }

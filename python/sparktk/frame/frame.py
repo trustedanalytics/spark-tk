@@ -4,14 +4,6 @@ from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
 
 
-def to_frame(tc, data, schema=None):
-    return Frame(tc, data, schema)
-
-
-def load_frame(tc, path):
-    return Frame(tc, tc._jtc.loadFrame(path))
-
-
 class Frame(object):
 
     def __init__(self, tc, source, schema=None):
@@ -35,6 +27,16 @@ class Frame(object):
     def create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema)
+
+    @staticmethod
+    def load(tc, scala_frame):
+        """creates a python Frame for the given scala Frame"""
+        return Frame(tc, scala_frame)
+
+    @staticmethod
+    def to_frame(tc, data, schema=None):
+        """converts the data and optional schema into a Frame"""
+        return Frame(tc, data, schema)
 
     def _frame_to_scala(self, python_frame):
         """converts a PythonFrame to a Scala Frame"""

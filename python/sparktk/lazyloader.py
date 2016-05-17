@@ -29,6 +29,7 @@ def get_lazy_loader(instance, name, parent_path=None, package_name='sparktk'):
     """Gets the lazy loader for the given instance and relative descendent name"""
     validate_public_python_name(name)
     private_name = name_to_private(name)
+    logger.debug("get_lazy_loader(name=%s) --> private name=%s", name, private_name)
     if private_name not in instance.__dict__:
         if parent_path is None:
             parent_path = os.path.dirname(os.path.abspath(__file__))  # default to local sparktk path, relative to here
@@ -42,6 +43,7 @@ def create_lazy_loader(path, package_name):
     """Creates a lazy loader access object for the given path, usually an absolute path"""
     class_name = ''.join([piece.capitalize()
                           for piece in get_module_name(path, package_name).split('.')]) + LazyLoader.__name__
+    logger.debug("create_lazy_loader(path=%s, package_name=%s) --> class_name=%s", path, package_name, class_name)
     lazy_loader_class = create_class_type(class_name, baseclass=LazyLoader)
     init_lazy_loader_class(lazy_loader_class, path, package_name)
     instance = lazy_loader_class()

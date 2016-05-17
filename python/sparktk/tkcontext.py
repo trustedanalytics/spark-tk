@@ -3,6 +3,8 @@ from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
 from pyspark import SparkContext
+import logging
+logger = logging.getLogger('sparktk')
 
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
@@ -31,10 +33,14 @@ class TkContext(object):
         """access to the various models of sparktk"""
         return get_lazy_loader(self, "models")
 
+    @property
+    def frame(self):
+        return get_lazy_loader(self, "frame").frame  # .frame to account for extra 'frame' is name vis-a-vis scala
+
     def to_frame(self, data, schema=None):
         """creates a frame from the given data"""
-        from sparktk.frame.frame import to_frame
-        return to_frame(self, data, schema)
+        from sparktk.frame.frame import Frame
+        return Frame.to_frame(self, data, schema)
 
     def load(self, path):
         """loads an object from the given path"""
@@ -59,9 +65,7 @@ class TkContext(object):
         """
         name_parts = scala_obj.getClass().getName().split('.')
         relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
-        if relevant_path == "frame.Frame":
-            return self.to_frame(scala_obj)
         cmd = "tc.%s.load(tc, scala_obj)" % relevant_path
-        print "cmd=%s" % cmd
+        logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
         proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})
         return proxy

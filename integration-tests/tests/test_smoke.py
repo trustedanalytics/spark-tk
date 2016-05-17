@@ -94,6 +94,8 @@ def test_kmeans_save_load(tc):
                         [("data", float), ("name", str)])
     model = kmeans.train(frame, ["data"], 3, seed=5)
     assert (model.k == 3)
+    assert (model.columns == [u'data'])
+    assert (model.scalings is None)
 
     sizes = model.compute_sizes(frame)
     assert (sizes == [4, 1, 4])
