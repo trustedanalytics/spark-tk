@@ -15,11 +15,17 @@ class JConvert(object):
     def to_scala_list_double(self, python_list):
         return self.scala.toScalaList(self.list_to_double_list(python_list))
 
+    def to_scala_list(self, python_list):
+        return self.scala.toScalaList(python_list)
+
     def to_scala_list_string(self, python_list):
         return self.scala.toScalaList([unicode(item) for item in python_list])
 
     def to_scala_list_string_bool_tuple(self, python_list):
         return self.scala.toScalaList([self.scala.toScalaTuple2(unicode(item[0]), item[1]) for item in python_list])
+
+    def to_scala_list_string_option_tuple(self, python_list):
+        return self.scala.toScalaList([self.scala.toScalaTuple2(unicode(item[0]), self.scala.toOption(item[1])) for item in python_list])
 
     def to_scala_vector_double(self, python_list):
         return self.scala.toScalaVector(self.list_to_double_list(python_list))
@@ -48,6 +54,20 @@ class JConvert(object):
             python_list = self.list_to_double_list(python_list)
         return self.to_scala_option(python_list)
 
+    def to_scala_option_list_string(self, python_list):
+        if isinstance(python_list, list):
+            python_list = self.to_scala_list_string(python_list)
+        return self.to_scala_option(python_list)
+
+    def to_scala_option_either_string_int(self, item):
+        if item is not None:
+            return self.scala.toOption(self.scala.toEitherStringInt(item))
+        else:
+            return self.scala.toOption(item)
+
     def from_scala_option(self, item):
         return self.scala.fromOption(item)
+
+    def from_scala_seq(self, seq):
+        return self.scala.scalaSeqToPython(seq)
 

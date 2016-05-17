@@ -119,48 +119,79 @@ class Frame(object):
         """
         return [name for name, data_type in self.schema]
 
+    @property
+    def row_count(self):
+        """
+        Number of rows in the current frame.
+
+        :return: The number of rows in the frame
+
+        Counts all of the rows in the frame.
+
+        Examples
+        --------
+        Get the number of rows:
+
+        <hide>
+        frame = tc.to_frame([[item] for item in range(0, 4)],[("a", int)])
+        </hide>
+
+        .. code::
+
+            >>> frame.row_count
+            4
+
+        """
+        if self._is_scala:
+            return int(self._scala.rowCount())
+        return self.rdd.count()
+
     def append_csv_file(self, file_name, schema, separator=','):
         self._scala.appendCsvFile(file_name, schema_to_scala(self._tc.sc, schema), separator)
 
     def export_to_csv(self, file_name):
         self._scala.exportToCsv(file_name)
 
-    def count(self):
-        if self._is_scala:
-            return int(self._scala.count())
-        return self.rdd.count()
-
     # Frame Operations
 
     from sparktk.frame.ops.add_columns import add_columns
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
+    from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
     from sparktk.frame.ops.categorical_summary import categorical_summary
     from sparktk.frame.ops.column_median import column_median
     from sparktk.frame.ops.column_mode import column_mode
     from sparktk.frame.ops.column_summary_statistics import column_summary_statistics
     from sparktk.frame.ops.correlation import correlation
     from sparktk.frame.ops.correlation_matrix import correlation_matrix
+    from sparktk.frame.ops.count import count
     from sparktk.frame.ops.covariance import covariance
     from sparktk.frame.ops.covariance_matrix import covariance_matrix
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.dot_product import dot_product
     from sparktk.frame.ops.drop_columns import drop_columns
+    from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
+    from sparktk.frame.ops.entropy import entropy
     from sparktk.frame.ops.export_data import export_to_json
     from sparktk.frame.ops.filter import filter
+    from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
+    from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
     from sparktk.frame.ops.rename_columns import rename_columns
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.sort import sort
+    from sparktk.frame.ops.sortedk import sorted_k
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
+    from sparktk.frame.ops.topk import top_k
+    from sparktk.frame.ops.unflatten_columns import unflatten_columns
 
 
 

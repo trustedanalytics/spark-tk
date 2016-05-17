@@ -1,7 +1,6 @@
 package org.trustedanalytics.sparktk.jvm
 
 import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
-
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
@@ -16,6 +15,13 @@ object JConvert extends Serializable {
       case null | None => None
       case item: JArrayList[T] => Some(toScalaList(item))
       case _ => Some(item)
+    }
+  }
+
+  def toEitherStringInt(item: Any): Either[String, Int] = {
+    item match {
+      case s: String => Left(s)
+      case i: Int => Right(i)
     }
   }
 
@@ -47,6 +53,12 @@ object JConvert extends Serializable {
     }
 
     hashMap
+  }
+
+  def scalaSeqToPython[T](seq: Seq[T]): JArrayList[T] = {
+    val pythonList = new JArrayList[T]()
+    seq.map(item => pythonList.add(item))
+    pythonList
   }
 
   def toScalaTuple2[T](a: T, b: T): (T, T) = {

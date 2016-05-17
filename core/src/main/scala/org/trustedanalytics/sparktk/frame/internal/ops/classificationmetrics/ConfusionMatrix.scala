@@ -1,6 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics
 
-case class ConfusionMatrix(rowLabels: List[String], columnLabels: List[String]) {
+case class ConfusionMatrix(rowLabels: Seq[String], columnLabels: Seq[String]) {
   val numRows = rowLabels.size
   val numColumns = columnLabels.size
   private var matrix: Array[Array[Long]] = Array.fill(numRows) { Array.fill(numColumns) { 0L } }

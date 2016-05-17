@@ -4,7 +4,6 @@ from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
 from pyspark import SparkContext
 
-
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
 

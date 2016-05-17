@@ -9,10 +9,10 @@ import org.trustedanalytics.sparktk.frame.{ Column, DataTypes }
 trait BinColumnTransformWithResult extends BaseFrame {
 
   def binColumn(column: String,
-                bins: Option[List[Double]],
+                bins: Option[Seq[Double]],
                 includeLowest: Boolean = true,
                 strictBinning: Boolean = false,
-                binColumnName: Option[String] = None): Array[Double] = {
+                binColumnName: Option[String] = None): Seq[Double] = {
 
     execute(BinColumn(column, bins, includeLowest, strictBinning, binColumnName))
   }
@@ -33,12 +33,12 @@ trait BinColumnTransformWithResult extends BaseFrame {
  * @param binColumnName The name of the new column may be optionally specified
  */
 case class BinColumn(column: String,
-                     bins: Option[List[Double]],
+                     bins: Option[Seq[Double]],
                      includeLowest: Boolean,
                      strictBinning: Boolean,
-                     binColumnName: Option[String]) extends FrameTransformWithResult[Array[Double]] {
+                     binColumnName: Option[String]) extends FrameTransformWithResult[Seq[Double]] {
 
-  override def work(state: FrameState): FrameTransformReturn[Array[Double]] = {
+  override def work(state: FrameState): FrameTransformReturn[Seq[Double]] = {
     val columnIndex = state.schema.columnIndex(column)
     state.schema.requireColumnIsNumerical(column)
     val newColumnName = binColumnName.getOrElse(state.schema.getNewColumnName(column + "_binned"))
