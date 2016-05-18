@@ -88,9 +88,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val countryCode = new FrameRdd(codeSchema, sparkContext.parallelize(idCountryCodes))
       val countryNames = new FrameRdd(countrySchema, sparkContext.parallelize(idCountryNames))
 
-      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(150))
-      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(10000))
-
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
 
@@ -152,9 +149,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
 
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"))
-
-      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(1500L))
-      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(100L + Int.MaxValue))
 
       // Test join wrapper function
       val resultFrame = JoinRddFunctions.leftJoin(leftJoinParam, rightJoinParam, true)
@@ -220,11 +214,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
 
       val resultFrame = JoinRddFunctions.rightJoin(leftJoinParam, rightJoinParam, true)
 
-      //      val broadcastJoinThreshold = 1000
-      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0"), Some(800))
-      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0"), Some(4000))
-      //
-      //      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right", broadcastJoinThreshold)
       val results = resultFrame.collect()
 
       resultFrame.frameSchema.columns should equal(List(
@@ -315,9 +304,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
 
-      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(150))
-      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(10000))
-
       val resultFrame = JoinRddFunctions.innerJoin(leftJoinParam, rightJoinParam, Some("inner"))
       val results = resultFrame.collect()
 
@@ -373,9 +359,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
 
       val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"))
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
-
-      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(1500L))
-      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(100L + Int.MaxValue))
 
       // Test join wrapper function
       val resultFrame = JoinRddFunctions.leftJoin(leftJoinParam, rightJoinParam, true)
@@ -437,12 +420,6 @@ class SparkJoinITest extends TestingSparkContextWordSpec with Matchers {
       val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"))
 
       val resultFrame = JoinRddFunctions.rightJoin(leftJoinParam, rightJoinParam, true)
-
-      //      val broadcastJoinThreshold = 1000
-      //      val leftJoinParam = RddJoinParam(countryCode, Seq("col_0", "col_2"), Some(800))
-      //      val rightJoinParam = RddJoinParam(countryNames, Seq("col_0", "col_2"), Some(4000))
-      //
-      //      val resultFrame = JoinRddFunctions.join(leftJoinParam, rightJoinParam, "right", broadcastJoinThreshold)
 
       val results = resultFrame.collect()
 

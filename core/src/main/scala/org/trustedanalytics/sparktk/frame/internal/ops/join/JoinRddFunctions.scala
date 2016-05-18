@@ -49,9 +49,9 @@ object JoinRddFunctions extends Serializable {
    */
   def innerJoin(left: RddJoinParam,
                 right: RddJoinParam,
-                useBroadcast: Option[String] = None): FrameRdd = {
+                useBroadcast: Option[String]): FrameRdd = {
 
-    val joinedRdd = if (useBroadcast.isDefined) {
+    val joinedRdd = if (useBroadcast == Some("left") || useBroadcast == Some("right")) {
       left.innerBroadcastJoin(right, useBroadcast)
     }
     else {
@@ -189,7 +189,7 @@ object JoinRddFunctions extends Serializable {
 
     joinedRdd.map(row => {
       val rowArray = row.toSeq.toArray
-      leftJoinIndices.zip(rightJoinIndices).map {
+      leftJoinIndices.zip(rightJoinIndices).foreach {
         case (leftIndex, rightIndex) => {
           if (row.get(leftIndex) == null) {
             rowArray(leftIndex) = row.get(rightIndex)

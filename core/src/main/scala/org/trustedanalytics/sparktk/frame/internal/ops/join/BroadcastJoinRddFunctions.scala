@@ -71,9 +71,9 @@ class BroadcastJoinRddFunctions(self: RddJoinParam) extends Logging with Seriali
    * @param other join parameter for second data frame
    * @return key-value RDD whose values are results of inner-outer join
    */
-  def innerBroadcastJoin(other: RddJoinParam, useBroadcast: Option[String] = None): RDD[Row] = {
+  def innerBroadcastJoin(other: RddJoinParam, useBroadcast: Option[String]): RDD[Row] = {
     val rowWrapper = new RowWrapper(other.frame.frameSchema)
-    val innerJoinedRDD = if (useBroadcast == "right") {
+    val innerJoinedRDD = if (useBroadcast == Some("right")) {
       val rightBroadcastVariable = JoinBroadcastVariable(other)
       val rightColsToKeep = other.frame.frameSchema.dropColumns(other.joinColumns.toList).columnNames
       val leftJoinColumns = self.joinColumns.toList
@@ -86,7 +86,7 @@ class BroadcastJoinRddFunctions(self: RddJoinParam) extends Logging with Seriali
         }
       })
     }
-    else if (useBroadcast == "left") {
+    else if (useBroadcast == Some("left")) {
       val leftBroadcastVariable = JoinBroadcastVariable(self)
       val rightJoinColumns = other.joinColumns.toList
       other.frame.flatMapRows(rightRow => {

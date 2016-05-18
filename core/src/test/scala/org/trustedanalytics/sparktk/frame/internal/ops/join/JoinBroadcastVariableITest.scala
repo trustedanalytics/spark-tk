@@ -60,7 +60,6 @@ class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matche
       val countryNames = new FrameRdd(inputSchema, sparkContext.parallelize(List.empty[Row]))
 
       val joinParam = RddJoinParam(countryNames, Seq("col_0"))
-      //val joinParam = RddJoinParam(countryNames, Seq("col_0"), Some(3L * 1024 * 1024 * 1024))
 
       val broadcastVariable = JoinBroadcastVariable(joinParam)
 
@@ -76,7 +75,6 @@ class JoinBroadcastVariableITest extends TestingSparkContextWordSpec with Matche
       intercept[Exception] {
         val countryNames = new FrameRdd(inputSchema, sparkContext.parallelize(idCountryNames))
         val joinParam = RddJoinParam(countryNames, Seq("col_bad"))
-        //val joinParam = RddJoinParam(countryNames, Seq("col_bad"), Some(3L * 1024 * 1024 * 1024))
         JoinBroadcastVariable(joinParam)
       }
     }

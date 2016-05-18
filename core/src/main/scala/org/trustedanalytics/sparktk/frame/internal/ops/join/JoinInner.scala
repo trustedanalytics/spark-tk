@@ -1,6 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.join
 
-import org.trustedanalytics.sparktk.frame.{ DataTypes, Frame }
+import org.trustedanalytics.sparktk.frame.{ SchemaHelper, DataTypes, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
@@ -28,7 +28,7 @@ case class JoinInner(right: Frame,
                      useBroadcast: Option[String]) extends FrameSummarization[Frame] {
 
   require(right != null, "right frame is required")
-  require(leftOn != null || leftOn.length != 0, "left join column is required")
+  require(leftOn != null || leftOn.nonEmpty, "left join column is required")
   require(rightOn != null, "right join column is required")
   require(useBroadcast.isEmpty
     || (useBroadcast.get == "left" || useBroadcast.get == "right"),
@@ -42,16 +42,9 @@ case class JoinInner(right: Frame,
     //first validate join columns are valid
     val leftColumns = leftOn
     val rightColumns = rightOn.getOrElse(leftOn)
-    leftFrame.schema.validateColumnsExist(leftColumns)
-    rightFrame.schema.validateColumnsExist(rightColumns)
 
-    //Check left join column is compatiable with right join column
-    (leftColumns zip rightColumns).map {
-      case (leftJoinCol, rightJoinCol) => require(DataTypes.isCompatibleDataType(
-        leftFrame.schema.columnDataType(leftJoinCol),
-        rightFrame.schema.columnDataType(rightJoinCol)),
-        "Join columns must have compatible data types")
-    }
+    //First validates join columns are valid and checks left join column is compatible with right join columns
+    SchemaHelper.checkValidColumnsExistAndCompatible(leftFrame, rightFrame, leftColumns, rightColumns)
 
     val joinedFrame = JoinRddFunctions.innerJoin(
       RddJoinParam(leftFrame, leftColumns),

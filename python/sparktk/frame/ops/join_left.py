@@ -36,8 +36,6 @@ def join_left(self,
 
     It is recommended that you rename the columns to meaningful terms prior
     to using the ``join`` method.
-    Keep in mind that unicode in column names will likely cause the
-    drop_frames() method (and others) to fail!
 
     Examples
     --------
@@ -51,11 +49,11 @@ def join_left(self,
     -etc-
 
     >>> country_code_rows = [[1, 354, "a"],[2, 91, "a"],[2, 100, "b"],[3, 47, "a"],[4, 968, "c"],[5, 50, "c"]]
-    >>> country_code_schema = [("col_0", int),("col_1", int),("col_2",str)]
+    >>> country_code_schema = [("country_code", int),("area_code", int),("test_str",str)]
     -etc-
 
     >>> country_name_rows = [[1, "Iceland", "a"],[1, "Ice-land", "a"],[2, "India", "b"],[3, "Norway", "a"],[4, "Oman", "c"],[6, "Germany", "c"]]
-    >>> country_names_schema = [("col_0", int),("col_1", str),("col_2",str)]
+    >>> country_names_schema = [("country_code", int),("country_name", str),("test_str",str)]
     -etc-
 
     >>> country_codes_frame = tc.to_frame(country_code_rows, country_code_schema)
@@ -89,6 +87,23 @@ def join_left(self,
     [2]        3  green
     [3]        4  blue
 
+    >>> j_left = codes.join_left(colors, 'numbers')
+    <progress>
+
+    >>> j_left.inspect()
+    [#]  numbers_L  color
+    ======================
+    [0]          0  None
+    [1]          1  red
+    [2]          1  red
+    [3]          1  red
+    [4]          2  yellow
+    [5]          3  green
+    [6]          3  green
+    [7]          5  None
+
+    setting use_broadcast_right to True
+
     >>> j_left = codes.join_left(colors, 'numbers', use_broadcast_right=True)
     <progress>
 
@@ -109,46 +124,60 @@ def join_left(self,
     Consider two frames: country_codes_frame and country_names_frame
 
     >>> country_codes_frame.inspect()
-    [#]  col_0  col_1  col_2
-    ========================
-    [0]      1    354  a
-    [1]      2     91  a
-    [2]      2    100  b
-    [3]      3     47  a
-    [4]      4    968  c
-    [5]      5     50  c
+    [#]  country_code  area_code  test_str
+    ======================================
+    [0]             1        354  a
+    [1]             2         91  a
+    [2]             2        100  b
+    [3]             3         47  a
+    [4]             4        968  c
+    [5]             5         50  c
 
 
     >>> country_names_frame.inspect()
-    [#]  col_0  col_1     col_2
-    ===========================
-    [0]      1  Iceland   a
-    [1]      1  Ice-land  a
-    [2]      2  India     b
-    [3]      3  Norway    a
-    [4]      4  Oman      c
-    [5]      6  Germany   c
+    [#]  country_code  country_name  test_str
+    =========================================
+    [0]             1  Iceland       a
+    [1]             1  Ice-land      a
+    [2]             2  India         b
+    [3]             3  Norway        a
+    [4]             4  Oman          c
+    [5]             6  Germany       c
 
-    Join them on the 'col_0' and 'col_2' columns ('inner' join by default)
+    Join them on the 'country_code' and 'test_str' columns  ('inner' join by default)
 
-    >>> composite_join_left = country_codes_frame.join_left(country_names_frame, ['col_0', 'col_2'])
+    >>> composite_join_left = country_codes_frame.join_left(country_names_frame, ['country_code', 'test_str'])
     <progress>
 
     >>> composite_join_left.inspect()
-    [#]  col_0_L  col_1_L  col_2_L  col_1_R
-    ========================================
-    [0]        1      354  a        Iceland
-    [1]        1      354  a        Ice-land
-    [2]        2       91  a        None
-    [3]        2      100  b        India
-    [4]        3       47  a        Norway
-    [5]        4      968  c        Oman
-    [6]        5       50  c        None
+    [#]  country_code_L  area_code  test_str_L  country_name
+    ========================================================
+    [0]               1        354  a           Iceland
+    [1]               1        354  a           Ice-land
+    [2]               2         91  a           None
+    [3]               2        100  b           India
+    [4]               3         47  a           Norway
+    [5]               4        968  c           Oman
+    [6]               5         50  c           None
 
+    setting use_broadcast_right to True
 
-    More examples can be found in the :ref:`user manual
-    <example_frame.join>`.
+    >>> composite_join_left = country_codes_frame.join_left(country_names_frame, ['country_code', 'test_str'], use_broadcast_right=True)
+    <progress>
+
+    >>> composite_join_left.inspect()
+    [#]  country_code_L  area_code  test_str_L  country_name
+    ========================================================
+    [0]               1        354  a           Ice-land
+    [1]               1        354  a           Iceland
+    [2]               2         91  a           None
+    [3]               2        100  b           India
+    [4]               3         47  a           Norway
+    [5]               4        968  c           Oman
+    [6]               5         50  c           None
+
     """
+
     if left_on is None:
         raise ValueError("Please provide column name on which join should be performed")
     elif isinstance(left_on, basestring):
