@@ -12,6 +12,43 @@ def load_frame(tc, path):
     return Frame(tc, tc._jtc.loadFrame(path))
 
 
+def load_frame_from_csv(tc, path, delimiter=",", header=False, inferschema=True, schema=None):
+    from pyspark.sql import SQLContext
+
+    if schema is not None:
+        inferschema = False   # if a custom schema is provided, don't waste time inferring the schema during load
+    if not isinstance(header, bool):
+        raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
+    if not isinstance(inferschema, bool):
+        raise ValueError("inferschema parameter must be a boolean, but is {0}.".format(type(inferschema)))
+
+    header_str = str(header).lower()
+    inferschema_str = str(inferschema).lower()
+    sqlContext = SQLContext(tc.sc)
+    df = sqlContext.read.format("com.databricks.spark.csv").options(delimiter=delimiter,
+                                                                    header=header_str,
+                                                                    inferschema=inferschema_str).load(path)
+    df_schema = []
+
+    if schema is None:
+        for column in df.schema.fields:
+            datatype = str
+            import sparktk.dtypes as dtypes
+            try:
+                datatype = dtypes.dtypes.get_primitive_type_from_pyspark_type(type(column.dataType))
+            except ValueError:
+                print "Warning: No mapping for type: {0}. Column '{1}' will default to use strings.".format(str(column.dataType), column.name)
+            df_schema.append((column.name, datatype))
+    else:
+        df_column_count = len(df.schema.fields)
+        custom_column_count = len(schema)
+        if (df_column_count != custom_column_count):
+            raise ValueError("Bad schema value.  The number of columns in the custom schema ({0}) must match the"
+                             "number of columns in the csv file data ({1}).".format(custom_column_count, df_column_count))
+        df_schema = schema
+    return Frame(tc, df.rdd, df_schema)
+
+
 class Frame(object):
 
     def __init__(self, tc, source, schema=None):
