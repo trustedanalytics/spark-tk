@@ -64,4 +64,4 @@ object SaveLoad {
  * @param formatVersion the version of the format for the information being loaded
  * @param data the retrieved data
  */
-case class LoadResult(formatId: String, formatVersion: Int, data: JValue))
+case class LoadResult(formatId: String, formatVersion: Int, data: JValue)

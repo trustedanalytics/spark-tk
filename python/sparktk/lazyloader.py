@@ -227,12 +227,12 @@ def wrap_for_implicit_kwargs(function, implicit_kwargs):
 
 
 def validate_is_implicit(function_name, arg_index, args, defaults):
-    """Raises a TypeError if the arg does not have an implicit default value"""
+    """Raises a TypeError if the kwarg does not have an implicit default value"""
     try:
         default_offset = len(args) - (len(defaults) if defaults else 0)
         default_index = arg_index - default_offset
-        assert(default_index >= 0)  # index must be into the kwargs
-        assert(defaults[default_index] is implicit)
+        if default_index >= 0:
+            assert(defaults[default_index] is implicit)
     except:
         raise TypeError("Lazyloader asked to implicitly fill arg '%s' but it is not marked implicit in function %s" %
                         (args[arg_index], function_name))
