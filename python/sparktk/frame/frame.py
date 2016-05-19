@@ -4,6 +4,11 @@ from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
 
 
+# import constructors for the API's sake (not actually dependencies of the Frame class)
+from sparktk.frame.constructors.create import create
+from sparktk.frame.constructors.import_csv import import_csv
+
+
 class Frame(object):
 
     def __init__(self, tc, source, schema=None):
@@ -32,11 +37,6 @@ class Frame(object):
     def load(tc, scala_frame):
         """creates a python Frame for the given scala Frame"""
         return Frame(tc, scala_frame)
-
-    @staticmethod
-    def to_frame(tc, data, schema=None):
-        """converts the data and optional schema into a Frame"""
-        return Frame(tc, data, schema)
 
     def _frame_to_scala(self, python_frame):
         """converts a PythonFrame to a Scala Frame"""
@@ -84,7 +84,6 @@ class Frame(object):
             python_rdd = RDD(java_rdd, self._tc.sc)
             self._frame = PythonFrame(python_rdd, python_schema)
         return self._frame
-
 
     ##########################################################################
     # API
@@ -193,7 +192,3 @@ class Frame(object):
     from sparktk.frame.ops.tally_percent import tally_percent
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
-
-
-
-

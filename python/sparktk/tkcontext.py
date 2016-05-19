@@ -3,6 +3,8 @@ from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
 from pyspark import SparkContext
+from sparktk.decorators import deprecated
+
 import logging
 logger = logging.getLogger('sparktk')
 
@@ -31,16 +33,17 @@ class TkContext(object):
     @property
     def models(self):
         """access to the various models of sparktk"""
-        return get_lazy_loader(self, "models")
+        return get_lazy_loader(self, "models", implicit_kwargs={'tc': self})
 
     @property
     def frame(self):
-        return get_lazy_loader(self, "frame").frame  # .frame to account for extra 'frame' is name vis-a-vis scala
+        return get_lazy_loader(self, "frame", implicit_kwargs={'tc': self}).frame  # .frame to account for extra 'frame' in name vis-a-vis scala
 
+    @deprecated
     def to_frame(self, data, schema=None):
         """creates a frame from the given data"""
-        from sparktk.frame.frame import Frame
-        return Frame.to_frame(self, data, schema)
+        from sparktk.frame.frame import create
+        return create(data, schema, tc=self)
 
     def load(self, path):
         """loads an object from the given path"""

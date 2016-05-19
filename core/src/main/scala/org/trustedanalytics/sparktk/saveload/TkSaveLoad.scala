@@ -2,7 +2,6 @@ package org.trustedanalytics.sparktk.saveload
 
 import org.apache.hadoop.fs.Path
 import org.apache.spark.SparkContext
-import org.json4s.JsonAST.JValue
 
 /**
  * Library to save/load json metadata in a tk/ subfolder
@@ -17,7 +16,7 @@ object TkSaveLoad {
    * @param path the source path
    * @return a tuple of (formatId, formatVersion, data)
    */
-  def loadTk(sc: SparkContext, path: String): (String, Int, JValue) = {
+  def loadTk(sc: SparkContext, path: String): LoadResult = {
     SaveLoad.load(sc, tkMetadataPath(path))
   }
 

@@ -33,15 +33,15 @@ object SaveLoad {
    * Loads data from a file into a json4s JValue and provides format identifier and version
    * @param sc active spark context
    * @param path the source path
-   * @return a tuple of (formatId, formatVersion, data)
+   * @return the payload from the load
    */
-  def load(sc: SparkContext, path: String): (String, Int, JValue) = {
+  def load(sc: SparkContext, path: String): LoadResult = {
     implicit val formats = DefaultFormats
     val contents = parse(sc.textFile(path).first())
     val formatId = (contents \ "id").extract[String]
     val formatVersion = (contents \ "version").extract[Int]
     val dataJValue: JValue = contents \ "data"
-    (formatId, formatVersion, dataJValue)
+    LoadResult(formatId, formatVersion, dataJValue)
   }
 
   /**
@@ -56,3 +56,12 @@ object SaveLoad {
     sourceJValue.extract[T]
   }
 }
+
+/**
+ * The results of a load operation
+ *
+ * @param formatId the identifier of the format type found, usually the full name of a case class type
+ * @param formatVersion the version of the format for the information being loaded
+ * @param data the retrieved data
+ */
+case class LoadResult(formatId: String, formatVersion: Int, data: JValue))

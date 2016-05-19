@@ -1498,6 +1498,11 @@
           <artifactId>libsvm</artifactId>
           <version>3.17</version>
         </dependency>
+        <dependency>
+          <groupId>com.databricks</groupId>
+          <artifactId>spark-csv_2.10</artifactId>
+          <version>1.4.0</version>
+        </dependency>
       </dependencies>
     </dependencyManagement>
   </project>

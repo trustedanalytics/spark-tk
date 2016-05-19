@@ -8,9 +8,9 @@ import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 object Loaders {
 
   def load(sc: SparkContext, path: String): Any = {
-    val (id: String, version: Int, tkMetaJson: JValue) = TkSaveLoad.loadTk(sc, path)
-    val loader = loaders.getOrElse(id, throw new RuntimeException(s"Could not find a registered loader for '$id' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}"))
-    loader(sc, path, version, tkMetaJson)
+    val result = TkSaveLoad.loadTk(sc, path)
+    val loader = loaders.getOrElse(result.formatId, throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}"))
+    loader(sc, path, result.formatVersion, result.data)
   }
 
   /**
