@@ -405,6 +405,10 @@
               <artifactId>scoverage-maven-plugin</artifactId>
               <version>${scoverage-plugin.version}</version>
             </plugin>
+              <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+              </plugin>
           </plugins>
         </reporting>
       </profile>

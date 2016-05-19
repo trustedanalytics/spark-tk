@@ -14,21 +14,21 @@
  *  limitations under the License.
  */
 
-package org.trustedanalytics.sparktk.frame.internal.ops
+package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
-class LoadTest extends TestingSparkContextWordSpec {
+class ImportCsvTest extends TestingSparkContextWordSpec {
 
-  "LoadFromCsv" should {
-    "Load frame with delimiter = |, header = true, inferSchema = true" in {
+  "ImportCsv" should {
+    "Import frame with delimiter = |, header = true, inferSchema = true" in {
       val path = "../integration-tests/datasets/cities.csv"
       val delimiter = "|"
       val header = true
       val inferSchema = true
 
-      val frame = Load.loadFromCsv(path, delimiter, header, inferSchema, sparkContext)
+      val frame = Import.importCsv(sparkContext, path, delimiter, header, inferSchema)
 
       assert(frame.rdd.count == 20)
       assert(frame.schema.columns.length == 6)
@@ -40,10 +40,10 @@ class LoadTest extends TestingSparkContextWordSpec {
       assert(frame.schema.columnDataType("county") == DataTypes.string)
     }
 
-    "Load frame with delimiter = , and string, int, float, bool, datetime types" in {
-      val path = "../integration-tests/datasets/csvloadtest.csv"
+    "Import frame with delimiter = , and string, int, float, bool, datetime types" in {
+      val path = "../integration-tests/datasets/importcsvtest.csv"
 
-      val frame = Load.loadFromCsv(path, ",", true, true, sparkContext)
+      val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 5)
@@ -54,10 +54,10 @@ class LoadTest extends TestingSparkContextWordSpec {
       assert(frame.schema.columnDataType("datetime_column") == DataTypes.string) // We don't have a data/time type
     }
 
-    "Load frame without a header row" in {
+    "Import frame without a header row" in {
       val path = "../integration-tests/datasets/noheader.csv"
 
-      val frame = Load.loadFromCsv(path, ",", false, true, sparkContext)
+      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 5)
@@ -68,10 +68,10 @@ class LoadTest extends TestingSparkContextWordSpec {
       assert(frame.schema.columnDataType("C4") == DataTypes.string) // We don't have a data/time type
     }
 
-    "Load frame without inferring schema and no header row" in {
+    "Import frame without inferring schema and no header row" in {
       val path = "../integration-tests/datasets/noheader.csv"
 
-      val frame = Load.loadFromCsv(path, ",", false, false, sparkContext)
+      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 5)
@@ -81,10 +81,10 @@ class LoadTest extends TestingSparkContextWordSpec {
       }
     }
 
-    "Load frame with a header row, but no inferred schema" in {
-      val path = "../integration-tests/datasets/csvloadtest.csv"
+    "Import frame with a header row, but no inferred schema" in {
+      val path = "../integration-tests/datasets/importcsvtest.csv"
 
-      val frame = Load.loadFromCsv(path, ",", true, false, sparkContext)
+      val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = false)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 5)

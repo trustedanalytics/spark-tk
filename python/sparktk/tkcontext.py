@@ -3,6 +3,10 @@ from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
 from pyspark import SparkContext
+from sparktk.decorators import deprecated
+
+import logging
+logger = logging.getLogger('sparktk')
 
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
@@ -15,6 +19,7 @@ class TkContext(object):
         self._sc = sc
         self._jtc = self._sc._jvm.org.trustedanalytics.sparktk.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
+        self._scala_sc = self._jutils.get_scala_sc()
         loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     @property
@@ -28,68 +33,42 @@ class TkContext(object):
     @property
     def models(self):
         """access to the various models of sparktk"""
-        return get_lazy_loader(self, "models")
+        return get_lazy_loader(self, "models", implicit_kwargs={'tc': self})
 
+    @property
+    def frame(self):
+        return get_lazy_loader(self, "frame", implicit_kwargs={'tc': self}).frame  # .frame to account for extra 'frame' in name vis-a-vis scala
+
+    @deprecated
     def to_frame(self, data, schema=None):
         """creates a frame from the given data"""
-        from sparktk.frame.frame import to_frame
-        return to_frame(self, data, schema)
+        from sparktk.frame.frame import create
+        return create(data, schema, tc=self)
 
-    def load_frame(self, path):
-        """loads a previously saved frame"""
-        from sparktk.frame.frame import load_frame
-        return load_frame(self, path)
+    def load(self, path):
+        """loads an object from the given path"""
+        scala_obj = self._jtc.load(path)
+        return self._create_python_proxy(scala_obj)
 
-    def load_frame_from_csv(self, path, delimiter=",", header=False, inferschema=True, schema=None):
+    def _create_python_proxy(self, scala_obj):
+        """Create a python object for the scala_obj
+
+        Convention is such that the python proxy object is available off the TkContext with the SAME
+        path that the object has in Scala, starting with sparktk.
+
+        Example:
+
+        org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
+
+        means a call to
+
+        tc.models.clustering.kmeans.KMeansModel.load(tc, scala_obj)
+
+        The signature is simply the python tc and the reference to the scala obj
         """
-        Creates a frame with data from a csv file.
-
-        :param path: Full path to the csv file
-        :param delimiter: A string which indicates the separation of data fields.  This is usually a single
-                          character and could be a non-visible character, such as a tab. The default delimiter
-                          is a comma (,).
-        :param header: Boolean value indicating if the first line of the file will be used to name columns,
-                       and not be included in the data.  The default value is false.
-        :param inferschema: Boolean value indicating if the column types will be automatically inferred.  It
-                            requires one extra pass over the data and is false by default.
-        :param: schema: Optionally specify the schema for the dataset.  Number of columns specified in the
-                        schema must match the number of columns in the csv file provided.
-        :return: Frame that contains the data from the csv file
-
-        Examples
-        --------
-
-        Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
-        there is a header and to infer the schema based on the data.
-
-        .. code::
-
-            >>> file_path = "../integration-tests/datasets/cities.csv"
-            >>> frame = tc.load_frame_from_csv(file_path, "|", header=True, inferschema=True)
-            -etc-
-
-            >>> frame.inspect()
-            [#]  rank  city         population_2013  population_2010  change  county
-            ============================================================================
-            [0]     1  Portland              609456           583776  4.40%   Multnomah
-            [1]     2  Salem                 160614           154637  3.87%   Marion
-            [2]     3  Eugene                159190           156185  1.92%   Lane
-            [3]     4  Gresham               109397           105594  3.60%   Multnomah
-            [4]     5  Hillsboro              97368            91611  6.28%   Washington
-            [5]     6  Beaverton              93542            89803  4.16%   Washington
-            [6]    15  Grants Pass            35076            34533  1.57%   Josephine
-            [7]    16  Oregon City            34622            31859  8.67%   Clackamas
-            [8]    17  McMinnville            33131            32187  2.93%   Yamhill
-            [9]    18  Redmond                27427            26215  4.62%   Deschutes
-
-            >>> frame.schema
-            [('rank', int),
-             ('city', str),
-             ('population_2013', int),
-             ('population_2010', int),
-             ('change', str),
-             ('county', str)]
-
-        """
-        from sparktk.frame.frame import load_frame_from_csv
-        return load_frame_from_csv(self, path, delimiter, header, inferschema, schema)
+        name_parts = scala_obj.getClass().getName().split('.')
+        relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
+        cmd = "tc.%s.load(tc, scala_obj)" % relevant_path
+        logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
+        proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})
+        return proxy
