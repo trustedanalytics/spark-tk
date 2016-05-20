@@ -14,15 +14,10 @@
  *  limitations under the License.
  */
 
-package org.trustedanalytics.sparktk.frame.internal.ops.binning
+package org.trustedanalytics.sparktk.frame.internal.ops
 
-import org.apache.spark.{ sql, SparkException }
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.internal.FrameState
-import org.trustedanalytics.sparktk.frame.internal.ops.Count
 import org.trustedanalytics.sparktk.frame.{ Frame, Column, DataTypes, FrameSchema }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec

@@ -26,6 +26,7 @@ import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params named "frameRdd" and "frameSchema" because naming them "rdd" and "schema" masks the base members "rdd" and "schema" in this scope
     with AddColumnsTransform
+    with AppendFrameTransform
     with AssignSampleTransform
     with BinColumnTransformWithResult
     with BinaryClassificationMetricsSummarization
@@ -33,6 +34,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with ColumnMedianSummarization
     with ColumnModeSummarization
     with ColumnSummaryStatisticsSummarization
+    with CopySummarization
     with CorrelationMatrixSummarization
     with CorrelationSummarization
     with CountSummarization
