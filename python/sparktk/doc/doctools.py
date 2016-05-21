@@ -10,35 +10,6 @@ import tempfile
 import logging
 logger = logging.getLogger(__file__)
 
-usage = "Usage: tools <-html=HTML_DIR|-py=PY_DIR>"
-
-if len(sys.argv) < 2:
-    raise RuntimeError(usage)
-
-option = sys.argv[1]
-html_flag = '-html='
-py_flag = '-py='
-
-# 1. pre-process py: clean doctest flags
-# 2. post-process html:  patch "Up" links
-
-# Repair the "Up" link for certain files (this needs to match the doc/templates/css.mako)
-def copy_package(package_path, dest_path): #//output_dirpackage_parent, package_name, zip_handle, exclude_dirs=None):
-    """creates a zip archive"""
-
-    #tmp_output_dir = tempfile.mkdtemp()
-    exclude_dirs = ["tests", "doc"]
-    #package_path = os.path.join(package_parent, package_name)
-    for root, dirs, files in os.walk(package_path, topdown=True):
-        dirs[:] = [d for d in dirs if d not in exclude_dirs]
-        for f in files:
-            if not f.endswith(".pyc"):
-                src = os.path.join(root, f)
-                dst = os.path.join(root, f)
-                shutil.copy(src_path)
-                zip_path = src_path[len(package_parent) + 1:]
-                zip_handle.write(src_path, zip_path)
-
 
 def pre_process_py(path):
 
@@ -86,6 +57,14 @@ def process_html_line(line, full_name):
 
     # clean doctest flags
     return line
+
+
+def parse_for_doc(text, file_name=None):
+    return str(DocExamplesPreprocessor(text, mode='doc', file_name=file_name))
+
+
+def parse_for_doctest(text, file_name=None):
+    return str(DocExamplesPreprocessor(text, mode='doctest', file_name=file_name))
 
 
 class DocExamplesException(Exception):
@@ -230,21 +209,32 @@ class DocExamplesPreprocessor(object):
     def __str__(self):
         return self.processed
 
-
 ##########################################################
-# start script
 
-if option.startswith(html_flag):
-    value = option[len(html_flag):]
-    html_dir = os.path.abspath(value)
-    print "Processing HTML at %s" % html_dir
-    post_process_html(html_dir)
-elif option.startswith(py_flag):
-    value = option[len(py_flag):]
-    py_dir = os.path.abspath(value)
-    print "Processing Python at %s" % py_dir
-    pre_process_py(py_dir)
-else:
-    raise RuntimeError(usage)
+def main():
+    script_name = os.path.basename(__file__)
+    usage = "Usage: %s <-html=HTML_DIR|-py=PY_DIR>" % script_name
+
+    if len(sys.argv) < 2:
+        raise RuntimeError(usage)
+
+    option = sys.argv[1]
+    html_flag = '-html='
+    py_flag = '-py='
+
+    if option.startswith(html_flag):
+        value = option[len(html_flag):]
+        html_dir = os.path.abspath(value)
+        print "[%s] processing HTML at %s" % (script_name, html_dir)
+        post_process_html(html_dir)
+    elif option.startswith(py_flag):
+        value = option[len(py_flag):]
+        py_dir = os.path.abspath(value)
+        print "[%s] processing Python at %s" % (script_name, py_dir)
+        pre_process_py(py_dir)
+    else:
+        raise RuntimeError(usage)
 
 
+if __name__ == "__main__":
+    main()
