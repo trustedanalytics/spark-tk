@@ -358,10 +358,28 @@
             </dependency>
           </dependencies>
         </dependencyManagement>
+
         <dependencies>
           <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.short.version}</artifactId>
+          </dependency>
+
+          <!--Added for in-memory db tetsing  -->
+          <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.175</version>
+          </dependency>
+          <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>8.4-702.jdbc4</version>
+          </dependency>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
           </dependency>
         </dependencies>
       </profile>

@@ -16,7 +16,6 @@ trait ExportToCsvSummarization extends BaseFrame {
 }
 
 case class ExportToCsv(fileName: String, separator: Char) extends FrameSummarization[Unit] {
-  //}, schema: Schema, lineParserArguments: LineParserArguments) extends FrameTransform { //} func: Array[Any] => Seq[Any], schema: Schema) extends FrameTransform {
 
   override def work(state: FrameState): Unit = {
     ExportToCsv.exportToCsvFile(state.rdd, fileName, separator)
