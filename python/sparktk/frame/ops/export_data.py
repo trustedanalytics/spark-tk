@@ -1,7 +1,7 @@
 
-def export_to_json(self, path, count=4, offset=0):
+def export_to_json(self, path, count=0, offset=0):
     """
-    Write current frame to HDFS in csv format.
+    Write current frame to HDFS in Json format.
 
     :param: path: The HDFS folder path where the files will be created.
     :param: count: The number of records you want. Default (0), or a non-positive value, is the whole frame.

@@ -10,20 +10,20 @@ import org.json4s.JsonDSL._
 
 trait ExportToJsonSummarization extends BaseFrame {
 
+  /**
+   * *
+   * Write current frame to HDFS in JSON format.
+   *
+   * @param path : The HDFS folder path where the files will be created.
+   * @param count : The number of records you want. Default (0), or a non-positive value, is the whole frame.
+   * @param offset : The number of rows to skip before exporting to the file. Default is zero (0).
+   */
   def exportToJson(path: String, count: Int = 0, offset: Int = 0) = {
     execute(ExportToJson(path, count, offset))
   }
 }
 
-/**
- * *
- * Write current frame to HDFS in JSON format.
- *
- * @param path : The HDFS folder path where the files will be created.
- * @param count : The number of records you want. Default (0), or a non-positive value, is the whole frame.
- * @param offset : The number of rows to skip before exporting to the file. Default is zero (0).
- */
-case class ExportToJson(path: String, count: Int = 0, offset: Int = 0) extends FrameSummarization[Unit] {
+case class ExportToJson(path: String, count: Int, offset: Int) extends FrameSummarization[Unit] {
 
   require(path != null, "Path is required")
   override def work(state: FrameState): Unit = {
@@ -44,8 +44,8 @@ object ExportToJson {
       row =>
         {
           val strArray = row.toSeq.zip(headers).map {
-            case (value, header) => (header, JString(value.toString))
-          }.map(JObject(_)).reduce((a, b) => a ~ b)
+            case (value, header) => JObject((header, JString(value.toString)))
+          }.reduce((a, b) => a ~ b)
           compact(render(strArray))
         }
     }
