@@ -20,6 +20,7 @@ trait ExportToHiveSummarization extends BaseFrame {
 
 case class ExportToHive(tableName: String) extends FrameSummarization[Unit] {
 
+  require(tableName !=null, "Hive table name required")
   override def work(state: FrameState): Unit = {
     ExportToHive.exportToHiveFile(state, tableName)
   }
