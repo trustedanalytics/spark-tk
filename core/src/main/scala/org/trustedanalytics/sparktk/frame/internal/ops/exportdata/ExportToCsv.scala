@@ -1,7 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
 import org.apache.commons.csv.{ CSVPrinter, CSVFormat }
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
@@ -16,7 +15,6 @@ trait ExportToCsvSummarization extends BaseFrame {
 }
 
 case class ExportToCsv(fileName: String, separator: Char) extends FrameSummarization[Unit] {
-  //}, schema: Schema, lineParserArguments: LineParserArguments) extends FrameTransform { //} func: Array[Any] => Seq[Any], schema: Schema) extends FrameTransform {
 
   override def work(state: FrameState): Unit = {
     ExportToCsv.exportToCsvFile(state.rdd, fileName, separator)
