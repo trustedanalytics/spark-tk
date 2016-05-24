@@ -22,13 +22,13 @@ case class ExportToHive(tableName: String) extends FrameSummarization[Unit] {
 
   require(tableName !=null, "Hive table name required")
   override def work(state: FrameState): Unit = {
-    ExportToHive.exportToHiveFile(state, tableName)
+    ExportToHive.exportToHiveTable(state, tableName)
   }
 }
 
 object ExportToHive {
 
-  def exportToHiveFile(frameRdd: FrameRdd,
+  def exportToHiveTable(frameRdd: FrameRdd,
                        hiveTableName: String) = {
 
     val dataFrame = frameRdd.toDataFrameUsingHiveContext
