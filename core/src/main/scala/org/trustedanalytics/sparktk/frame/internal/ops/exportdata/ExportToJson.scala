@@ -43,10 +43,10 @@ object ExportToJson {
     val jsonRDD = filterRdd.map {
       row =>
         {
-          val strArray = row.toSeq.zip(headers).map {
+          val jsonAst = row.toSeq.zip(headers).map {
             case (value, header) => JObject((header, JString(value.toString)))
           }.reduce((a, b) => a ~ b)
-          compact(render(strArray))
+          compact(render(jsonAst))
         }
     }
     jsonRDD.saveAsTextFile(path)
