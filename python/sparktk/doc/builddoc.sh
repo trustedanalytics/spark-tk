@@ -19,7 +19,7 @@ TMP_SPARKTK_DIR=$tmp_dir/sparktk
 rm -r $TMP_SPARKTK_DIR/doc
 
 echo $NAME pre-processing the python for the special doctest flags
-python2.7 -m doctools -py=$TMP_SPARKTK_DIR
+python2.7 -m docutils -py=$TMP_SPARKTK_DIR
 
 
 echo $NAME cd $TMP_SPARKTK_DIR
@@ -39,7 +39,7 @@ popd > /dev/null
 
 # Post-processing:  Patch the "Up" links
 echo $NAME post-processing the HTML
-python2.7 -m doctools -html=$HTML_DIR
+python2.7 -m docutils -html=$HTML_DIR
 
 echo $NAME cleaning up...
 echo $NAME rm $tmp_dir
