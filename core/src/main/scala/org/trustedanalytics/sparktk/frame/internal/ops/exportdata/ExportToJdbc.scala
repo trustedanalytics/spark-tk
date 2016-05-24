@@ -23,13 +23,13 @@ case class ExportToJdbc(connectionUrl: String, tableName: String) extends FrameS
   require(tableName != null, "table name is required")
 
   override def work(state: FrameState): Unit = {
-    ExportToJdbc.exportToJdbcFile(state, connectionUrl, tableName)
+    ExportToJdbc.exportToJdbcTable(state, connectionUrl, tableName)
   }
 }
 
 object ExportToJdbc {
 
-  def exportToJdbcFile(frameRdd: FrameRdd,
+  def exportToJdbcTable(frameRdd: FrameRdd,
                        connectionUrl: String,
                        tableName: String) = {
     val frame: FrameRdd = frameRdd
