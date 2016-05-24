@@ -79,7 +79,7 @@ test_file_name = os.path.join(here, "test_docs_generated.py")  # the name of gen
 
 
 sys.path.insert(0, path_to_doc)
-from doctools import parse_for_doctest, DocExamplesPreprocessor
+from docutils import parse_for_doctest, DocExamplesPreprocessor
 doctest.ELLIPSIS_MARKER = DocExamplesPreprocessor.doctest_ellipsis
 
 
