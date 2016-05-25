@@ -20,7 +20,8 @@ trait ExportToJdbcSummarization extends BaseFrame {
 
 case class ExportToJdbc(connectionUrl: String, tableName: String) extends FrameSummarization[Unit] {
 
-  require(tableName != null, "table name is required")
+  require(tableName.nonEmpty, "table name is required")
+  require(connectionUrl.nonEmpty, "connection url is required")
 
   override def work(state: FrameState): Unit = {
     ExportToJdbc.exportToJdbcTable(state, connectionUrl, tableName)
@@ -30,8 +31,8 @@ case class ExportToJdbc(connectionUrl: String, tableName: String) extends FrameS
 object ExportToJdbc {
 
   def exportToJdbcTable(frameRdd: FrameRdd,
-                       connectionUrl: String,
-                       tableName: String) = {
+                        connectionUrl: String,
+                        tableName: String) = {
     val frame: FrameRdd = frameRdd
     val dataFrame = frame.toDataFrame
     try {
