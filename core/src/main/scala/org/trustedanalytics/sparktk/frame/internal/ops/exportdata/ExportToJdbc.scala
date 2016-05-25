@@ -2,17 +2,20 @@ package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
 import java.sql.SQLException
 import java.util.Properties
+import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
+import org.trustedanalytics.sparktk.frame.internal.{FrameState, FrameSummarization, BaseFrame}
 
 trait ExportToJdbcSummarization extends BaseFrame {
 
   /**
-   * Write current frame to JDBC table.
-   *
-   * @param connectionUrl JDBC connection url to database server
-   * @param tableName JDBC table name
-   */
+    * Write current frame to JDBC table.
+    *
+    * Table will be created or appended to.Export of Vectors is not currently supported.
+    *
+    * @param connectionUrl JDBC connection url to database server
+    * @param tableName     JDBC table name
+    */
   def exportToJdbc(connectionUrl: String, tableName: String) = {
     execute(ExportToJdbc(connectionUrl, tableName))
   }
@@ -20,8 +23,8 @@ trait ExportToJdbcSummarization extends BaseFrame {
 
 case class ExportToJdbc(connectionUrl: String, tableName: String) extends FrameSummarization[Unit] {
 
-  require(tableName.nonEmpty, "table name is required")
-  require(connectionUrl.nonEmpty, "connection url is required")
+  require(StringUtils.isNotEmpty(tableName), "table name is required")
+  require(StringUtils.isNotEmpty(connectionUrl), "connection url is required")
 
   override def work(state: FrameState): Unit = {
     ExportToJdbc.exportToJdbcTable(state, connectionUrl, tableName)
@@ -39,7 +42,7 @@ object ExportToJdbc {
       dataFrame.write.jdbc(connectionUrl, tableName, new Properties)
     }
     catch {
-      case e: SQLException => println("Error message: " + e.toString)
+      case e: SQLException => throw e
     }
   }
 }
