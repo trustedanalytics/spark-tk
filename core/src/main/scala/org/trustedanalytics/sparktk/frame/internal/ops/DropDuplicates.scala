@@ -4,17 +4,19 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform, BaseFrame }
 
 trait DropDuplicatesTransform extends BaseFrame {
-
+  /**
+   * Modify the current frame, removing duplicate rows.
+   *
+   * Remove data rows which are the same as other rows. The entire row can be checked for duplication, or the search
+   * for duplicates can be limited to one or more columns.  This modifies the current frame.
+   *
+   * @param uniqueColumns Column name(s) to identify duplicates. Default is the entire row is compared.
+   */
   def dropDuplicates(uniqueColumns: Option[Seq[String]]): Unit = {
     execute(DropDuplicates(uniqueColumns))
   }
 }
 
-/**
- * Modify the current frame, removing duplicate rows.
- *
- * @param uniqueColumns Column name(s) to identify duplicates. Default is the entire row is compared.
- */
 case class DropDuplicates(uniqueColumns: Option[Seq[String]]) extends FrameTransform {
   override def work(state: FrameState): FrameState = {
     uniqueColumns match {

@@ -7,7 +7,11 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 import org.trustedanalytics.sparktk.saveload.TkSaveLoad
 
 trait SaveSummarization extends BaseFrame {
-
+  /**
+   * Save the current frame.
+   *
+   * @param path The destination path.
+   */
   def save(path: String): Unit = {
     execute(Save(path))
   }
