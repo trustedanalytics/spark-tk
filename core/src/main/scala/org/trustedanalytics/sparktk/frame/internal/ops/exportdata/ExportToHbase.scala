@@ -1,15 +1,14 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
-import com.sun.tools.doclets.internal.toolkit.Configuration
-import org.aopalliance.intercept.Invocation
-import org.apache.commons.lang3.StringUtils
+import org.apache.hadoop.conf.Configuration
+import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.util.Bytes
-import org.apache.hadoop.mapreduce.{ Job }
-import org.apache.hadoop.hbase.mapred.TableOutputFormat
-import org.apache.hadoop.hbase.{HColumnDescriptor, HTableDescriptor, HBaseConfiguration}
-import org.apache.hadoop.hbase.client.{Put, HBaseAdmin}
-import org.trustedanalytics.sparktk.frame.{Schema, DataTypes}
+import org.apache.hadoop.mapreduce.Job
+import org.apache.hadoop.hbase.mapreduce.TableOutputFormat
+import org.apache.hadoop.hbase.{ HColumnDescriptor, HTableDescriptor, HBaseConfiguration }
+import org.apache.hadoop.hbase.client.{ Put, HBaseAdmin }
+import org.trustedanalytics.sparktk.frame.{ Schema, DataTypes }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
@@ -20,9 +19,9 @@ trait ExportToHbaseSummarization extends BaseFrame {
    *
    * Table must exist in HBase.
    *
-   * @param tableName The name of the HBase table that will contain the exported frame
+   * @param tableName     The name of the HBase table that will contain the exported frame
    * @param keyColumnName The name of the column to be used as row key in hbase table
-   * @param familyName The family name of the HBase table that will contain the exported frame
+   * @param familyName    The family name of the HBase table that will contain the exported frame
    */
   def exportToHbase(tableName: String, keyColumnName: Option[String] = None, familyName: String = "familyColumn") = {
     execute(ExportToHbase(tableName, keyColumnName, familyName))
@@ -31,7 +30,9 @@ trait ExportToHbaseSummarization extends BaseFrame {
 
 case class ExportToHbase(tableName: String, keyColumnName: Option[String], familyName: String) extends FrameSummarization[Unit] {
 
-  require(tableName != null, "Hbase table name is required")
+  require(StringUtils.isNotEmpty(tableName), "Hbase table name is required")
+  require(StringUtils.isNotEmpty(familyName), "Hbase table family name is required")
+
   override def work(state: FrameState): Unit = {
     ExportToHbase.exportToHbaseTable(state, tableName, keyColumnName, familyName)
   }
@@ -43,10 +44,8 @@ object ExportToHbase {
                          tableName: String,
                          keyColumnName: Option[String],
                          familyName: String) = {
-    
-    val conf = createConfig(tableName)
-    val familyName = familyName
 
+    val conf = createConfig(tableName)
     val pairRdd = convertToPairRDD(frameRdd,
       familyName,
       keyColumnName.getOrElse(StringUtils.EMPTY))
@@ -63,18 +62,16 @@ object ExportToHbase {
   }
 
   /**
-    * Creates pair rdd to save to hbase
-    *
-    * @param rdd initial frame rdd
-    * @param familyColumnName family column name for hbase
-    * @param keyColumnName key column name for hbase
-    * @param invocation information about the user and the circumstances at the time of the call, as well as a function
-    *                   that can be called to produce a SparkContext that can be used during this invocation
-    * @return pair rdd
-    */
+   * Creates pair rdd to save to hbase
+   *
+   * @param rdd              initial frame rdd
+   * @param familyColumnName family column name for hbase
+   * @param keyColumnName    key column name for hbase
+   * @return pair rdd
+   */
   def convertToPairRDD(rdd: FrameRdd,
                        familyColumnName: String,
-                       keyColumnName: String)(implicit invocation: Invocation) = {
+                       keyColumnName: String) = {
 
     rdd.mapRows(_.valuesAsArray()).zipWithUniqueId().map {
       case (row, index) => buildRow((row, index), rdd.frameSchema, familyColumnName, keyColumnName)
@@ -82,29 +79,28 @@ object ExportToHbase {
   }
 
   /**
-    * Create initial configuration for hbase writer
-    *
-    * @param tableName name of hBase table
-    * @return hBase configuration
-    */
+   * Create initial configuration for hbase writer
+   *
+   * @param tableName name of hBase table
+   * @return hBase configuration
+   */
   private def createConfig(tableName: String): Configuration = {
     val conf = HBaseConfiguration.create()
     conf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
     val job = new Job(conf)
     job.setOutputFormatClass(classOf[TableOutputFormat[ImmutableBytesWritable]])
-
     job.getConfiguration
   }
 
   /**
-    * Builds a row
-    *
-    * @param row row of the original frame
-    * @param schema original schema
-    * @param familyColumnName family column name for hbase
-    * @param keyColumnName key column name for hbase
-    * @return hbase row
-    */
+   * Builds a row
+   *
+   * @param row              row of the original frame
+   * @param schema           original schema
+   * @param familyColumnName family column name for hbase
+   * @param keyColumnName    key column name for hbase
+   * @return hbase row
+   */
   private def buildRow(row: (Array[Any], Long), schema: Schema, familyColumnName: String, keyColumnName: String) = {
     val columnTypes = schema.columns.map(_.dataType)
     val columnNames = schema.columns.map(_.name)
