@@ -1,12 +1,35 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.binning
 
-import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameSummarization, FrameState }
 import org.trustedanalytics.sparktk.frame.DataTypes
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
 trait HistogramSummarization extends BaseFrame {
+  /**
+   * Compute the histogram for a column in a frame.
+   *
+   * Returns a map containing 3 lists one each for: the cutoff points of the bins, size of each bin, and density
+   * of each bin.
+   *
+   * @note The num_bins parameter is considered to be the maximum permissible number of bins because the data may
+   *       dictate fewer bins. With equal depth binning, for example, if the column to be binned has 10 elements with
+   *       only 2 distinct values and the ''num_bins'' parameter is greater than 2, then the number of actual number of
+   *       bins will only be 2. This is due to a restriction that elements with an identical value must belong to the
+   *       same bin.
+   *
+   * @param column Name of column to be evaluated.
+   * @param numBins Number of bins in histogram. Default is Square-root choice will be used
+   *                (in other words math.floor(math.sqrt(frame.row_count)).
+   * @param weightColumnName Name of column containing weights. Default is all observations are weighted equally.
+   * @param binType The type of binning algorithm to use: ["equalwidth"|"equaldepth"]. Default is "equalwidth".
+   * @return A map containing the result set.  The data returned is composed of multiple components:
+   *         - cutoffs : ''array of float''<br>A list containing the edges of each bin.
+   *         - hist : ''array of float''<br>A list containing count of the weighted observations found in each bin.
+   *         - density : ''array of float''<br>A list containing a decimal containing the percentage of observations
+   *         found in the total set per bin.
+   *
+   */
   def histogram(column: String,
                 numBins: Option[Int] = None,
                 weightColumnName: Option[String] = None,

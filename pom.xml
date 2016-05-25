@@ -406,6 +406,10 @@
               <artifactId>scoverage-maven-plugin</artifactId>
               <version>${scoverage-plugin.version}</version>
             </plugin>
+              <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+              </plugin>
           </plugins>
         </reporting>
       </profile>
@@ -1479,6 +1483,11 @@
           <groupId>tw.edu.ntu.csie</groupId>
           <artifactId>libsvm</artifactId>
           <version>3.17</version>
+        </dependency>
+        <dependency>
+          <groupId>com.databricks</groupId>
+          <artifactId>spark-csv_2.10</artifactId>
+          <version>1.4.0</version>
         </dependency>
       </dependencies>
     </dependencyManagement>

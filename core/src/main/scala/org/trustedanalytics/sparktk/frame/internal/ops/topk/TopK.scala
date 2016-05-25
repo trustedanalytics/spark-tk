@@ -22,7 +22,19 @@ import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.{ Frame, FrameSchema, Column }
 
 trait TopKSummarization extends BaseFrame {
-
+  /**
+   * Most or least frequent column values.
+   *
+   * Calculate the top (or bottom) K distinct values by count of a column. The column can be weighted. All data
+   * elements of weight <= 0 are excluded from the calculation, as are all data elements whose weight is NaN or
+   * infinite. If there are no data elements of finite weight > 0, then topK is empty.
+   *
+   * @param columnName The column whose top (or bottom) K distinct values are to be calculated.
+   * @param k Number of entries to return (If k is negative, return bottom k).
+   * @param weightColumn The column that provides weights (frequencies) for the topK calculation. Must
+   *                     contain numerical data.  Default is 1 for all items.
+   * @return Frame with top (or bottom) K distinct values.
+   */
   def topK(columnName: String,
            k: Int,
            weightColumn: Option[String]): Frame = {
@@ -30,14 +42,6 @@ trait TopKSummarization extends BaseFrame {
   }
 }
 
-/**
- * Most or least frequent column values.
- *
- * @param columnName The column whose top (or bottom) K distinct values are to be calculated.
- * @param k Number of entries to return (If k is negative, return bottom k).
- * @param weightColumn The column that provides weights (frequencies) for the topK calculation. Must
- *                     contain numerical data.  Default is 1 for all items.
- */
 case class TopK(columnName: String,
                 k: Int,
                 weightColumn: Option[String]) extends FrameSummarization[Frame] {

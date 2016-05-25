@@ -4,12 +4,9 @@ from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
 
 
-def to_frame(tc, data, schema=None):
-    return Frame(tc, data, schema)
-
-
-def load_frame(tc, path):
-    return Frame(tc, tc._jtc.loadFrame(path))
+# import constructors for the API's sake (not actually dependencies of the Frame class)
+from sparktk.frame.constructors.create import create
+from sparktk.frame.constructors.import_csv import import_csv
 
 
 class Frame(object):
@@ -35,6 +32,11 @@ class Frame(object):
     def create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema)
+
+    @staticmethod
+    def load(tc, scala_frame):
+        """creates a python Frame for the given scala Frame"""
+        return Frame(tc, scala_frame)
 
     def _frame_to_scala(self, python_frame):
         """converts a PythonFrame to a Scala Frame"""
@@ -82,7 +84,6 @@ class Frame(object):
             python_rdd = RDD(java_rdd, self._tc.sc)
             self._frame = PythonFrame(python_rdd, python_schema)
         return self._frame
-
 
     ##########################################################################
     # API
@@ -155,6 +156,7 @@ class Frame(object):
     # Frame Operations
 
     from sparktk.frame.ops.add_columns import add_columns
+    from sparktk.frame.ops.append import append
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
@@ -162,6 +164,7 @@ class Frame(object):
     from sparktk.frame.ops.column_median import column_median
     from sparktk.frame.ops.column_mode import column_mode
     from sparktk.frame.ops.column_summary_statistics import column_summary_statistics
+    from sparktk.frame.ops.copy import copy
     from sparktk.frame.ops.correlation import correlation
     from sparktk.frame.ops.correlation_matrix import correlation_matrix
     from sparktk.frame.ops.count import count
@@ -192,7 +195,3 @@ class Frame(object):
     from sparktk.frame.ops.tally_percent import tally_percent
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
-
-
-
-

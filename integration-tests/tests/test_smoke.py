@@ -80,6 +80,35 @@ def test_kmeans(tc):
 [7]   6.0  op          1      20.25     0.5625       36.0
 [8]   5.0  qr          1      12.25     3.0625       25.0""")
 
+def test_kmeans_save_load(tc):
+
+    frame = tc.to_frame([[2, "ab"],
+                         [1,"cd"],
+                         [7,"ef"],
+                         [1,"gh"],
+                         [9,"ij"],
+                         [2,"kl"],
+                         [0,"mn"],
+                         [6,"op"],
+                         [5,"qr"]],
+                        [("data", float), ("name", str)])
+    model = kmeans.train(frame, ["data"], 3, seed=5)
+    assert (model.k == 3)
+    assert (model.columns == [u'data'])
+    assert (model.scalings is None)
+
+    sizes = model.compute_sizes(frame)
+    assert (sizes == [4, 1, 4])
+
+    centroids = model.centroids
+
+    model.save("sandbox/km1")
+
+    restored = tc.load("sandbox/km1")
+    assert(restored.centroids == centroids)
+    restored_sizes = restored.compute_sizes(frame)
+    assert (restored_sizes == sizes)
+
 
 def test_save_load(tc):
     path = get_sandbox_path("briton1")
@@ -88,11 +117,10 @@ def test_save_load(tc):
                          [("data", float),("name", str)])
     frame1_inspect = frame1.inspect()
     frame1.save(path)
-    frame2 = tc.load_frame(path)
+    frame2 = tc.load(path)
     frame2_inspect = frame2.inspect()
     assert(frame1_inspect, frame2_inspect)
     assert(str(frame1.schema), str(frame2.schema))
-    #print frame2.inspect()
 
 
 def est_np(tc):

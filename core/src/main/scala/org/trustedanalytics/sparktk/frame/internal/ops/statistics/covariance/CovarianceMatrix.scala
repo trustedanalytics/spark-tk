@@ -5,19 +5,21 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 import org.trustedanalytics.sparktk.frame.{ SchemaHelper, DataTypes, Frame }
 
 trait CovarianceMatrixSummarization extends BaseFrame {
+  /**
+   * Calculate covariance matrix for two or more columns.
+   *
+   * @note This function applies only to columns containing numerical data.
+   *
+   * @param dataColumnNames The names of the columns from whic to compute the matrix.  Names should refer
+   *                        to a single column of type vector, or two or more columns of numeric scalars.
+   * @return A matrix with the covariance values for the columns.
+   */
+  def covarianceMatrix(dataColumnNames: List[String]): Frame = {
 
-  def covarianceMatrix(dataColumNames: List[String]): Frame = {
-
-    execute(CovarianceMatrix(dataColumNames))
+    execute(CovarianceMatrix(dataColumnNames))
   }
 }
 
-/**
- * Calculate covariance matrix for two or more columns.
- *
- * @param dataColumnNames The names of the columns from whic to compute the matrix.  Names should refer
- *                        to a single column of type vector, or two or more columns of numeric scalars.
- */
 case class CovarianceMatrix(dataColumnNames: List[String]) extends FrameSummarization[Frame] {
   require(!dataColumnNames.contains(null), "data columns names cannot be null")
   require(dataColumnNames.forall(!_.equals("")), "data columns names cannot be empty")

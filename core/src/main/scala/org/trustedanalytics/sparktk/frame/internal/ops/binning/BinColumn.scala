@@ -8,6 +8,30 @@ import org.trustedanalytics.sparktk.frame.{ Column, DataTypes }
 //todo - FrameBinColumnTranform  (remove *Trait)
 trait BinColumnTransformWithResult extends BaseFrame {
 
+  /**
+   * Classify data into user-defined groups.
+   *
+   * Summarize rows of data based on the value in a single column by sorting them into bins, or groups, based on a
+   * list of bin cutoff points.
+   *
+   * @note
+   *       1. Bins IDs are 0-index, in other words, the lowest bin number is 0.
+   *       1. The first and last cutoffs are always included in the bins. When ''include_lowest'' is ``True``, the last
+   *       bin includes both cutoffs. When ''include_lowest'' is ``False``, the first bin (bin 0) includes both cutoffs.
+   *
+   * @param column the column to bin
+   * @param bins If a single bin value is provided, it defines the number of equal-width bins that will be created.
+   *             Otherwise, bins can be a sequence of bin edges. If a list of bin cutoff points is specified, they must
+   *             be progressively increasing; all bin boundaries must be defined, so with N bins, N+1 values are required.
+   *             If no bins are specified, the default is to create equal-width bins, where the default number of bins is
+   *             the square-root of the number of rows.
+   * @param includeLowest true means the lower bound is inclusive, where false means the upper bound is inclusive.
+   * @param strictBinning if true, each value less than the first cutoff value or greater than the last cutoff value
+   *                      will be assigned to a bin value of -1; if false, values less than the first cutoff value will
+   *                      be placed in the first bin, and those beyond the last cutoff will go in the last bin
+   * @param binColumnName The name of the new column may be optionally specified
+   *
+   */
   def binColumn(column: String,
                 bins: Option[Seq[Double]],
                 includeLowest: Boolean = true,
@@ -18,20 +42,6 @@ trait BinColumnTransformWithResult extends BaseFrame {
   }
 }
 
-/**
- *
- * @param column the column to bin
- * @param bins If a single bin value is provided, it defines the number of equal-width bins that will be created.
- *             Otherwise, bins can be a sequence of bin edges. If a list of bin cutoff points is specified, they must
- *             be progressively increasing; all bin boundaries must be defined, so with N bins, N+1 values are required.
- *             If no bins are specified, the default is to create equal-width bins, where the default number of bins is
- *             the square-root of the number of rows.
- * @param includeLowest true means the lower bound is inclusive, where false means the upper bound is inclusive.
- * @param strictBinning if true, each value less than the first cutoff value or greater than the last cutoff value
- *                      will be assigned to a bin value of -1; if false, values less than the first cutoff value will
- *                      be placed in the first bin, and those beyond the last cutoff will go in the last bin
- * @param binColumnName The name of the new column may be optionally specified
- */
 case class BinColumn(column: String,
                      bins: Option[Seq[Double]],
                      includeLowest: Boolean,

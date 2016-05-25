@@ -21,17 +21,22 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform,
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait UnflattenColumnsTransform extends BaseFrame {
+  /**
+   * Compacts data from multiple rows based on the cell data.
+   *
+   * Groups together cells in all columns (less the composite key) using "," as string delimiter. The original rows
+   * are deleted.  The grouping takes place based on a composite key created from cell values. The column data types
+   * are changed to string.
+   *
+   * @param columns Name of the column(s) to be used as keys for unflattening
+   * @param delimiter Separator for the data in the result columns.  Default is comma (,).
+   */
   def unflattenColumns(columns: List[String],
                        delimiter: String = ","): Unit = {
     execute(UnflattenColumns(columns, delimiter))
   }
 }
 
-/**
- * Compacts data from multiple rows based on the cell data
- * @param columns Name of the column(s) to be used as keys for unflattening
- * @param delimiter Separator for the data in the result columns.  Default is comma (,).
- */
 case class UnflattenColumns(columns: List[String],
                             delimiter: String) extends FrameTransform {
   require(columns != null && columns.nonEmpty, "column list is required for key")

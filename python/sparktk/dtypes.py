@@ -9,6 +9,8 @@ __all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64'
 import numpy as np
 import json
 import re
+from pyspark.sql import types
+
 
 # alias numpy types
 # todo: bring back the numpy types
@@ -113,6 +115,16 @@ _primitive_type_to_str_table = {
     unicode: "unicode",
     ignore: "ignore",
     datetime: "datetime",
+}
+
+# map the pyspark sql type to the primitive data type
+_pyspark_type_to_primitive_type_table = {
+    types.BooleanType : bool,
+    types.LongType : int,
+    types.IntegerType : int,
+    types.DoubleType : float,
+    types.DecimalType : float,
+    types.StringType : str
 }
 
 # build reverse map string -> type
@@ -377,6 +389,18 @@ class _DataTypes(object):
         """create datetime object from ISO 8601 string"""
         return datetime_parser.parse(iso_string)
 
+    @staticmethod
+    def get_primitive_type_from_pyspark_type(pyspark_type):
+        """
+        Get the primitive type for the specified pyspark sql data type.
+        
+        :param pyspark_type: pyspark.sql.types data type
+        :return: Primitive data type
+        """
+        if _pyspark_type_to_primitive_type_table.has_key(pyspark_type):
+            return _pyspark_type_to_primitive_type_table[pyspark_type]
+        else:
+            raise ValueError("Unable to cast pyspark type %s to primitive type." % str(pyspark_type))
 
 dtypes = _DataTypes()
 #valid_data_types = dtypes  # consider for backwards comp

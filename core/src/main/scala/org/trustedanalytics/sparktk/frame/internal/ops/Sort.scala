@@ -20,16 +20,16 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform, BaseFrame }
 
 trait SortTransform extends BaseFrame {
+  /**
+   * Sort by one or more columns.
+   *
+   * @param columnNamesAndAscending Column names to sort by, true for ascending, false for descending.
+   */
   def sort(columnNamesAndAscending: List[(String, Boolean)]): Unit = {
     execute(Sort(columnNamesAndAscending))
   }
 }
 
-/**
- * Sort by one or more columns.
- *
- * @param columnNamesAndAscending Column names to sort by, true for ascending, false for descending.
- */
 case class Sort(columnNamesAndAscending: List[(String, Boolean)]) extends FrameTransform {
   require(columnNamesAndAscending != null && columnNamesAndAscending.nonEmpty, "one or more column names is required.")
   override def work(state: FrameState): FrameState = {
