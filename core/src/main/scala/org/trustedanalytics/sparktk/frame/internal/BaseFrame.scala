@@ -8,7 +8,14 @@ trait BaseFrame {
 
   private var frameState: FrameState = null
 
+  /**
+   * The content of the frame as an RDD of Rows.
+   */
   def rdd: RDD[Row] = if (frameState != null) frameState.rdd else null
+
+  /**
+   * Current frame column names and types.
+   */
   def schema: Schema = if (frameState != null) frameState.schema else null
 
   protected def init(rdd: RDD[Row], schema: Schema): Unit = {
