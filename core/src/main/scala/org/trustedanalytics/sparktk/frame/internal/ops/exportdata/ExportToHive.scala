@@ -1,12 +1,13 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait ExportToHiveSummarization extends BaseFrame {
 
   /**
-   * Write  current frame to Hive table.
+   * Write current frame to Hive table.
    *
    * Table must not exist in Hive. Hive does not support case sensitive table names and columns names.
    * Hence column names with uppercase letters will be converted to lower case by Hive.
@@ -20,7 +21,8 @@ trait ExportToHiveSummarization extends BaseFrame {
 
 case class ExportToHive(tableName: String) extends FrameSummarization[Unit] {
 
-  require(tableName !=null, "Hive table name required")
+  require(StringUtils.isNotEmpty(tableName), "Hive table name required")
+
   override def work(state: FrameState): Unit = {
     ExportToHive.exportToHiveTable(state, tableName)
   }
@@ -29,7 +31,7 @@ case class ExportToHive(tableName: String) extends FrameSummarization[Unit] {
 object ExportToHive {
 
   def exportToHiveTable(frameRdd: FrameRdd,
-                       hiveTableName: String) = {
+                        hiveTableName: String) = {
 
     val dataFrame = frameRdd.toDataFrameUsingHiveContext
     dataFrame.registerTempTable("mytable")
