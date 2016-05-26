@@ -38,11 +38,6 @@ object ExportToJdbc {
                         tableName: String) = {
     val frame: FrameRdd = frameRdd
     val dataFrame = frame.toDataFrame
-    try {
-      dataFrame.write.jdbc(connectionUrl, tableName, new Properties)
-    }
-    catch {
-      case e: SQLException => throw e
-    }
+    dataFrame.write.jdbc(connectionUrl, tableName, new Properties)
   }
 }
