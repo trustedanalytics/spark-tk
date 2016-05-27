@@ -1,7 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
 import org.apache.commons.csv.{ CSVPrinter, CSVFormat }
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
