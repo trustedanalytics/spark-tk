@@ -16,7 +16,6 @@
 
 package org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics
 
-import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, ScoreAndLabel }
 import org.apache.spark.rdd.RDD
 
@@ -25,6 +24,52 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 
 trait BinaryClassificationMetricsSummarization extends BaseFrame {
 
+  /**
+   * Statistics of accuracy, precision, and others for a binary classification model.
+   *
+   * Calculate the accuracy, precision, confusion_matrix, recall and :math:`F_{ \beta}`
+   * measure for a classification model.
+   *
+   * The '''fMeasure''' result is the :math:`F_{ \beta}` measure for a classification model. The :math:`F_{ \beta}`
+   * measure of a binary classification model is the harmonic mean of precision and recall.
+   *
+   * If we let:
+   * - beta :math:`\equiv \beta`,
+   * - :math:`T_{P}` denotes the number of true positives,
+   * - :math:`F_{P}` denotes the number of false positives, and
+   * - :math:`F_{N}` denotes the number of false negatives
+   *
+   * then:
+   *
+   * .. math::
+   *
+   *    F_{ \beta} = (1 + \beta ^ 2) * \frac{ \frac{T_{P}}{T_{P} + F_{P}} * \
+   *    \frac{T_{P}}{T_{P} + F_{N}}}{ \beta ^ 2 * \frac{T_{P}}{T_{P} + \
+   *    F_{P}}  + \frac{T_{P}}{T_{P} + F_{N}}}
+   *
+   *
+   * - The '''recall''' result of a binary classification model is the proportion of positive instances that are
+   * correctly identified. If we let :math:`T_{P}` denote the number of true positives and :math:`F_{N}` denote the
+   * number of false negatives, then the model recall is given by :math:`\frac {T_{P}} {T_{P} + F_{N}}`.
+   *
+   * - The '''precision''' of a binary classification model is the proportion of predicted positive instances that are
+   * correctly identified.  If we let :math:`T_{P}` denote the number of true positives and :math:`F_{P}` denote the
+   * number of false positives, then the model precision is given by: :math:`\frac {T_{P}} {T_{P} + F_{P}}`.
+   *
+   * - The '''accuracy''' of a classification model is the proportion of predictions that are correctly identified.
+   * If we let :math:`T_{P}` denote the number of true positives, :math:`T_{N}` denote the number of true negatives,
+   * and :math:`K` denote the total number of classified instances, then the model accuracy is given by:
+   * :math:`\frac{T_{P} + T_{N}}{K}`.
+   *
+   * - The '''confusionMatrix''' result is a confusion matrix for a binary classifier model, formatted for human readability.
+   *
+   * @param labelColumn The name of the column containing the correct label for each instance.
+   * @param predColumn The name of the column containing the predicted label for each instance.
+   * @param posLabel The value to be interpreted as a positive instance for binary classification.
+   * @param beta This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is
+   *             computed); must be greater than zero. Default is 1.
+   * @param frequencyColumn The name of an optional column containing the frequency of observations.
+   */
   def binaryClassificationMetrics(labelColumn: String,
                                   predColumn: String,
                                   posLabel: Any,
@@ -34,16 +79,6 @@ trait BinaryClassificationMetricsSummarization extends BaseFrame {
   }
 }
 
-/**
- * Statistics of accuracy, precision, and others for a binary classification model.
- *
- * @param labelColumn The name of the column containing the correct label for each instance.
- * @param predColumn The name of the column containing the predicted label for each instance.
- * @param posLabel The value to be interpreted as a positive instance for binary classification.
- * @param beta This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is
- *             computed); must be greater than zero. Default is 1.
- * @param frequencyColumn The name of an optional column containing the frequency of observations.
- */
 case class BinaryClassificationMetrics(labelColumn: String,
                                        predColumn: String,
                                        posLabel: Any,

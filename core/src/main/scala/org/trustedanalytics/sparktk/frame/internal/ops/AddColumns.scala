@@ -6,7 +6,17 @@ import org.trustedanalytics.sparktk.frame.internal._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait AddColumnsTransform extends BaseFrame {
-
+  /**
+   * Adds columns to frame according to row function (UDF)
+   *
+   * Assigns data to column based on evaluating a function for each row.
+   *
+   * @note
+   *       1. The rowFunction must return a value in the same format as specified by the schema.
+   *
+   * @param rowFunction map function which produces new row columns
+   * @param newColumns sequence of the new columns being added (Schema)
+   */
   def addColumns(rowFunction: RowWrapper => Row,
                  newColumns: Seq[Column]): Unit = {
     execute(AddColumns(rowFunction, newColumns))
@@ -14,12 +24,6 @@ trait AddColumnsTransform extends BaseFrame {
 
 }
 
-/**
- * Adds columns to frame according to row function (UDF)
- *
- * @param rowFunction map function which produces new row columns
- * @param newColumns sequence of the new columns being added (Schema)
- */
 case class AddColumns(rowFunction: RowWrapper => Row,
                       newColumns: Seq[Column]) extends FrameTransform {
 

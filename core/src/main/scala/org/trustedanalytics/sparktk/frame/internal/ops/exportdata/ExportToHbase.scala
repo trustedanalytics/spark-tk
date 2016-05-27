@@ -17,13 +17,12 @@ trait ExportToHbaseSummarization extends BaseFrame {
   /**
    * Write current frame to HBase table.
    *
-   * Table must exist in HBase.
    *
    * @param tableName     The name of the HBase table that will contain the exported frame
    * @param keyColumnName The name of the column to be used as row key in hbase table
    * @param familyName    The family name of the HBase table that will contain the exported frame
    */
-  def exportToHbase(tableName: String, keyColumnName: Option[String] = None, familyName: String = "familyColumn") = {
+  def exportToHbase(tableName: String, keyColumnName: Option[String] = None, familyName: String = "family") = {
     execute(ExportToHbase(tableName, keyColumnName, familyName))
   }
 }
@@ -31,6 +30,7 @@ trait ExportToHbaseSummarization extends BaseFrame {
 case class ExportToHbase(tableName: String, keyColumnName: Option[String], familyName: String) extends FrameSummarization[Unit] {
 
   require(StringUtils.isNotEmpty(tableName), "Hbase table name is required")
+  require(keyColumnName !=null, "Hbase key column name cannot be null")
   require(StringUtils.isNotEmpty(familyName), "Hbase table family name is required")
 
   override def work(state: FrameState): Unit = {

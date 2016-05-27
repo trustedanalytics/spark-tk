@@ -23,7 +23,36 @@ import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait MultiClassClassificationMetricsSummarization extends BaseFrame {
-
+  /**
+   * Model statistics of accuracy, precision, and others.
+   *
+   * Calculate the accuracy, precision, confusion_matrix, recall and :math:`F_{ \beta}` measure for a classification
+   * model.
+   *
+   * The '''fMeasure''' result is the :math:`F_{ \beta}` measure for a classification model.
+   *
+   * The :math:`F_{ \beta}` measure for a multi-class classification model is computed as the weighted average of the
+   * :math:`F_{ \beta}` measure for each label, where the weight is the number of instances of each label.
+   *
+   * - For multi-class classification models, the '''recall''' measure is computed as the weighted average of the recall
+   * for each label, where the weight is the number of instances of each label.
+   *
+   * - For multi-class classification models, the '''precision''' measure is computed as the weighted average of the
+   * precision for each label, where the weight is the number of instances of each label.
+   *
+   * - The '''accuracy''' of a classification model is the proportion of predictions that are correctly identified. If
+   * we let :math:`T_{P}` denote the number of true positives, :math:`T_{N}` denote the number of true negatives, and
+   * :math:`K` denote the total number of classified instances, then the model accuracy is given by:
+   * :math:`\frac{T_{P} + T_{N}}{K}`.
+   *
+   * - The '''confusionMatrix''' result is a confusion matrix, formatted for human readability.
+   *
+   * @param labelColumn The name of the column containing the correct label for each instance.
+   * @param predColumn The name of the column containing the predicted label for each instance.
+   * @param beta This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is
+   *             computed); must be greater than zero. Default is 1.
+   * @param frequencyColumn The name of an optional column containing the frequency of observations.
+   */
   def multiClassClassificationMetrics(labelColumn: String,
                                       predColumn: String,
                                       beta: Double = 1.0,
@@ -32,15 +61,6 @@ trait MultiClassClassificationMetricsSummarization extends BaseFrame {
   }
 }
 
-/**
- * Model statistics of accuracy, precision, and others.
- *
- * @param labelColumn The name of the column containing the correct label for each instance.
- * @param predColumn The name of the column containing the predicted label for each instance.
- * @param beta This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is
- *             computed); must be greater than zero. Default is 1.
- * @param frequencyColumn The name of an optional column containing the frequency of observations.
- */
 case class MultiClassClassificationMetrics(labelColumn: String,
                                            predColumn: String,
                                            beta: Double,
