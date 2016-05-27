@@ -11,7 +11,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransf
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ MultiClassClassificationMetricsSummarization, BinaryClassificationMetricsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
-import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvSummarization, ExportToJsonSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
@@ -48,6 +48,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with EcdfSummarization
     with EntropySummarization
     with ExportToCsvSummarization
+    with ExportToJsonSummarization
     with FlattenColumnsTransform
     with HistogramSummarization
     with MultiClassClassificationMetricsSummarization
