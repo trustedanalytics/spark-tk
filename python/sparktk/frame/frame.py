@@ -178,7 +178,7 @@ class Frame(object):
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.entropy import entropy
-    from sparktk.frame.ops.export_data import export_to_json
+    from sparktk.frame.ops.export_data import export_to_jdbc, export_to_json
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.histogram import histogram
