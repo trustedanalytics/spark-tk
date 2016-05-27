@@ -27,24 +27,12 @@ https://docs.python.org/2/library/doctest.html
 This is not a test content file itself, but a test generator as well as a library, which is why
 it sits in the same folder as the test files.
 
-There are 2 source areas for the documentation examples:
+This module locates all the files for doctest testing and produces a python module with test methods
 
-1. The .rst files found recursively in doc-api-examples/src/main/resources/python
-
-2. The specific API .py files in python-client/trustedanalytics/core
-
-This module locates all the files for doctest testing.  It module writes a new file
-containing code text for unittest testcase classes and testcase methods for
-each of the files it found.  So, multiple functions are distributed among several
-classes.  This helps nose runner concurrency performance.
-
-The test case method simply calls back to this module with its path.  So it is this
+Each test case method simply calls back to this module with its path.  So it is this
 module which actually loads the file content, runs a preprocessor on it which edits the
 text appropriately for running in doctest (this enables skipping some test content or adding
 ELLIPSIS_MARKERs to ignore some output), and then calls doctest.
-
-Generating a test file was chosen because of difficulties working with nose in parallel
-execution for dynamically generated code.
 
 (see integration-tests/README_doctest.md)
 """
