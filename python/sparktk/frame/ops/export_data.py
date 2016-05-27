@@ -12,28 +12,30 @@ def export_to_hbase(self, table_name, key_column_name=None, family_name="familyC
     Example:
     -----------------------
 
-    code snippet:
-        - from sparktk import TkContext
-        - tc=TkContext(sc)
-        - data = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
-        - schema = [('a', int), ('b', float),('c', int) ,('d', int)]
-        - my_frame = tc.to_frame(data, schema)
-        - my_frame.export_to_hbase("test_demo_hbase", family_name="test_family")
+    <skip>
 
-        Verify exported frame in hbase
+    >>> from sparktk import TkContext
+    >>> tc=TkContext(sc)
+    >>> data = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
+    >>> schema = [('a', int), ('b', float),('c', int) ,('d', int)]
+    >>> my_frame = tc.to_frame(data, schema)
+    >>> my_frame.export_to_hbase("test_demo_hbase", family_name="test_family")
+    <progress>
 
-        From bash shell
+    Verify exported frame in hbase
 
-        $hbase shell
+    From bash shell
 
-        hbase(main):001:0> list
+    $hbase shell
 
-        You should see test_demo_hbase table.
+    hbase(main):001:0> list
 
-        Run hbase(main):001:0> scan 'test_demo_hbase' (to verify frame).
+    You should see test_demo_hbase table.
 
-        Output:
-        ----------
+    Run hbase(main):001:0> scan 'test_demo_hbase' (to verify frame).
+
+    Output:
+    ----------
         ROW     COLUMN+CELL
          0      column=test_family:a, timestamp=1464219662295, value=1
          0      column=test_family:b, timestamp=1464219662295, value=0.2
@@ -53,11 +55,13 @@ def export_to_hbase(self, table_name, key_column_name=None, family_name="familyC
          3      column=test_family:d, timestamp=1464219662295, value=8
         4 row(s) in 0.1560 seconds
 
+    </skip>
     """
     if not isinstance(table_name, basestring):
         raise ValueError("Unsupported 'table_name' parameter type.  Expected string, but found %s." % type(table_name))
 
     if not isinstance(family_name, basestring):
-        raise ValueError("Unsupported 'family_name' parameter type.  Expected string, but found %s." % type(family_name))
+        raise ValueError(
+            "Unsupported 'family_name' parameter type.  Expected string, but found %s." % type(family_name))
 
     self._scala.exportToHbase(table_name, self._tc.jutils.convert.to_scala_option(key_column_name), family_name)
