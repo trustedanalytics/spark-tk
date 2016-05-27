@@ -17,7 +17,6 @@ trait ExportToHbaseSummarization extends BaseFrame {
   /**
    * Write current frame to HBase table.
    *
-   *
    * @param tableName     The name of the HBase table that will contain the exported frame
    * @param keyColumnName The name of the column to be used as row key in hbase table
    * @param familyName    The family name of the HBase table that will contain the exported frame
@@ -30,7 +29,7 @@ trait ExportToHbaseSummarization extends BaseFrame {
 case class ExportToHbase(tableName: String, keyColumnName: Option[String], familyName: String) extends FrameSummarization[Unit] {
 
   require(StringUtils.isNotEmpty(tableName), "Hbase table name is required")
-  require(keyColumnName !=null, "Hbase key column name cannot be null")
+  require(keyColumnName != null, "Hbase key column name cannot be null")
   require(StringUtils.isNotEmpty(familyName), "Hbase table family name is required")
 
   override def work(state: FrameState): Unit = {
@@ -56,6 +55,14 @@ object ExportToHbase {
       desc.addFamily(new HColumnDescriptor(familyName))
 
       hBaseAdmin.createTable(desc)
+    }
+    else {
+      val desc = hBaseAdmin.getTableDescriptor(tableName.getBytes())
+      if (!desc.hasFamily(familyName.getBytes())) {
+        desc.addFamily(new HColumnDescriptor(familyName))
+
+        hBaseAdmin.modifyTable(tableName, desc)
+      }
     }
 
     pairRdd.saveAsNewAPIHadoopDataset(conf)
