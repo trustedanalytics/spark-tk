@@ -4,7 +4,13 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 import org.trustedanalytics.sparktk.frame.{ Column, FrameSchema, DataTypes, Frame }
 
 trait QuantilesSummarization extends BaseFrame {
-
+  /**
+   * Calculate quantiles on the given column.
+   *
+   * @param column the name of the column to calculate quantiles.
+   * @param quantiles What is being requested
+   * @return A new frame with two columns (''float64''): requested quantiles and their respective values.
+   */
   def quantiles(column: String,
                 quantiles: List[Double]): Frame = {
 
@@ -12,11 +18,6 @@ trait QuantilesSummarization extends BaseFrame {
   }
 }
 
-/**
- *
- * @param column the name of the column to caculate quantiles.
- * @param quantiles What is being requested
- */
 case class Quantiles(column: String,
                      quantiles: List[Double]) extends FrameSummarization[Frame] {
 

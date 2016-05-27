@@ -8,7 +8,14 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 import scala.collection.mutable.ArrayBuffer
 
 trait ExportToCsvSummarization extends BaseFrame {
-
+  /**
+   * Write current frame to HDFS in csv format.
+   *
+   * Export the frame to a file in csv format as a Hadoop file.
+   *
+   * @param fileName The HDFS folder path where the files will be created.
+   * @param separator Delimiter character.  Defaults to use a comma (`,`).
+   */
   def exportToCsv(fileName: String, separator: Char = ',') = {
     execute(ExportToCsv(fileName, separator))
   }

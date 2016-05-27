@@ -5,18 +5,21 @@ import org.trustedanalytics.sparktk.frame.{ DataTypes, Column }
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform, BaseFrame }
 
 trait TallyTransform extends BaseFrame {
+  /**
+   * Count number of times a value is seen.
+   *
+   * A cumulative count is computed by sequentially stepping through the rows, observing the column values and keeping
+   * track of the number of times the specified '''countVal''' has been seen.
+   *
+   * @param sampleCol The name of the column from which to compute the cumulative count.
+   * @param countVal The column value to be used for the counts.
+   */
   def tally(sampleCol: String,
             countVal: String): Unit = {
     execute(Tally(sampleCol, countVal))
   }
 }
 
-/**
- * Count number of times a value is seen.
- *
- * @param sampleCol The name of the column from which to compute the cumulative count.
- * @param countVal The column value to be used for the counts.
- */
 case class Tally(sampleCol: String,
                  countVal: String) extends FrameTransform {
   require(StringUtils.isNotEmpty(sampleCol), "column name for sample is required")

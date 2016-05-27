@@ -7,7 +7,7 @@ They run alongside the integration tests and perform a sanity check on the docte
 
 import unittest
 
-from doc import DocExamplesPreprocessor, DocExamplesException
+from gendoct import DocExamplesPreprocessor, DocExamplesException
 
 
 class TestDoc(unittest.TestCase):

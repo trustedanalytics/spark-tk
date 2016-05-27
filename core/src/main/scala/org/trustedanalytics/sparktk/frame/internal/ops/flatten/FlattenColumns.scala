@@ -8,17 +8,19 @@ import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform, BaseFrame }
 
 trait FlattenColumnsTransform extends BaseFrame {
-
+  /**
+   * Spread data to multiple rows based on cell data.
+   *
+   * Splits cells in the specified columns into multiple rows according to a string delimiter. New rows are a full
+   * copy of the original row, but the specified columns only contain one value. The original row is deleted.
+   *
+   * @param columns The columns to be flattened, with an optional delimiter.  The default delimiter is a comma (,).
+   */
   def flattenColumns(columns: List[(String, Option[String])]): Unit = {
     execute(FlattenColumns(columns))
   }
 }
 
-/**
- * Spread data to multiple rows based on cell data.
- *
- * @param columns The columns to be flattened, with an optional delimiter.  The default delimiter is a comma (,).
- */
 case class FlattenColumns(columns: List[(String, Option[String])]) extends FrameTransform {
   require(columns != null && columns.nonEmpty, "column list is required")
   columns.foreach {

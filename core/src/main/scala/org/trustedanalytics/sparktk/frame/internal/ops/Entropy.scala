@@ -10,19 +10,24 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.C
 import scala.util.Try
 
 trait EntropySummarization extends BaseFrame {
-
+  /**
+   * Calculate the Shannon entropy of a column.
+   *
+   * The data column is weighted via the weights column. All data elements of weight <= 0 are excluded from the
+   * calculation, as are all data elements whose weight is NaN or infinite.  If there are no data elements with a
+   * finite weight greater than 0, the entropy is zero.
+   *
+   * @param dataColumn The column whose entropy is to be calculated.
+   * @param weightsColumn The column that provides weights (frequencies) for the entropy calculation.
+   *                      Must contain numerical data.
+   *                      Default is using uniform weights of 1 for all items.
+   * @return Entropy.
+   */
   def entropy(dataColumn: String, weightsColumn: Option[String] = None): Double = {
     execute(Entropy(dataColumn, weightsColumn))
   }
 }
 
-/**
- * Calculate the Shannon entropy of a column.
- * @param dataColumn The column whose entropy is to be calculated.
- * @param weightsColumn The column that provides weights (frequencies) for the entropy calculation.
- *                      Must contain numerical data.
- *                      Default is using uniform weights of 1 for all items.
- */
 case class Entropy(dataColumn: String, weightsColumn: Option[String]) extends FrameSummarization[Double] {
   require(StringUtils.isNotEmpty(dataColumn), "data column name is required")
 
