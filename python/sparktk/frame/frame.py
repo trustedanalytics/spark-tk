@@ -134,7 +134,7 @@ class Frame(object):
         Get the number of rows:
 
         <hide>
-        frame = tc.to_frame([[item] for item in range(0, 4)],[("a", int)])
+        frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
         </hide>
 
         .. code::

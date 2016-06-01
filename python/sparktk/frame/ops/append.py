@@ -11,7 +11,7 @@ def append(self, frame):
 
     .. code::
 
-        >>> animals = tc.to_frame([['dog', 'snoopy'],['cat', 'tom'],['bear', 'yogi'],['mouse', 'jerry']],
+        >>> animals = tc.frame.create([['dog', 'snoopy'],['cat', 'tom'],['bear', 'yogi'],['mouse', 'jerry']],
         ...                       [('animal', str), ('name', str)])
         <progress>
 
@@ -27,7 +27,7 @@ def append(self, frame):
 
     .. code::
 
-        >>> animals.append(tc.to_frame([['donkey'],['elephant'], ['ostrich']], [('animal', str)]))
+        >>> animals.append(tc.frame.create([['donkey'],['elephant'], ['ostrich']], [('animal', str)]))
         <progress>
 
         >>> animals.inspect()

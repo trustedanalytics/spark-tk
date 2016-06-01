@@ -9,7 +9,7 @@ def test_export_to_json_file_path(tc):
     print "create frame"
     rows = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
     schema = [('a', int), ('b', float),('c', int) ,('d', int)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 4, "frame should have 4 rows")
     assert(frame.column_names, ['a', 'b', 'c', 'd'])
@@ -32,7 +32,7 @@ def test_strange_strings(tc):
     print "create frame"
     rows = [["A", "Hi, i'm here"],["B", "Hello's to everyone"],["C", "I'm good ~how are doing@"],["DD", "#$this is something, amazing''s"],['EE', 'He said, "Hello!"'],["FF", "u'It is 15 \u00f8c outside'"]]
     schema = [("name", str), ("message", str)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 6, "frame should have 6 rows")
     assert(frame.column_names, ['name', 'message'])

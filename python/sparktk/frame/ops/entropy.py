@@ -20,7 +20,7 @@ def entropy(self, data_column, weights_column=None):
     Consider the following sample data set in *frame* 'frame' containing several numbers.
 
     <hide>
-    >>> frame = tc.to_frame([[0,1], [1,2], [2,4], [4,8]], [('data', int), ('weight', int)])
+    >>> frame = tc.frame.create([[0,1], [1,2], [2,4], [4,8]], [('data', int), ('weight', int)])
     -etc-
 
     </hide>
@@ -43,7 +43,7 @@ def entropy(self, data_column, weights_column=None):
     An on-line search for "Shannon Entropy" will provide more detail.
 
     <hide>
-    >>> frame = tc.to_frame([["H"], ["T"], ["H"], ["T"], ["H"], ["T"], ["H"], ["T"], ["H"], ["T"]], [('data', str)])
+    >>> frame = tc.frame.create([["H"], ["T"], ["H"], ["T"], ["H"], ["T"], ["H"], ["T"], ["H"], ["T"]], [('data', str)])
     -etc-
 
     </hide>

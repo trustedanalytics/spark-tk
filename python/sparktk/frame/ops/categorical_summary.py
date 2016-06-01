@@ -102,7 +102,7 @@ def categorical_summary(self, columns, top_k=None, threshold=None):
     <hide>
     >>> s = [("source",str),("target",str)]
     >>> rows = [ ["entity","thing"], ["entity","physical_entity"],["entity","abstraction"],["physical_entity","entity"],["physical_entity","matter"],["physical_entity","process"],["physical_entity","thing"],["physical_entity","substance"],["physical_entity","object"],["physical_entity","causal_agent"],["abstraction","entity"],["abstraction","communication"],["abstraction","group"],["abstraction","otherworld"],["abstraction","psychological_feature"],["abstraction","attribute"],["abstraction","set"],["abstraction","measure"],["abstraction","relation"],["thing","physical_entity"],["thing","reservoir"],["thing","part"],["thing","subject"],["thing","necessity"],["thing","variable"],["thing","unit"],["thing","inessential"],["thing","body_of_water"]]
-    >>> my_frame = tc.to_frame(rows, s)
+    >>> my_frame = tc.frame.create(rows, s)
     -etc-
 
     </hide>

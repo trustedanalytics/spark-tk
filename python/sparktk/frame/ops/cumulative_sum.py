@@ -17,7 +17,7 @@ def cumulative_sum(self, sample_col):
     column named *obs*:
 
         <hide>
-        >>> my_frame = tc.to_frame([[0],[1],[2],[0],[1],[2]], [("obs", int)])
+        >>> my_frame = tc.frame.create([[0],[1],[2],[0],[1],[2]], [("obs", int)])
         -etc-
 
         </hide>

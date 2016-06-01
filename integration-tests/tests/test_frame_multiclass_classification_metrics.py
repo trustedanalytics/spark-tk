@@ -6,7 +6,7 @@ def test_multiclass_classification_metrics_001(tc):
     print "create frame"
     rows = [["red", "red"],["blue", "green"],["green", "green"],["green", "green"],["orange","orange"],["red","orange"]]
     schema = [('labels', str),('predictions', str)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 4, "frame should have 6 rows")
     assert(frame.column_names, ['labels', 'predictions'])
@@ -27,7 +27,7 @@ def test_multiclass_classification_metrics_002(tc):
     print "create frame"
     rows = [[0.0, 0.0],[None, 0.0],[0.0, 0.0],[1.5, 1.5],[1.0, 1.0],[1.5, None]]
     schema = [('labels', float32),('predictions', float32)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 4, "frame should have 6 rows")
     assert(frame.column_names, ['labels', 'predictions'])
