@@ -1,5 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.constructors
 
+import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.trustedanalytics.sparktk.frame.{ Schema, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
@@ -25,6 +26,7 @@ object Import {
                 header: Boolean = false,
                 inferSchema: Boolean = false,
                 schema: Option[Schema] = None): Frame = {
+
     // If a custom schema is provided there's no reason to infer the schema during the load
     val loadWithInferSchema = if (schema.isDefined) false else inferSchema
 
@@ -61,5 +63,29 @@ object Import {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val df = sqlContext.read.parquet(path)
     FrameRdd.toFrameRdd(df)
+  }
+
+  /**
+   *
+   * @param connectionUrl : Jdbc connection url to connect to database
+   * @param tableName :Jdbc table name to import
+   * @return Frame with data from jdbc table
+   */
+  def importJdbc(sc: SparkContext, connectionUrl: String, tableName: String): Frame = {
+
+    require(StringUtils.isNotEmpty(connectionUrl), "connection url is required")
+    require(StringUtils.isNotEmpty(tableName), "table name is required")
+
+    // Load from jdbc table
+    import org.apache.spark.sql.SQLContext
+    val sqlContext = new SQLContext(sc)
+
+    val sqlDataframe = sqlContext.read.format("jdbc")
+      .option("url", connectionUrl)
+      .option("dbtable", tableName)
+      .load()
+
+    val frameRdd = FrameRdd.toFrameRdd(sqlDataframe)
+    new Frame(frameRdd, frameRdd.frameSchema)
   }
 }
