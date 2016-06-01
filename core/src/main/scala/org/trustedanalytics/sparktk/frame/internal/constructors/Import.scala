@@ -66,7 +66,8 @@ object Import {
   }
 
   /**
-   *
+   * Loads data from given jdbc table into frame
+    *
    * @param connectionUrl : Jdbc connection url to connect to database
    * @param tableName :Jdbc table name to import
    * @return Frame with data from jdbc table
