@@ -7,7 +7,6 @@ import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.internal.BaseFrame
 import org.trustedanalytics.sparktk.frame.internal.ops._
-import org.trustedanalytics.sparktk.frame.internal.constructors.Import
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ MultiClassClassificationMetricsSummarization, BinaryClassificationMetricsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
