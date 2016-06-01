@@ -15,7 +15,7 @@ def sort(self, columns, ascending=True):
     --------
 
         <hide>
-        >>> frame = tc.to_frame([[3, 'foxtrot'], [1, 'charlie'], [3, 'bravo'], [2, 'echo'], [4, 'delta'], [3, 'alpha']], [('col1', int), ('col2', str)])
+        >>> frame = tc.frame.create([[3, 'foxtrot'], [1, 'charlie'], [3, 'bravo'], [2, 'echo'], [4, 'delta'], [3, 'alpha']], [('col1', int), ('col2', str)])
         -etc-
 
         </hide>

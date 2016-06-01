@@ -16,7 +16,7 @@ def quantiles(self, column_name, quantiles):
         >>> data = [[100],[250],[95],[179],[315],[660],[540],[420],[250],[335]]
         >>> schema = [('final_sale_price', int)]
 
-        >>> my_frame = tc.to_frame(data, schema)
+        >>> my_frame = tc.frame.create(data, schema)
         <progress>
 
     </hide>
@@ -60,4 +60,4 @@ def quantiles(self, column_name, quantiles):
 
     """
 
-    return self._tc.to_frame(self._scala.quantiles(column_name, self._tc.jutils.convert.to_scala_list_double(quantiles)))
+    return self._tc.frame.create(self._scala.quantiles(column_name, self._tc.jutils.convert.to_scala_list_double(quantiles)))

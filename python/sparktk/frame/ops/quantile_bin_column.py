@@ -44,7 +44,7 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
 
     <hide>
 
-    >>> my_frame = tc.to_frame([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]],
+    >>> my_frame = tc.frame.create([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]],
     ... [('a', int)])
     -etc-
 

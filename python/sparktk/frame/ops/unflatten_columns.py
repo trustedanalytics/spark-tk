@@ -15,8 +15,8 @@ def unflatten_columns (self, columns, delimiter=","):
     --------
     <hide>
 
-    >>> frame = tc.to_frame([["user1", "1/1/2015", 1, 70],["user1", "1/1/2015", 2, 60],["user2", "1/1/2015", 1, 65]],
-    ...                     [('a', str), ('b', str),('c', int),('d', int)])
+    >>> frame = tc.frame.create([["user1", "1/1/2015", 1, 70],["user1", "1/1/2015", 2, 60],["user2", "1/1/2015", 1, 65]],
+    ...                         [('a', str), ('b', str),('c', int),('d', int)])
     <progress>
 
     </hide>
@@ -61,8 +61,8 @@ def unflatten_columns (self, columns, delimiter=","):
     <hide>
 
     # Re-create frame with original data to start over with single column example
-    >>> frame = tc.to_frame([["user1", "1/1/2015", 1, 70],["user1", "1/1/2015", 2, 60],["user2", "1/1/2015", 1, 65]],
-    ...                     [('a', str), ('b', str),('c', int) ,('d', int)])
+    >>> frame = tc.frame.create([["user1", "1/1/2015", 1, 70],["user1", "1/1/2015", 2, 60],["user2", "1/1/2015", 1, 65]],
+    ...                         [('a', str), ('b', str),('c', int) ,('d', int)])
     <progress>
 
     </hide>

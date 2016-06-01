@@ -56,6 +56,7 @@ this_script_as_module_name = os.path.splitext(__file__)[0]
 here = os.path.dirname(os.path.abspath(__file__))
 path_to_at_root = os.path.dirname(os.path.dirname(here))
 path_to_frameops = os.path.join(path_to_at_root, "python/sparktk/frame/ops")
+path_to_models = os.path.join(path_to_at_root, "python/sparktk/models")
 path_to_doc = os.path.join(path_to_at_root, "python/sparktk/doc")
 trim_to_at_root_len = len(path_to_at_root) + 1   # +1 for slash
 
@@ -205,7 +206,7 @@ def main():
         print "[%s] Removed pre-existing .pyc file %s" % (this_script_name, pyc)
 
     # Python flatmap --> [item for list in listoflists for item in list]
-    test_paths = [test_path for folder_path in [path_to_frameops] for test_path in get_all_example_file_paths(folder_path)]
+    test_paths = [test_path for folder_path in [path_to_frameops, path_to_models] for test_path in get_all_example_file_paths(folder_path)]
     filtered_test_paths = filter_exemptions(test_paths)
     filtered_test_paths.append(os.path.join(path_to_at_root, "README.md"))
     print "[%s] Test paths considered:\n%s" % (this_script_name, "\n".join(filtered_test_paths))

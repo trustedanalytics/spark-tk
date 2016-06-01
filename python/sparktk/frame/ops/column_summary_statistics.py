@@ -176,7 +176,7 @@ def column_summary_statistics(self, data_column, weights_column=None, use_popult
 
        >>> data = [[2],[3],[3],[5],[7],[10],[30]]
        >>> schema = [('a', int)]
-       >>> my_frame = tc.to_frame(data, schema)
+       >>> my_frame = tc.frame.create(data, schema)
        <progress>
 
     Inspect my_frame
@@ -221,7 +221,7 @@ def column_summary_statistics(self, data_column, weights_column=None, use_popult
 
         >>> data = [[2,1.7],[3,0.5],[3,1.2],[5,0.8],[7,1.1],[10,0.8],[30,0.1]]
         >>> schema = [('a', int), ('w', float)]
-        >>> my_frame = tc.to_frame(data, schema)
+        >>> my_frame = tc.frame.create(data, schema)
         <progress>
 
     Inspect my_frame

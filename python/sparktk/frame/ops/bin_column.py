@@ -35,7 +35,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
 
     <hide>
 
-    >>> frame = tc.to_frame([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]], [('a', int)])
+    >>> frame = tc.frame.create([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]], [('a', int)])
     -etc-
 
     </hide>
