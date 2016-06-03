@@ -17,7 +17,7 @@ def import_jdbc(connection_url, table_name, tc=implicit):
     <skip>
         >>> url = "jdbc:postgresql://localhost/postgres"
         >>> tb_name = "demo_test"
-        >>> frame = tc.import_jdbc(url, tb_name)
+        >>> frame = tc.frame.import_jdbc(url, tb_name)
         -etc-
         >>> frame.inspect()
         [#]  a  b    c   d
