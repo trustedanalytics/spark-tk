@@ -6,6 +6,36 @@ def import_hive(hive_query, tc=implicit):
     """
     import data from hive table into frame
 
+    Define the sql query to retrieve the data from a hive table
+
+    Only a subset of Hive data types are supported.
+
+    Data Type   Support
+    ___________ ___________________________
+
+    boolean     cast to int
+
+    bigint      native support
+    int         native support
+    tinyint     cast to int
+    smallint    cast to int
+
+    decimal     cast to double, may lose precision
+    double      native support
+    float       native support
+
+    date        cast to string
+    string      native support
+    timestamp   cast to string
+    varchar     cast to string
+
+    arrays      not supported
+    binary      not supported
+    char        not supported
+    maps        not supported
+    structs     not supported
+    union       not supported
+
     :param hive_query: hive query to fetch data from table
     :return: returns frame with hive table data
 
@@ -13,11 +43,9 @@ def import_hive(hive_query, tc=implicit):
     --------
     Load data into frame from a hive table based on hive query
 
-    .. code::
     <skip>
-
         >>> h_query = "select * from demo_test"
-        >>> frame = tc.import_hive(h_query)
+        >>> frame = tc.frame.import_hive(h_query)
         -etc-
         >>> frame.inspect()
         [#]  number  strformat
