@@ -25,6 +25,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat
 import org.apache.hadoop.hbase.util.Bytes
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
+import org.trustedanalytics.sparktk.frame.DataTypes.
 import org.apache.spark._
 
 /**
@@ -49,7 +50,7 @@ object HbaseHelper extends Serializable {
     hbaseRddToRdd(hBaseRDD, schema)
   }
 
-  def hbaseRddToRdd(hbaseRDD: RDD[(ImmutableBytesWritable, Result)], schema: Vector[HBaseSchemaArgs]) =
+  def hbaseRddToRdd(hbaseRDD: RDD[(ImmutableBytesWritable, Result)], schema: Vector[HBaseSchemaArgs]): RDD[Array[Any]] =
     hbaseRDD.map {
       case (key, row) => {
         val values = for { element <- schema }
@@ -73,35 +74,7 @@ object HbaseHelper extends Serializable {
     if (value == null)
       null
     else
-      valAsDataType(Bytes.toString(value), dataType)
-  }
-
-  /**
-   * Convert value from string representation to datatype
-   *
-   * @param value value as string
-   * @param dataType data type to convert to
-   * @return the converted value
-   */
-  private def valAsDataType(value: String, dataType: DataType): Any = {
-    if (DataTypes.int32.equals(dataType)) {
-      DataTypes.toInt(value)
-    }
-    else if (DataTypes.int64.equals(dataType)) {
-      DataTypes.toLong(value)
-    }
-    else if (DataTypes.float32.equals(dataType)) {
-      DataTypes.toFloat(value)
-    }
-    else if (DataTypes.float64.equals(dataType)) {
-      DataTypes.toDouble(value)
-    }
-    else if (DataTypes.string.equals(dataType)) {
-      value
-    }
-    else {
-      throw new IllegalArgumentException(s"unsupported export type ${dataType.toString}")
-    }
+      DataTypes.valAsDataType(Bytes.toString(value), dataType)
   }
 
   /**
