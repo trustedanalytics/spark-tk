@@ -14,8 +14,7 @@ def import_jdbc(connection_url, table_name, tc=implicit):
     --------
     Load a frame from a jdbc table specifying the connection url to the database server.
 
-    .. code::
-
+    <skip>
         >>> url = "jdbc:postgresql://localhost/postgres"
         >>> tb_name = "demo_test"
         >>> frame = tc.import_jdbc(url, tb_name)
@@ -30,7 +29,7 @@ def import_jdbc(connection_url, table_name, tc=implicit):
 
         >>> frame.schema
         [(u'a', int), (u'b', float), (u'c', int), (u'd', int)]
-
+    </skip>
     """
     if not isinstance(connection_url, basestring):
         raise ValueError("connection url parameter must be a string, but is {0}.".format(type(connection_url)))
