@@ -14,13 +14,10 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=implicit):
 
     Example
     ---------
-
     Load data into frame from a hbase table
 
-    .. code ::
     <skip>
-
-        >>> frame = tc.import_hbase("demo_test_hbase", [["test_family", "a", int],["test_family", "b", float], ["test_family", "c", int],["test_family", "d", int]])
+        >>> frame = tc.frame.import_hbase("demo_test_hbase", [["test_family", "a", int],["test_family", "b", float], ["test_family", "c", int],["test_family", "d", int]])
         -etc-
         >>> frame.inspect()
         [#]  test_family_a  test_family_b  test_family_c  test_family_d
