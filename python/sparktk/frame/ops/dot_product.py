@@ -31,7 +31,7 @@ def dot_product(self, left_column_names,right_column_names,dot_product_column_na
         >>> data = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
         >>> schema = [('col_0', int), ('col_1', float),('col_2', int) ,('col_3', int)]
 
-        >>> my_frame = tc.to_frame(data, schema)
+        >>> my_frame = tc.frame.create(data, schema)
         <progress>
 
     Calculate the dot product for a sequence of columns in Frame object *my_frame*:

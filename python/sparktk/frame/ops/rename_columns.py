@@ -17,7 +17,7 @@ def rename_columns(self, names):
 
         >>> rows = [["glass", "clear"],["paper","unclear"]]
 
-        >>> my_frame = tc.to_frame(rows, s)
+        >>> my_frame = tc.frame.create(rows, s)
         -etc-
 
         </hide>

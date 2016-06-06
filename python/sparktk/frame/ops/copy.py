@@ -21,7 +21,7 @@ def copy(self, columns=None, where=None):
     <hide>
     >>> schema = [("name", str), ("age", int), ("years", int)]
     >>> data = [["Thurston",64,26],["Judy",44,14],["Emily",37,5],["Frank",50,18],["Joe",43,11],["Ruth",52,21]]
-    >>> frame = tc.to_frame(data, schema)
+    >>> frame = tc.frame.create(data, schema)
     </hide>
 
     Consider the following frame of employee names, age, and years of service:
@@ -135,5 +135,5 @@ def copy(self, columns=None, where=None):
         new_schema = renamed_schema
 
     # return new frame with the filtered rdd and new schema
-    return self._tc.to_frame(new_rdd, new_schema)
+    return self._tc.frame.create(new_rdd, new_schema)
 

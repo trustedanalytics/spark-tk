@@ -6,7 +6,7 @@ def test_binary_classification_metrics_001(tc):
     print "create frame"
     rows = [["red", "red"],["blue", "green"],["green", "green"],["green", "green"]]
     schema = [('labels', str),('predictions', str)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
@@ -27,7 +27,7 @@ def test_binary_classification_metrics_002(tc):
     print "create frame"
     rows = [[0.0, 0.0],[1.5, 0.0],[0.0, 0.0],[1.5, 1.5]]
     schema = [('labels', float32),('predictions', float32)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
@@ -48,7 +48,7 @@ def test_binary_classification_metrics_003(tc):
     print "create frame"
     rows = [[0.0, 0.0],[1.5, None],[None, None],[1.5, 1.5]]
     schema = [('labels', float32),('predictions', float32)]
-    frame = tc.to_frame(rows, schema)
+    frame = tc.frame.create(rows, schema)
 
     assert(frame.row_count, 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])

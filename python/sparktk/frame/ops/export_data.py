@@ -19,7 +19,7 @@ def export_to_hbase(self, table_name, key_column_name=None, family_name="familyC
     >>> tc=TkContext(sc)
     >>> data = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
     >>> schema = [('a', int), ('b', float),('c', int) ,('d', int)]
-    >>> my_frame = tc.to_frame(data, schema)
+    >>> my_frame = tc.frame.create(data, schema)
     >>> my_frame.export_to_hbase("test_demo_hbase", family_name="test_family")
     <progress>
 
@@ -86,7 +86,7 @@ def export_to_hive(self, hive_table_name):
         >>> tc=TkContext(sc)
         >>> data = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
         >>> schema = [('a', int), ('b', float),('c', int) ,('d', int)]
-        >>> my_frame = tc.to_frame(data, schema)
+        >>> my_frame = tc.frame.create(data, schema)
         <progress>
 
         table_name: (string): table name. It will create new table with given name if it does not exists already.
@@ -126,7 +126,7 @@ def export_to_jdbc(self, connection_url, table_name):
         >>> c=TkContext(sc)
         >>> data = [[1, 0.2, -2, 5], [2, 0.4, -1, 6], [3, 0.6, 0, 7], [4, 0.8, 1, 8]]
         >>> schema = [('a', int), ('b', float),('c', int) ,('d', int)]
-        >>> my_frame = tc.to_frame(data, schema)
+        >>> my_frame = tc.frame.create(data, schema)
         <progress>
 
         connection_url : (string) : "jdbc:{datasbase_type}://{host}/{database_name}

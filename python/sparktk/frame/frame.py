@@ -8,7 +8,7 @@ from sparktk.frame.schema import schema_to_python, schema_to_scala
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
 from sparktk.frame.constructors.import_jdbc import import_jdbc
-
+from sparktk.frame.constructors.import_hive import import_hive
 
 class Frame(object):
 
@@ -135,7 +135,7 @@ class Frame(object):
         Get the number of rows:
 
         <hide>
-        frame = tc.to_frame([[item] for item in range(0, 4)],[("a", int)])
+        frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
         </hide>
 
         .. code::

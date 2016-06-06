@@ -13,8 +13,9 @@ def flatten_columns (self, *columns):
     Examples
     --------
     <hide>
-    >>> frame = tc.to_frame([[1,"solo,mono,single","green|yellow|red"],[2,"duo,double","orange|black"]],
-    ...                     [('a',int),('b', str),('c', str)])
+    >>> frame = tc.frame.create([[1, "solo,mono,single", "green|yellow|red"],
+    ...                          [2, "duo,double", "orange|black"]],
+    ...                         [('a', int), ('b', str), ('c', str)])
     <progress>
 
     </hide>
@@ -58,8 +59,9 @@ def flatten_columns (self, *columns):
         [4]  2  double  black
 
     <hide>
-    >>> frame = tc.to_frame([[1,"solo,mono,single","green|yellow|red"],[2,"duo,double","orange|black"]],
-    ...                     [('a',int),('b', str),('c', str)])
+    >>> frame = tc.frame.create([[1, "solo,mono,single", "green|yellow|red"],
+    ...                          [2, "duo,double", "orange|black"]],
+    ...                         [('a', int), ('b', str), ('c', str)])
     <progress>
 
     </hide>

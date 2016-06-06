@@ -1,10 +1,10 @@
 from setup import tc, rm, get_sandbox_path
 
 def test_append_to_empty_frame(tc):
-    frame1 = tc.to_frame([],[])
+    frame1 = tc.frame.create([],[])
     assert(frame1.row_count == 0)
     assert(frame1.column_names == [])
-    frame2 = tc.to_frame([[1],[2],[3]], [("numbers", int)])
+    frame2 = tc.frame.create([[1],[2],[3]], [("numbers", int)])
 
     # append empty frame to the populated frame
     frame2.append(frame1)
@@ -18,10 +18,10 @@ def test_append_to_empty_frame(tc):
 
 def test_append_new_columns(tc):
     two_columns = [("number", int), ("string", str)]
-    frame = tc.to_frame([[i,str(i)] for i in range(1,21)], two_columns)
+    frame = tc.frame.create([[i,str(i)] for i in range(1,21)], two_columns)
     assert(frame.row_count == 20)
     three_columns = [("number", int),("string", str),("float", float)]
-    frame.append(tc.to_frame([[i,str(i),float(i)] for i in range(21,31)],three_columns))
+    frame.append(tc.frame.create([[i,str(i),float(i)] for i in range(21,31)],three_columns))
     assert(frame.row_count == 30)
     assert(frame.column_names == ["number", "string", "float"])
     values = frame.take(frame.row_count).data

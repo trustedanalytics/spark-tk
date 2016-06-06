@@ -73,7 +73,7 @@ def multiclass_classification_metrics(self, label_column, pred_column, beta=1.0,
        <hide>
        >>> s = [('a', str),('b', int),('labels', int),('predictions', int)]
        >>> rows = [["red", 1, 0, 0], ["blue", 3, 1, 0],["green", 1, 0, 0],["green", 0, 1, 1],["red", 0, 5, 4]]
-       >>> my_frame = tc.to_frame(rows, s)
+       >>> my_frame = tc.frame.create(rows, s)
        -etc-
 
        </hide>

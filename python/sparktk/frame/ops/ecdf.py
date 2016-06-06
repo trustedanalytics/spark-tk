@@ -14,7 +14,7 @@ def ecdf(self, column):
     Consider the following sample data set in *frame* 'frame' containing several numbers.
 
     <hide>
-    >>> frame = tc.to_frame([[1], [3], [1], [0], [2], [1], [4], [3]], [('numbers', int)])
+    >>> frame = tc.frame.create([[1], [3], [1], [0], [2], [1], [4], [3]], [('numbers', int)])
     -etc-
 
     </hide>
@@ -44,4 +44,4 @@ def ecdf(self, column):
     [4]        4           1.0
 
     """
-    return self._tc.to_frame(self._scala.ecdf(column))
+    return self._tc.frame.create(self._scala.ecdf(column))

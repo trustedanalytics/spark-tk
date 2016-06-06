@@ -21,16 +21,16 @@ The library provides **machine learning** support through straightforward APIs t
 
 Upload some tabular data
     
-    >>> frame1 = tc.to_frame(data=[[2, 3],
-    ...                            [1, 4],
-    ...                            [7, 1],
-    ...                            [1, 1],
-    ...                            [9, 2],
-    ...                            [2, 4],
-    ...                            [0, 4],
-    ...                            [6, 3],
-    ...                            [5, 6]],
-    ...                      schema=[("a", int), ("b", int)])
+    >>> frame1 = tc.frame.create(data=[[2, 3],
+    ...                                [1, 4],
+    ...                                [7, 1],
+    ...                                [1, 1],
+    ...                                [9, 2],
+    ...                                [2, 4],
+    ...                                [0, 4],
+    ...                                [6, 3],
+    ...                                [5, 6]],
+    ...                          schema=[("a", int), ("b", int)])
     
     
 Do a linear transform
@@ -77,7 +77,7 @@ Add cluster predictions to the frame
 
 Upload some new data and predict
 
-    >>> frame2 = tc.to_frame(data=[[3], [8], [16], [1], [13], [18]], schema=[("x", int)])
+    >>> frame2 = tc.frame.create(data=[[3], [8], [16], [1], [13], [18]], schema=[("x", int)])
 
     >>> km.predict(frame2, 'x')
 

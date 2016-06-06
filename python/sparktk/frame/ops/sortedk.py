@@ -39,7 +39,7 @@ def sorted_k(self, k, column_names_and_ascending, reduce_tree_depth = 2):
     <hide>
     >>> s = [("genre", str), ("year", int), ("title", str)]
     >>> rows = [["Drama", 1957, "12 Angry Men"], ["Crime", 1946, "The Big Sleep"], ["Western", 1969, "Butch Cassidy and the Sundance Kid"], ["Drama", 1971, "A Clockwork Orange"], ["Drama", 2008, "The Dark Knight"], ["Animation", 2013, "Frozen"], ["Drama", 1972, "The Godfather"], ["Animation", 1994, "The Lion King"], ["Animation", 2010, "Tangled"], ["Fantasy", 1939, "The WOnderful Wizard of Oz"]  ]
-    >>> my_frame = tc.to_frame(rows, s)
+    >>> my_frame = tc.frame.create(rows, s)
     -etc-
 
     </hide>
@@ -103,6 +103,6 @@ def sorted_k(self, k, column_names_and_ascending, reduce_tree_depth = 2):
     [4]  Drama      1957  12 Angry Men
 
     """
-    return self._tc.to_frame(self._scala.sortedK(k,
-                        self._tc.jutils.convert.to_scala_list_string_bool_tuple(column_names_and_ascending),
-                        reduce_tree_depth))
+    return self._tc.frame.create(self._scala.sortedK(k,
+                                 self._tc.jutils.convert.to_scala_list_string_bool_tuple(column_names_and_ascending),
+                                 reduce_tree_depth))
