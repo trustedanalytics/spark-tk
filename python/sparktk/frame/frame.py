@@ -7,6 +7,7 @@ from sparktk.frame.schema import schema_to_python, schema_to_scala
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
+from sparktk.frame.constructors.import_jdbc import import_jdbc
 from sparktk.frame.constructors.import_hive import import_hive
 
 class Frame(object):
