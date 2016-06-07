@@ -35,7 +35,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
 
     <hide>
 
-    >>> frame = tc.to_frame([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]], [('a', int)])
+    >>> frame = tc.frame.create([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]], [('a', int)])
     -etc-
 
     </hide>
@@ -172,7 +172,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
     >>> print cutoffs
     [1.0, 30.333333333333332, 59.666666666666664, 89.0]
 
-    >>> frame.inspect(n=frame.count())
+    >>> frame.inspect(n=frame.row_count)
     [##]  a   equal_width_bins
     ==========================
     [0]    1                 0
@@ -190,7 +190,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
     """
     if not isinstance(bins, list):
         bins = [bins]
-    return list(self._scala.binColumn(column_name,
+    return self._tc.jutils.convert.from_scala_seq(self._scala.binColumn(column_name,
                                 self._tc.jutils.convert.to_scala_option_list_double(bins),
                                 include_lowest,
                                 strict_binning,

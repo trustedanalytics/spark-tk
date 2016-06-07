@@ -1,11 +1,17 @@
 package org.trustedanalytics.sparktk.jvm
 
 import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
+import org.apache.spark.SparkContext
+import org.apache.spark.api.java.JavaSparkContext
 
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
 object JConvert extends Serializable {
+
+  def toScalaSparkContext(jsc: JavaSparkContext): SparkContext = {
+    JavaSparkContext.toSparkContext(jsc)
+  }
 
   def toScalaList[T](x: JArrayList[T]): List[T] = x.asScala.toList
 
@@ -16,6 +22,13 @@ object JConvert extends Serializable {
       case null | None => None
       case item: JArrayList[T] => Some(toScalaList(item))
       case _ => Some(item)
+    }
+  }
+
+  def toEitherStringInt(item: Any): Either[String, Int] = {
+    item match {
+      case s: String => Left(s)
+      case i: Int => Right(i)
     }
   }
 
@@ -47,6 +60,26 @@ object JConvert extends Serializable {
     }
 
     hashMap
+  }
+
+  def scalaSeqToPython[T](seq: Seq[T]): JArrayList[T] = {
+    val pythonList = new JArrayList[T]()
+    seq.map(item => pythonList.add(item))
+    pythonList
+  }
+
+  def toScalaTuple2[T](a: T, b: T): (T, T) = {
+    (a, b)
+  }
+
+  /**
+   * Takes list of keys and values (i.e ["key1", "value1", "key2", "value2"]) and formats
+   * them as a scala map.
+   * @param keysAndValues List of keys and values
+   * @return Map of key to value pairs
+   */
+  def toScalaMap[T](keysAndValues: JArrayList[T]): Map[T, T] = {
+    keysAndValues.asScala.toList.grouped(2).collect { case List(k, v) => k -> v }.toMap
   }
 
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {

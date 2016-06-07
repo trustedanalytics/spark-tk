@@ -21,6 +21,7 @@ import java.util.Date
 import org.apache.spark.{ SparkConf, SparkContext }
 
 import scala.concurrent.Lock
+import org.apache.log4j.{ Logger, Level }
 
 /**
  * Don't use this class directly!!  Use the FlatSpec or WordSpec version for your tests
@@ -80,7 +81,14 @@ private[testutils] object TestingSparkContext {
     //conf.set("spark.kryo.registrator", registrator)
     conf.set("spark.sql.shuffle.partitions", "2")
 
+    turnOffLogging() // todo: add to config if needed for debug
+
     new SparkContext(conf)
+  }
+
+  def turnOffLogging() = {
+    Logger.getLogger("org").setLevel(Level.OFF)
+    Logger.getLogger("akka").setLevel(Level.OFF)
   }
 
   /**

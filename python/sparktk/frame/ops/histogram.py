@@ -42,7 +42,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
         >>> data = [['a', 2], ['b', 7], ['c', 3], ['d', 9], ['e', 1]]
         >>> schema = [('a', str), ('b', int)]
 
-        >>> frame = tc.to_frame(data, schema)
+        >>> frame = tc.frame.create(data, schema)
         <progress>
 
     </hide>

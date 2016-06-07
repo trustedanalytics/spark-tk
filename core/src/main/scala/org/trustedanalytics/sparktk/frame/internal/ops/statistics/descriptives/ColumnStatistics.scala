@@ -21,23 +21,21 @@ object ColumnStatistics extends Serializable {
    *
    * @param dataColumnIndex Index of the column providing data.
    * @param dataType The type of the data column.
-   * @param weightsColumnIndexOption Option for index of column providing weights. Must be numerical data.
-   * @param weightsTypeOption Option for the datatype of the weights.
+   * @param weightsColumnIndexAndType Option for index and data type of column providing weights. Must be numerical data.
    * @param modeCountOption Option for the maximum number of modes returned. Defaults to 1.
    * @param rowRDD RDD of input rows.
    * @return The mode of the column (as a string), the weight of the mode, and the total weight of the data.
    */
   def columnMode(dataColumnIndex: Int,
                  dataType: DataType,
-                 weightsColumnIndexOption: Option[Int],
-                 weightsTypeOption: Option[DataType],
+                 weightsColumnIndexAndType: Option[(Int, DataType)],
                  modeCountOption: Option[Int],
                  rowRDD: RDD[Row]): ColumnModeReturn = {
 
     val defaultNumberOfModesReturned = 1
 
     val dataWeightPairs: RDD[(Any, Double)] =
-      getDataWeightPairs(dataColumnIndex, weightsColumnIndexOption, weightsTypeOption, rowRDD)
+      getDataWeightPairs(dataColumnIndex, weightsColumnIndexAndType, rowRDD)
 
     val modeCount = modeCountOption.getOrElse(defaultNumberOfModesReturned)
 
@@ -58,19 +56,17 @@ object ColumnStatistics extends Serializable {
    *
    * @param dataColumnIndex Index of the data column.
    * @param dataType The type of the data column.
-   * @param weightsColumnIndexOption  Option for index of column providing  weights. Must be numerical data.
-   * @param weightsTypeOption Option for the datatype of the weights.
+   * @param weightsColumnIndexAndType  Option for index and data type of column providing weights. Must be numerical data.
    * @param rowRDD RDD of input rows.
    * @return The median of the column.
    */
   def columnMedian(dataColumnIndex: Int,
                    dataType: DataType,
-                   weightsColumnIndexOption: Option[Int],
-                   weightsTypeOption: Option[DataType],
+                   weightsColumnIndexAndType: Option[(Int, DataType)],
                    rowRDD: RDD[Row]): ColumnMedianReturn = {
 
     val dataWeightPairs: RDD[(Any, Double)] =
-      getDataWeightPairs(dataColumnIndex, weightsColumnIndexOption, weightsTypeOption, rowRDD)
+      getDataWeightPairs(dataColumnIndex, weightsColumnIndexAndType, rowRDD)
 
     implicit val ordering: Ordering[Any] = new NumericalOrdering(dataType)
 
@@ -129,20 +125,18 @@ object ColumnStatistics extends Serializable {
   }
 
   def getDataWeightPairs(dataColumnIndex: Int,
-                         weightsColumnIndexOption: Option[Int],
-                         weightsTypeOption: Option[DataType],
+                         weightColumnIndexAndType: Option[(Int, DataType)],
                          rowRDD: RDD[Row]): RDD[(Any, Double)] = {
 
     val dataRDD: RDD[Any] = rowRDD.map(row => row(dataColumnIndex))
 
-    val weighted = weightsColumnIndexOption.isDefined
+    val weighted = weightColumnIndexAndType.isDefined
 
-    if (weightsColumnIndexOption.nonEmpty && weightsTypeOption.isEmpty) {
-      throw new IllegalArgumentException("Cannot specify weights column without specifying its datatype.")
+    val weightsRDD = if (weighted) {
+      val weightColumnIndex = weightColumnIndexAndType.get._1
+      val weightColumnDataType = weightColumnIndexAndType.get._2
+      rowRDD.map(row => weightColumnDataType.asDouble(row(weightColumnIndex)))
     }
-
-    val weightsRDD = if (weighted)
-      rowRDD.map(row => weightsTypeOption.get.asDouble(row(weightsColumnIndexOption.get)))
     else
       null
 

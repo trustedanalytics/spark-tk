@@ -27,24 +27,12 @@ https://docs.python.org/2/library/doctest.html
 This is not a test content file itself, but a test generator as well as a library, which is why
 it sits in the same folder as the test files.
 
-There are 2 source areas for the documentation examples:
+This module locates all the files for doctest testing and produces a python module with test methods
 
-1. The .rst files found recursively in doc-api-examples/src/main/resources/python
-
-2. The specific API .py files in python-client/trustedanalytics/core
-
-This module locates all the files for doctest testing.  It module writes a new file
-containing code text for unittest testcase classes and testcase methods for
-each of the files it found.  So, multiple functions are distributed among several
-classes.  This helps nose runner concurrency performance.
-
-The test case method simply calls back to this module with its path.  So it is this
+Each test case method simply calls back to this module with its path.  So it is this
 module which actually loads the file content, runs a preprocessor on it which edits the
 text appropriately for running in doctest (this enables skipping some test content or adding
 ELLIPSIS_MARKERs to ignore some output), and then calls doctest.
-
-Generating a test file was chosen because of difficulties working with nose in parallel
-execution for dynamically generated code.
 
 (see integration-tests/README_doctest.md)
 """
@@ -53,25 +41,23 @@ execution for dynamically generated code.
 doctest_verbose = False     # set to True for debug if you want to see all the comparisons
 doctest_print_time = False   # set to True to have the execution time printed for each doctest file
 
-import time
 import os
+import sys
+import time
 # env hack to prevent the " ^[[?1034h" from appearing, which happens when doctest imports readline.
 # See:  http://reinout.vanrees.org/weblog/2009/08/14/readline-invisible-character-hack.html
 os.environ['TERM'] = 'linux'
 import doctest
 
-from doc import parse_for_doctest, DocExamplesPreprocessor
-
-doctest.ELLIPSIS_MARKER = DocExamplesPreprocessor.doctest_ellipsis
-
 
 # file path calculations
-import os
 this_script_name = os.path.basename(__file__)
 this_script_as_module_name = os.path.splitext(__file__)[0]
 here = os.path.dirname(os.path.abspath(__file__))
 path_to_at_root = os.path.dirname(os.path.dirname(here))
 path_to_frameops = os.path.join(path_to_at_root, "python/sparktk/frame/ops")
+path_to_models = os.path.join(path_to_at_root, "python/sparktk/models")
+path_to_doc = os.path.join(path_to_at_root, "python/sparktk/doc")
 trim_to_at_root_len = len(path_to_at_root) + 1   # +1 for slash
 
 def _trim_test_path(path):
@@ -80,6 +66,10 @@ def _trim_test_path(path):
 test_file_name = os.path.join(here, "test_docs_generated.py")  # the name of generated test module
 # note: the *_generated.py* is a pattern in the root .gitignore file as well as the pom for maven-clean-plugin
 
+
+sys.path.insert(0, path_to_doc)
+from docutils import parse_for_doctest, DocExamplesPreprocessor, DocExamplesException
+doctest.ELLIPSIS_MARKER = DocExamplesPreprocessor.doctest_ellipsis
 
 
 # file exemptions - relative paths of those .rst files which should be skipped
@@ -116,7 +106,7 @@ def _get_cleansed_test_text(full_path):
     """parses the file at the given path and returns a cleansed string of its test content"""
     with open(full_path) as test_file:
         content = test_file.read()
-    cleansed = parse_for_doctest(content)
+    cleansed = parse_for_doctest(content, full_path)
     return cleansed
 
 
@@ -216,7 +206,7 @@ def main():
         print "[%s] Removed pre-existing .pyc file %s" % (this_script_name, pyc)
 
     # Python flatmap --> [item for list in listoflists for item in list]
-    test_paths = [test_path for folder_path in [path_to_frameops] for test_path in get_all_example_file_paths(folder_path)]
+    test_paths = [test_path for folder_path in [path_to_frameops, path_to_models] for test_path in get_all_example_file_paths(folder_path)]
     filtered_test_paths = filter_exemptions(test_paths)
     filtered_test_paths.append(os.path.join(path_to_at_root, "README.md"))
     print "[%s] Test paths considered:\n%s" % (this_script_name, "\n".join(filtered_test_paths))

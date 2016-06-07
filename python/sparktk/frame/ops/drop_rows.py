@@ -9,11 +9,11 @@ def drop_rows(self, predicate):
 
     .. code::
 
-        >>> frame = tc.to_frame([['Fred',39,16,'555-1234'],
-        ...                      ['Susan',33,3,'555-0202'],
-        ...                      ['Thurston',65,26,'555-4510'],
-        ...                      ['Judy',44,14,'555-2183']],
-        ...                     schema=[('name', str), ('age', int), ('tenure', int), ('phone', str)])
+        >>> frame = tc.frame.create([['Fred',39,16,'555-1234'],
+        ...                          ['Susan',33,3,'555-0202'],
+        ...                          ['Thurston',65,26,'555-4510'],
+        ...                          ['Judy',44,14,'555-2183']],
+        ...                         schema=[('name', str), ('age', int), ('tenure', int), ('phone', str)])
 
         >>> frame.inspect()
         [#]  name      age  tenure  phone

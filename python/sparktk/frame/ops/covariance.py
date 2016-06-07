@@ -18,7 +18,7 @@ def covariance(self, column_a, column_b):
         <hide>
         >>> s = [("idnum", int), ("x1", float), ("x2", float), ("x3", float), ("x4", float)]
         >>> rows = [ [0, 1.0, 4.0, 0.0, -1.0], [1, 2.0, 3.0, 0.0, -1.0], [2, 3.0, 2.0, 1.0, -1.0], [3, 4.0, 1.0, 2.0, -1.0], [4, 5.0, 0.0, 2.0, -1.0]]
-        >>> my_frame = tc.to_frame(rows, s)
+        >>> my_frame = tc.frame.create(rows, s)
         -etc-
 
         </hide>

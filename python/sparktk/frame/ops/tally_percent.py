@@ -16,7 +16,7 @@ def tally_percent(self, sample_col, count_val):
     column named *obs*:
 
         <hide>
-        >>> my_frame = tc.to_frame([[0],[1],[2],[0],[1],[2]], [("obs", int)])
+        >>> my_frame = tc.frame.create([[0],[1],[2],[0],[1],[2]], [("obs", int)])
         -etc-
 
         </hide>

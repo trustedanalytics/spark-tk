@@ -18,7 +18,7 @@ def drop_columns(self, columns):
         <hide>
         >>> sc=[("column_a", str), ("column_b", int), ("column_c", str), ("column_d", int)]
         >>> rows = [["Alameda", 1, "CA", 7], ["Princeton", 2, "NJ", 6], ["NewYork", 3 , "NY", 9]]
-        >>> frame = tc.to_frame(rows, sc)
+        >>> frame = tc.frame.create(rows, sc)
         -etc-
 
         </hide>

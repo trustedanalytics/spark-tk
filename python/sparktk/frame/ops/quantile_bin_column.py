@@ -44,7 +44,7 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
 
     <hide>
 
-    >>> my_frame = tc.to_frame([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]],
+    >>> my_frame = tc.frame.create([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]],
     ... [('a', int)])
     -etc-
 
@@ -91,6 +91,6 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
     [1.0, 2.0, 5.0, 13.0, 34.0, 89.0]
 
     """
-    return list(self._scala.quantileBinColumn(column_name,
-                                              self._tc.jutils.convert.to_scala_option(num_bins),
-                                              self._tc.jutils.convert.to_scala_option(bin_column_name)))
+    return self._tc.jutils.convert.from_scala_seq(self._scala.quantileBinColumn(column_name,
+                                                  self._tc.jutils.convert.to_scala_option(num_bins),
+                                                  self._tc.jutils.convert.to_scala_option(bin_column_name)))

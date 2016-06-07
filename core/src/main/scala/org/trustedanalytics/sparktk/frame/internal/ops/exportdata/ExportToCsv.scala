@@ -1,7 +1,6 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
 import org.apache.commons.csv.{ CSVPrinter, CSVFormat }
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
@@ -9,14 +8,20 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 import scala.collection.mutable.ArrayBuffer
 
 trait ExportToCsvSummarization extends BaseFrame {
-
+  /**
+   * Write current frame to HDFS in csv format.
+   *
+   * Export the frame to a file in csv format as a Hadoop file.
+   *
+   * @param fileName The HDFS folder path where the files will be created.
+   * @param separator Delimiter character.  Defaults to use a comma (`,`).
+   */
   def exportToCsv(fileName: String, separator: Char = ',') = {
     execute(ExportToCsv(fileName, separator))
   }
 }
 
 case class ExportToCsv(fileName: String, separator: Char) extends FrameSummarization[Unit] {
-  //}, schema: Schema, lineParserArguments: LineParserArguments) extends FrameTransform { //} func: Array[Any] => Seq[Any], schema: Schema) extends FrameTransform {
 
   override def work(state: FrameState): Unit = {
     ExportToCsv.exportToCsvFile(state.rdd, fileName, separator)

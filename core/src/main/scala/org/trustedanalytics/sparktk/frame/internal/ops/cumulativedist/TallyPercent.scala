@@ -5,19 +5,22 @@ import org.trustedanalytics.sparktk.frame.{ Column, DataTypes }
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameTransform, BaseFrame }
 
 trait TallyPercentTransform extends BaseFrame {
-
+  /**
+   * Compute a cumulative percent count.
+   *
+   * A cumulative percent count is computed by sequentially stepping through the rows, observing the column values
+   * and keeping track of the percentage of the total number of times the specified '''countVal''' has been seen up to
+   * the current value.
+   *
+   * @param sampleCol The name of the column from which to compute the cumulative sum.
+   * @param countVal The column value to be used for the counts.
+   */
   def tallyPercent(sampleCol: String,
                    countVal: String): Unit = {
     execute(TallyPercent(sampleCol, countVal))
   }
 }
 
-/**
- * Compute a cumulative percent count.
- *
- * @param sampleCol The name of the column from which to compute the cumulative sum.
- * @param countVal The column value to be used for the counts.
- */
 case class TallyPercent(sampleCol: String,
                         countVal: String) extends FrameTransform {
   require(StringUtils.isNotEmpty(sampleCol), "column name for sample is required")

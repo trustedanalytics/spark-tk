@@ -660,6 +660,17 @@ trait Schema {
   }
 
   /**
+   * Convert data type for a column
+   * @param columnIndex index of the column to change
+   * @param updatedDataType the new data type for that column
+   * @return the updated Schema
+   */
+  def convertType(columnIndex: Int, updatedDataType: DataType): Schema = {
+    val col = column(columnIndex)
+    copy(columns = columns.updated(columnIndex, col.copy(dataType = updatedDataType)))
+  }
+
+  /**
    * Rename a column
    *
    * @param existingName the old name

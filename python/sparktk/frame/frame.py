@@ -4,13 +4,11 @@ from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
 
 
-def to_frame(tc, data, schema=None):
-    return Frame(tc, data, schema)
-
-
-def load_frame(tc, path):
-    return Frame(tc, tc._jtc.loadFrame(path))
-
+# import constructors for the API's sake (not actually dependencies of the Frame class)
+from sparktk.frame.constructors.create import create
+from sparktk.frame.constructors.import_csv import import_csv
+from sparktk.frame.constructors.import_jdbc import import_jdbc
+from sparktk.frame.constructors.import_hive import import_hive
 
 class Frame(object):
 
@@ -35,6 +33,11 @@ class Frame(object):
     def create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema)
+
+    @staticmethod
+    def load(tc, scala_frame):
+        """creates a python Frame for the given scala Frame"""
+        return Frame(tc, scala_frame)
 
     def _frame_to_scala(self, python_frame):
         """converts a PythonFrame to a Scala Frame"""
@@ -83,7 +86,6 @@ class Frame(object):
             self._frame = PythonFrame(python_rdd, python_schema)
         return self._frame
 
-
     ##########################################################################
     # API
     ##########################################################################
@@ -119,48 +121,82 @@ class Frame(object):
         """
         return [name for name, data_type in self.schema]
 
+    @property
+    def row_count(self):
+        """
+        Number of rows in the current frame.
+
+        :return: The number of rows in the frame
+
+        Counts all of the rows in the frame.
+
+        Examples
+        --------
+        Get the number of rows:
+
+        <hide>
+        frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
+        </hide>
+
+        .. code::
+
+            >>> frame.row_count
+            4
+
+        """
+        if self._is_scala:
+            return int(self._scala.rowCount())
+        return self.rdd.count()
+
     def append_csv_file(self, file_name, schema, separator=','):
         self._scala.appendCsvFile(file_name, schema_to_scala(self._tc.sc, schema), separator)
 
     def export_to_csv(self, file_name):
         self._scala.exportToCsv(file_name)
 
-    def count(self):
-        if self._is_scala:
-            return int(self._scala.count())
-        return self.rdd.count()
-
     # Frame Operations
 
     from sparktk.frame.ops.add_columns import add_columns
+    from sparktk.frame.ops.append import append
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
+    from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
     from sparktk.frame.ops.categorical_summary import categorical_summary
     from sparktk.frame.ops.column_median import column_median
     from sparktk.frame.ops.column_mode import column_mode
     from sparktk.frame.ops.column_summary_statistics import column_summary_statistics
+    from sparktk.frame.ops.copy import copy
     from sparktk.frame.ops.correlation import correlation
     from sparktk.frame.ops.correlation_matrix import correlation_matrix
+    from sparktk.frame.ops.count import count
     from sparktk.frame.ops.covariance import covariance
     from sparktk.frame.ops.covariance_matrix import covariance_matrix
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
+    from sparktk.frame.ops.dot_product import dot_product
     from sparktk.frame.ops.drop_columns import drop_columns
+    from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
+    from sparktk.frame.ops.entropy import entropy
+    from sparktk.frame.ops.export_data import export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
     from sparktk.frame.ops.filter import filter
+    from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
     from sparktk.frame.ops.join_inner import join_inner
     from sparktk.frame.ops.join_left import join_left
     from sparktk.frame.ops.join_right import join_right
     from sparktk.frame.ops.join_outer import join_outer
+    from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
+    from sparktk.frame.ops.rename_columns import rename_columns
     from sparktk.frame.ops.save import save
+    from sparktk.frame.ops.sort import sort
+    from sparktk.frame.ops.sortedk import sorted_k
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
-
-
-
+    from sparktk.frame.ops.topk import top_k
+    from sparktk.frame.ops.unflatten_columns import unflatten_columns
