@@ -38,10 +38,10 @@ def join_outer(self,
 
     <hide>
 
-    >>> codes = tc.to_frame([[1], [3], [1], [0], [2], [1], [5], [3]], [('numbers', int)])
+    >>> codes = tc.frame.create([[1], [3], [1], [0], [2], [1], [5], [3]], [('numbers', int)])
     -etc-
 
-    >>> colors = tc.to_frame([[1, 'red'], [2, 'yellow'], [3, 'green'], [4, 'blue']], [('numbers', int), ('color', str)])
+    >>> colors = tc.frame.create([[1, 'red'], [2, 'yellow'], [3, 'green'], [4, 'blue']], [('numbers', int), ('color', str)])
     -etc-
 
     >>> country_code_rows = [[1, 354, "a"],[2, 91, "a"],[2, 100, "b"],[3, 47, "a"],[4, 968, "c"],[5, 50, "c"]]
@@ -52,10 +52,10 @@ def join_outer(self,
     >>> country_names_schema = [("country_code", int),("country_name", str),("test_str",str)]
     -etc-
 
-    >>> country_codes_frame = tc.to_frame(country_code_rows, country_code_schema)
+    >>> country_codes_frame = tc.frame.create(country_code_rows, country_code_schema)
     -etc-
 
-    >>> country_names_frame= tc.to_frame(country_name_rows, country_names_schema)
+    >>> country_names_frame= tc.frame.create(country_name_rows, country_names_schema)
     -etc-
 
     </hide>
@@ -158,7 +158,7 @@ def join_outer(self,
     if len(left_on) != len(right_on):
         raise ValueError("Please provide equal number of join columns")
 
-    return self._tc.to_frame(self._scala.joinOuter(right._scala,
+    return self._tc.frame.create(self._scala.joinOuter(right._scala,
                                                    self._tc.jutils.convert.to_scala_list_string(left_on),
                                                    self._tc.jutils.convert.to_scala_option(
                                                            self._tc.jutils.convert.to_scala_list_string(right_on))))
