@@ -5,6 +5,16 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 
 trait JoinInnerSummarization extends BaseFrame {
+
+  /**
+    * JoinInner performs left join operation on one or two frames, creating a new frame.
+    *
+    * @param right        Another frame to join with.
+    * @param leftOn       Names of the columns in the left frame used to match up the two frames.
+    * @param rightOn      Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+    * @param useBroadcast If one of your tables is small enough to fit in the memory of a single machine, you can use a broadcast join.
+    *                     Specify which table to broadcast (left or right). Default is None.
+    */
   def joinInner(right: Frame,
                 leftOn: List[String],
                 rightOn: Option[List[String]] = None,
@@ -13,15 +23,6 @@ trait JoinInnerSummarization extends BaseFrame {
   }
 }
 
-/**
- * JoinInner performs left join operation on one or two frames, creating a new frame.
- *
- * @param right        Another frame to join with.
- * @param leftOn       Names of the columns in the left frame used to match up the two frames.
- * @param rightOn      Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
- * @param useBroadcast If one of your tables is small enough to fit in the memory of a single machine, you can use a broadcast join.
- *                     Specify which table to broadcast (left or right). Default is None.
- */
 case class JoinInner(right: Frame,
                      leftOn: List[String],
                      rightOn: Option[List[String]],
