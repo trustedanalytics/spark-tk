@@ -55,14 +55,11 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with ExportToJsonSummarization
     with FlattenColumnsTransform
     with HistogramSummarization
-<<<<<<< HEAD
     with JoinInnerSummarization
     with JoinLeftSummarization
     with JoinOuterSummarization
     with JoinRightSummarization
-=======
     with MultiClassClassificationMetricsSummarization
->>>>>>> b383e57a6714b48db350e7d8542fa78f41a35497
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
