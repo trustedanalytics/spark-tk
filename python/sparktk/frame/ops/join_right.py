@@ -93,9 +93,12 @@ def join_right(self,
     [#]  numbers_R  color
     ======================
     [0]          1  red
-    [1]          2  yellow
-    [2]          3  green
-    [3]          4  blue
+    [1]          1  red
+    [2]          1  red
+    [3]          2  yellow
+    [4]          3  green
+    [5]          3  green
+    [6]          4  blue
 
     Setting use_broadcast_left to True
 
@@ -106,9 +109,13 @@ def join_right(self,
     [#]  numbers_R  color
     ======================
     [0]          1  red
-    [1]          2  yellow
-    [2]          3  green
-    [3]          4  blue
+    [1]          1  red
+    [2]          1  red
+    [3]          2  yellow
+    [4]          3  green
+    [5]          3  green
+    [6]          4  blue
+
 
     (The join adds an extra column *_R which is the join column from the right frame; it may be disregarded)
 
