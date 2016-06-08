@@ -17,12 +17,13 @@ import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics 
 //import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
 //import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
-import org.apache.spark.mllib.linalg.{ Vector, Vectors }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors, DenseVector => MllibDenseVector }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.{ ArrayType, BooleanType, ByteType, DateType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.apache.spark.{ Partition, TaskContext }
+import org.apache.spark.mllib.regression.LabeledPoint
 //import org.trustedanalytics.atk.domain.schema.Column
 //import org.trustedanalytics.atk.domain.schema.DataTypes
 //import org.trustedanalytics.atk.domain.schema.DataTypes.DataType
@@ -653,6 +654,17 @@ object FrameRdd {
         val meanCenteredVector = Vectors.dense((new DenseVector(b) - new DenseVector(meanVector.toArray)).toArray)
         IndexedRow(index, meanCenteredVector)
     }
+  }
+
+  /**
+   * Convert FrameRdd into RDD[LabeledPoint] format required by MLLib
+   */
+  def toLabeledPointRDD(rdd: FrameRdd, labelColumnName: String, featureColumnNames: Seq[String]): RDD[LabeledPoint] = {
+    val featureColumnsAsVector = featureColumnNames.toVector
+    rdd.mapRows(row => {
+      val features = row.values(featureColumnsAsVector).map(value => DataTypes.toDouble(value))
+      new LabeledPoint(DataTypes.toDouble(row.value(labelColumnName)), new MllibDenseVector(features.toArray))
+    })
   }
 
   /**
