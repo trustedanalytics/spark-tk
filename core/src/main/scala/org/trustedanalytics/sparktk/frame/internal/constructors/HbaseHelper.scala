@@ -17,7 +17,6 @@
 package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import _root_.org.apache.spark.rdd.RDD
-import _root_.org.trustedanalytics.sparktk.frame.DataTypes
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.hbase.client.Result
@@ -25,7 +24,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat
 import org.apache.hadoop.hbase.util.Bytes
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
-import org.trustedanalytics.sparktk.frame.DataTypes.
+import org.trustedanalytics.sparktk.frame.DataTypes
 import org.apache.spark._
 
 /**
