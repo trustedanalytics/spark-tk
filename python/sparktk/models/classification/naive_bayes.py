@@ -1,6 +1,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
+from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 
 
 def train(frame, labelColumn, observationColumns, lambdaParameter = 1.0):
@@ -103,6 +104,10 @@ class NaiveBayesModel(PropertiesObject):
     def predict(self, frame, columns=None):
         c = self.__columns_to_option(columns)
         self._scala.predict(frame._scala, c)
+
+    def test(self, frame, columns=None):
+        c = self.__columns_to_option(columns)
+        return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
 
     def __columns_to_option(self, c):
         if c is not None:

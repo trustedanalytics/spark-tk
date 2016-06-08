@@ -7,7 +7,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
+import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, ScoreAndLabel, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 
@@ -63,6 +64,10 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
                                                  observationColumns: Seq[String],
                                                  lambdaParameter: Double) extends Serializable {
 
+  implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
+    new RowWrapperFunctions(rowWrapper)
+  }
+
   /**
    * Adds a column to the frame which indicates the predicted class for each observation
    * @param frame - frame to add predictions to
@@ -86,6 +91,34 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   }
 
   /**
+   * Get the predictions for observations in a test frame
+   *
+   * @param frame Frame to test the NaiveBayes model
+   * @param columns Column(s) containing the observations whose labels are to be predicted.
+   *                By default, we predict the labels over columns the NaiveBayesModel
+   * @return ClassificationMetricValue describing the test metrics
+   */
+  def test(frame: Frame, columns: Option[List[String]]): ClassificationMetricValue = {
+
+    if (columns.isDefined) {
+      require(columns.get.length == observationColumns.length, "Number of columns for train and test should be same")
+    }
+    val naiveBayesColumns = columns.getOrElse(observationColumns)
+
+    //predicting and testing
+    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
+      val labeledPoint = row.valuesAsLabeledPoint(naiveBayesColumns, labelColumn)
+      val score = sparkModel.predict(labeledPoint.features)
+      ScoreAndLabel(score, labeledPoint.label)
+    })
+
+    //Run Binary classification metrics
+    val posLabel: Double = 1d
+    ClassificationMetricsFunctions.binaryClassificationMetrics(scoreAndLabelRdd, posLabel)
+  }
+
+  /**
    * Saves this model to a file
    * @param sc active SparkContext
    * @param path save to path
@@ -103,6 +136,5 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
  * @param labelColumn Label column for trained model
  * @param observationColumns Handle to the observation columns of the data frame
  * @param lambdaParameter Smoothing parameter used during model training
-
  */
 case class NaiveBayesModelTkMetaData(labelColumn: String, observationColumns: Seq[String], lambdaParameter: Double) extends Serializable

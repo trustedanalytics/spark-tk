@@ -51,9 +51,6 @@ import org.apache.spark.mllib.regression.LabeledPoint
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
-// todo: move this somewhere:
-case class ScoreAndLabel[T](score: T, label: T, frequency: Long = 1)
-
 /**
  * A Frame RDD is a SchemaRDD with our version of the associated schema.
  *
