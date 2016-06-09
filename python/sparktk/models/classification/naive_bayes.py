@@ -4,14 +4,14 @@ from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 
 
-def train(frame, labelColumn, observationColumns, lambdaParameter = 1.0):
+def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     """
     Creates a Naive Bayes by training on the given frame
 
     :param frame: frame of training data
-    :param labelColumn Column containing the label for each observation
-    :param observationColumns Column(s) containing the observations
-    :param lambdaParameter Additive smoothing parameter Default is 1.0
+    :param label_column Column containing the label for each observation
+    :param observation_columns Column(s) containing the observations
+    :param lambda_parameter Additive smoothing parameter Default is 1.0
 
     :return: NaiveBayesModel
 
@@ -19,9 +19,9 @@ def train(frame, labelColumn, observationColumns, lambdaParameter = 1.0):
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_model = _scala_obj.train(frame._scala,
-                                   labelColumn,
-                                   tc.jutils.convert.to_scala_list_string(observationColumns),
-                                   lambdaParameter)
+                                   label_column,
+                                   tc.jutils.convert.to_scala_list_string(observation_columns),
+                                   lambda_parameter)
     return NaiveBayesModel(tc, scala_model)
 
 
@@ -37,10 +37,13 @@ class NaiveBayesModel(PropertiesObject):
     Example
     -------
 
-    >>> frame = tc.frame.create([[1,19.8446136104,2.2985856384],[1,16.8973559126,2.6933495054],
-    ...                                 [1,5.5548729596,2.7777687995],[0,46.1810010826,3.1611961917],
-    ...                                 [0,44.3117586448,3.3458963222],[0,34.6334526911,3.6429838715]],
-    ...                                 [('Class', int), ('Dim_1', float), ('Dim_2', float)])
+    >>> frame = tc.frame.create([[1,19.8446136104,2.2985856384],
+    ...                          [1,16.8973559126,2.6933495054],
+    ...                          [1,5.5548729596, 2.7777687995],
+    ...                          [0,46.1810010826,3.1611961917],
+    ...                          [0,44.3117586448,3.3458963222],
+    ...                          [0,34.6334526911,3.6429838715]],
+    ...                          [('Class', int), ('Dim_1', float), ('Dim_2', float)])
 
     >>> model = tc.models.classification.naive_bayes.train(frame, 'Class', ['Dim_1', 'Dim_2'], 0.9)
 
@@ -77,6 +80,11 @@ class NaiveBayesModel(PropertiesObject):
 
     >>> set(restored.observation_columns) == set(model.observation_columns)
     True
+
+    >>> metrics = model.test(frame)
+
+    >>> metrics.precision
+    1.0
 
     """
 
