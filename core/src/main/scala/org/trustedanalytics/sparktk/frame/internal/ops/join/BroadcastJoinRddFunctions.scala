@@ -72,8 +72,8 @@ class BroadcastJoinRddFunctions(self: RddJoinParam) extends Logging with Seriali
    * @return key-value RDD whose values are results of inner-outer join
    */
   def innerBroadcastJoin(other: RddJoinParam, useBroadcast: Option[String]): RDD[Row] = {
-    val rowWrapper = new RowWrapper(other.frame.frameSchema)
-    val innerJoinedRDD = if (useBroadcast == Some("right")) {
+    if (useBroadcast == Some("right")) {
+      val rowWrapper = new RowWrapper(other.frame.frameSchema)
       val rightBroadcastVariable = JoinBroadcastVariable(other)
       val rightColsToKeep = other.frame.frameSchema.dropColumns(other.joinColumns.toList).columnNames
       val leftJoinColumns = self.joinColumns.toList
@@ -87,19 +87,19 @@ class BroadcastJoinRddFunctions(self: RddJoinParam) extends Logging with Seriali
       })
     }
     else if (useBroadcast == Some("left")) {
+      val rowWrapper = new RowWrapper(self.frame.frameSchema)
       val leftBroadcastVariable = JoinBroadcastVariable(self)
+      val rightColsToKeep = other.frame.frameSchema.dropColumns(other.joinColumns.toList).columnNames
       val rightJoinColumns = other.joinColumns.toList
-      other.frame.flatMapRows(rightRow => {
-        val leftColsToKeep = self.frame.frameSchema.dropColumns(self.joinColumns.toList).columnNames
-        val rightKeys = rightRow.values(rightJoinColumns.toVector)
+      other.frame.flatMapRows(right => {
+        val rightKeys = right.values(rightJoinColumns.toVector)
         leftBroadcastVariable.get(rightKeys) match {
           case Some(leftRows) =>
-            for (leftRow <- leftRows) yield Row.merge(new GenericRow(rowWrapper(leftRow).values(leftColsToKeep).toArray), rightRow.row)
+            for (leftRow <- leftRows) yield Row.merge(new GenericRow(rowWrapper(leftRow).values().toArray), new GenericRow(right.values(rightColsToKeep).toArray))
           case _ => Set.empty[Row]
         }
       })
     }
     else throw new IllegalArgumentException(s"Provide either left or right as broadcast type")
-    innerJoinedRDD
   }
 }

@@ -6,13 +6,17 @@ def join_right(self,
     """
     join_right performs right join(right outer) operation on one or two frames, creating a new frame.
 
-    @:param right : Another frame to join with
-    @:param left_on :Names of the columns in the left frame used to match up the two frames.
-    @:param right_on :Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    @:param use_broadcast_left: If left table is small enough to fit in the memory of a single machine, you can set use_broadcast_left to True to perform broadcast join.
-            Default is False.
 
-    @:returns: A new frame with the results of the join
+    Parameters
+    ----------
+
+    @:param right: (Frame) Another frame to join with
+    @:param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
+    @:param right_on: (Optional[List[str]])Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+    @:param use_broadcast_left: (bool) If left table is small enough to fit in the memory of a single machine,
+            you can set use_broadcast_left to True to possibly improve performance using broadcast join. Default is False.
+
+    :returns: (Frame) A new frame with the results of the join
 
     Create a new frame from a SQL JOIN operation with another frame.
     The frame on the 'left' is the currently active frame.
@@ -100,22 +104,6 @@ def join_right(self,
     [5]          3  green
     [6]          4  blue
 
-    Setting use_broadcast_left to True
-
-    >>> j_right = codes.join_right(colors, 'numbers', use_broadcast_left=True)
-    <progress>
-
-    >>> j_right.inspect()
-    [#]  numbers_R  color
-    ======================
-    [0]          1  red
-    [1]          1  red
-    [2]          1  red
-    [3]          2  yellow
-    [4]          3  green
-    [5]          3  green
-    [6]          4  blue
-
 
     (The join adds an extra column *_R which is the join column from the right frame; it may be disregarded)
 
@@ -157,7 +145,21 @@ def join_right(self,
     [4]         47               3  Norway        a
     [5]        968               4  Oman          c
 
-    Setting use_broadcast_left to True
+    Right join broadcasting left table
+
+    >>> j_right = codes.join_right(colors, 'numbers', use_broadcast_left=True)
+    <progress>
+
+    >>> j_right.inspect()
+    [#]  numbers_R  color
+    ======================
+    [0]          1  red
+    [1]          1  red
+    [2]          1  red
+    [3]          2  yellow
+    [4]          3  green
+    [5]          3  green
+    [6]          4  blue
 
     >>> composite_join_right = country_codes_frame.join_right(country_names_frame, ['country_code', 'test_str'], use_broadcast_left=True)
     <progress>
@@ -171,8 +173,6 @@ def join_right(self,
     [3]         47               3  Norway        a
     [4]        968               4  Oman          c
     [5]       None               6  Germany       c
-
-
 
     """
     if left_on is None:

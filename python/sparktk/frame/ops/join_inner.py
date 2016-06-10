@@ -6,13 +6,17 @@ def join_inner(self,
     """
     join_inner performs inner join operation on one or two frames, creating a new frame.
 
-    @:param right : Another frame to join with
-    @:param left_on :Names of the columns in the left frame used to match up the two frames.
-    @:param right_on :Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    @:param use_broadcast: If one of your tables is small enough to fit in the memory of a single machine, you can use a broadcast join.
-            Specify which table to broadcast (left or right). Default is None.
 
-    @:returns: A new frame with the results of the join
+    Parameters
+    ----------
+
+    @:param right: (Frame) Another frame to join with
+    @:param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
+    @:param right_on: (Optional[List[str]]) Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+    @:param use_broadcast: (Optional[str]) If one of your tables is small enough to fit in the memory of a single machine, you can use a broadcast join.
+            Specify that table to broadcast (left or right) to possibly improve performance. Default is None.
+
+    :returns: (Frame) A new frame with the results of the join
 
     Create a new frame from a SQL JOIN operation with another frame.
     The frame on the 'left' is the currently active frame.
@@ -100,37 +104,6 @@ def join_inner(self,
     [4]        3  green
     [5]        3  green
 
-    Inner join broadcasting the left table
-
-    >>> j = codes.join_inner(colors, 'numbers',use_broadcast="left")
-    <progress>
-
-    >>> j.inspect()
-    [#]  numbers  color
-    ====================
-    [0]        1  red
-    [1]        1  red
-    [2]        1  red
-    [3]        2  yellow
-    [4]        3  green
-    [5]        3  green
-
-
-    Inner join broadcasting right table
-
-    >>> j = codes.join_inner(colors, 'numbers',use_broadcast="right")
-    <progress>
-
-    >>> j.inspect()
-    [#]  numbers  color
-    ====================
-    [0]        1  red
-    [1]        3  green
-    [2]        1  red
-    [3]        2  yellow
-    [4]        1  red
-    [5]        3  green
-
     (The join adds an extra column *_R which is the join column from the right frame; it may be disregarded)
 
     Consider two frames: country_codes_frame and country_names_frame
@@ -170,7 +143,21 @@ def join_inner(self,
     [3]             3         47  a         Norway
     [4]             4        968  c         Oman
 
-    Setting use_broadcast to "left"
+
+    Inner join broadcasting the left table
+
+    >>> j = codes.join_inner(colors, 'numbers',use_broadcast="left")
+    <progress>
+
+    >>> j.inspect()
+    [#]  numbers  color
+    ====================
+    [0]        1  red
+    [1]        1  red
+    [2]        1  red
+    [3]        2  yellow
+    [4]        3  green
+    [5]        3  green
 
     >>> composite_join_left = country_codes_frame.join_inner(country_names_frame, ['country_code', 'test_str'],use_broadcast="left")
     <progress>
@@ -184,7 +171,20 @@ def join_inner(self,
     [3]             3         47  a         Norway
     [4]             4        968  c         Oman
 
-    Setting use_broadcast to "right"
+    Inner join broadcasting right table
+
+    >>> j = codes.join_inner(colors, 'numbers',use_broadcast="right")
+    <progress>
+
+    >>> j.inspect()
+    [#]  numbers  color
+    ====================
+    [0]        1  red
+    [1]        3  green
+    [2]        1  red
+    [3]        2  yellow
+    [4]        1  red
+    [5]        3  green
 
     >>> composite_join_right = country_codes_frame.join_inner(country_names_frame, ['country_code', 'test_str'],use_broadcast="right")
     <progress>

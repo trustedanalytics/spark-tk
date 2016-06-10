@@ -6,13 +6,17 @@ def join_left(self,
     """
     join_left performs left join(Left outer) operation on one or two frames, creating a new frame.
 
-    @:param right : Another frame to join with
-    @:param left_on :Names of the columns in the left frame used to match up the two frames.
-    @:param right_on :Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    @:param use_broadcast_right: If right table is small enough to fit in the memory of a single machine, you can set use_broadcast_right to True to perform broadcast join.
-            Default is False.
 
-    @:returns: A new frame with the results of the join
+    Parameters
+    ---------
+
+    @:param right: (Frame) Another frame to join with
+    @:param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
+    @:param right_on: (Optional[List[str]]) Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+    @:param use_broadcast_right: (bool) If right table is small enough to fit in the memory of a single machine,
+            you can set use_broadcast_right to True to possibly improve performance using broadcast join. Default is False.
+
+    :returns: (Frame) A new frame with the results of the join
 
     Create a new frame from a SQL JOIN operation with another frame.
     The frame on the 'left' is the currently active frame.
@@ -102,23 +106,6 @@ def join_left(self,
     [6]          3  green
     [7]          5  None
 
-    setting use_broadcast_right to True
-
-    >>> j_left = codes.join_left(colors, 'numbers', use_broadcast_right=True)
-    <progress>
-
-    >>> j_left.inspect()
-    [#]  numbers_L  color
-    ======================
-    [0]          1  red
-    [1]          3  green
-    [2]          1  red
-    [3]          0  None
-    [4]          2  yellow
-    [5]          1  red
-    [6]          5  None
-    [7]          3  green
-
     (The join adds an extra column *_R which is the join column from the right frame; it may be disregarded)
 
     Consider two frames: country_codes_frame and country_names_frame
@@ -160,7 +147,22 @@ def join_left(self,
     [5]               4        968  c           Oman
     [6]               5         50  c           None
 
-    setting use_broadcast_right to True
+    Left join broadcasting right table
+
+    >>> j_left = codes.join_left(colors, 'numbers', use_broadcast_right=True)
+    <progress>
+
+    >>> j_left.inspect()
+    [#]  numbers_L  color
+    ======================
+    [0]          1  red
+    [1]          3  green
+    [2]          1  red
+    [3]          0  None
+    [4]          2  yellow
+    [5]          1  red
+    [6]          5  None
+    [7]          3  green
 
     >>> composite_join_left = country_codes_frame.join_left(country_names_frame, ['country_code', 'test_str'], use_broadcast_right=True)
     <progress>

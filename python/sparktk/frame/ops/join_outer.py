@@ -5,11 +5,15 @@ def join_outer(self,
     """
     join_outer performs outer join operation on one or two frames, creating a new frame.
 
-    @:param right : Another frame to join with
-    @:param left_on :Names of the columns in the left frame used to match up the two frames.
-    @:param right_on :Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
 
-    @:returns: A new frame with the results of the join
+    Parameters
+    ----------
+
+    @:param right: (Frame) Another frame to join with
+    @:param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
+    @:param right_on: (Optional[List[str]]) Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+
+    :returns: (Frame) A new frame with the results of the join
 
     Create a new frame from a SQL JOIN operation with another frame.
     The frame on the 'left' is the currently active frame.

@@ -7,14 +7,14 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 trait JoinRightSummarization extends BaseFrame {
 
   /**
-    * Join operation on one or two frames, creating a new frame.
-    *
-    * @param right        Another frame to join with.
-    * @param leftOn       Names of the columns in the left frame used to match up the two frames.
-    * @param rightOn      Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    * @param useBroadcastLeft If left table is small enough to fit in the memory of a single machine, you can set useBroadcastLeft to True to perform broadcast join.
-    * Default is False.
-    */
+   * Join operation on one or two frames, creating a new frame.
+   *
+   * @param right        Another frame to join with.
+   * @param leftOn       Names of the columns in the left frame used to match up the two frames.
+   * @param rightOn      Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+   * @param useBroadcastLeft If left table is small enough to fit in the memory of a single machine, you can set useBroadcastLeft to True to perform broadcast join.
+   * Default is False.
+   */
   def joinRight(right: Frame,
                 leftOn: List[String],
                 rightOn: Option[List[String]] = None,
