@@ -12,16 +12,28 @@ def train(frame,
           impurity = "gini",
           max_depth = 4,
           max_bins = 100,
-          seed = int(os.urandom(4).encode('hex'), 16),
+          seed = int(os.urandom(2).encode('hex'), 16),
           categorical_features_info = None,
           feature_subset_category = None):
     """
     Creates a Naive Bayes by training on the given frame
 
-    :param frame: frame of training data
-    :param label_column Column containing the label for each observation
+    :param frame frame of training data
+    :param label_column Column name containing the label for each observation
     :param observation_columns Column(s) containing the observations
-    :param lambda_parameter Additive smoothing parameter Default is 1.0
+    :param num_classes Number of classes for classification. Default is 2
+    :param num_trees Number of tress in the random forest. Default is 1
+    :param impurity Criterion used for information gain calculation. Supported values "gini" or "entropy".
+                    Default is "gini"
+    :param max_depth Maximum depth of the tree. Default is 4
+    :param max_bins Maximum number of bins used for splitting features. Default is 100
+    :param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
+    :param categorical_features_info Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
+                                   with 'k' categories indexed from 0:{0,1,...,k-1}
+    :param feature_subset_category Number of features to consider for splits at each node.
+                                 Supported values "auto","all","sqrt","log2","onethird".
+                                 If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
+                                 ; if num_trees > 1, set to "sqrt"
 
     :return: RandomForestClassifierModel
 
@@ -37,11 +49,15 @@ def train(frame,
                                    max_depth,
                                    max_bins,
                                    seed,
-                                   categorical_features_info,
+                                   get_categorical_features_info(tc, categorical_features_info),
                                    tc.jutils.convert.to_scala_option(feature_subset_category))
 
     return RandomForestClassifierModel(tc, scala_model)
 
+def get_categorical_features_info(tc, c):
+    if c is not None:
+        c = tc.jutils.convert.to_scala_map(c)
+    return tc.jutils.convert.to_scala_option(c)
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
@@ -55,54 +71,58 @@ class RandomForestClassifierModel(PropertiesObject):
     Example
     -------
 
-    >>> frame = tc.frame.create([[1,19.8446136104,2.2985856384],
-    ...                          [1,16.8973559126,2.6933495054],
-    ...                          [1,5.5548729596, 2.7777687995],
-    ...                          [0,46.1810010826,3.1611961917],
-    ...                          [0,44.3117586448,3.3458963222],
-    ...                          [0,34.6334526911,3.6429838715]],
-    ...                          [('Class', int), ('Dim_1', float), ('Dim_2', float)])
+    >>> frame = tc.frame.create([[1,19.8446136104,2.2985856384],[1,16.8973559126,2.6933495054],
+    ...                                 [1,5.5548729596,2.7777687995],[0,46.1810010826,3.1611961917],
+    ...                                 [0,44.3117586448,3.3458963222],[0,34.6334526911,3.6429838715]],
+    ...                                 [('Class', int), ('Dim_1', float), ('Dim_2', float)])
 
-    >>> model = tc.models.classification.naive_bayes.train(frame, 'Class', ['Dim_1', 'Dim_2'], 0.9)
+    >>> frame.inspect()
+    [#]  Class  Dim_1          Dim_2
+    =======================================
+    [0]      1  19.8446136104  2.2985856384
+    [1]      1  16.8973559126  2.6933495054
+    [2]      1   5.5548729596  2.7777687995
+    [3]      0  46.1810010826  3.1611961917
+    [4]      0  44.3117586448  3.3458963222
+    [5]      0  34.6334526911  3.6429838715
 
-    >>> model.label_column
-    u'Class'
-
-    >>> model.observation_columns
-    [u'Dim_1', u'Dim_2']
-
-    >>> model.lambda_parameter
-    0.9
+    >>> model = tc.models.classification.random_forest_classifier.train(frame, 'Class', ['Dim_1', 'Dim_2'], num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
 
     >>> model.predict(frame, ['Dim_1', 'Dim_2'])
 
     >>> frame.inspect()
     [#]  Class  Dim_1          Dim_2         predicted_class
     ========================================================
-    [0]      1  19.8446136104  2.2985856384              0.0
-    [1]      1  16.8973559126  2.6933495054              1.0
-    [2]      1   5.5548729596  2.7777687995              1.0
-    [3]      0  46.1810010826  3.1611961917              0.0
-    [4]      0  44.3117586448  3.3458963222              0.0
-    [5]      0  34.6334526911  3.6429838715              0.0
+    [0]      1  19.8446136104  2.2985856384                1
+    [1]      1  16.8973559126  2.6933495054                1
+    [2]      1   5.5548729596  2.7777687995                1
+    [3]      0  46.1810010826  3.1611961917                0
+    [4]      0  44.3117586448  3.3458963222                0
+    [5]      0  34.6334526911  3.6429838715                0
 
-    >>> model.save("sandbox/naivebayes")
+    >>> test_metrics = model.test(frame, ['Dim_1','Dim_2'])
 
-    >>> restored = tc.load("sandbox/naivebayes")
+    >>> test_metrics
+    accuracy         = 1.0
+    confusion_matrix =             Predicted_Pos  Predicted_Neg
+    Actual_Pos              3              0
+    Actual_Neg              0              3
+    f_measure        = 1.0
+    precision        = 1.0
+    recall           = 1.0
+
+    >>> model.save("sandbox/randomforestclassifier")
+
+    >>> restored = tc.load("sandbox/randomforestclassifier")
 
     >>> restored.label_column == model.label_column
     True
 
-    >>> restored.lambda_parameter == model.lambda_parameter
+    >>> restored.seed == model.seed
     True
 
     >>> set(restored.observation_columns) == set(model.observation_columns)
     True
-
-    >>> metrics = model.test(frame)
-
-    >>> metrics.precision
-    1.0
 
     """
 
@@ -124,8 +144,39 @@ class RandomForestClassifierModel(PropertiesObject):
         return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
 
     @property
-    def lambda_parameter(self):
-        return self._scala.lambdaParameter()
+    def num_classes(self):
+        return self._scala.numClasses()
+
+    @property
+    def num_trees(self):
+        return self._scala.numTrees()
+
+    @property
+    def impurity(self):
+        return self._scala.impurity()
+
+    @property
+    def max_depth(self):
+        return self._scala.maxDepth()
+
+    @property
+    def max_bins(self):
+        return self._scala.maxBins()
+
+    @property
+    def seed(self):
+        return self._scala.seed()
+
+    @property
+    def categorical_features_info(self):
+        s = self._tc.jutils.convert.from_scala_option(self._scala.categoricalFeaturesInfo())
+        if s:
+            return self._tc.jutils.convert.scala_map_to_python(s)
+        return None
+
+    @property
+    def feature_subset_category(self):
+        return self._tc.jutils.convert.from_scala_option(self._scala.featureSubsetCategory())
 
     def predict(self, frame, columns=None):
         c = self.__columns_to_option(columns)

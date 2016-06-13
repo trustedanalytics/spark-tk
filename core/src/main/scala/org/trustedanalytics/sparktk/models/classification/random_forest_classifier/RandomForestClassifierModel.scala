@@ -8,8 +8,8 @@ import org.apache.spark.sql.Row
 import org.apache.spark.mllib.tree.model.{ RandomForestModel => SparkRandomForestModel }
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
-import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ClassificationMetricsFunctions, ClassificationMetricValue}
-import org.trustedanalytics.sparktk.frame.internal.rdd.{ScoreAndLabel, RowWrapperFunctions, FrameRdd}
+import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
+import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 
@@ -18,7 +18,7 @@ import org.json4s.JsonAST.JValue
 
 object RandomForestClassifierModel extends TkSaveableObject {
 
-  def getFeatureSubsetCategory(featureSubsetCategory: Option[String], numTrees: Int): String = {
+  private def getFeatureSubsetCategory(featureSubsetCategory: Option[String], numTrees: Int): String = {
     var value = "all"
     value = featureSubsetCategory.getOrElse("all") match {
       case "auto" =>
@@ -76,7 +76,6 @@ object RandomForestClassifierModel extends TkSaveableObject {
       numTrees, impurity, maxDepth, maxBins, seed, categoricalFeaturesInfo, featureSubsetCategory)
   }
 
-
   def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
@@ -98,7 +97,7 @@ object RandomForestClassifierModel extends TkSaveableObject {
 }
 
 /**
- * NaiveBayesModel
+ * RandomForestClassifierModel
  * @param sparkModel Trained MLLib's RandomForestClassifier model
  * @param labelColumn Column name containing the label for each observation
  * @param observationColumns Column(s) containing the observations
@@ -117,27 +116,26 @@ object RandomForestClassifierModel extends TkSaveableObject {
  *                              ; if num_trees > 1, set to "sqrt"
  */
 case class RandomForestClassifierModel private[random_forest_classifier] (sparkModel: SparkRandomForestModel,
-                                                                        labelColumn: String,
-                                                                        observationColumns: List[String],
-                                                                        numClasses: Int,
-                                                                        numTrees: Int,
-                                                                        impurity: String,
-                                                                        maxDepth: Int,
-                                                                        maxBins: Int,
-                                                                        seed: Int,
-                                                                        categoricalFeaturesInfo: Option[Map[Int, Int]],
-                                                                        featureSubsetCategory: Option[String]) extends Serializable {
+                                                                          labelColumn: String,
+                                                                          observationColumns: List[String],
+                                                                          numClasses: Int,
+                                                                          numTrees: Int,
+                                                                          impurity: String,
+                                                                          maxDepth: Int,
+                                                                          maxBins: Int,
+                                                                          seed: Int,
+                                                                          categoricalFeaturesInfo: Option[Map[Int, Int]],
+                                                                          featureSubsetCategory: Option[String]) extends Serializable {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
-
   /**
    * Adds a column to the frame which indicates the predicted class for each observation
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the NaiveBayesModel
+   *                By default, we predict the labels over columns the RandomForestClassifierModel
    */
   def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
     require(frame != null, "frame is required")
@@ -161,7 +159,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
    *
    * @param frame Frame to test the RandomForestClassifier model
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the NaiveBayesModel
+   *                By default, we predict the labels over columns the RandomForestClassifierModel
    * @return ClassificationMetricValue describing the test metrics
    */
   def test(frame: Frame, columns: Option[List[String]]): ClassificationMetricValue = {
@@ -180,13 +178,13 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     })
 
     val output: ClassificationMetricValue = numClasses match {
-      case 2 => val posLabel = 1d
+      case 2 =>
+        val posLabel = 1d
         ClassificationMetricsFunctions.binaryClassificationMetrics(scoreAndLabelRdd, posLabel)
       case _ => ClassificationMetricsFunctions.multiclassClassificationMetrics(scoreAndLabelRdd)
     }
     output
   }
-
 
   /**
    * Saves this model to a file

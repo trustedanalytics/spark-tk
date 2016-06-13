@@ -35,9 +35,9 @@ object Loaders {
    */
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(Frame,
-                                              KMeansModel,
-                                              NaiveBayesModel,
-                                              RandomForestClassifierModel)
+      KMeansModel,
+      NaiveBayesModel,
+      RandomForestClassifierModel)
     entries.map(e => e.formatId -> e.load _).toMap
   }
 
