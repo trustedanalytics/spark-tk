@@ -30,9 +30,10 @@ Handles connect, building hardened prefixes, cleanup in the general case
 """
 
 import httplib
-import trustedanalytics as ia
+from sparktk import TkContext
+#import trustedanalytics as ia
 import unittest
-
+from sparktk.sparkconf import create_sc
 import common_utils
 import config
 
@@ -44,30 +45,36 @@ class ATKTestCase(unittest.TestCase):
     def setUpClass(cls):
         """Connect to the trustedanalytics server."""
         cls.class_prefix = cls.__name__
-        if config.coverage:
-            ia.loggers.set_api()
+       # if config.coverage:
+        #    ia.loggers.set_api()
 
-        if config.atk_logger:
-            ia.loggers.set_api()
-            httplib.HTTPConnection.debuglevel = 1
+        #if config.atk_logger:
+            #ia.loggers.set_api()
+            #httplib.HTTPConnection.debuglevel = 1
 
-        if not ia.api_status.is_installed:
-            ia.server.uri = config.atk_server_uri
+        #if not ia.api_status.is_installed:
+            #ia.server.uri = config.atk_server_uri
 
-            try:
-                ia.server.ping()
-            except IOError:
-                print "Failed to ping server"
-                raise
+            #try:
+                #ia.server.ping()
+            #except IOError:
+                #print "Failed to ping server"
+                #raise
 
-            try:
-                ia.connect(config.credentials_file)
-            except:
-                print "connect failed"
-                raise
+	try:
+	    print "attempting to create sc"
+            #ia.connect(config.credentials_file)
+	    sc = create_sc(app_name="pytest-pyspark-local-testing")
+	    print "created schema"
+	    request.addfinalizer(lambda:sc.stop())
+	    print "added finalizer"
+	    tc = TkContext(sc)
+	except:
+            print "connect failed"
+            raise
 
-            if not ia.api_status.is_installed:
-                raise RuntimeError("Failed to install API (Connect)")
+            #if not ia.api_status.is_installed:
+                #raise RuntimeError("Failed to install API (Connect)")
 
     def setUp(self):
         """Create a unique prefix for this test."""
