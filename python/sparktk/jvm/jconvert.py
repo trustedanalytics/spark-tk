@@ -65,9 +65,18 @@ class JConvert(object):
         else:
             return self.scala.toOption(item)
 
+    def to_scala_date_time_list(self, python_list):
+        return self.scala.toScalaList([self.scala.toDateTime(item) for item in python_list])
+
+    def to_scala_date_time(self, item):
+        return self.scala.toDateTime(item)
+
     def from_scala_option(self, item):
         return self.scala.fromOption(item)
 
     def from_scala_seq(self, seq):
         return self.scala.scalaSeqToPython(seq)
+
+    def from_scala_vector(self, vector):
+        return list(self.scala.scalaVectorToPython(vector))
 

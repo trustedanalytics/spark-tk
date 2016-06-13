@@ -3,6 +3,7 @@ package org.trustedanalytics.sparktk.jvm
 import java.util.{ List => JList, Map => JMap }
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
+import org.joda.time.DateTime
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
 
 import scala.collection.JavaConverters._
@@ -33,11 +34,20 @@ object JConvert extends Serializable {
     }
   }
 
+  def toDateTime(item: Any): DateTime = {
+    item match {
+      case s: String => DateTime.parse(s)
+      case _ => throw new IllegalArgumentException(s"Unable to translate type ${item.getClass.getName} to DateTime.")
+    }
+  }
+
   def fromOption(o: Option[Any]): Any = o.orNull
 
   def scalaMapToPython[K, V](m: Map[K, V]): JMap[K, V] = SparkAliases.JavaUtils.mapAsSerializableJavaMap(m)
 
   def scalaSeqToPython[T](seq: Seq[T]): JList[T] = seq.asJava
+
+  def scalaVectorToPython[T](vector: Vector[T]): JList[T] = vector.asJava
 
   def toScalaTuple2[T](a: T, b: T): (T, T) = (a, b)
 
