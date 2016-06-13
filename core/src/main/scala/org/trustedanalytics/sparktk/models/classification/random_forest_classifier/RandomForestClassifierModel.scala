@@ -68,12 +68,29 @@ object RandomForestClassifierModel extends TkSaveableObject {
     val randomForestCategoricalFeaturesInfo = categoricalFeaturesInfo.getOrElse(Map[Int, Int]())
 
     //create RDD from the frame
-    val labeledTrainRdd: RDD[LabeledPoint] = FrameRdd.toLabeledPointRDD(new FrameRdd(frame.schema, frame.rdd), labelColumn, observationColumns)
-    val randomForestModel = RandomForest.trainClassifier(labeledTrainRdd, numClasses, randomForestCategoricalFeaturesInfo, numTrees,
-      randomForestFeatureSubsetCategories, impurity, maxDepth, maxBins, seed)
+    val labeledTrainRdd: RDD[LabeledPoint] = FrameRdd.toLabeledPointRDD(new FrameRdd(frame.schema, frame.rdd),
+      labelColumn,
+      observationColumns)
+    val randomForestModel = RandomForest.trainClassifier(labeledTrainRdd,
+      numClasses,
+      randomForestCategoricalFeaturesInfo,
+      numTrees,
+      randomForestFeatureSubsetCategories,
+      impurity,
+      maxDepth,
+      maxBins,
+      seed)
 
-    RandomForestClassifierModel(randomForestModel, labelColumn, observationColumns, numClasses,
-      numTrees, impurity, maxDepth, maxBins, seed, categoricalFeaturesInfo, featureSubsetCategory)
+    RandomForestClassifierModel(randomForestModel,
+      labelColumn,
+      observationColumns,
+      numClasses,
+      numTrees,
+      impurity, maxDepth,
+      maxBins,
+      seed,
+      categoricalFeaturesInfo,
+      featureSubsetCategory)
   }
 
   def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
