@@ -65,3 +65,9 @@ class TkContext(object):
         logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
         proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})
         return proxy
+
+    @property
+    def agg(self):
+        """access to the aggregation function enumeration"""
+        from sparktk.frame.ops.group_by import agg
+        return agg

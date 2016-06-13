@@ -6,6 +6,19 @@ import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, Fram
 
 trait GroupBySummarization extends BaseFrame {
 
+  /**
+    * Summarized Frame with Aggregations.
+    *
+    * Create a Summarized Frame with Aggregations (Avg, Count, Max, Min, Mean, Sum, Stdev, ...).
+    *
+    * @param groupByColumns list of columns to group on
+    * @param aggregations list of lists contains aggregations to perform
+    *                     Each inner list contains below three strings
+    *                     function: Name of aggregation function (e.g., count, sum, variance)
+    *                     columnName: Name of column to aggregate
+    *                     newColumnName: Name of new column that stores the aggregated results
+    * @return Summarized Frame
+    */
   def groupBy(groupByColumns: List[String], aggregations: List[List[String]]) = {
     execute(GroupBy(groupByColumns, aggregations))
   }
