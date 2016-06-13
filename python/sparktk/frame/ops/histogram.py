@@ -133,7 +133,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
                 A list containing a decimal containing the percentage of
                 observations found in the total set per bin.
     """
-    results = self._tc.jutils.convert.scala_map_string_seq_to_python(self._scala.histogram(column_name,
+    results = self._tc.jutils.convert.scala_map_to_python_with_iterable_values(self._scala.histogram(column_name,
                           self._tc.jutils.convert.to_scala_option(num_bins),
                           self._tc.jutils.convert.to_scala_option(weight_column_name),
                           bin_type))

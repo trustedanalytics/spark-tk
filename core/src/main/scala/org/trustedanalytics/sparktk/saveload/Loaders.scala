@@ -3,6 +3,7 @@ package org.trustedanalytics.sparktk.saveload
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
+import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayesModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 
 object Loaders {
@@ -31,8 +32,11 @@ object Loaders {
    *
    * formatId -> loader function
    */
-  private lazy val loaders: Map[String, LoaderType] = Map(
-    Frame.formatId -> Frame.load,
-    KMeansModel.formatId -> KMeansModel.load
-  )
+  private lazy val loaders: Map[String, LoaderType] = {
+    val entries: Seq[TkSaveableObject] = List(Frame,
+      KMeansModel,
+      NaiveBayesModel)
+    entries.map(e => e.formatId -> e.load _).toMap
+  }
+
 }

@@ -24,7 +24,9 @@ def tc(request):
             from sparktk import create_sc
             #from sparktk.loggers import loggers
             #loggers.set("d", "sparktk.sparkconf")
-            sc = create_sc(master='local[2]', app_name="pytest-pyspark-local-testing")
+            sc = create_sc(master='local[2]',
+                           app_name="pytest-pyspark-local-testing",
+                           extra_conf={"spark.hadoop.fs.default.name": "file:///"})
             request.addfinalizer(lambda: sc.stop())
             global_tc = TkContext(sc)
     return global_tc
