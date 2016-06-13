@@ -5,28 +5,31 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
     """
     Creates a frame with data from a csv file.
 
-    :param path: Full path to the csv file
-    :param delimiter: A string which indicates the separation of data fields.  This is usually a single
-                      character and could be a non-visible character, such as a tab. The default delimiter
+    Parameters
+    ----------
+
+    :param path: (str) Full path to the csv file
+    :param delimiter: (Optional[str]) A string which indicates the separation of data fields.  This is usually a
+                      single character and could be a non-visible character, such as a tab. The default delimiter
                       is a comma (,).
-    :param header: Boolean value indicating if the first line of the file will be used to name columns,
+    :param header: (Optional[bool]) Boolean value indicating if the first line of the file will be used to name columns,
                    and not be included in the data.  The default value is false.
-    :param inferschema: Boolean value indicating if the column types will be automatically inferred.  It
-                        requires one extra pass over the data and is false by default.
-    :param: schema: Optionally specify the schema for the dataset.  Number of columns specified in the
-                    schema must match the number of columns in the csv file provided.
-    :return: Frame that contains the data from the csv file
+    :param inferschema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
+                       It requires one extra pass over the data and is false by default.
+    :param: schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
+                    columns specified in the schema must match the number of columns in the csv file provided.
+    :return: (Frame) Frame that contains the data from the csv file
 
     Examples
     --------
     Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
     there is a header and to infer the schema based on the data.
 
-    .. code::
-
         >>> file_path = "../integration-tests/datasets/cities.csv"
+
         >>> frame = tc.load_frame_from_csv(file_path, "|", header=True, inferschema=True)
         -etc-
+
         >>> frame.inspect()
         [#]  rank  city         population_2013  population_2010  change  county
         ============================================================================
@@ -40,6 +43,7 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
         [7]    16  Oregon City            34622            31859  8.67%   Clackamas
         [8]    17  McMinnville            33131            32187  2.93%   Yamhill
         [9]    18  Redmond                27427            26215  4.62%   Deschutes
+
         >>> frame.schema
         [('rank', int),
          ('city', str),

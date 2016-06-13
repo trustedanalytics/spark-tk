@@ -67,7 +67,29 @@
 
     extensions = []
     if use_pygments:
-      extensions = ['markdown.extensions.codehilite(linenums=False)']
+      extensions.append('markdown.extensions.codehilite(linenums=False)')
+
+    # style section headers
+    s = re.sub(r"(Notes|Note|Example|Examples|Parameters)\s[-]+$",
+               r"<div class='section-header'>\1:</div>",
+               s,flags=re.MULTILINE)
+
+    # style params (with or without type)
+    s = re.sub(r"\:param (\w+): \((?s)(.*?(?=\) ))\) (?s)(.*?(?=\n\n|:param|:return))",
+               r"<table><tr><td class='param-name'>\1</td><td class='param-type'>(\2):</td><td class='param-desc'>\3</td></tr></table>",
+               s,flags=re.MULTILINE)
+    s = re.sub(r"\:param (\w+): (?s)(.*?(?=\n\n|:param|:return))",
+               r"<table><tr><td class='param-name'>\1: </td><td class='param-desc'>\2</td></tr></table>",
+               s,flags=re.MULTILINE)
+
+    # style return value (with or without type)
+    s = re.sub(r"\:return: \((?s)(.*?(?=\) ))\) (?s)(.*?(?=\n\n))",
+               r"<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(\1): </td><td class='param-desc'>\2</td></tr></table></p>",
+               s,flags=re.MULTILINE)
+    s = re.sub(r"\:return: (?s)(.*?(?=\n\n))",
+               r"<p><table style='padding-top:10px'><tr><td class='param-name'>Returns: </td><td class='param-desc'>\1</td></tr></table></p>",
+               s,flags=re.MULTILINE)
+
     s = markdown.markdown(s.strip(), extensions=extensions)
     return s
 
@@ -454,26 +476,35 @@
   </script>
 </head>
 <body>
-<a href="index.html" id="fixed_top_left">Up</a>
-<a href="#" id="top">Top</a>
-
-<div id="container">
-  % if module_list:
-    <article id="content">
-      ${show_module_list(modules)}
-    </article>
-  % else:
-    ${module_index(module)}
-    <article id="content">
-      ${show_module(module)}
-    </article>
-  % endif
-  <div class="clear"> </div>
-  <footer id="footer">
-    <p>
-      spark-tk Python API Documentation
-    </p>
-  </footer>
-</div>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+    % if module_list:
+      <article id="content">
+        <div>
+        ${show_module_list(modules)}
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+    % else:
+      ${module_index(module)}
+      <article id="content">
+        <div>
+        ${show_module(module)}
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+    % endif
+  </div>
 </body>
 </html>

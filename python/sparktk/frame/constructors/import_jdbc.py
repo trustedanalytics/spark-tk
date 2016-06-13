@@ -4,7 +4,10 @@ from sparktk.tkcontext import TkContext
 
 def import_jdbc(connection_url, table_name, tc=implicit):
     """
-    import data from jdbc table into frame
+    Import data from jdbc table into frame.
+
+    Parameters
+    ----------
 
     :param connection_url: JDBC connection url to database server
     :param table_name: JDBC table name
@@ -17,8 +20,10 @@ def import_jdbc(connection_url, table_name, tc=implicit):
     <skip>
         >>> url = "jdbc:postgresql://localhost/postgres"
         >>> tb_name = "demo_test"
+
         >>> frame = tc.frame.import_jdbc(url, tb_name)
         -etc-
+
         >>> frame.inspect()
         [#]  a  b    c   d
         ==================
