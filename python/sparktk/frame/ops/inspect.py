@@ -3,6 +3,7 @@
 
 
 import sparktk.dtypes as dtypes
+import numpy as np
 
 spaces_between_cols = 2  # consts
 ellipses = '...'
@@ -284,6 +285,8 @@ class RowsInspection(object):
     def _get_value_formatter(self, data_type):
         if self.round and is_type_float(data_type):
             return self.get_rounder(data_type)
+        elif isinstance(data_type, dtypes.vector):
+            return self.get_vector_formatter()
         if self.truncate and is_type_unicode(data_type):
             return self.get_truncater()
         return identity
@@ -319,6 +322,13 @@ class RowsInspection(object):
         def rounder(value):
             return round_float(value, float_type, num_digits)
         return rounder
+
+    def get_vector_formatter(self):
+        def format_vector(v):
+            if v is None:
+                return None
+            return "[%s]" % ", ".join(["None" if np.isnan(f) else str(f) for f in v])
+        return format_vector
 
 
 def _get_header_entry(name, data_type, with_type):

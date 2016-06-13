@@ -1,8 +1,10 @@
 package org.trustedanalytics.sparktk.jvm
 
-import java.util.{ ArrayList => JArrayList, HashMap => JHashMap }
+import java.util.{ List => JList, Map => JMap }
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
+import org.joda.time.DateTime
+import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
 
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
@@ -13,14 +15,14 @@ object JConvert extends Serializable {
     JavaSparkContext.toSparkContext(jsc)
   }
 
-  def toScalaList[T](x: JArrayList[T]): List[T] = x.asScala.toList
+  def toScalaList[T](x: JList[T]): List[T] = x.asScala.toList
 
-  def toScalaVector[T](x: JArrayList[T]): Vector[T] = x.asScala.toVector
+  def toScalaVector[T](x: JList[T]): Vector[T] = x.asScala.toVector
 
   def toOption[T](item: T) = {
     item match {
       case null | None => None
-      case item: JArrayList[T] => Some(toScalaList(item))
+      case item: JList[T] => Some(toScalaList(item))
       case _ => Some(item)
     }
   }
@@ -32,55 +34,24 @@ object JConvert extends Serializable {
     }
   }
 
+  def toDateTime(item: Any): DateTime = {
+    item match {
+      case s: String => DateTime.parse(s)
+      case _ => throw new IllegalArgumentException(s"Unable to translate type ${item.getClass.getName} to DateTime.")
+    }
+  }
+
   def fromOption(o: Option[Any]): Any = o.orNull
 
-  def scalaMapStringIntToPython(m: Map[String, Int]) = {
-    scalaMapToPython[String, Int](m)
-  }
+  def scalaMapToPython[K, V](m: Map[K, V]): JMap[K, V] = SparkAliases.JavaUtils.mapAsSerializableJavaMap(m)
 
-  def scalaMapToPython[K, V](m: Map[K, V]): JArrayList[JArrayList[String]] = {
-    val pythonMap = new JArrayList[JArrayList[String]]()
-    m.map {
-      case (k, v) =>
-        val entry = new JArrayList[String]()
-        entry.add(k.toString)
-        entry.add(v.toString)
-        pythonMap.add(entry)
-    }
-    pythonMap
-  }
+  def scalaSeqToPython[T](seq: Seq[T]): JList[T] = seq.asJava
 
-  def scalaMapStringSeqToPython(m: Map[String, Seq[Double]]): JHashMap[String, JArrayList[Double]] = {
-    val hashMap = new JHashMap[String, JArrayList[Double]]()
+  def scalaVectorToPython[T](vector: Vector[T]): JList[T] = vector.asJava
 
-    m.map {
-      case (k, v) =>
-        val value = new JArrayList[Double](v.asJavaCollection)
-        hashMap.put(k, value)
-    }
+  def toScalaTuple2[T](a: T, b: T): (T, T) = (a, b)
 
-    hashMap
-  }
-
-  def scalaSeqToPython[T](seq: Seq[T]): JArrayList[T] = {
-    val pythonList = new JArrayList[T]()
-    seq.map(item => pythonList.add(item))
-    pythonList
-  }
-
-  def toScalaTuple2[T](a: T, b: T): (T, T) = {
-    (a, b)
-  }
-
-  /**
-   * Takes list of keys and values (i.e ["key1", "value1", "key2", "value2"]) and formats
-   * them as a scala map.
-   * @param keysAndValues List of keys and values
-   * @return Map of key to value pairs
-   */
-  def toScalaMap[T](keysAndValues: JArrayList[T]): Map[T, T] = {
-    keysAndValues.asScala.toList.grouped(2).collect { case List(k, v) => k -> v }.toMap
-  }
+  def toScalaMap[K, V](jm: java.util.Map[K, V]): Map[K, V] = SparkAliases.PythonUtils.toScalaMap(jm)
 
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
   //    val columns = pythonSchema.asScala.map { item =>

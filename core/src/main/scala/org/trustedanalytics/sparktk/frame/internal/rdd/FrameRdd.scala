@@ -688,7 +688,7 @@ object FrameRdd {
       case x if x.equals(DataTypes.float32) => FloatType
       case x if x.equals(DataTypes.float64) => DoubleType
       case x if x.equals(DataTypes.string) => StringType
-      // todo, bring back: case x if x.equals(DataTypes.datetime) => StringType
+      case x if x.equals(DataTypes.datetime) => StringType
       case x if x.isVector => VectorType
       case x if x.equals(DataTypes.ignore) => StringType
     }
@@ -761,7 +761,7 @@ object FrameRdd {
           case x if x.equals(DataTypes.float32) => "double"
           case x if x.equals(DataTypes.float64) => "double"
           case x if x.equals(DataTypes.string) => "string"
-          //case x if x.equals(DataTypes.datetime) => "string"
+          case x if x.equals(DataTypes.datetime) => "string"
           case x => throw new IllegalArgumentException(s"unsupported export type ${x.toString}")
         })
     }
