@@ -47,4 +47,4 @@ def rename_columns(self, names):
             new_schema[index] = (new_name, data_type)
         self._python.schema = new_schema
     else:
-        self._scala.renameColumns(self._tc.jutils.convert.to_scala_string_map(names))
+        self._scala.renameColumns(self._tc.jutils.convert.to_scala_map(names))
