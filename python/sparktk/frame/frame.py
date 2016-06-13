@@ -113,8 +113,6 @@ class Frame(object):
         Examples
         --------
 
-        .. code::
-
             >>> frame.column_names
             [u'name', u'age', u'tenure', u'phone']
 
@@ -135,10 +133,8 @@ class Frame(object):
         Get the number of rows:
 
         <hide>
-        frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
+         >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
         </hide>
-
-        .. code::
 
             >>> frame.row_count
             4

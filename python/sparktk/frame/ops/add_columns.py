@@ -18,17 +18,27 @@ def add_columns(self, func, schema, columns_accessed=None):
 
     Notes
     -----
-    1)  The row |UDF| ('func') must return a value in the same format as
+
+    1.  The row |UDF| ('func') must return a value in the same format as
         specified by the schema.
         See :doc:`/ds_apir`.
-    2)  Unicode in column names is not supported and will likely cause the
+    +   Unicode in column names is not supported and will likely cause the
         drop_frames() method (and others) to fail!
+
+    Parameters
+    ----------
+
+    :param func: (UDF) Function which takes the values in the row and produces a value, or collection of values, for the new cell(s).
+    :param schema: (List[(str,type)]) Schema for the column(s) being added.
+    :param columns_accessed: (Optional[List[str]]) List of columns which the UDF will access. This adds significant
+            performance benefit if we know which column(s) will be needed to execute the UDF, especially when the
+            frame has significantly more columns than those being used to evaluate the UDF.
+
 
     Examples
     --------
-    Given our frame, let's add a column which has how many years the person has been over 18
 
-    .. code::
+    Given our frame, let's add a column which has how many years the person has been over 18
 
         >>> frame = tc.frame.create([['Fred',39,16,'555-1234'],
         ...                          ['Susan',33,3,'555-0202'],
@@ -58,9 +68,8 @@ def add_columns(self, func, schema, columns_accessed=None):
     Multiple columns can be added at the same time.  Let's add percentage of
     life and percentage of adult life in one call, which is more efficient.
 
-    .. code::
-
-        >>> frame.add_columns(lambda row: [row.tenure / float(row.age), row.tenure / float(row.adult_years)], [("of_age", float), ("of_adult", float)])
+        >>> frame.add_columns(lambda row: [row.tenure / float(row.age), row.tenure / float(row.adult_years)],
+        ...                   [("of_age", float), ("of_adult", float)])
 
         >>> frame.inspect(round=2)
         [#]  name      age  tenure  phone     adult_years  of_age  of_adult
@@ -110,8 +119,6 @@ def add_columns(self, func, schema, columns_accessed=None):
 
     Let's add a name based on tenure percentage of age.  We know we're only going to use
     columns 'name' and 'of_age'.
-
-    .. code::
 
         >>> frame.add_columns(lambda row: percentage_of_string(row.name, row.of_age),
         ...                   ('tenured_name_age', unicode),

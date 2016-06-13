@@ -5,12 +5,15 @@ def copy(self, columns=None, where=None):
     """
     New frame with copied columns.
 
-    :param columns: String, list of strings, or dictionary.  If not None, the copy will only include the
+    Parameters
+    ----------
+
+    :param columns: (str, List[str], or dictionary(str,str))  If not None, the copy will only include the
                     columns specified.  If dict, the string pairs represent a column renaming
                     { source_column_name : destination_column_name }
-    :param where: Optionally provide a where function.  If not None, only those rows for which the UDF
+    :param where: (UDF) Optionally provide a where function.  If not None, only those rows for which the UDF
                   evaluates to True will be copied.
-    :return: New Frame object.
+    :return: (Frame) New Frame object.
 
     Copies specified columns into a new Frame object, optionally renaming them and/or filtering them.
     Useful for frame query.
@@ -25,8 +28,6 @@ def copy(self, columns=None, where=None):
     </hide>
 
     Consider the following frame of employee names, age, and years of service:
-
-    .. code::
 
         >>> frame.inspect()
         [#]  name      age  years
@@ -43,8 +44,6 @@ def copy(self, columns=None, where=None):
 
     To create a duplicate copy of the frame, use the copy operation with no parameters:
 
-    .. code::
-
         >>> duplicate = frame.copy()
         <progress>
 
@@ -59,8 +58,6 @@ def copy(self, columns=None, where=None):
         [5]  Ruth       52     21
 
     Using the copy operation, we can also limit the new frame to just include the 'name' column:
-
-    .. code::
 
         >>> names = frame.copy("name")
         <progress>
@@ -79,8 +76,6 @@ def copy(self, columns=None, where=None):
     a dictionary to rename the column(s) in the new frame.  Here we will use copy to create a frame of
     names for the employees that have over 20 years of service and also rename of the 'name' column to
     'first_name':
-
-    .. code::
 
         >>> names = frame.copy({"name" : "first_name"}, lambda row: row.years > 20)
         <progress>

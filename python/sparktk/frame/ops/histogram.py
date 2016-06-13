@@ -26,7 +26,29 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
     The returned value is a Histogram object containing 3 lists one each for:
     the cutoff points of the bins, size of each bin, and density of each bin.
 
-    **Notes**
+    Parameters
+    ----------
+
+    :param column_name: (str) Name of column to be evaluated.
+    :param num_bins: (Optional[int]) Number of bins in histogram.
+                     Default is Square-root choice will be used
+                     (in other words math.floor(math.sqrt(frame.row_count)).
+    :param weight_column_name: (Optional[str]) Name of column containing weights.
+                               Default is all observations are weighted equally.
+    :param bin_type: (str["equalwidth"|"equaldepth"]) The type of binning algorithm to use:
+                     ["equalwidth"|"equaldepth"] Defaults is "equalwidth".
+    :return: (Histogram) A Histogram object containing the result set.
+                The data returned is composed of multiple components:<br>
+            cutoffs : array of float<br>
+                A list containing the edges of each bin.<br>
+            hist : array of float<br>
+                A list containing count of the weighted observations found in each bin.<br>
+            density : array of float<br>
+                A list containing a decimal containing the percentage of
+                observations found in the total set per bin.
+
+    Notes
+    -----
 
     The num_bins parameter is considered to be the maximum permissible number
     of bins because the data may dictate fewer bins.
@@ -47,9 +69,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
 
     </hide>
 
-    Consider the following sample data set\:
-
-    .. code::
+    Consider the following sample data set:
 
         >>> frame.inspect()
             [#]  a  b
@@ -60,9 +80,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
             [3]  d  9
             [4]  e  1
 
-    A simple call for 3 equal-width bins gives\:
-
-    .. code::
+    A simple call for 3 equal-width bins gives:
 
         >>> hist = frame.histogram("b", num_bins=3)
         <progress>
@@ -77,8 +95,6 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
 
     Switching to equal depth gives\:
 
-    .. code::
-
         >>> hist = frame.histogram("b", num_bins=3, bin_type='equaldepth')
         <progress>
 
@@ -91,47 +107,23 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
         >>> hist.density
         [0.2, 0.4, 0.4]
 
-    .. only:: html
+    Plot hist as a bar chart using matplotlib:
 
-           Plot hist as a bar chart using matplotlib\:
-
-        .. code::
     <skip>
-            >>> import matplotlib.pyplot as plt
+        >>> import matplotlib.pyplot as plt
 
-            >>> plt.bar(hist,cutoffs[:1], hist.hist, width=hist.cutoffs[1] - hist.cutoffs[0])
-    </skip>
-    .. only:: latex
-
-           Plot hist as a bar chart using matplotlib\:
-
-        .. code::
-    <skip>
-            >>> import matplotlib.pyplot as plt
-
-            >>> plt.bar(hist.cutoffs[:1], hist.hist, width=hist.cutoffs[1] -
-            ... hist["cutoffs"][0])
+        >>> plt.bar(hist,cutoffs[:1], hist.hist, width=hist.cutoffs[1] - hist.cutoffs[0])
     </skip>
 
+    Plot hist as a bar chart using matplotlib\:
 
-    :param column_name: Name of column to be evaluated.
-    :param num_bins: Number of bins in histogram.
-                     Default is Square-root choice will be used
-                     (in other words math.floor(math.sqrt(frame.row_count)).
-    :param weight_column_name: Name of column containing weights.
-                               Default is all observations are weighted equally.
-    :param bin_type: The type of binning algorithm to use: ["equalwidth"|"equaldepth"]
-                     Defaults is "equalwidth".
-    :return: histogram
-                A Histogram object containing the result set.
-                The data returned is composed of multiple components:
-            cutoffs : array of float
-                A list containing the edges of each bin.
-            hist : array of float
-                A list containing count of the weighted observations found in each bin.
-            density : array of float
-                A list containing a decimal containing the percentage of
-                observations found in the total set per bin.
+    <skip>
+        >>> import matplotlib.pyplot as plt
+
+        >>> plt.bar(hist.cutoffs[:1], hist.hist, width=hist.cutoffs[1] -
+        ... hist["cutoffs"][0])
+    </skip>
+
     """
     results = self._tc.jutils.convert.scala_map_to_python_with_iterable_values(self._scala.histogram(column_name,
                           self._tc.jutils.convert.to_scala_option(num_bins),

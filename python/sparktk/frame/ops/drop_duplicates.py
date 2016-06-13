@@ -2,7 +2,11 @@ def drop_duplicates(self, unique_columns=None):
     """
     Modify the current frame, removing duplicate rows.
 
-    :param unique_columns: Column name(s) to identify duplicates. Default is the entire row is compared.
+    Parameters
+    ----------
+
+    :param unique_columns: (Optional[List[str] or str]) Column name(s) to identify duplicates. Default is the entire
+                           row is compared.
 
     Remove data rows which are the same as other rows.
     The entire row can be checked for duplication, or the search for duplicates can be limited to one or more columns.
@@ -12,8 +16,6 @@ def drop_duplicates(self, unique_columns=None):
     --------
 
     Given a frame with data:
-
-    .. code::
 
         <hide>
         >>> frame = tc.frame.create([[200, 4, 25],
@@ -49,8 +51,6 @@ def drop_duplicates(self, unique_columns=None):
     The result is a frame of unique rows.
     Note that row order may change.
 
-    .. code::
-
         >>> frame.drop_duplicates()
         <progress>
 
@@ -68,15 +68,11 @@ def drop_duplicates(self, unique_columns=None):
     Now remove any rows that have the same data in columns *a* and
     *c* as a previously checked row:
 
-    .. code::
-
         >>> frame.drop_duplicates([ "a", "c"])
         <progress>
 
     The result is a frame with unique values for the combination of columns *a*
     and *c*.
-
-    .. code::
 
         >>> frame.inspect()
         [#]  a    b  c
