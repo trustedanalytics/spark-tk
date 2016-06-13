@@ -62,21 +62,18 @@ def categorical_summary(self, columns, top_k=None, threshold=None):
     """
     Build summary of the data.
 
-    :param column_inputs: List of CategoricalSummaryInput consisting of column, topk and/or threshold
-    :return: List of CategoricalSummaryOutput objects for specified column(s) consisting of levels with
-             their frequency and percentage.
+    Parameters
+    ----------
 
-    Optional parameters:
-
-        top_k *: int*
-            Displays levels which are in the top k most frequently
+    :param columns: (List[CategoricalSummaryInput]) List of CategoricalSummaryInput consisting of column, topk and/or threshold
+    :param top_k: (Optional[int]) Displays levels which are in the top k most frequently
             occurring values for that column.
             Default is 10.
-
-        threshold *: float*
-            Displays levels which are above the threshold percentage with
+    :param threshold: (Optional[float]) Displays levels which are above the threshold percentage with
             respect to the total row count.
             Default is 0.0.
+    :return: (List[CategoricalSummaryOutput]) List of CategoricalSummaryOutput objects for specified column(s) consisting of levels with
+             their frequency and percentage.
 
     Compute a summary of the data in a column(s) for categorical or numerical data types.
     The returned value is a Map containing categorical summary for each specified column.
@@ -97,68 +94,69 @@ def categorical_summary(self, columns, top_k=None, threshold=None):
 
     Examples
     --------
+
     Consider Frame *my_frame*, which contains the data
 
     <hide>
-    >>> s = [("source",str),("target",str)]
-    >>> rows = [ ["entity","thing"], ["entity","physical_entity"],["entity","abstraction"],["physical_entity","entity"],["physical_entity","matter"],["physical_entity","process"],["physical_entity","thing"],["physical_entity","substance"],["physical_entity","object"],["physical_entity","causal_agent"],["abstraction","entity"],["abstraction","communication"],["abstraction","group"],["abstraction","otherworld"],["abstraction","psychological_feature"],["abstraction","attribute"],["abstraction","set"],["abstraction","measure"],["abstraction","relation"],["thing","physical_entity"],["thing","reservoir"],["thing","part"],["thing","subject"],["thing","necessity"],["thing","variable"],["thing","unit"],["thing","inessential"],["thing","body_of_water"]]
-    >>> my_frame = tc.frame.create(rows, s)
-    -etc-
-
+        >>> s = [("source",str),("target",str)]
+        >>> rows = [ ["entity","thing"], ["entity","physical_entity"],["entity","abstraction"],["physical_entity","entity"],["physical_entity","matter"],["physical_entity","process"],["physical_entity","thing"],["physical_entity","substance"],["physical_entity","object"],["physical_entity","causal_agent"],["abstraction","entity"],["abstraction","communication"],["abstraction","group"],["abstraction","otherworld"],["abstraction","psychological_feature"],["abstraction","attribute"],["abstraction","set"],["abstraction","measure"],["abstraction","relation"],["thing","physical_entity"],["thing","reservoir"],["thing","part"],["thing","subject"],["thing","necessity"],["thing","variable"],["thing","unit"],["thing","inessential"],["thing","body_of_water"]]
+        >>> my_frame = tc.frame.create(rows, s)
+        -etc-
     </hide>
-    >>> my_frame.inspect()
-    [#]  source           target
-    =====================================
-    [0]  entity           thing
-    [1]  entity           physical_entity
-    [2]  entity           abstraction
-    [3]  physical_entity  entity
-    [4]  physical_entity  matter
-    [5]  physical_entity  process
-    [6]  physical_entity  thing
-    [7]  physical_entity  substance
-    [8]  physical_entity  object
-    [9]  physical_entity  causal_agent
 
-    >>> cm = my_frame.categorical_summary('source', top_k=2)
-    <progress>
+        >>> my_frame.inspect()
+        [#]  source           target
+        =====================================
+        [0]  entity           thing
+        [1]  entity           physical_entity
+        [2]  entity           abstraction
+        [3]  physical_entity  entity
+        [4]  physical_entity  matter
+        [5]  physical_entity  process
+        [6]  physical_entity  thing
+        [7]  physical_entity  substance
+        [8]  physical_entity  object
+        [9]  physical_entity  causal_agent
 
-    >>> cm
-    column_name = "source"
-    [#]  level        frequency  percentage
-    ===========================================
-    [0]  thing                9  0.321428571429
-    [1]  abstraction          9  0.321428571429
-    [2]  <Missing>            0             0.0
-    [3]  <Other>             10  0.357142857143
+        >>> cm = my_frame.categorical_summary('source', top_k=2)
+        <progress>
 
-    >>> cm = my_frame.categorical_summary('source', threshold = 0.5)
-    <progress>
+        >>> cm
+        column_name = "source"
+        [#]  level        frequency  percentage
+        ===========================================
+        [0]  thing                9  0.321428571429
+        [1]  abstraction          9  0.321428571429
+        [2]  <Missing>            0             0.0
+        [3]  <Other>             10  0.357142857143
 
-    >>> cm
-    column_name = "source"
-    [#]  level      frequency  percentage
-    =====================================
-    [0]  <Missing>          0         0.0
-    [1]  <Other>           28         1.0
+        >>> cm = my_frame.categorical_summary('source', threshold = 0.5)
+        <progress>
 
-    >>> cm = my_frame.categorical_summary(['source', 'target'], top_k=[2, None], threshold=[None, 0.5])
-    <progress>
+        >>> cm
+        column_name = "source"
+        [#]  level      frequency  percentage
+        =====================================
+        [0]  <Missing>          0         0.0
+        [1]  <Other>           28         1.0
 
-    >>> cm
-    column_name = "source"
-    [#]  level        frequency  percentage
-    ===========================================
-    [0]  thing                9  0.321428571429
-    [1]  abstraction          9  0.321428571429
-    [2]  <Missing>            0             0.0
-    [3]  <Other>             10  0.357142857143
-    <BLANKLINE>
-    column_name = "target"
-    [#]  level      frequency  percentage
-    =====================================
-    [0]  <Missing>          0         0.0
-    [1]  <Other>           28         1.0
+        >>> cm = my_frame.categorical_summary(['source', 'target'], top_k=[2, None], threshold=[None, 0.5])
+        <progress>
+
+        >>> cm
+        column_name = "source"
+        [#]  level        frequency  percentage
+        ===========================================
+        [0]  thing                9  0.321428571429
+        [1]  abstraction          9  0.321428571429
+        [2]  <Missing>            0             0.0
+        [3]  <Other>             10  0.357142857143
+        <BLANKLINE>
+        column_name = "target"
+        [#]  level      frequency  percentage
+        =====================================
+        [0]  <Missing>          0         0.0
+        [1]  <Other>           28         1.0
 
     """
     if not isinstance(columns, list):

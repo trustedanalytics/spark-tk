@@ -3,9 +3,12 @@ def covariance(self, column_a, column_b):
     """
     Calculate covariance for exactly two columns.
 
-    :param column_a: The name of the column from which to compute the covariance.
-    :param column_b: The name of the column from which to compute the covariance.
-    :return: Covariance of the two columns.
+    Parameters
+    ----------
+
+    :param column_a: (str) The name of the column from which to compute the covariance.
+    :param column_b: (str) The name of the column from which to compute the covariance.
+    :return: (float) Covariance of the two columns.
 
     Notes
     -----

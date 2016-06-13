@@ -113,8 +113,6 @@ class Frame(object):
         Examples
         --------
 
-        .. code::
-
             >>> frame.column_names
             [u'name', u'age', u'tenure', u'phone']
 
@@ -135,10 +133,8 @@ class Frame(object):
         Get the number of rows:
 
         <hide>
-        frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
+         >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
         </hide>
-
-        .. code::
 
             >>> frame.row_count
             4
@@ -194,5 +190,7 @@ class Frame(object):
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
+    from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
+    from sparktk.frame.ops.timeseries_slice import timeseries_slice
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns

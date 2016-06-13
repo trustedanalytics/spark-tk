@@ -37,3 +37,26 @@ sparktk uses doctest to test the examples in the python API documentation.  See 
 in the integration-tests to learn about markup to control testability vs. what text shows up in the docs
 
 Example markup tags:  `<skip></skip>  <hide></hide>  <progress>`
+
+
+Formatting
+----------
+
+There are a standard set of headers ("Example", "Examples", "Parameters", "Note" and "Notes") that templates/html.mako
+will look for and format in a standard way in the html documentation.  In the python documentation, these headers
+should be formatted like:
+
+    Parameters
+    ----------
+
+There is also special formatting that is done for function parameters.  Parameters and return values should be
+formatted in python like:
+
+    :param param_name: (type) Description of the parameter
+    :return: (type) Description of what gets returned
+
+templates/html.mako will look for parameters and return values and format them so that the parameter names are
+**bold** and the types are in *italics*.  The html documentation will look like:
+
+**param_name** *(type)*: Description of the parameter<br>
+**Returns** *(type)*: Description of what gets returned

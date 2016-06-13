@@ -4,18 +4,22 @@ def binary_classification_metrics(self, label_column, pred_column, pos_label, be
     """
     Statistics of accuracy, precision, and others for a binary classification model.
 
-    :param label_column: The name of the column containing the correct label for each instance.
-    :param pred_column: The name of the column containing the predicted label for each instance.
-    :param pos_label: The value to be interpreted as a positive instance for binary classification.
-    :param beta: This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is computed);
+    Parameters
+    ----------
+
+    :param label_column: (str) The name of the column containing the correct label for each instance.
+    :param pred_column: (str) The name of the column containing the predicted label for each instance.
+    :param pos_label: (Any) The value to be interpreted as a positive instance for binary classification.
+    :param beta: (Optional[float]) This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is computed);
     must be greater than zero. Defaults is 1.
-    :param frequency_column: The name of an optional column containing the frequency of observations.
-    :return: The data returned is composed of multiple components\:
-    <object>.accuracy : double
-    <object>.confusion_matrix : table
-    <object>.f_measure : double
-    <object>.precision : double
-    <object>.recall : double
+    :param frequency_column: (Optional[str]) The name of an optional column containing the frequency of observations.
+    :return: (ClassificationMetricsValue) The data returned is composed of multiple components:<br>
+        &lt;object&gt;.accuracy : double<br>
+        &lt;object&gt;.confusion_matrix : table<br>
+        &lt;object&gt;.f_measure : double<br>
+        &lt;object&gt;.precision : double<br>
+        &lt;object&gt;.recall : double<br>
+
 
     Calculate the accuracy, precision, confusion_matrix, recall and :math:`F_{ \beta}` measure for a
         classification model.
@@ -69,6 +73,7 @@ def binary_classification_metrics(self, label_column, pred_column, pos_label, be
 
     Examples
     --------
+
     Consider Frame *my_frame*, which contains the data
 
     <hide>
@@ -78,33 +83,33 @@ def binary_classification_metrics(self, label_column, pred_column, pos_label, be
     -etc-
 
     </hide>
-    >>> my_frame.inspect()
-    [#]  a      b  labels  predictions
-    ==================================
-    [0]  red    1       0            0
-    [1]  blue   3       1            0
-    [2]  green  1       0            0
-    [3]  green  0       1            1
+        >>> my_frame.inspect()
+        [#]  a      b  labels  predictions
+        ==================================
+        [0]  red    1       0            0
+        [1]  blue   3       1            0
+        [2]  green  1       0            0
+        [3]  green  0       1            1
 
-    >>> cm = my_frame.binary_classification_metrics('labels', 'predictions', 1, 1)
-    <progress>
+        >>> cm = my_frame.binary_classification_metrics('labels', 'predictions', 1, 1)
+        <progress>
 
-    >>> cm.f_measure
-    0.6666666666666666
+        >>> cm.f_measure
+        0.6666666666666666
 
-    >>> cm.recall
-    0.5
+        >>> cm.recall
+        0.5
 
-    >>> cm.accuracy
-    0.75
+        >>> cm.accuracy
+        0.75
 
-    >>> cm.precision
-    1.0
+        >>> cm.precision
+        1.0
 
-    >>> cm.confusion_matrix
-                Predicted_Pos  Predicted_Neg
-    Actual_Pos              1              1
-    Actual_Neg              0              2
+        >>> cm.confusion_matrix
+                    Predicted_Pos  Predicted_Neg
+        Actual_Pos              1              1
+        Actual_Neg              0              2
 
     """
     return ClassificationMetricsValue(self._tc, self._scala.binaryClassificationMetrics(label_column,

@@ -2,14 +2,15 @@ def append(self, frame):
     """
     Adds more data to the current frame.
 
-    :param frame: Frame of data to append to the current frame.
+    Parameters
+    ----------
+
+    :param frame: (Frame) Frame of data to append to the current frame.
 
     Examples
     --------
 
     In this example, we start off by creating a frame of animals.
-
-    .. code::
 
         >>> animals = tc.frame.create([['dog', 'snoopy'],['cat', 'tom'],['bear', 'yogi'],['mouse', 'jerry']],
         ...                       [('animal', str), ('name', str)])
@@ -24,8 +25,6 @@ def append(self, frame):
         [3]  mouse   jerry
 
     Then, we append a frame that will add a few more animals to the original frame.
-
-    .. code::
 
         >>> animals.append(tc.frame.create([['donkey'],['elephant'], ['ostrich']], [('animal', str)]))
         <progress>

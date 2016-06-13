@@ -4,10 +4,13 @@ def drop_rows(self, predicate):
     """
     Erase any row in the current frame which qualifies.
 
+    Parameters
+    ----------
+    :param predicate: (UDF) Function which evaluates a row to a boolean; rows that answer True are dropped from
+                      the frame.
+
     Examples
     --------
-
-    .. code::
 
         >>> frame = tc.frame.create([['Fred',39,16,'555-1234'],
         ...                          ['Susan',33,3,'555-0202'],

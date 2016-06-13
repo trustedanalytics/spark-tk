@@ -6,23 +6,28 @@
   }
   body {
     background: #fff;
-    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.6em;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
   }
   #content {
-    width: 70%;
-    max-width: 850px;
-    float: left;
-    padding: 30px 60px;
-    border-left: 1px solid #ddd;
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
   }
   #sidebar {
+    position: absolute;
     width: 25%;
-    float: left;
+    top: 0;
+    right: 0;
+    left: 0;
     padding: 30px;
-    overflow: hidden;
+    overflow: auto;
+    height: 100%;
   }
   #nav {
     font-size: 130%;
@@ -45,10 +50,13 @@
     left: 5px;
     font-size: .85em;
     text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
   }
 
   #footer {
     font-size: .75em;
+    margin-top: 20px;
     padding: 5px 30px;
     border-top: 1px solid #ddd;
     text-align: right;
@@ -73,6 +81,7 @@
   }
 
   h3 {
+    font-size: 1.5em;
     margin: 25px 0 10px 0;
   }
 
@@ -92,8 +101,8 @@
     transition: color .3s ease-in-out;
   }
 
-  pre, code, .mono, .name {
-    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
   }
 
   .title .name {
@@ -105,7 +114,26 @@
   .ident {
     color: #900;
   }
-
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
   code {
     background: #f9f9f9;
   } 
@@ -124,6 +152,8 @@
 
     .codehilite pre {
       margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
     }
     .codehilite .err { background: #ff3300; color: #fff !important; } 
 
@@ -216,7 +246,7 @@
     }
 
     .item .desc {
-      padding: 0 8px;
+      padding: 0 20px 0 8px;
       margin: 0;
     }
 
