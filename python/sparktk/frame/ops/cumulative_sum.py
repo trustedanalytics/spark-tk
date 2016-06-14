@@ -2,7 +2,10 @@ def cumulative_sum(self, sample_col):
     """
     Add column to frame with cumulative sum.
 
-    :param sample_col: The name of the column from which to compute the cumulative sum.
+    Parameters
+    ----------
+
+    :param sample_col: (str) The name of the column from which to compute the cumulative sum.
 
     A cumulative sum is computed by sequentially stepping through the rows,
     observing the column values and keeping track of the cumulative sum for each value.
@@ -13,11 +16,12 @@ def cumulative_sum(self, sample_col):
 
     Examples
     --------
+
     Consider Frame *my_frame*, which accesses a frame that contains a single
     column named *obs*:
 
         <hide>
-        >>> my_frame = tc.to_frame([[0],[1],[2],[0],[1],[2]], [("obs", int)])
+        >>> my_frame = tc.frame.create([[0],[1],[2],[0],[1],[2]], [("obs", int)])
         -etc-
 
         </hide>

@@ -2,12 +2,14 @@ def cumulative_percent(self, sample_col):
     """
     Add column to frame with cumulative percent.
 
-    :param sample_col: The name of the column from which to compute the cumulative percent.
+    Parameters
+    ----------
+
+    :param sample_col: (str) The name of the column from which to compute the cumulative percent.
 
     A cumulative percent sum is computed by sequentially stepping through the rows,
     observing the column values and keeping track of the current percentage of the
     total sum accounted for at the current value.
-
 
     Notes
     -----
@@ -22,7 +24,7 @@ def cumulative_percent(self, sample_col):
     column named *obs*:
 
         <hide>
-        >>> my_frame = tc.to_frame([[0],[1],[2],[0],[1],[2]], [("obs", int)])
+        >>> my_frame = tc.frame.create([[0],[1],[2],[0],[1],[2]], [("obs", int)])
         -etc-
 
         </hide>

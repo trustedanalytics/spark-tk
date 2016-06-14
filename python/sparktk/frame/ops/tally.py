@@ -2,8 +2,11 @@ def tally(self, sample_col, count_val):
     """
     Count number of times a value is seen.
 
-    :param sample_col: The name of the column from which to compute the cumulative count.
-    :param count_val: The column value to be used for the counts.
+    Parameters
+    ----------
+
+    :param sample_col: (str) The name of the column from which to compute the cumulative count.
+    :param count_val: (str) The column value to be used for the counts.
 
     A cumulative count is computed by sequentially stepping through the rows,
     observing the column values and keeping track of the number of times the specified
@@ -15,7 +18,7 @@ def tally(self, sample_col, count_val):
     column named *obs*:
 
         <hide>
-        >>> my_frame = tc.to_frame([[0],[1],[2],[0],[1],[2]], [("obs", int)])
+        >>> my_frame = tc.frame.create([[0],[1],[2],[0],[1],[2]], [("obs", int)])
         -etc-
 
         </hide>

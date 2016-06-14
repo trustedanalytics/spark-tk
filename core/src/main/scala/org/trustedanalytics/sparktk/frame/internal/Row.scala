@@ -95,7 +95,7 @@ trait AbstractRow {
    * @param columnNames the columns to get values for
    * @return the values for the columns
    */
-  def values(columnNames: Vector[String] = schema.columnNames): Vector[Any] = {
+  def values(columnNames: Seq[String] = schema.columnNames): Seq[Any] = {
     columnNames.map(columnName => value(columnName))
   }
 

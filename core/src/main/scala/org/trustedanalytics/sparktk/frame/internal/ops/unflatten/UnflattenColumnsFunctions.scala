@@ -19,7 +19,7 @@ object UnflattenColumnsFunctions extends Serializable {
   }
 
   def unflattenRddByCompositeKey(compositeKeyIndex: List[Int],
-                                 initialRdd: RDD[(Vector[Any], Iterable[Row])],
+                                 initialRdd: RDD[(Seq[Any], Iterable[Row])],
                                  targetSchema: Schema,
                                  delimiter: String): RDD[Row] = {
     val rowWrapper = new RowWrapper(targetSchema)

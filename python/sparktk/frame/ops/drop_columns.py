@@ -6,11 +6,14 @@ def drop_columns(self, columns):
     """
     Drops columns from the frame
 
-    :param columns: names of the columns to drop
+    Parameters
+    ----------
 
+    :param columns: (str or List[str]) names of the columns to drop
 
     Examples
     --------
+
     For this example, the Frame object *my_frame* accesses a frame with 4 columns
     columns *column_a*, *column_b*, *column_c* and *column_d* and drops 2 columns *column_b* and *column_d* using drop columns.
 
@@ -18,7 +21,7 @@ def drop_columns(self, columns):
         <hide>
         >>> sc=[("column_a", str), ("column_b", int), ("column_c", str), ("column_d", int)]
         >>> rows = [["Alameda", 1, "CA", 7], ["Princeton", 2, "NJ", 6], ["NewYork", 3 , "NY", 9]]
-        >>> frame = tc.to_frame(rows, sc)
+        >>> frame = tc.frame.create(rows, sc)
         -etc-
 
         </hide>
@@ -35,6 +38,7 @@ def drop_columns(self, columns):
 
     Now the frame only has the columns *column_a* and *column_c*.
     For further examples, see: ref:`example_frame.drop_columns`.
+
     """
     if isinstance(columns, basestring):
         columns = [columns]

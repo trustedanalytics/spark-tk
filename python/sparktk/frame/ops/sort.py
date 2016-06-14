@@ -4,23 +4,26 @@ def sort(self, columns, ascending=True):
     """
     Sort by one or more columns.
 
-    :param columns: Either a column name, list of column names, or list of tuples where each tuple is a name and an
+    Parameters
+    ----------
+
+    :param columns: (str or List[str]) Either a column name, list of column names, or list of tuples where each tuple is a name and an
                     ascending bool value.
-    :param ascending: True for ascending, False for descending
+    :param ascending: (Optional[bool]) True for ascending (default), or False for descending.
 
     Sort a frame by column values either ascending or descending.
-
 
     Examples
     --------
 
         <hide>
-        >>> frame = tc.to_frame([[3, 'foxtrot'], [1, 'charlie'], [3, 'bravo'], [2, 'echo'], [4, 'delta'], [3, 'alpha']], [('col1', int), ('col2', str)])
+        >>> frame = tc.frame.create([[3, 'foxtrot'], [1, 'charlie'], [3, 'bravo'], [2, 'echo'], [4, 'delta'], [3, 'alpha']], [('col1', int), ('col2', str)])
         -etc-
 
         </hide>
 
-    Consider the frame
+    Consider the frame:
+
         >>> frame.inspect()
         [#]  col1  col2
         ==================
@@ -32,8 +35,6 @@ def sort(self, columns, ascending=True):
         [5]     3  alpha
 
     Sort a single column:
-
-    .. code::
 
         >>> frame.sort('col1')
         <progress>
@@ -49,8 +50,6 @@ def sort(self, columns, ascending=True):
 
     Sort a single column descending:
 
-    .. code::
-
         >>> frame.sort('col2', False)
         <progress>
         >>> frame.inspect()
@@ -65,10 +64,9 @@ def sort(self, columns, ascending=True):
 
     Sort multiple columns:
 
-    .. code::
-
         >>> frame.sort(['col1', 'col2'])
         <progress>
+
         >>> frame.inspect()
         [#]  col1  col2
         ==================
@@ -82,10 +80,9 @@ def sort(self, columns, ascending=True):
 
     Sort multiple columns descending:
 
-    .. code::
-
         >>> frame.sort(['col1', 'col2'], False)
         <progress>
+
         >>> frame.inspect()
         [#]  col1  col2
         ==================
@@ -98,10 +95,9 @@ def sort(self, columns, ascending=True):
 
     Sort multiple columns: 'col1' decending and 'col2' ascending:
 
-    .. code::
-
         >>> frame.sort([ ('col1', False), ('col2', True) ])
         <progress>
+
         >>> frame.inspect()
         [#]  col1  col2
         ==================

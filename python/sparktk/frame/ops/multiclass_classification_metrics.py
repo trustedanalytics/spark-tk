@@ -2,19 +2,21 @@ from classification_metrics_value import ClassificationMetricsValue
 
 def multiclass_classification_metrics(self, label_column, pred_column, beta=1.0, frequency_column=None):
     """
-   Statistics of accuracy, precision, and others for a multi-class classification model.
+    Statistics of accuracy, precision, and others for a multi-class classification model.
 
-   :param label_column: The name of the column containing the correct label for each instance.
-   :param pred_column: The name of the column containing the predicted label for each instance.
-   :param beta: This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is computed);
+    Parameters:
+
+    :param label_column: (str) The name of the column containing the correct label for each instance.
+    :param pred_column: (str) The name of the column containing the predicted label for each instance.
+    :param beta: (Optional[int]) This is the beta value to use for :math:`F_{ \beta}` measure (default F1 measure is computed);
                 must be greater than zero. Defaults is 1.
-   :param frequency_column: The name of an optional column containing the frequency of observations.
-   :return: The data returned is composed of multiple components\:
-            <object>.accuracy : double
-            <object>.confusion_matrix : table
-            <object>.f_measure : double
-            <object>.precision : double
-            <object>.recall : double
+    :param frequency_column: (Optional[str]) The name of an optional column containing the frequency of observations.
+    :return: (ClassificationMetricsValue) The data returned is composed of multiple components:<br>
+            &lt;object&gt;.accuracy : double<br>
+            &lt;object&gt;.confusion_matrix : table<br>
+            &lt;object&gt;.f_measure : double<br>
+            &lt;object&gt;.precision : double<br>
+            &lt;object&gt;.recall : double
 
    Calculate the accuracy, precision, confusion_matrix, recall and :math:`F_{ \beta}` measure for a
    classification model.
@@ -73,7 +75,7 @@ def multiclass_classification_metrics(self, label_column, pred_column, beta=1.0,
        <hide>
        >>> s = [('a', str),('b', int),('labels', int),('predictions', int)]
        >>> rows = [["red", 1, 0, 0], ["blue", 3, 1, 0],["green", 1, 0, 0],["green", 0, 1, 1],["red", 0, 5, 4]]
-       >>> my_frame = tc.to_frame(rows, s)
+       >>> my_frame = tc.frame.create(rows, s)
        -etc-
 
        </hide>
@@ -107,7 +109,7 @@ def multiclass_classification_metrics(self, label_column, pred_column, beta=1.0,
         Actual_1            1            1            0
         Actual_5            0            0            1
 
-   """
+    """
     return ClassificationMetricsValue(self._tc, self._scala.multiClassClassificationMetrics(label_column,
                                       pred_column,
                                       float(beta),

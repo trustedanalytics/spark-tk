@@ -1,6 +1,7 @@
 package org.trustedanalytics.sparktk.frame
 
-//import org.joda.time.DateTime
+import java.util
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 
 //import org.apache.commons.lang3.StringUtils
@@ -13,8 +14,6 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 import scala.util.Try
-
-//import org.trustedanalytics.atk.domain.DomainJsonProtocol.dateTimeFormat
 
 /**
  * Datatypes supported for frames, graphs, etc.
@@ -233,49 +232,49 @@ object DataTypes {
     override def isInteger = false
   }
 
-  //  /**
-  //   * DateTime
-  //   */
-  //  case object datetime extends DataType {
-  //
-  //    override type ScalaType = String
-  //
-  //    override def scalaType = classOf[ScalaType]
-  //
-  //    implicit def stringToDateTime(s: ScalaType): DateTime = toDateTime(s)
-  //
-  //    override def parse(raw: Any) = Try {
-  //      toDateTime(raw).toString
-  //    }
-  //
-  //    override def asString(raw: Any): String = {
-  //      parse(raw).get.asInstanceOf[String]
-  //    }
-  //
-  //    def compare(valueA: DateTime, valueB: DateTime): Int = {
-  //      valueA.compareTo(valueB)
-  //    }
-  //
-  //    def compare(valueA: String, valueB: String): Int = {
-  //      toDateTime(valueA).compareTo(toDateTime(valueB))
-  //    }
-  //
-  //    override def isType(raw: Any): Boolean = {
-  //      // where null is allowed we accept null as this type
-  //      raw == null || raw.isInstanceOf[DateTime] || Try { toDateTime(raw) }.isSuccess
-  //    }
-  //
-  //    override def typedJson(raw: Any): JsValue = {
-  //      asString(raw).toJson
-  //    }
-  //
-  //    override def asDouble(raw: Any): Double =
-  //      throw new IllegalArgumentException("Could not parse datetime object " + raw + " as a Double.")
-  //
-  //    override def isNumerical = false
-  //
-  //    override def isInteger = false
-  //  }
+  /**
+   * DateTime
+   */
+  case object datetime extends DataType {
+
+    override type ScalaType = String
+
+    override def scalaType = classOf[ScalaType]
+
+    implicit def stringToDateTime(s: ScalaType): DateTime = toDateTime(s)
+
+    override def parse(raw: Any) = Try {
+      toDateTime(raw).toString
+    }
+
+    override def asString(raw: Any): String = {
+      parse(raw).get.asInstanceOf[String]
+    }
+
+    def compare(valueA: DateTime, valueB: DateTime): Int = {
+      valueA.compareTo(valueB)
+    }
+
+    def compare(valueA: String, valueB: String): Int = {
+      toDateTime(valueA).compareTo(toDateTime(valueB))
+    }
+
+    override def isType(raw: Any): Boolean = {
+      // where null is allowed we accept null as this type
+      raw == null || raw.isInstanceOf[DateTime] || Try { toDateTime(raw) }.isSuccess
+    }
+
+    override def typedJson(raw: Any): JsValue = {
+      asString(raw).toJson
+    }
+
+    override def asDouble(raw: Any): Double =
+      throw new IllegalArgumentException("Could not parse datetime object " + raw + " as a Double.")
+
+    override def isNumerical = false
+
+    override def isInteger = false
+  }
 
   /**
    * Vectors
@@ -473,12 +472,13 @@ object DataTypes {
    */
   val supportedPrimitiveTypes: Map[String, DataType] =
     Seq(int32, int64, float32,
-      float64, string, ignore) //, datetime)
+      float64, string, ignore, datetime)
       .map(t => t.toString -> t)
       .toMap ++
       Map("str" -> string,
         "unicode" -> string,
-        "int" -> int32)
+        "int" -> int32,
+        "datetime" -> datetime)
 
   /**
    * Determine root DataType that all DataTypes in list can be converted into.
@@ -706,6 +706,7 @@ object DataTypes {
       case ab: ArrayBuffer[_] => ab.map(value => toDouble(value)).toVector
       case a: Array[_] => a.map(value => toDouble(value)).toVector
       case l: List[_] => l.map(value => toDouble(value)).toVector
+      case al: util.ArrayList[_] => al.map(value => toDouble(value)).toVector
       case i: Iterator[_] => i.map(value => toDouble(value)).toVector
       case i: java.util.Iterator[_] => i.map(value => toDouble(value)).toVector
       case wa: mutable.WrappedArray[_] => wa.map(value => toDouble(value)).toVector
@@ -717,14 +718,17 @@ object DataTypes {
     vec
   }
 
-  //  def toDateTime(value: Any): DateTime = {
-  //    value match {
-  //      case null => null
-  //      case s: String => DateTime.parse(s) // ISO 8601
-  //      case dt: DateTime => dt
-  //      case _ => throw new RuntimeException(s"${value.getClass.getName} toDateTime is not implemented")
-  //    }
-  //  }
+  /**
+   * Convert value to DateTime type
+   */
+  def toDateTime(value: Any): DateTime = {
+    value match {
+      case null => null
+      case s: String => DateTime.parse(s) // ISO 8601
+      case dt: DateTime => dt
+      case _ => throw new RuntimeException(s"${value.getClass.getName} toDateTime is not implemented")
+    }
+  }
 
   /**
    * Convert de-limited string to array of big decimals
@@ -764,7 +768,7 @@ object DataTypes {
         case d: Double => d.compare(DataTypes.toDouble(valueB))
         case s: String => s.compareTo(valueB.toString)
         case v: vector.ScalaType => vector.compare(v, DataTypes.toVector()(valueB))
-        //case dt: DateTime => dt.compareTo(DataTypes.toDateTime(valueB))
+        case dt: DateTime => dt.compareTo(DataTypes.toDateTime(valueB))
         case _ => throw new RuntimeException(s"${valueA.getClass.getName} comparison is not implemented")
       }
     }

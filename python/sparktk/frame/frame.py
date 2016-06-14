@@ -8,7 +8,8 @@ from sparktk.frame.schema import schema_to_python, schema_to_scala
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
 from sparktk.frame.constructors.import_hbase import import_hbase
-
+from sparktk.frame.constructors.import_jdbc import import_jdbc
+from sparktk.frame.constructors.import_hive import import_hive
 
 class Frame(object):
 
@@ -113,8 +114,6 @@ class Frame(object):
         Examples
         --------
 
-        .. code::
-
             >>> frame.column_names
             [u'name', u'age', u'tenure', u'phone']
 
@@ -135,10 +134,8 @@ class Frame(object):
         Get the number of rows:
 
         <hide>
-        frame = tc.to_frame([[item] for item in range(0, 4)],[("a", int)])
+         >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
         </hide>
-
-        .. code::
 
             >>> frame.row_count
             4
@@ -184,6 +181,10 @@ class Frame(object):
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
+    from sparktk.frame.ops.join_inner import join_inner
+    from sparktk.frame.ops.join_left import join_left
+    from sparktk.frame.ops.join_right import join_right
+    from sparktk.frame.ops.join_outer import join_outer
     from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
@@ -194,5 +195,7 @@ class Frame(object):
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
+    from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
+    from sparktk.frame.ops.timeseries_slice import timeseries_slice
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns

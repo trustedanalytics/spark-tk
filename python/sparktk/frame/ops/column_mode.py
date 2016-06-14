@@ -43,11 +43,16 @@ def column_mode(self, data_column, weights_column=None, max_modes_returned=None)
     By default, only one is returned, but by setting the optional parameter
     max_modes_returned, a larger number of modes can be returned.
 
-    :param data_column: Name of the column supplying the data.
-    :param weights_column: Name of the column supplying the weights.
+    Parameters
+    ----------
+
+    :param data_column: (str) Name of the column supplying the data.
+    :param weights_column: (Optional[str]) Name of the column supplying the weights.
                            Default is all items have weight of 1.
-    :param max_modes_returned: Maximum number of modes returned. Default is 1.
-    :return: ColumnMode object containing summary statistics.
+    :param max_modes_returned: (Option[int]) Maximum number of modes returned. Default is 1.
+    :return: (ColumnMode) ColumnMode object which includes multiple components (mode, weight_of_mode, total_weight,
+                          and mode_count).
+
     The data returned is composed of multiple components\:
 
     mode : A mode is a data element of maximum net weight.
@@ -74,37 +79,32 @@ def column_mode(self, data_column, weights_column=None, max_modes_returned=None)
 
     Examples
     --------
+
     Given a frame with column 'a' accessed by a Frame object 'my_frame':
 
-    .. code::
-       >>> data = [[2],[3],[3],[5],[7],[10],[30]]
-       >>> schema = [('a', int)]
-       >>> my_frame = tc.to_frame(data, schema)
-       <progress>
+        >>> data = [[2],[3],[3],[5],[7],[10],[30]]
+        >>> schema = [('a', int)]
+        >>> my_frame = tc.frame.create(data, schema)
+        <progress>
 
     Inspect my_frame
 
-    .. code::
-
-       >>> my_frame.inspect()
-       [#]  a
-       =======
-       [0]   2
-       [1]   3
-       [2]   3
-       [3]   5
-       [4]   7
-       [5]  10
-       [6]  30
-
+        >>> my_frame.inspect()
+        [#]  a
+        =======
+        [0]   2
+        [1]   3
+        [2]   3
+        [3]   5
+        [4]   7
+        [5]  10
+        [6]  30
 
     Compute and return a ColumnMode object containing summary statistics of column *a*:
 
-    .. code::
-
-       >>> mode = my_frame.column_mode('a')
-       <progress>
-       >>> print mode
+        >>> mode = my_frame.column_mode('a')
+        <progress>
+        >>> print mode
         mode_count     = 1
         modes          = [3]
         total_weight   = 7.0
@@ -112,19 +112,15 @@ def column_mode(self, data_column, weights_column=None, max_modes_returned=None)
 
     Given a frame with column 'a' and column 'w' as weights accessed by a Frame object 'my_frame':
 
-    .. code::
-
-       >>> data = [[2,1.7],[3,0.5],[3,1.2],[5,0.8],[7,1.1],[10,0.8],[30,0.1]]
-       >>> schema = [('a', int), ('w', float)]
-       >>> my_frame = tc.to_frame(data, schema)
-       <progress>
+        >>> data = [[2,1.7],[3,0.5],[3,1.2],[5,0.8],[7,1.1],[10,0.8],[30,0.1]]
+        >>> schema = [('a', int), ('w', float)]
+        >>> my_frame = tc.frame.create(data, schema)
+        <progress>
 
     Inspect my_frame
 
-    .. code::
-
-       >>> my_frame.inspect()
-       [#]  a   w
+        >>> my_frame.inspect()
+        [#]  a   w
         ============
         [0]   2  1.7
         [1]   3  0.5
@@ -136,11 +132,9 @@ def column_mode(self, data_column, weights_column=None, max_modes_returned=None)
 
     Compute and return ColumnMode object containing summary statistics of column 'a' with weights 'w':
 
-    .. code::
-
-       >>> mode = my_frame.column_mode('a', weights_column='w')
-       <progress>
-       >>> print mode
+        >>> mode = my_frame.column_mode('a', weights_column='w')
+        <progress>
+        >>> print mode
         mode_count     = 2
         modes          = [2]
         total_weight   = 6.2

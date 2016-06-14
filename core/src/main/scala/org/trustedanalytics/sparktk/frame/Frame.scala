@@ -10,6 +10,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ MultiClassClassificationMetricsSummarization, BinaryClassificationMetricsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
+import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinInnerSummarization, JoinLeftSummarization, JoinOuterSummarization, JoinRightSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvSummarization, ExportToHbaseSummarization, ExportToHiveSummarization, ExportToJdbcSummarization, ExportToJsonSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
@@ -19,6 +20,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ 
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization, CategoricalSummarySummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
@@ -54,6 +56,10 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with ExportToJsonSummarization
     with FlattenColumnsTransform
     with HistogramSummarization
+    with JoinInnerSummarization
+    with JoinLeftSummarization
+    with JoinOuterSummarization
+    with JoinRightSummarization
     with MultiClassClassificationMetricsSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
@@ -65,6 +71,8 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with TakeSummarization
     with TallyPercentTransform
     with TallyTransform
+    with TimeSeriesFromObseravationsSummarization
+    with TimeSeriesSliceSummarization
     with TopKSummarization
     with UnflattenColumnsTransform {
   init(frameRdd, frameSchema)

@@ -20,9 +20,10 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
     If there are multiples of the same value in :math:`C`, then their
     tie-adjusted rank is the average of their ordered rank values.
 
-    **Notes**
+    Notes
+    -----
 
-    #)  The num_bins parameter is considered to be the maximum permissible number
+    1.  The num_bins parameter is considered to be the maximum permissible number
         of bins because the data may dictate fewer bins.
         For example, if the column to be binned has a quantity of :math"`X`
         elements with only 2 distinct values and the *num_bins* parameter is
@@ -30,13 +31,16 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
         This is due to a restriction that elements with an identical value must
         belong to the same bin.
 
-    :param column_name: The column whose values are to be binned.
-    :param num_bins: The maximum number of quantiles.
+    Parameters
+    ----------
+
+    :param column_name: (str) The column whose values are to be binned.
+    :param num_bins: (Optional[int]) The maximum number of quantiles.
                      Default is the Square-root choice
                      :math:`\lfloor \sqrt{m} \rfloor`, where :math:`m` is the number of rows.
-    :param bin_column_name: The name for the new column holding the grouping labels.
+    :param bin_column_name: (Optional[str]) The name for the new column holding the grouping labels.
                             Default is <column_name>_binned
-    :return: a list containing the edges of each bin
+    :return: (List[float]) A list containing the edges of each bin
 
     Examples
     --------
@@ -44,25 +48,26 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
 
     <hide>
 
-    >>> my_frame = tc.to_frame([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]],
-    ... [('a', int)])
-    -etc-
+        >>> my_frame = tc.frame.create([[1],[1],[2],[3],[5],[8],[13],[21],[34],[55],[89]],
+        ... [('a', int)])
+        -etc-
 
     </hide>
-    >>> my_frame.inspect( n=11 )
-    [##]  a
-    ========
-    [0]    1
-    [1]    1
-    [2]    2
-    [3]    3
-    [4]    5
-    [5]    8
-    [6]   13
-    [7]   21
-    [8]   34
-    [9]   55
-    [10]  89
+
+        >>> my_frame.inspect( n=11 )
+        [##]  a
+        ========
+        [0]    1
+        [1]    1
+        [2]    2
+        [3]    3
+        [4]    5
+        [5]    8
+        [6]   13
+        [7]   21
+        [8]   34
+        [9]   55
+        [10]  89
 
 
     Modify the frame, adding a column showing what bin the data is in.
@@ -70,25 +75,26 @@ def quantile_bin_column(self, column_name, num_bins=None, bin_column_name=None):
     Note that each bin will have the same quantity of members (as much as
     possible):
 
-    >>> cutoffs = my_frame.quantile_bin_column('a', 5, 'aEDBinned')
-    <progress>
-    >>> my_frame.inspect( n=11 )
-    [##]  a   aEDBinned
-    ===================
-    [0]    1          0
-    [1]    1          0
-    [2]    2          1
-    [3]    3          1
-    [4]    5          2
-    [5]    8          2
-    [6]   13          3
-    [7]   21          3
-    [8]   34          4
-    [9]   55          4
-    [10]  89          4
+        >>> cutoffs = my_frame.quantile_bin_column('a', 5, 'aEDBinned')
+        <progress>
 
-    >>> print cutoffs
-    [1.0, 2.0, 5.0, 13.0, 34.0, 89.0]
+        >>> my_frame.inspect( n=11 )
+        [##]  a   aEDBinned
+        ===================
+        [0]    1          0
+        [1]    1          0
+        [2]    2          1
+        [3]    3          1
+        [4]    5          2
+        [5]    8          2
+        [6]   13          3
+        [7]   21          3
+        [8]   34          4
+        [9]   55          4
+        [10]  89          4
+
+        >>> print cutoffs
+        [1.0, 2.0, 5.0, 13.0, 34.0, 89.0]
 
     """
     return self._tc.jutils.convert.from_scala_seq(self._scala.quantileBinColumn(column_name,

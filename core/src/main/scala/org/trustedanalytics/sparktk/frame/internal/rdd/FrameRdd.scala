@@ -17,12 +17,13 @@ import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics 
 //import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
 //import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
-import org.apache.spark.mllib.linalg.{ Vector, Vectors }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors, DenseVector => MllibDenseVector }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.{ ArrayType, BooleanType, ByteType, DateType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.apache.spark.{ Partition, TaskContext }
+import org.apache.spark.mllib.regression.LabeledPoint
 //import org.trustedanalytics.atk.domain.schema.Column
 //import org.trustedanalytics.atk.domain.schema.DataTypes
 //import org.trustedanalytics.atk.domain.schema.DataTypes.DataType
@@ -49,9 +50,6 @@ import org.apache.spark.{ Partition, TaskContext }
 //import org.trustedanalytics.atk.graphbuilder.elements.{ GBEdge, GBVertex }
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
-
-// todo: move this somewhere:
-case class ScoreAndLabel[T](score: T, label: T, frequency: Long = 1)
 
 /**
  * A Frame RDD is a SchemaRDD with our version of the associated schema.
@@ -656,6 +654,17 @@ object FrameRdd {
   }
 
   /**
+   * Convert FrameRdd into RDD[LabeledPoint] format required by MLLib
+   */
+  def toLabeledPointRDD(rdd: FrameRdd, labelColumnName: String, featureColumnNames: Seq[String]): RDD[LabeledPoint] = {
+    val featureColumnsAsVector = featureColumnNames.toVector
+    rdd.mapRows(row => {
+      val features = row.values(featureColumnsAsVector).map(value => DataTypes.toDouble(value))
+      new LabeledPoint(DataTypes.toDouble(row.value(labelColumnName)), new MllibDenseVector(features.toArray))
+    })
+  }
+
+  /**
    * Defines a VectorType "StructType" for SchemaRDDs
    */
   val VectorType = ArrayType(DoubleType, containsNull = false)
@@ -679,7 +688,7 @@ object FrameRdd {
       case x if x.equals(DataTypes.float32) => FloatType
       case x if x.equals(DataTypes.float64) => DoubleType
       case x if x.equals(DataTypes.string) => StringType
-      // todo, bring back: case x if x.equals(DataTypes.datetime) => StringType
+      case x if x.equals(DataTypes.datetime) => StringType
       case x if x.isVector => VectorType
       case x if x.equals(DataTypes.ignore) => StringType
     }
@@ -752,7 +761,7 @@ object FrameRdd {
           case x if x.equals(DataTypes.float32) => "double"
           case x if x.equals(DataTypes.float64) => "double"
           case x if x.equals(DataTypes.string) => "string"
-          //case x if x.equals(DataTypes.datetime) => "string"
+          case x if x.equals(DataTypes.datetime) => "string"
           case x => throw new IllegalArgumentException(s"unsupported export type ${x.toString}")
         })
     }

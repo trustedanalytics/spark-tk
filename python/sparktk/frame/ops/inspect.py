@@ -3,6 +3,7 @@
 
 
 import sparktk.dtypes as dtypes
+import numpy as np
 
 spaces_between_cols = 2  # consts
 ellipses = '...'
@@ -284,6 +285,8 @@ class RowsInspection(object):
     def _get_value_formatter(self, data_type):
         if self.round and is_type_float(data_type):
             return self.get_rounder(data_type)
+        elif isinstance(data_type, dtypes.vector):
+            return self.get_vector_formatter()
         if self.truncate and is_type_unicode(data_type):
             return self.get_truncater()
         return identity
@@ -319,6 +322,13 @@ class RowsInspection(object):
         def rounder(value):
             return round_float(value, float_type, num_digits)
         return rounder
+
+    def get_vector_formatter(self):
+        def format_vector(v):
+            if v is None:
+                return None
+            return "[%s]" % ", ".join(["None" if np.isnan(f) else str(f) for f in v])
+        return format_vector
 
 
 def _get_header_entry(name, data_type, with_type):
@@ -476,12 +486,26 @@ def inspect(self,
     by python REPL (i.e. using the object's __repr__).  If running in a script and want the inspect output
     to be printed, then it must be explicitly printed, then `print frame.inspect()`
 
+    Parameters
+    ----------
+    :param n: (Optional[int]) The number of rows to print
+    :param offset: (Optional[int]) The number of rows to skip before printing.
+    :param columns: (Optional[List[str]]) Filter columns to be included.  By default, all columns are included.
+    :param wrap: (Optional[int or 'stripes']) If set to 'stripes' then inspect prints rows in stripes; if set to an
+                 integer N, rows will be printed in clumps of N columns, where the columns are wrapped.
+    :param truncate: (Optional[int]) If set to integer N, all strings will be truncated to length N, including all
+                     tagged ellipses.
+    :param round: (Optional[int]) If set to integer N, all floating point numbers will be rounded and truncated to
+                  N digits.
+    :param width: (Optional[int]) If set to integer N, the print out will try to honor a max line width of N.
+    :param margin: (Optional[int]) Applies to 'stripes' mode only.  If set to integer N, the margin for printing names
+                   in a stripe will be limited to N characters.
+    :param with_types: (Optinoal[bool]) If set to True, header will include the data_type of each column.
+    :return: (RowsInspection) An object which naturally converts to a pretty-print string.
 
     Examples
     --------
     To look at the first 4 rows of data in a frame:
-
-    .. code::
 
     <skip>
         >>> frame.inspect(4)
@@ -499,8 +523,6 @@ def inspect(self,
     running in an interactive REPL or otherwise which triggers the standard python repr().  To get around
     this problem, explicitly print the unicode of the returned object:
 
-    .. code::
-
     <skip>
         >>> print unicode(frame.inspect())
     </skip>
@@ -510,8 +532,6 @@ def inspect(self,
 
     If not specified, the arguments that control formatting receive default values from
     'sparktk.inspect_settings'.  Make changes there to affect all calls to inspect.
-
-    .. code::
 
         >>> import sparktk
         >>> sparktk.inspect_settings
@@ -547,7 +567,6 @@ def inspect(self,
         margin         None
         with_types    False
 
-    ..
     """
     format_settings = inspect_settings.copy(wrap, truncate, round, width, margin, with_types)
     result = self.take(n, offset, columns)

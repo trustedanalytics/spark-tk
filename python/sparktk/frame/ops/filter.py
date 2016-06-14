@@ -7,13 +7,19 @@ def filter(self, predicate):
     Modifies the current frame to save defined rows and delete everything
     else.
 
+    Parameters
+    ----------
+
+    :param predicate: (UDF) Function which evaluates a row to a boolean; rows that answer False are dropped
+                      from the frame.
+
     Examples
     --------
-        >>> frame = tc.to_frame([['Fred',39,16,'555-1234'],
-        ...                      ['Susan',33,3,'555-0202'],
-        ...                      ['Thurston',65,26,'555-4510'],
-        ...                      ['Judy',44,14,'555-2183']],
-        ...                     schema=[('name', str), ('age', int), ('tenure', int), ('phone', str)])
+        >>> frame = tc.frame.create([['Fred',39,16,'555-1234'],
+        ...                          ['Susan',33,3,'555-0202'],
+        ...                          ['Thurston',65,26,'555-4510'],
+        ...                          ['Judy',44,14,'555-2183']],
+        ...                         schema=[('name', str), ('age', int), ('tenure', int), ('phone', str)])
 
         >>> frame.inspect()
         [#]  name      age  tenure  phone

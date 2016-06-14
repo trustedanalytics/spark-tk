@@ -3,9 +3,12 @@ def covariance(self, column_a, column_b):
     """
     Calculate covariance for exactly two columns.
 
-    :param column_a: The name of the column from which to compute the covariance.
-    :param column_b: The name of the column from which to compute the covariance.
-    :return: Covariance of the two columns.
+    Parameters
+    ----------
+
+    :param column_a: (str) The name of the column from which to compute the covariance.
+    :param column_b: (str) The name of the column from which to compute the covariance.
+    :return: (float) Covariance of the two columns.
 
     Notes
     -----
@@ -18,7 +21,7 @@ def covariance(self, column_a, column_b):
         <hide>
         >>> s = [("idnum", int), ("x1", float), ("x2", float), ("x3", float), ("x4", float)]
         >>> rows = [ [0, 1.0, 4.0, 0.0, -1.0], [1, 2.0, 3.0, 0.0, -1.0], [2, 3.0, 2.0, 1.0, -1.0], [3, 4.0, 1.0, 2.0, -1.0], [4, 5.0, 0.0, 2.0, -1.0]]
-        >>> my_frame = tc.to_frame(rows, s)
+        >>> my_frame = tc.frame.create(rows, s)
         -etc-
 
         </hide>
