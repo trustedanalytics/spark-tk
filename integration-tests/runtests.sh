@@ -31,6 +31,8 @@ then
     exit 10
 fi
 
+#enable to debug
+#export SPARK_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=n,address=atk-wse.jf.intel.com:5005,suspend=y
 
 # todo - allow these pytest flags to be passed in to this script
 #python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
