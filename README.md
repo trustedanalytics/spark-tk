@@ -17,7 +17,7 @@ The library provides **machine learning** support through straightforward APIs t
     
     >>> tc = TkContext()
     
-[//]:# "<skip>"
+[//]:# "</skip>"
 
 Upload some tabular data
     
