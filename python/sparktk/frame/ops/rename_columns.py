@@ -4,19 +4,19 @@ def rename_columns(self, names):
     """
     Rename columns
 
-    :param names: Dictionary of old names to new names.
+    Parameters
+    ----------
+
+    :param names: (dict) Dictionary of old names to new names.
 
     Examples
     --------
     Start with a frame with columns *Black* and *White*.
 
-
         <hide>
 
         >>> s = [('Black', unicode), ('White', unicode)]
-
         >>> rows = [["glass", "clear"],["paper","unclear"]]
-
         >>> my_frame = tc.frame.create(rows, s)
         -etc-
 
@@ -47,4 +47,4 @@ def rename_columns(self, names):
             new_schema[index] = (new_name, data_type)
         self._python.schema = new_schema
     else:
-        self._scala.renameColumns(self._tc.jutils.convert.to_scala_string_map(names))
+        self._scala.renameColumns(self._tc.jutils.convert.to_scala_map(names))

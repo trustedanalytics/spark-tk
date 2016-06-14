@@ -3,10 +3,13 @@ def covariance_matrix(self, data_column_names):
     """
     Calculate covariance matrix for two or more columns.
 
-    :param data_column_names: The names of the column from which to compute the matrix.
+    Parameters
+    ----------
+
+    :param data_column_names: (List[str]) The names of the column from which to compute the matrix.
                               Names should refer to a single column of type vector, or two or more
                               columns of numeric scalars.
-    :return: A matrix with the covariance values for the columns.
+    :return: (Frame) A matrix with the covariance values for the columns.
 
     Notes
     -----

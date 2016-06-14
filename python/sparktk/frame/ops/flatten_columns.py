@@ -3,7 +3,10 @@ def flatten_columns (self, *columns):
     """
     Spread data to multiple rows based on cell data.
 
-    :param columns: The the name of the column to be flattened, or a tuple with the column name and
+    Parameters
+    ----------
+
+    :param columns: (str or tuple(str, str)) The the name of the column to be flattened, or a tuple with the column name and
                     delimiter string.  The default delimiter is a comma (,).
 
     Splits cells in the specified columns into multiple rows according to a string delimiter.
@@ -20,14 +23,12 @@ def flatten_columns (self, *columns):
 
     </hide>
 
-    Given a data file::
+    Given a data file:
 
         1-solo,mono,single-green,yellow,red
         2-duo,double-orange,black
 
     The commands to bring the data into a frame, where it can be worked on:
-
-    .. code::
 
         >>> frame.inspect()
         [#]  a  b                 c
@@ -37,8 +38,6 @@ def flatten_columns (self, *columns):
 
     Now, spread out those sub-strings in column *b* and *c* by specifying the column names and delmiters:
 
-    .. code::
-
         >>> frame.flatten_columns(('b', ','), ('c', '|'))
         <progress>
 
@@ -46,8 +45,6 @@ def flatten_columns (self, *columns):
     is a comma (,).  So, in the above example, the delimiter parameter for *b* could be omitted.
 
     Check again:
-
-    .. code::
 
         >>> frame.inspect()
         [#]  a  b       c
@@ -68,14 +65,10 @@ def flatten_columns (self, *columns):
 
     Alternatively, we can flatten a single column *b* using the default comma delimiter:
 
-    .. code::
-
         >>> frame.flatten_columns('b')
         <progress>
 
     Check again:
-
-    .. code ::
 
         >>> frame.inspect()
         [#]  a  b       c

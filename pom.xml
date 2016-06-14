@@ -861,6 +861,17 @@
         <!--</dependency>-->
         <!--&lt;!&ndash;org.scala&ndash;&gt;-->
         <dependency>
+          <groupId>com.cloudera.sparkts</groupId>
+          <artifactId>sparkts</artifactId>
+          <version>0.3.2</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>breeze_${scala.short.version}</artifactId>
+              <groupId>org.scalanlp</groupId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
           <groupId>org.scala-lang</groupId>
           <artifactId>scala-library</artifactId>
           <version>${scala.long.version}</version>

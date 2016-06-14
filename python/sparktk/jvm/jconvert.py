@@ -33,18 +33,18 @@ class JConvert(object):
     def to_scala_vector_string(self, python_list):
         return self.scala.toScalaVector([unicode(item) for item in python_list])
 
-    def to_scala_string_map(self, python_dict):
-        keys_and_values = []
-        for key in python_dict.keys():
-            keys_and_values.append(key)
-            keys_and_values.append(python_dict[key])
-        return self.scala.toScalaMap(keys_and_values)
+    def to_scala_map(self, python_dict):
+        return self.scala.toScalaMap(python_dict)
 
-    def scala_map_string_int_to_python(self, m):
-        return dict([(entry[0], int(entry[1])) for entry in list(self.scala.scalaMapStringIntToPython(m))])
+    def scala_map_to_python_with_iterable_values(self, m):
+        result = self.scala_map_to_python(m)
+        python_map_with_iterable_values = {}
+        for k,v in result.items():
+            python_map_with_iterable_values[k] = self.scala.scalaSeqToPython(v)
+        return python_map_with_iterable_values
 
-    def scala_map_string_seq_to_python(self, m):
-        return dict(self.scala.scalaMapStringSeqToPython(m))
+    def scala_map_to_python(self, m):
+        return self.scala.scalaMapToPython(m)
 
     def to_scala_option(self, item):
         return self.scala.toOption(item)
@@ -65,9 +65,18 @@ class JConvert(object):
         else:
             return self.scala.toOption(item)
 
+    def to_scala_date_time_list(self, python_list):
+        return self.scala.toScalaList([self.scala.toDateTime(item) for item in python_list])
+
+    def to_scala_date_time(self, item):
+        return self.scala.toDateTime(item)
+
     def from_scala_option(self, item):
         return self.scala.fromOption(item)
 
     def from_scala_seq(self, seq):
         return self.scala.scalaSeqToPython(seq)
+
+    def from_scala_vector(self, vector):
+        return list(self.scala.scalaVectorToPython(vector))
 

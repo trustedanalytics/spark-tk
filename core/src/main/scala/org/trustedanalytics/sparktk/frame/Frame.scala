@@ -20,6 +20,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ 
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization, CategoricalSummarySummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
@@ -70,6 +71,8 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with TakeSummarization
     with TallyPercentTransform
     with TallyTransform
+    with TimeSeriesFromObseravationsSummarization
+    with TimeSeriesSliceSummarization
     with TopKSummarization
     with UnflattenColumnsTransform {
   init(frameRdd, frameSchema)

@@ -3,8 +3,11 @@ def correlation_matrix(self, data_column_names):
     """
     Calculate correlation matrix for two or more columns.
 
-    :param data_column_names: The names of the columns from which to compute the matrix.
-    :return: A Frame with the matrix of the correlation values for the columns.
+    Parameters
+    ----------
+
+    :param data_column_names: (List[str]) The names of the columns from which to compute the matrix.
+    :return: (Frame) A Frame with the matrix of the correlation values for the columns.
 
     Notes
     -----
