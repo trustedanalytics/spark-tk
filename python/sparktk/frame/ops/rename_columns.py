@@ -4,19 +4,19 @@ def rename_columns(self, names):
     """
     Rename columns
 
-    :param names: Dictionary of old names to new names.
+    Parameters
+    ----------
+
+    :param names: (dict) Dictionary of old names to new names.
 
     Examples
     --------
     Start with a frame with columns *Black* and *White*.
 
-
         <hide>
 
         >>> s = [('Black', unicode), ('White', unicode)]
-
         >>> rows = [["glass", "clear"],["paper","unclear"]]
-
         >>> my_frame = tc.frame.create(rows, s)
         -etc-
 

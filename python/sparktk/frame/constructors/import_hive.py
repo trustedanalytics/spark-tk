@@ -4,9 +4,9 @@ from sparktk.tkcontext import TkContext
 
 def import_hive(hive_query, tc=implicit):
     """
-    import data from hive table into frame
+    Import data from hive table into frame.
 
-    Define the sql query to retrieve the data from a hive table
+    Define the sql query to retrieve the data from a hive table.
 
     Only a subset of Hive data types are supported.
 
@@ -36,8 +36,11 @@ def import_hive(hive_query, tc=implicit):
     structs     not supported
     union       not supported
 
-    :param hive_query: hive query to fetch data from table
-    :return: returns frame with hive table data
+    Parameters
+    ----------
+
+    :param hive_query: (str) hive query to fetch data from table
+    :return: (Frame) returns frame with hive table data
 
     Examples
     --------
@@ -47,6 +50,7 @@ def import_hive(hive_query, tc=implicit):
         >>> h_query = "select * from demo_test"
         >>> frame = tc.frame.import_hive(h_query)
         -etc-
+
         >>> frame.inspect()
         [#]  number  strformat
         ======================
