@@ -1,7 +1,8 @@
 import json
+from sparktk.lazyloader import implicit
+from sparktk.tkcontext import TkContext
 
 class AggregationFunctions(object):
-
     """
     Defines supported aggregation functions, maps them to keyword strings
     """
@@ -24,6 +25,7 @@ class AggregationFunctions(object):
     def __contains__(self, item):
         return (item in AggregationFunctions.__dict__.values())
 
+
 agg = AggregationFunctions()
 
 
@@ -31,6 +33,7 @@ class GroupByHistogram:
     """
     Class for histogram aggregation function that uses cutoffs to compute histograms
     """
+
     def __init__(self, cutoffs, include_lowest=True, strict_binning=False):
         for c in cutoffs:
             if not isinstance(c, (int, long, float, complex)):
@@ -42,7 +45,8 @@ class GroupByHistogram:
     def __repr__(self):
         return 'HISTOGRAM=' + json.dumps(self.__dict__)
 
-def group_by(self, group_by_columns, aggregations):
+
+def group_by(self, group_by_columns, *aggregations):
     """
     Create a Summarized Frame with Aggregations (Avg, Count, Max, Min, Mean, Sum, Stdev, ...).
 
@@ -51,11 +55,8 @@ def group_by(self, group_by_columns, aggregations):
     ----------
 
 
-    @:param group_by_columns: (List[str]) list of columns to group on
-    @:param aggregations: (List[List[str]]) list of lists contains aggregations to perform. Each inner list contains below three strings.
-                            function: (str) Name of aggregation function (e.g., count, sum, variance)
-                            columnName: (str) Name of column to aggregate
-                            newColumnName: (str) Name of new column that stores the aggregated results
+    :param group_by_columns: (List[str]) list of columns to group on
+    :param aggregations: (dict) Aggregation function based on entire row, and/or dictionaries (one or more) of { column name str : aggregation function(s) }.
     :return: (Frame) Summarized Frame
 
     Creates a new frame and returns a Frame object to access it.Takes a column or group of columns, finds the unique combination of
@@ -88,60 +89,62 @@ def group_by(self, group_by_columns, aggregations):
      -------
      For setup, we will use a Frame *my_frame* accessing a frame with a column *a*:
 
-     .. code::
+    .. code::
 
-            <hide>
-            >>> data = [[1, "alpha", 3.0, "small", 1, 3.0, 9],
-            ...        [1, "bravo", 5.0, "medium", 1, 4.0, 9],
-            ...        [1, "alpha", 5.0, "large", 1, 8.0, 8],
-            ...        [2, "bravo", 8.0, "large", 1, 5.0, 7],
-            ...        [2, "charlie", 12.0, "medium", 1, 6.0, 6],
-            ...        [2, "bravo", 7.0, "small", 1, 8.0, 5],
-            ...        [2, "bravo", 12.0, "large",  1, 6.0, 4]]
-            >>> schema = [("a",int), ("b",str), ("c",float), ("d",str), ("e", int), ("f", float), ("g", int)]
-            >>> frame = tc.frame.create(data, schema)
-            <progress>
-            </hide>
+        <hide>
+        >>> data = [[1, "alpha", 3.0, "small", 1, 3.0, 9],
+        ...        [1, "bravo", 5.0, "medium", 1, 4.0, 9],
+        ...        [1, "alpha", 5.0, "large", 1, 8.0, 8],
+        ...        [2, "bravo", 8.0, "large", 1, 5.0, 7],
+        ...        [2, "charlie", 12.0, "medium", 1, 6.0, 6],
+        ...        [2, "bravo", 7.0, "small", 1, 8.0, 5],
+        ...        [2, "bravo", 12.0, "large",  1, 6.0, 4]]
+        >>> schema = [("a",int), ("b",str), ("c",float), ("d",str), ("e", int), ("f", float), ("g", int)]
+        >>> frame = tc.frame.create(data, schema)
+        <progress>
+        </hide>
 
-            >>> frame.inspect()
-            [#]  a  b        c     d       e  f    g
-            ========================================
-            [0]  1  alpha     3.0  small   1  3.0  9
-            [1]  1  bravo     5.0  medium  1  4.0  9
-            [2]  1  alpha     5.0  large   1  8.0  8
-            [3]  2  bravo     8.0  large   1  5.0  7
-            [4]  2  charlie  12.0  medium  1  6.0  6
-            [5]  2  bravo     7.0  small   1  8.0  5
-            [6]  2  bravo    12.0  large   1  6.0  4
+        >>> frame.inspect()
+        [#]  a  b        c     d       e  f    g
+        ========================================
+        [0]  1  alpha     3.0  small   1  3.0  9
+        [1]  1  bravo     5.0  medium  1  4.0  9
+        [2]  1  alpha     5.0  large   1  8.0  8
+        [3]  2  bravo     8.0  large   1  5.0  7
+        [4]  2  charlie  12.0  medium  1  6.0  6
+        [5]  2  bravo     7.0  small   1  8.0  5
+        [6]  2  bravo    12.0  large   1  6.0  4
 
-            Count the groups in column 'b'
+        Count the groups in column 'b'
 
-            >>> b_count = frame.group_by('b', tc.agg.count)
-            <progress>
-            >>> b_count.inspect()
-            [#]  b        count
-            ===================
-            [0]  alpha        2
-            [1]  bravo        4
-            [2]  charlie      1
+        >>> b_count = frame.group_by('b', tc.agg.count)
+        <progress>
+        >>> b_count.inspect()
+        [#]  b        count
+        ===================
+        [0]  alpha        2
+        [1]  charlie      1
+        [2]  bravo        4
 
-            >>> avg1 = frame.group_by(['a', 'b'], {'c' : tc.agg.avg})
-            <progress>
-            >>> avg1.inspect()
-            [#]  a  b        c_AVG
-            ======================
-            [0]  2  bravo      9.0
-            [1]  1  alpha      4.0
-            [2]  2  charlie   12.0
-            [3]  1  bravo      5.0
+        >>> avg1 = frame.group_by(['a', 'b'], {'c' : tc.agg.avg})
+        <progress>
+        >>> avg1.inspect()
+        [#]  a  b        c_AVG
+        ======================
+        [0]  2  charlie   12.0
+        [1]  2  bravo      9.0
+        [2]  1  bravo      5.0
+        [3]  1  alpha      4.0
 
-            >>> mix_frame = frame.group_by('a', tc.agg.count, {'f': [tc.agg.avg, tc.agg.sum, tc.agg.min], 'g': tc.agg.max})
-            <progress>
-            >>> mix_frame.inspect()
-            [#]  a  count  g_MAX  f_AVG  f_SUM  f_MIN
-            =========================================
-            [0]  1      3      9    5.0   15.0    3.0
-            [1]  2      4      7   6.25   25.0    5.0
+        >>> mix_frame = frame.group_by('a', tc.agg.count, {'f': [tc.agg.avg, tc.agg.sum, tc.agg.min], 'g': tc.agg.max})
+        <progress>
+
+        >>> mix_frame.inspect()
+        [#]  a  count  g_MAX  f_AVG  f_SUM  f_MIN
+        =========================================
+        [0]  2      4      7   6.25   25.0    5.0
+        [1]  1      3      9    5.0   15.0    3.0
+
     """
     if group_by_columns is None:
         group_by_columns = []
@@ -149,31 +152,37 @@ def group_by(self, group_by_columns, aggregations):
         group_by_columns = [group_by_columns]
 
     first_column_name = None
-    aggregation_list = []   #aggregationFunction : String, columnName : String, newColumnName
+    aggregation_list = []  # aggregationFunction : String, columnName : String, newColumnName
 
     for arg in aggregations:
         if arg == agg.count:
             if not first_column_name:
-                first_column_name = self.column_names[0]  #only make this call once, since it goes to http - TODO, ultimately should be handled server-side
-            aggregation_list.append({'function': agg.count, 'column_name': first_column_name, 'new_column_name': "count"})
+                # only make this call once, since it goes to http - TODO, ultimately should be handled server-side
+                first_column_name = self.column_names[0]
+            aggregation_list.append(
+                    {'function': agg.count, 'column_name': first_column_name, 'new_column_name': "count"})
         elif isinstance(arg, dict):
-            for key,value in arg.iteritems():
+            for key, value in arg.iteritems():
                 # leave the valid column check to the server
                 if isinstance(value, list) or isinstance(value, tuple):
                     for item in value:
                         if item not in agg:
-                            raise ValueError("%s is not a valid aggregation function, like agg.max.  Supported agg methods: %s" % (item, agg))
-                        aggregation_list.append({'function': item, 'column_name' : key, 'new_column_name' : "%s_%s" % (key, item)})
+                            raise ValueError(
+                                "%s is not a valid aggregation function, like agg.max.  Supported agg methods: %s" % (
+                                item, agg))
+                        aggregation_list.append(
+                                {'function': item, 'column_name': key, 'new_column_name': "%s_%s" % (key, item)})
                 else:
-                    aggregation_list.append({'function': value, 'column_name' :key, 'new_column_name' : "%s_%s" % (key, value)})
+                    aggregation_list.append(
+                            {'function': value, 'column_name': key, 'new_column_name': "%s_%s" % (key, value)})
         else:
-            raise TypeError("Bad type %s provided in aggregation arguments; expecting an aggregation function or a dictionary of column_name:[func]" % type(arg))
-
+            raise TypeError(
+                "Bad type %s provided in aggregation arguments; expecting an aggregation function or a dictionary of column_name:[func]" % type(
+                    arg))
 
     scala_group_by_aggregation_args = []
     for item in aggregation_list:
         scala_group_by_aggregation_args.append(self._tc.jutils.convert.to_scala_group_by_aggregation_args(item))
 
-    self._scala.groupBy(self._tc.jutils.convert.to_scala_list_string(group_by_columns),
-                        self._tc.jutils.convert.to_scala_list(scala_group_by_aggregation_args))
-
+    return self._tc.frame.create(self._scala.groupBy(self._tc.jutils.convert.to_scala_list_string(group_by_columns),
+                        self._tc.jutils.convert.to_scala_list(scala_group_by_aggregation_args)))

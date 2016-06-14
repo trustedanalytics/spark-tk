@@ -29,8 +29,8 @@ import org.trustedanalytics.sparktk.frame.DataTypes
  * @param columnName Name of column to aggregate
  * @param newColumnName Name of new column that stores the aggregated results
  */
-case class GroupByAggregationArgs(function: String, columnName: String, newColumnName: String){
-  def this(aggregation: Map[String, String])={
+case class GroupByAggregationArgs(function: String, columnName: String, newColumnName: String) {
+  def this(aggregation: Map[String, String]) = {
     this(aggregation.get("function").get,
       aggregation.get("column_name").get,
       aggregation.get("new_column_name").get)

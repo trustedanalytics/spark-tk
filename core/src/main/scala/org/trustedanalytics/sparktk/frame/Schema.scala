@@ -159,9 +159,9 @@ object Column {
  * Schema for a data frame. Contains the columns with names and data types.
  * @param columns the columns in the data frame
  */
-case class FrameSchema(columns: Vector[Column] = Vector[Column]()) extends Schema {
+case class FrameSchema(columns: Seq[Column] = Vector[Column]()) extends Schema {
 
-  override def copy(columns: Vector[Column]): FrameSchema = {
+  override def copy(columns: Seq[Column]): FrameSchema = {
     new FrameSchema(columns)
   }
 
@@ -260,7 +260,7 @@ object SchemaHelper {
  */
 trait Schema {
 
-  val columns: Vector[Column]
+  val columns: Seq[Column]
 
   require(columns != null, "columns must not be null")
   require({
@@ -270,9 +270,9 @@ trait Schema {
 
   private lazy val namesToIndices: Map[String, Int] = (for ((col, i) <- columns.zipWithIndex) yield (col.name, i)).toMap
 
-  def copy(columns: Vector[Column]): Schema
+  def copy(columns: Seq[Column]): Schema
 
-  def columnNames: Vector[String] = {
+  def columnNames: Seq[String] = {
     columns.map(col => col.name)
   }
 
@@ -428,7 +428,7 @@ trait Schema {
    */
   def union(schema: Schema): Schema = {
     // check for conflicts
-    val newColumns: Vector[Column] = schema.columns.filterNot(c => {
+    val newColumns: Seq[Column] = schema.columns.filterNot(c => {
       hasColumn(c.name) && {
         require(hasColumnWithType(c.name, c.dataType), s"columns with same name ${c.name} didn't have matching types"); true
       }

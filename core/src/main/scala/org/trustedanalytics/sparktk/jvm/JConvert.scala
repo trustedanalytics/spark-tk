@@ -52,7 +52,6 @@ object JConvert extends Serializable {
 
   def toScalaMap[K, V](jm: java.util.Map[K, V]): Map[K, V] = SparkAliases.PythonUtils.toScalaMap(jm)
 
-
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
   //    val columns = pythonSchema.asScala.map { item =>
   //      val list = item.asScala.toList

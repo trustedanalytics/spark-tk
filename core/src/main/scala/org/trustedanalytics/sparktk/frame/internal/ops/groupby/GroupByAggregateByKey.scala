@@ -19,7 +19,6 @@ package org.trustedanalytics.sparktk.frame.internal.ops.groupby
 import org.apache.spark.rdd.{ PairRDDFunctions, RDD }
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.{ GroupByAggregator, ColumnAggregator }
-import org.trustedanalytics.sparktk.frame.internal.partitioners.SparkCoresPartitioner
 
 import scala.collection.mutable.ListBuffer
 
