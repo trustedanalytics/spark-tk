@@ -11,13 +11,13 @@ The library provides **machine learning** support through straightforward APIs t
 
 ## Example:
 
-```
+[//]:# "<skip>"
 
     >>> from sparktk import TkContext
     
     >>> tc = TkContext()
     
-```
+[//]:# "<skip>"
 
 Upload some tabular data
     
