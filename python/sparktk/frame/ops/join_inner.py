@@ -10,10 +10,10 @@ def join_inner(self,
     Parameters
     ----------
 
-    @:param right: (Frame) Another frame to join with
-    @:param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
-    @:param right_on: (Optional[List[str]]) Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    @:param use_broadcast: (Optional[str]) If one of your tables is small enough to fit in the memory of a single machine, you can use a broadcast join.
+    :param right: (Frame) Another frame to join with
+    :param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
+    :param right_on: (Optional[List[str]]) Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+    :param use_broadcast: (Optional[str]) If one of your tables is small enough to fit in the memory of a single machine, you can use a broadcast join.
             Specify that table to broadcast (left or right) to possibly improve performance. Default is None.
 
     :returns: (Frame) A new frame with the results of the join

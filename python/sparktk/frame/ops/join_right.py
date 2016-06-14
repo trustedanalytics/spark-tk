@@ -10,10 +10,10 @@ def join_right(self,
     Parameters
     ----------
 
-    @:param right: (Frame) Another frame to join with
-    @:param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
-    @:param right_on: (Optional[List[str]])Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
-    @:param use_broadcast_left: (bool) If left table is small enough to fit in the memory of a single machine,
+    :param right: (Frame) Another frame to join with
+    :param left_on: (List[str]) Names of the columns in the left frame used to match up the two frames.
+    :param right_on: (Optional[List[str]])Names of the columns in the right frame used to match up the two frames. Default is the same as the left frame.
+    :param use_broadcast_left: (bool) If left table is small enough to fit in the memory of a single machine,
             you can set use_broadcast_left to True to possibly improve performance using broadcast join. Default is False.
 
     :returns: (Frame) A new frame with the results of the join
