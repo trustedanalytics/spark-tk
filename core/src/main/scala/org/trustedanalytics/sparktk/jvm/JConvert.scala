@@ -5,7 +5,6 @@ import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
 import org.joda.time.DateTime
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
-
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
@@ -52,6 +51,7 @@ object JConvert extends Serializable {
   def toScalaTuple2[T](a: T, b: T): (T, T) = (a, b)
 
   def toScalaMap[K, V](jm: java.util.Map[K, V]): Map[K, V] = SparkAliases.PythonUtils.toScalaMap(jm)
+
 
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
   //    val columns = pythonSchema.asScala.map { item =>

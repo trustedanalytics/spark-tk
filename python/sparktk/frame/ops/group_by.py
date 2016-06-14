@@ -155,17 +155,25 @@ def group_by(self, group_by_columns, aggregations):
         if arg == agg.count:
             if not first_column_name:
                 first_column_name = self.column_names[0]  #only make this call once, since it goes to http - TODO, ultimately should be handled server-side
-            aggregation_list.append([agg.count,first_column_name, "count"])
+            aggregation_list.append({'function': agg.count, 'column_name': first_column_name, 'new_column_name': "count"})
         elif isinstance(arg, dict):
-            for k,v in arg.iteritems():
+            for key,value in arg.iteritems():
                 # leave the valid column check to the server
-                if isinstance(v, list) or isinstance(v, tuple):
-                    for j in v:
-                        if j not in agg:
-                            raise ValueError("%s is not a valid aggregation function, like agg.max.  Supported agg methods: %s" % (j, agg))
-                        aggregation_list.append({'function': j, 'column_name' : k, 'new_column_name' : "%s_%s" % (k, j)})
+                if isinstance(value, list) or isinstance(value, tuple):
+                    for item in value:
+                        if item not in agg:
+                            raise ValueError("%s is not a valid aggregation function, like agg.max.  Supported agg methods: %s" % (item, agg))
+                        aggregation_list.append({'function': item, 'column_name' : key, 'new_column_name' : "%s_%s" % (key, item)})
                 else:
-                    aggregation_list.append({'function': v, 'column_name' :k, 'new_column_name' : "%s_%s" % (k, v)})
+                    aggregation_list.append({'function': value, 'column_name' :key, 'new_column_name' : "%s_%s" % (key, value)})
         else:
             raise TypeError("Bad type %s provided in aggregation arguments; expecting an aggregation function or a dictionary of column_name:[func]" % type(arg))
+
+
+    scala_group_by_aggregation_args = []
+    for item in aggregation_list:
+        scala_group_by_aggregation_args.append(self._tc.jutils.convert.to_scala_group_by_aggregation_args(item))
+
+    self._scala.groupBy(self._tc.jutils.convert.to_scala_list_string(group_by_columns),
+                        self._tc.jutils.convert.to_scala_list(scala_group_by_aggregation_args))
 

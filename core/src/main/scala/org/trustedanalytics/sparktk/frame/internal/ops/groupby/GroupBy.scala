@@ -19,25 +19,25 @@ trait GroupBySummarization extends BaseFrame {
     *                     newColumnName: Name of new column that stores the aggregated results
     * @return Summarized Frame
     */
-  def groupBy(groupByColumns: List[String], aggregations: List[List[String]]) = {
+  def groupBy(groupByColumns: List[String], aggregations: List[GroupByAggregationArgs]) = {
     execute(GroupBy(groupByColumns, aggregations))
   }
 }
 
-case class GroupBy(groupByColumns: List[String], aggregations: List[List[String]]) extends FrameSummarization[Frame] {
+case class GroupBy(groupByColumns: List[String], aggregations: List[GroupByAggregationArgs]) extends FrameSummarization[Frame] {
 
   require(groupByColumns != null, "group_by columns is required")
   require(aggregations != null, "aggregation list is required")
 
-  val aggregation_list: List[GroupByAggregationArgs] = aggregations.map(aggregation => GroupByAggregationArgs(aggregation(0), aggregation(1), aggregation(2)))
   override def work(state: FrameState): Frame = {
-
     val frame: FrameRdd = state
     val groupByColumns: Vector[Column] = frame.frameSchema.copy(columns = groupByColumns).columns
 
     // run the operation and save results
-    val groupByRdd = GroupByAggregationHelper.aggregation(frame, groupByColumns.toList, aggregation_list)
+    val groupByRdd = GroupByAggregationHelper.aggregation(frame, groupByColumns.toList, aggregations)
     new Frame(groupByRdd, groupByRdd.frameSchema)
 
   }
 }
+
+
