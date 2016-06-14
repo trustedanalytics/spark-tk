@@ -3,16 +3,21 @@ def correlation(self, column_a, column_b):
     """
     Calculate correlation for two columns of current frame.
 
-    :param column_a: The name of the column from which to compute the correlation.
-    :param column_b: The name of the column from which to compute the correlation.
-    :return: Pearson correlation coefficient of the two columns.
+    Parameters
+    ----------
+
+    :param column_a: (str) The name of the column from which to compute the correlation.
+    :param column_b: (str) The name of the column from which to compute the correlation.
+    :return: (float) Pearson correlation coefficient of the two columns.
 
     Notes
     -----
+
     This method applies only to columns containing numerical data.
 
     Examples
     --------
+
     Consider Frame *my_frame*, which contains the data
 
         <hide>
@@ -22,6 +27,7 @@ def correlation(self, column_a, column_b):
         -etc-
 
         </hide>
+
         >>> my_frame.inspect()
         [#]  idnum  x1   x2   x3   x4
         ===============================
@@ -39,17 +45,14 @@ def correlation(self, column_a, column_b):
 
 
         >>> my_frame.correlation("x1", "x2")
-        <progress>
+        -0.9999999999999998
 
-            -1.0
         >>> my_frame.correlation("x1", "x4")
-        <progress>
+         0.0
 
-            0.0
         >>> my_frame.correlation("x2", "x3")
-        <progress>
+        -0.9486832980505138
 
-            -0.948683298051
     """
 
     return self._scala.correlation(column_a, column_b)

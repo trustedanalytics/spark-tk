@@ -3,9 +3,12 @@ def quantiles(self, column_name, quantiles):
     """
     Returns a new frame with Quantiles and their values.
 
-    :param column_name: The column to calculate quantiles
-    :param quantiles: What is being requested.
-    :return: A new frame with two columns (float64): requested Quantiles and their respective values.
+    Parameters
+    ----------
+
+    :param column_name: (str) The column to calculate quantiles
+    :param quantiles: (List[float]) What is being requested.
+    :return: (Frame) A new frame with two columns (float64): requested Quantiles and their respective values.
 
     Calculates quantiles on the given column.
 
@@ -20,10 +23,9 @@ def quantiles(self, column_name, quantiles):
         <progress>
 
     </hide>
+
     Consider Frame *my_frame*, which accesses a frame that contains a single
     column *final_sale_price*:
-
-    .. code::
 
         >>> my_frame.inspect()
         [#]  final_sale_price
@@ -41,15 +43,11 @@ def quantiles(self, column_name, quantiles):
 
     To calculate 10th, 50th, and 100th quantile:
 
-    .. code::
-
         >>> quantiles_frame = my_frame.quantiles('final_sale_price', [10, 50, 100])
         <progress>
 
     A new Frame containing the requested Quantiles and their respective values
-    will be returned :
-
-    .. code::
+    will be returned:
 
        >>> quantiles_frame.inspect()
        [#]  Quantiles  final_sale_price_QuantileValue

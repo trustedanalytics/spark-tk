@@ -3,6 +3,7 @@ package org.trustedanalytics.sparktk.frame
 import java.util.{ ArrayList => JArrayList }
 
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 import scala.reflect.runtime.universe._
 
@@ -42,6 +43,7 @@ case class Column(name: String, dataType: DataType) {
 object Column {
   /**
    * Create Column given column name and scala type
+   *
    * @param name Column name
    * @param dtype runtime type (using scala reflection)
    * @return Column
@@ -157,6 +159,7 @@ object Column {
 
 /**
  * Schema for a data frame. Contains the columns with names and data types.
+ *
  * @param columns the columns in the data frame
  */
 case class FrameSchema(columns: Vector[Column] = Vector[Column]()) extends Schema {
@@ -188,7 +191,7 @@ object SchemaHelper {
    * @param rightColumns columns for the right side
    * @return Combined list of columns
    */
-  def join(leftColumns: List[Column], rightColumns: List[Column]): List[Column] = {
+  def join(leftColumns: Seq[Column], rightColumns: Seq[Column]): Seq[Column] = {
 
     val funcAppendLetterForConflictingNames = (left: List[Column], right: List[Column], appendLetter: String) => {
 
@@ -208,12 +211,21 @@ object SchemaHelper {
           column)
     }
 
-    val left = funcAppendLetterForConflictingNames(leftColumns, rightColumns, "L")
-    val right = funcAppendLetterForConflictingNames(rightColumns, leftColumns, "R")
+    val left = funcAppendLetterForConflictingNames(leftColumns.toList, rightColumns.toList, "L")
+    val right = funcAppendLetterForConflictingNames(rightColumns.toList, leftColumns.toList, "R")
 
     left ++ right
   }
 
+  def checkValidColumnsExistAndCompatible(leftFrame: FrameRdd, rightFrame: FrameRdd, leftColumns: Seq[String], rightColumns: Seq[String]) = {
+    //Check left join column is compatiable with right join column
+    (leftColumns zip rightColumns).foreach {
+      case (leftJoinCol, rightJoinCol) => require(DataTypes.isCompatibleDataType(
+        leftFrame.schema.columnDataType(leftJoinCol),
+        rightFrame.schema.columnDataType(rightJoinCol)),
+        "Join columns must have compatible data types")
+    }
+  }
   /**
    *  Creates Frame schema from input parameters
    *
@@ -253,6 +265,7 @@ object SchemaHelper {
     }
     pythonSchema
   }
+
 }
 
 /**
@@ -388,6 +401,7 @@ trait Schema {
 
   /**
    * Retrieve list of column index based on column names
+   *
    * @param columnNames input column names
    */
   def columnIndices(columnNames: Seq[String]): Seq[Int] = {
@@ -400,6 +414,7 @@ trait Schema {
 
   /**
    * Copy a subset of columns into a new Schema
+   *
    * @param columnNames the columns to keep
    * @return the new Schema
    */
@@ -411,6 +426,7 @@ trait Schema {
 
   /**
    * Produces a renamed subset schema from this schema
+   *
    * @param columnNamesWithRename rename mapping
    * @return new schema
    */
@@ -439,6 +455,7 @@ trait Schema {
 
   /**
    * get column datatype by column name
+   *
    * @param columnName name of the column
    */
   def columnDataType(columnName: String): DataType = {
@@ -514,6 +531,7 @@ trait Schema {
 
   /**
    * Add a column to the schema
+   *
    * @param column New column
    * @return a new copy of the Schema with the column added
    */
@@ -526,6 +544,7 @@ trait Schema {
 
   /**
    * Add a column to the schema
+   *
    * @param columnName name
    * @param dataType the type for the column
    * @return a new copy of the Schema with the column added
@@ -579,6 +598,7 @@ trait Schema {
 
   /**
    * Remove a column from this schema
+   *
    * @param columnName the name to remove
    * @return a new copy of the Schema with the column removed
    */
@@ -588,6 +608,7 @@ trait Schema {
 
   /**
    * Remove a list of columns from this schema
+   *
    * @param columnNames the names to remove
    * @return a new copy of the Schema with the columns removed
    */
@@ -612,6 +633,7 @@ trait Schema {
 
   /**
    * Remove columns by the indices
+   *
    * @param columnIndices the indices to remove
    * @return a new copy of the Schema with the columns removed
    */
@@ -626,6 +648,7 @@ trait Schema {
 
   /**
    * Convert data type for a column
+   *
    * @param columnName the column to change
    * @param updatedDataType the new data type for that column
    * @return the updated Schema
@@ -649,6 +672,7 @@ trait Schema {
 
   /**
    * Rename a column
+   *
    * @param existingName the old name
    * @param newName the new name
    * @return the updated schema
@@ -659,6 +683,7 @@ trait Schema {
 
   /**
    * Renames several columns
+   *
    * @param names oldName -> newName
    * @return new renamed schema
    */
@@ -687,6 +712,7 @@ trait Schema {
 
   /**
    * Get the list of columns except those provided
+   *
    * @param columnNamesToExclude columns you want to filter
    * @return the other columns, if any
    */
@@ -696,6 +722,7 @@ trait Schema {
 
   /**
    * Get the list of column names except those provided
+   *
    * @param columnNamesToExclude column names you want to filter
    * @return the other column names, if any
    */
@@ -722,6 +749,7 @@ trait Schema {
    * create a column name that is unique, suitable for adding to the schema
    * (subject to race conditions, only provides unique name for schema as
    * currently defined)
+   *
    * @param candidate a candidate string to start with, an _N number will be
    *                  append to make it unique
    * @return unique column name for this schema, as currently defined

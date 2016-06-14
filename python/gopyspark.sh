@@ -2,45 +2,27 @@
 
 # Launches PySpark shell enabled to run spark-tk
 
+# todo - move to a bin folder
+
 NAME="[`basename $0`]"
 DIR="$( cd "$( dirname "$0" )" && pwd )"
-
-echo "$NAME"
-echo "$NAME  ************* gopyspark.sh is not preferred ***************"
-echo "$NAME  **"
-echo "$NAME  **  Use regular python session and create TkContext instead"
-echo "$NAME  **"
-echo "$NAME  **  >>> import sparktk as tk"
-echo "$NAME  **  >>> tc = tk.TkContext()  # You can pass more args here"
-echo "$NAME  **"
-echo "$NAME  ***********************************************************"
-echo "$NAME"
 echo "$NAME DIR=$DIR"
 
-# run python code to set things up
-EXPORT_CMDS=`python2.7 - <<END
-import sparktk.sparkconf as conf
-from sparktk.zip import zip_sparktk
+export CORE_DIR=$DIR/../core
+echo "$NAME SPARK_TK_DIR=$CORE_DIR"
 
-conf.set_env_for_sparktk()
-#conf.set_env_for_sparktk(debug=5005)  # <-- **Here's the line to turn on debugging**
+export SPARK_TK_JAR=$CORE_DIR/target/*
+export SPARK_TK_DEP_JARS=$CORE_DIR/target/dependencies/*
 
-conf.print_bash_cmds_for_sparktk_env()
-zip_path = zip_sparktk()
-print "export SPARKTK_PYZIP=%s" % zip_path
-END`
+# todo - build the jars argument as well, until then, this probably won't work on real cluster
 
-#echo "$NAME EXPORT_CMDS=$EXPORT_CMDS"
-
-# the python code prints a bunch of export cmds, so we need to source them
-source /dev/stdin < <(echo $EXPORT_CMDS)
-
-echo "$NAME SPARKTK_HOME=$SPARKTK_HOME"
-echo "$NAME SPARK_HOME=$SPARK_HOME"
-#echo "$NAME SPARKTK_PYZIP=$SPARKTK_PYZIP"
+if [ -z "$SPARK_HOME" ]; then
+    export SPARK_HOME=/opt/cloudera/parcels/CDH/lib/spark
+fi
+echo $NAME SPARK_HOME=$SPARK_HOME
 
 if [ -z "$PYSPARK_BIN" ]; then
-    export PYSPARK_BIN=$SPARK_HOME/bin/pyspark
+    export PYSPARK_BIN=pyspark
 fi
 echo $NAME PYSPARK_BIN=$PYSPARK_BIN
 
@@ -49,6 +31,18 @@ if [ -z "$PYSPARK_MASTER" ]; then
 fi
 echo $NAME PYSPARK_MASTER=$PYSPARK_MASTER
 
+if [ -z "$PYSPARK_PYTHON" ]; then
+    export PYSPARK_PYTHON=/usr/bin/python2.7
+fi
+echo $NAME PYSPARK_PYTHON=$PYSPARK_PYTHON
 
-echo IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER $PYSPARK_SUBMIT_ARGS
-IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER $PYSPARK_SUBMIT_ARGS
+if [ -z "$PYSPARK_DRIVER_PYTHON" ]; then
+    export PYSPARK_DRIVER_PYTHON=/usr/bin/python2.7
+fi
+echo $NAME PYSPARK_DRIVER_PYTHON=$PYSPARK_DRIVER_PYTHON
+
+#enable to debug
+export SPARK_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+
+echo $NAME IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"
+IPYTHON=1 $PYSPARK_BIN --master $PYSPARK_MASTER --driver-class-path "$SPARK_TK_JAR:$SPARK_TK_DEP_JARS"

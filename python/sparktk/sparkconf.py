@@ -143,7 +143,8 @@ def create_sc(master=None,
               spark_home=None,
               sparktk_home=None,
               pyspark_submit_args=None,
-              app_name="sparktk"):
+              app_name="sparktk",
+              extra_conf=None):
     """
     Creates a SparkContext with sparktk defaults
 
@@ -155,6 +156,7 @@ def create_sc(master=None,
     :param spark_home: override $SPARK_HOME
     :param sparktk_home: override $SPARKTK_HOME
     :param app_name: name of spark app
+    :param extra_conf: dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
     :return: pyspark SparkContext
     """
 
@@ -168,6 +170,9 @@ def create_sc(master=None,
         logger.info("sparktk.create_sc() master not specified, setting to %s", master)
 
     conf = SparkConf().setMaster(master).setAppName(app_name)
+    if extra_conf:
+        for k, v in extra_conf.items():
+            conf = conf.set(k, v)
 
     if not py_files:
         py_files = []
