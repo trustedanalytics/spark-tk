@@ -73,7 +73,7 @@ object HbaseHelper extends Serializable {
     if (value == null)
       null
     else
-      DataTypes.valAsDataType(Bytes.toString(value), dataType)
+      dataType.parse(value)
   }
 
   /**

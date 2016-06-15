@@ -58,24 +58,6 @@ object DataTypes {
   }
 
   /**
-   * Convert value from string representation to datatype
-   *
-   * @param value value as string
-   * @param dataType data type to convert to
-   * @return the converted value
-   */
-  def valAsDataType(value: String, dataType: DataType): Any = {
-    dataType match {
-      case DataTypes.int32 => DataTypes.toInt(value)
-      case DataTypes.int64 => DataTypes.toLong(value)
-      case DataTypes.float32 => DataTypes.toFloat(value)
-      case DataTypes.float64 => DataTypes.toDouble(value)
-      case DataTypes.string => value
-      case _ => throw new IllegalArgumentException(s"unsupported export type ${dataType.toString}")
-    }
-  }
-
-  /**
    * 32 bit ints
    */
   case object int32 extends DataType {
