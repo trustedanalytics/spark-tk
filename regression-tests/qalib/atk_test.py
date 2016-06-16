@@ -40,6 +40,7 @@ import config
 
 class ATKTestCase(unittest.TestCase):
     _multiprocess_shared_ = False
+    tc = None 
 
     @classmethod
     def setUpClass(cls):
@@ -62,12 +63,9 @@ class ATKTestCase(unittest.TestCase):
                 #raise
 
 	try:
-	    print "attempting to create sc"
             #ia.connect(config.credentials_file)
 	    sc = create_sc(app_name="pytest-pyspark-local-testing")
-	    print "created schema"
-	    request.addfinalizer(lambda:sc.stop())
-	    print "added finalizer"
+	    #request.addfinalizer(lambda:sc.stop())
 	    tc = TkContext(sc)
 	except:
             print "connect failed"

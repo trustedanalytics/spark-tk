@@ -20,17 +20,28 @@
 # estoppel or otherwise. Any license under such intellectual property rights
 # must be express and approved by Intel in writing.
 ##############################################################################
+""" Utilities for generic qa manipulation """
 
-"""
-    Utilities for generic qa manipulation
-"""
+import trustedanalytics as ia
 
 import datetime
 import time
-import trustedanalytics as ia
+import json
 import uuid
 
 import config
+
+def get_tap_file_name(file_name):
+    with open('../utils/files.ini') as f:
+        data = json.load(f)
+        return data[file_name]
+
+def get_file(filename):
+    if config.on_tap:
+        placed_path = get_tap_file_name('/qa_data/'+filename)
+    else:
+        placed_path = "qa_data"+ "/" + filename
+    return placed_path
 
 
 def datestamp():
@@ -57,7 +68,6 @@ def get_a_name(prefix, harden=True):
     if len(name) > 127:
         print "Warning: Name Length is over 127"
 
-    print "The name generated is ", name
     return name
 
 
@@ -104,7 +114,6 @@ class Timer(object):
             if e.message != "No module named teamcity.messages":
                 raise
 
-# NTS: whenever a testcase is saving data, create a folder and remember to delete the folder here for cleanup
 
 #def drop_all_prefix(prefix):
     """Drop all frames, models and graphs with a given prefix"""

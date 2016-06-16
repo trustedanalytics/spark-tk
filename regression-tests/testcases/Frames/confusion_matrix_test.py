@@ -35,8 +35,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath
 import unittest
 
 import trustedanalytics as ia
+#from sparktk.frame.constructors import create
+from sparktk import TkContext
 
-from qalib import frame_utils
+from qalib import common_utils as cu
 from qalib import atk_test
 
 
@@ -51,12 +53,18 @@ class ConfusionMatrix(atk_test.ATKTestCase):
                         ("rating", ia.int32),
                         ("splits", str),
                         ("predicted", ia.int32)]
-        self.model_33_50 = "model_33_50.csv"
+        #self.model_33_50 = "model_33_50.csv"
+	model_33_50 = cu.get_file("model_33_50.csv")
         # [true_positive, false_negative, false_positive, true_negative]
         self.actual_result = [6534, 3266, 6535, 3267]
-
-        self.frame1 = frame_utils.build_frame(
-            self.model_33_50, self.schema1, self.prefix)
+	print "model: " + str(model_33_50)
+	tc = atk_test.ATKTestCase.get_context()
+	
+	model = tc.frame.import_csv(model_33_50)
+	self.frame1 = tc.frame.create(model)
+	#create(model_33_50, schema=self.schema1)
+        #self.frame1 = frame_utils.build_frame(
+        #    self.model_33_50, self.schema1, self.prefix)
 
     def test_confusion_matrix_for_data_33_55(self):
         """Tests the confusion matrix functionality"""
