@@ -90,7 +90,7 @@ object Import {
 
     //Map seq[seq[string]] to List[HBaseSchemaArgs]
     val finalSchema: Seq[HBaseSchemaArgs] = schema.map(item => HBaseSchemaArgs(item(0), item(1), DataTypes.toDataType(item(2))))
-    val hBaseRdd = HbaseHelper.createRdd(sc, tableName, finalSchema.toVector, startTag, endTag)
+    val hBaseRdd = HbaseHelper.createRdd(sc, tableName, finalSchema.toVector, startTag, endTag).map(DataTypes.parseMany(finalSchema.map(_.dataType).toArray))
     val hBaseSchema = new FrameSchema(finalSchema.toVector.map {
       case x => Column(x.columnFamily + "_" + x.columnName, x.dataType)
     })

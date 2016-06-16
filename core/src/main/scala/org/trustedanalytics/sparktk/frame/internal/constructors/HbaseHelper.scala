@@ -70,10 +70,7 @@ object HbaseHelper extends Serializable {
    */
   private def getValue(row: Result, columnFamily: String, columnName: String, dataType: DataType): Any = {
     val value = row.getValue(Bytes.toBytes(columnFamily), Bytes.toBytes(columnName))
-    if (value == null)
-      null
-    else
-      dataType.parse(value)
+    Bytes.toString(value)
   }
 
   /**
