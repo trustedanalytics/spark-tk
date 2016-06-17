@@ -14,7 +14,7 @@ def train(frame,
           reg_param = 0.01,
           mini_batch_fraction = 1.0):
     """
-    Creates a SVM Model by training on the given frame
+    Creates a Svm Model by training on the given frame
 
     Parameters
     ----------
@@ -28,7 +28,7 @@ def train(frame,
     :param reg_type: (Optional(str)) Regularization "L1" or "L2". Default is "L2"
     :param reg_param: (float) Regularization parameter. Default is 0.01
     :param mini_batch_fraction: (float) Set fraction of data to be used for each SGD iteration. Default is 1.0; corresponding to deterministic/classical gradient descent
-    :return: (SVMModel) The SVM trained model (with SGD)
+    :return: (SvmModel) The SVM trained model (with SGD)
 
     Notes
     -----
@@ -52,17 +52,17 @@ def train(frame,
                                    reg_param,
                                    mini_batch_fraction)
 
-    return SVMModel(tc, scala_model)
+    return SvmModel(tc, scala_model)
 
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.classification.svm.SVMModel
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 
 
-class SVMModel(PropertiesObject):
+class SvmModel(PropertiesObject):
     """
-    A trained SVM model
+    A trained Svm model
 
     Example
     -------
@@ -143,7 +143,7 @@ class SVMModel(PropertiesObject):
 
     @staticmethod
     def load(tc, scala_model):
-        return SVMModel(tc, scala_model)
+        return SvmModel(tc, scala_model)
 
     @property
     def label_column(self):

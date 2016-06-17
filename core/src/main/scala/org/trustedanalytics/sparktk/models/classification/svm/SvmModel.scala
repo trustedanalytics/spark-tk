@@ -1,7 +1,7 @@
 package org.trustedanalytics.sparktk.models.classification.svm
 
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.classification.{ SVMModel => SparkSVMModel, SVMWithSGD }
+import org.apache.spark.mllib.classification.{ SVMModel => SparkSvmModel, SVMWithSGD }
 import org.apache.spark.mllib.optimization.{ SquaredL2Updater, L1Updater }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
-object SVMModel extends TkSaveableObject {
+object SvmModel extends TkSaveableObject {
 
   /**
    * Train a SVM with SGD Model using the observation column and label column of a frame.
@@ -40,7 +40,7 @@ object SVMModel extends TkSaveableObject {
             stepSize: Double = 1d,
             regType: Option[String] = None,
             regParam: Double = 0.01,
-            miniBatchFraction: Double = 1.0): SVMModel = {
+            miniBatchFraction: Double = 1.0): SvmModel = {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
     require(StringUtils.isNotEmpty(labelColumn), "labelColumn must not be null nor empty")
@@ -68,7 +68,7 @@ object SVMModel extends TkSaveableObject {
     //Running MLLib
     val svmModel = svm.run(labeledTrainRdd)
 
-    SVMModel(svmModel, labelColumn,
+    SvmModel(svmModel, labelColumn,
       observationColumns,
       intercept,
       numIterations,
@@ -81,10 +81,10 @@ object SVMModel extends TkSaveableObject {
   def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
-    val m: SVMModelTkMetaData = SaveLoad.extractFromJValue[SVMModelTkMetaData](tkMetadata)
-    val sparkModel = SparkSVMModel.load(sc, path)
+    val m: SvmModelTkMetaData = SaveLoad.extractFromJValue[SvmModelTkMetaData](tkMetadata)
+    val sparkModel = SparkSvmModel.load(sc, path)
 
-    SVMModel(sparkModel,
+    SvmModel(sparkModel,
       m.labelColumn,
       m.observationColumns,
       m.intercept,
@@ -97,7 +97,7 @@ object SVMModel extends TkSaveableObject {
 }
 
 /**
- * SVMModel
+ * SvmModel
  * @param sparkModel Trained MLLib's Naive Bayes model
  * @param labelColumn Label column for trained model
  * @param observationColumns Handle to the observation columns of the data frame
@@ -108,7 +108,7 @@ object SVMModel extends TkSaveableObject {
  * @param regParam Regularization parameter
  * @param miniBatchFraction Set fraction of data to be used for each SGD iteration. corresponding to deterministic/classical gradient descent
  */
-case class SVMModel private[svm] (sparkModel: SparkSVMModel,
+case class SvmModel private[svm] (sparkModel: SparkSvmModel,
                                   labelColumn: String,
                                   observationColumns: Seq[String],
                                   intercept: Boolean,
@@ -126,7 +126,7 @@ case class SVMModel private[svm] (sparkModel: SparkSVMModel,
    * Adds a column to the frame which indicates the predicted class for each observation
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the SVMModel
+   *                By default, we predict the labels over columns the SvmModel
    */
   def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
     require(frame != null, "frame is required")
@@ -147,9 +147,9 @@ case class SVMModel private[svm] (sparkModel: SparkSVMModel,
   /**
    * Get the predictions for observations in a test frame
    *
-   * @param frame Frame to test the SVM model
+   * @param frame Frame to test the Svm model
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the SVMModel
+   *                By default, we predict the labels over columns the SvmModel
    * @return ClassificationMetricValue describing the test metrics
    */
   def test(frame: Frame, columns: Option[List[String]]): ClassificationMetricValue = {
@@ -180,7 +180,7 @@ case class SVMModel private[svm] (sparkModel: SparkSVMModel,
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
-    val tkMetadata = SVMModelTkMetaData(labelColumn,
+    val tkMetadata = SvmModelTkMetaData(labelColumn,
       observationColumns,
       intercept,
       numIterations,
@@ -188,7 +188,7 @@ case class SVMModel private[svm] (sparkModel: SparkSVMModel,
       regType,
       regParam,
       miniBatchFraction)
-    TkSaveLoad.saveTk(sc, path, SVMModel.formatId, formatVersion, tkMetadata)
+    TkSaveLoad.saveTk(sc, path, SvmModel.formatId, formatVersion, tkMetadata)
   }
 }
 
@@ -203,7 +203,7 @@ case class SVMModel private[svm] (sparkModel: SparkSVMModel,
  * @param regParam Regularization parameter
  * @param miniBatchFraction Set fraction of data to be used for each SGD iteration. corresponding to deterministic/classical gradient descent
  */
-case class SVMModelTkMetaData(labelColumn: String,
+case class SvmModelTkMetaData(labelColumn: String,
                               observationColumns: Seq[String],
                               intercept: Boolean,
                               numIterations: Int,
