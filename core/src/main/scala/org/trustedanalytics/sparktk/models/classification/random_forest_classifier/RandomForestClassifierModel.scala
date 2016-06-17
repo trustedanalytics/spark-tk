@@ -67,8 +67,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
     require(maxDepth >= 0, "maxDepth must be non negative")
     require(numClasses >= 2, "numClasses must be at least 2")
     require(featureSubsetCategory.isEmpty ||
-      List("auto","all","sqrt","log2","onethird").contains(featureSubsetCategory.get),
-      "feature subset category can be either None or one of the values: auto, all, sqrt, log2")
+      List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory.get),
+      "feature subset category can be either None or one of the values: auto, all, sqrt, log2, onethird")
     require(List("gini", "entropy").contains(impurity), "Supported values for impurity are gini or entropy")
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
