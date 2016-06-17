@@ -45,6 +45,9 @@ object SvmModel extends TkSaveableObject {
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
     require(StringUtils.isNotEmpty(labelColumn), "labelColumn must not be null nor empty")
     require(!frame.rdd.isEmpty(), "Frame is empty. Please train on a non-empty Frame.")
+    require(numIterations > 0, "number of iterations must be a positive value")
+    require(regType.isEmpty || List("L1", "L2").contains(regType), "regularization type can be either empty or" +
+      "one of the 2 values: L1 or L2")
 
     frame.schema.validateColumnsExist(observationColumns)
 
