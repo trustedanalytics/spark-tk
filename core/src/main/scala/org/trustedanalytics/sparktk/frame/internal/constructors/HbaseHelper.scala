@@ -66,7 +66,7 @@ object HbaseHelper extends Serializable {
    * @param columnFamily hBase column family
    * @param columnName hBase column name
    * @param dataType internal data type of the cell
-   * @return the value for the cell as per the specified datatype
+   * @return the value as string
    */
   private def getValue(row: Result, columnFamily: String, columnName: String, dataType: DataType): Any = {
     val value = row.getValue(Bytes.toBytes(columnFamily), Bytes.toBytes(columnName))
