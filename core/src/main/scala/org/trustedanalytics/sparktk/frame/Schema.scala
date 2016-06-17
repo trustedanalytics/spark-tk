@@ -2,6 +2,8 @@ package org.trustedanalytics.sparktk.frame
 
 import java.util.{ ArrayList => JArrayList }
 
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
@@ -266,6 +268,75 @@ object SchemaHelper {
     pythonSchema
   }
 
+  private def mergeType(dataTypeA: DataType, dataTypeB: DataType): DataType = {
+    val numericTypes = List[DataType](DataTypes.float64, DataTypes.float32, DataTypes.int64, DataTypes.int32)
+
+    if (dataTypeA.equalsDataType(dataTypeB))
+      dataTypeA
+    else if (dataTypeA == DataTypes.string || dataTypeB == DataTypes.string)
+      DataTypes.string
+    else if (numericTypes.contains(dataTypeA) && numericTypes.contains(dataTypeB)) {
+      if (numericTypes.indexOf(dataTypeA) > numericTypes.indexOf(dataTypeB))
+        dataTypeB
+      else
+        dataTypeA
+    }
+    else if (dataTypeA.isVector && dataTypeB.isVector) {
+      throw new RuntimeException(s"Vectors must all be the same length (found vectors with length " +
+        s"${dataTypeA.asInstanceOf[DataTypes.vector].length} and ${dataTypeB.asInstanceOf[DataTypes.vector].length}).")
+    }
+    else
+      // Unable to merge types, default to use a string
+      DataTypes.string
+  }
+
+  private def mergeTypes(dataTypesA: Vector[DataType], dataTypesB: Vector[DataType]): Vector[DataType] = {
+    if (dataTypesA.length != dataTypesB.length)
+      throw new RuntimeException(s"Rows are not the same length (${dataTypesA.length} and ${dataTypesB.length}).")
+
+    dataTypesA.zipWithIndex.map {
+      case (dataTypeA, index) => mergeType(dataTypeA, dataTypesB(index))
+    }
+  }
+
+  private def inferDataTypes(row: Row): Vector[DataType] = {
+    row.toSeq.map(value => {
+      value match {
+        case i: Int => DataTypes.int32
+        case l: Long => DataTypes.int64
+        case f: Float => DataTypes.float32
+        case d: Double => DataTypes.float64
+        case s: String => DataTypes.string
+        case l: List[_] => DataTypes.vector(l.length)
+        case a: Array[_] => DataTypes.vector(a.length)
+        case s: Seq[_] => DataTypes.vector(s.length)
+      }
+    }).toVector
+  }
+
+  /**
+   * Looks at the first x number of rows (depending on the sampleSize) to determine the schema of the data set.
+   *
+   * @param data RDD of data
+   * @return Schema inferred from the data
+   */
+  def inferSchema(data: RDD[Row], sampleSize: Int, columnNames: Option[List[String]]): Schema = {
+    val sampleSet = data.take(math.min(data.count.toInt, sampleSize))
+
+    val dataTypes = sampleSet.foldLeft(inferDataTypes(sampleSet.head)) {
+      case (v: Vector[DataType], r: Row) => mergeTypes(v, inferDataTypes(r))
+    }
+
+    val schemaColumnNames = columnNames.getOrElse(List[String]())
+
+    val columns = dataTypes.zipWithIndex.map {
+      case (dataType, index) =>
+        val columnName = if (schemaColumnNames.length > index) schemaColumnNames(index) else "C" + index
+        Column(columnName, dataType)
+    }
+
+    FrameSchema(columns)
+  }
 }
 
 /**
