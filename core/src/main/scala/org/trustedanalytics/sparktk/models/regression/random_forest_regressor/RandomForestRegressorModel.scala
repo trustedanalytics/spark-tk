@@ -59,6 +59,13 @@ object RandomForestRegressorModel extends TkSaveableObject {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
     require(StringUtils.isNotEmpty(valueColumn), "valueColumn must not be null nor empty")
+    require(numTrees > 0, "numTrees must be greater than 0")
+    require(maxDepth >= 0, "maxDepth must be non negative")
+    require(StringUtils.equals(impurity, "variance"), "Only variance is a supported value for impurity " +
+      "for Random Forest Regressor model")
+    require(featureSubsetCategory.isEmpty ||
+      List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory.get),
+      "feature subset category can be either None or one of the values: auto, all, sqrt, log2, onethird")
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
     val randomForestCategoricalFeaturesInfo = categoricalFeaturesInfo.getOrElse(Map[Int, Int]())
