@@ -84,6 +84,20 @@ def group_by(self, group_by_columns, *aggregations):
             *   sum
             *   var (see glossary :term:`Bias vs Variance`)
             *   The aggregation arguments also accepts the User Defined function(UDF). UDF acts on each row
+            *   histogram(cutoffs, include_lowest=True, strict_binning=False)
+                    - cutoffs: (List[int or float or long or double]) An array of values containing bin cutoff points. Array can be list or tuple. If an array is provided,
+                                values must be progressively increasing. All bin boundaries must be included, so, with N bins, you need N+1 values.
+                                Ex: [1, 5, 8, 12] - creates three bins
+                                        0 (bin) - values [1 inclusive - 5 exclusive]
+                                        1 (bin) - values [5 inclusive - 8 exclusive]
+                                        2 (bin) - values [8 inclusive - 9 exclusive]
+
+                    - include_lowest: (Optional[bool]) Specify how the boundary conditions are handled. ``True`` indicates that the lower bound of the bin is inclusive.
+                                      ``False`` indicates that the upper bound is inclusive. Default is ``True``.
+
+                    - strict_binning: (Optional(bool)) Specify how values outside of the cutoffs array should be binned. If set to ``True``, each value less than cutoffs[0]
+                                      or greater than cutoffs[-1] will be assigned a bin value of -1. If set to ``False``, values less than cutoffs[0] will be included in
+                                      the first bin while values greater than cutoffs[-1] will be included in the final bin.
 
      Examples
      -------
@@ -144,6 +158,26 @@ def group_by(self, group_by_columns, *aggregations):
         =========================================
         [0]  2      4      7   6.25   25.0    5.0
         [1]  1      3      9    5.0   15.0    3.0
+
+        GroupbyHistogram
+
+        >>> hist = frame.group_by('a', {'g': tc.agg.histogram([1, 5, 8, 9])})
+        <progress>
+
+        >>> hist.inspect()
+        [#]  a  g_HISTOGRAM
+        =========================
+        [0]  2  [0.25, 0.75, 0.0]
+        [1]  1    [0.0, 0.0, 1.0]
+
+        >>> hist = frame.group_by('a', {'g': tc.agg.histogram([1, 5, 8, 9], False)})
+        <progress>
+
+        >>> hist.inspect()
+        [#]  a  g_HISTOGRAM
+        =============================================
+        [0]  2                        [0.5, 0.5, 0.0]
+        [1]  1  [0.0, 0.333333333333, 0.666666666667]
 
     """
     if group_by_columns is None:
