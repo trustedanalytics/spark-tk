@@ -10,7 +10,8 @@ import numpy as np
 import json
 import re
 from pyspark.sql import types
-
+import logging
+logger = logging.getLogger('sparktk')
 
 # alias numpy types
 # todo: bring back the numpy types
@@ -135,7 +136,7 @@ _primitive_alias_type_to_type_table = {
     int: int32,
     long: int64,
     str: unicode,
-    #list: vector,
+    list: vector,
 }
 
 _primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _primitive_alias_type_to_type_table.iteritems()])
@@ -401,6 +402,34 @@ class _DataTypes(object):
             return _pyspark_type_to_primitive_type_table[pyspark_type]
         else:
             raise ValueError("Unable to cast pyspark type %s to primitive type." % str(pyspark_type))
+
+    @staticmethod
+    def merge_types (type_a, type_b):
+        """
+        Returns the lowest common denominator data type for the specified types.
+        :param type_a: Data type a to compare
+        :param type_b: Data type b t compare
+        :return: Merged data type
+        """
+        merged = unicode
+        numeric_types = [float, long, int, bool]       # numeric types in rank order
+        if type_a == type_b:
+            merged = type_a
+        elif type_a == unicode or type_b == unicode:
+            merged = unicode
+        elif type_a == str or type_b == str:
+            merged = str
+        elif type_a in numeric_types and type_b in numeric_types:
+            if numeric_types.index(type_a) > numeric_types.index(type_b):
+                merged = type_b
+            else:
+                merged = type_a
+        elif isinstance(type_a, vector) and isinstance(type_b, vector):
+            if type_a.length != type_b.length:
+                raise ValueError("Vectors must all be the same length (found vectors with length %s and %s)." % (type_a.length, type_b.length))
+            merged = type_a
+        return merged
+
 
 dtypes = _DataTypes()
 #valid_data_types = dtypes  # consider for backwards comp
