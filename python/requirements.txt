@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 py4j
 numpy
 decorator
@@ -7,3 +8,6 @@ python-dateutil
 pytest
 pdoc
 importlib
+=======
+numpy>=1.9.0
+>>>>>>> 4dc3efd5d5e9ffe3b6e7ddae4fd1146f340dfc37
