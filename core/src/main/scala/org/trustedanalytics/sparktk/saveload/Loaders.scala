@@ -5,6 +5,7 @@ import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayesModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
+import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 
 object Loaders {
 
@@ -35,7 +36,9 @@ object Loaders {
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(Frame,
       KMeansModel,
-      NaiveBayesModel)
+      NaiveBayesModel,
+      GaussianMixtureModel
+    )
     entries.map(e => e.formatId -> e.load _).toMap
   }
 
