@@ -1,11 +1,12 @@
 package org.trustedanalytics.sparktk.frame
 
+import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.sparktk.frame.internal.BaseFrame
+import org.trustedanalytics.sparktk.frame.internal.{ ValidationReport, BaseFrame }
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ BinaryClassificationMetricsSummarization, MultiClassClassificationMetricsSummarization }
@@ -27,7 +28,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.zip.ZipWithIndexedRddTran
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
-class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params named "frameRdd" and "frameSchema" because naming them "rdd" and "schema" masks the base members "rdd" and "schema" in this scope
+class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = false) extends BaseFrame with Serializable // params named "frameRdd" and "frameSchema" because naming them "rdd" and "schema" masks the base members "rdd" and "schema" in this scope
     with AddColumnsTransform
     with AppendFrameTransform
     with AssignSampleTransform
@@ -77,7 +78,49 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema) extends BaseFrame // params
     with TopKSummarization
     with UnflattenColumnsTransform
     with ZipWithIndexedRddTransform {
+
   init(frameRdd, frameSchema)
+
+  private val log: Logger = Logger.getLogger(Frame.getClass)
+
+  val validationReport = init(frameRdd, frameSchema, validateSchema)
+
+  /**
+   * Initialize the frame and call schema validation, if it's enabled.
+   *
+   * @param frameRdd RDD
+   * @param frameSchema Schema
+   * @param validateSchema Boolean indicating if schema validation should be performed.
+   * @return ValidationReport, if the data is validated against the schema.
+   */
+  def init(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean): Option[ValidationReport] = {
+    var validationReport: Option[ValidationReport] = None
+
+    // Infer the schema, if a schema was not provided
+    val updatedSchema = if (frameSchema == null) {
+      SchemaHelper.inferSchema(frameRdd, 100, None)
+    }
+    else
+      frameSchema
+
+    // Validate the data against the schema, if the validateSchema is enabled
+    val updatedRdd = if (validateSchema) {
+      val schemaValidation = super.validateSchema(frameRdd, updatedSchema)
+
+      if (schemaValidation.validationReport.numBadValues > 0)
+        log.warn(s"Schema validation found ${schemaValidation.validationReport.numBadValues} bad values.")
+
+      validationReport = Some(schemaValidation.validationReport)
+      schemaValidation.validatedRdd
+
+    }
+    else
+      frameRdd
+
+    super.init(updatedRdd, updatedSchema)
+
+    validationReport
+  }
 
   /**
    * (typically called from pyspark, with jrdd)

@@ -2,7 +2,10 @@ from pyspark.rdd import RDD
 
 from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
-
+from sparktk import dtypes
+import logging
+logger = logging.getLogger('sparktk')
+from sparktk.propobj import PropertiesObject
 
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
@@ -12,7 +15,7 @@ from sparktk.frame.constructors.import_hive import import_hive
 
 class Frame(object):
 
-    def __init__(self, tc, source, schema=None):
+    def __init__(self, tc, source, schema=None, validate_schema=False):
         self._tc = tc
         if self._is_scala_frame(source):
             self._frame = source
@@ -21,18 +24,140 @@ class Frame(object):
             self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
         else:
             if not isinstance(source, RDD):
+                if isinstance(schema, list):
+                    if all(isinstance(item, basestring) for item in schema):
+                        # check if schema is just a list of column names (versus string and data type tuples)
+                        schema = self._infer_schema(source, schema)
+                    elif not all(isinstance(item, tuple) and
+                                  len(item) == 2 and
+                                  isinstance(item[0], str) for item in schema):
+                        raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
+                    else:
+                        for item in schema:
+                            if not self._is_supported_datatype(item[1]):
+                                raise TypeError("Invalid schema.  %s is not a supported data type." % str(item[1]))
+                elif schema is None:
+                    schema = self._infer_schema(source)
+                else:
+                    # Schema is not a list or None
+                    raise TypeError("Invalid schema type: %s.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
                 source = tc.sc.parallelize(source)
-            if schema:
-                self.validate_pyrdd_schema(source, schema)
+            if schema and validate_schema:
+                # Validate schema by going through the data and checking the data type and attempting to parse it
+                validate_schema_result = self.validate_pyrdd_schema(source, schema)
+                source = validate_schema_result.validated_rdd
+                logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
+
             self._frame = PythonFrame(source, schema)
 
+    def _merge_types(self, type_list_a, type_list_b):
+        """
+        Merges two lists of data types
+
+        :param type_list_a: First list of data types to merge
+        :param type_list_b: Second list of data types to merge
+        :return: List of merged data types
+        """
+        if not isinstance(type_list_a, list) or not isinstance(type_list_b, list):
+            raise TypeError("Unable to generate schema, because schema is not a list.")
+        if len(type_list_a) != len(type_list_b):
+            raise ValueError("Length of each row must be the same (found rows with lengths: %s and %s)." % (len(type_list_a), len(type_list_b)))
+        return [dtypes._DataTypes.merge_types(type_list_a[i], type_list_b[i]) for i in xrange(0, len(type_list_a))]
+
+    def _infer_types_for_row(self, row):
+        """
+        Returns a list of data types for the data in the specified row
+
+        :param row: List or Row of data
+        :return: List of data types
+        """
+        inferred_types = []
+        for item in row:
+            if not isinstance(item, list):
+                inferred_types.append(type(item))
+            else:
+                inferred_types.append(dtypes.vector((len(item))))
+        return inferred_types
+
+    def _infer_schema(self, data, column_names=[], sample_size=100):
+        """
+        Infers the schema based on the data in the RDD.
+
+        :param sc: Spark Context
+        :param data: Data used to infer schema
+        :param column_names: Optional column names to use in the schema.  If no column names are provided, columns
+                             are given numbered names.  If there are more columns in the RDD than there are in the
+                             column_names list, remaining columns will be numbered.
+        :param sample_size: Number of rows to check when inferring the schema.  Defaults to 100.
+        :return: Schema
+        """
+        inferred_schema = []
+
+        if isinstance(data, list):
+            if len(data) > 0:
+                # get the schema for the first row
+                data_types = self._infer_types_for_row(data[0])
+
+                sample_size = min(sample_size, len(data))
+
+                for i in xrange (1, sample_size):
+                    data_types = self._merge_types(data_types, self._infer_types_for_row(data[i]))
+
+                for i, data_type in enumerate(data_types):
+                    column_name = "C%s" % i
+                    if len(column_names) > i:
+                        column_name = column_names[i]
+                    inferred_schema.append((column_name, data_type))
+        else:
+            raise TypeError("Unable to infer schema, because the data provided is not a list.")
+        return inferred_schema
+
+    def _is_supported_datatype(self, data_type):
+        """
+        Returns True if the specified data_type is supported.
+        """
+        supported_primitives = [int, float, long, str, unicode]
+        if data_type in supported_primitives:
+            return True
+        elif data_type is dtypes.datetime:
+            return True
+        elif type(data_type) is dtypes.vector:
+            return True
+        else:
+            return False
+
     def validate_pyrdd_schema(self, pyrdd, schema):
-        pass
+        if isinstance(pyrdd, RDD):
+            schema_length = len(schema)
+            num_bad_values = self._tc.sc.accumulator(0)
+
+            def validate_schema(row, accumulator):
+                data = []
+                if len(row) != schema_length:
+                    raise ValueError("Length of the row (%s) does not match the schema length (%s)." % (len(row), len(schema)))
+                for index, column in enumerate(schema):
+                    data_type = column[1]
+                    try:
+                        if row[index] is not None:
+                            data.append(dtypes.dtypes.cast(row[index], data_type))
+                    except:
+                        data.append(None)
+                        accumulator += 1
+                return data
+
+            validated_rdd = pyrdd.map(lambda row: validate_schema(row, num_bad_values))
+
+            # Force rdd to load, so that we can get a bad value count
+            validated_rdd.count()
+
+            return SchemaValidationReturn(validated_rdd, num_bad_values.value)
+        else:
+            raise TypeError("Unable to validate schema, because the pyrdd provided is not an RDD.")
 
     @staticmethod
     def create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
-        return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema)
+        return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
     def load(tc, scala_frame):
@@ -198,3 +323,28 @@ class Frame(object):
     from sparktk.frame.ops.timeseries_slice import timeseries_slice
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
+
+
+class SchemaValidationReturn(PropertiesObject):
+    """
+    Return value from schema validation that includes the rdd of validated values and the number of bad values
+    that were found.
+    """
+
+    def __init__(self, validated_rdd, bad_value_count):
+        self._validated_rdd = validated_rdd
+        self._bad_value_count = bad_value_count
+
+    @property
+    def validated_rdd(self):
+        """
+        RDD of values that have been casted to the data type specified by the frame's schema.
+        """
+        return self._validated_rdd
+
+    @property
+    def bad_value_count(self):
+        """
+        Number of values that were unable to be parsed to the data type specified by the schema.
+        """
+        return self._bad_value_count
