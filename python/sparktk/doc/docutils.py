@@ -110,10 +110,12 @@ class DocExamplesPreprocessor(object):
             # process for human-consumable documentation
             self.replacements = self.doc_replacements
             self.is_state_keep = self._is_hide_state_keep
+            self._disappear  = ''   # in documentation, we need complete disappearance
         elif mode == 'doctest':
             # process for doctest execution
             self.replacements = self.doctest_replacements
             self.is_state_keep = self._is_skip_state_keep
+            self._disappear = '\n'  # disappear means blank line for doctests, to preserve line numbers for error report
         else:
             raise DocExamplesException('Invalid mode "%s" given to %s.  Must be in %s' %
                                        (mode, self.__class__, ", ".join(['doc', 'doctest'])))
@@ -153,7 +155,7 @@ class DocExamplesPreprocessor(object):
             stripped = DocExamplesPreprocessor._strip_markdown_comment(stripped)
             if stripped[0] == '<':
                 if self._process_if_tag_pair_tag(stripped):
-                    return ''  # return empty string, as tag-pari markup should disappear
+                    return self._disappear  # tag-pair markup should disappear appropriately
 
                 # check for keyword replacement
                 for keyword, replacement in self.replacements:
@@ -161,7 +163,7 @@ class DocExamplesPreprocessor(object):
                         line = line.replace(keyword, replacement, 1)
                         break
 
-        return line if self.is_state_keep() else ''
+        return line if self.is_state_keep() else self._disappear
 
     def _process_if_tag_pair_tag(self, stripped):
         """determines if the stripped line is a tag pair start or stop, advances fsms accordingly"""

@@ -30,7 +30,7 @@ object MatcherUtils extends Matchers {
    * Array(0.12, 0.25) should  equalWithTolerance(Array(0.122, 0.254), 0.01)
    * </pre>
    */
-  def equalWithTolerance(right: Array[Double], tolerance: Double = 1E-6) =
+  def equalWithTolerance(right: Array[Double], tolerance: Double = 1E-5) =
     Matcher { (left: Array[Double]) =>
       MatchResult(
         (left zip right) forall { case (a, b) => a === (b +- tolerance) },

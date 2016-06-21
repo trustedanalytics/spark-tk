@@ -7,7 +7,6 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     """
     Creates a KMeansModel by training on the given frame
 
-    :param tc: TkContext
     :param frame: frame of training data
     :param columns: names of columns containing the observations for training
     :param k: number of clusters

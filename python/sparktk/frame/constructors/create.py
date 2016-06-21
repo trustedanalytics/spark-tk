@@ -98,5 +98,7 @@ def create(data, schema=None, validate_schema=False, tc=implicit):
     schema, and further frame operations may fail due to the data type discrepancy.
 
     """
+    if tc is implicit:
+        implicit.error('tc')    
     from sparktk.frame.frame import Frame
     return Frame(tc, data, schema, validate_schema)
