@@ -90,15 +90,15 @@ class GaussianMixtureModel(PropertiesObject):
         >>> for i in range(0, len(mu)):
         ...     l.append([float(mu[i]), float(sigma[i])])
 
-       >>> l.sort(key=lambda x: x[0])
+        >>> l.sort(key=lambda x: x[0])
         >>> np.allclose(np.array(l),np.array([[1.1984454608177824, 0.5599200477022921],
         ... [6.6173304476544335, 2.1848346923369246],
         ... [6.79969916638852, 2.2623755196701305]]),atol=1e-00)
         True
 
         >>> model.predict(frame)
-
-        >>> x = frame.take(10)
+        <skip>
+        >>> x = frame.take(9)
         [#]  data  name  predicted_cluster
         ==================================
         [0]   9.0  ij                    0
@@ -110,11 +110,24 @@ class GaussianMixtureModel(PropertiesObject):
         [6]   1.0  gh                    1
         [7]   6.0  op                    0
         [8]   2.0  kl                    1
-
-        >>> frame.
-        >>> exp_out = [[],[]]
-        >>> x[0][0][2]
-        0
+        </skip>
+        <hide>
+        >>> x = frame.take(9)
+        >>> val = set(map(lambda y : y[2], x[0]))
+        >>> newlist = [[z[1] for z in x[0] if z[2]==a]for a in val]
+        >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
+        >>> act_out
+        [['ij', 'qr', 'ef', 'op'], ['ab', 'mn', 'cd', 'gh', 'kl']]
+        >>> exp_out = [['ij','qr','ef','op'], ['ab','mn','cd','gh','kl']]
+        >>> result = False
+        >>> for list in act_out:
+        ...     if list not in exp_out:
+        ...         result = False
+        ...     else:
+        ...         result = True
+        >>> result
+        True
+        </hide>
         >>> model.observation_columns
         [u'data']
 
