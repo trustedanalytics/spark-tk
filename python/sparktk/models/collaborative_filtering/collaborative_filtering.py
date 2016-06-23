@@ -1,0 +1,248 @@
+from sparktk.loggers import log_load; log_load(__name__); del log_load
+
+from sparktk.propobj import PropertiesObject
+
+
+def train(frame,
+          source_column_name,
+          dest_column_name,
+          weight_column_name,
+          max_steps = 10,
+          regularization = 0.5,
+          alpha = 0.5,
+          num_factors = 3,
+          use_implicit = False,
+          num_user_blocks = 2,
+          num_item_block = 3,
+          checkpoint_iterations = 10,
+          target_rmse = 0.05):
+    """
+    Create collaborative filtering model by training on given frame
+
+    :param frame: The frame containing the data to train on
+    :param source_column_name: source column name.
+    :param dest_column_name: destination column name.
+    :param weight_column_name: weight column name.
+    :param max_steps: max number of super-steps (max iterations) before the algorithm terminates. Default = 10
+    :param regularization: float value between 0 .. 1
+    :param alpha: double value between 0 .. 1
+    :param num_factors: number of the desired factors (rank)
+    :param use_implicit: use implicit preference
+    :param num_user_blocks: number of user blocks
+    :param num_item_block: number of item blocks
+    :param checkpoint_iterations: Number of iterations between checkpoints
+    :param target_rmse: target RMSE
+    :return: collaborative filtering model
+    """
+
+    tc = frame._tc
+    _scala_obj = get_scala_obj(tc)
+    scala_model = _scala_obj.train(frame._scala,
+                                   source_column_name,
+                                   dest_column_name,
+                                   weight_column_name,
+                                   max_steps,
+                                   regularization,
+                                   alpha,
+                                   num_factors,
+                                   use_implicit,
+                                   num_user_blocks,
+                                   num_item_block,
+                                   checkpoint_iterations,
+                                   target_rmse)
+    return CollaborativeFilteringModel(tc, scala_model)
+
+
+def get_scala_obj(tc):
+    """Gets reference to the scala object"""
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
+
+
+def scala_collaborative_filtering_recommend_return_to_python(self, recommend_return):
+    """
+    method to convert scala CollaborativeFilteringRecommendReturn to python list
+    :param recommend_return: scala recommend return result
+    :return: return python list of tuples('user', 'product', 'rating')
+    """
+    from collections import namedtuple
+    recommend_return_tuple = namedtuple("RecommendReturnTuple", ['user', 'product', 'rating'])
+    scala_list_return = self._tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel.scalaCollaborativeFilteringRecommendReturnToPython(recommend_return)
+    python_list = [recommend_return_tuple(user=recommend_list[0], product=recommend_list[1], rating=recommend_list[2]) for recommend_list in scala_list_return]
+    return python_list
+
+
+class CollaborativeFilteringModel(PropertiesObject):
+    """
+    A trained collaborative filtering model
+
+    >>> schema = [('source', int), ('dest', int), ('weight', float)]
+    >>> rows = [ [1, 3, .5], [1, 4, .6], [1, 5, .7], [2, 5, .1] ]
+
+    >>> frame = tc.frame.create(rows, schema)
+    <progress>
+    >>> frame.inspect()
+    [#]  source  dest  weight
+    =========================
+    [0]       1     3     0.5
+    [1]       1     4     0.6
+    [2]       1     5     0.7
+    [3]       2     5     0.1
+
+    >>> rows_predict = [ [1, 3, .5], [1, 4, .6], [1, 5, .7], [2, 5, .1] ]
+
+    >>> predict_frame = tc.frame.create(rows_predict, schema)
+    <progress>
+
+    >>> model = tc.models.collaborative_filtering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
+    <progress>
+
+    <skip>
+    >>> predict_result = model.predict(edge_frame_predict, 'source', 'dest')
+    <progress>
+
+    >>> recommendations = model.recommend(1, 3, True)
+    <progress>
+    >>> recommendations
+    [{u'rating': 0.04854799984010311, u'product': 4, u'user': 1}, {u'rating': 0.04045666535703035, u'product': 3, u'user': 1}, {u'rating': 0.030060528471388848, u'product': 5, u'user': 1}]
+    >>> recommendations = model.recommend(5, 2, False)
+    <progress>
+    </skip>
+    <hide>
+    >>> recommendations = model.recommend(1, 3, True)
+    <progress>
+    >>> "%.2f" % recommendations[0]['rating']
+    '0.05'
+    >>> "%.2f" % recommendations[1]['rating']
+    '0.04'
+    >>> "%.2f" % recommendations[2]['rating']
+    '0.03'
+    >>> recommendations = model.recommend(3, 2, False)
+    <progress>
+    >>> "%.2f" % recommendations[0]['rating']
+    '0.04'
+    </hide>
+
+    """
+    def __init__(self, tc, scala_model):
+        self._tc = tc
+        tc.jutils.validate_is_jvm_instance_of(scala_model, get_scala_obj(tc))
+        self._scala = scala_model
+
+    @staticmethod
+    def load(tc, scala_model):
+        """Loads a collaborative filtering model from a scala model"""
+        return CollaborativeFilteringModel(tc, scala_model)
+
+    @property
+    def source_column_name(self):
+        """source column name used for model training"""
+        return self._scala.sourceColumnName()
+
+    @property
+    def dest_column_name(self):
+        """destination column name used for model training"""
+        return self._scala.destColumnName()
+
+    @property
+    def weight_column_name(self):
+        """weight column name used for model training"""
+        return self._scala.weightColumnName()
+
+    @property
+    def max_steps(self):
+        """maximum steps used for model training"""
+        return self._scala.maxSteps()
+
+    @property
+    def regularization(self):
+        """regularization used for model training"""
+        return self._scala.regularization()
+
+    @property
+    def alpha(self):
+        """alpha used for model training"""
+        return self._scala.alpha()
+
+    @property
+    def num_factors(self):
+        """number of desired factors(rank) used for model training"""
+        return self._scala.numFactors()
+
+    @property
+    def use_implicit(self):
+        """use implicit for model training"""
+        return self._scala.useImplicit()
+
+    @property
+    def num_user_blocks(self):
+        """number of user blocks used model training"""
+        return self._scala.numUserBlocks()
+
+    @property
+    def num_item_block(self):
+        """number of item blocks used for model training"""
+        return self._scala.numItemBlock()
+
+    @property
+    def checkpoint_iterations(self):
+        """check point iterations used for model training"""
+        return self._scala.checkpointIterations()
+
+    @property
+    def target_rmse(self):
+        """target RMSE used for model training"""
+        return self._scala.targetRMSE()
+
+    @property
+    def user_frame(self):
+        """user frame from model"""
+        return self._tc.frame.create(self._scala.userFrame())
+
+    @property
+    def product_frame(self):
+        """user frame from model"""
+        return self._tc.frame.create(self._scala.productFrame())
+
+    def predict(self,
+                frame,
+                input_source_column_name,
+                input_dest_column_name,
+                output_user_column_name="user",
+                output_product_column_name="product",
+                output_rating_column_name="rating"):
+        """
+        Predicts the given frame based on trained model
+
+        :param frame: frame to predict based on generated model
+        :param input_source_column_name: source column name.
+        :param input_dest_column_name: destination column name.
+        :param output_user_column_name: A user column name for the output frame
+        :param output_product_column_name: A product  column name for the output frame
+        :param output_rating_column_name: A rating column name for the output frame
+        :return: returns predicted rating frame with specified output columns
+        """
+        self._scala.predict(frame._scala,
+                            input_source_column_name,
+                            input_dest_column_name,
+                            output_user_column_name,
+                            output_product_column_name,
+                            output_rating_column_name)
+
+    def recommend(self, entity_id, number_of_recommendations = 1, recommend_products = True):
+        """recommend products to users or vice versa"""
+        #returns scala list of scala map
+        scala_list_of_scala_map = self._scala.recommend(entity_id, number_of_recommendations, recommend_products)
+
+        #First convert to python list of scala map
+        python_list_of_scala_map = self._tc.jutils.convert.from_scala_seq(scala_list_of_scala_map)
+
+        #Convert to Python list of python map
+        python_list_of_python_map = []
+        for scala_map in python_list_of_scala_map:
+            python_list_of_python_map.append(self._tc.jutils.convert.scala_map_to_python(scala_map))
+
+        return python_list_of_python_map
+
+    def save(self, path):
+        """save the trained model to path"""
+        self._scala.save(self._tc._scala_sc, path)
