@@ -91,7 +91,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
 
     // Infer the schema, if a schema was not provided
     val updatedSchema = if (frameSchema == null) {
-      SchemaHelper.inferSchema(frameRdd, 100, None)
+      SchemaHelper.inferSchema(frameRdd)
     }
     else
       frameSchema
