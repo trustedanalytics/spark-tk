@@ -2,9 +2,11 @@ package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
-import org.trustedanalytics.sparktk.frame.{ Schema, Frame }
+import org.relaxng.datatype.Datatype
+import org.trustedanalytics.sparktk.frame.DataTypes.DataType
+import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.apache.commons.lang.StringUtils
+import org.trustedanalytics.sparktk.frame.internal.constructors.HbaseHelper
 
 object Import {
 
@@ -64,6 +66,36 @@ object Import {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val df = sqlContext.read.parquet(path)
     FrameRdd.toFrameRdd(df)
+  }
+
+  /**
+   * Load data from hbase table into frame
+   *
+   * @param tableName hbase table name
+   * @param schema hbase schema as a list of tuples (columnFamily, columnName, dataType for cell value)
+   * @param startTag optional start tag for filtering
+   * @param endTag optional end tag for filtering
+   * @return frame with data from hbase table
+   */
+  def importHbase(sc: SparkContext,
+                  tableName: String,
+                  schema: Seq[Seq[String]],
+                  startTag: Option[String] = None,
+                  endTag: Option[String] = None): Frame = {
+
+    require(StringUtils.isNotEmpty(tableName), "hbase name is required")
+    require(schema != null, "hbase table schema cannot be null")
+    require(startTag != null, "hbase table startTag cannot be null")
+    require(endTag != null, "hbase table endTag cannot be null")
+
+    //Map seq[seq[string]] to List[HBaseSchemaArgs]
+    val finalSchema: Seq[HBaseSchemaArgs] = schema.map(item => HBaseSchemaArgs(item(0), item(1), DataTypes.toDataType(item(2))))
+    val hBaseRdd = HbaseHelper.createRdd(sc, tableName, finalSchema.toVector, startTag, endTag).map(DataTypes.parseMany(finalSchema.map(_.dataType).toArray))
+    val hBaseSchema = new FrameSchema(finalSchema.toVector.map {
+      case x => Column(x.columnFamily + "_" + x.columnName, x.dataType)
+    })
+    val frameRdd = FrameRdd.toFrameRdd(hBaseSchema, hBaseRdd)
+    new Frame(frameRdd, frameRdd.frameSchema)
   }
 
   /**

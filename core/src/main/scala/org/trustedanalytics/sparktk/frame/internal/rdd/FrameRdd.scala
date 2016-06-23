@@ -141,7 +141,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @param columnNames Names of the frame's column(s) whose column statistics are to be computed
    * @return MLLib's MultivariateStatisticalSummary
    */
-  def columnStatistics(columnNames: List[String]): MultivariateStatisticalSummary = {
+  def columnStatistics(columnNames: Seq[String]): MultivariateStatisticalSummary = {
     val vectorRdd = toDenseVectorRdd(columnNames)
     Statistics.colStats(vectorRdd)
   }
@@ -151,7 +151,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
    * @param featureColumnNames Names of the frame's column(s) to be used
    * @return RDD of (org.apache.spark.mllib)Vector
    */
-  def toMeanCenteredDenseVectorRDD(featureColumnNames: List[String]): RDD[Vector] = {
+  def toMeanCenteredDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
     val vectorRdd = toDenseVectorRdd(featureColumnNames)
     val columnMeans: Vector = columnStatistics(featureColumnNames).mean
     vectorRdd.map(i => {
@@ -752,7 +752,7 @@ object FrameRdd {
    * Converts the schema object to a StructType for use in creating a SchemaRDD
    * @return StructType with StructFields corresponding to the columns of the schema object
    */
-  def schemaToAvroType(schema: Schema): scala.collection.immutable.Vector[(String, String)] = {
+  def schemaToAvroType(schema: Schema): Seq[(String, String)] = {
     val fields = schema.columns.map {
       column =>
         (column.name.replaceAll("\\s", ""), column.dataType match {

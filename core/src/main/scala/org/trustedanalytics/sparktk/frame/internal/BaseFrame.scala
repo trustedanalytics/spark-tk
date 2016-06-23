@@ -57,7 +57,7 @@ trait BaseFrame {
     SchemaValidationReturn(validatedRdd, ValidationReport(badValueCount.value))
   }
 
-  protected def init(rdd: RDD[Row], schema: Schema): Unit = {
+  private[sparktk] def init(rdd: RDD[Row], schema: Schema): Unit = {
     frameState = FrameState(rdd, schema)
   }
 
