@@ -182,12 +182,12 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
    * @param outputProductColumnName A product  column name for the output frame
    * @param outputRatingColumnName A rating column name for the output frame
    */
-  def predict(frame: Frame,
-              inputSourceColumnName: String,
-              inputDestColumnName: String,
-              outputUserColumnName: String = "user",
-              outputProductColumnName: String = "product",
-              outputRatingColumnName: String = "rating"): Unit = {
+  def createPredictFrame(frame: Frame,
+                         inputSourceColumnName: String,
+                         inputDestColumnName: String,
+                         outputUserColumnName: String = "user",
+                         outputProductColumnName: String = "product",
+                         outputRatingColumnName: String = "rating"): Frame = {
 
     require(frame != null, "batch data as a frame is required")
 
@@ -208,15 +208,15 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
     val newSchema = FrameSchema(Vector(
       Column(outputUserColumnName, DataTypes.int),
       Column(outputProductColumnName, DataTypes.int),
-      Column(outputRatingColumnName, DataTypes.float32)))
+      Column(outputRatingColumnName, DataTypes.float64)))
 
     val rowRdd = modelRdd.map {
       case alsRating => Row(alsRating.user, alsRating.product, DataTypes.toFloat(alsRating.rating))
     }
 
-    val modelFrameRdd = new FrameRdd(newSchema, rowRdd)
-    val resultFrameRdd = frameRdd.zipFrameRdd(modelFrameRdd)
-    //frame.init(resultFrameRdd.rdd, resultFrameRdd.schema)
+    new Frame(rowRdd, newSchema)
+    //Cannot do zip because join inside of sparkmodel predict repartitions the rdd
+    //val resultFrameRdd = frameRdd.zipFrameRdd(modelFrameRdd)
   }
 
   /**

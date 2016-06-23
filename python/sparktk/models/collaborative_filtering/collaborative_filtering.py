@@ -1,21 +1,23 @@
-from sparktk.loggers import log_load; log_load(__name__); del log_load
-
+from sparktk.loggers import log_load
 from sparktk.propobj import PropertiesObject
+
+log_load(__name__)
+del log_load
 
 
 def train(frame,
           source_column_name,
           dest_column_name,
           weight_column_name,
-          max_steps = 10,
-          regularization = 0.5,
-          alpha = 0.5,
-          num_factors = 3,
-          use_implicit = False,
-          num_user_blocks = 2,
-          num_item_block = 3,
-          checkpoint_iterations = 10,
-          target_rmse = 0.05):
+          max_steps=10,
+          regularization=0.5,
+          alpha=0.5,
+          num_factors=3,
+          use_implicit=False,
+          num_user_blocks=2,
+          num_item_block=3,
+          checkpoint_iterations=10,
+          target_rmse=0.05):
     """
     Create collaborative filtering model by training on given frame
 
@@ -66,8 +68,10 @@ def scala_collaborative_filtering_recommend_return_to_python(self, recommend_ret
     """
     from collections import namedtuple
     recommend_return_tuple = namedtuple("RecommendReturnTuple", ['user', 'product', 'rating'])
-    scala_list_return = self._tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel.scalaCollaborativeFilteringRecommendReturnToPython(recommend_return)
-    python_list = [recommend_return_tuple(user=recommend_list[0], product=recommend_list[1], rating=recommend_list[2]) for recommend_list in scala_list_return]
+    scala_list_return = self._tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel.scalaCollaborativeFilteringRecommendReturnToPython(
+        recommend_return)
+    python_list = [recommend_return_tuple(user=recommend_list[0], product=recommend_list[1], rating=recommend_list[2])
+                   for recommend_list in scala_list_return]
     return python_list
 
 
@@ -88,28 +92,48 @@ class CollaborativeFilteringModel(PropertiesObject):
     [2]       1     5     0.7
     [3]       2     5     0.1
 
-    >>> rows_predict = [ [1, 3, .5], [1, 4, .6], [1, 5, .7], [2, 5, .1] ]
+    >>> rows_predict = [ [1, 3], [1, 4], [1, 5], [2, 5] ]
+    >>> schema_predict = [('source', int), ('dest', int)]
 
-    >>> predict_frame = tc.frame.create(rows_predict, schema)
+    >>> predict_frame = tc.frame.create(rows_predict, schema_predict)
     <progress>
 
     >>> model = tc.models.collaborative_filtering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
     <progress>
 
+    >>> predict_result = model.create_predict_frame(predict_frame, 'source', 'dest')
+    <progress>
     <skip>
-    >>> predict_result = model.predict(edge_frame_predict, 'source', 'dest')
-    <progress>
-
-    >>> recommendations = model.recommend(1, 3, True)
-    <progress>
-    >>> recommendations
-    [{u'rating': 0.04854799984010311, u'product': 4, u'user': 1}, {u'rating': 0.04045666535703035, u'product': 3, u'user': 1}, {u'rating': 0.030060528471388848, u'product': 5, u'user': 1}]
-    >>> recommendations = model.recommend(5, 2, False)
-    <progress>
+    >>> predict_result.inspect()
+    [#]  user  product  rating
+    ===============================
+    [0]     1        4   0.04834617
+    [1]     1        3  0.040288474
+    [2]     2        5  0.003955772
+    [3]     1        5  0.029929327
     </skip>
     <hide>
+    >>> expected =[[1, 4, 0.04834617],[1, 3, 0.040288474],[2, 5, 0.003955772],[1, 5, 0.029929327]]
+
+    >>> actual = predict_result.take(4).data
+
+    >>> if len(expected) != len(actual):
+    ...     raise RuntimeError("Mismatched lengths for predicted frame, expected %s != got %s" % (len(expected), len(actual)))
+
+    >>> for i in xrange(len(actual)):
+    ...     tc.testing.compare_floats(expected[2], actual[2], 0.001)
+    </hide>
     >>> recommendations = model.recommend(1, 3, True)
     <progress>
+    <skip>
+    >>> recommendations
+    [{u'rating': 0.04854799984010311, u'product': 4, u'user': 1}, {u'rating': 0.04045666535703035, u'product': 3, u'user': 1}, {u'rating': 0.030060528471388848, u'product': 5, u'user': 1}]
+    </skip>
+    >>> recommendations = model.recommend(5, 2, False)
+    <progress>
+    >>> recommendations = model.recommend(1, 3, True)
+    <progress>
+    <hide>
     >>> "%.2f" % recommendations[0]['rating']
     '0.05'
     >>> "%.2f" % recommendations[1]['rating']
@@ -121,7 +145,6 @@ class CollaborativeFilteringModel(PropertiesObject):
     >>> "%.2f" % recommendations[0]['rating']
     '0.04'
     </hide>
-
     """
     def __init__(self, tc, scala_model):
         self._tc = tc
@@ -203,13 +226,13 @@ class CollaborativeFilteringModel(PropertiesObject):
         """user frame from model"""
         return self._tc.frame.create(self._scala.productFrame())
 
-    def predict(self,
-                frame,
-                input_source_column_name,
-                input_dest_column_name,
-                output_user_column_name="user",
-                output_product_column_name="product",
-                output_rating_column_name="rating"):
+    def create_predict_frame(self,
+                            frame,
+                            input_source_column_name,
+                            input_dest_column_name,
+                            output_user_column_name="user",
+                            output_product_column_name="product",
+                            output_rating_column_name="rating"):
         """
         Predicts the given frame based on trained model
 
@@ -221,22 +244,22 @@ class CollaborativeFilteringModel(PropertiesObject):
         :param output_rating_column_name: A rating column name for the output frame
         :return: returns predicted rating frame with specified output columns
         """
-        self._scala.predict(frame._scala,
-                            input_source_column_name,
-                            input_dest_column_name,
-                            output_user_column_name,
-                            output_product_column_name,
-                            output_rating_column_name)
+        return self._tc.frame.create(self._scala.createPredictFrame(frame._scala,
+                                                             input_source_column_name,
+                                                             input_dest_column_name,
+                                                             output_user_column_name,
+                                                             output_product_column_name,
+                                                             output_rating_column_name))
 
-    def recommend(self, entity_id, number_of_recommendations = 1, recommend_products = True):
+    def recommend(self, entity_id, number_of_recommendations=1, recommend_products=True):
         """recommend products to users or vice versa"""
-        #returns scala list of scala map
+        # returns scala list of scala map
         scala_list_of_scala_map = self._scala.recommend(entity_id, number_of_recommendations, recommend_products)
 
-        #First convert to python list of scala map
+        # First convert to python list of scala map
         python_list_of_scala_map = self._tc.jutils.convert.from_scala_seq(scala_list_of_scala_map)
 
-        #Convert to Python list of python map
+        # Convert to Python list of python map
         python_list_of_python_map = []
         for scala_map in python_list_of_scala_map:
             python_list_of_python_map.append(self._tc.jutils.convert.scala_map_to_python(scala_map))
