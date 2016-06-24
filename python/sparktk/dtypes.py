@@ -27,6 +27,7 @@ int64 = long
 
 from datetime import datetime
 import dateutil.parser as datetime_parser
+import pytz
 # Chose python's datetime over numpy.datetime64 because of time zone support and string serialization
 # Here's a long thread discussing numpy's datetime64 timezone problem:
 #   http://mail.scipy.org/pipermail/numpy-discussion/2013-April/066038.html
@@ -120,12 +121,22 @@ _primitive_type_to_str_table = {
 
 # map the pyspark sql type to the primitive data type
 _pyspark_type_to_primitive_type_table = {
-    types.BooleanType : bool,
+    #types.BooleanType : bool,
     types.LongType : int,
     types.IntegerType : int,
     types.DoubleType : float,
     types.DecimalType : float,
-    types.StringType : str
+    types.StringType : str,
+    types.TimestampType : datetime
+}
+
+# map data type to pyspark sql type
+_data_type_to_pyspark_type_table = {
+    int: types.IntegerType(),
+    long: types.LongType(),
+    float: types.DoubleType(),
+    str: types.StringType(),
+    datetime: types.TimestampType()
 }
 
 # build reverse map string -> type
@@ -154,14 +165,40 @@ def get_float_constructor(float_type):
         return ft(value)
     return float_constructor
 
+def datetime_to_ms(date_time):
+    """
+    Returns the number of milliseconds since epoch (1970-01-01).
+    :param date_time: (datetime) Date/time to convert to timestamp
+    :return: Timestamp (number of ms since epoch)
+    """
+    if isinstance(date_time, datetime):
+        ms = long(date_time.strftime("%s")) * 1000.0
+        ms += date_time.microsecond // 1000
+        return ms
+    else:
+        raise TypeError("Unable to calculate the number of milliseconds since epoch for type: %s" % type(date_time))
+
+def ms_to_datetime_str(ms):
+    """
+    Returns the date/time string for the specified timestamp (milliseconds since epoch).
+    :param ms: Milliseconds since epoch (int or long)
+    :return: Date/time string
+    """
+    if isinstance(ms, long) or isinstance(ms, int):
+        return datetime.fromtimestamp(ms/1000.0, tz=pytz.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    else:
+        raise TypeError("Unable to convert timestamp milliseconds to a date/time string, because the value provided " +
+                        "is not a long/int.  Unsupported type: %" % type(ms))
 
 def datetime_constructor(value):
-    """Creates special constructor for datetime parsing"""
+    """Creates special constructor for datetime parsing.  Returns the number of ms since epoch."""
     if dtypes.value_is_string(value):
-        return datetime_parser.parse(value)
+        return datetime_to_ms(datetime_parser.parse(value))
+    elif isinstance(value, long) or isinstance(value, int):
+        return value
     else:
         try:
-            return datetime(*value)
+            return datetime_to_ms(datetime(*value))
         except:
             raise TypeError("cannot convert type to the datetime")
 

@@ -6,6 +6,7 @@ import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.models.dimreduction.pca.PcaModel
 import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayesModel
 import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
+import org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 
@@ -41,7 +42,8 @@ object Loaders {
       NaiveBayesModel,
       PcaModel,
       RandomForestClassifierModel,
-      RandomForestRegressorModel)
+      RandomForestRegressorModel,
+      SvmModel)
     entries.map(e => e.formatId -> e.load _).toMap
   }
 

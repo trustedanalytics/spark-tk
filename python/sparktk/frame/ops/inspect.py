@@ -287,6 +287,8 @@ class RowsInspection(object):
             return self.get_rounder(data_type)
         elif isinstance(data_type, dtypes.vector):
             return self.get_vector_formatter()
+        elif data_type == dtypes.datetime:
+            return self.get_datetime_formatter()
         if self.truncate and is_type_unicode(data_type):
             return self.get_truncater()
         return identity
@@ -329,6 +331,19 @@ class RowsInspection(object):
                 return None
             return "[%s]" % ", ".join(["None" if np.isnan(f) else str(f) for f in v])
         return format_vector
+
+    def get_datetime_formatter(self):
+        def format_datetime(d):
+            from datetime import datetime
+            if d is None:
+                return None
+            elif isinstance(d, long) or isinstance(d, int):
+                return dtypes.ms_to_datetime_str(d)
+            elif isinstance(d, datetime):
+                return d.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            else:
+                return str(d)
+        return format_datetime
 
 
 def _get_header_entry(name, data_type, with_type):
