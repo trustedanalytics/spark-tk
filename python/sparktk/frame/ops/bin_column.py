@@ -21,7 +21,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
      values less than cutoffs[0] will be included in the first bin while values greater than cutoffs[-1] will be
      included in the final bin.
     :param bin_column_name: (str) The name for the new binned column.  Default is ``&lt;column_name&gt;_binned``
-    :return: (List[float])a list containing the edges of each bin
+    :return: (List[float]) a list containing the edges of each bin
 
     Notes
     -----
