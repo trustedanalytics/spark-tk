@@ -34,11 +34,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath
 
 import unittest
 
-import trustedanalytics as ia
-#from sparktk.frame.constructors import create
 from sparktk import TkContext
-from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
-from qalib import common_utils as cu
 from qalib import atk_test
 
 
@@ -53,26 +49,15 @@ class ConfusionMatrix(atk_test.ATKTestCase):
                         ("rating", int),
                         ("splits", str),
                         ("predicted", int)]
-        self.model = "model_33_50.csv"
-	#model_33_50 = cu.get_file("model_33_50.csv")
-        # [true_positive, false_negative, false_positive, true_negative]
-        self.actual_result = [6534, 3266, 6535, 3267]
-	tc = atk_test.get_context()
-	print str(tc)
-	self.csv_path = "qa_data/" + self.model
-	frame = tc.frame.import_csv(str(self.csv_path), schema=self.schema1)
-	classMetrics = frame.binary_classification_metrics('rating', 'predicted', 1)
-	confMatrix = classMetrics.confusion_matrix.values
-	print "confusion matrix vals: " 
-	print str(confMatrix)
+        self.model = "model_33_50.csv" # our data file in qa_data
+        self.actual_result = [6534, 3266, 6535, 3267] # what we expect to get from the confusion matrix
+	tc = atk_test.get_context() # getting a sparktk context
+	self.csv_path = "qa_data/" + self.model # path to the csv file with our data
+	frame = tc.frame.import_csv(str(self.csv_path), schema=self.schema1) # imports our data and returns a frame
+	classMetrics = frame.binary_classification_metrics('rating', 'predicted', 1) # params are label column, result column, pos column
+	confMatrix = classMetrics.confusion_matrix.values 
 	cumulative_matrix_list = [confMatrix[0][0], confMatrix[0][1], confMatrix[1][0], confMatrix[1][1]]
-	self.assertEqual(self.actual_result, cumulative_matrix_list)
-	#classMetrics = ClassificationMetricsValue
-
-	#self.frame1 = tc.frame.create(model, schema=self.schema1)
-	#create(model_33_50, schema=self.schema1)
-        #self.frame1 = frame_utils.build_frame(
-        #    self.model_33_50, self.schema1, self.prefix)
+	self.assertEqual(self.actual_result, cumulative_matrix_list) # compare our confusion matrix values with the expected values
 
 
 if __name__ == '__main__':
