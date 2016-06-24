@@ -42,7 +42,7 @@ object Loaders {
       PcaModel,
       RandomForestClassifierModel,
       SvmModel)
-    entries.map(e => e.formatId -> e.load _).toMap
+    entries.map(e => e.formatId -> e.loadTkSaveableObject _).toMap
   }
 
 }
