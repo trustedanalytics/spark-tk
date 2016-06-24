@@ -139,6 +139,15 @@ _data_type_to_pyspark_type_table = {
     datetime: types.TimestampType()
 }
 
+# map data type to pyspark sql type
+_data_type_to_pyspark_type_table = {
+    int: types.IntegerType(),
+    long: types.LongType(),
+    float: types.DoubleType(),
+    str: types.StringType(),
+    datetime: types.TimestampType()
+}
+
 # build reverse map string -> type
 _primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()])
 
