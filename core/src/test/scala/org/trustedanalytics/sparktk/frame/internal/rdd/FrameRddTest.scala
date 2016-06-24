@@ -1,7 +1,11 @@
 package org.trustedanalytics.sparktk.frame.internal.rdd
 
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.expressions.GenericRow
+import org.apache.spark.sql.types._
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.internal.FrameState
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
 import org.trustedanalytics.sparktk.testutils._
 
@@ -39,6 +43,45 @@ class FrameRddTest extends TestingSparkContextWordSpec with Matchers {
       // Call both methods with FrameRdd
       assert(frameRddColumnCount(frameRdd) == (2, 100))
       assert(frameStateColumnCount(frameRdd) == (2, 100))
+    }
+
+    /**
+     * Tests converting from a FrameRdd to a DataFrame and then back to a FrameRdd.
+     */
+    "converting between FrameRdd and Spark DataFrame" in {
+      val schema = FrameSchema(Vector(Column("id", DataTypes.int32), Column("name", DataTypes.string), Column("bday", DataTypes.datetime)))
+      val rows: Array[Row] = Array(
+        new GenericRow(Array[Any](1, "Bob", "1950-05-12T03:25:21.123Z")),
+        new GenericRow(Array[Any](2, "Susan", "1979-08-05T07:51:28.000Z")),
+        new GenericRow(Array[Any](3, "Jane", "1986-10-17T11:45:00.000Z"))
+      )
+      val frameRDD = new FrameRdd(schema, sparkContext.parallelize(rows))
+
+      // Convert FrameRDD to DataFrame
+      val dataFrame = frameRDD.toDataFrame
+
+      // Check the schema and note that the datetime column is represented as a long in the DataFrame
+      assert(dataFrame.schema.fields.sameElements(Array(StructField("id", IntegerType, true),
+        StructField("name", StringType, true),
+        StructField("bday", LongType, true))))
+
+      // Add a column that converts the bday (LongType) to a timestamp column that uses the TimestampType
+      val dfWithTimestamp = dataFrame.withColumn("timestamp", TimeSeriesFunctions.toTimestamp(dataFrame("bday")))
+      assert(dfWithTimestamp.schema.fields.sameElements(Array(StructField("id", IntegerType, true),
+        StructField("name", StringType, true),
+        StructField("bday", LongType, true),
+        StructField("timestamp", TimestampType, true))))
+
+      // Convert DataFrame back to a FrameRDD
+      val frameRddWithTimestamp = FrameRdd.toFrameRdd(dfWithTimestamp)
+
+      // Check schema
+      val fields = frameRddWithTimestamp.schema.columns
+      assert(frameRddWithTimestamp.schema.columnNames.sameElements(Vector("id", "name", "bday", "timestamp")))
+      assert(frameRddWithTimestamp.schema.columnDataType("id") == DataTypes.int32)
+      assert(frameRddWithTimestamp.schema.columnDataType("name") == DataTypes.string)
+      assert(frameRddWithTimestamp.schema.columnDataType("bday") == DataTypes.int64)
+      assert(frameRddWithTimestamp.schema.columnDataType("timestamp") == DataTypes.datetime)
     }
   }
 }
