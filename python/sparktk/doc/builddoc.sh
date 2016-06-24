@@ -6,6 +6,7 @@
 NAME="[`basename $0`]"
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 echo "$NAME DIR=$DIR"
+cd $DIR
 
 SPARKTK_DIR="$(dirname "$DIR")"
 

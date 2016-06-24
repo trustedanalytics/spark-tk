@@ -33,16 +33,9 @@ import unittest
 
 #import trustedanalytics as ia
 from sparktk import TkContext
-from sparktk.sparkconf import create_sc
-import common_utils
-import config
+#import common_utils
+#import config
 import httplib
-
-tc = None
-
-def get_context():
-    global tc
-    return tc
 
 class ATKTestCase(unittest.TestCase):
 
@@ -52,9 +45,7 @@ class ATKTestCase(unittest.TestCase):
         cls.class_prefix = cls.__name__
 	
 	try:
-	    sc = create_sc(app_name="pytest-pyspark-local-testing")
-	    global tc
-	    tc = TkContext(sc)
+	    cls.tc = TkContext()
 	except:
 	    print "Connect failed - could not establish a TkContext"
 	    raise
@@ -95,13 +86,16 @@ class ATKTestCase(unittest.TestCase):
         """Drop everything built with this system."""
         pass
 
+    def get_context():
+	return cls.tc
+
     @classmethod
     def tearDownClass(cls):
         """Disconnect from the trustedanalytics server."""
         pass
 
-    def assertFramesEqual(self, frame1, frame2):
-        frame1_take = frame1.take(frame1.row_count)
-        frame2_take = frame2.take(frame2.row_count)
+    #def assertFramesEqual(self, frame1, frame2):
+    #    frame1_take = frame1.take(frame1.row_count)
+    #    frame2_take = frame2.take(frame2.row_count)
 
-        self.assertItemsEqual(frame1_take, frame2_take)
+    #    self.assertItemsEqual(frame1_take, frame2_take)

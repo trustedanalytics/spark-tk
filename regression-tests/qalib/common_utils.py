@@ -115,42 +115,42 @@ class Timer(object):
                 raise
 
 
-#def drop_all_prefix(prefix):
+def drop_all_prefix(prefix):
     """Drop all frames, models and graphs with a given prefix"""
-    #ia.drop_models(
-    #    [obj for obj in ia.get_model_names()if obj.startswith(prefix)])
-    #ia.drop_graphs(
-    #    [obj for obj in ia.get_graph_names() if obj.startswith(prefix)])
-    #ia.drop_frames(
-    #    [obj for obj in ia.get_frame_names() if obj.startswith(prefix)])
+    ia.drop_models(
+        [obj for obj in ia.get_model_names()if obj.startswith(prefix)])
+    ia.drop_graphs(
+        [obj for obj in ia.get_graph_names() if obj.startswith(prefix)])
+    ia.drop_frames(
+        [obj for obj in ia.get_frame_names() if obj.startswith(prefix)])
 
 
-#def drop_all_suffix(suffix):
+def drop_all_suffix(suffix):
     """Drop all frames_models and graphs with a given suffix"""
-    #ia.drop_models(
-    #    [obj for obj in ia.get_model_names()if obj.endswith(suffix)])
-    #ia.drop_graphs(
-    #    [obj for obj in ia.get_graph_names() if obj.endswith(suffix)])
-    #ia.drop_frames(
-    #    [obj for obj in ia.get_frame_names() if obj.endswith(suffix)])
+    ia.drop_models(
+        [obj for obj in ia.get_model_names()if obj.endswith(suffix)])
+    ia.drop_graphs(
+        [obj for obj in ia.get_graph_names() if obj.endswith(suffix)])
+    ia.drop_frames(
+        [obj for obj in ia.get_frame_names() if obj.endswith(suffix)])
 
 
-#def flatten(tree):
-#    """
-#    Remove all the list and tuple nesting from a sequence.  For instance:
-#    ["Start", [1, 2], [2, 7], [3, 9],
-#    {"A":1, "B":2}, [5, 7, [["Mid", 8], 6]], "End"]
-#        is returned as
-#    ['Start', 1, 2, 2, 7, 3, 9, {'A': 1, 'B': 2}, 5, 7, 'Mid', 8, 6, 'End']
-#    other sequences and structures
-#    (e.g. dictionaries and strings) are unaffected.
-#    :param tree: sequence to be flattened
-#    :return: flattened sequence
-#    """
-#    result = []
-#    if isinstance(tree, (list, tuple)):
-#        for elem in tree:
-#            result.extend(flatten(elem))
-#    else:
-#        result.append(tree)
-#    return result
+def flatten(tree):
+    """
+    Remove all the list and tuple nesting from a sequence.  For instance:
+    ["Start", [1, 2], [2, 7], [3, 9],
+    {"A":1, "B":2}, [5, 7, [["Mid", 8], 6]], "End"]
+        is returned as
+    ['Start', 1, 2, 2, 7, 3, 9, {'A': 1, 'B': 2}, 5, 7, 'Mid', 8, 6, 'End']
+    other sequences and structures
+    (e.g. dictionaries and strings) are unaffected.
+    :param tree: sequence to be flattened
+    :return: flattened sequence
+    """
+    result = []
+    if isinstance(tree, (list, tuple)):
+        for elem in tree:
+            result.extend(flatten(elem))
+    else:
+        result.append(tree)
+    return result
