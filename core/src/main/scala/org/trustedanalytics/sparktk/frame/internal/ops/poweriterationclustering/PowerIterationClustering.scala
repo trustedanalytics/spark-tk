@@ -8,6 +8,19 @@ import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, Fram
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
 
 trait PowerIterationClusteringTransformWithResult extends BaseFrame {
+  /***
+    *
+    * Performs Power Iteration Clustering to create less than or equal to 'k' clusters. Returns data classified into clusters along with the number of clusters
+    *
+    * @param sourceColumn Name of the column containing the source node
+    * @param destinationColumn Name of the column containing the destination node
+    * @param similarityColumn Name of the column containing the similarity
+    * @param k Number of clusters to cluster the graph into. Default is 2
+    * @param maxIterations Maximum number of iterations of the power iteration loop. Default is 100
+    * @param initializationMode Initialization mode of power iteration clustering. This can be either "random" to use a
+     random vector as vertex properties, or "degree" to use normalized sum similarities. Default is "random".
+    * @return Returns a k and cluster size that belong to class ClusterDetails
+    */
   def powerIterationClustering(sourceColumn: String,
                                destinationColumn: String,
                                similarityColumn: String,

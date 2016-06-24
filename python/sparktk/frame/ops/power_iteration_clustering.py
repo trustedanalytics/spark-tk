@@ -13,10 +13,10 @@ def power_iteration_clustering(self, source_column, destination_column, similari
     :param destination_column: Name of the column containing the destination node
     :param similarity_column: Name of the column containing the similarity
     :param k: Number of clusters to cluster the graph into. Default is 2
-    :param max_iterations: (str) Maximum number of iterations of the power iteration loop. Default is 100
+    :param max_iterations: Maximum number of iterations of the power iteration loop. Default is 100
     :param initialization_mode: Initialization mode of power iteration clustering. This can be either "random" to use a
      random vector as vertex properties, or "degree" to use normalized sum similarities. Default is "random".
-
+    :return Returns namedtuple and a frame with results
     Example
     -------
 
@@ -61,7 +61,6 @@ def power_iteration_clustering(self, source_column, destination_column, similari
         {u'Cluster:2': 1, u'Cluster:1': 2, u'Cluster:3': 4}
 
     """
-    #return self._tc.jutils.convert.from_scala_seq(
     result = self._scala.powerIterationClustering(source_column,
                                                   destination_column,
                                                   similarity_column,
