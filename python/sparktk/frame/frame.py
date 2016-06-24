@@ -311,6 +311,7 @@ class Frame(object):
     from sparktk.frame.ops.join_right import join_right
     from sparktk.frame.ops.join_outer import join_outer
     from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
+    from sparktk.frame.ops.power_iteration_clustering import power_iteration_clustering
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
     from sparktk.frame.ops.rename_columns import rename_columns
