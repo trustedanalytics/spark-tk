@@ -4,10 +4,7 @@ import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayesModel
-<<<<<<< HEAD
 import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
-=======
->>>>>>> 4dc3efd5d5e9ffe3b6e7ddae4fd1146f340dfc37
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 
 object Loaders {
@@ -39,12 +36,8 @@ object Loaders {
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(Frame,
       KMeansModel,
-<<<<<<< HEAD
       NaiveBayesModel,
       RandomForestClassifierModel)
-=======
-      NaiveBayesModel)
->>>>>>> 4dc3efd5d5e9ffe3b6e7ddae4fd1146f340dfc37
     entries.map(e => e.formatId -> e.load _).toMap
   }
 

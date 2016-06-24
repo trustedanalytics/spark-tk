@@ -1,5 +1,6 @@
 from sparktk.lazyloader import implicit
 from sparktk.tkcontext import TkContext
+from pyspark.rdd import RDD
 
 def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None, tc=implicit):
     """
@@ -91,4 +92,6 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
                              "number of columns in the csv file data ({1}).".format(custom_column_count, df_column_count))
         df_schema = schema
     from sparktk.frame.frame import Frame  # circular dependency, so import late
-    return Frame(tc, df.rdd, df_schema)
+    jrdd = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(df._jdf.rdd())
+    rdd = RDD(jrdd, tc.sc)
+    return Frame(tc, rdd, df_schema)

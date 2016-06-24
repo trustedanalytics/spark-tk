@@ -268,7 +268,6 @@ object SchemaHelper {
     pythonSchema
   }
 
-<<<<<<< HEAD
   private def mergeType(dataTypeA: DataType, dataTypeB: DataType): DataType = {
     val numericTypes = List[DataType](DataTypes.float64, DataTypes.float32, DataTypes.int64, DataTypes.int32)
 
@@ -338,8 +337,6 @@ object SchemaHelper {
 
     FrameSchema(columns)
   }
-=======
->>>>>>> 4dc3efd5d5e9ffe3b6e7ddae4fd1146f340dfc37
 }
 
 /**

@@ -29,50 +29,62 @@ Abstracts across all test cases
 Handles connect, building hardened prefixes, cleanup in the general case
 """
 
-import httplib
-from sparktk import TkContext
-#import trustedanalytics as ia
 import unittest
+
+#import trustedanalytics as ia
+from sparktk import TkContext
 from sparktk.sparkconf import create_sc
 import common_utils
 import config
+import httplib
 
+tc = None
+
+def get_context():
+    global tc
+    return tc
 
 class ATKTestCase(unittest.TestCase):
-    _multiprocess_shared_ = False
-    tc = None 
 
     @classmethod
     def setUpClass(cls):
         """Connect to the trustedanalytics server."""
         cls.class_prefix = cls.__name__
-       # if config.coverage:
+	
+	try:
+	    sc = create_sc(app_name="pytest-pyspark-local-testing")
+	    global tc
+	    tc = TkContext(sc)
+	except:
+	    print "Connect failed - could not establish a TkContext"
+	    raise
+        
+        #ia.rest.config.requests_defaults.max_retries = 10
+        
+        #if config.coverage:
         #    ia.loggers.set_api()
 
         #if config.atk_logger:
-            #ia.loggers.set_api()
-            #httplib.HTTPConnection.debuglevel = 1
+        #    ia.loggers.set_api()
+        #    httplib.HTTPConnection.debuglevel = 1
 
         #if not ia.api_status.is_installed:
-            #ia.server.uri = config.atk_server_uri
+        #    ia.server.uri = config.atk_server_uri
 
-            #try:
-                #ia.server.ping()
-            #except IOError:
-                #print "Failed to ping server"
-                #raise
+        #    try:
+        #        ia.server.ping()
+        #    except IOError:
+        #        print "Failed to ping server"
+        #        raise
 
-	try:
-            #ia.connect(config.credentials_file)
-	    sc = create_sc(app_name="pytest-pyspark-local-testing")
-	    #request.addfinalizer(lambda:sc.stop())
-	    tc = TkContext(sc)
-	except:
-            print "connect failed"
-            raise
+        #    try:
+        #        ia.connect(config.credentials_file)
+        #    except:
+        #        print "connect failed"
+        #        raise
 
-            #if not ia.api_status.is_installed:
-                #raise RuntimeError("Failed to install API (Connect)")
+        #    if not ia.api_status.is_installed:
+        #        raise RuntimeError("Failed to install API (Connect)")
 
     def setUp(self):
         """Create a unique prefix for this test."""
@@ -80,24 +92,16 @@ class ATKTestCase(unittest.TestCase):
         self.prefix = "_".join(self.id().split('.')[-2:])+"__"
 
     def tearDown(self):
-        """Drop everything built with this system.
-
-           If the environment variable KEEP_ATK_RESULTS is set to
-           non 0 nothing will be cleaned up.
-        """
-        # if we are to teardown the results, do so
-        if config.keep_results == 0:
-            common_utils.drop_all_prefix(self.prefix)
+        """Drop everything built with this system."""
+        pass
 
     @classmethod
     def tearDownClass(cls):
         """Disconnect from the trustedanalytics server."""
-        # TODO: remove this block once ATK is able to consistently Start and 
-        #  Release YARN Job Contexts
-        try:
-            # ia.release()
-            pass
-        except Exception, err:
-            print "Failed to release YARN Job Context: %s" % err
-        # finally:
-        #     pass
+        pass
+
+    def assertFramesEqual(self, frame1, frame2):
+        frame1_take = frame1.take(frame1.row_count)
+        frame2_take = frame2.take(frame2.row_count)
+
+        self.assertItemsEqual(frame1_take, frame2_take)
