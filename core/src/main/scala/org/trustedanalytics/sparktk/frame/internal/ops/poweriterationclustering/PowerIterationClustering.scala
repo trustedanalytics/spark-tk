@@ -2,16 +2,17 @@ package org.trustedanalytics.sparktk.frame.internal.ops.poweriterationclustering
 
 import org.apache.spark.mllib.clustering.{ PowerIterationClustering => SparkPowerIterationClustering }
 import org.apache.spark.sql.Row
-import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
+import org.trustedanalytics.sparktk.frame._
+import org.trustedanalytics.sparktk.frame.internal._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, FrameTransformReturn, FrameTransformWithResult }
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
 
-trait PowerIterationClusteringTransformWithResult extends BaseFrame {
+trait PowerIterationClusteringSummarizationWithResult extends BaseFrame {
   /**
    * *
    *
-   * Performs Power Iteration Clustering to create less than or equal to 'k' clusters. Returns data classified into clusters along with the number of clusters
+   * Performs Power Iteration Clustering to create less than or equal to 'k' clusters. Returns data classified
+   * into clusters along with the number of clusters and a map of clusters and respective sizes.
    *
    * @param sourceColumn Name of the column containing the source node
    * @param destinationColumn Name of the column containing the destination node
@@ -40,7 +41,7 @@ trait PowerIterationClusteringTransformWithResult extends BaseFrame {
  * @param k : number of clusters as a result of running Power Iteration
  * @param clusterSizes : A map of cluster names and cluster sizes
  */
-case class ClusterDetails(k: Int, clusterSizes: Map[String, Int]) {
+case class ClusterDetails(frame: Frame, k: Int, clusterSizes: Map[String, Int]) {
 
 }
 
@@ -49,9 +50,9 @@ case class PowerIterationClustering(sourceColumn: String,
                                     similarityColumn: String,
                                     k: Int,
                                     maxIterations: Int,
-                                    initializationMode: String) extends FrameTransformWithResult[ClusterDetails] {
+                                    initializationMode: String) extends FrameSummarization[ClusterDetails] {
 
-  override def work(state: FrameState): FrameTransformReturn[ClusterDetails] = {
+  override def work(state: FrameState): ClusterDetails = {
     require(sourceColumn != null && sourceColumn.nonEmpty, "sourceColumn must not be null nor empty")
     require(destinationColumn != null && destinationColumn.nonEmpty, "destinationColumn must not be null nor empty")
     require(similarityColumn != null && similarityColumn.nonEmpty, "similarityColumn must not be null nor empty")
@@ -70,17 +71,13 @@ case class PowerIterationClustering(sourceColumn: String,
     val clustersRdd = assignments.map(row => Row.apply(row.id.toInt, row.cluster + 1))
 
     val schema = FrameSchema(List(Column("id", DataTypes.int64), Column("cluster", DataTypes.int32)))
-    val assignmentFrame = new FrameRdd(schema, clustersRdd)
-
-    val result = trainFrameRdd.zipFrameRdd(assignmentFrame)
+    val assignmentFrame = new Frame(clustersRdd, schema)
 
     trainFrameRdd.unpersist()
 
     val clusterSize = clustersRdd.map(row => ("Cluster:" + row(1).toString, 1)).reduceByKey(_ + _).collect().toMap
-    val clusterDetails = new ClusterDetails(model.k, clusterSize)
-
-    // Return frame state, and ClusterDetails(k, cluster sizes)
-    FrameTransformReturn(FrameRdd.toFrameState(assignmentFrame), clusterDetails)
+    // Return ClusterDetails(result_frame, k, cluster sizes)
+    new ClusterDetails(assignmentFrame, model.k, clusterSize)
   }
 
 }

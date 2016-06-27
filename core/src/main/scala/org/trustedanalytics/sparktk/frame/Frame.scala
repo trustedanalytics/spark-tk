@@ -16,7 +16,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransf
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvSummarization, ExportToHbaseSummarization, ExportToHiveSummarization, ExportToJdbcSummarization, ExportToJsonSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
-import org.trustedanalytics.sparktk.frame.internal.ops.poweriterationclustering.PowerIterationClusteringTransformWithResult
+import org.trustedanalytics.sparktk.frame.internal.ops.poweriterationclustering.PowerIterationClusteringSummarizationWithResult
 import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationMatrixSummarization, CorrelationSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
@@ -63,7 +63,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with JoinOuterSummarization
     with JoinRightSummarization
     with MultiClassClassificationMetricsSummarization
-    with PowerIterationClusteringTransformWithResult
+    with PowerIterationClusteringSummarizationWithResult
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
