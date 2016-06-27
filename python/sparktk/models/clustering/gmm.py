@@ -14,12 +14,12 @@ def train(frame,
 
     :param frame: (Frame) frame of training data
     :param observation_columns: (List(str)) names of columns containing the observations for training
-    :param column_scalings: (Optional(List(float))) column scalings for each of the observation columns.  The scaling
+    :param column_scalings: (List(float)) column scalings for each of the observation columns.  The scaling
         value is multiplied by the corresponding value in the observation column
-    :param k: (int) number of clusters
-    :param max_iterations: (int) number of iterations for which the algorithm should run
-    :param convergence_tol:  (float) Largest change in log-likelihood at which convergence is considered to have occurred
-    :param seed: (int) seed for randomness
+    :param k: (Optional(int)) number of clusters
+    :param max_iterations: (Optional(int)) number of iterations for which the algorithm should run
+    :param convergence_tol:  (Optional(float)) Largest change in log-likelihood at which convergence is considered to have occurred
+    :param seed: (Optional(int)) seed for randomness
     :return: GaussianMixtureModel
 
     """   
