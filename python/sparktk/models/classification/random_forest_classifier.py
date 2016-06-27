@@ -12,7 +12,7 @@ def train(frame,
           impurity = "gini",
           max_depth = 4,
           max_bins = 100,
-          seed = int(os.urandom(2).encode('hex'), 16),
+          seed = None,
           categorical_features_info = None,
           feature_subset_category = None):
     """
@@ -30,7 +30,7 @@ def train(frame,
                     Default is "gini"
     :param max_depth: (int) Maximum depth of the tree. Default is 4
     :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100
-    :param seed: (int) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
+    :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
     :param categorical_features_info: (Optional(Dict(Int -> Int)) Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
                                    with 'k' categories indexed from 0:{0,1,...,k-1}
     :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.
@@ -54,6 +54,7 @@ def train(frame,
     """
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
+    seed = int(os.urandom(2).encode('hex'), 16) if seed is None else seed
     scala_model = _scala_obj.train(frame._scala,
                                    label_column,
                                    tc.jutils.convert.to_scala_list_string(observation_columns),
