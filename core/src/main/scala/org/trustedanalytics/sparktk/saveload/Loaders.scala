@@ -7,6 +7,7 @@ import org.trustedanalytics.sparktk.models.dimreduction.pca.PcaModel
 import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayesModel
 import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
+import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
 
 object Loaders {
 
@@ -37,6 +38,7 @@ object Loaders {
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(Frame,
       KMeansModel,
+      LinearRegressionModel,
       NaiveBayesModel,
       PcaModel,
       RandomForestClassifierModel)
