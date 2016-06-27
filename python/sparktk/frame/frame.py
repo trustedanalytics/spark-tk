@@ -296,6 +296,7 @@ class Frame(object):
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.dot_product import dot_product
+    from sparktk.frame.ops.download import download
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
