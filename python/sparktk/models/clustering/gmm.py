@@ -8,7 +8,7 @@ def train(frame,
           k=2,
           max_iterations=20,
           convergence_tol=0.01,
-          seed= int(os.urandom(2).encode('hex'), 16)):
+          seed=None):
     """
     Creates a GaussianMixtureModel by training on the given frame
 
@@ -148,36 +148,45 @@ class GaussianMixtureModel(PropertiesObject):
         tc.jutils.validate_is_jvm_instance_of(scala_model, get_scala_obj(tc))
         self._scala = scala_model
 
+
     @staticmethod
     def load(tc, scala_model):
+        """Loads a trained gaussian mixture model from a scala model"""
         return GaussianMixtureModel(tc, scala_model)
 
     @property
     def observation_columns(self):
+        """observation columns used for model training"""
         return list(self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns()))
 
     @property
     def column_scalings(self):
+        """column containing the scalings used for model training"""
         return list(self._tc.jutils.convert.from_scala_seq(self._scala.columnScalings()))
 
     @property
     def k(self):
+        """maximum limit for number of resulting clusters"""
         return self._scala.k()
 
     @property
     def max_iterations(self):
+        """maximum number of iterations"""
         return self._scala.maxIterations()
 
     @property
     def convergence_tol(self):
+        """convergence tolerance"""
         return self._scala.convergenceTol()
 
     @property
     def seed(self):
+        """seed used during training of the model"""
         return self._scala.seed()
 
     @property
     def gaussians(self):
+        """the mu and sigma values"""
         g = self._tc.jutils.convert.from_scala_seq(self._scala.gaussians())
         results = []
         for i in g:
@@ -185,10 +194,12 @@ class GaussianMixtureModel(PropertiesObject):
         return results
 
     def cluster_sizes(self, frame):
+        """a map of clusters and their sizes"""
         cs = self._scala.computeGmmClusterSize(frame._scala)
         return self._tc.jutils.convert.scala_map_to_python(cs)
 
     def predict(self, frame, columns=None):
+        """method to predict on a given frame"""
         c = self.__columns_to_option(columns)
         self._scala.predict(frame._scala, c)
 
@@ -199,6 +210,7 @@ class GaussianMixtureModel(PropertiesObject):
 
 
     def save(self, path):
+        """save the trained model to the given path"""
         self._scala.save(self._tc._scala_sc, path)
 
 del PropertiesObject
