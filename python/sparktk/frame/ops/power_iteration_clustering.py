@@ -14,9 +14,9 @@ def power_iteration_clustering(self, source_column, destination_column, similari
     :param source_column: (str) Name of the column containing the source node
     :param destination_column: (str) Name of the column containing the destination node
     :param similarity_column: (str) Name of the column containing the similarity
-    :param k: (int) Number of clusters to cluster the graph into. Default is 2
-    :param max_iterations: (int) Maximum number of iterations of the power iteration loop. Default is 100
-    :param initialization_mode: (str) Initialization mode of power iteration clustering. This can be either "random" to use a
+    :param k: (Optional(int)) Number of clusters to cluster the graph into. Default is 2
+    :param max_iterations: (Optional(int)) Maximum number of iterations of the power iteration loop. Default is 100
+    :param initialization_mode: (Optional(str)) Initialization mode of power iteration clustering. This can be either "random" to use a
      random vector as vertex properties, or "degree" to use normalized sum similarities. Default is "random".
     :return: (namedtuple) Returns namedtuple and a frame with results
 
