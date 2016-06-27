@@ -21,6 +21,9 @@ def train(frame,
     """
     Create collaborative filtering model by training on given frame
 
+    Parameters
+    ----------
+
     :param frame: The frame containing the data to train on
     :param source_column_name: source column name.
     :param dest_column_name: destination column name.
