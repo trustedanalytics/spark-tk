@@ -8,19 +8,20 @@ import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, Fram
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
 
 trait PowerIterationClusteringTransformWithResult extends BaseFrame {
-  /***
-    *
-    * Performs Power Iteration Clustering to create less than or equal to 'k' clusters. Returns data classified into clusters along with the number of clusters
-    *
-    * @param sourceColumn Name of the column containing the source node
-    * @param destinationColumn Name of the column containing the destination node
-    * @param similarityColumn Name of the column containing the similarity
-    * @param k Number of clusters to cluster the graph into. Default is 2
-    * @param maxIterations Maximum number of iterations of the power iteration loop. Default is 100
-    * @param initializationMode Initialization mode of power iteration clustering. This can be either "random" to use a
-     random vector as vertex properties, or "degree" to use normalized sum similarities. Default is "random".
-    * @return Returns a k and cluster size that belong to class ClusterDetails
-    */
+  /**
+   * *
+   *
+   * Performs Power Iteration Clustering to create less than or equal to 'k' clusters. Returns data classified into clusters along with the number of clusters
+   *
+   * @param sourceColumn Name of the column containing the source node
+   * @param destinationColumn Name of the column containing the destination node
+   * @param similarityColumn Name of the column containing the similarity
+   * @param k Number of clusters to cluster the graph into. Default is 2
+   * @param maxIterations Maximum number of iterations of the power iteration loop. Default is 100
+   * @param initializationMode Initialization mode of power iteration clustering. This can be either "random" to use a
+   * random vector as vertex properties, or "degree" to use normalized sum similarities. Default is "random".
+   * @return Returns a k and cluster size that belong to class ClusterDetails
+   */
   def powerIterationClustering(sourceColumn: String,
                                destinationColumn: String,
                                similarityColumn: String,
@@ -33,6 +34,12 @@ trait PowerIterationClusteringTransformWithResult extends BaseFrame {
 
 }
 
+/**
+ * *
+ *
+ * @param k : number of clusters as a result of running Power Iteration
+ * @param clusterSizes : A map of cluster names and cluster sizes
+ */
 case class ClusterDetails(k: Int, clusterSizes: Map[String, Int]) {
 
 }
@@ -40,9 +47,9 @@ case class ClusterDetails(k: Int, clusterSizes: Map[String, Int]) {
 case class PowerIterationClustering(sourceColumn: String,
                                     destinationColumn: String,
                                     similarityColumn: String,
-                                    k: Int = 2,
-                                    maxIterations: Int = 100,
-                                    initializationMode: String = "random") extends FrameTransformWithResult[ClusterDetails] {
+                                    k: Int,
+                                    maxIterations: Int,
+                                    initializationMode: String) extends FrameTransformWithResult[ClusterDetails] {
 
   override def work(state: FrameState): FrameTransformReturn[ClusterDetails] = {
     require(sourceColumn != null && sourceColumn.nonEmpty, "sourceColumn must not be null nor empty")
@@ -61,8 +68,6 @@ case class PowerIterationClustering(sourceColumn: String,
     var model = sparkPowerIteration.run(similaritiesRDD)
     val assignments = model.assignments
     val clustersRdd = assignments.map(row => Row.apply(row.id.toInt, row.cluster + 1))
-    //val schema = FrameSchema(Vector[Column](Column("cluster", DataTypes.str)))
-    val clustersMap = assignments.map(row => (row.id.toInt, row.cluster + 1))
 
     val schema = FrameSchema(List(Column("id", DataTypes.int64), Column("cluster", DataTypes.int32)))
     val assignmentFrame = new FrameRdd(schema, clustersRdd)
@@ -70,7 +75,6 @@ case class PowerIterationClustering(sourceColumn: String,
     val result = trainFrameRdd.zipFrameRdd(assignmentFrame)
 
     trainFrameRdd.unpersist()
-    //val clusterSize = clustersMap.reduceByKey(_ + _).collect().toMap
 
     val clusterSize = clustersRdd.map(row => ("Cluster:" + row(1).toString, 1)).reduceByKey(_ + _).collect().toMap
     val clusterDetails = new ClusterDetails(model.k, clusterSize)
