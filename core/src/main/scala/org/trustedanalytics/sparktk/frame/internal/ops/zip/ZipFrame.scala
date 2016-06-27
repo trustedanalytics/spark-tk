@@ -26,8 +26,6 @@ case class ZipWithIndexedRdd(rdd: RDD[(Long, Row)],
 
     val indexedFrameRdd = state.rdd.zipWithIndex().map { case (row, index) => (index, row) }
 
-    val x = rdd.join(indexedFrameRdd).collect()
-
     val resultRdd: RDD[Row] = rdd.join(indexedFrameRdd).map { value =>
       val row = value._2._2
       val cluster = value._2._1
