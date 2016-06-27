@@ -7,6 +7,11 @@ import org.trustedanalytics.sparktk.frame.Column
 import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, FrameTransform }
 
 trait ZipWithIndexedRddTransform extends BaseFrame {
+  /***
+    *
+    * @param rdd : The rdd of the frame to be to be zipped with
+    * @param newColumns : A sequence of columns to be appended, associated with the new rdd
+    */
   def zipWithIndexedRdd(rdd: RDD[(Long, Row)],
                         newColumns: Seq[Column]): Unit = {
     execute(ZipWithIndexedRdd(rdd, newColumns))
