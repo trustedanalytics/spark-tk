@@ -119,13 +119,14 @@ object ArxModel extends TkSaveableObject {
     val yValues = new Array[Double](totalRowCount)
     val xValues = Array.ofDim[Double](totalRowCount, xColumnNames.size)
     var rowCounter = 0
+    val yColumnIndex = schema.columnIndex(yColumnName)
 
     for (row <- frame.collect()) {
-      yValues(rowCounter) = row.get(schema.columnIndex(yColumnName)).toString.toDouble
+      yValues(rowCounter) = DataTypes.toDouble(row.get(yColumnIndex))
 
       var xColumnCounter = 0
       for (xColumn <- xColumnNames) {
-        xValues(rowCounter)(xColumnCounter) = row.get(schema.columnIndex(xColumn)).toString.toDouble
+        xValues(rowCounter)(xColumnCounter) = DataTypes.toDouble(row.get(schema.columnIndex(xColumn)))
         xColumnCounter += 1
       }
 
@@ -199,14 +200,14 @@ case class ArxModel private[arx] (timeseriesColumn: String,
     // Find the maximum lag and fill that many spots with nulls, followed by the predicted y values
     val maxLag = max(arxModel.yMaxLag, arxModel.xMaxLag)
     val predictions = Array.fill(maxLag) { null } ++ arxModel.predict(yVector, xMatrix).toArray
-
-    if (predictions.length != frame.rdd.count)
-      throw new RuntimeException("Received unexpected number of y values from ARX Model predict (expected " +
-        (frame.rdd.count - maxLag).toString + " values, but received " + (predictions.length - maxLag).toString + " values).")
+    val numPredictions = predictions.length
 
     val dataWithPredictions = frame.rdd.zipWithIndex().map {
       case (row: Row, index: Long) =>
-        Row.fromSeq(row.toSeq :+ predictions(index.toInt))
+        if (numPredictions > index)
+          Row.fromSeq(row.toSeq :+ predictions(index.toInt))
+        else
+          Row.fromSeq(row.toSeq :+ null)
     }
 
     val schemaWithPredictions = frame.schema.addColumn(Column("predicted_y", DataTypes.float64))

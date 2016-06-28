@@ -73,10 +73,11 @@ object ArimaModel extends TkSaveableObject {
 
     // Fit model using the specified time series values and ARIMA parameters
     val userInitParams = if (initParams.isDefined) initParams.get.toArray else null
-    val arimaModel = SparkTsArima.fitModel(p, d, q, new DenseVector(ts.toArray), includeIntercept, trainMethod, userInitParams)
+    val ts_vector = new DenseVector(ts.toArray)
+    val arimaModel = SparkTsArima.fitModel(p, d, q, ts_vector, includeIntercept, trainMethod, userInitParams)
 
     // Return trained model
-    ArimaModel(ts, p, d, q, includeIntercept, method, initParams, arimaModel)
+    ArimaModel(ts_vector, p, d, q, includeIntercept, method, initParams, arimaModel)
   }
 
   /**
@@ -100,7 +101,7 @@ object ArimaModel extends TkSaveableObject {
   }
 }
 
-case class ArimaModel private[arima] (ts: Seq[Double],
+case class ArimaModel private[arima] (ts: DenseVector,
                                       p: Int,
                                       d: Int,
                                       q: Int,
@@ -127,7 +128,7 @@ case class ArimaModel private[arima] (ts: Seq[Double],
     require(futurePeriods >= 0, "number of futurePeriods should be a positive value.")
 
     // Call the ARIMA model to forecast values using the specified golden value
-    arimaModel.forecast(new DenseVector(ts.toArray), futurePeriods).toArray
+    arimaModel.forecast(ts, futurePeriods).toArray
   }
 
   /**
@@ -145,17 +146,17 @@ case class ArimaModel private[arima] (ts: Seq[Double],
 /**
  * TK Metadata that will be stored as part of the ARIMA model
  *
- * @param ts
- * @param p
- * @param d
- * @param q
- * @param includeIntercept
- * @param method
- * @param initParams
+ * @param ts vector of time series values that the model was trained with
+ * @param p Autoregressive order
+ * @param d Differencing order
+ * @param q Moving average order
+ * @param includeIntercept If true, the model was fit with an intercept.
+ * @param method Objective function and optimization method the model was trained wtih.
+ * @param initParams User provided initial parameters for optimization.
  * @param hasIntercept True if the trained model has an intercept
  * @param coefficients Coefficients from the trained model
  */
-case class ArimaModelTkMetaData(ts: Seq[Double],
+case class ArimaModelTkMetaData(ts: DenseVector,
                                 p: Int,
                                 d: Int,
                                 q: Int,
