@@ -1,6 +1,5 @@
 from setup import tc, rm, get_sandbox_path
 from sparktk import dtypes
-import pandas as pd
 
 def test_frame_to_pandas_to_frame(tc):
     """
@@ -9,16 +8,9 @@ def test_frame_to_pandas_to_frame(tc):
     # Create a frame from a csv file for testing
     path = "../datasets/importcsvtest.csv"
     frame1 = tc.frame.import_csv(path, header=True, inferschema=True)
-    print "frame1.schema: " + str(frame1.schema)
 
     # download to data frame and check the columns/types/row count
     df = frame1.download()
-    print df
-    print "\n"
-    print pd.__version__
-    print "\n"
-    print df.columns
-    print "\n"
     assert(df.columns.tolist() == ['string_column', 'integer_column', 'float_column', 'datetime_column'])
     assert([str(d) for d in df.dtypes] == ['object', 'int32', 'float64', 'datetime64[ns]'])
     assert(frame1.row_count == len(df))

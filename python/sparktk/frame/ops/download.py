@@ -67,16 +67,15 @@ def download(self, n=100, offset = 0, columns=None):
     def long_to_date_time(row):
         for i in date_time_columns:
             if isinstance(row[i], long):
-                ms = row[i]
-                row[i] = datetime.datetime.fromtimestamp(ms//1000).replace(microsecond=ms%1000*1000)
-                print str(type(row[i])) + ": " + str(row[i])
+                row[i] = pandas.to_datetime(row[i], unit='ms')
         return row
 
     if (has_date_time):
-        print "found date/time columns: " + str(date_time_columns)
         frame_data = map(long_to_date_time, frame_data)
 
+    # create pandas df
     pandas_df = pandas.DataFrame(frame_data, columns=headers)
+
     for i, dtype in enumerate(data_types):
         dtype_str = _sparktk_dtype_to_pandas_str(dtype)
         try:
@@ -92,8 +91,10 @@ def download(self, n=100, offset = 0, columns=None):
 
 
 def _sparktk_dtype_to_pandas_str(dtype):
-    from sparktk import dtypes
     """maps spark-tk schema types to types understood by pandas, returns string"""
-    if dtype is not dtypes.datetime and dtypes.dtypes.is_primitive_type(dtype):
+    from sparktk import dtypes
+    if dtype ==dtypes.datetime:
+        return "datetime64[ns]"
+    elif dtypes.dtypes.is_primitive_type(dtype):
         return dtypes.dtypes.to_string(dtype)
     return "object"
