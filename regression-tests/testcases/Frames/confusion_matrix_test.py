@@ -51,7 +51,7 @@ class ConfusionMatrix(atk_test.ATKTestCase):
         self.model = "model_33_50.csv" # our data file in qa_data
 	self.filepath = common_utils.get_file(self.model)
         self.actual_result = [6534, 3266, 6535, 3267] # what we expect to get from the confusion matrix
-	tc = atk_test.get_context() # getting a sparktk context
+	tc = self.tc # getting a sparktk context
 	#self.csv_path = "qa_data/" + self.model # path to the csv file with our data
 	frame = tc.frame.import_csv(str(self.filepath), schema=self.schema1) # imports our data and returns a frame
 	classMetrics = frame.binary_classification_metrics('rating', 'predicted', 1) # params are label column, result column, pos column

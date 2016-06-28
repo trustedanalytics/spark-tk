@@ -23,7 +23,6 @@
 """ Global Config file for testcases, used heavily by automation"""
 import os
 
-import trustedanalytics as ta
 #import read_env
 
 
@@ -33,8 +32,6 @@ root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 #fs_root = "/user/atkuser/" if os.getenv("ATK_TAP", "0") else read_env.find_value("../env.json")
 #export_location = "." if os.getenv("ATK_TAP", "0") else read_env.find_value("../env.json")
 hdfs_namenode = os.getenv("CDH_MASTER", "localhost")
-atk_server_uri = os.getenv("ATK_SERVER_URI", ta.server.uri)
-atk_server_port = os.getenv("ATK_SERVER_PORT", ta.server.port)
 #data_location = "../qa_data" if os.getenv("ATK_TAP", 0) else "qa_data"
 data_location = os.getenv("ATK_DATA_HOME", "qa_data")
 keep_results = os.getenv("KEEP_ATK_RESULTS", 0)
