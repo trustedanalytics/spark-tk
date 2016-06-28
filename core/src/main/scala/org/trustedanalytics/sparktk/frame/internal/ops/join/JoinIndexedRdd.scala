@@ -1,0 +1,37 @@
+package org.trustedanalytics.sparktk.frame.internal.ops.join
+
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.frame.Column
+import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, FrameTransform }
+
+trait JoinIndexedRddTransform extends BaseFrame {
+  /**
+   * *
+   *
+   * @param rdd : The rdd of the frame to be to be zipped with
+   * @param newColumns : A sequence of columns to be appended, associated with the new rdd
+   */
+  def joinIndexedRdd(rdd: RDD[(Long, Row)],
+                     newColumns: Seq[Column]): Unit = {
+    execute(JoinIndexedRdd(rdd, newColumns))
+  }
+
+}
+
+case class JoinIndexedRdd(rdd: RDD[(Long, Row)],
+                          newColumns: Seq[Column]) extends FrameTransform {
+
+  override def work(state: FrameState): FrameState = {
+
+    val indexedFrameRdd = state.rdd.zipWithIndex().map { case (row, index) => (index, row) }
+
+    val resultRdd: RDD[Row] = rdd.join(indexedFrameRdd).map { value =>
+      val row = value._2._2
+      val cluster = value._2._1
+      Row.merge(row, cluster)
+    }
+
+    FrameState(resultRdd, state.schema.copy(columns = state.schema.columns ++ newColumns))
+  }
+}

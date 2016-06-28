@@ -64,14 +64,15 @@ object GaussianMixtureModel extends TkSaveableObject {
       model)
   }
 
-  /***
-    *
-    * @param sc active spark context
-    * @param path the source path
-    * @param formatVersion the version of the format for the tk metadata that should be recorded.
-    * @param tkMetadata the data to save (should be a case class), must be serializable to JSON using json4s
-    * @return
-    */
+  /**
+   * *
+   *
+   * @param sc active spark context
+   * @param path the source path
+   * @param formatVersion the version of the format for the tk metadata that should be recorded.
+   * @param tkMetadata the data to save (should be a case class), must be serializable to JSON using json4s
+   * @return
+   */
   def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
@@ -126,7 +127,7 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
 
     val predictionsRdd = sparkModel.predict(frameRdd.toDenseVectorRdd(gmmColumns, Some(scalingValues)))
     val indexedPredictionsRdd = predictionsRdd.zipWithIndex().map { case (cluster, index) => (index.toLong, Row.apply(cluster)) }
-    frame.zipWithIndexedRdd(indexedPredictionsRdd, Seq(Column("predicted_cluster", DataTypes.int32)))
+    frame.joinIndexedRdd(indexedPredictionsRdd, Seq(Column("predicted_cluster", DataTypes.int32)))
 
   }
 

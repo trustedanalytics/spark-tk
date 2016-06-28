@@ -25,6 +25,7 @@ def train(frame,
     """   
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
+    seed = int(os.urandom(2).encode('hex'),16) if seed is None else seed
     scala_columns = tc.jutils.convert.to_scala_vector_string(observation_columns)
     scala_scalings = tc.jutils.convert.to_scala_vector_double(column_scalings)
     scala_model = _scala_obj.train(frame._scala,
@@ -117,7 +118,7 @@ class GaussianMixtureModel(PropertiesObject):
         >>> newlist = [[z[1] for z in x[0] if z[2]==a]for a in val]
         >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
         >>> act_out
-        [['ij', 'qr', 'ef', 'op'], ['ab', 'mn', 'cd', 'gh', 'kl']]
+        [['ab', 'mn', 'cd', 'gh', 'kl'], ['ij', 'qr', 'ef', 'op']]
         >>> exp_out = [['ij','qr','ef','op'], ['ab','mn','cd','gh','kl']]
         >>> result = False
         >>> for list in act_out:
