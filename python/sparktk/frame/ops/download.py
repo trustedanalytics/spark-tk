@@ -67,7 +67,7 @@ def download(self, n=100, offset = 0, columns=None):
     def long_to_date_time(row):
         for i in date_time_columns:
             if isinstance(row[i], long):
-                row[i] = pandas.to_datetime(row[i], unit='ms')
+                row[i] = datetime.datetime.fromtimestamp(row[i]//1000).replace(microsecond=row[i]%1000*1000)
         return row
 
     if (has_date_time):
