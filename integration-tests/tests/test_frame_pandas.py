@@ -12,6 +12,10 @@ def test_frame_to_pandas_to_frame(tc):
 
     # download to data frame and check the columns/types/row count
     df = frame1.download()
+    print df
+    print "\n"
+    print df.columns
+    print "\n"
     assert(df.columns.tolist() == ['string_column', 'integer_column', 'float_column', 'datetime_column'])
     assert([str(d) for d in df.dtypes] == ['object', 'int32', 'float64', 'datetime64[ns]'])
     assert(frame1.row_count == len(df))

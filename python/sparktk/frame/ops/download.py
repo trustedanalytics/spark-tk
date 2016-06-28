@@ -69,9 +69,11 @@ def download(self, n=100, offset = 0, columns=None):
             if isinstance(row[i], long):
                 ms = row[i]
                 row[i] = datetime.datetime.fromtimestamp(ms//1000).replace(microsecond=ms%1000*1000)
+                print str(type(row[i])) + ": " + str(row[i])
         return row
 
     if (has_date_time):
+        print "found date/time columns: " + str(date_time_columns)
         frame_data = map(long_to_date_time, frame_data)
 
     pandas_df = pandas.DataFrame(frame_data, columns=headers)
