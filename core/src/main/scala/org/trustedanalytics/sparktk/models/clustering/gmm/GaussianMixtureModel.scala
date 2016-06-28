@@ -127,8 +127,15 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
 
     val predictionsRdd = sparkModel.predict(frameRdd.toDenseVectorRdd(gmmColumns, Some(scalingValues)))
     val indexedPredictionsRdd = predictionsRdd.zipWithIndex().map { case (cluster, index) => (index.toLong, Row.apply(cluster)) }
-    frame.joinIndexedRdd(indexedPredictionsRdd, Seq(Column("predicted_cluster", DataTypes.int32)))
 
+    val indexedFrameRdd = frame.rdd.zipWithIndex().map { case (row, index) => (index, row) }
+
+    val resultRdd: RDD[Row] = indexedPredictionsRdd.join(indexedFrameRdd).map { value =>
+      val row = value._2._2
+      val cluster = value._2._1
+      Row.merge(row, cluster)
+    }
+    frame.init(resultRdd, frame.schema.copy(columns = frame.schema.columns ++ Seq(Column("predicted_cluster", DataTypes.int32))))
   }
 
   /**

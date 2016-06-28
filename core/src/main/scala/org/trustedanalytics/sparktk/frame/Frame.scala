@@ -24,7 +24,6 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.Quan
 import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
-import org.trustedanalytics.sparktk.frame.internal.ops.join.JoinIndexedRddTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
@@ -58,7 +57,6 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToJsonSummarization
     with FlattenColumnsTransform
     with HistogramSummarization
-    with JoinIndexedRddTransform
     with JoinInnerSummarization
     with JoinLeftSummarization
     with JoinOuterSummarization

@@ -117,6 +117,7 @@ class GaussianMixtureModel(PropertiesObject):
         >>> val = set(map(lambda y : y[2], x[0]))
         >>> newlist = [[z[1] for z in x[0] if z[2]==a]for a in val]
         >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
+        >>> act_out.sort(key=lambda x: x[0])
         >>> act_out
         [['ab', 'mn', 'cd', 'gh', 'kl'], ['ij', 'qr', 'ef', 'op']]
         >>> exp_out = [['ij','qr','ef','op'], ['ab','mn','cd','gh','kl']]
