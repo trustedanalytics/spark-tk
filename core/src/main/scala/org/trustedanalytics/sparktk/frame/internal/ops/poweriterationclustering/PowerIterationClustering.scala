@@ -66,7 +66,7 @@ case class PowerIterationClustering(sourceColumn: String,
     val similaritiesRDD = trainFrameRdd.toSourceDestinationSimilarityRDD(sourceColumn, destinationColumn, similarityColumn)
     var model = sparkPowerIteration.run(similaritiesRDD)
     val assignments = model.assignments
-    val clustersRdd = assignments.map(row => Row.apply(row.id.toInt, (row.cluster.toInt + 1).toInt))
+    val clustersRdd = assignments.map(row => Row.apply(row.id.toInt, row.cluster.toInt + 1))
 
     val schema = FrameSchema(List(Column("id", DataTypes.int32), Column("cluster", DataTypes.int32)))
     val assignmentFrame = new Frame(clustersRdd, schema)
