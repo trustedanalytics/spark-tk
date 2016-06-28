@@ -41,7 +41,6 @@ class _Vector(object):
 
     def __init__(self, length):
         self.length = int(length)
-        self.is_complex_type = True
         self.constructor = self._get_constructor()
 
     def _get_constructor(self):
@@ -72,6 +71,10 @@ class _Vector(object):
                 raise ValueError("Could not construct vector in Python Client.  Expected vector of length %s, but received length %d" % (length, len(array)))
             return array
         return constructor
+
+    @property
+    def is_complex_type(self):
+        return True
 
     @staticmethod
     def get_from_string(data_type_str):
