@@ -62,7 +62,7 @@ def power_iteration_clustering(self, source_column, destination_column, similari
         >>> x[1]
         3
         >>> x[2]
-        {u'Cluster:2': 1, u'Cluster:1': 2, u'Cluster:3': 4}
+        {u'2': 1, u'3': 4, u'1': 2}
 
     """
     result = self._scala.powerIterationClustering(source_column,
@@ -73,5 +73,5 @@ def power_iteration_clustering(self, source_column, destination_column, similari
                                                   initialization_mode)
     k_val = result.k()
     cluster_sizes = self._tc.jutils.convert.scala_map_to_python(result.clusterSizes())
-    py_frame = self._tc.frame.create(result.frame())
+    py_frame = self._tc.frame.create(result.clusterMapFrame())
     return PicResult(frame=py_frame, k=k_val, cluster_sizes=cluster_sizes)

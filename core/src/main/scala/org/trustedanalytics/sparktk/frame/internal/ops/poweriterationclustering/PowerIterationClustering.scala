@@ -7,7 +7,7 @@ import org.trustedanalytics.sparktk.frame.internal._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
 
-trait PowerIterationClusteringSummarizationWithResult extends BaseFrame {
+trait PowerIterationClusteringSummarization extends BaseFrame {
   /**
    * *
    *
@@ -41,9 +41,7 @@ trait PowerIterationClusteringSummarizationWithResult extends BaseFrame {
  * @param k : number of clusters as a result of running Power Iteration
  * @param clusterSizes : A map of cluster names and cluster sizes
  */
-case class ClusterDetails(frame: Frame, k: Int, clusterSizes: Map[String, Int]) {
-
-}
+case class ClusterDetails(clusterMapFrame: Frame, k: Int, clusterSizes: Map[String, Int])
 
 case class PowerIterationClustering(sourceColumn: String,
                                     destinationColumn: String,
@@ -59,23 +57,23 @@ case class PowerIterationClustering(sourceColumn: String,
     require(k >= 2, "Number of clusters must be must be greater than 1")
     require(maxIterations >= 1, "Maximum number of iterations must be greater than 0")
     val sparkPowerIteration = new SparkPowerIterationClustering()
-    sparkPowerIteration.setInitializationMode(initializationMode)
-    sparkPowerIteration.setK(k)
-    sparkPowerIteration.setMaxIterations(maxIterations)
+      .setInitializationMode(initializationMode)
+      .setK(k)
+      .setMaxIterations(maxIterations)
     val trainFrameRdd = new FrameRdd(state.schema, state.rdd)
     require(!trainFrameRdd.isEmpty(), "Frame is empty. Please run on a non-empty Frame.")
     trainFrameRdd.cache()
     val similaritiesRDD = trainFrameRdd.toSourceDestinationSimilarityRDD(sourceColumn, destinationColumn, similarityColumn)
     var model = sparkPowerIteration.run(similaritiesRDD)
     val assignments = model.assignments
-    val clustersRdd = assignments.map(row => Row.apply(row.id.toInt, row.cluster + 1))
+    val clustersRdd = assignments.map(row => Row.apply(row.id.toInt, (row.cluster.toInt + 1).toInt))
 
-    val schema = FrameSchema(List(Column("id", DataTypes.int64), Column("cluster", DataTypes.int32)))
+    val schema = FrameSchema(List(Column("id", DataTypes.int32), Column("cluster", DataTypes.int32)))
     val assignmentFrame = new Frame(clustersRdd, schema)
 
     trainFrameRdd.unpersist()
 
-    val clusterSize = clustersRdd.map(row => ("Cluster:" + row(1).toString, 1)).reduceByKey(_ + _).collect().toMap
+    val clusterSize = clustersRdd.map(row => (row(1).toString, 1)).reduceByKey(_ + _).collect().toMap
     // Return ClusterDetails(result_frame, k, cluster sizes)
     new ClusterDetails(assignmentFrame, model.k, clusterSize)
   }
