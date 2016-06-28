@@ -1,5 +1,6 @@
 from setup import tc, rm, get_sandbox_path
 from sparktk import dtypes
+import pandas as pd
 
 def test_frame_to_pandas_to_frame(tc):
     """
@@ -13,6 +14,8 @@ def test_frame_to_pandas_to_frame(tc):
     # download to data frame and check the columns/types/row count
     df = frame1.download()
     print df
+    print "\n"
+    print pd.__version__
     print "\n"
     print df.columns
     print "\n"
