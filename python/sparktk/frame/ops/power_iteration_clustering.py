@@ -3,7 +3,8 @@ from collections import namedtuple
 PicResult = namedtuple("PicResult", ["frame", "k", "cluster_sizes"])
 
 
-def power_iteration_clustering(self, source_column, destination_column, similarity_column, k=2, max_iterations=100, initialization_mode = "random"):
+def power_iteration_clustering(self, source_column, destination_column, similarity_column, k=2, max_iterations=100,
+                               initialization_mode = "random"):
     """
     Power Iteration Clustering finds a low-dimensional embedding of a dataset using truncated power iteration on a
     normalized pair-wise similarity matrix of the data.
@@ -48,7 +49,7 @@ def power_iteration_clustering(self, source_column, destination_column, similari
 
         >>> x = frame.power_iteration_clustering('Source', 'Destination', 'Similarity', k=3)
 
-        >>> x[0].inspect()
+        >>> x.frame.inspect()
         [#]  id  cluster
         ================
         [0]   4        1
@@ -59,9 +60,9 @@ def power_iteration_clustering(self, source_column, destination_column, similari
         [5]   3        1
         [6]   5        3
 
-        >>> x[1]
+        >>> x.k
         3
-        >>> x[2]
+        >>> x.cluster_sizes
         {u'2': 1, u'3': 4, u'1': 2}
 
     """
