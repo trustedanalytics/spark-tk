@@ -16,7 +16,8 @@
 
 package org.trustedanalytics.sparktk.frame.internal.constructors
 
-import org.trustedanalytics.sparktk.frame.DataTypes
+import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.frame.{ Column, FrameSchema, DataTypes }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ImportCsvTest extends TestingSparkContextWordSpec {
@@ -46,12 +47,15 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
 
       assert(frame.rdd.count == 10)
-      assert(frame.schema.columns.length == 5)
+      assert(frame.schema.columns.length == 4)
       assert(frame.schema.columnDataType("string_column") == DataTypes.string)
       assert(frame.schema.columnDataType("integer_column") == DataTypes.int32)
       assert(frame.schema.columnDataType("float_column") == DataTypes.float64)
-      assert(frame.schema.columnDataType("bool_column") == DataTypes.int32) // We don't have a bool type
-      assert(frame.schema.columnDataType("datetime_column") == DataTypes.string) // We don't have a data/time type
+      assert(frame.schema.columnDataType("datetime_column") == DataTypes.datetime)
+
+      val data = frame.take(1)(0)
+      assert(data == Row.fromSeq(Seq("green", 1, 1.0, 1452539454000L)))
+
     }
 
     "Import frame without a header row" in {
@@ -60,12 +64,11 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
 
       assert(frame.rdd.count == 10)
-      assert(frame.schema.columns.length == 5)
+      assert(frame.schema.columns.length == 4)
       assert(frame.schema.columnDataType("C0") == DataTypes.string)
       assert(frame.schema.columnDataType("C1") == DataTypes.int32)
       assert(frame.schema.columnDataType("C2") == DataTypes.float64)
-      assert(frame.schema.columnDataType("C3") == DataTypes.int32) // We don't have a bool type
-      assert(frame.schema.columnDataType("C4") == DataTypes.string) // We don't have a data/time type
+      assert(frame.schema.columnDataType("C3") == DataTypes.datetime)
     }
 
     "Import frame without inferring schema and no header row" in {
@@ -74,9 +77,9 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false)
 
       assert(frame.rdd.count == 10)
-      assert(frame.schema.columns.length == 5)
+      assert(frame.schema.columns.length == 4)
       // When no schema is inferred or specified, they are all strings
-      for (i <- 0 until 5) {
+      for (i <- 0 until 4) {
         assert(frame.schema.columnDataType("C" + i.toString) == DataTypes.string)
       }
     }
@@ -87,14 +90,31 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = false)
 
       assert(frame.rdd.count == 10)
-      assert(frame.schema.columns.length == 5)
+      assert(frame.schema.columns.length == 4)
       // When no schema is inferred or specified, they are all strings, but since
       // we have a header, they should have column names
       assert(frame.schema.columnDataType("string_column") == DataTypes.string)
       assert(frame.schema.columnDataType("integer_column") == DataTypes.string)
       assert(frame.schema.columnDataType("float_column") == DataTypes.string)
-      assert(frame.schema.columnDataType("bool_column") == DataTypes.string)
       assert(frame.schema.columnDataType("datetime_column") == DataTypes.string)
+    }
+
+    "Import frame with unsupport data types" in {
+      val path = "../integration-tests/datasets/unsupported_types.csv"
+
+      intercept[Exception] {
+        // Frame contains booleans, which aren't supported, so this should cause an exception when inferring the schema
+        Import.importCsv(sparkContext, path, ",", inferSchema = true)
+      }
+
+      val schema = FrameSchema(Vector(Column("id", DataTypes.int32),
+        Column("name", DataTypes.string),
+        Column("bool", DataTypes.string),
+        Column("date", DataTypes.string)))
+
+      // Specify the schema to treat booleans as strings, so this should pass
+      val frame = Import.importCsv(sparkContext, path, ",", inferSchema = false, schema = Some(schema))
+      assert(frame.rowCount() == 5)
     }
   }
 
