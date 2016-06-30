@@ -19,7 +19,3 @@ echo "inflating jars"
 pushd $MAINDIR/core/target
 unzip *.zip
 popd
-
-echo "list jars"
-ls $MAINDIR/core/target
-ls $MAINDIR/core/target/sparktk
