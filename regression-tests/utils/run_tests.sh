@@ -5,7 +5,6 @@ echo "$NAME DIR=$DIR"
 
 MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
-MAINDIR="$(dirname $MAINDIR)"
 
 
 export SPARKTK_HOME=$MAINDIR/core/target/spark-tk
