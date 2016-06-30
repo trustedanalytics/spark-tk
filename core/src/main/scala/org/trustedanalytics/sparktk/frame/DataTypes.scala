@@ -1,9 +1,10 @@
 package org.trustedanalytics.sparktk.frame
 
 import java.util
-import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 
+import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.{ DateTimeZone, DateTime }
+import org.slf4j.LoggerFactory
 //import org.apache.commons.lang3.StringUtils
 import spray.json.DefaultJsonProtocol._
 import spray.json.{ JsValue, _ }
@@ -219,18 +220,18 @@ object DataTypes {
    */
   case object datetime extends DataType {
 
-    override type ScalaType = String
+    override type ScalaType = Long
 
     override def scalaType = classOf[ScalaType]
 
-    implicit def stringToDateTime(s: ScalaType): DateTime = toDateTime(s)
+    implicit def longToDateTime(s: ScalaType): DateTime = toDateTime(s)
 
     override def parse(raw: Any) = Try {
-      toDateTime(raw).toString
+      toDateTime(raw).getMillis
     }
 
     override def asString(raw: Any): String = {
-      parse(raw).get.asInstanceOf[String]
+      toDateTime(raw).toString(ISODateTimeFormat.dateTime)
     }
 
     def compare(valueA: DateTime, valueB: DateTime): Int = {
@@ -241,9 +242,13 @@ object DataTypes {
       toDateTime(valueA).compareTo(toDateTime(valueB))
     }
 
+    def compare(valueA: Long, valueB: Long): Int = {
+      valueA.compareTo(valueB)
+    }
+
     override def isType(raw: Any): Boolean = {
       // where null is allowed we accept null as this type
-      raw == null || raw.isInstanceOf[DateTime] || Try { toDateTime(raw) }.isSuccess
+      raw == null || raw.isInstanceOf[DateTime] || raw.isInstanceOf[Long] || Try { toDateTime(raw) }.isSuccess
     }
 
     override def typedJson(raw: Any): JsValue = {
@@ -706,6 +711,7 @@ object DataTypes {
   def toDateTime(value: Any): DateTime = {
     value match {
       case null => null
+      case l: Long => new DateTime(l, DateTimeZone.UTC);
       case s: String => DateTime.parse(s) // ISO 8601
       case dt: DateTime => dt
       case _ => throw new RuntimeException(s"${value.getClass.getName} toDateTime is not implemented")

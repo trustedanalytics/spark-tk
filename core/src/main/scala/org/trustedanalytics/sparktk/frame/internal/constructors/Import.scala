@@ -3,8 +3,9 @@ package org.trustedanalytics.sparktk.frame.internal.constructors
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.relaxng.datatype.Datatype
-import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame._
+import org.apache.spark.sql.types.{ StructType, StructField }
+import org.trustedanalytics.sparktk.frame.{ DataTypes, Schema, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.constructors.HbaseHelper
 
@@ -39,11 +40,18 @@ object Import {
     val headerStr = header.toString.toLowerCase
     val inferSchemaStr = inferSchema.toString.toLowerCase
 
-    val df = sqlContext.read.format("com.databricks.spark.csv")
+    var dfr = sqlContext.read.format("com.databricks.spark.csv")
       .option("header", headerStr)
       .option("inferSchema", inferSchemaStr)
       .option("delimiter", delimiter)
-      .load(path)
+      .option("dateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+
+    if (!inferSchema && schema.isDefined) {
+      dfr = dfr.schema(StructType(schema.get.columns.map(column =>
+        StructField(column.name, FrameRdd.schemaDataTypeToSqlDataType(column.dataType), true))))
+    }
+
+    val df = dfr.load(path)
     val frameRdd = FrameRdd.toFrameRdd(df)
 
     if (schema.isDefined) {
@@ -54,6 +62,7 @@ object Import {
                                            not match the number of columns found in the csv file ($numColumnsFromLoad).""")
     }
     val frameSchema = if (schema.isDefined) schema.get else frameRdd.frameSchema
+
     new Frame(frameRdd, frameSchema)
   }
 
