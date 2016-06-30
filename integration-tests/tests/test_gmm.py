@@ -27,7 +27,7 @@ def test_gmm(tc):
     logger.info(f.inspect())
 
     logger.info("training the model on the frame")
-    model = tc.models.clustering.gmm.train(f, ['Data'], [1.0], 3)
+    model = tc.models.clustering.gmm.train(f, ['Data'], [1.0], 3, 99,seed=100)
     logger.info("predicting the cluster using the model and the frame")
     model.predict(f)
     assert(set(f.column_names) == set(['Data', 'Name','predicted_cluster']))
@@ -39,21 +39,14 @@ def test_gmm(tc):
     newlist = [[z[1] for z in x[0] if z[2] == a]for a in val]
     act_out = [[s.encode('ascii') for s in list] for list in newlist]
     act_out.sort(key = lambda x: x[0])
+    print(act_out)
 
-    exp_out1 = [['ab', 'mn', 'cd', 'gh', 'kl'], ['ij', 'yz', 'uv', 'ef', 'wx'], ['qr', 'op', 'st']]
+    #Providing seed value to test for a static result
+    exp_out1 = [['ab', 'mn', 'cd', 'gh', 'kl'], ['ij', 'yz', 'uv', 'wx'], ['qr', 'ef', 'op', 'st']]
     result = False
     for list in act_out:
         if list not in exp_out1:
             result = False
         else:
             result = True
-
-    if result == False:
-        exp_out2 = [['ab', 'mn', 'cd', 'gh', 'kl'], ['ij', 'qr', 'yz', 'uv', 'ef', 'wx', 'op', 'st']]
-        for list in act_out:
-            if list not in exp_out2:
-                result = False
-            else:
-                result = True
-
     assert(result == True)
