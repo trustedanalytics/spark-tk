@@ -7,6 +7,7 @@ MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
 
 
+
 export SPARKTK_HOME=$MAINDIR/core/target/spark-tk
 
 echo "spark tk home"
