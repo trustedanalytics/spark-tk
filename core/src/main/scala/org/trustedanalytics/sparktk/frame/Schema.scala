@@ -186,6 +186,39 @@ trait GraphElementSchema extends Schema {
 object SchemaHelper {
 
   /**
+   * Appends letter to the conflicting columns
+   *
+   * @param left list to which letter needs to be appended
+   * @param right list of columns which might conflict with the left list
+   * @param appendLetter letter to be appended
+   * @return Renamed list of columns
+   */
+  def funcAppendLetterForConflictingNames(left: List[Column],
+                                          right: List[Column],
+                                          appendLetter: String,
+                                          ignoreColumns: Option[List[Column]] = None): Seq[Column] = {
+
+    var leftColumnNames = left.map(column => column.name)
+    val rightColumnNames = right.map(column => column.name)
+    val ignoreColumnNames = ignoreColumns.map(column => column.map(_.name)).getOrElse(List(""))
+
+    left.map { column =>
+      if (ignoreColumnNames.contains(column.name))
+        column
+      else if (right.map(i => i.name).contains(column.name)) {
+        var name = column.name + "_" + appendLetter
+        while (leftColumnNames.contains(name) || rightColumnNames.contains(name)) {
+          name = name + "_" + appendLetter
+        }
+        leftColumnNames = leftColumnNames ++ List(name)
+        Column(name, column.dataType)
+      }
+      else
+        column
+    }
+  }
+
+  /**
    * Join two lists of columns.
    *
    * Join resolves naming conflicts when both left and right columns have same column names
@@ -196,28 +229,33 @@ object SchemaHelper {
    */
   def join(leftColumns: Seq[Column], rightColumns: Seq[Column]): Seq[Column] = {
 
-    val funcAppendLetterForConflictingNames = (left: List[Column], right: List[Column], appendLetter: String) => {
-
-      var leftColumnNames = left.map(column => column.name)
-      val rightColumnNames = right.map(column => column.name)
-
-      left.map(column =>
-        if (right.map(i => i.name).contains(column.name)) {
-          var name = column.name + "_" + appendLetter
-          while (leftColumnNames.contains(name) || rightColumnNames.contains(name)) {
-            name = name + "_" + appendLetter
-          }
-          leftColumnNames = leftColumnNames ++ List(name)
-          Column(name, column.dataType)
-        }
-        else
-          column)
-    }
-
     val left = funcAppendLetterForConflictingNames(leftColumns.toList, rightColumns.toList, "L")
     val right = funcAppendLetterForConflictingNames(rightColumns.toList, leftColumns.toList, "R")
 
     left ++ right
+  }
+
+
+  /**
+    * Resolve name conflicts (alias) in frame before sending it to spark data frame join
+    * @param left Left Frame
+    * @param right Right Frame
+    * @param joinColumns List of Join Columns (common to both frames)
+    * @return Aliased Left and Right Frame
+    */
+  def resolveColumnNamesConflictForJoin(left: FrameRdd, right: FrameRdd, joinColumns: List[Column]): (FrameRdd, FrameRdd) = {
+    val leftColumns = left.schema.columns.toList
+    val rightColumns = right.schema.columns.toList
+    val renamedLeftColumns = funcAppendLetterForConflictingNames(leftColumns, rightColumns, "L", Some(joinColumns))
+    val renamedRightColumns = funcAppendLetterForConflictingNames(rightColumns, leftColumns, "R", Some(joinColumns))
+
+    def createRenamingColumnMap(f: FrameRdd, newColumns: Seq[Column]): FrameRdd = {
+      val oldColumnNames = f.schema.columnNames
+      val newColumnNames = newColumns.map(_.name)
+      f.selectColumnsWithRename(oldColumnNames.zip(newColumnNames).toMap)
+    }
+
+    (createRenamingColumnMap(left, renamedLeftColumns), createRenamingColumnMap(right, renamedRightColumns))
   }
 
   def checkValidColumnsExistAndCompatible(leftFrame: FrameRdd, rightFrame: FrameRdd, leftColumns: Seq[String], rightColumns: Seq[String]) = {
