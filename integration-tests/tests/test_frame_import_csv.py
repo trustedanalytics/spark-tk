@@ -110,3 +110,31 @@ def test_import_with_unsupported_type(tc):
     frame = tc.frame.import_csv(path, ",", inferschema=False, schema=schema)
     assert(frame.row_count == 5)
     assert(frame.schema == schema)
+
+def test_frame_loading_multiple_files_with_wildcard(tc):
+        frame = tc.frame.import_csv("../datasets/movie-part*.csv", header=True)
+        assert(frame.schema == [('user', int),
+                                ('vertex_type', str),
+                                ('movie', int),
+                                ('weight', int),
+                                ('edge_type', str)])
+        assert(frame.take(frame.row_count).data == [[1, 'L', -131, 0, 'tr'],
+                                                    [-131, 'R', 1, 0, 'tr'],
+                                                    [1, 'L', -300, 2, 'tr'],
+                                                    [-300, 'R', 1, 2, 'tr'],
+                                                    [1, 'L', -570, 4, 'tr'],
+                                                    [-570, 'R', 1, 4, 'tr'],
+                                                    [2, 'L', -778, 1, 'tr'],
+                                                    [-778, 'R', 1, 1, 'tr'],
+                                                    [1, 'L', -1209, 2, 'va'],
+                                                    [-1209, 'R', 1, 2, 'va'],
+                                                    [2, 'L', -1218, 3, 'tr'],
+                                                    [-1218, 'R', 1, 3, 'tr'],
+                                                    [1, 'L', -1232, 3, 'tr'],
+                                                    [-1232, 'R', 1, 3, 'tr'],
+                                                    [3, 'L', -1416, 2, 'tr'],
+                                                    [-1416, 'R', 1, 2, 'tr'],
+                                                    [3, 'L', -1648, 3, 'tr'],
+                                                    [-1648, 'R', 1, 3, 'tr'],
+                                                    [3, 'L', -2347, 3, 'tr'],
+                                                    [-2347, 'R', 1, 3, 'tr']])

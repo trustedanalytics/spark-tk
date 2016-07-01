@@ -25,23 +25,34 @@ class Frame(object):
             self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
         else:
             if not isinstance(source, RDD):
+                inferred_schema = False
                 if isinstance(schema, list):
                     if all(isinstance(item, basestring) for item in schema):
                         # check if schema is just a list of column names (versus string and data type tuples)
                         schema = self._infer_schema(source, schema)
+                        inferred_schema = True
                     elif not all(isinstance(item, tuple) and
                                   len(item) == 2 and
                                   isinstance(item[0], str) for item in schema):
                         raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
-                    else:
-                        for item in schema:
-                            if not self._is_supported_datatype(item[1]):
-                                raise TypeError("Invalid schema.  %s is not a supported data type." % str(item[1]))
                 elif schema is None:
                     schema = self._infer_schema(source)
+                    inferred_schema = True
                 else:
                     # Schema is not a list or None
                     raise TypeError("Invalid schema type: %s.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
+                for item in schema:
+                    if not self._is_supported_datatype(item[1]):
+                        if inferred_schema:
+                            raise TypeError("The %s data type was found when inferring the schema, and it is not a "
+                                            "supported data type.  Instead, specify a schema that uses a supported data "
+                                            "type, and enable validate_schema so that the data is casted to the proper "
+                                            "data type.\n\nInferred schema: %s\n\nSupported data types: %s" %
+                                            (str(item[1]), str(schema), dtypes.dtypes))
+                        else:
+                            raise TypeError("Invalid schema.  %s is not a supported data type.\n\nSupported data types: %s" %
+                                            (str(item[1]), dtypes.dtypes))
+
                 source = tc.sc.parallelize(source)
             if schema and validate_schema:
                 # Validate schema by going through the data and checking the data type and attempting to parse it
@@ -74,7 +85,9 @@ class Frame(object):
         """
         inferred_types = []
         for item in row:
-            if not isinstance(item, list):
+            if item is None:
+                inferred_types.append(int)
+            elif not isinstance(item, list):
                 inferred_types.append(type(item))
             else:
                 inferred_types.append(dtypes.vector((len(item))))
