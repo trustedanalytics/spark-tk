@@ -111,6 +111,16 @@ case class ArimaModel private[arima] (ts: DenseVector,
                                       arimaModel: SparkTsArimaModel) extends Serializable {
 
   /**
+   * Coefficient values: intercept, AR, MA, with increasing degrees
+   */
+  def coefficients: Seq[Double] = arimaModel.coefficients
+
+  /**
+   * Time series values that the model was trained with
+   */
+  def timeseriesValues: Seq[Double] = ts.toArray
+
+  /**
    * Forecasts future periods using ARIMA.
    *
    * Provided fitted values of the time series as 1-step ahead forecasts, based on current model parameters, then

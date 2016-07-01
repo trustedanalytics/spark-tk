@@ -151,6 +151,24 @@ class ArimaModel(PropertiesObject):
          13.950679344897772,
          13.838311126610202]
 
+    Save the trained model to use later:
+
+        >>> save_path = "sandbox/savedArimaModel"
+        >>> model.save(save_path)
+
+    The model can be loaded from the tk context like:
+
+        >>> loaded_model = tc.load(save_path)
+
+        >>> loaded_model.predict()
+        [12.674342627141744,
+         13.638048984791693,
+         13.682219498657313,
+         13.883970022400577,
+         12.49564914570843,
+         13.66340392811346,
+         14.201275185574925]
+
     """
     def __init__(self, tc, scala_model):
         self._tc = tc
@@ -173,7 +191,7 @@ class ArimaModel(PropertiesObject):
         """
         List of time series values that were used to fit the model.
         """
-        return list(self._tc.jutils.convert.from_scala_seq(self._scala.ts()))
+        return list(self._tc.jutils.convert.from_scala_seq(self._scala.timeseriesValues()))
 
     @property
     def p(self):
@@ -216,6 +234,13 @@ class ArimaModel(PropertiesObject):
         A set of user provided initial parameters for optimization
         """
         return self._scala.initParams()
+
+    @property
+    def coefficients(self):
+        """
+        Coefficient values from the trained model (intercept, AR, MA, with increasing degrees).
+        """
+        return list(self._tc.jutils.convert.from_scala_seq(self._scala.coefficients()))
 
     def predict(self, future_periods = 0):
         """
