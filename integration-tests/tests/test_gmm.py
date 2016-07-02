@@ -33,10 +33,10 @@ def test_gmm(tc):
     assert(set(f.column_names) == set(['Data', 'Name','predicted_cluster']))
     assert(len(f.column_names) == 3)
     assert(model.k == 3)
-    x = f.take(13)
+    rows = f.take(13)
 
-    val = set(map(lambda y : y[2], x[0]))
-    newlist = [[z[1] for z in x[0] if z[2] == a]for a in val]
+    val = set(map(lambda y : y[2], rows[0]))
+    newlist = [[z[1] for z in rows[0] if z[2] == a]for a in val]
     act_out = [[s.encode('ascii') for s in list] for list in newlist]
     act_out.sort(key = lambda x: x[0])
     print(act_out)
