@@ -1,0 +1,59 @@
+# Build from the Java 8 maven image (include JDK 8 and Maven)
+FROM maven:3.3-jdk-8
+
+# Expose Port 8080
+EXPOSE 8080
+
+# ADD SETTINGS.XML FOR MAVEN PROXY SETTINGS
+# ADD ./settings.xml /root/.m2/settings.xml
+
+# CREATE SOURCE DIRECTORY
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# INSTALL REQUIRED PACKAGES
+RUN apt-get -q update && \
+    apt-get -q install -y \
+      build-essential \
+      bzip2 \
+      gcc \
+      gfortran \
+      python-qt4 \
+      python-dev \
+      wget \
+      zip \
+      unzip; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# INSTALL PIP
+RUN wget -nv https://bootstrap.pypa.io/get-pip.py
+RUN python get-pip.py
+
+# DOWNLOAD SPARK BINARY AND SET SPARK_HOME
+RUN wget -nv http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz
+RUN tar xzf spark-1.5.0-bin-hadoop2.6.tgz
+RUN mv spark-1.5.0-bin-hadoop2.6 spark
+RUN rm spark-1.5.0-bin-hadoop2.6.tgz
+
+ENV SPARK_HOME /usr/src/app/spark
+
+# CREATE SPARK-TK DIRECTORY AND COPY SOURCE FILES
+RUN mkdir -p /usr/src/app/spark-tk
+COPY ./ spark-tk/
+
+# CHDIR TO SPARK-TK DIRECTORY
+WORKDIR /usr/src/app/spark-tk
+
+# INSTALL PYTHON DEPENDENCIES
+RUN pip install -r python/requirements.txt
+
+# BUILD SPARK-TK [ RUNS UNIT TESTS AND INTEGRATION TESTS ]
+RUN mvn clean install -q
+
+# INSTALL IPYTHON AND ADD SPARK-TK TO PYTHONPATH
+RUN pip install ipython
+ENV PYTHONPATH /usr/src/app/spark-tk/python
+
+# LAUNCH IPYTHON [ docker run -it <image_name> ]
+CMD ["ipython"]

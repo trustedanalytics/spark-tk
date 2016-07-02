@@ -1,0 +1,16 @@
+language: bash
+
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker build -t spark-tk .
+  - docker run spark-tk
+
+after_success:
+  - echo "docker push spark-tk"
+
+after_failure:
+  - echo "Travis build failed"
