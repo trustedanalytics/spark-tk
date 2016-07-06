@@ -10,7 +10,7 @@ script:
   - docker run spark-tk
 
 after_success:
-  - echo "docker push spark-tk"
+  - echo "Travis build succeeded"
 
 after_failure:
   - echo "Travis build failed"
