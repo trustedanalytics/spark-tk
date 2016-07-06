@@ -308,6 +308,7 @@ object SchemaHelper {
   private def inferDataTypes(row: Row): Vector[DataType] = {
     row.toSeq.map(value => {
       value match {
+        case null => DataTypes.int32
         case i: Int => DataTypes.int32
         case l: Long => DataTypes.int64
         case f: Float => DataTypes.float32
