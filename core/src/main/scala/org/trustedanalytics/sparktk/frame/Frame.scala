@@ -80,8 +80,6 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
 
   init(frameRdd, frameSchema)
 
-  private val log: Logger = Logger.getLogger(Frame.getClass)
-
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 
   /**
