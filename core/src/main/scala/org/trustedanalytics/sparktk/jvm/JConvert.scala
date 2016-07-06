@@ -5,7 +5,6 @@ import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
 import org.joda.time.{ DateTimeZone, DateTime }
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
-
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 

@@ -45,7 +45,7 @@ class ATKTestCase(unittest.TestCase):
         cls.class_prefix = cls.__name__
 	
 	try:
-	    cls.tc = TkContext()
+	    cls.tk_context = TkContext()
 	except:
 	    print "Connect failed - could not establish a TkContext"
 	    raise
@@ -85,9 +85,6 @@ class ATKTestCase(unittest.TestCase):
     def tearDown(self):
         """Drop everything built with this system."""
         pass
-
-    def get_context():
-	return cls.tc
 
     @classmethod
     def tearDownClass(cls):

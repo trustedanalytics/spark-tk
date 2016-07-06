@@ -1,6 +1,5 @@
 package org.trustedanalytics.sparktk.frame
 
-import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
@@ -15,6 +14,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinInnerSummariza
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvSummarization, ExportToHbaseSummarization, ExportToHiveSummarization, ExportToJdbcSummarization, ExportToJsonSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
+import org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupBySummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
@@ -56,6 +56,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToJdbcSummarization
     with ExportToJsonSummarization
     with FlattenColumnsTransform
+    with GroupBySummarization
     with HistogramSummarization
     with JoinInnerSummarization
     with JoinLeftSummarization
@@ -77,8 +78,6 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with TopKSummarization
     with UnflattenColumnsTransform {
 
-  private val log: Logger = Logger.getLogger(Frame.getClass)
-
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 
   /**
@@ -94,7 +93,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
 
     // Infer the schema, if a schema was not provided
     val updatedSchema = if (frameSchema == null) {
-      SchemaHelper.inferSchema(frameRdd, 100, None)
+      SchemaHelper.inferSchema(frameRdd)
     }
     else
       frameSchema
@@ -104,7 +103,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
       val schemaValidation = super.validateSchema(frameRdd, updatedSchema)
 
       if (schemaValidation.validationReport.numBadValues > 0)
-        log.warn(s"Schema validation found ${schemaValidation.validationReport.numBadValues} bad values.")
+        logger.warn(s"Schema validation found ${schemaValidation.validationReport.numBadValues} bad values.")
 
       validationReport = Some(schemaValidation.validationReport)
       schemaValidation.validatedRdd
