@@ -1,5 +1,7 @@
 from sparktk.lazyloader import implicit
 from sparktk.tkcontext import TkContext
+from pyspark.rdd import RDD
+from pyspark.sql import SQLContext
 from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
@@ -56,7 +58,6 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
          ('county', str)]
     """
 
-    from pyspark.sql import SQLContext
 
     if schema is not None:
         inferschema = False   # if a custom schema is provided, don't waste time inferring the schema during load
@@ -124,4 +125,6 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
         rdd = df.rdd.map(cast_datetime)
 
     from sparktk.frame.frame import Frame  # circular dependency, so import late
+    jrdd = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(df._jdf.rdd())
+    rdd = RDD(jrdd, tc.sc)
     return Frame(tc, rdd, df_schema)
