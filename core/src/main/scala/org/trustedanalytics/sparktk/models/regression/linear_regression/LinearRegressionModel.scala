@@ -12,6 +12,7 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegressionModel }
 import scala.collection.mutable.ListBuffer
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
+import org.apache.commons.lang.StringUtils
 
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -48,50 +49,43 @@ object LinearRegressionModel extends TkSaveableObject {
 
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
-    require(valueColumn != null && !valueColumn.isEmpty, "valueColumn must not be null nor empty")
+    require(StringUtils.isNotEmpty(valueColumn), "valueColumn must not be null nor empty")
     require(maxIterations > 0, "numIterations must be a positive value")
     require(regParam >= 0, "regParam should be greater than or equal to 0")
 
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val dataFrame = trainFrameRdd.toLabeledDataFrame(valueColumn, observationColumns.toList)
+    val dataFrame = trainFrameRdd.toLabeledDataFrame(trainFrameRdd, valueColumn, observationColumns.toList)
 
     val linReg = new LinearRegression()
     linReg.setElasticNetParam(elasticNetParameter)
-    linReg.setFitIntercept(fitIntercept)
-    linReg.setMaxIter(maxIterations)
-    linReg.setRegParam(regParam)
-    linReg.setStandardization(standardization)
-    linReg.setTol(tolerance)
-    linReg.setLabelCol("label")
-    linReg.setFeaturesCol("features")
+      .setFitIntercept(fitIntercept)
+      .setMaxIter(maxIterations)
+      .setRegParam(regParam)
+      .setStandardization(standardization)
+      .setTol(tolerance)
+      .setLabelCol("label")
+      .setFeaturesCol("features")
 
     val linRegModel = linReg.fit(dataFrame)
 
-    val intercept = linRegModel.intercept
-    val weights = linRegModel.weights.toArray
-    val summary = linRegModel.summary
-    val explainedVariance = summary.explainedVariance
-    val meanAbsoluteError = summary.meanAbsoluteError
-    val meanSquaredError = summary.meanSquaredError
-    val objectiveHistory = summary.objectiveHistory
-    val r2 = summary.r2
-    val rootMeanSquaredError = summary.rootMeanSquaredError
-    val iterations = summary.totalIterations
+    linRegModel.setFeaturesCol("features")
+    linRegModel.setPredictionCol("predicted_value")
 
     LinearRegressionModel(valueColumn,
       observationColumns,
-      intercept,
-      weights.toSeq,
-      explainedVariance,
-      meanAbsoluteError,
-      meanSquaredError,
-      objectiveHistory.toSeq,
-      r2,
-      rootMeanSquaredError,
-      iterations,
+      linRegModel.intercept,
+      linRegModel.weights.toArray.toSeq,
+      linRegModel.summary.explainedVariance,
+      linRegModel.summary.meanAbsoluteError,
+      linRegModel.summary.meanSquaredError,
+      linRegModel.summary.objectiveHistory.toSeq,
+      linRegModel.summary.r2,
+      linRegModel.summary.rootMeanSquaredError,
+      linRegModel.summary.totalIterations,
       linRegModel)
   }
 
+  //Revisit with spark 1.6
   def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
     validateFormatVersion(formatVersion, 1)
     throw new RuntimeException("Load method yet to be implemented..!!")
@@ -102,7 +96,7 @@ object LinearRegressionModel extends TkSaveableObject {
 /**
  *
  * @param valueColumn Frame's column storing the value of the observation
- * @param observationColumns Frame's column(s) storing the observations
+ * @param observationColumnsTrain Frame's column(s) storing the observations
  * @param intercept The intercept of the trained model
  * @param weights Weights of the trained model
  * @param explainedVariance The explained variance regression score
@@ -115,7 +109,7 @@ object LinearRegressionModel extends TkSaveableObject {
  * @param sparkModel spark ml linear regression model
  */
 case class LinearRegressionModel(valueColumn: String,
-                                 observationColumns: Seq[String],
+                                 observationColumnsTrain: Seq[String],
                                  intercept: Double,
                                  weights: Seq[Double],
                                  explainedVariance: Double,
@@ -138,16 +132,13 @@ case class LinearRegressionModel(valueColumn: String,
    * @param observationColumns List of column(s) containing the observations
    * @return returns predicted frame
    */
-  def createPredictFrame(frame: Frame, observationColumns: Option[List[String]]): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]]): Frame = {
 
     require(frame != null, "require frame to predict")
 
     val predictFrameRdd = new FrameRdd(frame.schema, frame.rdd)
 
-    val dataFrame = predictFrameRdd.toLabeledDataFrame(observationColumns.get)
-
-    sparkModel.setFeaturesCol("features")
-    sparkModel.setPredictionCol("predicted_value")
+    val dataFrame = predictFrameRdd.toLabeledDataFrame(observationColumns.getOrElse(observationColumnsTrain.toList))
 
     val fullPrediction = sparkModel.transform(dataFrame)
     val prediction = fullPrediction.select("predicted_value").map(_.getDouble(0))

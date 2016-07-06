@@ -1,9 +1,6 @@
-from sparktk.loggers import log_load
+from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
-
-log_load(__name__)
-del log_load
 
 
 def train(frame,
@@ -21,7 +18,7 @@ def train(frame,
     Parameters
     ----------
 
-    :param frame : (Frame) A frame to train the model on
+    :param frame: (Frame) A frame to train the model on
     :param value_column: (str) Column name containing the value for each observation.
     :param observation_columns: (List[str]) List of column(s) containing the observations.
     :param elastic_net_parameter: (double) Parameter for the ElasticNet mixing. Default is 0.0
@@ -30,7 +27,7 @@ def train(frame,
     :param reg_param: (double) Parameter for regularization. Default is 0.0
     :param standardization: (bool) Parameter for whether to standardize the training features before fitting the model. Default is true
     :param tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
-    :return: returns LinearRegressionModel
+    :return: (LinearRegressionModel) A trained linear regression model
     """
 
     tc = frame._tc
@@ -63,60 +60,60 @@ class LinearRegressionModel(PropertiesObject):
 
     Example
     -------
-    >>> rows = [[0,0],[1, 2.5],[2, 5.0],[3, 7.5],[4, 10],[5, 12.5],[6, 13.0],[7, 17.15], [8, 18.5],[9, 23.5]]
-    >>> schema = [("x1", float),("y", float)]
-    >>> frame = tc.frame.create(rows, schema)
+        >>> rows = [[0,0],[1, 2.5],[2, 5.0],[3, 7.5],[4, 10],[5, 12.5],[6, 13.0],[7, 17.15], [8, 18.5],[9, 23.5]]
+        >>> schema = [("x1", float),("y", float)]
+        >>> frame = tc.frame.create(rows, schema)
 
-    Consider the following frame containing two columns.
+        Consider the following frame containing two columns.
 
-    >>> frame.inspect()
-    [#]  x1  y
-    ==============
-    [0]   0      0
-    [1]   1    2.5
-    [2]   2    5.0
-    [3]   3    7.5
-    [4]   4     10
-    [5]   5   12.5
-    [6]   6   13.0
-    [7]   7  17.15
-    [8]   8   18.5
-    [9]   9   23.5
+        >>> frame.inspect()
+        [#]  x1  y
+        ==============
+        [0]   0      0
+        [1]   1    2.5
+        [2]   2    5.0
+        [3]   3    7.5
+        [4]   4     10
+        [5]   5   12.5
+        [6]   6   13.0
+        [7]   7  17.15
+        [8]   8   18.5
+        [9]   9   23.5
 
-    >>> model = tc.models.regression.linear_regression_model.train(frame,'y',['x1'])
-    <progress>
+        >>> model = tc.models.regression.linear_regression_model.train(frame,'y',['x1'])
+        <progress>
 
-    >>> model
-    explained_variance      = 49.2759280303
-    intercept               = -0.0327272727273
-    iterations              = 3
-    mean_absolute_error     = 0.529939393939
-    mean_squared_error      = 0.630096969697
-    objective_history       = [0.5, 0.007324606455391056, 0.006312834669731454]
-    observation_columns     = [u'x1']
-    r2                      = 0.987374330661
-    root_mean_squared_error = 0.793786476136
-    value_column            = y
-    weights                 = WrappedArray(2.4439393939393934)
+        >>> model
+        explained_variance      = 49.2759280303
+        intercept               = -0.0327272727273
+        iterations              = 3
+        mean_absolute_error     = 0.529939393939
+        mean_squared_error      = 0.630096969697
+        objective_history       = [0.5, 0.007324606455391056, 0.006312834669731454]
+        observation_columns     = [u'x1']
+        r2                      = 0.987374330661
+        root_mean_squared_error = 0.793786476136
+        value_column            = y
+        weights                 = WrappedArray(2.4439393939393934)
 
-    >>> predicted_frame = model.create_predict_frame(frame, ["x1"])
-    <progress>
+        >>> predicted_frame = model.predict(frame, ["x1"])
+        <progress>
 
-    >>> predicted_frame.inspect()
-    [#]  x1   y      predicted_value
-    =================================
-    [0]  0.0    0.0  -0.0327272727273
-    [1]  1.0    2.5     2.41121212121
-    [2]  2.0    5.0     4.85515151515
-    [3]  3.0    7.5     7.29909090909
-    [4]  4.0   10.0     9.74303030303
-    [5]  5.0   12.5      12.186969697
-    [6]  6.0   13.0     14.6309090909
-    [7]  7.0  17.15     17.0748484848
-    [8]  8.0   18.5     19.5187878788
-    [9]  9.0   23.5     21.9627272727
+        >>> predicted_frame.inspect()
+        [#]  x1   y      predicted_value
+        =================================
+        [0]  0.0    0.0  -0.0327272727273
+        [1]  1.0    2.5     2.41121212121
+        [2]  2.0    5.0     4.85515151515
+        [3]  3.0    7.5     7.29909090909
+        [4]  4.0   10.0     9.74303030303
+        [5]  5.0   12.5      12.186969697
+        [6]  6.0   13.0     14.6309090909
+        [7]  7.0  17.15     17.0748484848
+        [8]  8.0   18.5     19.5187878788
+        [9]  9.0   23.5     21.9627272727
 
-    """
+        """
 
     def __init__(self, tc, scala_model):
         self._tc = tc
@@ -135,7 +132,7 @@ class LinearRegressionModel(PropertiesObject):
     @property
     def observation_columns(self):
         """List of column(s) containing the observations."""
-        return self._tc.jutils.convert.from_scala_vector(self._scala.observationColumns())
+        return self._tc.jutils.convert.from_scala_vector(self._scala.observationColumnsTrain())
 
     @property
     def intercept(self):
@@ -182,15 +179,20 @@ class LinearRegressionModel(PropertiesObject):
         """The number of training iterations until termination"""
         return self._scala.iterations()
 
-    def create_predict_frame(self, frame, observation_columns):
+    def predict(self, frame, observation_columns):
         """
         Predict values for a frame using a trained Linear Regression model
 
-        :param frame: The frame to predict on
-        :param observation_columns: List of column(s) containing the observations
-        :return: returns predicted frame
+        :param frame: (Frame) The frame to predict on
+        :param observation_columns: (List[str]) List of column(s) containing the observations
+        :return: (Frame) returns predicted frame
         """
-        return self._tc.frame.create(self._scala.createPredictFrame(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
+        return self._tc.frame.create(self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
 
     def save(self, path):
+        """
+        Saves the model to given path
+
+        :param path: (str) path to save
+        """
         self._scala.save(self._tc._scala_sc, path)

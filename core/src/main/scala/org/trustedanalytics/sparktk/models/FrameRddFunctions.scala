@@ -24,26 +24,13 @@ import org.apache.spark.sql.types.{ DoubleType, StructField, StructType }
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ LabeledPointWithFrequency, FrameRdd }
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
 
 /**
  * Functions for extending frames with model-related methods.
- * <p>
- * This is best used by importing ModelPluginImplicits._
- * </p>
- *
  * @param self input that these functions are applicable to
  */
 class FrameRddFunctions(self: FrameRdd) {
-  /**
-   * Convert FrameRdd into RDD[LabeledPoint] format required by MLLib
-   */
-  def toLabeledPointRDD(labelColumnName: String, featureColumnNames: List[String]): RDD[LabeledPoint] = {
-    self.mapRows(row => {
-      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
-      new LabeledPoint(DataTypes.toDouble(row.value(labelColumnName)), new DenseVector(features.toArray))
-    })
-  }
-
   /**
    * Convert FrameRdd into RDD[LabeledPointWithFrequency] format required for updates in MLLib code
    */
@@ -68,8 +55,8 @@ class FrameRddFunctions(self: FrameRdd) {
   /**
    * Convert FrameRdd into labeled DataFrame with label of type double, and features of type vector
    */
-  def toLabeledDataFrame(labelColumnName: String, featureColumnNames: List[String]): DataFrame = {
-    val labeledPointRdd = toLabeledPointRDD(labelColumnName, featureColumnNames)
+  def toLabeledDataFrame(rdd: FrameRdd, labelColumnName: String, featureColumnNames: List[String]): DataFrame = {
+    val labeledPointRdd = toLabeledPointRDD(rdd, labelColumnName, featureColumnNames)
     val rowRdd: RDD[Row] = labeledPointRdd.map(labeledPoint => new GenericRow(Array[Any](labeledPoint.label, labeledPoint.features)))
     val schema = StructType(Seq(StructField("label", DoubleType, true), StructField("features", new VectorUDT, true)))
     new SQLContext(self.sparkContext).createDataFrame(rowRdd, schema)
