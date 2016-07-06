@@ -51,9 +51,8 @@ RUN pip install -r python/requirements.txt
 # BUILD SPARK-TK [ RUNS UNIT TESTS AND INTEGRATION TESTS ]
 RUN mvn clean install -q
 
-# INSTALL IPYTHON AND ADD SPARK-TK TO PYTHONPATH
-RUN pip install ipython
+# ADD SPARK-TK TO PYTHONPATH
 ENV PYTHONPATH /usr/src/app/spark-tk/python
 
-# LAUNCH IPYTHON [ docker run -it <image_name> ]
-CMD ["ipython"]
+# LAUNCH PYTHON [ docker run -it <image_name> ]
+CMD ["python"]
