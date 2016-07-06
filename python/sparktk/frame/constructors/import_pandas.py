@@ -115,11 +115,6 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
     if len(pandas_frame.columns) != len(field_names):
         raise ValueError("Number of columns in Pandasframe {0} does not match the number of columns in the"
                          " schema provided {1}.".format(len(pandas_frame.columns), len(field_names)))
-    begin_index = 0
-    iteration = 1
-    upload_row_chunk = 10000   # TODO: put this in config file
-    end_index = upload_row_chunk
-    frame = None
 
     date_time_columns = [i for i, x in enumerate(pandas_frame.dtypes) if x == "datetime64[ns]"]
     has_date_time = len(date_time_columns) > 0
@@ -136,28 +131,14 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
                 row[i] = long((long(dt.strftime("%s")) * 1000) + (dt.microsecond // 1000))
         return row
 
-    while True:
-        pandas_rows = pandas_frame[begin_index:end_index].values.tolist()
+    pandas_rows = pandas_frame[0:len(pandas_frame.index)].values.tolist()
 
-        # if the dataframe has date/time columns, map them to ms 
-        if (has_date_time):
-            pandas_rows = map(pandas_datetime_to_ms, pandas_rows)
+    # if the dataframe has date/time columns, map them to ms
+    if (has_date_time):
+        pandas_rows = map(pandas_datetime_to_ms, pandas_rows)
 
-        if frame is None:
-            # create frame with the pandas_rows
-            frame = tc.frame.create(pandas_rows, schema)
-        else:
-            # append pandas_rows to the frame
-            frame.append(tc.frame.create(pandas_rows, schema))
-
-        # check if we're done adding all the rows
-        if end_index > len(pandas_frame.index):
-            break
-
-        # update begin/end indices and then move on to the next chunk
-        iteration += 1
-        begin_index = end_index
-        end_index = upload_row_chunk * iteration
+    # create frame with the pandas_rows
+    frame = tc.frame.create(pandas_rows, schema)
 
     if validate_schema:
         frame = tc.frame.create(frame.rdd, schema, validate_schema)
