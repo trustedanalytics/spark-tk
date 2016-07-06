@@ -72,6 +72,10 @@ class _Vector(object):
             return array
         return constructor
 
+    @property
+    def is_complex_type(self):
+        return True
+
     @staticmethod
     def get_from_string(data_type_str):
         return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
