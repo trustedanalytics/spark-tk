@@ -8,6 +8,7 @@ import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayes
 import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
 import org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
+import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 
 object Loaders {
@@ -38,6 +39,7 @@ object Loaders {
    */
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(Frame,
+      GaussianMixtureModel,
       KMeansModel,
       NaiveBayesModel,
       PcaModel,
