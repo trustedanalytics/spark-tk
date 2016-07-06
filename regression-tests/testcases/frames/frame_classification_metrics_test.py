@@ -32,18 +32,17 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from qalib import common_utils as cu
-from qalib import atk_test
+from qalib import sparktk_test
 
 
-class ClassificationMetrics(atk_test.ATKTestCase):
+class ClassificationMetrics(sparktk_test.SparkTKTestCase):
 
     def test_multinomial_frame_classification(self):
         """Tests the confusion matrix functionality"""
-        schema1 = [("actual", int), ("predicted", int), ("count", int)]
-        class_csv = cu.get_file("class_data.csv") # the name of our data file, needs to be in hdfs for the test to run
+        schema = [("actual", int), ("predicted", int), ("count", int)]
+        class_csv = self.get_file("class_data.csv") # the name of our data file, needs to be in hdfs for the test to run
         actual_result = [5, 2, 3, 0, 5, 3, 0, 2, 5] # the values we expect to get from our test
-        context = self.tk_context # the sparktk context we get from atk_test
-	frame = context.frame.import_csv(str(class_csv), schema=schema1) # uploading our data file, will return a frame
+	frame = self.context.frame.import_csv(class_csv, schema=schema) # uploading our data file, will return a frame
 	classMetrics = frame.multiclass_classification_metrics('actual', 'predicted', frequency_column='count') # the label column, result column, and frequency column are the params
         conf_matrix = classMetrics.confusion_matrix.values 
 	cumulative_matrix_list = [conf_matrix[0][0],

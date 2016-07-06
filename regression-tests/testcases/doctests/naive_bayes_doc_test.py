@@ -31,11 +31,9 @@ import unittest
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-from qalib import atk_test
-#import trustedanalytics as ia
-from qalib import common_utils as cu
+from qalib import sparktk_test
 
-class ClassifierTest(atk_test.ATKTestCase):
+class ClassifierTest(sparktk_test.SparkTKTestCase):
 
     def test_model_class_doc(self):
         """Documentation test for classifiers"""
@@ -48,11 +46,6 @@ class ClassifierTest(atk_test.ATKTestCase):
         atk_server_uri = os.getenv("ATK_SERVER_URI", "") #ia.server.uri)
         credentials_file = os.getenv("ATK_CREDENTIALS", "")
 
-        # set the server, and use the credentials to connect to the ATK
-        #ia.server.uri = atk_server_uri
-        #ia.connect(credentials_file)
-	context = self.tk_context
-	
         # The general workflow will be build a frame, build a model,
         # train the model on the frame, predict using the model,
         # evaluate the results using classification metrics
@@ -86,14 +79,10 @@ class ClassifierTest(atk_test.ATKTestCase):
 		       ("f3", int)]
 
 	self.csv = "temp_csv_naive_bayes_doc_test.csv"
-	self.model = cu.get_file(self.csv)
-	frame = context.frame.import_csv(self.model, schema=self.schema)	
-        nb_model = context.models.classification.naive_bayes.train(frame, "class", ["f1", "f2", "f3"])
+	self.model = self.get_file(self.csv)
+	frame = self.context.frame.import_csv(self.model, schema=self.schema)	
+        nb_model = self.context.models.classification.naive_bayes.train(frame, "class", ["f1", "f2", "f3"])
 
-	print "nb model: " + str(nb_model)
-	#print "inspect: " + str(nb_model.inspect())
-
-	#print frame.inspect()
 
         # Build a model
         # Naive Bayes is a basic classifier
