@@ -46,7 +46,7 @@ class Frame(object):
                         if inferred_schema:
                             raise TypeError("The %s data type was found when inferring the schema, and it is not a "
                                             "supported data type.  Instead, specify a schema that uses a supported data "
-                                            "type, and enable validate_schema so that the data is casted to the proper "
+                                            "type, and enable validate_schema so that the data is converted to the proper "
                                             "data type.\n\nInferred schema: %s\n\nSupported data types: %s" %
                                             (str(item[1]), str(schema), dtypes.dtypes))
                         else:

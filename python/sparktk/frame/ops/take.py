@@ -72,7 +72,7 @@ def take(self, n, offset=0, columns=None):
 
     schema = self.schema
     if columns is not None:
-        if isinstance(columns, str):
+        if isinstance(columns, basestring):
             columns = [columns]
         elif not isinstance(columns, list):
             raise TypeError("columns must be be a string list of strings, but was %s" % type(columns))
