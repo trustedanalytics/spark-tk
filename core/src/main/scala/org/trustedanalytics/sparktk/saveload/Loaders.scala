@@ -9,6 +9,8 @@ import org.trustedanalytics.sparktk.models.classification.random_forest_classifi
 import org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
+import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
+import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 
 object Loaders {
@@ -38,7 +40,9 @@ object Loaders {
    * formatId -> loader function
    */
   private lazy val loaders: Map[String, LoaderType] = {
-    val entries: Seq[TkSaveableObject] = List(Frame,
+    val entries: Seq[TkSaveableObject] = List(ArimaModel,
+      ArxModel,
+      Frame,
       GaussianMixtureModel,
       KMeansModel,
       NaiveBayesModel,
