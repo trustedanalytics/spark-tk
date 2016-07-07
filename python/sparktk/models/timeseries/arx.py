@@ -3,6 +3,7 @@ ARX (autoregressive exogenous) Model
 """
 
 from sparktk.loggers import log_load; log_load(__name__); del log_load
+from sparktk.lazyloader import implicit
 
 from sparktk.propobj import PropertiesObject
 
@@ -51,9 +52,18 @@ def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False)
 
     return ArxModel(tc, scala_model)
 
+
+def load(path, tc=implicit):
+    """load ArxModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, ArxModel)
+
+
 def _get_scala_obj(tc):
     """Gets reference to the ArxModel scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
+
 
 class ArxModel(PropertiesObject):
     """
@@ -170,7 +180,7 @@ class ArxModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """
         Load an ARX model
 
