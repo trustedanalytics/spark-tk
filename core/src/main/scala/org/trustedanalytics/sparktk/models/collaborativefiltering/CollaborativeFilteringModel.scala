@@ -20,7 +20,7 @@ object CollaborativeFilteringModel extends TkSaveableObject {
    * @param sourceColumnName source column name.
    * @param destColumnName destination column name.
    * @param weightColumnName weight column name.
-   * @param maxSteps max number of super-steps (max iterations) before the algorithm terminates. Default = 10
+   * @param maxSteps max number of super-steps (max iterations) before the algorithm terminates.
    * @param regularization float value between 0 .. 1
    * @param alpha double value between 0 .. 1
    * @param numFactors number of the desired factors (rank)
@@ -50,8 +50,8 @@ object CollaborativeFilteringModel extends TkSaveableObject {
     require(StringUtils.isNotEmpty(destColumnName), "destination column name is required")
     require(StringUtils.isNotEmpty(weightColumnName), "weight column name is required")
     require(maxSteps > 1, "min steps must be a positive integer")
-    require(regularization > 0, "regularization must be a positive value")
-    require(alpha > 0, "alpha must be a positive value")
+    require(regularization > 0 && regularization <1 , "regularization must be a positive value")
+    require(alpha > 0 & alpha <1 , "alpha must be a positive value")
     require(checkpointIterations > 0, "Iterations between checkpoints must be positive")
     require(numFactors > 0, "number of factors must be a positive integer")
     require(numUserBlocks > 0, "number of user blocks must be a positive integer")
@@ -157,7 +157,7 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
     new RowWrapperFunctions(rowWrapper)
   }
 
-  val outputSchema = FrameSchema(Vector(Column("id", DataTypes.int), Column("features", DataTypes.vector(numFactors))))
+  private lazy val outputSchema = FrameSchema(Vector(Column("id", DataTypes.int), Column("features", DataTypes.vector(numFactors))))
   lazy val userFrame = {
     val userRowrdd = sparkModel.userFeatures.map {
       case (id, features) => Row(id, DataTypes.toVector(features.length)(features))
