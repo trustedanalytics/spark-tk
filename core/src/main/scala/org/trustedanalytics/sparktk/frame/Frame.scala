@@ -145,7 +145,7 @@ object Frame extends TkSaveableObject {
    * @param tkMetadata TK metadata
    * @return
    */
-  def load(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
     require(tkFormatVersion == formatVersion, s"Frame load only supports version $tkFormatVersion.  Got version $formatVersion")
     // no extra metadata in version 1
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)

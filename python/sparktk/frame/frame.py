@@ -175,7 +175,7 @@ class Frame(object):
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
-    def load(tc, scala_frame):
+    def _from_scala(tc, scala_frame):
         """creates a python Frame for the given scala Frame"""
         return Frame(tc, scala_frame)
 

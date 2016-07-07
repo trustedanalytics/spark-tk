@@ -6,6 +6,7 @@ import org.apache.spark.mllib.optimization.{ SquaredL2Updater, L1Updater }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
@@ -81,7 +82,7 @@ object SvmModel extends TkSaveableObject {
       miniBatchFraction)
   }
 
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
     val m: SvmModelTkMetaData = SaveLoad.extractFromJValue[SvmModelTkMetaData](tkMetadata)
@@ -96,6 +97,16 @@ object SvmModel extends TkSaveableObject {
       m.regType,
       m.regParam,
       m.miniBatchFraction)
+  }
+
+  /**
+   * Load a SvmModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): SvmModel = {
+    tc.load(path).asInstanceOf[SvmModel]
   }
 }
 
