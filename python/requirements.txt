@@ -7,3 +7,5 @@ python-dateutil
 pytest
 pdoc
 importlib
+pytz
+pandas

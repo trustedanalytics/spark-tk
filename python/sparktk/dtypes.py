@@ -41,7 +41,6 @@ class _Vector(object):
 
     def __init__(self, length):
         self.length = int(length)
-        self.is_complex_type = True
         self.constructor = self._get_constructor()
 
     def _get_constructor(self):
@@ -73,9 +72,17 @@ class _Vector(object):
             return array
         return constructor
 
+    @property
+    def is_complex_type(self):
+        return True
+
     @staticmethod
     def get_from_string(data_type_str):
         return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+
+    @property
+    def is_complex_type(self):
+        return True
 
     def __repr__(self):
         return "vector(%d)" % self.length

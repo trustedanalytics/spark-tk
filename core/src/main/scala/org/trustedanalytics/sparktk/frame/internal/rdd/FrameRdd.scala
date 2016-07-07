@@ -767,6 +767,5 @@ object FrameRdd {
     }
     fields
   }
-
 }
 

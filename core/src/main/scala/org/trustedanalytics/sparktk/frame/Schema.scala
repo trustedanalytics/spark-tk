@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.frame
 
 import java.util.{ ArrayList => JArrayList }
 
+import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.commons.lang.{ StringUtils => CommonsStringUtils }
@@ -185,6 +186,10 @@ trait GraphElementSchema extends Schema {
 
 object SchemaHelper {
 
+  val config = ConfigFactory.load(this.getClass.getClassLoader)
+
+  lazy val defaultInferSchemaSampleSize = config.getInt("trustedanalytics.sparktk.frame.schema.infer-schema-sample-size")
+
   /**
    * Join two lists of columns.
    *
@@ -303,6 +308,7 @@ object SchemaHelper {
   private def inferDataTypes(row: Row): Vector[DataType] = {
     row.toSeq.map(value => {
       value match {
+        case null => DataTypes.int32
         case i: Int => DataTypes.int32
         case l: Long => DataTypes.int64
         case f: Float => DataTypes.float32
@@ -321,8 +327,9 @@ object SchemaHelper {
    * @param data RDD of data
    * @return Schema inferred from the data
    */
-  def inferSchema(data: RDD[Row], sampleSize: Int, columnNames: Option[List[String]]): Schema = {
-    val sampleSet = data.take(math.min(data.count.toInt, sampleSize))
+  def inferSchema(data: RDD[Row], sampleSize: Option[Int] = None, columnNames: Option[List[String]] = None): Schema = {
+
+    val sampleSet = data.take(math.min(data.count.toInt, sampleSize.getOrElse(defaultInferSchemaSampleSize)))
 
     val dataTypes = sampleSet.foldLeft(inferDataTypes(sampleSet.head)) {
       case (v: Vector[DataType], r: Row) => mergeTypes(v, inferDataTypes(r))
