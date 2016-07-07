@@ -9,12 +9,12 @@ def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     """
     Creates a Naive Bayes by training on the given frame
 
-    :param frame: frame of training data
-    :param label_column Column containing the label for each observation
-    :param observation_columns Column(s) containing the observations
-    :param lambda_parameter Additive smoothing parameter Default is 1.0
+    :param frame: (Frame) frame of training data
+    :param label_column: (str) Column containing the label for each observation
+    :param observation_columns: (List[str]) Column(s) containing the observations
+    :param lambda_parameter: (float) Additive smoothing parameter Default is 1.0
 
-    :return: NaiveBayesModel
+    :return: (NaiveBayesModel) Trained Naive Bayes model
 
     """
     tc = frame._tc
@@ -45,54 +45,54 @@ class NaiveBayesModel(PropertiesObject):
     Example
     -------
 
-    >>> frame = tc.frame.create([[1,19.8446136104,2.2985856384],
-    ...                          [1,16.8973559126,2.6933495054],
-    ...                          [1,5.5548729596, 2.7777687995],
-    ...                          [0,46.1810010826,3.1611961917],
-    ...                          [0,44.3117586448,3.3458963222],
-    ...                          [0,34.6334526911,3.6429838715]],
-    ...                          [('Class', int), ('Dim_1', float), ('Dim_2', float)])
+        >>> frame = tc.frame.create([[1,19.8446136104,2.2985856384],
+        ...                          [1,16.8973559126,2.6933495054],
+        ...                          [1,5.5548729596, 2.7777687995],
+        ...                          [0,46.1810010826,3.1611961917],
+        ...                          [0,44.3117586448,3.3458963222],
+        ...                          [0,34.6334526911,3.6429838715]],
+        ...                          [('Class', int), ('Dim_1', float), ('Dim_2', float)])
 
-    >>> model = tc.models.classification.naive_bayes.train(frame, 'Class', ['Dim_1', 'Dim_2'], 0.9)
+        >>> model = tc.models.classification.naive_bayes.train(frame, 'Class', ['Dim_1', 'Dim_2'], 0.9)
 
-    >>> model.label_column
-    u'Class'
+        >>> model.label_column
+        u'Class'
 
-    >>> model.observation_columns
-    [u'Dim_1', u'Dim_2']
+        >>> model.observation_columns
+        [u'Dim_1', u'Dim_2']
 
-    >>> model.lambda_parameter
-    0.9
+        >>> model.lambda_parameter
+        0.9
 
-    >>> model.predict(frame, ['Dim_1', 'Dim_2'])
+        >>> model.predict(frame, ['Dim_1', 'Dim_2'])
 
-    >>> frame.inspect()
-    [#]  Class  Dim_1          Dim_2         predicted_class
-    ========================================================
-    [0]      1  19.8446136104  2.2985856384              0.0
-    [1]      1  16.8973559126  2.6933495054              1.0
-    [2]      1   5.5548729596  2.7777687995              1.0
-    [3]      0  46.1810010826  3.1611961917              0.0
-    [4]      0  44.3117586448  3.3458963222              0.0
-    [5]      0  34.6334526911  3.6429838715              0.0
+        >>> frame.inspect()
+        [#]  Class  Dim_1          Dim_2         predicted_class
+        ========================================================
+        [0]      1  19.8446136104  2.2985856384              0.0
+        [1]      1  16.8973559126  2.6933495054              1.0
+        [2]      1   5.5548729596  2.7777687995              1.0
+        [3]      0  46.1810010826  3.1611961917              0.0
+        [4]      0  44.3117586448  3.3458963222              0.0
+        [5]      0  34.6334526911  3.6429838715              0.0
 
-    >>> model.save("sandbox/naivebayes")
+        >>> model.save("sandbox/naivebayes")
 
-    >>> restored = tc.load("sandbox/naivebayes")
+        >>> restored = tc.load("sandbox/naivebayes")
 
-    >>> restored.label_column == model.label_column
-    True
+        >>> restored.label_column == model.label_column
+        True
 
-    >>> restored.lambda_parameter == model.lambda_parameter
-    True
+        >>> restored.lambda_parameter == model.lambda_parameter
+        True
 
-    >>> set(restored.observation_columns) == set(model.observation_columns)
-    True
+        >>> set(restored.observation_columns) == set(model.observation_columns)
+        True
 
-    >>> metrics = model.test(frame)
+        >>> metrics = model.test(frame)
 
-    >>> metrics.precision
-    1.0
+        >>> metrics.precision
+        1.0
 
     """
 

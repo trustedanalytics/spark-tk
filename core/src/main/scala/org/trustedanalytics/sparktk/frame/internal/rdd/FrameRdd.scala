@@ -94,7 +94,10 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   lazy val sparkSchema = FrameRdd.schemaToStructType(frameSchema)
 
   /**
-   * Convert a FrameRdd to a Spark Dataframe
+   * Convert a FrameRdd to a Spark Dataframe.
+   *
+   * Note that datetime columns will be represented as longs in the DataFrame.
+   *
    * @return Dataframe representing the FrameRdd
    */
   def toDataFrame: DataFrame = {
@@ -518,9 +521,7 @@ object FrameRdd {
             rowArray(i) = null
           }
           else if (fields(i).dataType.getClass == TimestampType.getClass || fields(i).dataType.getClass == DateType.getClass) {
-            rowArray(i) = o.toString
-            // todo - add conversion to datetime object
-            // rowArray(i) = org.trustedanalytics.atk.domain.schema.DataTypes.toDateTime(o.toString).toString
+            rowArray(i) = row.getTimestamp(i).getTime
           }
           else if (fields(i).dataType.getClass == ShortType.getClass) {
             rowArray(i) = row.getShort(i).toInt
@@ -608,8 +609,7 @@ object FrameRdd {
             case null => null
             case _ =>
               val colType = schema.column(i).dataType
-              rowArray(i) = o.asInstanceOf[colType.ScalaType]
-
+              rowArray(i) = colType.parse(o).get
           }
       }
       new GenericRow(rowArray)
@@ -688,7 +688,7 @@ object FrameRdd {
       case x if x.equals(DataTypes.float32) => FloatType
       case x if x.equals(DataTypes.float64) => DoubleType
       case x if x.equals(DataTypes.string) => StringType
-      case x if x.equals(DataTypes.datetime) => StringType
+      case x if x.equals(DataTypes.datetime) => LongType
       case x if x.isVector => VectorType
       case x if x.equals(DataTypes.ignore) => StringType
     }
@@ -720,11 +720,11 @@ object FrameRdd {
       case `decimalType` => float64
       case `shortType` => int32
       case `stringType` => DataTypes.string
-      case `dateType` => DataTypes.string
+      //case `dateType` => DataTypes.string
       case `byteType` => int32
-      case `booleanType` => int32
-      case `timeStampType` => DataTypes.string
-      case _ => throw new IllegalArgumentException(s"unsupported type $a")
+      //case `booleanType` => int32
+      case `timeStampType` => DataTypes.datetime
+      case _ => throw new IllegalArgumentException(s"unsupported column data type $a")
     }
   }
 
@@ -744,7 +744,7 @@ object FrameRdd {
     else if ("dateType".equalsIgnoreCase(sparkDataType)) { DataTypes.string }
     else if ("byteType".equalsIgnoreCase(sparkDataType)) { int32 }
     else if ("booleanType".equalsIgnoreCase(sparkDataType)) { int32 }
-    else if ("timeStampType".equalsIgnoreCase(sparkDataType)) { DataTypes.string }
+    else if ("timeStampType".equalsIgnoreCase(sparkDataType)) { DataTypes.datetime }
     else throw new IllegalArgumentException(s"unsupported type $sparkDataType")
   }
 
@@ -761,12 +761,11 @@ object FrameRdd {
           case x if x.equals(DataTypes.float32) => "double"
           case x if x.equals(DataTypes.float64) => "double"
           case x if x.equals(DataTypes.string) => "string"
-          case x if x.equals(DataTypes.datetime) => "string"
+          case x if x.equals(DataTypes.datetime) => "long"
           case x => throw new IllegalArgumentException(s"unsupported export type ${x.toString}")
         })
     }
     fields
   }
-
 }
 
