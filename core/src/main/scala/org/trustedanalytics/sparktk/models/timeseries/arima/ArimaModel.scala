@@ -21,6 +21,7 @@ import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.SparkContext
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import com.cloudera.sparkts.models.{ ARIMA => SparkTsArima, ARIMAModel => SparkTsArimaModel }
 
@@ -81,6 +82,16 @@ object ArimaModel extends TkSaveableObject {
   }
 
   /**
+   * Load a ArimaModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): ArimaModel = {
+    tc.load(path).asInstanceOf[ArimaModel]
+  }
+
+  /**
    * Load model from file
    *
    * @param sc active spark context
@@ -89,7 +100,7 @@ object ArimaModel extends TkSaveableObject {
    * @param tkMetadata the data to save (should be a case class), must be serializable to JSON using json4s
    * @return ArimaModel loaded from the specified file
    */
-  override def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  override def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
     validateFormatVersion(formatVersion, validFormatVersions: _*)
     val m: ArimaModelTkMetaData = SaveLoad.extractFromJValue[ArimaModelTkMetaData](tkMetadata)
 

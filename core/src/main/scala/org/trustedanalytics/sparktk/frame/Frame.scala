@@ -5,7 +5,7 @@ import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.sparktk.frame.internal.{ ValidationReport, BaseFrame }
+import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, ValidationReport }
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ BinaryClassificationMetricsSummarization, MultiClassClassificationMetricsSummarization }
@@ -16,6 +16,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvS
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupBySummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
+import org.trustedanalytics.sparktk.frame.internal.ops.poweriterationclustering.PowerIterationClusteringSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationMatrixSummarization, CorrelationSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
@@ -63,6 +64,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with JoinOuterSummarization
     with JoinRightSummarization
     with MultiClassClassificationMetricsSummarization
+    with PowerIterationClusteringSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
@@ -143,7 +145,7 @@ object Frame extends TkSaveableObject {
    * @param tkMetadata TK metadata
    * @return
    */
-  def load(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
     require(tkFormatVersion == formatVersion, s"Frame load only supports version $tkFormatVersion.  Got version $formatVersion")
     // no extra metadata in version 1
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
