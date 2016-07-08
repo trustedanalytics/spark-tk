@@ -121,7 +121,7 @@ class LinearRegressionModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         return LinearRegressionModel(tc, scala_model)
 
     @property

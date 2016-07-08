@@ -5,6 +5,7 @@ import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.models.FrameRddFunctions
@@ -86,11 +87,21 @@ object LinearRegressionModel extends TkSaveableObject {
   }
 
   //Revisit with spark 1.6
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
     validateFormatVersion(formatVersion, 1)
     throw new RuntimeException("Load method yet to be implemented..!!")
   }
 
+  /**
+   * Load a PcaModel from the given path
+   *
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): LinearRegressionModel = {
+    throw new RuntimeException("Load method yet to be implemented..!!")
+  }
 }
 
 /**
@@ -163,6 +174,7 @@ case class LinearRegressionModel(valueColumn: String,
 
   /**
    * Saves this model to a file
+   *
    * @param sc active SparkContext
    * @param path save to path
    */
