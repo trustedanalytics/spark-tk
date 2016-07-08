@@ -1,6 +1,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
+from sparktk.lazyloader import implicit
 
 
 def train(frame, columns, mean_centered=True, k=None):
@@ -24,6 +25,13 @@ def train(frame, columns, mean_centered=True, k=None):
     scala_k = tc.jutils.convert.to_scala_option(k)
     scala_model = _scala_obj.train(frame._scala, scala_columns, mean_centered, scala_k)
     return PcaModel(tc, scala_model)
+
+
+def load(path, tc=implicit):
+    """load PcaModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, PcaModel)
 
 
 def get_scala_obj(tc):
@@ -138,7 +146,7 @@ class PcaModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         return PcaModel(tc, scala_model)
 
     @property

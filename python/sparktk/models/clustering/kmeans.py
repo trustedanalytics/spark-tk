@@ -1,24 +1,25 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
+from sparktk.lazyloader import implicit
 
 
 def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=None, init_mode="k-means||"):
     """
     Creates a KMeansModel by training on the given frame
 
-    :param frame: frame of training data
-    :param columns: names of columns containing the observations for training
-    :param k: number of clusters
-    :param scalings: column scalings for each of the observation columns.  The scaling value is multiplied by
+    :param frame: (Frame) frame of training data
+    :param columns: (List[str]) names of columns containing the observations for training
+    :param k: (Optional (int)) number of clusters
+    :param scalings: (Optional(List[float])) column scalings for each of the observation columns.  The scaling value is multiplied by
      the corresponding value in the observation column
-    :param max_iter: number of iterations for which the algorithm should run
-    :param epsilon: distance threshold within which we consider k-means to have converged. Default is 1e-4.
+    :param max_iter: (Optional(int)) number of iterations for which the algorithm should run
+    :param epsilon: (Optional(float)) distance threshold within which we consider k-means to have converged. Default is 1e-4.
      If all centers move less than this Euclidean distance, we stop iterating one run
-    :param seed: seed for randomness
-    :param init_mode: the initialization technique for the algorithm.   It can be either "random" to choose
+    :param seed: Optional(long) seed for randomness
+    :param init_mode: (Optional(str)) the initialization technique for the algorithm.   It can be either "random" to choose
      random points as initial clusters or "k-means||" to use a parallel variant of k-means++. Default is "k-means||
-    :return: KMeansModel
+    :return: (KMeansModel) trained KMeans model
 
     """
     tc = frame._tc
@@ -36,6 +37,13 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     return KMeansModel(tc, scala_model)
 
 
+def load(path, tc=implicit):
+    """load KMeansModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, KMeansModel)
+
+
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
@@ -48,82 +56,89 @@ class KMeansModel(PropertiesObject):
     Example
     -------
 
-    >>> frame = tc.frame.create([[2, "ab"],
-    ...                          [1,"cd"],
-    ...                          [7,"ef"],
-    ...                          [1,"gh"],
-    ...                          [9,"ij"],
-    ...                          [2,"kl"],
-    ...                          [0,"mn"],
-    ...                          [6,"op"],
-    ...                          [5,"qr"]],
-    ...                         [("data", float), ("name", str)])
+        >>> frame = tc.frame.create([[2, "ab"],
+        ...                          [1,"cd"],
+        ...                          [7,"ef"],
+        ...                          [1,"gh"],
+        ...                          [9,"ij"],
+        ...                          [2,"kl"],
+        ...                          [0,"mn"],
+        ...                          [6,"op"],
+        ...                          [5,"qr"]],
+        ...                         [("data", float), ("name", str)])
 
-    >>> model = tc.models.clustering.kmeans.train(frame, ["data"], 3, seed=5)
+        >>> model = tc.models.clustering.kmeans.train(frame, ["data"], 3, seed=5)
 
-    >>> model.k
-    3
+        >>> model.k
+        3
 
-    >>> sizes = model.compute_sizes(frame)
+        >>> sizes = model.compute_sizes(frame)
 
-    >>> sizes
-    [4, 1, 4]
+        >>> sizes
+        [4, 1, 4]
 
-    >>> wsse = model.compute_wsse(frame)
+        >>> wsse = model.compute_wsse(frame)
 
-    >>> wsse
-    9.75
+        >>> wsse
+        9.75
 
-    >>> model.predict(frame)
+        >>> model.predict(frame)
 
-    >>> frame.inspect()
-    [#]  data  name  cluster
-    ========================
-    [0]   2.0  ab          0
-    [1]   1.0  cd          0
-    [2]   7.0  ef          1
-    [3]   1.0  gh          0
-    [4]   9.0  ij          1
-    [5]   2.0  kl          0
-    [6]   0.0  mn          2
-    [7]   6.0  op          1
-    [8]   5.0  qr          1
+        >>> frame.inspect()
+        [#]  data  name  cluster
+        ========================
+        [0]   2.0  ab          0
+        [1]   1.0  cd          0
+        [2]   7.0  ef          1
+        [3]   1.0  gh          0
+        [4]   9.0  ij          1
+        [5]   2.0  kl          0
+        [6]   0.0  mn          2
+        [7]   6.0  op          1
+        [8]   5.0  qr          1
 
-    >>> model.add_distance_columns(frame)
+        >>> model.add_distance_columns(frame)
 
-    >>> frame.inspect()
-    [#]  data  name  cluster  distance0  distance1  distance2
-    =========================================================
-    [0]   2.0  ab          0       0.25    22.5625        4.0
-    [1]   1.0  cd          0       0.25    33.0625        1.0
-    [2]   7.0  ef          1      30.25     0.0625       49.0
-    [3]   1.0  gh          0       0.25    33.0625        1.0
-    [4]   9.0  ij          1      56.25     5.0625       81.0
-    [5]   2.0  kl          0       0.25    22.5625        4.0
-    [6]   0.0  mn          2       2.25    45.5625        0.0
-    [7]   6.0  op          1      20.25     0.5625       36.0
-    [8]   5.0  qr          1      12.25     3.0625       25.0
+        >>> frame.inspect()
+        [#]  data  name  cluster  distance0  distance1  distance2
+        =========================================================
+        [0]   2.0  ab          0       0.25    22.5625        4.0
+        [1]   1.0  cd          0       0.25    33.0625        1.0
+        [2]   7.0  ef          1      30.25     0.0625       49.0
+        [3]   1.0  gh          0       0.25    33.0625        1.0
+        [4]   9.0  ij          1      56.25     5.0625       81.0
+        [5]   2.0  kl          0       0.25    22.5625        4.0
+        [6]   0.0  mn          2       2.25    45.5625        0.0
+        [7]   6.0  op          1      20.25     0.5625       36.0
+        [8]   5.0  qr          1      12.25     3.0625       25.0
 
-    >>> model.columns
-    [u'data']
+        >>> model.columns
+        [u'data']
 
-    >>> model.scalings  # None
+        >>> model.scalings  # None
 
 
-    >>> centroids = model.centroids
+        >>> centroids = model.centroids
 
-    >>> model.save("sandbox/kmeans1")
+        >>> model.save("sandbox/kmeans1")
 
-    >>> restored = tc.load("sandbox/kmeans1")
+        >>> restored = tc.load("sandbox/kmeans1")
+
+        >>> restored.centroids == centroids
+        True
+
+        >>> restored_sizes = restored.compute_sizes(frame)
+
+        >>> restored_sizes == sizes
+        True
+
+    <hide>
+    >>> restored2 = tc.models.clustering.kmeans.load("sandbox/kmeans1")
 
     >>> restored.centroids == centroids
     True
 
-    >>> restored_sizes = restored.compute_sizes(frame)
-
-    >>> restored_sizes == sizes
-    True
-
+    </hide>
     """
 
     def __init__(self, tc, scala_model):
@@ -132,7 +147,7 @@ class KMeansModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         return KMeansModel(tc, scala_model)
 
     @property
