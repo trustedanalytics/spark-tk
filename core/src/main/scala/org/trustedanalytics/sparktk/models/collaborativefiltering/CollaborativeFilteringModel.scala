@@ -7,6 +7,7 @@ import org.apache.spark.mllib.recommendation.{ MatrixFactorizationModel, ALS, Ra
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
@@ -96,7 +97,7 @@ object CollaborativeFilteringModel extends TkSaveableObject {
       alsTrainedModel)
   }
 
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetaData: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetaData: JValue): Any = {
     validateFormatVersion(formatVersion, 1)
     val m: CollaborativeFilteringMetaData = SaveLoad.extractFromJValue[CollaborativeFilteringMetaData](tkMetaData)
     val sparkModel: MatrixFactorizationModel = MatrixFactorizationModel.load(sc, path)
@@ -115,6 +116,17 @@ object CollaborativeFilteringModel extends TkSaveableObject {
       m.targetRMSE,
       m.rank,
       sparkModel)
+  }
+
+  /**
+   * Load a PcaModel from the given path
+   *
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): CollaborativeFilteringModel = {
+    tc.load(path).asInstanceOf[CollaborativeFilteringModel]
   }
 }
 

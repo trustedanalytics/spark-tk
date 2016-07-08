@@ -162,7 +162,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """Loads a collaborative filtering model from a scala model"""
         return CollaborativeFilteringModel(tc, scala_model)
 
