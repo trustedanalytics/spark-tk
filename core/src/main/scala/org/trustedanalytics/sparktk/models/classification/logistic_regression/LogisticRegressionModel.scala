@@ -4,6 +4,7 @@ import breeze.linalg.DenseMatrix
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
@@ -143,7 +144,7 @@ object LogisticRegressionModel extends TkSaveableObject {
    * @param formatVersion the version of the format for the tk metadata that should be recorded.
    * @param tkMetadata    the data to save (should be a case class), must be serializable to JSON using json4s
    */
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
     val m: LogisticRegressionModelMetaData = SaveLoad.extractFromJValue[LogisticRegressionModelMetaData](tkMetadata)
@@ -168,6 +169,17 @@ object LogisticRegressionModel extends TkSaveableObject {
       m.intercept,
       hessianMatrixNew,
       sparkLogRegModel)
+  }
+
+  /**
+   * Load a PcaModel from the given path
+   *
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): LogisticRegressionModel = {
+    tc.load(path).asInstanceOf[LogisticRegressionModel]
   }
 
   //Helper to build logistic regressioin summary table

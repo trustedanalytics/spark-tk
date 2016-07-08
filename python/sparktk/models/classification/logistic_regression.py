@@ -225,7 +225,7 @@ class LogisticRegressionModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """Loads a Logistic Regression Model from a scala model"""
         return LogisticRegressionModel(tc, scala_model)
 
