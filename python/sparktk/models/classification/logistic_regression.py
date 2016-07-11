@@ -1,4 +1,5 @@
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
+from sparktk.models.logistic_regression_summary_table import LogisticRegressionSummaryTable
 from sparktk.loggers import log_load
 from sparktk.propobj import PropertiesObject
 
@@ -7,8 +8,8 @@ del log_load
 
 
 def train(frame,
-          label_column,
           observation_columns,
+          label_column,
           frequency_column=None,
           num_classes=2,
           optimizer="LBFGS",
@@ -32,8 +33,8 @@ def train(frame,
     ----------
 
     :param frame: (Frame) A frame to train the model on.
-    :param label_column: (str) Column name containing the label for each observation.
     :param observation_columns: (List[str]) Column(s) containing the observations.
+    :param label_column: (str) Column name containing the label for each observation.
     :param frequency_column:(Option[str]) Optional column containing the frequency of observations.
     :param num_classes: (int) Number of classes
     :param optimizer: (str) Set type of optimizer.
@@ -87,8 +88,8 @@ def train(frame,
         raise ValueError("feature_scaling must be a bool, received %s" % type(feature_scaling))
 
     scala_model = _scala_obj.train(frame._scala,
-                                   label_column,
                                    scala_observation_columns,
+                                   label_column,
                                    scala_frequency_column,
                                    num_classes,
                                    optimizer,
@@ -140,11 +141,11 @@ class LogisticRegressionModel(PropertiesObject):
         [8]           7.2           5.8      2
         [9]           7.4           6.1      2
 
-        >>> model = tc.models.classification.logistic_regression.train(frame, 'Class', ['Sepal_Length', 'Petal_Length'], num_classes=3, optimizer='LBFGS', compute_covariance=True)
+        >>> model = tc.models.classification.logistic_regression.train(frame, ['Sepal_Length', 'Petal_Length'], 'Class', num_classes=3, optimizer='LBFGS', compute_covariance=True)
         <progress>
 
         <skip>
-        >>> train_output.summary_table
+        >>> model.final_summary_table
                         coefficients  degrees_freedom  standard_errors  \
         intercept_0        -0.780153                1              NaN
         Sepal_Length_1   -120.442165                1  28497036.888425
@@ -161,7 +162,7 @@ class LogisticRegressionModel(PropertiesObject):
         Petal_Length_0        0.000003  0.998559
         Petal_Length_1        0.000006  0.998094
 
-        >>> train_output.covariance_matrix.inspect()
+        >>> model.final_summary_table.covariance_matrix.inspect()
         [#]  Sepal_Length_0      Petal_Length_0      intercept_0
         ===============================================================
         [0]   8.12518826843e+14   -1050552809704907   5.66008788624e+14
@@ -214,7 +215,7 @@ class LogisticRegressionModel(PropertiesObject):
 
         >>> restored = tc.load("sandbox/logistic_regression")
 
-        >>> restored.num_features == model.num_features
+        >>> restored.final_summary_table.num_features == model.final_summary_table.num_features
         True
 
     """
@@ -230,9 +231,19 @@ class LogisticRegressionModel(PropertiesObject):
         return LogisticRegressionModel(tc, scala_model)
 
     @property
-    def num_features(self):
-        """Number of features"""
-        return self._scala.numFeatures()
+    def observation_columns(self):
+        """Column(s) containing the observations."""
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
+
+    @property
+    def label_column(self):
+        """Column name containing the label for each observation."""
+        return self._scala.labelColumn()
+
+    @property
+    def frequency_column(self):
+        """Optional column containing the frequency of observations."""
+        return self._scala.frequencyColumn()
 
     @property
     def num_classes(self):
@@ -240,46 +251,78 @@ class LogisticRegressionModel(PropertiesObject):
         return self._scala.numClasses()
 
     @property
-    def coefficients(self):
-        """Model coefficients"""
-        return self._tc.jutils.convert.scala_map_to_python(self._scala.coefficients())
+    def optimizer(self):
+        """Set type of optimizer.
+            LBFGS - Limited-memory BFGS.
+            LBFGS supports multinomial logistic regression.
+            SGD - Stochastic Gradient Descent.
+            SGD only supports binary logistic regression."""
+        return self._scala.optimizer()
 
     @property
-    def degrees_freedom(self):
-        """Degrees of freedom for model coefficients"""
-        return self._tc.jutils.convert.scala_map_to_python(self._scala.degreesFreedom())
+    def compute_covariance(self):
+        """Compute covariance matrix for the model."""
+        return self._scala.computeCovariance()
 
     @property
-    def covariance_matrix(self):
-        """Optional covariance matrix"""
-        scala_option_frame = self._tc.jutils.convert.from_scala_option(self._scala.covarianceMatrix())
-        if scala_option_frame:
-            return self._tc.frame.create(scala_option_frame)
-        return None
+    def intercept(self):
+        """intercept column of training data."""
+        return self._scala.intercept()
 
     @property
-    def standard_errors(self):
-        """Optional standard errors for model coefficients"""
-        scala_option_map = self._tc.jutils.convert.from_scala_option(self._scala.standardErrors())
-        if scala_option_map:
-            return self._tc.jutils.convert.scala_map_to_python(scala_option_map)
-        return None
+    def feature_scaling(self):
+        """Perform feature scaling before training model."""
+        return self._scala.featureScaling()
 
     @property
-    def wald_statistic(self):
-        """Optional Wald Chi-Squared statistic"""
-        scala_option_map = self._tc.jutils.convert.from_scala_option(self._scala.waldStatistic())
-        if scala_option_map:
-            return self._tc.jutils.convert.scala_map_to_python(scala_option_map)
-        return None
+    def threshold(self):
+        """Threshold for separating positive predictions from negative predictions."""
+        return self._scala.threshold()
 
     @property
-    def p_value(self):
-        """Optional p-values for the model coefficients"""
-        scala_option_map = self._tc.jutils.convert.from_scala_option(self._scala.pValue())
-        if scala_option_map:
-            return self._tc.jutils.convert.scala_map_to_python(scala_option_map)
-        return None
+    def reg_type(self):
+        """Set type of regularization
+            L1 - L1 regularization with sum of absolute values of coefficients
+            L2 - L2 regularization with sum of squares of coefficients"""
+        return self._scala.regType()
+
+    @property
+    def reg_param(self):
+        """Regularization parameter"""
+        return self._scala.regParam()
+
+    @property
+    def num_iterations(self):
+        """Maximum number of iterations"""
+        return self._scala.numIterations()
+
+    @property
+    def convergence_tolerance(self):
+        """Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations."""
+        return self._scala.convergenceTolerance()
+
+    @property
+    def num_corrections(self):
+        """Number of corrections used in LBFGS update.
+            Default is 10.
+            Values of less than 3 are not recommended;
+            large values will result in excessive computing time."""
+        return self._scala.numCorrections()
+
+    @property
+    def mini_batch_fraction(self):
+        """Fraction of data to be used for each SGD iteration"""
+        return self._scala.miniBatchFraction()
+
+    @property
+    def step_size(self):
+        """Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)"""
+        return self._scala.stepSize()
+
+    @property
+    def final_summary_table(self):
+        """Logistic regression summary table"""
+        return LogisticRegressionSummaryTable(self._tc, self._scala.finalSummaryTable())
 
     def predict(self, frame, observation_columns_predict):
         """Adds columns to the given frame which are logistic regression model predictions"""
