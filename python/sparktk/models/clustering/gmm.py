@@ -83,7 +83,7 @@ class GaussianMixtureModel(PropertiesObject):
         [7]   6  op
         [8]   5  qr
 
-        >>> model = tc.models.clustering.gmm.train(frame, ["data"], [1.0], 3 )
+        >>> model = tc.models.clustering.gmm.train(frame, ["data"], [1.0], 3 ,seed=1)
 
         >>> model.k
         3
