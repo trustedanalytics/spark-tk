@@ -80,6 +80,10 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
 
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 
+  def this(frameRdd: FrameRdd, validateSchema: Boolean = false) = {
+    this(frameRdd.rdd, frameRdd.schema, validateSchema)
+  }
+
   /**
    * Initialize the frame and call schema validation, if it's enabled.
    *
