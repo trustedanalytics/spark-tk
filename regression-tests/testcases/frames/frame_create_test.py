@@ -117,6 +117,34 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
             self.dataset, schema=self.schema, header=True)
 	frame_without_header = self.context.frame.import_csv(self.dataset, schema=self.schema, header=False)
 	self.assertEqual(len(frame_with_header.take(sys.maxint).data), len(frame_without_header.take(sys.maxint).data) - 1) #the frame with header = True should have on less row than the one without because the first line is being skipped
+    def test_without_schema(self):
+	"""Test import_csv without a specified schema, check that the inferred schema is correct"""
+	frame = self.context.frame.import_csv(self.dataset)
+	expected_inferred_schema = [("C0", int), ("C1", str), ("C2", int)] # same as self.schema except with generic column labels
+	self.assertEqual(frame.schema, expected_inferred_schema)
+
+    def test_with_no_specified_or_inferred_schema(self):
+	"""Test import_csv with inferredschema false and no specified schema, should default to creating a schema of all strings"""
+	frame = self.context.frame.import_csv(self.dataset, inferschema=False)
+        expected_schema = [("C0", str), ("C1", str), ("C2", str)]
+	self.assertEqual(frame.schema, expected_schema)
+
+    def test_with_inferred_schema(self):
+        """Test import_csv without a specified schema, check that the inferred schema is correct"""
+        frame = self.context.frame.import_csv(self.dataset, inferschema=True)
+        expected_inferred_schema = [("C0", int), ("C1", str), ("C2", int)] # same as self.schema except with generic column labels
+        self.assertEqual(frame.schema, expected_inferred_schema)
+
+    def test_with_defined_schema_and_inferred_schema_is_true(self):
+	"""Test with inferredschema true and also a defined schema, should default to using the defined schema, should no infer the schema"""
+	frame = self.context.frame.import_csv(self.dataset, inferschema=True, schema=self.schema)
+	self.assertEqual(frame.schema, self.schema)
+
+    def test_with__header_no_schema(self):
+	"""Test without a schema but with a header, inferedschema should use the first items of the csv as column names"""
+	frame = self.context.frame.import_csv(self.dataset, header=True)
+	expected_schema = [("1", int), ("a", str), ("2", int)]
+	self.assertEqual(frame.schema, expected_schema)	
 
 if __name__ == "__main__":
     unittest.main()
