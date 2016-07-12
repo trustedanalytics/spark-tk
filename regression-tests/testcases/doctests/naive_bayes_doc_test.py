@@ -38,54 +38,53 @@ from qalib import sparktk_test
 class ClassifierTest(sparktk_test.SparkTKTestCase):
 
     def test_model_class_doc(self):
-	"""Generate a naive bayes dataset, use sparktk to train a naive bayes model and check that the result meets our expectations for accuracy, precision, etc."""
-	# Generate naive bayes dataset
-	numCoeffs = random.randint(2, 10)
-	coefficients = []
-	schema = [] 
-	obsCols = [] # the observation column names
-	dataRows = [] # our actual dataset
-	for index in range(0, numCoeffs):
-	    coefficients.append(random.uniform(0, 1)) # generate a random coefficient
-	    schema.append(("x" + str(index), int)) # append a column to our schema for the coefficient
-	    obsCols.append("x" + str(index)) # record the name of the column in our observation columns list
-	schema.append(("x" + str(numCoeffs), int)) # create a final column in our schema for the classification column
-	numDiceRolls = random.randint(3, 30) # the number of rows of data we will generate for each permutation
-	# Generate the coefficient table and schema
-	binaryPermutations = list(itertools.product(range(2), repeat=numCoeffs))  # get all permutations of 0, 1 of length numCoeffs
-    coeffTable = []
-	for element in binaryPermutations: # now we compute the probability for each row and add the probability for each row as a column to the table
-            product = 1
-            element = list(element)
-            for i in range(0, numCoeffs):
-                if element[i] is 1:
-                    product = coefficients[i] * product
-            	if element[i] is 0:
-                    product = (1 - coefficients[i]) * product
-            element.append(product)
-            coeffTable.append(list(element))
-	# Now we use the coefficient table to generate the actual dataset
-	for row in coeffTable:
-            probability = row[len(row) - 1]
-            for n in range(0, numDiceRolls):
-                newRow = row
-                randomResult = random.uniform(0, 1)
-    		if probability >= randomResult:
-        	    newRow[len(newRow) -1] = 1
-    		else:
-        	    newRow[len(newRow) -1] = 0
-		dataRows.append(newRow)
-	# Now that we have our dataset we will create a frame and train the model
-	frame = self.context.frame.create(dataRows, schema=schema)	
-	nb_model = self.context.models.classification.naive_bayes.train(frame, "x" + str(numCoeffs - 1), obsCols)
-	nb_model.predict(frame)
-	result = nb_model.test(frame)
-	cm = frame.binary_classification_metrics("x" + str(numCoeffs - 1), "predicted_class", 1)
-	# Lastly we check that the result is reporting adequate accuracy and precision, etc.
-	self.assertAlmostEqual(1, result.f_measure)
-	self.assertAlmostEqual(1, result.recall)
-	self.assertAlmostEqual(1, result.precision)
-	self.assertAlmostEqual(1, result.accuracy)
+		"""Generate a naive bayes dataset, use sparktk to train a naive bayes model and check that the result meets our expectations for accuracy, precision, etc."""	
+		# Generate naive bayes dataset
+		numCoeffs = random.randint(2, 10)
+		coefficients = []
+		schema = []
+		obsCols = []
+		dataRows = []
+		for index in range(0, numCoeffs):
+			coefficients.append(random.uniform(0, 1))
+			schema.append(("x" + str(index), int))
+			obsCols.append("x" + str(index))
+		schema.append(("x" + str(numCoeffs), int))
+		numDiceRolls = random.randint(3, 30) # the number of rows of data we will generate
+		# Generate the coefficient table and schema
+		binaryPermutations = list(itertools.product(range(2), repeat=numCoeffs))  # get all permutations of 0, 1 of length numCoeffs
+		coeffTable = []
+		for element in binaryPermutations: # now we compute the probability for each row and add the probability for each row as a column to the table
+				product = 1
+				element = list(element)
+				for i in range(0, numCoeffs):
+					if element[i] is 1:
+						product = coefficients[i] * product
+					if element[i] is 0:
+						product = (1 - coefficients[i]) * product
+				element.append(product)
+				coeffTable.append(list(element))
+		for row in coeffTable:
+				probability = row[len(row) - 1]
+				for n in range(0, numDiceRolls):
+					newRow = row
+					randomResult = random.uniform(0, 1)
+				if probability >= randomResult:
+					newRow[len(newRow) -1] = 1
+				else:
+					newRow[len(newRow) -1] = 0
+				dataRows.append(newRow)
+		frame = self.context.frame.create(dataRows, schema=schema)	
+		nb_model = self.context.models.classification.naive_bayes.train(frame, "x" + str(numCoeffs - 1), obsCols)
+		nb_model.predict(frame)
+		result = nb_model.test(frame)
+		cm = frame.binary_classification_metrics("x" + str(numCoeffs - 1), "predicted_class", 1)
+		self.assertAlmostEqual(1, result.precision)
+		self.assertAlmostEqual(1, result.accuracy)
+		#self.assertEqual(cm.confusion_matrix.values[0][0], 2)
+			#self.assertEqual(cm.confusion_matrix.values[1][1], 2)
+			#self.assertEqual(cm.confusion_matrix.values[0][1], 0)
+			#self.assertEqual(cm.confusion_matrix.values[1][0], 0)
 
 if __name__ == '__main__':
     unittest.main()
