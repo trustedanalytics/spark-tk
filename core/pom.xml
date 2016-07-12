@@ -96,6 +96,10 @@
             <artifactId>spark-mllib_${scala.short.version}</artifactId>
         </dependency>
         <dependency>
+            <groupId>graphframes</groupId>
+            <artifactId>graphframes</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
         </dependency>
