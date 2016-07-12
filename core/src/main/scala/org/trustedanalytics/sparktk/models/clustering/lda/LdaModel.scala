@@ -3,6 +3,7 @@ package org.trustedanalytics.sparktk.models.clustering.lda
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ LdaModelPredictionResult, TkLdaModel }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.MllibVector
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Frame }
@@ -11,7 +12,7 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
-object LdaModel extends TkSaveableObject with Serializable {
+object LdaModel extends TkSaveableObject {
 
   /**
    * Creates Latent Dirichlet Allocation model
@@ -94,7 +95,7 @@ object LdaModel extends TkSaveableObject with Serializable {
       ldaModel)
   }
 
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
     val m: LdaModelTkMetaData = SaveLoad.extractFromJValue[LdaModelTkMetaData](tkMetadata)
@@ -110,6 +111,16 @@ object LdaModel extends TkSaveableObject with Serializable {
       m.randomSeed,
       m.report,
       sparkModel)
+  }
+
+  /**
+   * Load an LdaModel from the given path
+   * @param tc TkContext
+   * @param path location of the model
+   * @return LdaModel
+   */
+  def load(tc: TkContext, path: String): LdaModel = {
+    tc.load(path).asInstanceOf[LdaModel]
   }
 
   /**

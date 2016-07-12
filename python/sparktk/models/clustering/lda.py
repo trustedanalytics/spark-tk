@@ -1,6 +1,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
+from sparktk.lazyloader import implicit
 
 def train(frame,
           document_column_name,
@@ -69,6 +70,13 @@ def train(frame,
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.clustering.lda.LdaModel
+
+
+def load(path, tc=implicit):
+    """load LdaModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, LdaModel)
 
 
 class LdaModel(PropertiesObject):
@@ -209,7 +217,7 @@ class LdaModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         return LdaModel(tc, scala_model)
 
     @property
