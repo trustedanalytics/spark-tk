@@ -27,8 +27,10 @@
     THIS TEST IS TO BE MAINTAINED AS A SMOKE TEST FOR THE ML SYSTEM
 """
 
+import itertools
 import unittest
 import os
+import random
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from qalib import sparktk_test
@@ -36,86 +38,54 @@ from qalib import sparktk_test
 class ClassifierTest(sparktk_test.SparkTKTestCase):
 
     def test_model_class_doc(self):
-        """Documentation test for classifiers"""
-        # Establish a connection to the ATK Rest Server
-        # This handle will be used for the remaineder of the script
-        # No cleanup is required
-
-        # First you have to get your server URL and credentials file
-        # from your TAP administrator
-        atk_server_uri = os.getenv("ATK_SERVER_URI", "") #ia.server.uri)
-        credentials_file = os.getenv("ATK_CREDENTIALS", "")
-
-        # The general workflow will be build a frame, build a model,
-        # train the model on the frame, predict using the model,
-        # evaluate the results using classification metrics
-
-        # First Step, construct a frame
-        # Construct a frame to be uploaded, this is done using plain python
-        # lists uploaded to the server
-
-        # Each row represents a sample from a probability distribution,
-        # with a vector associated with a category. For the purposes of this
-        # example there are two categories (e.g. cat and dog) and three
-        # features to indicate whether the sample is a cat or a dog (say
-        # mass, height, fur type)
-
-        # The frame has the schema of
-        # Class, feature 1, feature 2, feature 3
-        # where class is the category that the sample belongs to
-        #rows_frame = ia.UploadRows([[0, 1, 0, 0],
-        #                            [0, 2, 0, 0],
-        #                            [1, 0, 1, 0],
-        #                            [1, 0, 2, 0]],
-        #                           [("class", ia.float32),
-        #                            ("f1", ia.int32),
-        #                            ("f2", ia.int32),
-        #                            ("f3", ia.int32)])
-        # Actually build the frame described in in the UploadRows object
-        #frame = ia.Frame(rows_frame)
-	self.schema = [("class", float),
-		       ("f1", int),
-		       ("f2", int),
-		       ("f3", int)]
-
-	self.csv = "temp_csv_naive_bayes_doc_test.csv"
-	self.model = self.get_file(self.csv)
-	frame = self.context.frame.import_csv(self.model, schema=self.schema)	
-        nb_model = self.context.models.classification.naive_bayes.train(frame, "class", ["f1", "f2", "f3"])
-
-
-        # Build a model
-        # Naive Bayes is a basic classifier
-        #nb_model = ia.NaiveBayesModel()
-
-	        # Train the model on the frame, this is supervised training technique
-        # so the category is used in the training process. Note the feature
-        # vector is represented as a list of column names.
-        #nb_model.train(frame, "class", ["f1", "f2", "f3"])
-
-        # Predict assigns a category to a sample in the feature space
-        # For the purposes of illustrating the workflow, I am predicting on the
-        # same frame used to train, normally you would predict on a different
-        # frame representing data that didn't have a category assigned to it
-
-        # again note the feature vector is a python list of column names
-        #result = nb_model.predict(frame, ["f1", "f2", "f3"])
-	nb_model.predict(frame, ["f1", "f2", "f3"])
-        # The result is a frame with a new "predicted_class" column
-        #print result.inspect()
-
-        # Run classification metrics on the resultant frame to understand
-        # model performance
-        #cm = result.classification_metrics("class", "predicted_class")
-	cm = frame.multiclass_classification_metrics("class", "predicted_class", 1)
-        print str(cm)
-
-        # Assert the results are correct
-        self.assertEqual(cm.confusion_matrix.values[0][0], 2)
-        self.assertEqual(cm.confusion_matrix.values[1][1], 2)
-        self.assertEqual(cm.confusion_matrix.values[0][1], 0)
-        self.assertEqual(cm.confusion_matrix.values[1][0], 0)
-
+	"""Generate a naive bayes dataset, use sparktk to train a naive bayes model and check that the result meets our expectations for accuracy, precision, etc."""
+	# Generate naive bayes dataset
+	numCoeffs = random.randint(2, 10)
+	coefficients = []
+	schema = [] 
+	obsCols = [] # the observation column names
+	dataRows = [] # our actual dataset
+	for index in range(0, numCoeffs):
+	    coefficients.append(random.uniform(0, 1)) # generate a random coefficient
+	    schema.append(("x" + str(index), int)) # append a column to our schema for the coefficient
+	    obsCols.append("x" + str(index)) # record the name of the column in our observation columns list
+	schema.append(("x" + str(numCoeffs), int)) # create a final column in our schema for the classification column
+	numDiceRolls = random.randint(3, 30) # the number of rows of data we will generate for each permutation
+	# Generate the coefficient table and schema
+	binaryPermutations = list(itertools.product(range(2), repeat=numCoeffs))  # get all permutations of 0, 1 of length numCoeffs
+    coeffTable = []
+	for element in binaryPermutations: # now we compute the probability for each row and add the probability for each row as a column to the table
+            product = 1
+            element = list(element)
+            for i in range(0, numCoeffs):
+                if element[i] is 1:
+                    product = coefficients[i] * product
+            	if element[i] is 0:
+                    product = (1 - coefficients[i]) * product
+            element.append(product)
+            coeffTable.append(list(element))
+	# Now we use the coefficient table to generate the actual dataset
+	for row in coeffTable:
+            probability = row[len(row) - 1]
+            for n in range(0, numDiceRolls):
+                newRow = row
+                randomResult = random.uniform(0, 1)
+    		if probability >= randomResult:
+        	    newRow[len(newRow) -1] = 1
+    		else:
+        	    newRow[len(newRow) -1] = 0
+		dataRows.append(newRow)
+	# Now that we have our dataset we will create a frame and train the model
+	frame = self.context.frame.create(dataRows, schema=schema)	
+	nb_model = self.context.models.classification.naive_bayes.train(frame, "x" + str(numCoeffs - 1), obsCols)
+	nb_model.predict(frame)
+	result = nb_model.test(frame)
+	cm = frame.binary_classification_metrics("x" + str(numCoeffs - 1), "predicted_class", 1)
+	# Lastly we check that the result is reporting adequate accuracy and precision, etc.
+	self.assertAlmostEqual(1, result.f_measure)
+	self.assertAlmostEqual(1, result.recall)
+	self.assertAlmostEqual(1, result.precision)
+	self.assertAlmostEqual(1, result.accuracy)
 
 if __name__ == '__main__':
     unittest.main()
