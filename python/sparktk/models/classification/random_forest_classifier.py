@@ -2,6 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
+from sparktk.lazyloader import implicit
 import os
 
 def train(frame,
@@ -73,6 +74,14 @@ def __get_categorical_features_info(tc, c):
     if c is not None:
         c = tc.jutils.convert.to_scala_map(c)
     return tc.jutils.convert.to_scala_option(c)
+
+
+def load(path, tc=implicit):
+    """load RandomForestClassifierModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, RandomForestClassifierModel)
+
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
@@ -147,7 +156,7 @@ class RandomForestClassifierModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """Loads a random forest classifier model from a scala model"""
         return RandomForestClassifierModel(tc, scala_model)
 

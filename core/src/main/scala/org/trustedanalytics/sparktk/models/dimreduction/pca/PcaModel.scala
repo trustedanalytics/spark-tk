@@ -7,6 +7,7 @@ import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVe
 import org.apache.spark.mllib.linalg.distributed.{ RowMatrix, IndexedRow, IndexedRowMatrix }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.TkContext
 
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
@@ -51,10 +52,20 @@ object PcaModel extends TkSaveableObject {
     PcaModel(columns, meanCentered, train_k, columnStatistics.mean, singularValues, svd.V)
   }
 
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
     validateFormatVersion(formatVersion, 1)
     val json: PcaModelJson = SaveLoad.extractFromJValue[PcaModelJson](tkMetadata)
     json.toPcaModel
+  }
+
+  /**
+   * Load a PcaModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): PcaModel = {
+    tc.load(path).asInstanceOf[PcaModel]
   }
 }
 
