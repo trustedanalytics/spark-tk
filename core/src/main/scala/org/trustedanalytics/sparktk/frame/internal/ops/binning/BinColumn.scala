@@ -48,6 +48,10 @@ case class BinColumn(column: String,
                      strictBinning: Boolean,
                      binColumnName: Option[String]) extends FrameTransformWithResult[Seq[Double]] {
 
+  if (bins.isDefined) {
+    require(bins.get == bins.get.sorted, "the cutoff points of the bins must be monotonically increasing")
+  }
+
   override def work(state: FrameState): FrameTransformReturn[Seq[Double]] = {
     val columnIndex = state.schema.columnIndex(column)
     state.schema.requireColumnIsNumerical(column)
