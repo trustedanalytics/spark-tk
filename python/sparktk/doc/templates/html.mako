@@ -75,7 +75,7 @@
                s,flags=re.MULTILINE)
 
     # style params (with or without type)
-    s = re.sub(r"\:param (\w+): \((?s)(.*?(?=\) ))\) (?s)(.*?(?=\n\n|:param|:return))",
+    s = re.sub(r"\:param (\w+): \((?s)(.*?(?=\) ))\) (?s)(.*?(?=\n\n|:param|:return|\Z))",
                r"<table><tr><td class='param-name'>\1</td><td class='param-type'>(\2):</td><td class='param-desc'>\3</td></tr></table>",
                s,flags=re.MULTILINE)
     s = re.sub(r"\:param (\w+): (?s)(.*?(?=\n\n|:param|:return))",
@@ -83,10 +83,10 @@
                s,flags=re.MULTILINE)
 
     # style return value (with or without type)
-    s = re.sub(r"\:return: \((?s)(.*?(?=\) ))\) (?s)(.*?(?=\n\n))",
+    s = re.sub(r"\:return: \((?s)(.*?(?=\) ))\) (?s)(.*?(?=\n\n|\Z))",
                r"<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(\1): </td><td class='param-desc'>\2</td></tr></table></p>",
                s,flags=re.MULTILINE)
-    s = re.sub(r"\:return: (?s)(.*?(?=\n\n))",
+    s = re.sub(r"\:return: (?s)(.*?(?=\n\n|\Z))",
                r"<p><table style='padding-top:10px'><tr><td class='param-name'>Returns: </td><td class='param-desc'>\1</td></tr></table></p>",
                s,flags=re.MULTILINE)
 

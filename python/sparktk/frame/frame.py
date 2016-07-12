@@ -10,8 +10,10 @@ from sparktk.propobj import PropertiesObject
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
+from sparktk.frame.constructors.import_hbase import import_hbase
 from sparktk.frame.constructors.import_jdbc import import_jdbc
 from sparktk.frame.constructors.import_hive import import_hive
+from sparktk.frame.constructors.import_pandas import import_pandas
 
 class Frame(object):
 
@@ -24,23 +26,34 @@ class Frame(object):
             self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
         else:
             if not isinstance(source, RDD):
+                inferred_schema = False
                 if isinstance(schema, list):
                     if all(isinstance(item, basestring) for item in schema):
                         # check if schema is just a list of column names (versus string and data type tuples)
                         schema = self._infer_schema(source, schema)
+                        inferred_schema = True
                     elif not all(isinstance(item, tuple) and
                                   len(item) == 2 and
                                   isinstance(item[0], str) for item in schema):
                         raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
-                    else:
-                        for item in schema:
-                            if not self._is_supported_datatype(item[1]):
-                                raise TypeError("Invalid schema.  %s is not a supported data type." % str(item[1]))
                 elif schema is None:
                     schema = self._infer_schema(source)
+                    inferred_schema = True
                 else:
                     # Schema is not a list or None
                     raise TypeError("Invalid schema type: %s.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
+                for item in schema:
+                    if not self._is_supported_datatype(item[1]):
+                        if inferred_schema:
+                            raise TypeError("The %s data type was found when inferring the schema, and it is not a "
+                                            "supported data type.  Instead, specify a schema that uses a supported data "
+                                            "type, and enable validate_schema so that the data is converted to the proper "
+                                            "data type.\n\nInferred schema: %s\n\nSupported data types: %s" %
+                                            (str(item[1]), str(schema), dtypes.dtypes))
+                        else:
+                            raise TypeError("Invalid schema.  %s is not a supported data type.\n\nSupported data types: %s" %
+                                            (str(item[1]), dtypes.dtypes))
+
                 source = tc.sc.parallelize(source)
             if schema and validate_schema:
                 # Validate schema by going through the data and checking the data type and attempting to parse it
@@ -73,7 +86,9 @@ class Frame(object):
         """
         inferred_types = []
         for item in row:
-            if not isinstance(item, list):
+            if item is None:
+                inferred_types.append(int)
+            elif not isinstance(item, list):
                 inferred_types.append(type(item))
             else:
                 inferred_types.append(dtypes.vector((len(item))))
@@ -160,7 +175,7 @@ class Frame(object):
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
-    def load(tc, scala_frame):
+    def _from_scala(tc, scala_frame):
         """creates a python Frame for the given scala Frame"""
         return Frame(tc, scala_frame)
 
@@ -295,6 +310,7 @@ class Frame(object):
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.dot_product import dot_product
+    from sparktk.frame.ops.download import download
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
@@ -303,6 +319,7 @@ class Frame(object):
     from sparktk.frame.ops.export_data import export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
+    from sparktk.frame.ops.group_by import group_by
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
     from sparktk.frame.ops.join_inner import join_inner
@@ -310,6 +327,7 @@ class Frame(object):
     from sparktk.frame.ops.join_right import join_right
     from sparktk.frame.ops.join_outer import join_outer
     from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
+    from sparktk.frame.ops.power_iteration_clustering import power_iteration_clustering
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
     from sparktk.frame.ops.rename_columns import rename_columns

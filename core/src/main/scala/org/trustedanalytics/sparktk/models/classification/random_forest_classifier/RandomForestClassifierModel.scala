@@ -6,6 +6,7 @@ import org.apache.spark.mllib.tree.RandomForest
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.mllib.tree.model.{ RandomForestModel => SparkRandomForestModel }
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
@@ -101,7 +102,7 @@ object RandomForestClassifierModel extends TkSaveableObject {
       featureSubsetCategory)
   }
 
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
     val m: RandomForestClassifierModelTkMetaData = SaveLoad.extractFromJValue[RandomForestClassifierModelTkMetaData](tkMetadata)
@@ -118,6 +119,16 @@ object RandomForestClassifierModel extends TkSaveableObject {
       m.seed,
       m.categoricalFeaturesInfo,
       m.featureSubsetCategory)
+  }
+
+  /**
+   * Load a RandomForestClassifierModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): RandomForestClassifierModel = {
+    tc.load(path).asInstanceOf[RandomForestClassifierModel]
   }
 }
 
