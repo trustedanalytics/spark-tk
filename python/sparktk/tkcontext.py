@@ -38,6 +38,10 @@ class TkContext(object):
     def frame(self):
         return get_lazy_loader(self, "frame", implicit_kwargs={'tc': self}).frame  # .frame to account for extra 'frame' in name vis-a-vis scala
 
+    @property
+    def graph(self):
+        return get_lazy_loader(self, "graph", implicit_kwargs={'tc': self}).graph  # .graph to account for extra 'graph' in name vis-a-vis scala
+
     def load(self, path, validate_type=None):
         """loads object from the given path (if validate_type is provided, error raised if loaded obj does not match"""
         scala_obj = self._jtc.load(path)
