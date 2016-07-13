@@ -1,6 +1,6 @@
 from sparktk.frame.row import Row
 
-from sparktk.frame.schema import isMergeable
+from sparktk.frame.schema import is_mergeable
 
     # @api
     # @has_udf_arg
@@ -146,7 +146,7 @@ def add_columns(self, func, schema, columns_accessed=None):
     """
     # For further examples, see :ref:`example_frame.add_columns`.
 
-    isMergeable(self._tc, self.schema, schema)
+    is_mergeable(self._tc, self.schema, schema)
 
     row = Row(self.schema)
 

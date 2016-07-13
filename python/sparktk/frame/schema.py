@@ -29,7 +29,7 @@ def schema_to_python(sc, scala_schema):
     list_of_list_of_str_schema = jvm_scala_schema(sc).scalaToPython(scala_schema)
     return [(name, dtypes.get_from_string(dtype)) for name, dtype in list_of_list_of_str_schema]
 
-def isMergeable(tc, *python_schema):
+def is_mergeable(tc, *python_schema):
 
     scala_schema_list = []
     for schema in python_schema:
