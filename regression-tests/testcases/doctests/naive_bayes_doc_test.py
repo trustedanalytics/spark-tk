@@ -64,6 +64,7 @@ class ClassifierTest(sparktk_test.SparkTKTestCase):
 						product = (1 - coefficients[i]) * product
 				element.append(product)
 				coeffTable.append(list(element))
+		# Now we use the coefficient table to geneate the actual data
 		for row in coeffTable:
 				probability = row[len(row) - 1]
 				for n in range(0, numDiceRolls):
@@ -74,6 +75,7 @@ class ClassifierTest(sparktk_test.SparkTKTestCase):
 				else:
 					newRow[len(newRow) -1] = 0
 				dataRows.append(newRow)
+		# Finally we create the frame and model and check that it performs as we would expect
 		frame = self.context.frame.create(dataRows, schema=schema)	
 		nb_model = self.context.models.classification.naive_bayes.train(frame, "x" + str(numCoeffs - 1), obsCols)
 		nb_model.predict(frame)
@@ -81,10 +83,7 @@ class ClassifierTest(sparktk_test.SparkTKTestCase):
 		cm = frame.binary_classification_metrics("x" + str(numCoeffs - 1), "predicted_class", 1)
 		self.assertAlmostEqual(1, result.precision)
 		self.assertAlmostEqual(1, result.accuracy)
-		#self.assertEqual(cm.confusion_matrix.values[0][0], 2)
-			#self.assertEqual(cm.confusion_matrix.values[1][1], 2)
-			#self.assertEqual(cm.confusion_matrix.values[0][1], 0)
-			#self.assertEqual(cm.confusion_matrix.values[1][0], 0)
-
+		self.assertAlmostEqual(1, result.recall)
+		self.assertAlmostEqual(1, result.f_measure)
 if __name__ == '__main__':
     unittest.main()
