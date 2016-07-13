@@ -193,7 +193,9 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
         [10]  89                 2
 
     """
-    if not isinstance(bins, list):
+    if isinstance(bins, tuple):
+        bins = list(bins)
+    elif not isinstance(bins, list):
         bins = [bins]
     return self._tc.jutils.convert.from_scala_seq(self._scala.binColumn(column_name,
                                 self._tc.jutils.convert.to_scala_option_list_double(bins),
