@@ -52,6 +52,12 @@ def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=Non
 
     return ArimaModel(tc, scala_model)
 
+def load(path, tc=implicit):
+    """load ArimaModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, ArimaModel)
+
 def _get_scala_obj(tc):
     """Gets reference to the ARIMA model scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
@@ -176,7 +182,7 @@ class ArimaModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """
         Load an ARIMA model
 

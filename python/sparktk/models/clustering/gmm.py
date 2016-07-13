@@ -1,5 +1,6 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
+from sparktk.lazyloader import implicit
 import os
 
 def train(frame,
@@ -36,6 +37,13 @@ def train(frame,
                                    convergence_tol,
                                    seed)
     return GaussianMixtureModel(tc, scala_model)
+
+
+def load(path, tc=implicit):
+    """load GaussianMixtureModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, GaussianMixtureModel)
 
 
 def get_scala_obj(tc):
@@ -75,7 +83,7 @@ class GaussianMixtureModel(PropertiesObject):
         [7]   6  op
         [8]   5  qr
 
-        >>> model = tc.models.clustering.gmm.train(frame, ["data"], [1.0], 3 )
+        >>> model = tc.models.clustering.gmm.train(frame, ["data"], [1.0], 3 ,seed=1)
 
         >>> model.k
         3
@@ -152,7 +160,7 @@ class GaussianMixtureModel(PropertiesObject):
 
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """Loads a trained gaussian mixture model from a scala model"""
         return GaussianMixtureModel(tc, scala_model)
 

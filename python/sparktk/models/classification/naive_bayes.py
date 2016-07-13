@@ -2,6 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
+from sparktk.lazyloader import implicit
 
 
 def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
@@ -23,6 +24,13 @@ def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
                                    tc.jutils.convert.to_scala_list_string(observation_columns),
                                    lambda_parameter)
     return NaiveBayesModel(tc, scala_model)
+
+
+def load(path, tc=implicit):
+    """load NaiveBayesModel from given path"""
+    if tc is implicit:
+        implicit.error("tc")
+    return tc.load(path, NaiveBayesModel)
 
 
 def get_scala_obj(tc):
@@ -94,7 +102,7 @@ class NaiveBayesModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         return NaiveBayesModel(tc, scala_model)
 
     @property

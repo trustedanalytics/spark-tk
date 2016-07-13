@@ -4,6 +4,7 @@ import org.apache.spark.sql.Row
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ GaussianMixture => SparkGaussianMixture, GaussianMixtureModel => SparkGaussianMixtureModel }
 import org.apache.spark.rdd.RDD
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, RowWrapperFunctions }
@@ -65,6 +66,16 @@ object GaussianMixtureModel extends TkSaveableObject {
   }
 
   /**
+   * Load a GaussianMixtureModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): GaussianMixtureModel = {
+    tc.load(path).asInstanceOf[GaussianMixtureModel]
+  }
+
+  /**
    * *
    *
    * @param sc active spark context
@@ -73,7 +84,7 @@ object GaussianMixtureModel extends TkSaveableObject {
    * @param tkMetadata the data to save (should be a case class), must be serializable to JSON using json4s
    * @return
    */
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
     val m: GaussianMixtureModelTkMetaData = SaveLoad.extractFromJValue[GaussianMixtureModelTkMetaData](tkMetadata)

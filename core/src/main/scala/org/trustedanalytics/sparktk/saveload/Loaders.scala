@@ -50,7 +50,7 @@ object Loaders {
       RandomForestClassifierModel,
       RandomForestRegressorModel,
       SvmModel)
-    entries.map(e => e.formatId -> e.load _).toMap
+    entries.map(e => e.formatId -> e.loadTkSaveableObject _).toMap
   }
 
 }

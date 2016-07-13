@@ -21,9 +21,9 @@ import com.cloudera.sparkts.models.{ ARXModel => SparkTsArxModel, Autoregression
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.Row
-import org.json4s.{ DefaultFormats, Extraction }
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
@@ -84,6 +84,16 @@ object ArxModel extends TkSaveableObject {
   }
 
   /**
+   * Load a ArxModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): ArxModel = {
+    tc.load(path).asInstanceOf[ArxModel]
+  }
+
+  /**
    * Load model from file
    *
    * @param sc active spark context
@@ -92,7 +102,7 @@ object ArxModel extends TkSaveableObject {
    * @param tkMetadata the data to save (should be a case class), must be serializable to JSON using json4s
    * @return ARX Model loaded from the specified file.
    */
-  override def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  override def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
     validateFormatVersion(formatVersion, validFormatVersions: _*)
     val m: ArxModelTkMetaData = SaveLoad.extractFromJValue[ArxModelTkMetaData](tkMetadata)
 
