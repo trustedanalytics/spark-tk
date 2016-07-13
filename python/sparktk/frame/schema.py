@@ -28,3 +28,13 @@ def schema_to_scala(sc, python_schema):
 def schema_to_python(sc, scala_schema):
     list_of_list_of_str_schema = jvm_scala_schema(sc).scalaToPython(scala_schema)
     return [(name, dtypes.get_from_string(dtype)) for name, dtype in list_of_list_of_str_schema]
+
+def isMergeable(tc, *python_schema):
+
+    scala_schema_list = []
+    for schema in python_schema:
+        if not isinstance(schema, list):
+            schema = [schema]
+        scala_schema_list.append(schema_to_scala(tc.sc, schema))
+
+    return jvm_scala_schema(tc.sc).isMergeable(tc.jutils.convert.to_scala_list(scala_schema_list))
