@@ -1,18 +1,17 @@
-package org.apache.spark.mllib.clustering
+package org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk
 
 import org.apache.spark.SparkContext
+import org.apache.spark.mllib.clustering.DistributedLDAModel
 import org.apache.spark.mllib.clustering.LDA.TopicCounts
 import org.apache.spark.mllib.linalg.{ DenseVector => MlDenseVector, Matrix, Vector => MlVector }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{ DataFrame, SQLContext, Row }
 import org.apache.spark.sql.catalyst.expressions.GenericRow
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
+import org.json4s.DefaultFormats
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.models.clustering.lda.LdaTrainArgs
 import org.trustedanalytics.sparktk.saveload.SaveLoad
-
-import org.json4s.DefaultFormats
-import org.json4s.jackson.JsonMethods._
-import org.json4s.JsonDSL._
 
 import scala.collection.immutable.Map
 import scala.util.Try
@@ -117,15 +116,14 @@ case class TkLdaModel(numTopics: Int, documentColumnName: String, wordColumnName
   /**
    * Get model summary
    *
-   * @param edgeFrame Frame of edges between documents and words
-   * @param maxIterations Maximum number of iterations that the algorithm will execute
+   * @param args LdaTrainArgs
    * @return model summary
    */
-  def getModelSummary(edgeFrame: FrameRdd, maxIterations: Int): String = {
+  def getModelSummary(args: LdaTrainArgs): String = {
     require(distLdaModel != null, "Trained LDA model must not be null")
     val buf = new StringBuilder()
     val numDocs = distLdaModel.topicDistributions.count()
-    val numEdges = edgeFrame.count()
+    val numEdges = args.frame.rowCount()
 
     buf ++= "======Graph Statistics======\n"
     buf ++= s"Number of vertices: ${numDocs + distLdaModel.vocabSize}} (doc: ${numDocs}, word: ${distLdaModel.vocabSize}})\n"
@@ -134,7 +132,7 @@ case class TkLdaModel(numTopics: Int, documentColumnName: String, wordColumnName
     buf ++= s"numTopics: ${distLdaModel.k}\n"
     buf ++= s"alpha: ${getAlpha}\n"
     buf ++= s"beta: ${distLdaModel.topicConcentration}\n"
-    buf ++= s"maxIterations: ${maxIterations}\n"
+    buf ++= s"maxIterations: ${args.maxIterations}\n"
     buf.toString()
   }
 
@@ -221,10 +219,9 @@ case class TkLdaModel(numTopics: Int, documentColumnName: String, wordColumnName
    * @return Topic predictions for document
    */
   def predict(document: List[String]): LdaModelPredictionResult = {
-    require(document != null, "document must not be null")
-
-    val docLength = document.length
     val wordOccurrences: Map[String, Int] = computeWordOccurrences(document)
+    val docLength = document.length
+
     val topicGivenDoc = new Array[Double](numTopics)
 
     for (word <- wordOccurrences.keys) {
@@ -489,3 +486,14 @@ case class TkLdaModelSaveLoadArtifacts(numTopics: Int,
                                        documentColumnName: String,
                                        wordColumnName: String,
                                        topicWordMap: Map[String, Vector[Double]]) extends Serializable
+
+/**
+ * Return arguments to the LDA predict plugin
+ *
+ * @param topicsGivenDoc Vector of conditional probabilities of topics given document
+ * @param newWordsCount Count of new words in test document not present in training set
+ * @param newWordsPercentage Percentage of new word in test document
+ */
+case class LdaModelPredictionResult(topicsGivenDoc: Vector[Double],
+                                    newWordsCount: Int,
+                                    newWordsPercentage: Double)

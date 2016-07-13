@@ -1,7 +1,7 @@
 package org.trustedanalytics.sparktk.models.clustering.lda
 
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.clustering.{ LdaModelPredictionResult, TkLdaModel }
+import org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk.{ TkLdaModel, LdaModelPredictionResult }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.MllibVector
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
@@ -78,10 +78,9 @@ object LdaModel extends TkSaveableObject {
       randomSeed
     )
 
-    val edgeFrameRdd = new FrameRdd(edgeFrame.schema, edgeFrame.rdd)
-    val ldaModel = LdaTrainFunctions.trainLdaModel(edgeFrameRdd, arguments)
+    val ldaModel: TkLdaModel = LdaTrainFunctions.trainLdaModel(arguments)
 
-    val modelSummary = ldaModel.getModelSummary(edgeFrameRdd, arguments.maxIterations)
+    val modelSummary = ldaModel.getModelSummary(arguments)
 
     LdaModel(documentColumnName,
       wordColumnName,
@@ -122,30 +121,6 @@ object LdaModel extends TkSaveableObject {
   def load(tc: TkContext, path: String): LdaModel = {
     tc.load(path).asInstanceOf[LdaModel]
   }
-
-  /**
-   * Helper method that provides a function to create an appropriate MllibVector for a RowWrapper, taking into account optional weights
-   * @param observationColumns The columns which hold the observations
-   * @return
-   */
-  private[lda] def getDenseVectorMaker(observationColumns: Seq[String], scalings: Option[Seq[Double]]): RowWrapper => MllibVector = {
-
-    def getDenseVector(columnNames: Seq[String])(row: RowWrapper): MllibVector = {
-      row.toDenseVector(columnNames)
-    }
-
-    def getWeightedDenseVector(columnNames: Seq[String], columnWeights: Array[Double])(row: RowWrapper): MllibVector = {
-      row.toWeightedDenseVector(columnNames, columnWeights)
-    }
-
-    scalings match {
-      case None => getDenseVector(observationColumns)
-      case Some(weights) =>
-        require(weights.length == observationColumns.length)
-        getWeightedDenseVector(observationColumns, weights.toArray)
-    }
-  }
-
 }
 
 /**
@@ -215,6 +190,7 @@ case class LdaModel private[lda] (documentColumnName: String,
   /* LDA frame with conditional probabilities of topics given word */
   lazy val topicsGivenWordFrame = new Frame(sparkModel.getTopicsGivenWordFrame)
 
+  /* Return the topic probabilities based on trained LDA Model for the documents */
   def predict(document: List[String]): LdaModelPredictionResult = {
     sparkModel.predict(document)
   }

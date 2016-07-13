@@ -14,12 +14,12 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
  * Each word count vector is a "bags of words" with a fixed-size vocabulary.
  * The  vocabulary size is the length of the vector.
  *
- * @param edgeFrame Frame of edges between documents and words
  * @param args LDA train arguments
  */
-case class LdaCorpus(edgeFrame: FrameRdd, args: LdaTrainArgs) {
-  require(edgeFrame != null, "edge frame is required")
+case class LdaCorpus(args: LdaTrainArgs) {
   require(args != null, "LDA train arguments required")
+
+  val edgeFrame = new FrameRdd(args.frame.schema, args.frame.rdd)
 
   lazy val wordIdAssigner = LdaWordIdAssigner(edgeFrame, args.wordColumnName, args.wordCountColumnName)
   lazy val uniqueWordsFrame = wordIdAssigner.assignUniqueIds().cache()

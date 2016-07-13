@@ -1,6 +1,7 @@
 package org.trustedanalytics.sparktk.models.clustering.lda
 
-import org.apache.spark.mllib.clustering.{ TkLdaModel, DistributedLDAModel, LDA }
+import org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk.TkLdaModel
+import org.apache.spark.mllib.clustering.{ DistributedLDAModel, LDA }
 import org.apache.spark.mllib.linalg.{ Vectors, Vector }
 import org.apache.spark.rdd.RDD
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
@@ -10,12 +11,11 @@ object LdaTrainFunctions extends Serializable {
   /**
    * Train LDA model
    *
-   * @param edgeFrame Frame of edges between documents and words
    * @param args LDA train arguments
    * @return Trained LDA model
    */
-  def trainLdaModel(edgeFrame: FrameRdd, args: LdaTrainArgs): TkLdaModel = {
-    val ldaCorpus = LdaCorpus(edgeFrame, args)
+  def trainLdaModel(args: LdaTrainArgs): TkLdaModel = {
+    val ldaCorpus = LdaCorpus(args)
     val trainCorpus = ldaCorpus.createCorpus().cache()
     val distLdaModel = runLda(trainCorpus, args)
 

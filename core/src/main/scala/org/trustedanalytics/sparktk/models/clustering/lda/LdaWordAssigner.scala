@@ -20,10 +20,10 @@ case class LdaWordIdAssigner(edgeFrame: FrameRdd,
   require(wordColumnName != null, "word column is required")
   require(wordCountColumnName != null, "word count column is required")
 
-  val LdaWordPrefix: String = "_lda_word_"
-  val ldaWordIdColumnName: String = LdaWordPrefix + "id_" + wordColumnName
-  val ldaWordColumnName: String = LdaWordPrefix + wordColumnName
-  val ldaWordCountColumnName: String = LdaWordPrefix + "total_" + wordCountColumnName
+  val ldaWordPrefix: String = "_lda_word_"
+  val ldaWordIdColumnName: String = ldaWordPrefix + "id_" + wordColumnName
+  val ldaWordColumnName: String = ldaWordPrefix + wordColumnName
+  val ldaWordCountColumnName: String = ldaWordPrefix + "total_" + wordCountColumnName
 
   /**
    * Assign unique Ids to words, and count total occurrences of each word in documents.

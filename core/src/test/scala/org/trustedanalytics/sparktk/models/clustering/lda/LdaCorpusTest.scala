@@ -38,11 +38,10 @@ class LdaCorpusTest extends TestingSparkContextWordSpec with Matchers {
 
     "add word Ids to edge frame" in {
       val rows = sparkContext.parallelize(edgeData)
-      val edgeFrame = new FrameRdd(edgeSchema, rows)
-      val frame = new Frame(edgeFrame)
+      val frame = new Frame(rows, edgeSchema)
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count", numTopics = 2)
 
-      val ldaCorpus = LdaCorpus(edgeFrame, trainArgs)
+      val ldaCorpus = LdaCorpus(trainArgs)
       val edgesWithWordIds = ldaCorpus.addWordIdsToEdgeFrame().collect()
       val wordIdMap = ldaCorpus.uniqueWordsFrame.map(row => {
         (row(1).asInstanceOf[String], row(0).asInstanceOf[Long])
@@ -57,11 +56,10 @@ class LdaCorpusTest extends TestingSparkContextWordSpec with Matchers {
 
     "create corpus of documents for training LDA model" in {
       val rows = sparkContext.parallelize(edgeData)
-      val edgeFrame = new FrameRdd(edgeSchema, rows)
-      val frame = new Frame(edgeFrame)
+      val frame = new Frame(rows, edgeSchema)
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count", numTopics = 2)
 
-      val ldaCorpus = LdaCorpus(edgeFrame, trainArgs)
+      val ldaCorpus = LdaCorpus(trainArgs)
       val idWordMap = ldaCorpus.uniqueWordsFrame.map(row => {
         (row(0).asInstanceOf[Long], row(1).asInstanceOf[String])
       }).collectAsMap()
@@ -92,11 +90,10 @@ class LdaCorpusTest extends TestingSparkContextWordSpec with Matchers {
 
     "return empty frame" in {
       val rows = sparkContext.parallelize(Array.empty[Row])
-      val edgeFrame = new FrameRdd(edgeSchema, rows)
-      val frame = new Frame(edgeFrame.rdd, edgeFrame.schema)
+      val frame = new Frame(rows, edgeSchema)
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count", numTopics = 2)
 
-      val ldaCorpus = LdaCorpus(edgeFrame, trainArgs)
+      val ldaCorpus = LdaCorpus(trainArgs)
       val trainCorpus = ldaCorpus.createCorpus().collect()
 
       assert(trainCorpus.isEmpty)
@@ -104,31 +101,24 @@ class LdaCorpusTest extends TestingSparkContextWordSpec with Matchers {
 
     "throw an IllegalArgumentException if edge frame is null" in {
       intercept[IllegalArgumentException] {
-        val rows = sparkContext.parallelize(Array.empty[Row])
-        val edgeFrame = new FrameRdd(edgeSchema, rows)
-        val frame = new Frame(edgeFrame.rdd, edgeFrame.schema)
-        val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count", numTopics = 2)
-
-        LdaCorpus(null, trainArgs)
+        val trainArgs = LdaTrainArgs(null, "document", "word", "word_count", numTopics = 2)
+        LdaCorpus(trainArgs)
       }
     }
 
     "throw an IllegalArgumentException if train arguments are null" in {
       intercept[IllegalArgumentException] {
-        val rows = sparkContext.parallelize(Array.empty[Row])
-        val edgeFrame = new FrameRdd(edgeSchema, rows)
-        LdaCorpus(edgeFrame, null)
+        LdaCorpus(null)
       }
     }
 
     "throw a SparkException for invalid column names" in {
       intercept[SparkException] {
         val rows = sparkContext.parallelize(edgeData)
-        val edgeFrame = new FrameRdd(edgeSchema, rows)
-        val frame = new Frame(edgeFrame)
+        val frame = new Frame(rows, edgeSchema)
         val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count", numTopics = 2)
         val invalidTrainArgs = LdaTrainArgs(frame, "invalid_document", "invalid_word", "invalid_count")
-        LdaCorpus(edgeFrame, invalidTrainArgs).createCorpus()
+        LdaCorpus(invalidTrainArgs).createCorpus()
       }
     }
   }

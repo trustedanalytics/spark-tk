@@ -69,8 +69,7 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
 
     "initialize LDA runner" in {
       val rows = sparkContext.parallelize(edgeData)
-      val edgeFrame = new FrameRdd(edgeSchema, rows)
-      val frame = new Frame(edgeFrame)
+      val frame = new Frame(rows, edgeSchema)
 
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count",
         numTopics = 2, maxIterations = 10, alpha = Some(List(1.3d, 1.3d)), beta = 1.6f, randomSeed = Some(25))
@@ -85,12 +84,11 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
 
     "compute topic probabilities" in {
       val rows = sparkContext.parallelize(edgeData)
-      val edgeFrame = new FrameRdd(edgeSchema, rows)
-      val frame = new Frame(edgeFrame)
+      val frame = new Frame(rows, edgeSchema)
 
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count",
         numTopics = 2, maxIterations = 10, randomSeed = Some(25))
-      val ldaModel = LdaTrainFunctions.trainLdaModel(edgeFrame, trainArgs)
+      val ldaModel = LdaTrainFunctions.trainLdaModel(trainArgs)
 
       val topicsGivenDoc = ldaModel.getTopicsGivenDocFrame.map(row => {
         (row(0).asInstanceOf[String], row(1).asInstanceOf[Vector[Double]])
