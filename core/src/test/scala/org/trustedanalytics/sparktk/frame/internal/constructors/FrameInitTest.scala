@@ -66,6 +66,21 @@ class FrameInitTest extends TestingSparkContextWordSpec {
       }
     }
 
+    "infer the schema, with missing values" in {
+      val rows: Array[Row] = Array(
+        new GenericRow(Array[Any](1, 2, null)),
+        new GenericRow(Array[Any](4, null, null)),
+        new GenericRow(Array[Any](7, 8, null))
+      )
+      val rdd = sparkContext.parallelize(rows)
+      val frame = new Frame(rdd, null)
+      assert(frame.schema == FrameSchema(Vector(Column("C0", DataTypes.int32),
+        Column("C1", DataTypes.int32),
+        Column("C2", DataTypes.int32))))
+      val data = frame.take(frame.rowCount().toInt)
+      assert(data.sameElements(rows))
+    }
+
     "throw an exception when vectors aren't all the same length" in {
       val rows: Array[Row] = Array(
         new GenericRow(Array[Any](List[Int](1, 2, 3))),

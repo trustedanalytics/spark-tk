@@ -114,8 +114,10 @@ class TimeSeriesTest extends TestingSparkContextWordSpec with Matchers {
       val frameRdd = FrameRdd.toFrameRdd(frameSchema, rowArrayRdd)
       var frameDataFrame = frameRdd.toDataFrame
 
+      val testData = frameDataFrame.take(frameDataFrame.count().toInt)
+
       // Add a "timestamp" column using the Timestamp data type
-      val toTimestamp = udf((t: String) => Timestamp.from(ZonedDateTime.parse(t).toInstant))
+      val toTimestamp = udf((t: Long) => new Timestamp(t))
       frameDataFrame = frameDataFrame.withColumn(tsCol, toTimestamp(frameDataFrame(dateTimeCol))).select(tsCol, keyCol, valCol)
 
       // Create a timeseries RDD

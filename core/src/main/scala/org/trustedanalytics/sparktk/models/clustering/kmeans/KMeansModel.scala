@@ -4,6 +4,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
 import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
@@ -27,7 +28,7 @@ object KMeansModel extends TkSaveableObject {
    *                           of k-means++.  Default is "k-means||"
    * @param seed Optional seed value to control the algorithm randomness
    */
-  def train(frame: Frame, // args: KMeansTrainArgs): KMeansModel = {
+  def train(frame: Frame,
             columns: Seq[String],
             k: Int = 2,
             scalings: Option[Seq[Double]] = None,
@@ -66,7 +67,17 @@ object KMeansModel extends TkSaveableObject {
     KMeansModel(columns, k, scalings, maxIterations, epsilon, initializationMode, seed, model)
   }
 
-  def load(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+  /**
+   * Load a KMeansModel from the given path
+   * @param tc TkContext
+   * @param path location
+   * @return
+   */
+  def load(tc: TkContext, path: String): KMeansModel = {
+    tc.load(path).asInstanceOf[KMeansModel]
+  }
+
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
     val m: KMeansModelTkMetaData = SaveLoad.extractFromJValue[KMeansModelTkMetaData](tkMetadata)

@@ -33,8 +33,8 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
  */
 object TimeSeriesFunctions extends Serializable {
 
-  // Spark SQL UDF for converting our datetime column (which is string based) to a Timestamp datatype
-  val toTimestamp: UserDefinedFunction = udf((t: String) => Timestamp.from(ZonedDateTime.parse(t).toInstant))
+  // Spark SQL UDF for converting our datetime column (represented as a long) to a Timestamp datatype
+  val toTimestamp: UserDefinedFunction = udf((t: Long) => new Timestamp(t))
 
   /**
    * Creates a Frame for the specified TimeSeriesRdd
@@ -61,12 +61,18 @@ object TimeSeriesFunctions extends Serializable {
 
   /**
    * Creates a DateTimeIndex from the ist of Date/Times
-   * @param dateTimeStrings List of Date/Times
+   * @param dateTimeList List of Date/Times
    * @return DateTimeIndex
    */
-  def createDateTimeIndex(dateTimeStrings: List[DateTime]): DateTimeIndex = {
+  def createDateTimeIndex(dateTimeList: List[DateTime]): DateTimeIndex = {
+    implicit val ordering = new Ordering[DateTime] {
+      override def compare(a: DateTime, b: DateTime): Int = {
+        a.compareTo(b)
+      }
+    }
+
     // Create DateTimeIndex after parsing the strings as ZonedDateTime
-    DateTimeIndex.irregular(dateTimeStrings.map(dt => parseZonedDateTime(dt)).toArray)
+    DateTimeIndex.irregular(dateTimeList.sorted.map(dt => parseZonedDateTime(dt)).toArray)
   }
 
   /**

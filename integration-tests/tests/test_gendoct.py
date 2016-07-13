@@ -60,14 +60,25 @@ end
 """
 
         expected_doctest = """
+
 >>> import trustedanalytics as ta  # invisible set up code
 >>> ta.connect()
 -etc-
 
+
 Blah Blah
+
 More mysteries
 <and>
 Disguises
+
+
+
+
+
+
+
+
 
 end
 """

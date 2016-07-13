@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.frame.internal
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.slf4j.LoggerFactory
 import org.trustedanalytics.sparktk.frame.Schema
 
 import scala.util.{ Failure, Success }
@@ -19,6 +20,8 @@ trait BaseFrame {
    * Current frame column names and types.
    */
   def schema: Schema = if (frameState != null) frameState.schema else null
+
+  lazy val logger = LoggerFactory.getLogger("sparktk")
 
   /**
    * Validates the data against the specified schema. Attempts to parse the data to the column's data type.  If
@@ -57,19 +60,22 @@ trait BaseFrame {
     SchemaValidationReturn(validatedRdd, ValidationReport(badValueCount.value))
   }
 
-  protected def init(rdd: RDD[Row], schema: Schema): Unit = {
+  private[sparktk] def init(rdd: RDD[Row], schema: Schema): Unit = {
     frameState = FrameState(rdd, schema)
   }
 
   protected def execute(transform: FrameTransform): Unit = {
+    logger.info("Frame transform {}", transform.getClass.getName)
     frameState = transform.work(frameState)
   }
 
   protected def execute[T](summarization: FrameSummarization[T]): T = {
+    logger.info("Frame summarization {}", summarization.getClass.getName)
     summarization.work(frameState)
   }
 
   protected def execute[T](transform: FrameTransformWithResult[T]): T = {
+    logger.info("Frame transform (with result) {}", transform.getClass.getName)
     val r = transform.work(frameState)
     frameState = r.state
     r.result

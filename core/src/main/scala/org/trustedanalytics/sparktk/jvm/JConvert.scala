@@ -3,9 +3,8 @@ package org.trustedanalytics.sparktk.jvm
 import java.util.{ List => JList, Map => JMap }
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
-import org.joda.time.DateTime
+import org.joda.time.{ DateTimeZone, DateTime }
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
-
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
@@ -36,6 +35,7 @@ object JConvert extends Serializable {
 
   def toDateTime(item: Any): DateTime = {
     item match {
+      case l: Long => new DateTime(l, DateTimeZone.UTC);
       case s: String => DateTime.parse(s)
       case _ => throw new IllegalArgumentException(s"Unable to translate type ${item.getClass.getName} to DateTime.")
     }

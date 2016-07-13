@@ -2,8 +2,10 @@ package org.trustedanalytics.sparktk.frame
 
 import java.util.{ ArrayList => JArrayList }
 
+import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.apache.commons.lang.{ StringUtils => CommonsStringUtils }
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
@@ -164,9 +166,9 @@ object Column {
  *
  * @param columns the columns in the data frame
  */
-case class FrameSchema(columns: Vector[Column] = Vector[Column]()) extends Schema {
+case class FrameSchema(columns: Seq[Column] = Vector[Column]()) extends Schema {
 
-  override def copy(columns: Vector[Column]): FrameSchema = {
+  override def copy(columns: Seq[Column]): FrameSchema = {
     new FrameSchema(columns)
   }
 
@@ -183,6 +185,10 @@ trait GraphElementSchema extends Schema {
 }
 
 object SchemaHelper {
+
+  val config = ConfigFactory.load(this.getClass.getClassLoader)
+
+  lazy val defaultInferSchemaSampleSize = config.getInt("trustedanalytics.sparktk.frame.schema.infer-schema-sample-size")
 
   /**
    * Join two lists of columns.
@@ -303,6 +309,7 @@ object SchemaHelper {
   private def inferDataTypes(row: Row): Vector[DataType] = {
     row.toSeq.map(value => {
       value match {
+        case null => DataTypes.int32
         case i: Int => DataTypes.int32
         case l: Long => DataTypes.int64
         case f: Float => DataTypes.float32
@@ -321,8 +328,9 @@ object SchemaHelper {
    * @param data RDD of data
    * @return Schema inferred from the data
    */
-  def inferSchema(data: RDD[Row], sampleSize: Int, columnNames: Option[List[String]]): Schema = {
-    val sampleSet = data.take(math.min(data.count.toInt, sampleSize))
+  def inferSchema(data: RDD[Row], sampleSize: Option[Int] = None, columnNames: Option[List[String]] = None): Schema = {
+
+    val sampleSet = data.take(math.min(data.count.toInt, sampleSize.getOrElse(defaultInferSchemaSampleSize)))
 
     val dataTypes = sampleSet.foldLeft(inferDataTypes(sampleSet.head)) {
       case (v: Vector[DataType], r: Row) => mergeTypes(v, inferDataTypes(r))
@@ -347,7 +355,7 @@ object SchemaHelper {
  */
 trait Schema {
 
-  val columns: Vector[Column]
+  val columns: Seq[Column]
 
   require(columns != null, "columns must not be null")
   require({
@@ -357,9 +365,9 @@ trait Schema {
 
   private lazy val namesToIndices: Map[String, Int] = (for ((col, i) <- columns.zipWithIndex) yield (col.name, i)).toMap
 
-  def copy(columns: Vector[Column]): Schema
+  def copy(columns: Seq[Column]): Schema
 
-  def columnNames: Vector[String] = {
+  def columnNames: Seq[String] = {
     columns.map(col => col.name)
   }
 
@@ -437,6 +445,7 @@ trait Schema {
    */
   def requireColumnsAreVectorizable(columnNames: Seq[String]): Unit = {
     require(columnNames.nonEmpty, "single vector column, or one or more numeric columns required")
+    columnNames.foreach { c => require(CommonsStringUtils.isNotEmpty(c), "data columns names cannot be empty") }
     if (columnNames.size > 1) {
       requireColumnsOfNumericPrimitives(columnNames)
     }
@@ -518,7 +527,7 @@ trait Schema {
    */
   def union(schema: Schema): Schema = {
     // check for conflicts
-    val newColumns: Vector[Column] = schema.columns.filterNot(c => {
+    val newColumns: Seq[Column] = schema.columns.filterNot(c => {
       hasColumn(c.name) && {
         require(hasColumnWithType(c.name, c.dataType), s"columns with same name ${c.name} didn't have matching types"); true
       }

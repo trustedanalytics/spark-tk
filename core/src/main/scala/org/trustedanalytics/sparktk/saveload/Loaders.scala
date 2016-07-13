@@ -3,12 +3,15 @@ package org.trustedanalytics.sparktk.saveload
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
+import org.trustedanalytics.sparktk.models.dimreduction.pca.PcaModel
 import org.trustedanalytics.sparktk.models.classification.naive_bayes.NaiveBayesModel
-<<<<<<< HEAD
 import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
-=======
->>>>>>> 4dc3efd5d5e9ffe3b6e7ddae4fd1146f340dfc37
+import org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
+import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
+import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
+import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
+import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 
 object Loaders {
 
@@ -37,15 +40,17 @@ object Loaders {
    * formatId -> loader function
    */
   private lazy val loaders: Map[String, LoaderType] = {
-    val entries: Seq[TkSaveableObject] = List(Frame,
+    val entries: Seq[TkSaveableObject] = List(ArimaModel,
+      ArxModel,
+      Frame,
+      GaussianMixtureModel,
       KMeansModel,
-<<<<<<< HEAD
       NaiveBayesModel,
-      RandomForestClassifierModel)
-=======
-      NaiveBayesModel)
->>>>>>> 4dc3efd5d5e9ffe3b6e7ddae4fd1146f340dfc37
-    entries.map(e => e.formatId -> e.load _).toMap
+      PcaModel,
+      RandomForestClassifierModel,
+      RandomForestRegressorModel,
+      SvmModel)
+    entries.map(e => e.formatId -> e.loadTkSaveableObject _).toMap
   }
 
 }
