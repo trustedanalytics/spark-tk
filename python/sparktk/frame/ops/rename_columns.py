@@ -37,14 +37,22 @@ def rename_columns(self, names):
         raise ValueError("Unsupported 'names' parameter type.  Expected dictionary, but found %s." % type(names))
     if self.schema is None:
         raise RuntimeError("Unable rename column(s), because the frame's schema has not been defined.")
-    if self._is_python:
-        new_schema = self._python.schema
-        index_list = sparktk.frame.schema.get_indices_for_selected_columns(self.schema, names.keys())
-        for index in index_list:
-            old_name = new_schema[index][0]
-            data_type = new_schema[index][1]
-            new_name = names[old_name]
-            new_schema[index] = (new_name, data_type)
-        self._python.schema = new_schema
+
+    new_conlumns_names = [names[v] for v in names]
+    if len(new_conlumns_names) == len(set(new_conlumns_names)):
+        if self._is_python:
+            new_schema = self._python.schema
+            index_list = sparktk.frame.schema.get_indices_for_selected_columns(self.schema, names.keys())
+            for index in index_list:
+                old_name = new_schema[index][0]
+                data_type = new_schema[index][1]
+                new_name = names[old_name]
+                if new_name in self.column_names and len(set(set(names)).intersection(set(names.values()))) == 0:
+                    raise ValueError("Unable rename column(s), because the column's name %s already exists." %new_name)
+                else:
+                    new_schema[index] = (new_name, data_type)
+            self._python.schema = new_schema
+        else:
+            self._scala.renameColumns(self._tc.jutils.convert.to_scala_map(names))
     else:
-        self._scala.renameColumns(self._tc.jutils.convert.to_scala_map(names))
+        raise ValueError("Unable rename columns, because the columns names %s are not unique." %new_conlumns_names)
