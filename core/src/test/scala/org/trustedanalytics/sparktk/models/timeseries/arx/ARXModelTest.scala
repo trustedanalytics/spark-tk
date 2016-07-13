@@ -19,8 +19,6 @@ package org.trustedanalytics.sparktk.models.timeseries.arx
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 

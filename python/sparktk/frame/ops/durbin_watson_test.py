@@ -23,7 +23,8 @@ def durbin_watson_test(self, residuals):
         >>> frame = tc.frame.create([[value] for value in data], ["timeseries_values"])
     </hide>
 
-    In this example, we have a frame that contains time series values.  The inspect command below shows
+    In this example, we have a frame that contains time series values.  The inspect command below shows a snippet of
+    what the data looks like:
 
         >>> frame.inspect()
         [#]  timeseries_values
