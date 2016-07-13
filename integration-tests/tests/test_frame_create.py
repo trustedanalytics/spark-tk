@@ -137,3 +137,15 @@ def test_frame_schema_validation(tc):
     frame = tc.frame.create(data)
     result = frame.validate_pyrdd_schema(frame.rdd, [("a", str)])
     assert(result.bad_value_count == 0)
+
+def test_frame_upload_raw_list_data(tc):
+        """does round trip with list data --> upload to frame --> 'take' back to list and compare"""
+        data = [[1, 'one', [1.0, 1.1]], [2, 'two', [2.0, 2.2]], [3, 'three', [3.0, 3.3]]]
+        schema = [('n', int), ('s', str), ('v', dtypes.vector(2))]
+        frame = tc.frame.create(data, schema)
+        taken = frame.take(5).data
+        assert(len(data) == len(taken))
+        for r, row in enumerate(taken):
+            assert(len(data[r]) == len(row))
+            for c, column in enumerate(row):
+                assert(data[r][c] == column)
