@@ -23,6 +23,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.Row
 import org.json4s.{ DefaultFormats, Extraction }
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
@@ -75,7 +76,7 @@ object ArxModel extends TkSaveableObject {
 
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
     trainFrameRdd.cache()
-    val (yVector, xMatrix) = getYandXFromFrame(trainFrameRdd, timeseriesColumn, xColumns)
+    val (yVector, xMatrix) = TimeSeriesFunctions.getYandXFromFrame(trainFrameRdd, timeseriesColumn, xColumns)
     val arxModel = AutoregressionX.fitModel(yVector, xMatrix, yMaxLag, xMaxLag, includesOriginalX, noIntercept)
     trainFrameRdd.unpersist()
 
@@ -100,60 +101,6 @@ object ArxModel extends TkSaveableObject {
 
     // Create the ArxModel to return
     ArxModel(m.timeseriesColumn, m.xColumns, m.yMaxLag, m.xMaxLag, m.noIntercept, sparkModel)
-  }
-
-  /**
-   * Gets values from the specified y and x columns.
-   * @param frame Frame to get values from
-   * @param yColumnName Name of the y column
-   * @param xColumnNames Name of the x columns
-   * @return Array of y values, and 2-dimensional array of x values
-   */
-  private[arx] def getYandXFromRows(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (Array[Double], Array[Array[Double]]) = {
-    val schema = frame.frameSchema
-
-    schema.requireColumnIsNumerical(yColumnName)
-    xColumnNames.foreach((xColumn: String) => schema.requireColumnIsNumerical(xColumn))
-
-    val totalRowCount = frame.count.toInt
-    val yValues = new Array[Double](totalRowCount)
-    val xValues = Array.ofDim[Double](totalRowCount, xColumnNames.size)
-    var rowCounter = 0
-    val yColumnIndex = schema.columnIndex(yColumnName)
-
-    for (row <- frame.collect()) {
-      yValues(rowCounter) = DataTypes.toDouble(row.get(yColumnIndex))
-
-      var xColumnCounter = 0
-      for (xColumn <- xColumnNames) {
-        xValues(rowCounter)(xColumnCounter) = DataTypes.toDouble(row.get(schema.columnIndex(xColumn)))
-        xColumnCounter += 1
-      }
-
-      rowCounter += 1
-    }
-
-    (yValues, xValues)
-
-  }
-
-  /**
-   * Gets x and y values from the specified frame
-   * @param frame  Frame to get values from
-   * @param yColumnName Name of the column that has y values
-   * @param xColumnNames Name of the columns that have x values
-   * @return Vector of y values and Matrix of x values
-   */
-  private[arx] def getYandXFromFrame(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (Vector[Double], Matrix[Double]) = {
-
-    // Get values in arrays
-    val (yValues, xValues) = getYandXFromRows(frame, yColumnName, xColumnNames)
-
-    // Put values into a vector and matrix to return
-    val yVector = new DenseVector(yValues)
-    val xMatrix = new DenseMatrix(rows = yValues.length, cols = xColumnNames.size, data = xValues.transpose.flatten)
-
-    (yVector, xMatrix)
   }
 }
 
@@ -195,7 +142,7 @@ case class ArxModel private[arx] (timeseriesColumn: String,
 
     // Get vector or y values and matrix of x values
     val predictFrameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val (yVector, xMatrix) = ArxModel.getYandXFromFrame(predictFrameRdd, predictTimeseriesColumn, predictXColumns)
+    val (yVector, xMatrix) = TimeSeriesFunctions.getYandXFromFrame(predictFrameRdd, predictTimeseriesColumn, predictXColumns)
 
     // Find the maximum lag and fill that many spots with nulls, followed by the predicted y values
     val maxLag = max(arxModel.yMaxLag, arxModel.xMaxLag)
