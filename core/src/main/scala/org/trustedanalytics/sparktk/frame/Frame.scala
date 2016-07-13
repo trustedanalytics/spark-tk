@@ -22,7 +22,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ 
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ CategoricalSummarySummarization, ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
-import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization, DurbinWatsonTestSummarization, AugmentedDickeyFullerTestSummarization, BreuschGodfreyTestTestSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
@@ -32,8 +32,10 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with AddColumnsTransform
     with AppendFrameTransform
     with AssignSampleTransform
+    with AugmentedDickeyFullerTestSummarization
     with BinColumnTransformWithResult
     with BinaryClassificationMetricsSummarization
+    with BreuschGodfreyTestTestSummarization
     with CategoricalSummarySummarization
     with ColumnMedianSummarization
     with ColumnModeSummarization
@@ -49,6 +51,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with DotProductTransform
     with DropColumnsTransform
     with DropDuplicatesTransform
+    with DurbinWatsonTestSummarization
     with EcdfSummarization
     with EntropySummarization
     with ExportToCsvSummarization
