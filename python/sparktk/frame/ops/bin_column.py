@@ -12,7 +12,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
     :param bins: (Optional[List[float]]) Either a single value representing the number of equal-width bins to create, or an array of values
      containing bin cutoff points. Array can be list or tuple. If an array is provided, values must be progressively
      increasing. All bin boundaries must be included, so, with N bins, you need N+1 values.
-     Default is equal-width bins where the maximum number of bins is the Square-root choice
+     Default (None or Empty List) is equal-width bins where the maximum number of bins is the Square-root choice
      :math:`\lfloor \sqrt{m} \rfloor`, where :math:`m` is the number of rows.
     :param include_lowest: (bool) Specify how the boundary conditions are handled. ``True`` indicates that the lower bound
      of the bin is inclusive. ``False`` indicates that the upper bound is inclusive. Default is ``True``.
