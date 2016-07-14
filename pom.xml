@@ -159,8 +159,8 @@
       <artifactIdExcludesHive>hive-exec,hive-metastore</artifactIdExcludesHive>
       <artifactIdExcludesHadoop>hadoop-aws,hadoop-annotations,hadoop-mapreduce-client-common,hadoop-mapreduce-client-core,hadoop-mapreduce-client-jobclient,hadoop-mapreduce-client-shuffle,hadoop-yarn-api,hadoop-yarn-client,hadoop-yarn-common,hadoop-yarn-server-common,hadoop-yarn-server-web-proxy</artifactIdExcludesHadoop>
       <artifactIdExcludesSpark>spark-hive_${scala.short.version},spark-yarn_${scala.short.version},spark-core_${scala.short.version},spark-mllib_${scala.short.version},spark-sql_${scala.short.version},spark-graphx_${scala.short.version},spark-catalyst_${scala.short.version},spark-launcher_${scala.short.version},spark-network-common_${scala.short.version},spark-network-shuffle_${scala.short.version},spark-streaming_${scala.short.version},spark-unsafe_${scala.short.version}</artifactIdExcludesSpark>
-      <artifactIdExcludesScala>akka-actor_${scala.short.version},spire_${scala.short.version},breeze_${scala.short.version},scala-library,scala-reflect,scalatest_${scala.short.version}</artifactIdExcludesScala>
-      <artifactIdExcludesMisc>junit,ivy,derby,zookeeper,groovy-all,guava,jdk.tools,scala-compiler,aws-java-sdk,calcite-core</artifactIdExcludesMisc>
+      <artifactIdExcludesScala>spire_${scala.short.version},breeze_${scala.short.version},scala-library,scala-reflect,scalatest_${scala.short.version}</artifactIdExcludesScala>
+      <artifactIdExcludesMisc>junit,ivy,derby,zookeeper,groovy-all,jdk.tools,scala-compiler,aws-java-sdk,calcite-core</artifactIdExcludesMisc>
       <artifactIdExcludes>${artifactIdExcludesMisc},${artifactIdExcludesScala},${artifactIdExcludesSpark},${artifactIdExcludesHadoop},${artifactIdExcludesHive}</artifactIdExcludes>
         <!--org.apache.hadoop,org.apache.hbase,org.apache.hive-->
       <groupIdExcludes></groupIdExcludes>
@@ -1262,7 +1262,7 @@
           <artifactId>slick_${scala.short.version}</artifactId>
           <version>2.0.1</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
           <groupId>com.typesafe.akka</groupId>
           <artifactId>akka-actor_${scala.short.version}</artifactId>
           <version>${akka.version}</version>
@@ -1278,7 +1278,7 @@
           <artifactId>akka-testkit_${scala.short.version}</artifactId>
           <version>${akka.version}</version>
           <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
         <!-- parquet -->
         <dependency>

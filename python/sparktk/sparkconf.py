@@ -6,6 +6,8 @@ import atexit
 from pyspark import SparkContext, SparkConf
 from zip import zip_sparktk
 
+LIB_DIR="dependencies"
+
 import logging
 logger = logging.getLogger('sparktk')
 
@@ -48,12 +50,20 @@ def get_jars_and_classpaths(dirs):
 def get_sparktk_dirs():
     """returns the folders which contain all the jars required to run sparktk"""
     # todo: revisit when packaging is resolved, right now this assumes source code/build folder structure
+
     try:
         sparktk_home = os.environ['SPARKTK_HOME']
     except KeyError:
         raise RuntimeError("Missing value for SPARKTK_HOME.  Try setting $SPARKTK_HOME or the kwarg 'sparktk_home'")
-    dirs = [sparktk_home,
-            os.path.join(sparktk_home, "dependencies")]   # the /dependencies folder
+
+    try:
+        spark_home = os.environ['SPARK_HOME']
+    except KeyError:
+        raise RuntimeError("Missing value for environment variable SPARK_HOME.")
+
+    dirs = [os.path.join(spark_home, "lib"),
+            sparktk_home,
+            os.path.join(sparktk_home, LIB_DIR)]   # the /dependencies folder
     return dirs
 
 
