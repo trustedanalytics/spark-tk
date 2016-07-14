@@ -1,6 +1,6 @@
 from sparktk.propobj import PropertiesObject
 
-def augmented_dickey_fuller_test(self, ts_column, max_lag, regression = "c"):
+def timeseries_augmented_dickey_fuller_test(self, ts_column, max_lag, regression = "c"):
     """
     Performs the Augmented Dickey-Fuller (ADF) Test, which tests the null hypothesis of whether a unit root is present
     in a time series sample. The test statistic that is returned in a negative number.  The lower the value, the
@@ -49,7 +49,7 @@ def augmented_dickey_fuller_test(self, ts_column, max_lag, regression = "c"):
     Calculate augmented Dickey-Fuller test statistic by giving it the name of the column that has the time series
     values and the max_lag.  The function returns an object that has properties for the p-value and test statistic.
 
-        >>> frame.augmented_dickey_fuller_test("timeseries_values", 0)
+        >>> frame.timeseries_augmented_dickey_fuller_test("timeseries_values", 0)
         p_value   = 1.0
         test_stat = -7.54504405591
 
@@ -62,7 +62,7 @@ def augmented_dickey_fuller_test(self, ts_column, max_lag, regression = "c"):
     if not isinstance(regression, str):
         raise TypeError("regression parameter should be a str")
 
-    scala_result = self._scala.augmentedDickeyFullerTest(ts_column, max_lag, regression)
+    scala_result = self._scala.timeSeriesAugmentedDickeyFullerTest(ts_column, max_lag, regression)
     return AugmentedDickeyFullerTestResult(scala_result)
 
 class AugmentedDickeyFullerTestResult(PropertiesObject):

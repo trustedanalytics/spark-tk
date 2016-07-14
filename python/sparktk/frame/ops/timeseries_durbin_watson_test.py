@@ -1,5 +1,5 @@
 
-def durbin_watson_test(self, residuals):
+def timeseries_durbin_watson_test(self, residuals):
     """
     Computes the Durbin-Watson test statistic used to determine the presence of serial correlation in the residuals.
     Serial correlation can show a relationship between values separated from each other by a given time lag. A value
@@ -42,7 +42,7 @@ def durbin_watson_test(self, residuals):
 
     Calculate Durbin-Watson test statistic by giving it the name of the column that has the time series values:
 
-        >>> frame.durbin_watson_test("timeseries_values")
+        >>> frame.timeseries_durbin_watson_test("timeseries_values")
         0.02678674777710402
 
     """
@@ -50,4 +50,4 @@ def durbin_watson_test(self, residuals):
     if not isinstance(residuals, str):
         raise TypeError("residuals should be a str (column name).")
 
-    return self._scala.durbinWatsonTest(residuals)
+    return self._scala.timeSeriesDurbinWatsonTest(residuals)

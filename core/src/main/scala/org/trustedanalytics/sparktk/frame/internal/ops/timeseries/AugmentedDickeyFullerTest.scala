@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 import com.cloudera.sparkts.stats.TimeSeriesStatisticalTests
 
-trait AugmentedDickeyFullerTestSummarization extends BaseFrame {
+trait TimeSeriesAugmentedDickeyFullerTestSummarization extends BaseFrame {
 
   /**
    * Performs the Augmented Dickey-Fuller (ADF) Test, which tests the null hypothesis of whether a unit root is present
@@ -18,16 +18,16 @@ trait AugmentedDickeyFullerTestSummarization extends BaseFrame {
    *                   and trend-squared.
    * @return Object that contains the ADF test statistic and p-value
    */
-  def augmentedDickeyFullerTest(tsColumn: String,
-                                maxLag: Int,
-                                regression: String = "c"): AdfTestReturn = {
-    execute(AugmentedDickeyFullerTest(tsColumn, maxLag, regression))
+  def timeSeriesAugmentedDickeyFullerTest(tsColumn: String,
+                                          maxLag: Int,
+                                          regression: String = "c"): AdfTestReturn = {
+    execute(TimeSeriesAugmentedDickeyFullerTest(tsColumn, maxLag, regression))
   }
 }
 
-case class AugmentedDickeyFullerTest(tsColumn: String,
-                                     maxLag: Int,
-                                     regression: String) extends FrameSummarization[AdfTestReturn] {
+case class TimeSeriesAugmentedDickeyFullerTest(tsColumn: String,
+                                               maxLag: Int,
+                                               regression: String) extends FrameSummarization[AdfTestReturn] {
   require(StringUtils.isNotEmpty(tsColumn), "tsColumn name must not be null or empty.")
   require(StringUtils.isNotEmpty(regression), "regression string must not be null or empty.")
 

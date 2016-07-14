@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
 import com.cloudera.sparkts.stats.TimeSeriesStatisticalTests
 
-trait DurbinWatsonTestSummarization extends BaseFrame {
+trait TimeSeriesDurbinWatsonTestSummarization extends BaseFrame {
   /**
    * Computes the Durbin-Watson test statistic used to determine the presence of serial correlation in the residuals.
    * Serial correlation can show a relationship between values separated from each other by a given time lag. A value
@@ -14,12 +14,12 @@ trait DurbinWatsonTestSummarization extends BaseFrame {
    * @param residuals Name of the column that contains the residual values
    * @return The Durbin-Watson test statistic
    */
-  def durbinWatsonTest(residuals: String): Double = {
-    execute(DurbinWatsonTest(residuals))
+  def timeSeriesDurbinWatsonTest(residuals: String): Double = {
+    execute(TimeSeriesDurbinWatsonTest(residuals))
   }
 }
 
-case class DurbinWatsonTest(residuals: String) extends FrameSummarization[Double] {
+case class TimeSeriesDurbinWatsonTest(residuals: String) extends FrameSummarization[Double] {
   require(StringUtils.isNotEmpty(residuals), "residuals must not be null or empty.")
 
   override def work(state: FrameState): Double = {

@@ -1,6 +1,6 @@
 from sparktk.propobj import PropertiesObject
 
-def breusch_godfrey_test(self, residuals, factors, max_lag):
+def timeseries_breusch_godfrey_test(self, residuals, factors, max_lag):
     """
     Calculates the Breusch-Godfrey test statistic for serial correlation.
 
@@ -49,7 +49,7 @@ def breusch_godfrey_test(self, residuals, factors, max_lag):
         >>> x_columns = ["num_attendees", "weekend_flag", "seasonality", "min_temp","max_temp"]
         >>> max_lag = 1
 
-        >>> result = frame.breusch_godfrey_test(y_column, x_columns, max_lag)
+        >>> result = frame.timeseries_breusch_godfrey_test(y_column, x_columns, max_lag)
 
         >>> result
         p_value   = 0.00467773498105
@@ -67,7 +67,7 @@ def breusch_godfrey_test(self, residuals, factors, max_lag):
     if not isinstance(max_lag, int):
         raise TypeError("max_lag parameter should be an integer.")
 
-    scala_result = self._scala.breuschGodfreyTestTest(residuals,
+    scala_result = self._scala.timeSeriesBreuschGodfreyTest(residuals,
                                                       self._tc.jutils.convert.to_scala_list_string(factors),
                                                       max_lag)
     return BreuschGodfreyTestResult(scala_result)

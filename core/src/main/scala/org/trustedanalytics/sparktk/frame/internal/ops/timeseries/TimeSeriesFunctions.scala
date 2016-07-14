@@ -146,7 +146,7 @@ object TimeSeriesFunctions extends Serializable {
    * @param xColumnNames Name of the x columns
    * @return Array of y values, and 2-dimensional array of x values
    */
-  private def getYandXFromRows(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (Array[Double], Array[Array[Double]]) = {
+  private def getYAndXFromRows(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (Array[Double], Array[Array[Double]]) = {
     val schema = frame.frameSchema
 
     schema.requireColumnIsNumerical(yColumnName)
@@ -181,10 +181,10 @@ object TimeSeriesFunctions extends Serializable {
    * @param xColumnNames Name of the columns that have x values
    * @return Breeze Vector of y values and Breeze Matrix of x values
    */
-  def getYandXFromFrame(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (BreezeVector[Double], BreezeMatrix[Double]) = {
+  def getYAndXFromFrame(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (BreezeVector[Double], BreezeMatrix[Double]) = {
 
     // Get values in arrays
-    val (yValues, xValues) = getYandXFromRows(frame, yColumnName, xColumnNames)
+    val (yValues, xValues) = getYAndXFromRows(frame, yColumnName, xColumnNames)
 
     // Put values into a vector and matrix to return
     val yVector = new BreezeDenseVector(yValues)
@@ -200,10 +200,10 @@ object TimeSeriesFunctions extends Serializable {
    * @param xColumnNames Name of the columns that have x values
    * @return Spark Vector of y values and Spark Matrix of x values
    */
-  def getSparkVectorYandXFromFrame(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (SparkVector, SparkMatrix) = {
+  def getSparkVectorYAndXFromFrame(frame: FrameRdd, yColumnName: String, xColumnNames: Seq[String]): (SparkVector, SparkMatrix) = {
 
     // Get values in arrays
-    val (yValues, xValues) = getYandXFromRows(frame, yColumnName, xColumnNames)
+    val (yValues, xValues) = getYAndXFromRows(frame, yColumnName, xColumnNames)
 
     // Put values into a vector and matrix to return
     val yVector = new SparkDenseVector(yValues)

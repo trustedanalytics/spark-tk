@@ -211,12 +211,12 @@ class TimeSeriesTest extends TestingSparkContextWordSpec with Matchers {
 
       intercept[IllegalArgumentException] {
         // We should get an exception when y is a string
-        TimeSeriesFunctions.getYandXFromFrame(rdd, "str_value", List("int_value"))
+        TimeSeriesFunctions.getYAndXFromFrame(rdd, "str_value", List("int_value"))
       }
 
       intercept[IllegalArgumentException] {
         // We should get an exception when an x column is a string
-        TimeSeriesFunctions.getYandXFromFrame(rdd, "int_value", List("float_value", "str_value"))
+        TimeSeriesFunctions.getYAndXFromFrame(rdd, "int_value", List("float_value", "str_value"))
       }
     }
 
@@ -227,12 +227,12 @@ class TimeSeriesTest extends TestingSparkContextWordSpec with Matchers {
 
       intercept[IllegalArgumentException] {
         // We should get an exception when the y column does not exist
-        TimeSeriesFunctions.getYandXFromFrame(rdd, "bogus", List("int_value"))
+        TimeSeriesFunctions.getYAndXFromFrame(rdd, "bogus", List("int_value"))
       }
 
       intercept[IllegalArgumentException] {
         // We should get an exception when an x column does not exist
-        TimeSeriesFunctions.getYandXFromFrame(rdd, "int_value", List("float_value", "bogus"))
+        TimeSeriesFunctions.getYAndXFromFrame(rdd, "int_value", List("float_value", "bogus"))
       }
     }
 
@@ -241,7 +241,7 @@ class TimeSeriesTest extends TestingSparkContextWordSpec with Matchers {
       val rows = sparkContext.parallelize((1 to 10).map(i => Array(i.toString, i, i * 2, i * 3)))
       val rdd = FrameRdd.toFrameRdd(schema, rows)
 
-      val (y, x) = TimeSeriesFunctions.getYandXFromFrame(rdd, "float32_value", List("float64_value", "int_value"))
+      val (y, x) = TimeSeriesFunctions.getYAndXFromFrame(rdd, "float32_value", List("float64_value", "int_value"))
       for (i <- 1 until 10) {
         assert(y(i - 1) == i)
         assert(x(i - 1, 0) == (i * 2))

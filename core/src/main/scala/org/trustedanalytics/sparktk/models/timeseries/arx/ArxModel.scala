@@ -76,7 +76,7 @@ object ArxModel extends TkSaveableObject {
 
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
     trainFrameRdd.cache()
-    val (yVector, xMatrix) = TimeSeriesFunctions.getYandXFromFrame(trainFrameRdd, timeseriesColumn, xColumns)
+    val (yVector, xMatrix) = TimeSeriesFunctions.getYAndXFromFrame(trainFrameRdd, timeseriesColumn, xColumns)
     val arxModel = AutoregressionX.fitModel(yVector, xMatrix, yMaxLag, xMaxLag, includesOriginalX, noIntercept)
     trainFrameRdd.unpersist()
 
@@ -152,7 +152,7 @@ case class ArxModel private[arx] (timeseriesColumn: String,
 
     // Get vector or y values and matrix of x values
     val predictFrameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val (yVector, xMatrix) = TimeSeriesFunctions.getYandXFromFrame(predictFrameRdd, predictTimeseriesColumn, predictXColumns)
+    val (yVector, xMatrix) = TimeSeriesFunctions.getYAndXFromFrame(predictFrameRdd, predictTimeseriesColumn, predictXColumns)
 
     // Find the maximum lag and fill that many spots with nulls, followed by the predicted y values
     val maxLag = max(arxModel.yMaxLag, arxModel.xMaxLag)

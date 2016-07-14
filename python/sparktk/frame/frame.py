@@ -295,10 +295,8 @@ class Frame(object):
     from sparktk.frame.ops.add_columns import add_columns
     from sparktk.frame.ops.append import append
     from sparktk.frame.ops.assign_sample import assign_sample
-    from sparktk.frame.ops.augmented_dickey_fuller_test import augmented_dickey_fuller_test
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
-    from sparktk.frame.ops.breusch_godfrey_test import breusch_godfrey_test
     from sparktk.frame.ops.categorical_summary import categorical_summary
     from sparktk.frame.ops.column_median import column_median
     from sparktk.frame.ops.column_mode import column_mode
@@ -316,7 +314,6 @@ class Frame(object):
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
-    from sparktk.frame.ops.durbin_watson_test import durbin_watson_test
     from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.entropy import entropy
     from sparktk.frame.ops.export_data import export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
@@ -340,6 +337,9 @@ class Frame(object):
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
+    from sparktk.frame.ops.timeseries_augmented_dickey_fuller_test import timeseries_augmented_dickey_fuller_test
+    from sparktk.frame.ops.timeseries_breusch_godfrey_test import timeseries_breusch_godfrey_test
+    from sparktk.frame.ops.timeseries_durbin_watson_test import timeseries_durbin_watson_test
     from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
     from sparktk.frame.ops.timeseries_slice import timeseries_slice
     from sparktk.frame.ops.topk import top_k

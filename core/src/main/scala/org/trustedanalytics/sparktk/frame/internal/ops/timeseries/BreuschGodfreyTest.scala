@@ -6,7 +6,7 @@ import com.cloudera.sparkts.stats.TimeSeriesStatisticalTests
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.apache.spark.mllib.linalg.{ DenseVector, Vector => SparkVector, Matrix }
 
-trait BreuschGodfreyTestTestSummarization extends BaseFrame {
+trait TimeSeriesBreuschGodfreyTestSummarization extends BaseFrame {
   /**
    * Calculates the Breusch-Godfrey test statistic for serial correlation.
    *
@@ -15,21 +15,21 @@ trait BreuschGodfreyTestTestSummarization extends BaseFrame {
    * @param maxLag The lag order to calculate the test statistic.
    * @return The Breusch-Godfrey test statistic and p-value
    */
-  def breuschGodfreyTestTest(residuals: String,
-                             factors: Seq[String],
-                             maxLag: Int): BgTestReturn = {
-    execute(BreuschGodfreyTestTest(residuals, factors, maxLag))
+  def timeSeriesBreuschGodfreyTest(residuals: String,
+                                   factors: Seq[String],
+                                   maxLag: Int): BgTestReturn = {
+    execute(TimeSeriesBreuschGodfreyTest(residuals, factors, maxLag))
   }
 }
 
-case class BreuschGodfreyTestTest(residuals: String,
-                                  factors: Seq[String],
-                                  maxLag: Int) extends FrameSummarization[BgTestReturn] {
+case class TimeSeriesBreuschGodfreyTest(residuals: String,
+                                        factors: Seq[String],
+                                        maxLag: Int) extends FrameSummarization[BgTestReturn] {
   require(StringUtils.isNotEmpty(residuals), "residuals name must not be null or empty.")
   require(factors != null && factors.nonEmpty, "factors string must not be null or empty.")
 
   override def work(state: FrameState): BgTestReturn = {
-    val (vector, matrix) = TimeSeriesFunctions.getSparkVectorYandXFromFrame(new FrameRdd(state.schema, state.rdd), residuals, factors)
+    val (vector, matrix) = TimeSeriesFunctions.getSparkVectorYAndXFromFrame(new FrameRdd(state.schema, state.rdd), residuals, factors)
 
     val result = TimeSeriesStatisticalTests.bgtest(vector, matrix, maxLag)
     return BgTestReturn(result._1, result._2)
