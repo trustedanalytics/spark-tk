@@ -3,7 +3,7 @@
 import os
 import shutil
 import atexit
-import glob
+import glob2
 from pyspark import SparkContext, SparkConf
 from zip import zip_sparktk
 
@@ -54,7 +54,7 @@ def get_spark_dirs():
     except KeyError:
         raise RuntimeError("Missing value for environment variable SPARK_HOME.")
 
-    spark_assembly_search = glob.glob(os.path.join(spark_home,SPARK_ASSEMBLY_SEARCH))
+    spark_assembly_search = glob2.glob(os.path.join(spark_home,SPARK_ASSEMBLY_SEARCH))
     if len(spark_assembly_search) > 0:
         spark_assembly = os.path.dirname(spark_assembly_search[0])
     else:
