@@ -3,10 +3,12 @@
 import os
 import shutil
 import atexit
+import glob
 from pyspark import SparkContext, SparkConf
 from zip import zip_sparktk
 
 LIB_DIR="dependencies"
+SPARK_ASSEMBLY_SEARCH="**/spark-assembly*.jar"
 
 import logging
 logger = logging.getLogger('sparktk')
@@ -46,6 +48,20 @@ def get_jars_and_classpaths(dirs):
     jars = ','.join(jar_files)
     return jars, classpath
 
+def get_spark_dirs():
+    try:
+        spark_home = os.environ['SPARK_HOME']
+    except KeyError:
+        raise RuntimeError("Missing value for environment variable SPARK_HOME.")
+
+    spark_assembly_search = glob.glob(os.path.join(spark_home,SPARK_ASSEMBLY_SEARCH))
+    if len(spark_assembly_search) > 0:
+        spark_assembly = os.path.dirname(spark_assembly_search[0])
+    else:
+        raise RuntimeError("Couldn't find spark assembly jar")
+
+    return [spark_assembly]
+
 
 def get_sparktk_dirs():
     """returns the folders which contain all the jars required to run sparktk"""
@@ -56,13 +72,7 @@ def get_sparktk_dirs():
     except KeyError:
         raise RuntimeError("Missing value for SPARKTK_HOME.  Try setting $SPARKTK_HOME or the kwarg 'sparktk_home'")
 
-    try:
-        spark_home = os.environ['SPARK_HOME']
-    except KeyError:
-        raise RuntimeError("Missing value for environment variable SPARK_HOME.")
-
-    dirs = [os.path.join(spark_home, "lib"),
-            sparktk_home,
+    dirs = [sparktk_home,
             os.path.join(sparktk_home, LIB_DIR)]   # the /dependencies folder
     return dirs
 
@@ -106,9 +116,10 @@ def set_env_for_sparktk(spark_home=None,
         set_env('PYSPARK_PYTHON', 'python2.7')
 
     # Everything else go in PYSPARK_SUBMIT_ARGS
+    spark_dirs = get_spark_dirs()
+    spark_dirs.extend(get_sparktk_dirs())
 
-    sparktk_dirs = get_sparktk_dirs()
-    jars, driver_class_path = get_jars_and_classpaths(sparktk_dirs)
+    jars, driver_class_path = get_jars_and_classpaths(spark_dirs)
 
     if not pyspark_submit_args:
         using_env = True
