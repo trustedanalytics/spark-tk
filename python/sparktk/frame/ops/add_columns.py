@@ -1,5 +1,7 @@
 from sparktk.frame.row import Row
 
+from sparktk.frame.schema import is_mergeable
+
     # @api
     # @has_udf_arg
     # @arg('func', 'UDF', "User-Defined Function (|UDF|) which takes the values in the row and produces a value, or "
@@ -143,6 +145,8 @@ def add_columns(self, func, schema, columns_accessed=None):
 
     """
     # For further examples, see :ref:`example_frame.add_columns`.
+
+    is_mergeable(self._tc, self.schema, schema)
 
     row = Row(self.schema)
 

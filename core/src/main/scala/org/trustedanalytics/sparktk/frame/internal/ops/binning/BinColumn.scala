@@ -23,7 +23,7 @@ trait BinColumnTransformWithResult extends BaseFrame {
    * @param bins If a single bin value is provided, it defines the number of equal-width bins that will be created.
    *             Otherwise, bins can be a sequence of bin edges. If a list of bin cutoff points is specified, they must
    *             be progressively increasing; all bin boundaries must be defined, so with N bins, N+1 values are required.
-   *             If no bins are specified, the default is to create equal-width bins, where the default number of bins is
+   *             If no bins are specified (None or Empty List), the default is to create equal-width bins, where the default number of bins is
    *             the square-root of the number of rows.
    * @param includeLowest true means the lower bound is inclusive, where false means the upper bound is inclusive.
    * @param strictBinning if true, each value less than the first cutoff value or greater than the last cutoff value
@@ -47,6 +47,10 @@ case class BinColumn(column: String,
                      includeLowest: Boolean,
                      strictBinning: Boolean,
                      binColumnName: Option[String]) extends FrameTransformWithResult[Seq[Double]] {
+
+  if (bins.isDefined) {
+    require(bins.get == bins.get.sorted, "the cutoff points of the bins must be monotonically increasing")
+  }
 
   override def work(state: FrameState): FrameTransformReturn[Seq[Double]] = {
     val columnIndex = state.schema.columnIndex(column)
