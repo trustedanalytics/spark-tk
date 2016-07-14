@@ -156,6 +156,14 @@
       <commons-lang3.version>3.3.2</commons-lang3.version>
       <mavenVersion>3.1.1</mavenVersion>
       <javaVersion>1.8</javaVersion>
+      <artifactIdExcludesHive>hive-exec,hive-metastore</artifactIdExcludesHive>
+      <artifactIdExcludesHadoop>hadoop-aws,hadoop-annotations,hadoop-mapreduce-client-common,hadoop-mapreduce-client-core,hadoop-mapreduce-client-jobclient,hadoop-mapreduce-client-shuffle,hadoop-yarn-api,hadoop-yarn-client,hadoop-yarn-common,hadoop-yarn-server-common,hadoop-yarn-server-web-proxy</artifactIdExcludesHadoop>
+      <artifactIdExcludesSpark>spark-hive_${scala.short.version},spark-yarn_${scala.short.version},spark-core_${scala.short.version},spark-mllib_${scala.short.version},spark-sql_${scala.short.version},spark-graphx_${scala.short.version},spark-catalyst_${scala.short.version},spark-launcher_${scala.short.version},spark-network-common_${scala.short.version},spark-network-shuffle_${scala.short.version},spark-streaming_${scala.short.version},spark-unsafe_${scala.short.version}</artifactIdExcludesSpark>
+      <artifactIdExcludesScala>akka-actor_${scala.short.version},spire_${scala.short.version},breeze_${scala.short.version},scala-library,scala-reflect,scalatest_${scala.short.version}</artifactIdExcludesScala>
+      <artifactIdExcludesMisc>junit,ivy,derby,zookeeper,groovy-all,guava,jdk.tools,scala-compiler,aws-java-sdk,calcite-core</artifactIdExcludesMisc>
+      <artifactIdExcludes>${artifactIdExcludesMisc},${artifactIdExcludesScala},${artifactIdExcludesSpark},${artifactIdExcludesHadoop},${artifactIdExcludesHive}</artifactIdExcludes>
+        <!--org.apache.hadoop,org.apache.hbase,org.apache.hive-->
+      <groupIdExcludes></groupIdExcludes>
     </properties>
     <profiles>
       <profile>
@@ -507,6 +515,23 @@
             </configuration>
           </plugin>
 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.9</version>
+                <configuration>
+                    <excludedScopes>provided</excludedScopes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>download-licenses</id>
+                        <goals>
+                            <goal>download-licenses</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
           <!-- Update and correct open source license block comments -->
           <plugin>
             <groupId>com.mycila</groupId>
@@ -734,11 +759,14 @@
                 <overWriteReleases>false</overWriteReleases>
                 <overWriteSnapshots>false</overWriteSnapshots>
                 <overWriteIfNewer>true</overWriteIfNewer>
-                <includeScope>compile</includeScope>
+                <excludeGroupIds>${groupIdExcludes}</excludeGroupIds>
+                <excludeArtifactIds>${artifactIdExcludes}</excludeArtifactIds>
+                <excludeScope>provided</excludeScope>
               </configuration>
             </execution>
           </executions>
         </plugin>
+
       </plugins>
       <testResources>
         <testResource>
@@ -886,6 +914,8 @@
                     <artifactId>asm</artifactId>
                     <groupId>org.ow2.asm</groupId>
                 </exclusion>
+
+
             </exclusions>
         </dependency>
         <dependency>
@@ -912,6 +942,14 @@
                 <exclusion>
                     <groupId>org.mortbay.jetty</groupId>
                     <artifactId>servlet-api-2.5</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1428,6 +1466,104 @@
           <artifactId>spark-csv_2.10</artifactId>
           <version>1.4.0</version>
         </dependency>
+
+        <!--stop transative dependencies from being included in distribution-->
+          <dependency>
+              <groupId>com.github.rwl</groupId>
+              <artifactId>jtransforms</artifactId>
+              <version>2.4.0</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-client</artifactId>
+              <version>1.9</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-core</artifactId>
+              <version>1.9</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-json</artifactId>
+              <version>1.9</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-server</artifactId>
+              <version>1.9</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.jersey.contribs</groupId>
+              <artifactId>jersey-guice</artifactId>
+              <version>1.9</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-core</artifactId>
+              <version>2.2.3-1</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-impl</artifactId>
+              <version>2.2.3-1</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>javax.xml.bind</groupId>
+              <artifactId>jaxb-api</artifactId>
+              <version>2.1</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>org.codehaus.jackson</groupId>
+              <artifactId>jackson-jaxrs</artifactId>
+              <version>1.8.8</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>org.codehaus.jackson</groupId>
+              <artifactId>jackson-xc</artifactId>
+              <version>1.8.8</version>
+              <scope>provided</scope>
+          </dependency>
+
+          <dependency>
+              <groupId>jfree</groupId>
+              <artifactId>jcommon</artifactId>
+              <version>1.0.16</version>
+              <scope>provided</scope>
+          </dependency>
+          <dependency>
+              <groupId>jfree</groupId>
+              <artifactId>jfreechart</artifactId>
+              <version>1.0.13</version>
+              <scope>provided</scope>
+          </dependency>
+
+
       </dependencies>
     </dependencyManagement>
+    <dependencies>
+
+
+
+    </dependencies>
   </project>
