@@ -130,6 +130,9 @@ class LdaModel(PropertiesObject):
         >>> model.max_iterations
         3
 
+        >>> model.training_data_row_count
+        16L
+
         >>> model.topics_given_doc_frame.schema
         [(u'doc_id', <type 'unicode'>), (u'topic_probabilities', vector(2))]
 
@@ -282,6 +285,11 @@ class LdaModel(PropertiesObject):
     def topics_given_word_frame(self):
         """Frame for topics given word"""
         return self._tc.frame.create(self._scala.topicsGivenWordFrame())
+
+    @property
+    def training_data_row_count(self):
+        """Row count of the frame used to train this model"""
+        return self._scala.trainingDataRowCount()
 
     def predict(self, documents):
         """Predict topic probabilities for the documents given the trained model"""

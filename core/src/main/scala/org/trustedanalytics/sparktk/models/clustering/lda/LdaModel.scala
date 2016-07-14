@@ -2,10 +2,9 @@ package org.trustedanalytics.sparktk.models.clustering.lda
 
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk.{ TkLdaModel, LdaModelPredictionResult }
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.MllibVector
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
-import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, FrameRdd }
+import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Frame }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 
@@ -80,8 +79,6 @@ object LdaModel extends TkSaveableObject {
 
     val ldaModel: TkLdaModel = LdaTrainFunctions.trainLdaModel(arguments)
 
-    val modelSummary = ldaModel.getModelSummary(arguments)
-
     LdaModel(documentColumnName,
       wordColumnName,
       wordCountColumnName,
@@ -90,7 +87,7 @@ object LdaModel extends TkSaveableObject {
       beta,
       numTopics,
       randomSeed,
-      modelSummary,
+      frame.rowCount(),
       ldaModel)
   }
 
@@ -108,7 +105,7 @@ object LdaModel extends TkSaveableObject {
       m.beta,
       m.numTopics,
       m.randomSeed,
-      m.report,
+      m.trainingDataRowCount,
       sparkModel)
   }
 
@@ -163,7 +160,6 @@ object LdaModel extends TkSaveableObject {
  *                   used in the LDA model. Setting the random seed to the same value every
  *                   time the model is trained, allows LDA to generate the same topic distribution
  *                   if the corpus and LDA parameters are unchanged.
- * @param report The configuration and learning curve report for Latent Dirichlet Allocation as a multiple line str.
  * @param sparkModel Trained Spark LDA Model (TkLdaModel)
  */
 case class LdaModel private[lda] (documentColumnName: String,
@@ -174,7 +170,7 @@ case class LdaModel private[lda] (documentColumnName: String,
                                   beta: Float,
                                   numTopics: Int,
                                   randomSeed: Option[Long],
-                                  report: String,
+                                  trainingDataRowCount: Long,
                                   sparkModel: TkLdaModel) extends Serializable {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
@@ -189,6 +185,9 @@ case class LdaModel private[lda] (documentColumnName: String,
 
   /* LDA frame with conditional probabilities of topics given word */
   lazy val topicsGivenWordFrame = new Frame(sparkModel.getTopicsGivenWordFrame)
+
+  /* The configuration and learning curve report for Latent Dirichlet Allocation as a multiple line str */
+  lazy val report = sparkModel.getModelSummary(trainingDataRowCount, maxIterations)
 
   /* Return the topic probabilities based on trained LDA Model for the documents */
   def predict(document: List[String]): LdaModelPredictionResult = {
@@ -211,7 +210,7 @@ case class LdaModel private[lda] (documentColumnName: String,
       beta,
       numTopics,
       randomSeed,
-      report)
+      trainingDataRowCount)
     TkSaveLoad.saveTk(sc, path, LdaModel.formatId, formatVersion, tkMetadata)
   }
 }
@@ -225,5 +224,5 @@ case class LdaModelTkMetaData(documentColumnName: String,
                               beta: Float,
                               numTopics: Int,
                               randomSeed: Option[Long],
-                              report: String) extends Serializable
+                              trainingDataRowCount: Long) extends Serializable
 

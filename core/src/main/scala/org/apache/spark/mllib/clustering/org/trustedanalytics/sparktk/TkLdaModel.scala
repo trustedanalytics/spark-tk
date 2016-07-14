@@ -10,7 +10,6 @@ import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.json4s.DefaultFormats
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.trustedanalytics.sparktk.models.clustering.lda.LdaTrainArgs
 import org.trustedanalytics.sparktk.saveload.SaveLoad
 
 import scala.collection.immutable.Map
@@ -116,14 +115,15 @@ case class TkLdaModel(numTopics: Int, documentColumnName: String, wordColumnName
   /**
    * Get model summary
    *
-   * @param args LdaTrainArgs
+   * @param rowCount RowCount (Number of Edges) of the frame used for model training
+   * @param maxIterations Max Iterations used during model training
    * @return model summary
    */
-  def getModelSummary(args: LdaTrainArgs): String = {
+  def getModelSummary(rowCount: Long, maxIterations: Long): String = {
     require(distLdaModel != null, "Trained LDA model must not be null")
     val buf = new StringBuilder()
     val numDocs = distLdaModel.topicDistributions.count()
-    val numEdges = args.frame.rowCount()
+    val numEdges = rowCount
 
     buf ++= "======Graph Statistics======\n"
     buf ++= s"Number of vertices: ${numDocs + distLdaModel.vocabSize}} (doc: ${numDocs}, word: ${distLdaModel.vocabSize}})\n"
@@ -132,7 +132,7 @@ case class TkLdaModel(numTopics: Int, documentColumnName: String, wordColumnName
     buf ++= s"numTopics: ${distLdaModel.k}\n"
     buf ++= s"alpha: ${getAlpha}\n"
     buf ++= s"beta: ${distLdaModel.topicConcentration}\n"
-    buf ++= s"maxIterations: ${args.maxIterations}\n"
+    buf ++= s"maxIterations: ${maxIterations}\n"
     buf.toString()
   }
 
