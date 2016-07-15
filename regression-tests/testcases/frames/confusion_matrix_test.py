@@ -46,11 +46,11 @@ class ConfusionMatrix(sparktk_test.SparkTKTestCase):
                         ("predicted", int)]
         perf = self.get_file("classification_metrics.csv") # our data file in qa_data
         self.actual_result = [64, 15, 23, 96] # what we expect to get from the confusion matrix
-	frame = self.context.frame.import_csv(perf, schema=self.schema) # imports our data and returns a frame
-	classMetrics = frame.binary_classification_metrics('value', 'predicted', 1, 1) # params are label column, result column, pos column
-	confMatrix = classMetrics.confusion_matrix.values 
-	cumulative_matrix_list = [confMatrix[0][0], confMatrix[0][1], confMatrix[1][0], confMatrix[1][1]]
-	self.assertEqual(self.actual_result, cumulative_matrix_list) # compare our confusion matrix values with the expected values
+        frame = self.context.frame.import_csv(perf, schema=self.schema) # imports our data and returns a frame
+        classMetrics = frame.binary_classification_metrics('value', 'predicted', 1, 1) # params are label column, result column, pos column
+        confMatrix = classMetrics.confusion_matrix.values 
+        cumulative_matrix_list = [confMatrix[0][0], confMatrix[0][1], confMatrix[1][0], confMatrix[1][1]]
+        self.assertEqual(self.actual_result, cumulative_matrix_list) # compare our confusion matrix values with the expected values
 
 
 if __name__ == '__main__':
