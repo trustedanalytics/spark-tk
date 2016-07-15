@@ -94,6 +94,12 @@
           <enabled>true</enabled>
         </releases>
       </repository>
+
+        <repository>
+            <id>www.dcm4che.org</id>
+            <name>dcm4che Repository</name>
+            <url>http://www.dcm4che.org/maven2</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -755,6 +761,17 @@
 
     <dependencyManagement>
       <dependencies>
+
+          <dependency>
+              <groupId>org.dcm4che</groupId>
+              <artifactId>dcm4che-core</artifactId>
+              <version>3.3.8-SNAPSHOT</version>
+          </dependency>
+          <!--<dependency>-->
+              <!--<groupId>org.dcm4che</groupId>-->
+              <!--<artifactId>dcm4che-tool</artifactId>-->
+              <!--<version>3.3.8-SNAPSHOT</version>-->
+          <!--</dependency>-->
         <!-- START Intel DAAL dependencies -->
         <dependency>
           <groupId>com.intel.daal</groupId>

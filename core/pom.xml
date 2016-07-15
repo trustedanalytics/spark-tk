@@ -92,6 +92,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-core</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.dcm4che</groupId>-->
+            <!--<artifactId>dcm4che-tool</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_${scala.short.version}</artifactId>
         </dependency>
