@@ -114,10 +114,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -159,12 +159,26 @@
             <artifactId>commons-csv</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.parboiled</groupId>
+            <artifactId>parboiled-scala_${scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.parboiled</groupId>
+            <artifactId>parboiled-core</artifactId>
+
+        </dependency>
+<!--        <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>parquet-hadoop</artifactId>
         </dependency>
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>parquet-column</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.threeten</groupId>
+            <artifactId>threeten-extra</artifactId>
+
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -174,16 +188,11 @@
             <groupId>tw.edu.ntu.csie</groupId>
             <artifactId>libsvm</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.3.175</version>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>8.4-702.jdbc4</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_${scala.short.version}</artifactId>
