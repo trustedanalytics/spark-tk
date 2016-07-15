@@ -74,5 +74,6 @@ def power_iteration_clustering(self, source_column, destination_column, similari
                                                   initialization_mode)
     k_val = result.k()
     cluster_sizes = self._tc.jutils.convert.scala_map_to_python(result.clusterSizes())
-    py_frame = self._tc.frame.create(result.clusterMapFrame())
+    from sparktk.frame.frame import Frame
+    py_frame = Frame(self._tc, result.clusterMapFrame())
     return PicResult(frame=py_frame, k=k_val, cluster_sizes=cluster_sizes)
