@@ -26,7 +26,6 @@
     THIS TEST IS TO BE MAINTAINED AS A SMOKE TEST FOR THE ML SYSTEM
 """
 import unittest
-import os
 from sparktk import TkContext
 from sparktk import dtypes
 
