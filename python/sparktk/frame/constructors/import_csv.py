@@ -84,10 +84,12 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
         pyspark_schema = StructType(fields)
 
     sqlContext = SQLContext(tc.sc)
-    df = sqlContext.read.format("com.databricks.spark.csv").options(delimiter=delimiter,
-                                                                    header=header_str,
-                                                                    dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
-                                                                    inferschema=inferschema_str).load(path, schema=pyspark_schema)
+    df = sqlContext.read.format(
+        "com.databricks.spark.csv.org.trustedanalytics.sparktk").options(
+            delimiter=delimiter,
+            header=header_str,
+            dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
+            inferschema=inferschema_str).load(path, schema=pyspark_schema)
 
     df_schema = []
 
