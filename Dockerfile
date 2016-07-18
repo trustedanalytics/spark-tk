@@ -12,7 +12,8 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # INSTALL REQUIRED PACKAGES
-RUN apt-get -q update && \
+RUN apt-get -q clean && \
+    apt-get -q update && \
     apt-get -q install -y \
       build-essential \
       bzip2 \
