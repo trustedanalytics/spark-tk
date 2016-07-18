@@ -52,12 +52,12 @@ class CumSumTest(unittest.TestCase):
 
 
         # Create the frame using a list object
-        frame = tc.frame.create([[0,100],
-                                    [3,20],
-                                    [1,25],
-                                    [2,90]],
-                                   ["order",
-                                    "value"])
+        frame = tc.frame.create(data=[[0,100],
+                                      [3,20],
+                                      [1,25],
+                                      [2,90]],
+                                schema=[("order",int),
+                                        ("value", int)])
 
         print frame.inspect()
 
