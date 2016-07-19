@@ -105,6 +105,6 @@ def create(data, schema=None, validate_schema=False, tc=implicit):
     if data is None:
         data = []
     if not isinstance(data, list) and not isinstance(data, RDD) and not tc._jutils.is_jvm_instance_of(data, tc.sc._jvm.org.apache.spark.rdd.RDD):
-        raise TypeError("Invalid data source. The data parameter must be a 2-dimensional list (list of row data) or an RDD")
+        raise TypeError("Invalid data source. Expected the data parameter to be a 2-dimensional list (list of row data) or an RDD, but received: %s" % type(data))
     from sparktk.frame.frame import Frame
     return Frame(tc, data, schema, validate_schema)
