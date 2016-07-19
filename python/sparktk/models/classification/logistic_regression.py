@@ -145,7 +145,7 @@ class LogisticRegressionModel(PropertiesObject):
         <progress>
 
         <skip>
-        >>> model.final_summary_table
+        >>> model.training_summary
                         coefficients  degrees_freedom  standard_errors  \
         intercept_0        -0.780153                1              NaN
         Sepal_Length_1   -120.442165                1  28497036.888425
@@ -162,7 +162,7 @@ class LogisticRegressionModel(PropertiesObject):
         Petal_Length_0        0.000003  0.998559
         Petal_Length_1        0.000006  0.998094
 
-        >>> model.final_summary_table.covariance_matrix.inspect()
+        >>> model.training_summary.covariance_matrix.inspect()
         [#]  Sepal_Length_0      Petal_Length_0      intercept_0
         ===============================================================
         [0]   8.12518826843e+14   -1050552809704907   5.66008788624e+14
@@ -182,9 +182,9 @@ class LogisticRegressionModel(PropertiesObject):
         [5]     566617247774244  -3.52342642321e+14   -2528394057347494
         </skip>
 
-        >>> predicted_frame = model.predict(frame, ['Sepal_Length', 'Petal_Length'])
+        >>> model.predict(frame, ['Sepal_Length', 'Petal_Length'])
         <progress>
-        >>> predicted_frame.inspect()
+        >>> frame.inspect()
         [#]  Sepal_Length  Petal_Length  Class  predicted_label
         =======================================================
         [0]           4.9           1.4      0                0
@@ -215,7 +215,7 @@ class LogisticRegressionModel(PropertiesObject):
 
         >>> restored = tc.load("sandbox/logistic_regression")
 
-        >>> restored.final_summary_table.num_features == model.final_summary_table.num_features
+        >>> restored.training_summary.num_features == model.training_summary.num_features
         True
 
     """
@@ -320,15 +320,14 @@ class LogisticRegressionModel(PropertiesObject):
         return self._scala.stepSize()
 
     @property
-    def final_summary_table(self):
+    def training_summary(self):
         """Logistic regression summary table"""
-        return LogisticRegressionSummaryTable(self._tc, self._scala.finalSummaryTable())
+        return LogisticRegressionSummaryTable(self._tc, self._scala.trainingSummary())
 
     def predict(self, frame, observation_columns_predict):
         """Adds columns to the given frame which are logistic regression model predictions"""
-        return self._tc.frame.create(self._scala.predict(frame._scala,
-                                                         self._tc.jutils.convert.to_scala_option_list_string(
-                                                             observation_columns_predict)))
+        self._scala.predict(frame._scala,self._tc.jutils.convert.to_scala_option_list_string(
+                                                             observation_columns_predict))
 
     def test(self, frame, label_column, observation_columns_test):
         """Get the predictions for observations in a test frame"""

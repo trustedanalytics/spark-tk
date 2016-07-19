@@ -3,62 +3,63 @@ package org.trustedanalytics.sparktk.models.classification.logistic_regression
 import breeze.linalg.DenseMatrix
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency
+import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
-import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ClassificationMetricsFunctions, ClassificationMetricValue}
-import org.trustedanalytics.sparktk.frame.internal.rdd.{ScoreAndLabel, RowWrapperFunctions, FrameRdd}
+import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
+import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.models.FrameRddFunctions
-import org.trustedanalytics.sparktk.saveload.{SaveLoad, TkSaveLoad, TkSaveableObject}
+import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import scala.language.implicitConversions
 
 object LogisticRegressionModel extends TkSaveableObject {
 
   /**
-    * Build logistic regression model.
-    *
-    * Create a logistic regression model and train it using the obseravtion columns and label column of a given frame
-    *
-    * @param frame                A frame to train the model on.
-    * @param observationColumns   Column(s) containing the observations.
-    * @param labelColumn          Column name containing the label for each observation.
-    * @param frequencyColumn      Optional column containing the frequency of observations.
-    * @param numClasses           Number of classes
-    * @param optimizer            Set type of optimizer.
-    *                             LBFGS - Limited-memory BFGS.
-    *                             LBFGS supports multinomial logistic regression.
-    *                             SGD - Stochastic Gradient Descent.
-    *                             SGD only supports binary logistic regression.
-    * @param computeCovariance    Compute covariance matrix for the model.
-    * @param intercept            Add intercept column to training data.
-    * @param featureScaling       Perform feature scaling before training model.
-    * @param threshold            Threshold for separating positive predictions from negative predictions.
-    * @param regType              Set type of regularization
-    *                             L1 - L1 regularization with sum of absolute values of coefficients
-    *                             L2 - L2 regularization with sum of squares of coefficients
-    * @param regParam             Regularization parameter
-    * @param numIterations        Maximum number of iterations
-    * @param convergenceTolerance Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.
-    * @param numCorrections       Number of corrections used in LBFGS update.
-    *                             Default is 10.
-    *                             Values of less than 3 are not recommended;
-    *                             large values will result in excessive computing time.
-    * @param miniBatchFraction    Fraction of data to be used for each SGD iteration
-    * @param stepSize             Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
-    * @return A LogisticRegressionModel with a summary of the trained model.
-    *         The data returned is composed of multiple components\:
-    *         **int** : *numFeatures*
-    *         Number of features in the training data
-    *         **int** : *numClasses*
-    *         Number of classes in the training data
-    *         **table** : *summaryTable*
-    *         A summary table composed of:
-    *         **Frame** : *CovarianceMatrix (optional)*
-    *         Covariance matrix of the trained model.
-    *         The covariance matrix is the inverse of the Hessian matrix for the trained model.
-    *         The Hessian matrix is the second-order partial derivatives of the model's log-likelihood function.
-    */
+   * Build logistic regression model.
+   *
+   * Create a logistic regression model and train it using the obseravtion columns and label column of a given frame
+   *
+   * @param frame                A frame to train the model on.
+   * @param observationColumns   Column(s) containing the observations.
+   * @param labelColumn          Column name containing the label for each observation.
+   * @param frequencyColumn      Optional column containing the frequency of observations.
+   * @param numClasses           Number of classes
+   * @param optimizer            Set type of optimizer.
+   *                             LBFGS - Limited-memory BFGS.
+   *                             LBFGS supports multinomial logistic regression.
+   *                             SGD - Stochastic Gradient Descent.
+   *                             SGD only supports binary logistic regression.
+   * @param computeCovariance    Compute covariance matrix for the model.
+   * @param intercept            Add intercept column to training data.
+   * @param featureScaling       Perform feature scaling before training model.
+   * @param threshold            Threshold for separating positive predictions from negative predictions.
+   * @param regType              Set type of regularization
+   *                             L1 - L1 regularization with sum of absolute values of coefficients
+   *                             L2 - L2 regularization with sum of squares of coefficients
+   * @param regParam             Regularization parameter
+   * @param numIterations        Maximum number of iterations
+   * @param convergenceTolerance Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.
+   * @param numCorrections       Number of corrections used in LBFGS update.
+   *                             Default is 10.
+   *                             Values of less than 3 are not recommended;
+   *                             large values will result in excessive computing time.
+   * @param miniBatchFraction    Fraction of data to be used for each SGD iteration
+   * @param stepSize             Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
+   * @return A LogisticRegressionModel with a summary of the trained model.
+   *         The data returned is composed of multiple components\:
+   *         **int** : *numFeatures*
+   *         Number of features in the training data
+   *         **int** : *numClasses*
+   *         Number of classes in the training data
+   *         **table** : *summaryTable*
+   *         A summary table composed of:
+   *         **Frame** : *CovarianceMatrix (optional)*
+   *         Covariance matrix of the trained model.
+   *         The covariance matrix is the inverse of the Hessian matrix for the trained model.
+   *         The Hessian matrix is the second-order partial derivatives of the model's log-likelihood function.
+   */
   def train(frame: Frame,
             observationColumns: Seq[String],
             labelColumn: String,
@@ -119,9 +120,9 @@ object LogisticRegressionModel extends TkSaveableObject {
 
     //Running MLLib
     val mlModel = LogisticRegressionModelWrapperFactory.createModel(arguments)
-    val logRegModel = mlModel.getModel.run(labeledTrainRdd)
+    val sparkLogRegModel = mlModel.getModel.run(labeledTrainRdd)
 
-    val finalSummaryTable = buildSummaryTable(frame.rdd.sparkContext, logRegModel, observationColumns, intercept, mlModel.getHessianMatrix)
+    val trainingSummary = buildSummaryTable(frame.rdd.sparkContext, sparkLogRegModel, observationColumns, intercept, mlModel.getHessianMatrix)
 
     LogisticRegressionModel(observationColumns.toList,
       labelColumn,
@@ -139,18 +140,18 @@ object LogisticRegressionModel extends TkSaveableObject {
       numCorrections,
       miniBatchFraction,
       stepSize,
-      finalSummaryTable,
+      trainingSummary,
       mlModel.getHessianMatrix,
-      logRegModel)
+      sparkLogRegModel)
   }
 
   /**
-    *
-    * @param sc            active spark context
-    * @param path          the source path
-    * @param formatVersion the version of the format for the tk metadata that should be recorded.
-    * @param tkMetadata    the data to save (should be a case class), must be serializable to JSON using json4s
-    */
+   *
+   * @param sc            active spark context
+   * @param path          the source path
+   * @param formatVersion the version of the format for the tk metadata that should be recorded.
+   * @param tkMetadata    the data to save (should be a case class), must be serializable to JSON using json4s
+   */
   def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
 
     validateFormatVersion(formatVersion, 1)
@@ -186,12 +187,12 @@ object LogisticRegressionModel extends TkSaveableObject {
   }
 
   /**
-    * Load a PcaModel from the given path
-    *
-    * @param tc   TkContext
-    * @param path location
-    * @return
-    */
+   * Load a PcaModel from the given path
+   *
+   * @param tc   TkContext
+   * @param path location
+   * @return
+   */
   def load(tc: TkContext, path: String): LogisticRegressionModel = {
     tc.load(path).asInstanceOf[LogisticRegressionModel]
   }
@@ -221,72 +222,72 @@ object LogisticRegressionModel extends TkSaveableObject {
 }
 
 /**
-  * Logistic Regression Model
-  *
-  * @param observationColumns   Column(s) containing the observations.
-  * @param labelColumn          Column name containing the label for each observation.
-  * @param frequencyColumn      Optional column containing the frequency of observations.
-  * @param numClasses           Number of classes
-  * @param optimizer            Set type of optimizer.
-  *                             LBFGS - Limited-memory BFGS.
-  *                             LBFGS supports multinomial logistic regression.
-  *                             SGD - Stochastic Gradient Descent.
-  *                             SGD only supports binary logistic regression.
-  * @param computeCovariance    Compute covariance matrix for the model.
-  * @param intercept            Add intercept column to training data.
-  * @param featureScaling       Perform feature scaling before training model.
-  * @param threshold            Threshold for separating positive predictions from negative predictions.
-  * @param regType              Set type of regularization
-  *                             L1 - L1 regularization with sum of absolute values of coefficients
-  *                             L2 - L2 regularization with sum of squares of coefficients
-  * @param regParam             Regularization parameter
-  * @param numIterations        Maximum number of iterations
-  * @param convergenceTolerance Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.
-  * @param numCorrections       Number of corrections used in LBFGS update.
-  *                             Default is 10.
-  *                             Values of less than 3 are not recommended;
-  *                             large values will result in excessive computing time.
-  * @param miniBatchFraction    Fraction of data to be used for each SGD iteration
-  * @param stepSize             Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
-  * @param finalSummaryTable    logistic regression summary table
-  * @param hessianMatrix        hessianMatrix
-  * @param sparkModel           Spark LogisticRegressionModel
-  */
-case class LogisticRegressionModel private[logistic_regression](observationColumns: List[String],
-                                                                labelColumn: String,
-                                                                frequencyColumn: Option[String],
-                                                                numClasses: Int,
-                                                                optimizer: String,
-                                                                computeCovariance: Boolean,
-                                                                intercept: Boolean,
-                                                                featureScaling: Boolean,
-                                                                threshold: Double,
-                                                                regType: String,
-                                                                regParam: Double,
-                                                                numIterations: Int,
-                                                                convergenceTolerance: Double,
-                                                                numCorrections: Int,
-                                                                miniBatchFraction: Double,
-                                                                stepSize: Double,
-                                                                finalSummaryTable: LogisticRegressionSummaryTable,
-                                                                hessianMatrix: Option[DenseMatrix[Double]],
-                                                                sparkModel: LogisticRegressionModelWithFrequency) extends Serializable {
+ * Logistic Regression Model
+ *
+ * @param observationColumns   Column(s) containing the observations.
+ * @param labelColumn          Column name containing the label for each observation.
+ * @param frequencyColumn      Optional column containing the frequency of observations.
+ * @param numClasses           Number of classes
+ * @param optimizer            Set type of optimizer.
+ *                             LBFGS - Limited-memory BFGS.
+ *                             LBFGS supports multinomial logistic regression.
+ *                             SGD - Stochastic Gradient Descent.
+ *                             SGD only supports binary logistic regression.
+ * @param computeCovariance    Compute covariance matrix for the model.
+ * @param intercept            Add intercept column to training data.
+ * @param featureScaling       Perform feature scaling before training model.
+ * @param threshold            Threshold for separating positive predictions from negative predictions.
+ * @param regType              Set type of regularization
+ *                             L1 - L1 regularization with sum of absolute values of coefficients
+ *                             L2 - L2 regularization with sum of squares of coefficients
+ * @param regParam             Regularization parameter
+ * @param numIterations        Maximum number of iterations
+ * @param convergenceTolerance Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.
+ * @param numCorrections       Number of corrections used in LBFGS update.
+ *                             Default is 10.
+ *                             Values of less than 3 are not recommended;
+ *                             large values will result in excessive computing time.
+ * @param miniBatchFraction    Fraction of data to be used for each SGD iteration
+ * @param stepSize             Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
+ * @param trainingSummary      logistic regression training summary table
+ * @param hessianMatrix        hessianMatrix
+ * @param sparkModel           Spark LogisticRegressionModel
+ */
+case class LogisticRegressionModel private[logistic_regression] (observationColumns: List[String],
+                                                                 labelColumn: String,
+                                                                 frequencyColumn: Option[String],
+                                                                 numClasses: Int,
+                                                                 optimizer: String,
+                                                                 computeCovariance: Boolean,
+                                                                 intercept: Boolean,
+                                                                 featureScaling: Boolean,
+                                                                 threshold: Double,
+                                                                 regType: String,
+                                                                 regParam: Double,
+                                                                 numIterations: Int,
+                                                                 convergenceTolerance: Double,
+                                                                 numCorrections: Int,
+                                                                 miniBatchFraction: Double,
+                                                                 stepSize: Double,
+                                                                 trainingSummary: LogisticRegressionSummaryTable,
+                                                                 hessianMatrix: Option[DenseMatrix[Double]],
+                                                                 sparkModel: LogisticRegressionModelWithFrequency) extends Serializable {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
   /**
-    * Predict labels for data points using trained logistic regression model.
-    *
-    * Predict the labels for a test frame using trained logistic regression model, and create a new frame revision with
-    * existing columns and a new predicted label's column.
-    *
-    * @param frame                     A frame whose labels are to be predicted. By default, predict is run on the same columns over which the model is trained.
-    * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
-    * @return Frame containing the original frame's columns and a column with the predicted label.
-    */
-  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Frame = {
+   * Predict labels for data points using trained logistic regression model.
+   *
+   * Predict the labels for a test frame using trained logistic regression model, and create a new frame revision with
+   * existing columns and a new predicted label's column.
+   *
+   * @param frame                     A frame whose labels are to be predicted. By default, predict is run on the same columns over which the model is trained.
+   * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
+   * @return Frame containing the original frame's columns and a column with the predicted label.
+   */
+  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Unit = {
     require(frame != null, "frame is required")
 
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
@@ -298,22 +299,23 @@ case class LogisticRegressionModel private[logistic_regression](observationColum
     val logRegColumns = observationColumnsPredict.getOrElse(observationColumns)
 
     //predicting a label for the observation columns
-    val predictColumn = Column("predicted_label", DataTypes.int32)
+    val predictColumn = Column(frame.schema.getNewColumnName("predicted_label"), DataTypes.int32)
 
-    val predictFrameRdd = frameRdd.addColumn(predictColumn, row => {
+    val predictMapper: RowWrapper => Row = row => {
       val point = row.valuesAsDenseVector(logRegColumns)
-      sparkModel.predict(point).toInt
-    })
+      val prediction = sparkModel.predict(point).toInt
+      Row.apply(prediction)
+    }
 
-    new Frame(predictFrameRdd.rdd, predictFrameRdd.schema)
+    frame.addColumns(predictMapper, Seq(predictColumn))
   }
 
   /**
-    * Saves this model to a file
-    *
-    * @param sc   active SparkContext
-    * @param path save to path
-    */
+   * Saves this model to a file
+   *
+   * @param sc   active SparkContext
+   * @param path save to path
+   */
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
@@ -345,24 +347,24 @@ case class LogisticRegressionModel private[logistic_regression](observationColum
   }
 
   /**
-    * Get the predictions for observations in a test frame
-    *
-    * @param frame                  Frame whose labels are to be predicted.
-    * @param labelColumn            Column containing the actual label for each observation.
-    * @param observationColumnsTest Column(s) containing the observations whose labels are to be predicted and tested. Default is to test over the columns the SVM model was trained on.
-    * @return A dictionary with binary classification metrics.
-    *         The data returned is composed of the following keys\:
-    *         'accuracy' : double
-    *         The proportion of predictions that are correctly identified
-    *         'confusion_matrix' : dictionary
-    *         A table used to describe the performance of a classification model
-    *         'f_measure' : double
-    *         The harmonic mean of precision and recall
-    *         'precision' : double
-    *         The proportion of predicted positive instances that are correctly identified
-    *         'recall' : double
-    *         The proportion of positive instances that are correctly identified.
-    */
+   * Get the predictions for observations in a test frame
+   *
+   * @param frame                  Frame whose labels are to be predicted.
+   * @param labelColumn            Column containing the actual label for each observation.
+   * @param observationColumnsTest Column(s) containing the observations whose labels are to be predicted and tested. Default is to test over the columns the SVM model was trained on.
+   * @return A dictionary with binary classification metrics.
+   *         The data returned is composed of the following keys\:
+   *         'accuracy' : double
+   *         The proportion of predictions that are correctly identified
+   *         'confusion_matrix' : dictionary
+   *         A table used to describe the performance of a classification model
+   *         'f_measure' : double
+   *         The harmonic mean of precision and recall
+   *         'precision' : double
+   *         The proportion of predicted positive instances that are correctly identified
+   *         'recall' : double
+   *         The proportion of positive instances that are correctly identified.
+   */
   def test(frame: Frame, labelColumn: String, observationColumnsTest: Option[List[String]]): ClassificationMetricValue = {
     if (observationColumnsTest.isDefined) {
       require(observationColumns.length == observationColumnsTest.get.length, "Number of columns for train and test should be same")
@@ -390,37 +392,37 @@ case class LogisticRegressionModel private[logistic_regression](observationColum
 }
 
 /**
-  * Logistic Regression Meta data
-  *
-  * @param observationColumns   Column(s) containing the observations.
-  * @param labelColumn          Column name containing the label for each observation.
-  * @param frequencyColumn      Optional column containing the frequency of observations.
-  * @param numClasses           Number of classes
-  * @param optimizer            Set type of optimizer.
-  *                             LBFGS - Limited-memory BFGS.
-  *                             LBFGS supports multinomial logistic regression.
-  *                             SGD - Stochastic Gradient Descent.
-  *                             SGD only supports binary logistic regression.
-  * @param computeCovariance    Compute covariance matrix for the model.
-  * @param intercept            Add intercept column to training data.
-  * @param featureScaling       Perform feature scaling before training model.
-  * @param threshold            Threshold for separating positive predictions from negative predictions.
-  * @param regType              Set type of regularization
-  *                             L1 - L1 regularization with sum of absolute values of coefficients
-  *                             L2 - L2 regularization with sum of squares of coefficients
-  * @param regParam             Regularization parameter
-  * @param numIterations        Maximum number of iterations
-  * @param convergenceTolerance Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.
-  * @param numCorrections       Number of corrections used in LBFGS update.
-  *                             Default is 10.
-  *                             Values of less than 3 are not recommended;
-  *                             large values will result in excessive computing time.
-  * @param miniBatchFraction    Fraction of data to be used for each SGD iteration
-  * @param stepSize             Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
-  * @param hessianMatrixRows    hessian matrix rows count
-  * @param hessianMatrixCols    hessian matrix cols count
-  * @param hessianMatrixData    hessian matrix data array
-  */
+ * Logistic Regression Meta data
+ *
+ * @param observationColumns   Column(s) containing the observations.
+ * @param labelColumn          Column name containing the label for each observation.
+ * @param frequencyColumn      Optional column containing the frequency of observations.
+ * @param numClasses           Number of classes
+ * @param optimizer            Set type of optimizer.
+ *                             LBFGS - Limited-memory BFGS.
+ *                             LBFGS supports multinomial logistic regression.
+ *                             SGD - Stochastic Gradient Descent.
+ *                             SGD only supports binary logistic regression.
+ * @param computeCovariance    Compute covariance matrix for the model.
+ * @param intercept            Add intercept column to training data.
+ * @param featureScaling       Perform feature scaling before training model.
+ * @param threshold            Threshold for separating positive predictions from negative predictions.
+ * @param regType              Set type of regularization
+ *                             L1 - L1 regularization with sum of absolute values of coefficients
+ *                             L2 - L2 regularization with sum of squares of coefficients
+ * @param regParam             Regularization parameter
+ * @param numIterations        Maximum number of iterations
+ * @param convergenceTolerance Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.
+ * @param numCorrections       Number of corrections used in LBFGS update.
+ *                             Default is 10.
+ *                             Values of less than 3 are not recommended;
+ *                             large values will result in excessive computing time.
+ * @param miniBatchFraction    Fraction of data to be used for each SGD iteration
+ * @param stepSize             Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
+ * @param hessianMatrixRows    hessian matrix rows count
+ * @param hessianMatrixCols    hessian matrix cols count
+ * @param hessianMatrixData    hessian matrix data array
+ */
 case class LogisticRegressionModelMetaData(observationColumns: List[String],
                                            labelColumn: String,
                                            frequencyColumn: Option[String],
@@ -442,8 +444,8 @@ case class LogisticRegressionModelMetaData(observationColumns: List[String],
                                            hessianMatrixData: Array[Double]) extends Serializable
 
 /**
-  * Input arguments for logistic regression train plugin
-  */
+ * Input arguments for logistic regression train plugin
+ */
 case class LogisticRegressionTrainArgs(frame: Frame,
                                        observationColumns: List[String],
                                        labelColumn: String,
