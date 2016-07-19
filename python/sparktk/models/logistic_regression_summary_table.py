@@ -16,22 +16,26 @@ class LogisticRegressionSummaryTable(PropertiesObject):
         if scala_option_frame:
             from sparktk.frame.frame import Frame
             self._covariance_matrix = Frame(self._tc, scala_option_frame)
-        self._covariance_matrix = None
+        else:
+            self._covariance_matrix = None
 
         scala_option_map = self._tc.jutils.convert.from_scala_option(scala_result.standardErrors())
         if scala_option_map:
             self._standard_errors = self._tc.jutils.convert.scala_map_to_python(scala_option_map)
-        self._standard_errors = None
+        else:
+            self._standard_errors = None
 
         scala_option_map = self._tc.jutils.convert.from_scala_option(scala_result.waldStatistic())
         if scala_option_map:
             self._wald_statistic = self._tc.jutils.convert.scala_map_to_python(scala_option_map)
-        self._wald_statistic = None
+        else:
+            self._wald_statistic = None
 
         scala_option_map = self._tc.jutils.convert.from_scala_option(scala_result.pValue())
         if scala_option_map:
             self._p_value = self._tc.jutils.convert.scala_map_to_python(scala_option_map)
-        self._p_value = None
+        else:
+            self._p_value = None
 
     @property
     def num_features(self):
