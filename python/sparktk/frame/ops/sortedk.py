@@ -108,6 +108,8 @@ def sorted_k(self, k, column_names_and_ascending, reduce_tree_depth = 2):
         [4]  Drama      1957  12 Angry Men
 
     """
-    return self._tc.frame.create(self._scala.sortedK(k,
-                                 self._tc.jutils.convert.to_scala_list_string_bool_tuple(column_names_and_ascending),
-                                 reduce_tree_depth))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc,
+                 self._scala.sortedK(k,
+                                     self._tc.jutils.convert.to_scala_list_string_bool_tuple(column_names_and_ascending),
+                                     reduce_tree_depth))
