@@ -9,9 +9,9 @@ def import_jdbc(connection_url, table_name, tc=implicit):
     Parameters
     ----------
 
-    :param connection_url: JDBC connection url to database server
-    :param table_name: JDBC table name
-    :return: returns frame with jdbc table data
+    :param connection_url: (str) JDBC connection url to database server
+    :param table_name: (str) JDBC table name
+    :return: (Frame) returns frame with jdbc table data
 
     Examples
     --------

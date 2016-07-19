@@ -57,5 +57,5 @@ def quantiles(self, column_name, quantiles):
        [2]      100.0                           660.0
 
     """
-
-    return self._tc.frame.create(self._scala.quantiles(column_name, self._tc.jutils.convert.to_scala_list_double(quantiles)))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.quantiles(column_name, self._tc.jutils.convert.to_scala_list_double(quantiles)))

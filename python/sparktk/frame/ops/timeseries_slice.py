@@ -66,7 +66,8 @@ def timeseries_slice(self, date_time_index, start, end):
     if not isinstance(end, basestring):
         raise TypeError("end date/time should be a string in the ISO 8601 format")
 
-    return self._tc.frame.create(
-        self._scala.timeSeriesSlice(self._tc.jutils.convert.to_scala_date_time_list(date_time_index),
-                                    self._tc.jutils.convert.to_scala_date_time(start),
-                                    self._tc.jutils.convert.to_scala_date_time(end)))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc,
+                 self._scala.timeSeriesSlice(self._tc.jutils.convert.to_scala_date_time_list(date_time_index),
+                                             self._tc.jutils.convert.to_scala_date_time(start),
+                                             self._tc.jutils.convert.to_scala_date_time(end)))

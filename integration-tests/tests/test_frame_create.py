@@ -149,3 +149,56 @@ def test_frame_upload_raw_list_data(tc):
             assert(len(data[r]) == len(row))
             for c, column in enumerate(row):
                 assert(data[r][c] == column)
+
+def test_create_empty_frame(tc):
+    """
+    Tests creating an empty frame.
+    """
+    frame = tc.frame.create(None)
+    assert(frame.row_count == 0)
+    assert(len(frame.schema) == 0)
+    frame = tc.frame.create([])
+    assert(frame.row_count == 0)
+    assert(len(frame.schema) == 0)
+
+def test_invalid_frame_data_source(tc):
+    """
+    Tests creating a frame with an invalid data source (not a list of data or RDD)
+    """
+    # create a valid frame to test as a data source
+    frame = tc.frame.create([[1, "a"],[2, "b"]])
+    assert(frame.row_count == 2)
+    assert(frame._is_python)
+
+    try:
+        # creating a frame from a python frame should not be allowed
+        tc.frame.create(frame)
+        raise RuntimeError("Expected an error when trying to create a frame from a python frame.")
+    except TypeError as e:
+        assert("Invalid data source" in e.message)
+
+    frame._scala
+    assert(frame._is_scala)
+
+    try:
+        # creating a frame from a scala frame should not be allowed
+        tc.frame.create(frame)
+        raise RuntimeError("Expected an error when trying to create a frame from a scala frame.")
+    except TypeError as e:
+        assert("Invalid data source" in e.message)
+
+    try:
+        # creating a frame from an integer is not allowed
+        tc.frame.create(1)
+        raise RuntimeError("Expected an error when trying to create a frame from an int.")
+    except TypeError as e:
+        assert("Invalid data source" in e.message)
+
+    try:
+        # if creating a frame from a list, it should be a 2-dimensional list
+        tc.frame.create([[1,2,3], 4, [5,6,7]])
+        raise RuntimeError("Expected an error when trying to create with an invalid list.")
+    except TypeError as e:
+        assert("Invalid data source" in e.message)
+
+
