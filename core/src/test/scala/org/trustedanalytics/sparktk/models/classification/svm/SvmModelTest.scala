@@ -26,7 +26,7 @@ class SvmModelTest extends TestingSparkContextWordSpec with Matchers {
       svmModel shouldBe a[SvmModel]
     }
 
-    "thow an IllegalArgumentException for empty observationColumns" in {
+    "throw an IllegalArgumentException for empty observationColumns" in {
       intercept[IllegalArgumentException] {
 
         val rdd = sparkContext.parallelize(labeledPoint)
@@ -36,7 +36,7 @@ class SvmModelTest extends TestingSparkContextWordSpec with Matchers {
       }
     }
 
-    "thow an IllegalArgumentException for empty labelColumn" in {
+    "throw an IllegalArgumentException for empty labelColumn" in {
       intercept[IllegalArgumentException] {
 
         val rdd = sparkContext.parallelize(labeledPoint)

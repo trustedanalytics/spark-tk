@@ -25,7 +25,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
       model shouldBe a[RandomForestRegressorModel]
     }
 
-    "thow an IllegalArgumentException for empty observationColumns" in {
+    "throw an IllegalArgumentException for empty observationColumns" in {
       intercept[IllegalArgumentException] {
 
         val rdd = sparkContext.parallelize(labeledPoint)
@@ -34,7 +34,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
       }
     }
 
-    "thow an IllegalArgumentException for empty labelColumn" in {
+    "throw an IllegalArgumentException for empty labelColumn" in {
       intercept[IllegalArgumentException] {
 
         val rdd = sparkContext.parallelize(labeledPoint)

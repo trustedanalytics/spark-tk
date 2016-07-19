@@ -25,7 +25,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       model shouldBe a[RandomForestClassifierModel]
     }
 
-    "thow an IllegalArgumentException for empty observationColumns" in {
+    "throw an IllegalArgumentException for empty observationColumns" in {
       intercept[IllegalArgumentException] {
 
         val rdd = sparkContext.parallelize(labeledPoint)
@@ -35,7 +35,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       }
     }
 
-    "thow an IllegalArgumentException for empty labelColumn" in {
+    "throw an IllegalArgumentException for empty labelColumn" in {
       intercept[IllegalArgumentException] {
 
         val rdd = sparkContext.parallelize(labeledPoint)

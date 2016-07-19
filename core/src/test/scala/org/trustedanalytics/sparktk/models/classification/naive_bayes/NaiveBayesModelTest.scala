@@ -24,7 +24,7 @@ class NaiveBayesModelTest extends TestingSparkContextWordSpec with Matchers {
       model shouldBe a[NaiveBayesModel]
     }
 
-    "thow an IllegalArgumentException for empty observationColumns" in {
+    "throw an IllegalArgumentException for empty observationColumns" in {
       intercept[IllegalArgumentException] {
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
@@ -33,7 +33,7 @@ class NaiveBayesModelTest extends TestingSparkContextWordSpec with Matchers {
       }
     }
 
-    "thow an IllegalArgumentException for empty labelColumn" in {
+    "throw an IllegalArgumentException for empty labelColumn" in {
       intercept[IllegalArgumentException] {
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
