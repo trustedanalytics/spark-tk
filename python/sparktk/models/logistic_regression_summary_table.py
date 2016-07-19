@@ -14,7 +14,8 @@ class LogisticRegressionSummaryTable(PropertiesObject):
 
         scala_option_frame = self._tc.jutils.convert.from_scala_option(scala_result.covarianceMatrix())
         if scala_option_frame:
-            self._covariance_matrix = self._tc.frame.create(scala_option_frame)
+            from sparktk.frame.frame import Frame
+            self._covariance_matrix = Frame(self._tc, scala_option_frame)
         self._covariance_matrix = None
 
         scala_option_map = self._tc.jutils.convert.from_scala_option(scala_result.standardErrors())
