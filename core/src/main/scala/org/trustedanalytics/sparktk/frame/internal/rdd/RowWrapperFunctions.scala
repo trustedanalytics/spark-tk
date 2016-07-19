@@ -4,7 +4,7 @@ import breeze.linalg.{ DenseVector => BDV }
 import org.apache.spark.SparkException
 import org.apache.spark.mllib.linalg.{ Vectors, Vector, DenseVector }
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.{ NumericParser, parseNumeric }
+import org.apache.spark.mllib.MllibAliases.{ NumericParser, parseNumeric }
 import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 
