@@ -247,7 +247,8 @@ class ArxModel(PropertiesObject):
         elif len(x_columns) <= 0:
             raise ValueError("'x_columns' should not be empty.")
         scala_x_columns = self._tc.jutils.convert.to_scala_vector_string(x_columns)
-        return self._tc.frame.create(self._scala.predict(frame._scala, ts_column, scala_x_columns))
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, ts_column, scala_x_columns))
 
     def save(self, path):
         """

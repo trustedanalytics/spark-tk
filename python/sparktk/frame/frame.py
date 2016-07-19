@@ -26,6 +26,9 @@ class Frame(object):
             self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
         else:
             if not isinstance(source, RDD):
+                if not isinstance(source, list) or (len(source) > 0 and any(not isinstance(row, list) for row in source)):
+                    raise TypeError("Invalid data source.  The data parameter must be a 2-dimensional list (list of row data) or an RDD.")
+
                 inferred_schema = False
                 if isinstance(schema, list):
                     if all(isinstance(item, basestring) for item in schema):
