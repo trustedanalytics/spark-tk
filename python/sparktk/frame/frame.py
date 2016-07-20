@@ -1,4 +1,5 @@
 from pyspark.rdd import RDD
+from pyspark.sql import DataFrame
 
 from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
@@ -24,9 +25,13 @@ class Frame(object):
         elif self.is_scala_rdd(source):
             scala_schema = schema_to_scala(tc.sc, schema)
             self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
+        elif self.is_scala_dataframe(source):
+            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source)
+        elif isinstance(source, DataFrame):
+            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
         else:
             if not isinstance(source, RDD):
-                if not isinstance(source, list) or (len(source) > 0 and any(not isinstance(row, list) for row in source)):
+                if not isinstance(source, list) or (len(source) > 0 and any(not isinstance(row, (list, tuple)) for row in source)):
                     raise TypeError("Invalid data source.  The data parameter must be a 2-dimensional list (list of row data) or an RDD.")
 
                 inferred_schema = False
@@ -178,6 +183,11 @@ class Frame(object):
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
+    def create_scala_frame_from_scala_dataframe(sc, scala_dataframe):
+        """call constructor in JVM"""
+        return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_dataframe)
+
+    @staticmethod
     def _from_scala(tc, scala_frame):
         """creates a python Frame for the given scala Frame"""
         return Frame(tc, scala_frame)
@@ -193,6 +203,9 @@ class Frame(object):
 
     def is_scala_rdd(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.rdd.RDD)
+
+    def is_scala_dataframe(self, item):
+        return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.sql.DataFrame)
 
     def is_python_rdd(self, item):
         return isinstance(item, RDD)

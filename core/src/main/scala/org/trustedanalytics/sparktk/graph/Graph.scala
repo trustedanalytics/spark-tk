@@ -17,7 +17,7 @@ class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
   //  }
 }
 
-object GraphHelp {
+object Graph {
   val exampleGraphs = examples.Graphs // get example graph
 
   def getExampleGraphFrameFriends: GraphFrame = exampleGraphs.friends

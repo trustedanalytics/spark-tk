@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.graph.internal.constructors
 
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.Graph
+import org.graphframes.GraphFrame
 
 object FromFrames {
 
@@ -18,6 +19,7 @@ object FromFrames {
    *                  for example, when interfacing with logic (such as a graph DB) which expects a specific edge type
    * @return
    */
-  def create(vertexFrame: Frame, edgeFrame: Frame): Graph = ???
-
+  def create(vertexFrame: Frame, edgeFrame: Frame): Graph = {
+    new Graph(GraphFrame(vertexFrame.dataframe, edgeFrame.dataframe))
+  }
 }

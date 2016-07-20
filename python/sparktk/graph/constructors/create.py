@@ -39,6 +39,8 @@ def create(vertex_frame, edge_frame, tc=implicit):
     scala_graph = Graph.create_scala_graph_from_scala_frames(tc, scala_vertex_frame, scala_edge_frame)
     return Graph(tc, scala_graph)
 
+# This is probably busted in that the original python frames are lost
+
 
 def create_from_spark_graphframe(graphframe, tc=implicit):
     """Create a sparktk Graph from a Spark GraphFrame"""

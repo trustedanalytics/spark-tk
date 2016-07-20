@@ -11,7 +11,7 @@ from sparktk.graph.constructors.create import create, create_from_spark_graphfra
 
 
 #def get_example_graph_frame(tc):
-    #return tc.sc._jvm.org.trustedanalytics.sparktk.graph.GraphHelp.getExampleGraphFrame()
+    #return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph.getExampleGraphFrame()
 
 
 class Graph(object):
@@ -19,7 +19,6 @@ class Graph(object):
     def __init__(self, tc, source):
         self._tc = tc
         self._scala = None
-        self._python_graphframe = None
         if self._is_scala_graph(source):
             # Scala Graph
             self._scala = source
@@ -32,9 +31,6 @@ class Graph(object):
             self._scala = self.create_scala_graph_from_scala_graphframe(self._tc, scala_graphframe)
         else:
             raise ValueError("Cannot create from source %s" % source)
-
-        sql_context = SQLContext(tc.sc)
-        self._python_graphframe = _from_java_gf(self._scala.graphFrame(), sql_context)
 
     @staticmethod
     def create_scala_graph(sc, scala_graph_frame):
@@ -53,7 +49,7 @@ class Graph(object):
 
     @staticmethod
     def create_scala_graph_from_scala_graphframe(tc, scala_graphframe):
-        #return tc.sc._jvm.org.trustedanalytics.sparktk.graph.GraphHelp.createGraph(scala_graphframe)
+        #return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph.createGraph(scala_graphframe)
         return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph(scala_graphframe)
 
     @staticmethod
@@ -76,6 +72,18 @@ class Graph(object):
 
     @property
     def graphframe(self):
-        return self._python_graphframe
+        sql_context = SQLContext(self._tc.sc)
+        return _from_java_gf(self._scala.graphFrame(), sql_context)
+
+    @property
+    def vertices(self):
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.graphFrame.vertices())
+
+    @property
+    def edges(self):
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.graphFrame.edges())
+
 
     from sparktk.graph.ops.vertex_count import vertex_count
