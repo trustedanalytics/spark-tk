@@ -229,12 +229,14 @@ class CollaborativeFilteringModel(PropertiesObject):
     @property
     def user_frame(self):
         """user frame from model"""
-        return self._tc.frame.create(self._scala.userFrame())
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.userFrame())
 
     @property
     def product_frame(self):
         """user frame from model"""
-        return self._tc.frame.create(self._scala.productFrame())
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.productFrame())
 
     def create_predict_frame(self,
                              frame,
@@ -254,7 +256,8 @@ class CollaborativeFilteringModel(PropertiesObject):
         :param output_rating_column_name: (str) A rating column name for the output frame
         :return: (Frame) returns predicted rating frame with specified output columns
         """
-        return self._tc.frame.create(self._scala.createPredictFrame(frame._scala,
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.createPredictFrame(frame._scala,
                                                                     input_source_column_name,
                                                                     input_dest_column_name,
                                                                     output_user_column_name,
