@@ -187,7 +187,8 @@ class LinearRegressionModel(PropertiesObject):
         :param observation_columns: (List[str]) List of column(s) containing the observations
         :return: (Frame) returns predicted frame
         """
-        return self._tc.frame.create(self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
 
     def save(self, path):
         """
