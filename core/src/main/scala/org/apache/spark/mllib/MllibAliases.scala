@@ -1,4 +1,4 @@
-package org.apache.spark.mllib.org.trustedanalytics.sparktk
+package org.apache.spark.mllib
 
 import org.apache.spark.mllib.util.{ Loader => SparkLoader, NumericParser => SparkNumericParser }
 import org.apache.spark.mllib.linalg.{ Vectors => SparkVectors, Vector => SparkVector }

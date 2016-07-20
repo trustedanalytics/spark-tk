@@ -1,6 +1,6 @@
 package org.trustedanalytics.sparktk.models.clustering.kmeans
 
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases
+import org.apache.spark.mllib.MllibAliases
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Column, FrameSchema }
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
