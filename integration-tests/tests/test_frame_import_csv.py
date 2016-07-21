@@ -34,6 +34,14 @@ def test_import_csv_with_custom_schema(tc):
     assert(f.row_count == 20)
     assert(f.schema == schema)
 
+def test_import_csv_with_custom_schema_parse_error(tc):
+    # Test with good schema, but bad value in file --bad value should render as None
+    path = "../datasets/parse_error.csv"
+    f = tc.frame.import_csv(path, schema=[("a", str),("b", int), ("c", float)], header=True)
+    rows = f.take(f.row_count).data
+    assert(len(rows) == 4)
+    assert(rows[2] == ["blue",100, None])
+
 
 def test_import_csv_with_no_header(tc):
     path = "../datasets/noheader.csv"

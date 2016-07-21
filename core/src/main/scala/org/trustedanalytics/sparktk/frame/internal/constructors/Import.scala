@@ -40,7 +40,7 @@ object Import {
     val headerStr = header.toString.toLowerCase
     val inferSchemaStr = inferSchema.toString.toLowerCase
 
-    var dfr = sqlContext.read.format("com.databricks.spark.csv")
+    var dfr = sqlContext.read.format("com.databricks.spark.csv.org.trustedanalytics.sparktk")
       .option("header", headerStr)
       .option("inferSchema", inferSchemaStr)
       .option("delimiter", delimiter)

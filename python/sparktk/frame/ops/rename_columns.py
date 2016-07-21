@@ -1,5 +1,7 @@
 import sparktk.frame.schema
 
+from sparktk.frame.schema import schema_to_python, schema_to_scala
+
 def rename_columns(self, names):
     """
     Rename columns
@@ -30,7 +32,7 @@ def rename_columns(self, names):
         >>> my_frame.rename_columns({"Black": "Mercury", "White": "Venus"})
 
         >>> print my_frame.schema
-        [('Mercury', <type 'unicode'>), ('Venus', <type 'unicode'>)]
+        [(u'Mercury', <type 'unicode'>), (u'Venus', <type 'unicode'>)]
 
     """
     if not isinstance(names, dict):
@@ -38,13 +40,9 @@ def rename_columns(self, names):
     if self.schema is None:
         raise RuntimeError("Unable rename column(s), because the frame's schema has not been defined.")
     if self._is_python:
-        new_schema = self._python.schema
-        index_list = sparktk.frame.schema.get_indices_for_selected_columns(self.schema, names.keys())
-        for index in index_list:
-            old_name = new_schema[index][0]
-            data_type = new_schema[index][1]
-            new_name = names[old_name]
-            new_schema[index] = (new_name, data_type)
-        self._python.schema = new_schema
+        scala_rename_map = self._tc.jutils.convert.to_scala_map(names)
+        scala_schema = schema_to_scala(self._tc.sc, self._python.schema)
+        rename_scala_schema = scala_schema.renameColumns(scala_rename_map)
+        self._python.schema = schema_to_python(self._tc.sc, rename_scala_schema)
     else:
         self._scala.renameColumns(self._tc.jutils.convert.to_scala_map(names))
