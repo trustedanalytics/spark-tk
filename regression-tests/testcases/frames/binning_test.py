@@ -99,7 +99,14 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = frame_1_2_5_ratings.group_by("binned8", self.context.agg.count)
         self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
 
-
+    def test_bin_cutoffs_strict_binning_2bins_5ratings(self):
+        """Binning using cutoffs on 5 ratings and 2 bins"""
+        self.frame_5ratings.bin_column("rating", [1, 2, 3, 4], include_lowest=False,
+            strict_binning=True, bin_column_name="binned9")
+        print self.frame_5ratings.inspect(100)
+        baseline = [[-1, 3944], [0, 7714], [1, 3994], [2, 3950]]
+        groupby_frame = self.frame_5ratings.group_by("binned9", self.context.agg.count)
+        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
 if __name__ == '__main__':
     unittest.main()
 
