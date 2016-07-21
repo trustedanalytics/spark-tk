@@ -1,41 +1,17 @@
-##############################################################################
-# INTEL CONFIDENTIAL
-#
-# Copyright 2014, 2015 Intel Corporation All Rights Reserved.
-#
-# The source code contained or described herein and all documents related to
-# the source code (Material) are owned by Intel Corporation or its suppliers
-# or licensors. Title to the Material remains with Intel Corporation or its
-# suppliers and licensors. The Material may contain trade secrets and
-# proprietary and confidential information of Intel Corporation and its
-# suppliers and licensors, and is protected by worldwide copyright and trade
-# secret laws and treaty provisions. No part of the Material may be used,
-# copied, reproduced, modified, published, uploaded, posted, transmitted,
-# distributed, or disclosed in any way without Intel's prior express written
-# permission.
-#
-# No license under any patent, copyright, trade secret or other intellectual
-# property right is granted to or conferred upon you by disclosure or
-# delivery of the Materials, either expressly, by implication, inducement,
-# estoppel or otherwise. Any license under such intellectual property rights
-# must be express and approved by Intel in writing.
-##############################################################################
-""" Test interface functionality of column accessors and modifiers"""
+""" Tests import_csv functionality with varying parameters"""
 
 import unittest
-
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from qalib import sparktk_test
 import sparktk
 
-class FrameCreateTest(sparktk_test.SparkTKTestCase):
+class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
         """Build frames to be exercised and establish known baselines"""
-        super(FrameCreateTest, self).setUp()
+        super(FrameImportCSVTest, self).setUp()
         self.dataset = self.get_file("int_str_int.csv")
         self.schema = [("num1", int), ("letter", str), ("num2", int)]
         self.frame = self.context.frame.import_csv(self.dataset, schema=self.schema)
@@ -116,7 +92,8 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         frame_with_header = self.context.frame.import_csv(
             self.dataset, schema=self.schema, header=True)
         frame_without_header = self.context.frame.import_csv(self.dataset, schema=self.schema, header=False)
-        self.assertEqual(len(frame_with_header.take(sys.maxint).data), len(frame_without_header.take(sys.maxint).data) - 1) # frame with header = True should have on less row than the one without because the first line is being skipped
+        self.assertEqual(len(frame_with_header.take(sys.maxint).data), len(frame_without_header.take(sys.maxint).data) - 1) 
+        # frame with header = True should have on less row than the one without because the first line is being skipped
     
     def test_without_schema(self):
         """Test import_csv without a specified schema, check that the inferred schema is correct"""
@@ -146,6 +123,7 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.import_csv(self.dataset, header=True)
         expected_schema = [("1", int), ("a", str), ("2", int)]
         self.assertEqual(frame.schema, expected_schema)	
+
 
 if __name__ == "__main__":
     unittest.main()
