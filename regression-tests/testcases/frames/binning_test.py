@@ -35,56 +35,56 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         baseline = [[0, 3970], [1, 3744], [2, 3994], [3, 3950], [4, 3944]]
         self.frame_5ratings.bin_column("rating", 5, bin_column_name="binned0")
         groupby_frame = self.frame_5ratings.group_by("binned0", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equalwidth_2bins_5ratings(self):
         """Equal width  binning on 5 ratings into 2 bins"""
         baseline = [[0, 7714], [1, 11888]]
         self.frame_5ratings.bin_column("rating", 2, bin_column_name="binned1")
         groupby_frame = self.frame_5ratings.group_by("binned1", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equalwidth_10bins_5ratings(self):
         """Equal Width binning on 5 ratings and 10 bins"""
         baseline = [[0, 3970], [2, 3744], [5, 3994], [7, 3950], [9, 3944]]
         self.frame_5ratings.bin_column("rating", 10, bin_column_name="binned2")
         groupby_frame = self.frame_5ratings.group_by("binned2", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equaldepth_5bins_5ratings(self):
         """Equal depth binning on 5 ratings into 5 bins"""
         baseline = [[0, 3970], [1, 3744], [2, 3994], [3, 3950], [4, 3944]]
         self.frame_5ratings.quantile_bin_column("rating", 5, bin_column_name="binned3")
         groupby_frame = self.frame_5ratings.group_by("binned3", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equaldepth_2bins_5ratings(self):
         """Equal depth binning on 5 ratings into 2 bins"""
         baseline = [[0, 11708], [1, 7894]]
         self.frame_5ratings.quantile_bin_column("rating", 2, bin_column_name="binned4")
         groupby_frame = self.frame_5ratings.group_by("binned4", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equaldepth_10bins_5ratings(self):
         """Equal depth binning on 5 ratings into 10 bins """
         self.frame_5ratings.quantile_bin_column("rating", 10, bin_column_name="binned5")
         baseline = [[0, 3970], [1, 3744], [2, 3994], [3, 3950], [4, 3944]]
         groupby_frame = self.frame_5ratings.group_by("binned5", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equalwidth_5bins_1rating(self):
         """Equal width binning on 1 rating and 5 bins"""
         self.frame_1ratings.bin_column("rating", 5, bin_column_name="binned6")
         baseline = [[0, 19602]]
         groupby_frame = self.frame_1ratings.group_by("binned6", self.context.agg.count)
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equaldepth_5bins_1rating(self):
         """Equal depth binning on 1 rating and 5 bins"""
         self.frame_1ratings.quantile_bin_column("rating", 5, bin_column_name="binned7")
         baseline = [[0, 19602]]
         groupby_frame = self.frame_1ratings.group_by("binned7", self.context.agg.count)
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_equaldepth_2bins_1_2_5_rating(self):
         """Equal depth binning on ratings 1, 2 and 5 into 2 bins"""
@@ -97,7 +97,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         frame_1_2_5_ratings.quantile_bin_column("rating", 2, bin_column_name="binned8")
         baseline = [[0, 7714], [1, 11888]]
         groupby_frame = frame_1_2_5_ratings.group_by("binned8", self.context.agg.count)
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_bin_cutoffs_strict_binning_true_4bins_5ratings(self):
         """Binning using cutoffs on 5 ratings and 2 bins"""
@@ -105,7 +105,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
             strict_binning=True, bin_column_name="binned9")
         baseline = [[-1, 3944], [0, 7714], [1, 3994], [2, 3950]]
         groupby_frame = self.frame_5ratings.group_by("binned9", self.context.agg.count)
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual( sorted(groupby_frame.take(10).data), baseline)
 
     def test_bin_cutoff_strict_binning_false_3bins_5ratings(self):
         """Binning using cutoff with strict binning false"""
