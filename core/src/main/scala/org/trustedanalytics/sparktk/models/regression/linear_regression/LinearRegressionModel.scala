@@ -6,9 +6,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.TkContext
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, FrameRddFunctions }
 import org.trustedanalytics.sparktk.frame._
-import org.trustedanalytics.sparktk.models.FrameRddFunctions
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegressionModel }
 import scala.collection.mutable.ListBuffer

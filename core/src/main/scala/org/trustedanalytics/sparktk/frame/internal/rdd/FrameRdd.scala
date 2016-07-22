@@ -17,7 +17,8 @@ import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics 
 //import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
 //import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
-import org.apache.spark.mllib.linalg.{ Vector, Vectors, DenseVector => MllibDenseVector }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors, VectorUDT, DenseVector => MllibDenseVector }
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.{ ArrayType, BooleanType, ByteType, DateType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType, TimestampType }
@@ -769,3 +770,53 @@ object FrameRdd {
   }
 }
 
+/**
+ * Functions for extending frames with model-related methods.
+ * @param self input that these functions are applicable to
+ */
+class FrameRddFunctions(self: FrameRdd) {
+  /**
+   * Convert FrameRdd into RDD[LabeledPointWithFrequency] format required for updates in MLLib code
+   */
+  def toLabeledPointRDDWithFrequency(labelColumnName: String,
+                                     featureColumnNames: List[String],
+                                     frequencyColumnName: Option[String]): RDD[LabeledPointWithFrequency] = {
+    self.mapRows(row => {
+      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
+      frequencyColumnName match {
+        case Some(freqColumn) => {
+          new LabeledPointWithFrequency(DataTypes.toDouble(row.value(labelColumnName)),
+            new MllibDenseVector(features.toArray), DataTypes.toDouble(row.value(freqColumn)))
+        }
+        case _ => {
+          new LabeledPointWithFrequency(DataTypes.toDouble(row.value(labelColumnName)),
+            new MllibDenseVector(features.toArray), DataTypes.toDouble(1.0))
+        }
+      }
+    })
+  }
+
+  /**
+   * Convert FrameRdd into labeled DataFrame with label of type double, and features of type vector
+   */
+  def toLabeledDataFrame(rdd: FrameRdd, labelColumnName: String, featureColumnNames: List[String]): DataFrame = {
+    val labeledPointRdd = toLabeledPointRDD(rdd, labelColumnName, featureColumnNames)
+    val rowRdd: RDD[Row] = labeledPointRdd.map(labeledPoint => new GenericRow(Array[Any](labeledPoint.label, labeledPoint.features)))
+    val schema = StructType(Seq(StructField("label", DoubleType, true), StructField("features", new VectorUDT, true)))
+    new SQLContext(self.sparkContext).createDataFrame(rowRdd, schema)
+  }
+
+  /**
+   * Convert FrameRdd to DataFrame with features of type vector
+   */
+  def toLabeledDataFrame(featureColumnNames: List[String]): DataFrame = {
+    val vectorRdd: RDD[org.apache.spark.mllib.linalg.Vector] = self.mapRows(row => {
+      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
+      new MllibDenseVector(features.toArray)
+    })
+    val rowRdd: RDD[Row] = vectorRdd.map(vector => new GenericRow(Array[Any](vector)))
+    val schema = StructType(Seq(StructField("features", new VectorUDT, true)))
+    new SQLContext(self.sparkContext).createDataFrame(rowRdd, schema)
+  }
+
+}

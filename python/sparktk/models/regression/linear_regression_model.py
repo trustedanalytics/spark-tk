@@ -184,8 +184,8 @@ class LinearRegressionModel(PropertiesObject):
         Predict values for a frame using a trained Linear Regression model
 
         :param frame: (Frame) The frame to predict on
-        :param observation_columns: (List[str]) List of column(s) containing the observations
-        :return: (Frame) returns predicted frame
+        :param observation_columns: Optional(List[str]) List of column(s) containing the observations
+        :return: (Frame) returns frame with predicted column added
         """
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
