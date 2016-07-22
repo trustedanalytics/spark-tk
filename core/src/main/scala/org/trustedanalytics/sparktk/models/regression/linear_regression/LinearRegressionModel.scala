@@ -6,9 +6,9 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.TkContext
-import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, FrameRddFunctions }
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame._
-import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
+import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegressionModel }
 import scala.collection.mutable.ListBuffer
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
@@ -42,10 +42,6 @@ object LinearRegressionModel extends TkSaveableObject {
             regParam: Double = 0.0,
             standardization: Boolean = true,
             tolerance: Double = 1E-6): LinearRegressionModel = {
-
-    implicit def frameToFrameRddFunctions(frame: FrameRdd): FrameRddFunctions = {
-      new FrameRddFunctions(frame)
-    }
 
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
@@ -131,10 +127,6 @@ case class LinearRegressionModel(valueColumn: String,
                                  iterations: Int,
                                  sparkModel: SparkLinearRegressionModel) extends Serializable {
 
-  implicit def frameToFrameRddFunctions(frame: FrameRdd): FrameRddFunctions = {
-    new FrameRddFunctions(frame)
-  }
-
   /**
    * Predict values for a frame using a trained Linear Regression model
    *
@@ -148,7 +140,7 @@ case class LinearRegressionModel(valueColumn: String,
 
     val predictFrameRdd = new FrameRdd(frame.schema, frame.rdd)
 
-    val dataFrame = predictFrameRdd.toLabeledDataFrame(observationColumns.getOrElse(observationColumnsTrain.toList))
+    val dataFrame = predictFrameRdd.toLabeledDataFrame(predictFrameRdd, observationColumns.getOrElse(observationColumnsTrain.toList))
 
     val fullPrediction = sparkModel.transform(dataFrame)
     val prediction = fullPrediction.select("predicted_value").map(_.getDouble(0))
