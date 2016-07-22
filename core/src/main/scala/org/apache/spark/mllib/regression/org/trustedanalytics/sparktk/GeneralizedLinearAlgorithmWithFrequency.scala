@@ -31,12 +31,12 @@
  * limitations under the License.
  */
 
-package org.apache.spark.mllib.regression
+package org.apache.spark.mllib.regression.org.trustedanalytics.sparktk
 
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.mllib.feature.StandardScaler
 import org.apache.spark.mllib.linalg.{ Vector, Vectors }
-import org.apache.spark.mllib.optimization.OptimizerWithFrequency
+import org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk.OptimizerWithFrequency
 import org.apache.spark.mllib.util.MLUtils._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel

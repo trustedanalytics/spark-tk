@@ -18,8 +18,8 @@ package org.trustedanalytics.sparktk.models.classification.logistic_regression
 
 import breeze.linalg.DenseMatrix
 import org.apache.spark.mllib.optimization.{ L1Updater, SquaredL2Updater }
-import org.apache.spark.mllib.classification.{ LogisticRegressionModelWithFrequency, LogisticRegressionWithFrequencySGD }
-import org.apache.spark.mllib.regression.GeneralizedLinearAlgorithmWithFrequency
+import org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.{ LogisticRegressionModelWithFrequency, LogisticRegressionWithFrequencySGD }
+import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.GeneralizedLinearAlgorithmWithFrequency
 
 /**
  * Logistic regression model with Stochastic Gradient Descent

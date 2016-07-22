@@ -19,7 +19,7 @@ package org.trustedanalytics.sparktk.models.classification.logistic_regression
 import breeze.linalg.{ DenseMatrix, DenseVector, diag }
 import breeze.numerics.sqrt
 import breeze.stats.distributions.ChiSquared
-import org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency
+import org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency
 import org.trustedanalytics.sparktk.frame.Frame
 
 /**

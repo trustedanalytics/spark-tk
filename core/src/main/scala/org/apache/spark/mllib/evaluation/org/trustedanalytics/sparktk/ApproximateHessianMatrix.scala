@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.apache.spark.mllib.evaluation
+package org.apache.spark.mllib.evaluation.org.trustedanalytics.sparktk
 
 import breeze.linalg.support.CanCopy
 import breeze.linalg.{ DenseMatrix, DenseVector }
@@ -22,7 +22,7 @@ import breeze.math.VectorSpace
 import breeze.optimize.DiffFunction
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.optimization.Updater
-import org.apache.spark.mllib.optimization.{ CostFunctionWithFrequency, GradientWithFrequency }
+import org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk.{ CostFunctionWithFrequency, GradientWithFrequency }
 import org.apache.spark.rdd.RDD
 
 /**

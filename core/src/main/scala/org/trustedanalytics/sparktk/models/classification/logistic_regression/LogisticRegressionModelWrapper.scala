@@ -16,9 +16,9 @@
 
 package org.trustedanalytics.sparktk.models.classification.logistic_regression
 
-import org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency
-import org.apache.spark.mllib.evaluation.HessianMatrix
-import org.apache.spark.mllib.regression.GeneralizedLinearAlgorithmWithFrequency
+import org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency
+import org.apache.spark.mllib.evaluation.org.trustedanalytics.sparktk.HessianMatrix
+import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.GeneralizedLinearAlgorithmWithFrequency
 
 trait LogisticRegressionModelWrapper extends HessianMatrix {
 

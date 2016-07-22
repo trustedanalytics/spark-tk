@@ -2,7 +2,7 @@ package org.trustedanalytics.sparktk.models.classification.logistic_regression
 
 import breeze.linalg.DenseMatrix
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency
+import org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
@@ -10,7 +10,6 @@ import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
-import org.trustedanalytics.sparktk.models.FrameRddFunctions
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import scala.language.implicitConversions
 
@@ -77,10 +76,6 @@ object LogisticRegressionModel extends TkSaveableObject {
             numCorrections: Int = 10,
             miniBatchFraction: Double = 1d,
             stepSize: Double = 1d) = {
-
-    implicit def frameToFrameRddFunctions(frame: FrameRdd): FrameRddFunctions = {
-      new FrameRddFunctions(frame)
-    }
 
     require(frame != null, "frame is required")
     require(optimizer == "LBFGS" || optimizer == "SGD", "optimizer name must be 'LBFGS' or 'SGD'")

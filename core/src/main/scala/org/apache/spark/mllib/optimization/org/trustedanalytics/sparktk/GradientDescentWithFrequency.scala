@@ -31,13 +31,14 @@
  * limitations under the License.
  */
 
-package org.apache.spark.mllib.optimization
+package org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk
 
 import breeze.linalg.{ DenseMatrix => BDM, DenseVector => BDV }
 import org.apache.spark.Logging
 import org.apache.spark.annotation.{ DeveloperApi, Experimental }
-import org.apache.spark.mllib.evaluation.{ ApproximateHessianMatrix, HessianMatrix }
+import org.apache.spark.mllib.evaluation.org.trustedanalytics.sparktk.{ ApproximateHessianMatrix, HessianMatrix }
 import org.apache.spark.mllib.linalg.{ Vector, Vectors }
+import org.apache.spark.mllib.optimization.Updater
 import org.apache.spark.rdd.RDD
 
 import scala.collection.mutable.ArrayBuffer

@@ -16,7 +16,7 @@
 
 package org.trustedanalytics.sparktk.models.classification.logistic_regression
 
-import org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency
+import org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency
 
 /**
  * Command for loading model data into existing model in the model database.

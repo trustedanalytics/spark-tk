@@ -14,12 +14,13 @@
  *  limitations under the License.
  */
 
-package org.apache.spark.mllib.optimization
+package org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk
 
 import breeze.linalg.{ DenseVector => BDV }
 import breeze.optimize.DiffFunction
 import org.apache.spark.mllib.linalg.BLAS.axpy
 import org.apache.spark.mllib.linalg.{ Vector, Vectors }
+import org.apache.spark.mllib.optimization.Updater
 import org.apache.spark.rdd.RDD
 
 /**
@@ -27,6 +28,7 @@ import org.apache.spark.rdd.RDD
  * at a particular point (weights). It's used in Breeze's convex optimization routines.
  *
  * This is a copy of the private CostFun class in MLlib's LBFGS class
+ *
  * @see org.apache.spark.mllib.optimization.LBFGS
  */
 class CostFunctionWithFrequency(

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.apache.spark.mllib.evaluation
+package org.apache.spark.mllib.evaluation.org.trustedanalytics.sparktk
 
 import breeze.linalg.{ DenseMatrix => BDM }
 

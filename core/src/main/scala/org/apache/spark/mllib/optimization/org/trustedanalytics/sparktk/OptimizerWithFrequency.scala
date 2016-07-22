@@ -30,52 +30,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.spark.mllib.utils
 
-import org.apache.spark.Logging
+package org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk
+
 import org.apache.spark.annotation.DeveloperApi
-import org.apache.spark.mllib.regression.LabeledPointWithFrequency
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 
 /**
  * :: DeveloperApi ::
- * A collection of methods used to validate data before applying ML algorithms.
+ * Trait for optimization problem solvers.
  *
- * Extension of MlLib's data validators that supports a frequency column.
- * The frequency column contains the frequency of occurrence of each observation.
- *
- * @see org.apache.spark.mllib.utils.DataValidators
- *
+ * Extension of MlLib's optimization trait that supports a frequency column.
  */
 @DeveloperApi
-object DataValidatorsWithFrequency extends Logging {
+trait OptimizerWithFrequency extends Serializable {
 
   /**
-   * Function to check if labels used for classification are either zero or one.
-   *
-   * @return True if labels are all zero or one, false otherwise.
+   * Solve the provided convex optimization problem.
    */
-  val binaryLabelValidator: RDD[LabeledPointWithFrequency] => Boolean = { data =>
-    val numInvalid = data.filter(x => x.label != 1.0 && x.label != 0.0).count()
-    if (numInvalid != 0) {
-      throw new IllegalArgumentException("Classification labels should be 0 or 1. Found " + numInvalid + " invalid labels")
-    }
-    numInvalid == 0
-  }
-
-  /**
-   * Function to check if labels used for k class multi-label classification are
-   * in the range of {0, 1, ..., k - 1}.
-   *
-   * @return True if labels are all in the range of {0, 1, ..., k-1}, false otherwise.
-   */
-  def multiLabelValidator(k: Int): RDD[LabeledPointWithFrequency] => Boolean = { data =>
-    val numInvalid = data.filter(x =>
-      x.label - x.label.toInt != 0.0 || x.label < 0 || x.label > k - 1).count()
-    if (numInvalid != 0) {
-      throw new IllegalArgumentException("Classification labels should be in {0 to " + (k - 1) + "}. " +
-        "Found " + numInvalid + " invalid labels")
-    }
-    numInvalid == 0
-  }
+  def optimizeWithFrequency(data: RDD[(Double, Vector, Double)], initialWeights: Vector): Vector
 }

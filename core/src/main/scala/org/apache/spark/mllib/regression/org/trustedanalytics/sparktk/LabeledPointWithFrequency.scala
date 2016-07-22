@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.apache.spark.mllib.regression
+package org.apache.spark.mllib.regression.org.trustedanalytics.sparktk
 
 import org.apache.spark.SparkException
 import org.apache.spark.mllib.linalg.{ Vector, Vectors }
@@ -40,12 +40,12 @@ case class LabeledPointWithFrequency(label: Double, features: Vector, frequency:
 }
 
 /**
- * Parser for [[org.apache.spark.mllib.regression.LabeledPointWithFrequency]].
+ * Parser for [[org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.LabeledPointWithFrequency]].
  */
 object LabeledPointWithFrequency {
   /**
    * Parses a string resulted from `LabeledPointWithFrequency#toString` into
-   * an [[org.apache.spark.mllib.regression.LabeledPointWithFrequency]].
+   * an [[org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.LabeledPointWithFrequency]].
    */
   def parse(s: String): LabeledPointWithFrequency = {
     if (s.startsWith("(")) {

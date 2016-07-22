@@ -31,11 +31,12 @@
  * limitations under the License.
  */
 
-package org.apache.spark.mllib.optimization
+package org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk
 
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.mllib.linalg.BLAS.{ axpy, dot, scal }
 import org.apache.spark.mllib.linalg.{ DenseVector, Vector, Vectors }
+import org.apache.spark.mllib.optimization.Gradient
 import org.apache.spark.mllib.util.MLUtils
 
 /**

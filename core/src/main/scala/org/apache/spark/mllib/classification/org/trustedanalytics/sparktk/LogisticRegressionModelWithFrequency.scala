@@ -14,17 +14,19 @@
  *  limitations under the License.
  */
 
-package org.apache.spark.mllib.classification
+package org.apache.spark.mllib.classification.org.trustedanalytics.sparktk
 
 import org.apache.spark.SparkContext
 import org.apache.spark.annotation.Experimental
+import org.apache.spark.mllib.classification.ClassificationModel
 import org.apache.spark.mllib.classification.impl.GLMClassificationModel
 import org.apache.spark.mllib.linalg.BLAS.dot
 import org.apache.spark.mllib.linalg.{ DenseVector, Vector }
 import org.apache.spark.mllib.optimization.SquaredL2Updater
-import org.apache.spark.mllib.optimization.{ LBFGSWithFrequency, GradientDescentWithFrequency, LogisticGradientWithFrequency }
-import org.apache.spark.mllib.regression.{ LabeledPointWithFrequency, GeneralizedLinearAlgorithmWithFrequency, GeneralizedLinearModelWithFrequency }
-import org.apache.spark.mllib.utils.DataValidatorsWithFrequency
+import org.apache.spark.mllib.optimization.org.trustedanalytics.sparktk.{ GradientDescentWithFrequency, LBFGSWithFrequency, LogisticGradientWithFrequency }
+import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.{ GeneralizedLinearAlgorithmWithFrequency, GeneralizedLinearModelWithFrequency, LabeledPointWithFrequency }
+import org.apache.spark.mllib.utils.org.trustedanalytics.sparktk.DataValidatorsWithFrequency
+import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.LabeledPointWithFrequency
 import org.apache.spark.mllib.util.{ Loader, Saveable }
 import org.apache.spark.rdd.RDD
 
@@ -177,7 +179,7 @@ object LogisticRegressionModelWithFrequency extends Loader[LogisticRegressionMod
   override def load(sc: SparkContext, path: String): LogisticRegressionModelWithFrequency = {
     val (loadedClassName, version, metadata) = Loader.loadMetadata(sc, path)
     // Hard-code class name string in case it changes in the future
-    val classNameV1_0 = "org.apache.spark.mllib.classification.LogisticRegressionModelWithFrequency"
+    val classNameV1_0 = "org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency"
     (loadedClassName, version) match {
       case (className, "1.0") if className == classNameV1_0 =>
         val (numFeatures, numClasses) = ClassificationModel.getNumFeaturesClasses(metadata)
