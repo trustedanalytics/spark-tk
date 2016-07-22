@@ -1,7 +1,7 @@
 package org.apache.spark.mllib.org.trustedanalytics.sparktk
 
+import org.apache.spark.mllib.linalg.{ Vector => SparkVector, Vectors => SparkVectors }
 import org.apache.spark.mllib.util.{ Loader => SparkLoader, NumericParser => SparkNumericParser }
-import org.apache.spark.mllib.linalg.{ Vectors => SparkVectors, Vector => SparkVector }
 
 object MllibAliases {
 
