@@ -13,12 +13,12 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def setUp(self):
         super(FrameSortTest, self).setUp()
 
-        dataset = self.get_file("movie.csv")
-        schema = [("src", int),
-                  ("dir", str),
-                  ("dest", int),
+        dataset = self.get_file("dogs.csv")
+        schema = [("age", int),
+                  ("name", str),
+                  ("owner", str),
                   ("weight", int),
-                  ("e_type", str)]
+                  ("hair_type", str)]
 
         self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True)
 
@@ -43,7 +43,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sortedk_col_multiple_ascending(self):
         """ Test multiple-column sorting, ascending"""
         topk_frame = self.frame.sorted_k(
-            5, [("weight", True), ("e_type", True)])
+            5, [("weight", True), ("hair_type", True)])
         up_take = topk_frame.take(20)
 
         for i in range(0, len(up_take) - 1):
@@ -57,7 +57,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sortedk_col_multiple_descending(self):
         """ Test multiple-column sorting, descending"""
         topk_frame = self.frame.sorted_k(
-            5, [("weight", False), ("e_type", False)])
+            5, [("weight", False), ("hair_type", False)])
         down_take = topk_frame.take(20)
 
         for i in range(0, len(down_take) - 1):
@@ -72,7 +72,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sortedk_col_multiple_mixed(self):
         """ Test multiple-column sorting, mixed ascending/descending"""
         topk_frame = self.frame.sorted_k(
-            5, [("src", False), ("e_type", True), ("weight", True)])
+            5, [("age", False), ("hair_type", True), ("weight", True)])
         mixed_take = topk_frame.take(20)
 
         for i in range(0, len(mixed_take) - 1):
