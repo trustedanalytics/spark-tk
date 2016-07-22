@@ -50,7 +50,7 @@ object LinearRegressionModel extends TkSaveableObject {
     require(regParam >= 0, "regParam should be greater than or equal to 0")
 
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val dataFrame = trainFrameRdd.toLabeledDataFrame(trainFrameRdd, valueColumn, observationColumns.toList)
+    val dataFrame = trainFrameRdd.toLabeledDataFrame(valueColumn, observationColumns.toList)
 
     val linReg = new LinearRegression()
     linReg.setElasticNetParam(elasticNetParameter)
@@ -140,7 +140,7 @@ case class LinearRegressionModel(valueColumn: String,
 
     val predictFrameRdd = new FrameRdd(frame.schema, frame.rdd)
 
-    val dataFrame = predictFrameRdd.toLabeledDataFrame(predictFrameRdd, observationColumns.getOrElse(observationColumnsTrain.toList))
+    val dataFrame = predictFrameRdd.toLabeledDataFrame(observationColumns.getOrElse(observationColumnsTrain.toList))
 
     val fullPrediction = sparkModel.transform(dataFrame)
     val prediction = fullPrediction.select("predicted_value").map(_.getDouble(0))
