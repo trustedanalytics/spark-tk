@@ -145,8 +145,6 @@ object CollaborativeFilteringModel extends TkSaveableObject {
  * @param numItemBlock number of item blocks
  * @param checkpointIterations Number of iterations between checkpoints
  * @param targetRMSE target RMSE
- * // * @param userFeaturesFrame user features frame
- * // * @param productFeaturesFrame product features frame
  * @param rank rank
  * @param sparkModel model generated using spark
  */
