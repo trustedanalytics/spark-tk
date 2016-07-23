@@ -9,17 +9,19 @@ object FromFrames {
   /**
    * Creates a sparktk Graph from two sparktk Frames
    *
-   * @param vertexFrame - frame defining the vertices for the graph; schema must have a column named "id" which provides
-   *                    unique vertex ID.  All other columns are treated as vertex properties.  If a column is also
-   *                    found named "vertex", it will be used as a special label to denote the type of vertex,
-   *                    for example, when interfacing with logic (such as a graph DB) which expects a specific vertex type
-   * @param edgeFrame - frame defining the edges of the graph; schema must have columns names "src" and "dst" which
-   *                  provide the vertex ids of the edge.  All other columns are treated as edge properties.  If a
-   *                  column is also found named "edge", it will be used as a special label to denote the type of edge,
-   *                  for example, when interfacing with logic (such as a graph DB) which expects a specific edge type
-   * @return
+   * @param verticesFrame - A vertices frame defines the vertices for the graph and must have a schema with a column
+   *                    named "id" which provides unique vertex ID.  All other columns are treated as vertex properties.
+   *                    If a column is also found named "vertex_type", it will be used as a special label to denote the
+   *                    type of vertex, for example, when interfacing with logic (such as a graph DB) which expects a
+   *                    specific vertex type.
+   * @param edgesFrame - An edge frame defines the edges of the graph; schema must have columns names "src" and "dst"
+   *                    which provide the vertex ids of the edge.  All other columns are treated as edge properties.
+   *                    If a column is also found named "edge_type", it will be used as a special label to denote the
+   *                    type of edge, for example, when interfacing with logic (such as a graph DB) which expects a
+   *                    specific edge type.
+   * @return - a new Graph object
    */
-  def create(vertexFrame: Frame, edgeFrame: Frame): Graph = {
-    new Graph(GraphFrame(vertexFrame.dataframe, edgeFrame.dataframe))
+  def create(verticesFrame: Frame, edgesFrame: Frame): Graph = {
+    new Graph(GraphFrame(verticesFrame.dataframe, edgesFrame.dataframe))
   }
 }

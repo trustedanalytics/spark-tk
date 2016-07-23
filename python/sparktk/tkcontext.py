@@ -2,6 +2,7 @@ from lazyloader import get_lazy_loader
 from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
 from sparktk.loggers import loggers
+from sparktk.arguments import require_type
 from pyspark import SparkContext
 
 import logging
@@ -16,14 +17,34 @@ class TkContext(object):
         if type(sc) is not SparkContext:
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc
+        self._sql_context = None
         self._jtc = self._sc._jvm.org.trustedanalytics.sparktk.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
         self._scala_sc = self._jutils.get_scala_sc()
         loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
+    from sparktk.arguments import implicit
+
+    @staticmethod
+    def validate(tc, arg_name='tc'):
+        """
+        Raises a ValueError if the tc variable is not of type TkContext
+
+        Since tc is so commonly used as an implicit variable, it's worth the special code here to save a lot of imports otherwise
+
+        """
+        require_type(tc, arg_name, TkContext)
+
     @property
     def sc(self):
         return self._sc
+
+    @property
+    def sql_context(self):
+        if self._sql_context is None:
+            from pyspark.sql import SQLContext
+            self._sql_context = SQLContext(self.sc)
+        return self._sql_context
 
     @property
     def jutils(self):
@@ -41,6 +62,10 @@ class TkContext(object):
     @property
     def graph(self):
         return get_lazy_loader(self, "graph", implicit_kwargs={'tc': self}).graph  # .graph to account for extra 'graph' in name vis-a-vis scala
+
+    @property
+    def examples(self):
+        return get_lazy_loader(self, "examples", implicit_kwargs={'tc': self})
 
     def load(self, path, validate_type=None):
         """loads object from the given path (if validate_type is provided, error raised if loaded obj does not match"""
@@ -67,7 +92,10 @@ class TkContext(object):
         The signature is simply the python tc and the reference to the scala obj
         """
         name_parts = scala_obj.getClass().getName().split('.')
-        relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
+        try:
+            relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
+        except ValueError as e:
+            raise ValueError("Trouble with class name %s, %s" % ('.'.join(name_parts), str(e)))
         cmd = "tc.%s._from_scala(tc, scala_obj)" % relevant_path
         logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
         proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})

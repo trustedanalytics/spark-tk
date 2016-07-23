@@ -42,8 +42,8 @@ class Frame(object):
                         inferred_schema = True
                     elif not all(isinstance(item, tuple) and
                                   len(item) == 2 and
-                                  isinstance(item[0], str) for item in schema):
-                        raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
+                                  isinstance(item[0], basestring) for item in schema):
+                        raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type, but received type %s." % type(schema))
                 elif schema is None:
                     schema = self._infer_schema(source)
                     inferred_schema = True
@@ -258,6 +258,10 @@ class Frame(object):
         return self._frame.schema
 
     @property
+    def dataframe(self):
+        return DataFrame(self._scala.dataframe(), self._tc.sql_context)
+
+    @property
     def column_names(self):
         """
         Column identifications in the current frame.
@@ -269,8 +273,11 @@ class Frame(object):
         Examples
         --------
 
+            <skip>
             >>> frame.column_names
             [u'name', u'age', u'tenure', u'phone']
+
+            </skip>
 
         """
         return [name for name, data_type in self.schema]
@@ -288,9 +295,9 @@ class Frame(object):
         --------
         Get the number of rows:
 
-        <hide>
-         >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
-        </hide>
+            <hide>
+            >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
+            </hide>
 
             >>> frame.row_count
             4

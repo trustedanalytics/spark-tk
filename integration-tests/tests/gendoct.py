@@ -56,7 +56,9 @@ this_script_as_module_name = os.path.splitext(__file__)[0]
 here = os.path.dirname(os.path.abspath(__file__))
 path_to_at_root = os.path.dirname(os.path.dirname(here))
 path_to_frameops = os.path.join(path_to_at_root, "python/sparktk/frame/ops")
+path_to_frame = os.path.join(path_to_at_root, "python/sparktk/frame/frame.py")
 path_to_graphops = os.path.join(path_to_at_root, "python/sparktk/graph/ops")
+path_to_graph = os.path.join(path_to_at_root, "python/sparktk/graph/graph.py")
 path_to_models = os.path.join(path_to_at_root, "python/sparktk/models")
 path_to_doc = os.path.join(path_to_at_root, "python/sparktk/doc")
 trim_to_at_root_len = len(path_to_at_root) + 1   # +1 for slash
@@ -210,6 +212,7 @@ def main():
     test_paths = [test_path for folder_path in [path_to_frameops,
                                                 path_to_graphops,
                                                 path_to_models] for test_path in get_all_example_file_paths(folder_path)]
+    test_paths.extend([path_to_frame, path_to_graph])
     filtered_test_paths = filter_exemptions(test_paths)
     filtered_test_paths.append(os.path.join(path_to_at_root, "README.md"))
     print "[%s] Test paths considered:\n%s" % (this_script_name, "\n".join(filtered_test_paths))

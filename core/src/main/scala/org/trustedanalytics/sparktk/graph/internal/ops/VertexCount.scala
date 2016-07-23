@@ -4,16 +4,13 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait VertexCountSummarization extends BaseGraph {
   /**
-   * Counts all of the rows in the frame.
+   * Counts all of the rows in the vertices frame.
    *
    * @return The number of rows in the frame.
    */
   def vertexCount(): Long = execute[Long](VertexCount)
 }
 
-/**
- * Number of rows in the current frame
- */
 case object VertexCount extends GraphSummarization[Long] {
   def work(state: GraphState): Long = state.graphFrame.vertices.count()
 }

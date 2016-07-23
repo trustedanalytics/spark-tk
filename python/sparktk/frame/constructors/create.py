@@ -1,7 +1,8 @@
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 from pyspark.rdd import RDD
+from pyspark.sql import DataFrame
 
-def create(data, schema=None, validate_schema=False, tc=implicit):
+def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
     """
     Creates a frame from the given data and schema.  If no schema data types are provided, the schema is inferred
     based on the data in the first 100 rows.
@@ -100,11 +101,13 @@ def create(data, schema=None, validate_schema=False, tc=implicit):
     schema, and further frame operations may fail due to the data type discrepancy.
 
     """
-    if tc is implicit:
-        implicit.error('tc')
+    TkContext.validate(tc)
     if data is None:
         data = []
-    if not isinstance(data, list) and not isinstance(data, RDD) and not tc._jutils.is_jvm_instance_of(data, tc.sc._jvm.org.apache.spark.rdd.RDD):
-        raise TypeError("Invalid data source. Expected the data parameter to be a 2-dimensional list (list of row data) or an RDD, but received: %s" % type(data))
+    if not isinstance(data, list)\
+            and not isinstance(data, (RDD, DataFrame))\
+            and not tc._jutils.is_jvm_instance_of(data, tc.sc._jvm.org.apache.spark.rdd.RDD)\
+            and not tc._jutils.is_jvm_instance_of(data, tc.sc._jvm.org.apache.spark.sql.DataFrame):
+        raise TypeError("Invalid data source. Expected the data parameter to be a 2-dimensional list (list of row data) or an RDD or DataFrame, but received: %s" % type(data))
     from sparktk.frame.frame import Frame
     return Frame(tc, data, schema, validate_schema)
