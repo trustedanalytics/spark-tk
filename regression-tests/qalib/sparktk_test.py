@@ -6,20 +6,17 @@ import datetime
 import sparktk as stk
 
 import config
+from threading import Lock
 
-# set up a singleton to share spark context across multiple test suites
-# each py.test run can only run create context 1 time
-global_spark_context = None
-spark_context_initialized = False
+lock = Lock()
+global_tc = None
 
-
-def get_context():
-    global global_spark_context
-    global spark_context_initialized
-    if not spark_context_initialized:
-        global_spark_context = stk.TkContext()
-        spark_context_initialized = True
-    return global_spark_context
+def tc(request):
+    global global_tc
+    with lock:
+        if global_tc is None:
+            global_spark_context = stk.TkContext()
+    return global_tc
 
 
 class SparkTKTestCase(unittest.TestCase):
