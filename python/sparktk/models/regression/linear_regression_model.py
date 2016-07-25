@@ -64,7 +64,7 @@ class LinearRegressionModel(PropertiesObject):
         >>> schema = [("x1", float),("y", float)]
         >>> frame = tc.frame.create(rows, schema)
 
-        Consider the following frame containing two columns.
+        Consider the following frame with two columns.
 
         >>> frame.inspect()
         [#]  x1  y
