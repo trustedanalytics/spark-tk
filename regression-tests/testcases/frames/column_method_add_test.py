@@ -43,15 +43,26 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(
             ColumnMethodTest.static_udf, self.new_col_schema)
         self.assertEqual(self.frame.column_names, self.expected_header)
+        self.assertEqual(
+            len(self.new_col_schema)+3, len((self.frame.take(1)).data[0]))
 
         columns = self.frame.take(self.frame.row_count).data
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
+    @unittest.skip("Spark global udf doesn't autoamtically add script")
     def test_add_col_names(self):
         """Tests adding a column name with a global method"""
         self.frame.add_columns(global_udf, self.new_col_schema)
         self.assertEqual(self.frame.column_names, self.expected_header)
+
+        self.assertEqual(
+            len(self.new_col_schema)+3, len((self.frame.take(1)).data[0]))
+
+        self.frame.inspect()
+        columns = self.frame.take(self.frame.row_count).data
+        for i in columns:
+            self.assertEqual(i[-1], udf_int_val)
 
     def test_add_columns_lambda_single(self):
         """Test adding individual columns from a lambda"""
