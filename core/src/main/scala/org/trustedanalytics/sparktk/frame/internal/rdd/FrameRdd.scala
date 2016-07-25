@@ -544,7 +544,6 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
   }
 
->>>>>>> 85d23ba140ca8858d41ff69a998bee9333aab95d
 }
 
 /**
