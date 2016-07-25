@@ -141,7 +141,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         def bad_divide(row):
             return float(row.float) / 0
 
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(ValueError, "Unsupported type e"):
             self.frame.add_columns(
                 bad_divide, schema=["result", float])
             self.assertEqual(schema_before, self.frame.schema)
@@ -176,19 +176,19 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_add_column_null_schema(self):
         """Test adding a column with a null schema errors"""
-        with self.assertRaises(TypeError):
+        with self.assertRaisesRegexp(TypeError, "'NoneType' object has no attribute '__getitem__'"):
             self.frame.add_columns(lambda row: dummy_int_val, None)
             self.frame.inspect()
 
     def test_add_column_empty_schema(self):
         """Test adding a column with an empty schema errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(IndexError, "tuple index out of range"):
             self.frame.add_columns(lambda row: dummy_int_val, ())
             self.frame.inspect()
 
     def test_add_column_schema_list(self):
         """Test adding a column with a schema containing a list"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, 'concatenate list'):
             self.frame.add_columns(
                     lambda row: dummy_int_val, schema=[('new_col', int)])
             self.frame.inspect()
