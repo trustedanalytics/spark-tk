@@ -51,7 +51,8 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_drop_non_existent_column(self):
         """test dropping non-existent column"""
-        with self.assertRaisesRegexp(ValueError, 'Invalid column name non-existent provided'):
+        with self.assertRaisesRegexp(
+                ValueError, 'Invalid column name non-existent provided'):
             self.frame.drop_columns("non-existent")
 
     def test_drop_columns(self):

@@ -35,8 +35,8 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.new_col_schema = [("col_" + str(n), int)
                                for n in range(0, udf_col_count)]
         self.expected_header = old_header + [col_schema[0]
-                                             for col_schema in 
-                                                self.new_col_schema]
+                                             for col_schema in
+                                             self.new_col_schema]
 
     def test_static_add_col_names(self):
         """Tests adding a column name with a static method"""
@@ -176,8 +176,8 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_add_column_null_schema(self):
         """Test adding a column with a null schema errors"""
-        with self.assertRaisesRegexp(TypeError,
-            "'NoneType' object has no attribute '__getitem__'"):
+        with self.assertRaisesRegexp(
+                TypeError, "'NoneType' object has no attribute '__getitem__'"):
             self.frame.add_columns(lambda row: udf_int_val, None)
             self.frame.inspect()
 
@@ -193,7 +193,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
             self.frame.add_columns(
                     lambda row: udf_int_val, schema=[('new_col', int)])
             self.frame.inspect()
-        
+
     def test_unicode_conversion(self):
         """Test renaming with unicode names"""
         self.frame.add_columns(

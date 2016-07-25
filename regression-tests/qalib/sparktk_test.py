@@ -11,11 +11,12 @@ from threading import Lock
 lock = Lock()
 global_tc = None
 
-def tc(request):
+
+def get_context(request):
     global global_tc
     with lock:
         if global_tc is None:
-            global_spark_context = stk.TkContext()
+            global_tc = stk.TkContext()
     return global_tc
 
 
