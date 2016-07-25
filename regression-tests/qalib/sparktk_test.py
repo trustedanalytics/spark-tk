@@ -12,7 +12,7 @@ lock = Lock()
 global_tc = None
 
 
-def get_context(request):
+def get_context():
     global global_tc
     with lock:
         if global_tc is None:
