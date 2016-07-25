@@ -83,7 +83,7 @@ def scala_collaborative_filtering_recommend_return_to_python(self, recommend_ret
 
 class CollaborativeFilteringModel(PropertiesObject):
     """
-    A trained collaborative filtering model
+    A trained Collaborative Filtering Model
 
     Example
     -------
