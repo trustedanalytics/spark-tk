@@ -11,9 +11,8 @@ udf_int_val = -77     # placeholder data value for added column
 udf_col_count = 1000  # length of list for column add
 
 
-# This method is to test different sources of functions
-# i.e. global
 def global_udf(row):
+    """This method is to test different sources of functions with udf"""
     return [udf_int_val for _ in range(0, udf_col_count)]
 
 
@@ -22,6 +21,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
     # Test class bound methods
     @staticmethod
     def static_udf(row):
+        """This method is to test different sources of functions with udf"""
         return [udf_int_val for _ in range(0, udf_col_count)]
 
     def setUp(self):
