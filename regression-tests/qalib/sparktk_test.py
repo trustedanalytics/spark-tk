@@ -38,6 +38,10 @@ class SparkTKTestCase(unittest.TestCase):
         pass
 
     def get_file(self, filename):
+        """Return the hdfs path to the given file"""
+
+        # Note this is an HDFS path, not a userspace path. os.path library
+        # may be wrong
         placed_path = "/user/" + config.user + "/qa_data/" + filename
         return placed_path
 
@@ -45,10 +49,6 @@ class SparkTKTestCase(unittest.TestCase):
         """build a guid hardened unique name """
         datestamp = datetime.datetime.now().strftime("%m_%d_%H_%M_")
         name = prefix + datestamp + uuid.uuid1().hex + config.qa_suffix
-
-        # ATK presently doesn't allow names over 127 characters in length
-        if len(name) > 127:
-            print "Warning: Name Length is over 127"
 
         return name
 
