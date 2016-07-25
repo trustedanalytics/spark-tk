@@ -51,7 +51,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_drop_non_existent_column(self):
         """test dropping non-existent column"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(ValueError, 'Invalid column name non-existent provided'):
             self.frame.drop_columns("non-existent")
 
     def test_drop_columns(self):
@@ -59,30 +59,32 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(
             lambda row: dummy_int_val, ('product', int))
 
-        col_count = len(self.frame.take(1)[0][0])
+        col_count = len(self.frame.take(1).data[0])
         self.frame.drop_columns(['int'])
         self.assertNotIn('int', self.frame.column_names)
-        self.assertEqual(col_count-1, len(self.frame.take(1)[0][0]))
+        self.assertEqual(col_count-1, len(self.frame.take(1).data[0]))
 
     def test_drop_columns_multiple(self):
         """Test drop columns multiple, repeated"""
         self.frame.add_columns(
             lambda row: dummy_int_val, ('product', int))
 
-        col_count = len(self.frame.take(1)[0][0])
+        col_count = len(self.frame.take(1).data[0])
         self.frame.drop_columns(['str', 'product', 'str'])
         self.assertNotIn('str', self.frame.column_names)
         self.assertNotIn('product', self.frame.column_names)
-        self.assertEqual(col_count-2, len(self.frame.take(1)[0][0]))
+        self.assertEqual(col_count-2, len(self.frame.take(1).data[0]))
 
+    @unittest.skip("dropping no columns should not error")
     def test_drop_zero_columns(self):
         """Test dropping no columns"""
-        with self.assertRaises(ValueError):
-            self.frame.drop_columns([])
+        self.frame.drop_columns([])
+        header = self.frame.column_names
+        self.assertEqual(header, ['int', 'str', 'float'])
 
     def test_drop_nonexistent_column(self):
         """Test drop non-existent column"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(ValueError, 'Invalid column name'):
             self.frame.drop_columns(['no-such-name'])
 
 if __name__ == "__main__":

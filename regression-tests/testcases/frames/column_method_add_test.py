@@ -55,64 +55,64 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_add_columns_lambda_single(self):
         """Test adding individual columns from a lambda"""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: row.int*row.float, ('a_times_b', int))
         self.assertIn('a_times_b', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
 
     def test_add_columns_lambda_multiple(self):
         """Test adding multiple columns from a lambda"""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: [row.int * row.float, row.int + row.float],
             [("a_times_b", float), ("a_plus_b", float)])
         self.assertIn('a_times_b', self.frame.column_names)
         self.assertIn('a_plus_b', self.frame.column_names)
-        self.assertEqual(col_count+2, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+2, len((self.frame.take(1)).data[0]))
 
     def test_add_columns_accessed_str(self):
         """Test columns_accessed param, 1 column, string"""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: row.int*row.int, ('a_times_b', int), 'int')
         self.assertIn('a_times_b', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
 
     def test_add_columns_accessed_list1(self):
         """Test columns_accessed param, 1 column, list"""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: row.int*row.int, ('a_times_b', int), ['int'])
         self.assertIn('a_times_b', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
 
     def test_add_columns_accessed_extra(self):
         """Test columns_accessed param; specify an unused column."""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: row.int*row.int,
             ('a_times_b', int), ['int', 'float'])
         self.assertIn('a_times_b', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
 
     def test_add_columns_accessed_list_all(self):
         """Test columns_accessed param, 1 column, list of all"""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: float(ord(row.str[0])) / (row.float*row.int),
             ('a_times_b', float), ['int', 'str', 'float'])
         self.assertIn('a_times_b', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
 
     def test_add_columns_accessed_list_ooo(self):
         """Test columns_accessed param, all columns out of order"""
-        col_count = len((self.frame.take(1))[0][0])
+        col_count = len((self.frame.take(1)).data[0])
         self.frame.add_columns(
             lambda row: float(ord(row.str[0])) / (row.int*row.float),
             ('poutine', float), ['float', 'int', 'str'])
         self.assertIn('poutine', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1))[0][0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
 
     @unittest.skip("accessed columns is not honored")
     def test_add_columns_accessed_miss(self):
@@ -197,7 +197,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         """Test renaming with unicode names"""
         self.frame.add_columns(
             lambda row: dummy_int_val, ('product', int))
-        col_count = len(self.frame.take(1)[0][0])
+        col_count = len(self.frame.take(1).data[0])
         self.frame.rename_columns({'product': u'unicode'})
         self.assertEqual(col_count, len(self.frame.take(1)[0][0]))
         self.assertNotIn('product', self.frame.column_names)

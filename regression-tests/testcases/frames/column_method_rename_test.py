@@ -37,11 +37,11 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(
             lambda row: dummy_int_val, ('product', int))
 
-        col_count = len(self.frame.take(1)[0][0])
+        col_count = len(self.frame.take(1).data[0])
         self.frame.rename_columns(
             {'int': 'firstNumber', 'float': 'secondNumber'})
 
-        self.assertEqual(col_count, len(self.frame.take(1)[0][0]))
+        self.assertEqual(col_count, len(self.frame.take(1).data[0]))
         self.assertNotIn('int', self.frame.column_names)
         self.assertNotIn('float', self.frame.column_names)
         self.assertIn('firstNumber', self.frame.column_names)
@@ -49,16 +49,16 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_redundant_rename(self):
         """Test renaming with the same name works"""
-        col_count = len(self.frame.take(1)[0][0])
+        col_count = len(self.frame.take(1).data[0])
         self.frame.rename_columns({'str': 'str'})
-        self.assertEqual(col_count, len(self.frame.take(1)[0][0]))
+        self.assertEqual(col_count, len(self.frame.take(1).data[0]))
         self.assertIn('str', self.frame.column_names)
 
     def test_swap_column_names(self):
         """Test swapping column names works"""
-        col_count = len(self.frame.take(1)[0][0])
+        col_count = len(self.frame.take(1).data[0])
         self.frame.rename_columns({'str': 'int', 'int': 'str'})
-        self.assertEqual(col_count, len(self.frame.take(1)[0][0]))
+        self.assertEqual(col_count, len(self.frame.take(1).data[0]))
         self.assertEqual(u'str', self.frame.column_names[0])
         self.assertEqual(u'int', self.frame.column_names[1])
 
