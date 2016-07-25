@@ -13,6 +13,7 @@ import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
+import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
 
 object Loaders {
 
@@ -47,6 +48,7 @@ object Loaders {
       Frame,
       GaussianMixtureModel,
       KMeansModel,
+      LinearRegressionModel,
       NaiveBayesModel,
       PcaModel,
       RandomForestClassifierModel,
