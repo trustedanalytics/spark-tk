@@ -38,10 +38,13 @@ class TkContext(object):
     def frame(self):
         return get_lazy_loader(self, "frame", implicit_kwargs={'tc': self}).frame  # .frame to account for extra 'frame' in name vis-a-vis scala
 
-    def load(self, path):
-        """loads an object from the given path"""
+    def load(self, path, validate_type=None):
+        """loads object from the given path (if validate_type is provided, error raised if loaded obj does not match"""
         scala_obj = self._jtc.load(path)
-        return self._create_python_proxy(scala_obj)
+        python_obj = self._create_python_proxy(scala_obj)
+        if validate_type and not isinstance(python_obj, validate_type):
+          raise RuntimeError("load expected to get type %s but got type %s" % (validate_type, type(python_obj)))
+        return python_obj
 
     def _create_python_proxy(self, scala_obj):
         """Create a python object for the scala_obj
@@ -61,7 +64,7 @@ class TkContext(object):
         """
         name_parts = scala_obj.getClass().getName().split('.')
         relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
-        cmd = "tc.%s.load(tc, scala_obj)" % relevant_path
+        cmd = "tc.%s._from_scala(tc, scala_obj)" % relevant_path
         logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
         proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})
         return proxy

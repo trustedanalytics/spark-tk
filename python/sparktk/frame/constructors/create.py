@@ -1,4 +1,5 @@
 from sparktk.lazyloader import implicit
+from pyspark.rdd import RDD
 
 def create(data, schema=None, validate_schema=False, tc=implicit):
     """
@@ -9,16 +10,17 @@ def create(data, schema=None, validate_schema=False, tc=implicit):
     not match the schema's data type, it attempts to cast the data to the proper data type.  When the data is unable
     to be casted to the schema's data type, the item will be missing (None) in the frame.
 
-    :param data: Data source
-    :param schema: Optionally specify a schema (list of tuples of string column names and data type), column names
-                   (list of strings, and the column data types will be inferred) or None (column data types will be
-                   inferred and column names will be numbered like C0, C1, C2, etc).
-    :param validate_schema: When True, all data is is checked to ensure that it matches the schema.  If the data does
-                            not match the schema's data type, it attempts to cast the data to the proper data type.
-                            When the data is unable to be casted to the schema's data type, a ValueError is raised.
-                            Defaults to False.
+    :param data: (List of row data or RDD) Data source
+    :param schema: (Optional(list[tuple(str, type)] or list[str])] Optionally specify a schema (list of tuples of
+                   string column names and data type), column names (list of strings, and the column data types will
+                   be inferred) or None (column data types will be inferred and column names will be numbered like C0,
+                   C1, C2, etc).
+    :param validate_schema: (Optional(bool)) When True, all data is is checked to ensure that it matches the schema.
+                            If the data does not match the schema's data type, it attempts to cast the data to the
+                            proper data type.  When the data is unable to be casted to the schema's data type, a
+                            ValueError is raised. Defaults to False.
     :param tc: TkContext
-    :return: Frame loaded with the specified data
+    :return: (Frame) Frame loaded with the specified data
 
 
     Examples
@@ -99,6 +101,10 @@ def create(data, schema=None, validate_schema=False, tc=implicit):
 
     """
     if tc is implicit:
-        implicit.error('tc')    
+        implicit.error('tc')
+    if data is None:
+        data = []
+    if not isinstance(data, list) and not isinstance(data, RDD) and not tc._jutils.is_jvm_instance_of(data, tc.sc._jvm.org.apache.spark.rdd.RDD):
+        raise TypeError("Invalid data source. Expected the data parameter to be a 2-dimensional list (list of row data) or an RDD, but received: %s" % type(data))
     from sparktk.frame.frame import Frame
     return Frame(tc, data, schema, validate_schema)

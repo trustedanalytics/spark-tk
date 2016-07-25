@@ -308,6 +308,7 @@ object SchemaHelper {
   private def inferDataTypes(row: Row): Vector[DataType] = {
     row.toSeq.map(value => {
       value match {
+        case null => DataTypes.int32
         case i: Int => DataTypes.int32
         case l: Long => DataTypes.int64
         case f: Float => DataTypes.float32
@@ -344,6 +345,22 @@ object SchemaHelper {
 
     FrameSchema(columns)
   }
+
+  /**
+   * Return if list of schema can be merged. Throw exception on name conflicts
+   * @param schema List of schema to be merged
+   * @return true if schemas can be merged, false otherwise
+   */
+  def isMergeable(schema: Schema*): Boolean = {
+    def merge(schema_l: Schema, schema_r: Schema): Schema = {
+      require(schema_l.columnNames.intersect(schema_r.columnNames).isEmpty, "Schemas have conflicting column names." +
+        s" Please rename before merging. Left Schema: ${schema_l.columnNamesAsString} Right Schema: ${schema_r.columnNamesAsString}")
+      FrameSchema(schema_l.columns ++ schema_r.columns)
+    }
+    schema.reduce(merge)
+    true
+  }
+
 }
 
 /**

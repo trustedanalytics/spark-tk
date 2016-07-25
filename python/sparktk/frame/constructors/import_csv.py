@@ -84,10 +84,12 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
         pyspark_schema = StructType(fields)
 
     sqlContext = SQLContext(tc.sc)
-    df = sqlContext.read.format("com.databricks.spark.csv").options(delimiter=delimiter,
-                                                                    header=header_str,
-                                                                    dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
-                                                                    inferschema=inferschema_str).load(path, schema=pyspark_schema)
+    df = sqlContext.read.format(
+        "com.databricks.spark.csv.org.trustedanalytics.sparktk").options(
+            delimiter=delimiter,
+            header=header_str,
+            dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
+            inferschema=inferschema_str).load(path, schema=pyspark_schema)
 
     df_schema = []
 
@@ -118,13 +120,12 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
                 data.append(row[column_index])
         return data
 
-    rdd = df.rdd
+    jrdd = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(df._jdf.rdd())
+    rdd = RDD(jrdd, tc.sc)
 
     if any(c[1] == dtypes.datetime for c in df_schema):
         # If any columns are date/time we must do this map
         rdd = df.rdd.map(cast_datetime)
 
     from sparktk.frame.frame import Frame  # circular dependency, so import late
-    jrdd = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(df._jdf.rdd())
-    rdd = RDD(jrdd, tc.sc)
     return Frame(tc, rdd, df_schema)

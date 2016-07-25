@@ -72,6 +72,11 @@ def take(self, n, offset=0, columns=None):
 
     schema = self.schema
     if columns is not None:
+        if isinstance(columns, basestring):
+            columns = [columns]
+        elif not isinstance(columns, list):
+            raise TypeError("columns must be be a string list of strings, but was %s" % type(columns))
+
         indices = sparktk.frame.schema.get_indices_for_selected_columns(schema, columns)
         schema = sparktk.frame.schema.get_schema_for_columns(schema, columns)
         data = extract_data_from_selected_columns(data, indices)
