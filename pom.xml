@@ -124,6 +124,7 @@
       <maven>3.0</maven>
     </prerequisites>
     <properties>
+     <downloadSources>true</downloadSources>
       <project.version>master-SNAPSHOT</project.version>
       <top.dir>${project.basedir}</top.dir>
       <buildtype>test</buildtype>
@@ -758,14 +759,36 @@
                 <!-- needed on build server -->
                   <excludeTransitive>true</excludeTransitive>
                 <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
-                <overWriteReleases>false</overWriteReleases>
-                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteReleases>true</overWriteReleases>
+                <overWriteSnapshots>true</overWriteSnapshots>
                 <overWriteIfNewer>true</overWriteIfNewer>
                 <excludeGroupIds>${groupIdExcludes}</excludeGroupIds>
                 <excludeArtifactIds>${artifactIdExcludes}</excludeArtifactIds>
                 <excludeScope>provided</excludeScope>
               </configuration>
             </execution>
+            <execution>
+              <id>copy-sources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>sources</goal>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <!-- needed on build server -->
+                <failOnWarning>true</failOnWarning>
+                <classifier>sources</classifier>
+                  <excludeTransitive>true</excludeTransitive>
+                <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                <overWriteReleases>true</overWriteReleases>
+                <overWriteSnapshots>true</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+                <excludeGroupIds>${groupIdExcludes}</excludeGroupIds>
+                <excludeArtifactIds>${artifactIdExcludes}</excludeArtifactIds>
+                <excludeScope>provided</excludeScope>
+              </configuration>
+            </execution>
+            
           </executions>
         </plugin>
 
