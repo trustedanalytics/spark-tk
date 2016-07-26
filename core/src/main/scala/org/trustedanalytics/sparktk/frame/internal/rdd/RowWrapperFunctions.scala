@@ -3,8 +3,9 @@ package org.trustedanalytics.sparktk.frame.internal.rdd
 import breeze.linalg.{ DenseVector => BDV }
 import org.apache.spark.SparkException
 import org.apache.spark.mllib.linalg.{ Vectors, Vector, DenseVector }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.{ NumericParser, parseNumeric }
+import MllibAliases.{ NumericParser, parseNumeric }
 import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 
@@ -58,8 +59,8 @@ class RowWrapperFunctions(self: RowWrapper) {
  *
  * Extension of MlLib's labeled points that supports a frequency column.
  * The frequency column contains the frequency of occurrence of each observation.
- * @see org.apache.spark.mllib.regression.LabeledPoint
  *
+ * @see org.apache.spark.mllib.regression.LabeledPoint
  * @param label Label for this data point.
  * @param features List of features for this data point.
  */
