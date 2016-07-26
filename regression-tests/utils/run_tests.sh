@@ -13,4 +13,4 @@ export SPARKTK_HOME=$MAINDIR/core/target/spark-tk
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-nosetests $MAINDIR/regression-tests
+py.test $MAINDIR/regression-tests
