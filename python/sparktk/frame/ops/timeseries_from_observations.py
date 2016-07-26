@@ -73,6 +73,6 @@ def timeseries_from_observations(self, date_time_index, timestamp_column, key_co
         raise TypeError("date_time_index should be a list of date/times")
 
     scala_date_list = self._tc.jutils.convert.to_scala_date_time_list(date_time_index)
-
-    return self._tc.frame.create(
-        self._scala.timeSeriesFromObseravations(scala_date_list, timestamp_column, key_column, value_column))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc,
+                 self._scala.timeSeriesFromObseravations(scala_date_list, timestamp_column, key_column, value_column))

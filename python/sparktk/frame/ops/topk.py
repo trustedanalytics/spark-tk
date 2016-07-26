@@ -83,4 +83,5 @@ def top_k(self, column_name, k, weight_column=None):
         [1]  Clackamas     3.0
 
     """
-    return self._tc.frame.create(self._scala.topK(column_name, k, self._tc.jutils.convert.to_scala_option(weight_column)))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.topK(column_name, k, self._tc.jutils.convert.to_scala_option(weight_column)))

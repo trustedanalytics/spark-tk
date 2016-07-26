@@ -6,11 +6,12 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=implicit):
     """
     Import data from hbase table into frame
 
-    :param table_name: hbase table name
-    :param schema: hbase schema as a List of List(string) (columnFamily, columnName, dataType for cell value)
-    :param start_tag: optional start tag for filtering
-    :param end_tag: optional end tag for filtering
-    :return: frame with data from hbase table
+    :param table_name: (str) hbase table name
+    :param schema: (list[list[str, str, type]]) hbase schema as a List of List(string) (columnFamily, columnName,
+                   dataType for cell value)
+    :param start_tag: (Optional(str)) optional start tag for filtering
+    :param end_tag: (Optional(str)) optional end tag for filtering
+    :return: (Frame) frame with data from hbase table
 
     Example
     ---------
