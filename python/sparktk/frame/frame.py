@@ -342,6 +342,7 @@ class Frame(object):
     from sparktk.frame.ops.tally_percent import tally_percent
     from sparktk.frame.ops.timeseries_augmented_dickey_fuller_test import timeseries_augmented_dickey_fuller_test
     from sparktk.frame.ops.timeseries_breusch_godfrey_test import timeseries_breusch_godfrey_test
+    from sparktk.frame.ops.timeseries_breusch_pagan_test import timeseries_breusch_pagan_test
     from sparktk.frame.ops.timeseries_durbin_watson_test import timeseries_durbin_watson_test
     from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
     from sparktk.frame.ops.timeseries_slice import timeseries_slice
