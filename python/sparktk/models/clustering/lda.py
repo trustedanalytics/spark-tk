@@ -274,17 +274,20 @@ class LdaModel(PropertiesObject):
     @property
     def topics_given_doc_frame(self):
         """Frame for topics given document"""
-        return self._tc.frame.create(self._scala.topicsGivenDocFrame())
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.topicsGivenDocFrame())
 
     @property
     def word_given_topics_frame(self):
         """Frame for word given topics"""
-        return self._tc.frame.create(self._scala.wordGivenTopicsFrame())
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.wordGivenTopicsFrame())
 
     @property
     def topics_given_word_frame(self):
         """Frame for topics given word"""
-        return self._tc.frame.create(self._scala.topicsGivenWordFrame())
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.topicsGivenWordFrame())
 
     @property
     def training_data_row_count(self):
