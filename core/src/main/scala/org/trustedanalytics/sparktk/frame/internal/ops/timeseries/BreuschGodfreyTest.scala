@@ -32,7 +32,7 @@ case class TimeSeriesBreuschGodfreyTest(residuals: String,
     val (vector, matrix) = TimeSeriesFunctions.getSparkVectorYAndXFromFrame(new FrameRdd(state.schema, state.rdd), residuals, factors)
 
     val result = TimeSeriesStatisticalTests.bgtest(vector, matrix, maxLag)
-    return BgTestReturn(result._1, result._2)
+    BgTestReturn(result._1, result._2)
   }
 }
 

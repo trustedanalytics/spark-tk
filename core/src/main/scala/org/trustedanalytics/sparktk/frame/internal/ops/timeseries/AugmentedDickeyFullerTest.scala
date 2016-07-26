@@ -34,7 +34,7 @@ case class TimeSeriesAugmentedDickeyFullerTest(tsColumn: String,
   override def work(state: FrameState): AdfTestReturn = {
     val tsVector = TimeSeriesFunctions.getVectorFromFrame(state, tsColumn)
     val dftResult = TimeSeriesStatisticalTests.adftest(tsVector, maxLag, regression)
-    return AdfTestReturn(dftResult._1, dftResult._2)
+    AdfTestReturn(dftResult._1, dftResult._2)
   }
 }
 

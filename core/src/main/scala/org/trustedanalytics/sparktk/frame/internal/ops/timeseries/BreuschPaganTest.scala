@@ -29,7 +29,7 @@ case class TimeSeriesBreuschPaganTest(residuals: String,
     val (vector, matrix) = TimeSeriesFunctions.getSparkVectorYAndXFromFrame(new FrameRdd(state.schema, state.rdd), residuals, factors)
 
     val result = TimeSeriesStatisticalTests.bptest(vector, matrix)
-    return BpTestReturn(result._1, result._2)
+    BpTestReturn(result._1, result._2)
   }
 }
 
