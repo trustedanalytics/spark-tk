@@ -1,4 +1,3 @@
-# vim: set encoding=utf-8 
 """ Global Config file for testcases, used heavily by automation"""
 import os
 
