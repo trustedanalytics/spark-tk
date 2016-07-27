@@ -44,11 +44,22 @@
   <!--</properties>-->
 
     <repositories>
+    <repository>
+        <id>central</id>
+        <url>http://repo1.maven.org/maven2</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
       <repository>
         <id>atk</id>
         <url>https://maven.trustedanalytics.org/content/repositories/public/</url>
         <snapshots>
           <enabled>true</enabled>
+            <updatePolicy>daily</updatePolicy>
         </snapshots>
         <releases>
           <enabled>true</enabled>
@@ -66,13 +77,7 @@
         </snapshots>
       </repository>
 
-      <repository>
-        <id>central</id>
-        <url>http://repo1.maven.org/maven2</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </repository>
+
 
       <repository>
         <id>apache</id>
