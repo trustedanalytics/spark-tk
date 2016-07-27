@@ -776,7 +776,6 @@
               </goals>
               <configuration>
                 <!-- needed on build server -->
-                <failOnWarning>true</failOnWarning>
                 <classifier>sources</classifier>
                   <excludeTransitive>true</excludeTransitive>
                 <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
