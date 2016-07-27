@@ -13,7 +13,10 @@ class TkContext(object):
 
     def __init__(self, sc=None, **create_sc_kwargs):
         if not sc:
-            sc = create_sc(**create_sc_kwargs)
+            if SparkContext._active_spark_context:
+                sc = SparkContext._active_spark_context
+            else:
+                sc = create_sc(**create_sc_kwargs)
         if type(sc) is not SparkContext:
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc
