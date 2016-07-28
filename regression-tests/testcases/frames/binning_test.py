@@ -3,8 +3,9 @@
 import unittest
 import sys
 import os
-from spartkregtests.lin import sparktk_test
+from spartkregtests.lib import sparktk_test
 from spartk import dtypes
+
 
 class BinningHarness(spartk_test.SparkTKTestCase):
 
