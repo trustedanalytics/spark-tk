@@ -19,7 +19,7 @@ object GraphSchema {
   val vertexTypeColumnName = "vertex_type"
   val edgeTypeColumnName = "edge_type"
 
-  implicit def frame2schema(frame: Frame): Schema = frame.schema
+  implicit def frameToSchema(frame: Frame): Schema = frame.schema
 
   /**
    * Validates the frame has the proper schema to represent a Vertices Frame
