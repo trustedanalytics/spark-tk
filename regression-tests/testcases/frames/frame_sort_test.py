@@ -7,9 +7,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath
 from qalib import sparktk_test
 
 # related bug tickets:
-# DPNG-9407 frame sort does not allow tuples
-# DPNG-9405 frame sort allows ascending parameter to be a list
-# DPNG-9401 import_csv allows the user to set inferschema to true and also provide a schema
+#@DPNG-9407 frame sort does not allow tuples
+#@DPNG-9405 frame sort allows ascending parameter to be a list
+#@DPNG-9401 import_csv allows the user to set inferschema to true and also provide a schema
 
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
@@ -26,7 +26,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                   ("owner", str),
                   ("weight", int),
                   ("hair_type", str)]
-        self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True) # creates and returns a frame from a csv file, header=True means first line will be skipped
+        self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True) # header=True means first line will be skipped
 
     def test_frame_sort_single_column_ascending(self):
         """ Test single-column sorting ascending"""
@@ -64,7 +64,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         self.frame.sort(["weight", "hair_type"])
         up_take = self.frame.download(self.frame.row_count)
         sorted_vals = unsorted.sort_values(['weight', 'hair_type'])
-        for i in range(len(sorted_vals)):
+        for i in range(len(sorted_vals)): # compare the data we sorted with the sorted frame
             self.assertEqual(
                 up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
             self.assertEqual(
@@ -72,11 +72,9 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     
     def test_frame_sort_multiple_column_tuple_descending(self):
         """ Test multiple-column sorting descending with the argument"""
-        self.frame.sort([("weight", False), ("hair_type", False)])
+        self.frame.sort([("weight", False), ("hair_type", False)]) # these tests will fail currently because of a bug (see above)
         up_take = self.frame.download(self.frame.row_count)
         sorted_vals = up_take.sort_values(['weight', 'hair_type'], ascending=[False, False])
-        print "frame.sort: " + str(self.frame.inspect())
-        print "sorted vals: " + str(sorted_vals)
         for i in range(len(sorted_vals)):
             self.assertEqual(
                 up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
@@ -88,8 +86,6 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         self.frame.sort(['weight', 'hair_type'], ascending=[False, False])
         up_take = self.frame.download(self.frame.row_count)
         sorted_vals = up_take.sort_values(['weight', 'hair_type'], ascending=[False, False])
-        print "frame.sort: " + str(self.frame.inspect())
-        print "sorted vals: " + str(sorted_vals)
         for i in range(len(sorted_vals)):
             self.assertEqual(
                 up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
@@ -98,7 +94,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_sort_multiple_column_mixed(self):
         """ Test multiple-column sorting descending with the argument"""
-        self.frame.sort([("weight", False), ("hair_type", True), ('age', True)])
+        self.frame.sort([("weight", False), ("hair_type", True), ('age', True)]) # See bug DPNG-9407
         up_take = self.frame.download(self.frame.row_count)
         sorted_vals = up_take.sort_values(
             ['weight', 'hair_type', 'age'], ascending=[False, True, True])
@@ -119,6 +115,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         """Test no arguments errors"""
         with self.assertRaises(Exception):
             self.frame.sort()
+
 
 if __name__ == "__main__":
     unittest.main()

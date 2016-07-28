@@ -6,6 +6,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from qalib import sparktk_test
 
+# Related bugs:
+#@DPNG-9685 - weighted median with negative weights does not error
 
 class WeightedMedians(sparktk_test.SparkTKTestCase):
 
@@ -42,6 +44,7 @@ class WeightedMedians(sparktk_test.SparkTKTestCase):
         """Weighted median calculation where weights are negative integers"""
         weighted_median = self.frame_median2.column_median('x0', 'x2')
         self.assertEqual(weighted_median, None)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -7,6 +7,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath
 
 from qalib import sparktk_test
 
+# Related bugs:
+# @DPNG-9405 - multiple params with different ascending/descending values
+# @DPNG-9407 - tuples
+
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
 
