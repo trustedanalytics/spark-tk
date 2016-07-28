@@ -50,6 +50,7 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
 
     def test_cat_summary_single_column_with_None(self):
         """Categorical summary with Nones"""
+        print(str(self.frame.inspect()))
         def add_nones(row):
             if int(row['age']) % 5 == 0:      # ending in 0 or 5
                 return ""
@@ -126,12 +127,15 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         sum = float(value.sum())
         nones = value.get("", 0)
         value = value.drop("", errors="ignore")
-        k = len(stats["categorical_summary"][0].levels)-2
+        print "stats: " + str(stats)
+        if "categorical_summary" in stats:
+            catsum = stats["categorical_summary"]
+        else:
+            catsum = stats
+        k = len(catsum[0].levels)-2
         level_values = []
-        print "cat sum: " + str(stats["categorical_summary"][0])
-        print "column: " + str(column)
-        self.assertEqual(stats["categorical_summary"][0].column_name, column)
-        for i in stats["categorical_summary"][0].levels:
+        self.assertEqual(catsum[0].column_name, column)
+        for i in catsum[0].levels:
             print "i: " + str(i)
             if str(i.level) == "<Missing>":
                 self.assertEqual(i.frequency, nones)
@@ -141,6 +145,8 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
                 self.assertEqual(i.percentage, (value[k:].sum()/sum))
             else:
                 print "i.level: " + str(i.level)
+                print "value: " + str(value) + ", type: " + str(type(value))
+                print "value at i.level: " + str(value[int(i.level)])
                 self.assertEqual(i.frequency, value[int(i.level)])
                 self.assertEqual(i.percentage, value[int(i.level)]/sum)
                 level_values.append(i.frequency)
