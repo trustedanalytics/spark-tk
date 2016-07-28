@@ -5,6 +5,7 @@ import unittest
 from sparktk import TkContext
 from sparktk import dtypes
 
+
 class CumSumTest(unittest.TestCase):
 
     def test_frame_basic(self):
@@ -19,15 +20,14 @@ class CumSumTest(unittest.TestCase):
         # customer orders) and a value associated with the order.
         # The order is sorted on, and then the order value is accumulated
         # Cumulative sum finds the sum up to and including a given order
-	
-        # Create context 
+        # Create context
         tc = TkContext()
         # Create the frame using a list object
-        frame = tc.frame.create(data=[[0,100],
-                                      [3,20],
-                                      [1,25],
-                                      [2,90]],
-                                schema=[("order",int),
+        frame = tc.frame.create(data=[[0, 100],
+                                      [3, 20],
+                                      [1, 25],
+                                      [2, 90]],
+                                schema=[("order", int),
                                         ("value", int)])
         print frame.inspect()
         # Sort on order, note this is a side effect based operation
@@ -38,8 +38,10 @@ class CumSumTest(unittest.TestCase):
         # Fetch the results, and validate they are what you would expect
         result = frame.take(frame.row_count)
         self.assertItemsEqual(
-            result.data, [[0,100,100], [3,20,235], [1,25,125], [2,90,215]])
-
+            result.data, [[0, 100, 100],
+                          [3, 20, 235],
+                          [1, 25, 125],
+                          [2, 90, 215]])
 
 if __name__ == '__main__':
     unittest.main()
