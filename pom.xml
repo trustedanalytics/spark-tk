@@ -204,7 +204,9 @@
             <name>!skipTests</name>
           </property>
         </activation>
+
         <modules>
+
           <module>integration-tests</module>
         </modules>
       </profile>
@@ -756,7 +758,7 @@
           <executions>
             <execution>
               <id>copy-dependencies</id>
-              <phase>package</phase>
+              <phase>prepare-package</phase>
               <goals>
                 <goal>copy-dependencies</goal>
               </goals>
