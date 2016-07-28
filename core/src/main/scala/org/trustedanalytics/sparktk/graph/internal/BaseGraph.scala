@@ -11,9 +11,9 @@ import org.trustedanalytics.sparktk.frame.{ Frame, Schema }
 object GraphSchema {
 
   // These column names must match GraphFrame exactly
-  val vertexIdColumnName = "id"
-  val edgeSourceColumnName = "src"
-  val edgeDestinationColumnName = "dst"
+  val vertexIdColumnName = GraphFrame.ID
+  val edgeSourceColumnName = GraphFrame.SRC
+  val edgeDestinationColumnName = GraphFrame.DST
 
   // These column names are used by sparktk's convention
   val vertexTypeColumnName = "vertex_type"

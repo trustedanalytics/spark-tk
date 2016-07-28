@@ -13,9 +13,6 @@ class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
     with SaveSummarization
     with VertexCountSummarization {
 
-  GraphSchema.validateSchemaForVerticesFrame(graphFrame.vertices)
-  GraphSchema.validateSchemaForEdgesFrame(graphFrame.edges)
-
   def this(verticesFrame: DataFrame, edgesFrame: DataFrame) = {
     this(GraphFrame(verticesFrame, edgesFrame))
   }
@@ -50,7 +47,7 @@ object Graph extends TkSaveableObject {
    * @return
    */
   def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
-    require(tkFormatVersion == formatVersion, s"Frame load only supports version $tkFormatVersion.  Got version $formatVersion")
+    require(tkFormatVersion == formatVersion, s"Graph load only supports version $tkFormatVersion.  Got version $formatVersion")
     // no extra metadata in version 1
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val verticesDf = sqlContext.read.parquet(path + "/vertices")
