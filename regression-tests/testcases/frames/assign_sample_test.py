@@ -1,10 +1,10 @@
 """ Test assign sample functionality """
 
 import unittest
-
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+sys.path.append(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.realpath(__file__)))))
 from qalib import sparktk_test
 
 
@@ -68,5 +68,3 @@ class AssignSample(sparktk_test.SparkTKTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
