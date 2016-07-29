@@ -47,7 +47,7 @@
                             </execution>
                             <execution>
                                 <id>integration-tests</id>
-                                <phase>test</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
