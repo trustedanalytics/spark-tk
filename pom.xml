@@ -379,6 +379,7 @@
           <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.short.version}</artifactId>
+              <scope>test</scope>
           </dependency>
         </dependencies>
       </profile>
@@ -528,8 +529,9 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <version>1.9</version>
                 <configuration>
-                    <excludedScopes>provided</excludedScopes>
+                    <excludedScopes>provided,test,system</excludedScopes>
                     <includeTransitiveDependencies>false</includeTransitiveDependencies>
+                    <includedScopes>compile</includedScopes>
                 </configuration>
                 <executions>
                     <execution>
