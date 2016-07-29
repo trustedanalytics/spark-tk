@@ -5,6 +5,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from qalib import sparktk_test
 
+# related bugs:
+# @DPNG-9636 - percentage is inaccurate for Nones in categorical summary
 
 class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
 
