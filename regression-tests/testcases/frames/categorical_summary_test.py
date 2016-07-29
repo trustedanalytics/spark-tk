@@ -61,7 +61,8 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
             return row['age']
 
         # Add empty strings to exercise missing functionality
-        self.frame.add_columns(add_nones, ('Nones', unicode))
+        #self.frame.add_columns(add_nones, ('Nones', unicode))
+        self.frame.add_columns(add_nones, ('Nones', int))
 
         stats = self.frame.categorical_summary('Nones', top_k=8)
         self._top_k("Nones", stats, 10)
@@ -122,21 +123,24 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
     def _compare_equal(self, column, stats):
         # Group and count the values, drop any ignored values, validate
         pf = self.frame.download(self.frame.row_count)
+        # here we do our own analysis to compare with the results of the categorical summary
         value = pf.groupby(column).size().sort_values(ascending=False)
 
         sum = float(value.sum())
         nones = value.get("", 0)
         value = value.drop("", errors="ignore")
-        print "stats: " + str(stats)
+        # the way in which the stats result is returned is inconsistent
+        # sometimes we have to get it by the key, othertimes there is no categorical_summary key
         if "categorical_summary" in stats:
             catsum = stats["categorical_summary"]
         else:
             catsum = stats
+        # I believe the -2 the author wrote here is to not include the bottom "missing" and "other" columns
         k = len(catsum[0].levels)-2
         level_values = []
         self.assertEqual(catsum[0].column_name, column)
+        # for each level, compare the result from the categorical_summary frequency and percentage with our own expected values
         for i in catsum[0].levels:
-            print "i: " + str(i)
             if str(i.level) == "<Missing>":
                 self.assertEqual(i.frequency, nones)
                 self.assertAlmostEqual(i.percentage, nones/sum)
@@ -144,9 +148,6 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
                 self.assertEqual(i.frequency, value[k:].sum())
                 self.assertEqual(i.percentage, (value[k:].sum()/sum))
             else:
-                print "i.level: " + str(i.level)
-                print "value: " + str(value) + ", type: " + str(type(value))
-                print "value at i.level: " + str(value[int(i.level)])
                 self.assertEqual(i.frequency, value[int(i.level)])
                 self.assertEqual(i.percentage, value[int(i.level)]/sum)
                 level_values.append(i.frequency)
