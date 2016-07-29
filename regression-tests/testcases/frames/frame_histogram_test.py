@@ -6,6 +6,8 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from qalib import sparktk_test
 
+# related bugs:
+# @DNPG-9813 - histogram returns a Java array
 
 class FrameHistogramTest(sparktk_test.SparkTKTestCase):
 
@@ -25,9 +27,9 @@ class FrameHistogramTest(sparktk_test.SparkTKTestCase):
                      10.0, 10.0, 10.0, 10.0, 10.0]
         density = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
-        self.assertAlmostEqual(list(cutoffs), list(result.cutoffs))
-        self.assertAlmostEqual(list(histogram), list(result.hist))
-        self.assertAlmostEqual(list(density), list(result.density))
+        self.assertAlmostEqual(cutoffs, result.cutoffs) # these will fail because the result is a JavaArray
+        self.assertAlmostEqual(histogram, result.hist) # a bug has been filed (see above)
+        self.assertAlmostEqual(density, result.density)
 
 
 if __name__ == '__main__':
