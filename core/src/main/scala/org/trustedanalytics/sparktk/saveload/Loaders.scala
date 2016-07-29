@@ -3,6 +3,7 @@ package org.trustedanalytics.sparktk.saveload
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
+import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.models.clustering.lda.LdaModel
 import org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModel
 import org.trustedanalytics.sparktk.models.dimreduction.pca.PcaModel
@@ -49,6 +50,7 @@ object Loaders {
       CollaborativeFilteringModel,
       Frame,
       GaussianMixtureModel,
+      Graph,
       KMeansModel,
       LdaModel,
       LinearRegressionModel,

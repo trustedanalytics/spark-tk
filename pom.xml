@@ -94,6 +94,10 @@
           <enabled>true</enabled>
         </releases>
       </repository>
+      <repository>
+        <id>SparkPackagesRepo</id>
+        <url>http://dl.bintray.com/spark-packages/maven</url>
+      </repository>
     </repositories>
 
     <pluginRepositories>
@@ -141,6 +145,7 @@
       <dep.hive.version>1.1.0-${dep.cdh.version}</dep.hive.version>
       <dev.spark.hive.version>1.5.0-${dep.cdh.version}</dev.spark.hive.version>
       <dep.daal.version>2016.0.109</dep.daal.version>
+      <dep.graphframes.version>0.1.0-spark1.5</dep.graphframes.version>
       <!--START GAO MAVEN -->
 
       <scala.long.version>2.10.4</scala.long.version>
@@ -412,7 +417,6 @@
             <plugin>
               <groupId>org.scoverage</groupId>
               <artifactId>scoverage-maven-plugin</artifactId>
-              <version>${scoverage-plugin.version}</version>
             </plugin>
               <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -791,7 +795,11 @@
           <artifactId>daal-core</artifactId>
           <version>${dep.daal.version}</version>
         </dependency>
-        
+        <dependency>
+          <groupId>graphframes</groupId>
+          <artifactId>graphframes</artifactId>
+          <version>${dep.graphframes.version}</version>
+        </dependency>
         <dependency>
           <groupId>com.cloudera.sparkts</groupId>
           <artifactId>sparkts</artifactId>

@@ -49,6 +49,13 @@ WORKDIR /usr/src/app/spark-tk
 # INSTALL PYTHON DEPENDENCIES
 RUN pip install -r python/requirements.txt
 
+# INSTALL GRAPHFRAMES DEPENDENCY
+RUN wget --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar \
+ -O /usr/src/app/spark-tk/graphframes.zip && unzip /usr/src/app/spark-tk/graphframes.zip -d /usr/src/app/spark-tk/python \
+  && ls -la /usr/src/app/spark-tk/python
+
+#&& ln -s $AGENT_HOME/graphframes /usr/lib/python2.7/dist-packages/graphframes
+
 # BUILD SPARK-TK [ RUNS UNIT TESTS AND INTEGRATION TESTS ]
 RUN mvn clean install -q
 
