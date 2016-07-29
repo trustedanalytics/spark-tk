@@ -141,6 +141,15 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         actual_unflat = frame.take(frame.row_count).data
         self.assertItemsEqual(expected_flat, actual_unflat)
 
+    def test_flatten_int_column(self):
+        """Test flatten on integer column"""
+        block_data = [[1, "a,b,c"],
+                      [2, "d,e,f"],
+                      [3, "g,h,i"]]
+        block_schema = [("col1", int), ("col2", str)]
+        frame = self.context.frame.create(block_data, schema=block_schema)
+        with self.assertRaises(Exception):
+            frame.flatten_columns("col1")
 
 if __name__ == "__main__":
     unittest.main()
