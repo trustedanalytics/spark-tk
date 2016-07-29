@@ -11,19 +11,19 @@ def test_adf_invalid_params(tc):
         frame.timeseries_augmented_dickey_fuller_test(10, 0)
         raise RuntimeError("Expected TypeError due to invalid ts_column type")
     except TypeError as e:
-        assert("ts_column parameter should be a str" in e.message)
+        assert("ts_column parameter should be a str" in str(e))
 
     try:
         frame.timeseries_augmented_dickey_fuller_test("data", "invalid lag")
         raise RuntimeError("Expected TypeError due to invalid max_lag type")
     except TypeError as e:
-        assert("max_lag parameter should be a int" in e.message)
+        assert("max_lag parameter should be a int" in str(e))
 
     try:
         frame.timeseries_augmented_dickey_fuller_test("data", 0, 123)
         raise RuntimeError("Expected TypeError due to invalid regression type")
     except TypeError as e:
-        assert("regression parameter should be a str" in e.message)
+        assert("regression parameter should be a str" in str(e))
 
 def test_adf_column_types(tc):
     """
@@ -38,7 +38,7 @@ def test_adf_column_types(tc):
         frame.timeseries_augmented_dickey_fuller_test("str_column", 0)
         raise RuntimeError("Expected error since the str_column is not numerical.")
     except Exception as e:
-        assert("Column str_column was not numerical" in e.message)
+        assert("Column str_column was not numerical" in str(e))
 
     # Numerical columns should not have an error
     frame.timeseries_augmented_dickey_fuller_test("int_column", 0)
@@ -57,7 +57,7 @@ def test_dwtest_invalid_params(tc):
         frame.timeseries_durbin_watson_test(1)
         raise RuntimeError("Expected TypeError due to invalid parameter type.")
     except TypeError as e:
-        assert("residuals should be a str" in e.message)
+        assert("residuals should be a str" in str(e))
 
 def test_dwtest_column_types(tc):
     """
@@ -72,7 +72,7 @@ def test_dwtest_column_types(tc):
         frame.timeseries_durbin_watson_test("str_column")
         raise RuntimeError("Expected error since the column must be numerical")
     except Exception as e:
-        assert("Column str_column was not numerical" in e.message)
+        assert("Column str_column was not numerical" in str(e))
 
     # int and float columns should not give any error
     frame.timeseries_durbin_watson_test("int_column")
@@ -90,25 +90,25 @@ def test_bgt_invalid_params(tc):
         frame.timeseries_breusch_godfrey_test(1, ["int_column", "float_column"], 1)
         raise RuntimeError("Expected an error since residuals parameter should be a string")
     except TypeError as e:
-        assert("residuals parameter should be a str" in e.message)
+        assert("residuals parameter should be a str" in str(e))
 
     try:
         frame.timeseries_breusch_godfrey_test("int_column", 10, 1)
         raise RuntimeError("Expected an error since the factors parameter should be a list of strings")
     except Exception as e:
-        assert("factors parameter should be a list of strings" in e.message)
+        assert("factors parameter should be a list of strings" in str(e))
 
     try:
         frame.timeseries_breusch_godfrey_test("int_column", ["bogus"], 1)
         raise RuntimeError("Expected an error since there is no column named 'bogus'")
     except Exception as e:
-        assert("No column named bogus" in e.message)
+        assert("No column named bogus" in str(e))
 
     try:
         frame.timeseries_breusch_godfrey_test("int_column", ["float_column"], "bogus")
         raise RuntimeError("Expected an error, since the max_lag parameter should be an integer.")
     except Exception as e:
-        assert("max_lag parameter should be an integer" in e.message)
+        assert("max_lag parameter should be an integer" in str(e))
 
 def test_bgt_invalid_column(tc):
     """
@@ -122,13 +122,13 @@ def test_bgt_invalid_column(tc):
         frame.timeseries_breusch_godfrey_test("str_column", ["int_column", "float_column"], max_lag=1)
         raise RuntimeError("Expected error since the y column specified has strings")
     except Exception as e:
-        assert("Column str_column was not numerical" in e.message)
+        assert("Column str_column was not numerical" in str(e))
 
     try:
         frame.timeseries_breusch_godfrey_test("float_column", ["int_column", "str_column"], 1)
         raise RuntimeError("Expected error since one of the x columns specified has strings.", max_lag=1)
     except Exception as e:
-        assert("Column str_column was not numerical" in e.message)
+        assert("Column str_column was not numerical" in str(e))
 
     # numerical data should not have an error
     frame.timeseries_breusch_godfrey_test("float_column", ["int_column"], max_lag=1)
