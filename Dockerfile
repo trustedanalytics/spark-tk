@@ -39,6 +39,12 @@ RUN rm spark-1.5.0-bin-hadoop2.6.tgz
 
 ENV SPARK_HOME /usr/src/app/spark
 
+# INSTALL GRAPHFRAMES DEPENDENCY
+RUN wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar -O graphframes.zip
+RUN unzip -q graphframes.zip
+RUN ln -s `pwd`/graphframes /usr/lib/python2.7/dist-packages/graphframes
+RUN rm -rf graphframes.zip
+
 # CREATE SPARK-TK DIRECTORY AND COPY SOURCE FILES
 RUN mkdir -p /usr/src/app/spark-tk
 COPY ./ spark-tk/
@@ -48,13 +54,6 @@ WORKDIR /usr/src/app/spark-tk
 
 # INSTALL PYTHON DEPENDENCIES
 RUN pip install -r python/requirements.txt
-
-# INSTALL GRAPHFRAMES DEPENDENCY
-RUN wget --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar \
- -O /usr/src/app/spark-tk/graphframes.zip && unzip /usr/src/app/spark-tk/graphframes.zip -d /usr/src/app/spark-tk/python \
-  && ls -la /usr/src/app/spark-tk/python
-
-#&& ln -s $AGENT_HOME/graphframes /usr/lib/python2.7/dist-packages/graphframes
 
 # BUILD SPARK-TK [ RUNS UNIT TESTS AND INTEGRATION TESTS ]
 RUN mvn clean install -q
