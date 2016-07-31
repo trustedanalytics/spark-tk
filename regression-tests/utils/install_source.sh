@@ -16,6 +16,8 @@ echo "linking pyspark"
 sudo ln -fs /opt/cloudera/parcels/CDH/lib/spark/python/pyspark /usr/lib/python2.7/site-packages/
 
 echo "inflating jars"
+ls $MAINNDIR
+ls $MAINDIR/core
 pushd $MAINDIR/core/target
 unzip *.zip
 popd
