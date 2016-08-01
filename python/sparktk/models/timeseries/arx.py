@@ -3,7 +3,7 @@ ARX (autoregressive exogenous) Model
 """
 
 from sparktk.loggers import log_load; log_load(__name__); del log_load
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 
 from sparktk.propobj import PropertiesObject
 
@@ -53,10 +53,9 @@ def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False)
     return ArxModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load ArxModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, ArxModel)
 
 
@@ -247,7 +246,8 @@ class ArxModel(PropertiesObject):
         elif len(x_columns) <= 0:
             raise ValueError("'x_columns' should not be empty.")
         scala_x_columns = self._tc.jutils.convert.to_scala_vector_string(x_columns)
-        return self._tc.frame.create(self._scala.predict(frame._scala, ts_column, scala_x_columns))
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, ts_column, scala_x_columns))
 
     def save(self, path):
         """

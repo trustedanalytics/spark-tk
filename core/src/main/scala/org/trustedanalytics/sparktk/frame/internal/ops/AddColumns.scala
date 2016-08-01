@@ -28,6 +28,7 @@ case class AddColumns(rowFunction: RowWrapper => Row,
                       newColumns: Seq[Column]) extends FrameTransform {
 
   override def work(state: FrameState): FrameState = {
+    SchemaHelper.isMergeable(state.schema, new FrameSchema(newColumns))
     val frameRdd = new FrameRdd(state.schema, state.rdd)
     val addedRdd = frameRdd.mapRows(row => Row.merge(row.data, rowFunction(row)))
     FrameState(addedRdd, state.schema.copy(columns = state.schema.columns ++ newColumns))

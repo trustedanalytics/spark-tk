@@ -1,6 +1,6 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 import os
 
 def train(frame,
@@ -39,10 +39,9 @@ def train(frame,
     return GaussianMixtureModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load GaussianMixtureModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, GaussianMixtureModel)
 
 
@@ -102,7 +101,7 @@ class GaussianMixtureModel(PropertiesObject):
         >>> l.sort(key=lambda x: x[0])
         >>> np.allclose(np.array(l),np.array([[1.1984454608177824, 0.5599200477022921],
         ... [6.6173304476544335, 2.1848346923369246],
-        ... [6.79969916638852, 2.2623755196701305]]),atol=1e-00)
+        ... [6.79969916638852, 2.2623755196701305]]),atol=1e+01)
         True
 
         >>> model.predict(frame)

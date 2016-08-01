@@ -7,23 +7,7 @@ import logging
 from decorator import decorator
 logger = logging.getLogger(__name__)
 
-
-class implicit(object):
-    """
-    Type which acts a singleton value indicating that an argument should be implicitly filled
-
-    Usage:
-
-    def mult(a, b=2, base=implicit):
-        if base is implicit:
-            implicit.error('base')
-        return base(a*b)
-    """
-
-    @staticmethod
-    def error(arg_name):
-        """Raises an error that the arg with the given name was found equal to implicit (i.e. its value was not provided, implicitly or explicitly)"""
-        raise ValueError("Missing value for arg '%s'.  This value is normally filled implicitly, however, if this method is called standalone, it must be set explicitly" % arg_name)
+from sparktk.arguments import implicit
 
 
 class LazyLoader(object):
@@ -191,7 +175,7 @@ def add_module_element_properties(cls, path, package_name, implicit_kwargs):
     logger.info("Dynamically loading module %s", module_name)
     m = importlib.import_module(module_name)
     if hasattr(m, '__all__'):
-        d = dict([(k, m.__dict__(k)) for k in m.__all__])
+        d = dict([(k, m.__dict__[k]) for k in m.__all__])
     else:
         d = dict([(k, v) for k, v in m.__dict__.items() if not k.startswith('_')])
 

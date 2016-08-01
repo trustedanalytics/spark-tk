@@ -5,6 +5,8 @@
 NAME="[`basename $0`]"
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 echo "$NAME DIR=$DIR"
+echo "$NAME cd $DIR"
+cd $DIR
 
 
 if [ -z "$SPARK_HOME" ]; then

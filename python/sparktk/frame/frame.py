@@ -1,4 +1,5 @@
 from pyspark.rdd import RDD
+from pyspark.sql import DataFrame
 
 from sparktk.frame.pyframe import PythonFrame
 from sparktk.frame.schema import schema_to_python, schema_to_scala
@@ -24,8 +25,15 @@ class Frame(object):
         elif self.is_scala_rdd(source):
             scala_schema = schema_to_scala(tc.sc, schema)
             self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
+        elif self.is_scala_dataframe(source):
+            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source)
+        elif isinstance(source, DataFrame):
+            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
         else:
             if not isinstance(source, RDD):
+                if not isinstance(source, list) or (len(source) > 0 and any(not isinstance(row, (list, tuple)) for row in source)):
+                    raise TypeError("Invalid data source.  The data parameter must be a 2-dimensional list (list of row data) or an RDD.")
+
                 inferred_schema = False
                 if isinstance(schema, list):
                     if all(isinstance(item, basestring) for item in schema):
@@ -34,8 +42,8 @@ class Frame(object):
                         inferred_schema = True
                     elif not all(isinstance(item, tuple) and
                                   len(item) == 2 and
-                                  isinstance(item[0], str) for item in schema):
-                        raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
+                                  isinstance(item[0], basestring) for item in schema):
+                        raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type, but received type %s." % type(schema))
                 elif schema is None:
                     schema = self._infer_schema(source)
                     inferred_schema = True
@@ -175,6 +183,11 @@ class Frame(object):
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
+    def create_scala_frame_from_scala_dataframe(sc, scala_dataframe):
+        """call constructor in JVM"""
+        return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_dataframe)
+
+    @staticmethod
     def _from_scala(tc, scala_frame):
         """creates a python Frame for the given scala Frame"""
         return Frame(tc, scala_frame)
@@ -190,6 +203,9 @@ class Frame(object):
 
     def is_scala_rdd(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.rdd.RDD)
+
+    def is_scala_dataframe(self, item):
+        return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.sql.DataFrame)
 
     def is_python_rdd(self, item):
         return isinstance(item, RDD)
@@ -242,6 +258,10 @@ class Frame(object):
         return self._frame.schema
 
     @property
+    def dataframe(self):
+        return DataFrame(self._scala.dataframe(), self._tc.sql_context)
+
+    @property
     def column_names(self):
         """
         Column identifications in the current frame.
@@ -253,8 +273,11 @@ class Frame(object):
         Examples
         --------
 
+            <skip>
             >>> frame.column_names
             [u'name', u'age', u'tenure', u'phone']
+
+            </skip>
 
         """
         return [name for name, data_type in self.schema]
@@ -272,9 +295,9 @@ class Frame(object):
         --------
         Get the number of rows:
 
-        <hide>
-         >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
-        </hide>
+            <hide>
+            >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
+            </hide>
 
             >>> frame.row_count
             4
@@ -337,6 +360,9 @@ class Frame(object):
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
+    from sparktk.frame.ops.timeseries_augmented_dickey_fuller_test import timeseries_augmented_dickey_fuller_test
+    from sparktk.frame.ops.timeseries_breusch_godfrey_test import timeseries_breusch_godfrey_test
+    from sparktk.frame.ops.timeseries_durbin_watson_test import timeseries_durbin_watson_test
     from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
     from sparktk.frame.ops.timeseries_slice import timeseries_slice
     from sparktk.frame.ops.topk import top_k

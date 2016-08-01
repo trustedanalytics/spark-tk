@@ -12,7 +12,8 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # INSTALL REQUIRED PACKAGES
-RUN apt-get -q update && \
+RUN apt-get -q clean && \
+    apt-get -q update && \
     apt-get -q install -y \
       build-essential \
       bzip2 \
@@ -37,6 +38,12 @@ RUN mv spark-1.5.0-bin-hadoop2.6 spark
 RUN rm spark-1.5.0-bin-hadoop2.6.tgz
 
 ENV SPARK_HOME /usr/src/app/spark
+
+# INSTALL GRAPHFRAMES DEPENDENCY
+RUN wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar -O graphframes.zip
+RUN unzip -q graphframes.zip
+RUN ln -s `pwd`/graphframes /usr/lib/python2.7/dist-packages/graphframes
+RUN rm -rf graphframes.zip
 
 # CREATE SPARK-TK DIRECTORY AND COPY SOURCE FILES
 RUN mkdir -p /usr/src/app/spark-tk
