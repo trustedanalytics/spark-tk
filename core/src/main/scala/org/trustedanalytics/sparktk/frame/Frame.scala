@@ -3,7 +3,7 @@ package org.trustedanalytics.sparktk.frame
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{ DataFrame, Row }
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, ValidationReport }
 import org.trustedanalytics.sparktk.frame.internal.ops._
@@ -87,6 +87,10 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
 
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 
+  def this(frameRdd: FrameRdd, validateSchema: Boolean = false) = {
+    this(frameRdd.rdd, frameRdd.schema, validateSchema)
+  }
+
   /**
    * Initialize the frame and call schema validation, if it's enabled.
    *
@@ -133,6 +137,17 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
   def this(jrdd: JavaRDD[Array[Any]], schema: Schema) = {
     this(PythonJavaRdd.toRowRdd(jrdd.rdd, schema), schema)
   }
+
+  private[frame] def this(sparktkFrameRdd: FrameRdd) = {
+    this(sparktkFrameRdd, sparktkFrameRdd.schema)
+  }
+
+  /**
+   * Construct a spark-tk Frame from a Spark DataFrame
+   */
+  def this(df: DataFrame) = {
+    this(FrameRdd.toFrameRdd(df))
+  }
 }
 
 object Frame extends TkSaveableObject {
@@ -153,7 +168,6 @@ object Frame extends TkSaveableObject {
     // no extra metadata in version 1
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val df = sqlContext.read.parquet(path)
-    val frameRdd = FrameRdd.toFrameRdd(df)
-    new Frame(frameRdd, frameRdd.frameSchema)
+    new Frame(df)
   }
 }

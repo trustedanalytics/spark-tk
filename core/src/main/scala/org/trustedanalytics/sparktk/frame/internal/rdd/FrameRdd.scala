@@ -1,6 +1,9 @@
 package org.trustedanalytics.sparktk.frame.internal.rdd
 
 import breeze.linalg.DenseVector
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.{ LabeledPointWithFrequency => SparktkLabeledPointWithFrequency }
+
 //import FrameOrderingUtils
 import org.trustedanalytics.sparktk.frame.DataTypes.{ float32, float64, int32, int64 }
 import org.trustedanalytics.sparktk.frame._
@@ -17,13 +20,13 @@ import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics 
 //import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
 //import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
-import org.apache.spark.mllib.linalg.{ Vector, Vectors, DenseVector => MllibDenseVector }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors, VectorUDT, DenseVector => MllibDenseVector }
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.{ ArrayType, BooleanType, ByteType, DateType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.apache.spark.{ Partition, TaskContext }
-import org.apache.spark.mllib.regression.LabeledPoint
 //import org.trustedanalytics.atk.domain.schema.Column
 //import org.trustedanalytics.atk.domain.schema.DataTypes
 //import org.trustedanalytics.atk.domain.schema.DataTypes.DataType
@@ -121,6 +124,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Convert FrameRdd into RDD[Vector] format required by MLLib
+   *
    * @param featureColumnNames Names of the frame's column(s) to be used
    * @return RDD of (org.apache.spark.mllib)Vector
    */
@@ -141,6 +145,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Compute MLLib's MultivariateStatisticalSummary from FrameRdd
+   *
    * @param columnNames Names of the frame's column(s) whose column statistics are to be computed
    * @return MLLib's MultivariateStatisticalSummary
    */
@@ -151,6 +156,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Convert FrameRdd to RDD[Vector] by mean centering the specified columns
+   *
    * @param featureColumnNames Names of the frame's column(s) to be used
    * @return RDD of (org.apache.spark.mllib)Vector
    */
@@ -164,6 +170,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Convert FrameRdd to RDD[Vector]
+   *
    * @param featureColumnNames Names of the frame's column(s) to be used
    * @param columnWeights The weights of the columns
    * @return RDD of (org.apache.spark.mllib)Vector
@@ -181,6 +188,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Convert FrameRdd to RDD[(Long, Long, Double)]
+   *
    * @param sourceColumnName Name of the frame's column storing the source id of the edge
    * @param destinationColumnName Name of the frame's column storing the destination id of the edge
    * @param edgeSimilarityColumnName Name of the frame's column storing the similarity between the source and destination
@@ -244,6 +252,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Create a new FrameRdd that is only a subset of the columns of this FrameRdd
+   *
    * @param columnNames names to include
    * @return the FrameRdd with only some columns
    */
@@ -256,6 +265,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Select a subset of columns while renaming them
+   *
    * @param columnNamesWithRename map of old names to new names
    * @return the new FrameRdd
    */
@@ -361,6 +371,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Sort by one or more columns
+   *
    * @param columnNamesAndAscending column names to sort by, true for ascending, false for descending
    * @return the sorted Frame
    */
@@ -415,6 +426,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
 
   /**
    * Save this RDD to disk or other store
+   *
    * @param absolutePath location to store
    * @param storageFormat "file/parquet", "file/sequence", etc.
    */
@@ -478,6 +490,60 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     new FrameRdd(frameSchema.addColumn(column), rows)
   }
 
+  /**
+   * Convert FrameRdd into RDD[LabeledPointWithFrequency] format required for updates in MLLib code
+   */
+  def toLabeledPointRDDWithFrequency(labelColumnName: String,
+                                     featureColumnNames: List[String],
+                                     frequencyColumnName: Option[String]): RDD[SparktkLabeledPointWithFrequency] = {
+    this.mapRows(row => {
+      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
+      frequencyColumnName match {
+        case Some(freqColumn) => {
+          new SparktkLabeledPointWithFrequency(DataTypes.toDouble(row.value(labelColumnName)),
+            new MllibDenseVector(features.toArray), DataTypes.toDouble(row.value(freqColumn)))
+        }
+        case _ => {
+          new SparktkLabeledPointWithFrequency(DataTypes.toDouble(row.value(labelColumnName)),
+            new MllibDenseVector(features.toArray), DataTypes.toDouble(1.0))
+        }
+      }
+    })
+  }
+
+  /**
+   * Convert FrameRdd into RDD[LabeledPoint] format required by MLLib
+   */
+  def toLabeledPointRDD(labelColumnName: String, featureColumnNames: List[String]): RDD[LabeledPoint] = {
+    this.mapRows(row => {
+      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
+      new LabeledPoint(DataTypes.toDouble(row.value(labelColumnName)), new MllibDenseVector(features.toArray))
+    })
+  }
+
+  /**
+   * Convert FrameRdd into labeled DataFrame with label of type double, and features of type vector
+   */
+  def toLabeledDataFrame(labelColumnName: String, featureColumnNames: List[String]): DataFrame = {
+    val labeledPointRdd = toLabeledPointRDD(labelColumnName, featureColumnNames)
+    val rowRdd: RDD[Row] = labeledPointRdd.map(labeledPoint => new GenericRow(Array[Any](labeledPoint.label, labeledPoint.features)))
+    val schema = StructType(Seq(StructField("label", DoubleType, true), StructField("features", new VectorUDT, true)))
+    new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
+  }
+
+  /**
+   * Convert FrameRdd to DataFrame with features of type vector
+   */
+  def toLabeledDataFrame(featureColumnNames: List[String]): DataFrame = {
+    val vectorRdd: RDD[org.apache.spark.mllib.linalg.Vector] = this.mapRows(row => {
+      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
+      new MllibDenseVector(features.toArray)
+    })
+    val rowRdd: RDD[Row] = vectorRdd.map(vector => new GenericRow(Array[Any](vector)))
+    val schema = StructType(Seq(StructField("features", new VectorUDT, true)))
+    new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
+  }
+
 }
 
 /**
@@ -503,6 +569,7 @@ object FrameRdd {
 
   /**
    * converts a data frame to frame rdd
+   *
    * @param rdd a data frame
    * @return a frame rdd
    */
@@ -546,58 +613,9 @@ object FrameRdd {
     new FrameRdd(schema, convertedRdd)
   }
 
-  //  /**
-  //   * Convert an RDD of mixed vertex types into a map where the keys are labels and values are FrameRdd's
-  //   * @param gbVertexRDD Graphbuilder Vertex RDD
-  //   * @return  keys are labels and values are FrameRdd's
-  //   */
-  //  def toFrameRddMap(gbVertexRDD: RDD[GBVertex]): Map[String, FrameRdd] = {
-  //
-  //    // make sure all of the vertices have a label
-  //    val labeledVertices = gbVertexRDD.labelVertices(Nil)
-  //
-  //    // figure out the schemas of the different vertex types
-  //    val vertexSchemaAggregator = new VertexSchemaAggregator(Nil)
-  //    val vertexSchemas = labeledVertices.aggregate(vertexSchemaAggregator.zeroValue)(vertexSchemaAggregator.seqOp, vertexSchemaAggregator.combOp).values
-  //
-  //    vertexSchemas.map(schema => {
-  //      val filteredVertices: RDD[GBVertex] = labeledVertices.filter(v => {
-  //        v.getProperty(GraphSchema.labelProperty) match {
-  //          case Some(p) => p.value == schema.label
-  //          case _ => throw new RuntimeException(s"Vertex didn't have a label property $v")
-  //        }
-  //      })
-  //      val vertexWrapper = new VertexWrapper(schema)
-  //      val rows = filteredVertices.map(gbVertex => vertexWrapper.create(gbVertex))
-  //      val frameRdd = new FrameRdd(schema.toFrameSchema, rows)
-  //
-  //      (schema.label, frameRdd)
-  //    }).toMap
-  //  }
-  //
-  //  /**
-  //   * Convert an RDD of mixed vertex types into a map where the keys are labels and values are FrameRdd's
-  //   * @param gbEdgeRDD Graphbuilder Edge RDD
-  //   * @param gbVertexRDD Graphbuilder Vertex RDD
-  //   * @return  keys are labels and values are FrameRdd's
-  //   */
-  //  def toFrameRddMap(gbEdgeRDD: RDD[GBEdge], gbVertexRDD: RDD[GBVertex]): Map[String, FrameRdd] = {
-  //
-  //    val edgeHolders = gbEdgeRDD.map(edge => EdgeHolder(edge, null, null))
-  //    val edgeSchemas = edgeHolders.aggregate(EdgeSchemaAggregator.zeroValue)(EdgeSchemaAggregator.seqOp, EdgeSchemaAggregator.combOp).values
-  //
-  //    edgeSchemas.map(schema => {
-  //      val filteredEdges: RDD[GBEdge] = gbEdgeRDD.filter(_.label == schema.label)
-  //      val edgeWrapper = new EdgeWrapper(schema)
-  //      val rows = filteredEdges.map(gbEdge => edgeWrapper.create(gbEdge))
-  //      val frameRdd = new FrameRdd(schema.toFrameSchema, rows)
-  //
-  //      (schema.label, frameRdd)
-  //    }).toMap
-  //  }
-
   /**
    * Converts row object from an RDD[Array[Any]] to an RDD[Product] so that it can be used to create a SchemaRDD
+   *
    * @return RDD[org.apache.spark.sql.Row] with values equal to row object
    */
   def toRowRDD(schema: Schema, rows: RDD[Array[Any]]): RDD[org.apache.spark.sql.Row] = {
@@ -619,6 +637,7 @@ object FrameRdd {
 
   /**
    * Converts row object to RDD[IndexedRow] needed to create an IndexedRowMatrix
+   *
    * @param indexedRows Rows of the frame as RDD[Row]
    * @param frameSchema Schema of the frame
    * @param featureColumnNames List of the frame's column(s) to be used
@@ -636,6 +655,7 @@ object FrameRdd {
 
   /**
    * Converts row object to RDD[IndexedRow] needed to create an IndexedRowMatrix
+   *
    * @param indexedRows Rows of the frame as RDD[Row]
    * @param frameSchema Schema of the frame
    * @param featureColumnNames List of the frame's column(s) to be used
@@ -671,6 +691,7 @@ object FrameRdd {
 
   /**
    * Converts the schema object to a StructType for use in creating a SchemaRDD
+   *
    * @return StructType with StructFields corresponding to the columns of the schema object
    */
   def schemaToStructType(schema: Schema): StructType = {
@@ -696,6 +717,7 @@ object FrameRdd {
 
   /**
    * Converts the spark DataTypes to our schema Datatypes
+   *
    * @return our schema DataType
    */
   def sparkDataTypeToSchemaDataType(dataType: org.apache.spark.sql.types.DataType): DataTypes.DataType = {
@@ -730,6 +752,7 @@ object FrameRdd {
 
   /**
    * Converts a spark dataType (as string)to our schema Datatype
+   *
    * @param sparkDataType spark data type
    * @return a DataType
    */
@@ -750,6 +773,7 @@ object FrameRdd {
 
   /**
    * Converts the schema object to a StructType for use in creating a SchemaRDD
+   *
    * @return StructType with StructFields corresponding to the columns of the schema object
    */
   def schemaToAvroType(schema: Schema): Seq[(String, String)] = {
@@ -768,4 +792,3 @@ object FrameRdd {
     fields
   }
 }
-

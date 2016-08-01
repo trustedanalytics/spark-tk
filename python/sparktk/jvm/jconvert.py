@@ -40,7 +40,7 @@ class JConvert(object):
         result = self.scala_map_to_python(m)
         python_map_with_iterable_values = {}
         for k,v in result.items():
-            python_map_with_iterable_values[k] = self.scala.scalaSeqToPython(v)
+            python_map_with_iterable_values[k] = list(self.scala.scalaSeqToPython(v))
         return python_map_with_iterable_values
 
     def scala_map_to_python(self, m):

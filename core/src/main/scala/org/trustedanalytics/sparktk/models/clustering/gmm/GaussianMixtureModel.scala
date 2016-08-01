@@ -166,8 +166,8 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
 
 case class GaussianMixtureModelTkMetaData(observationColumns: Seq[String],
                                           columnScalings: Seq[Double],
-                                          k: Int = 2,
-                                          maxIterations: Int = 100,
-                                          convergenceTol: Double = 0.01,
-                                          seed: Long = scala.util.Random.nextLong(),
+                                          k: Int,
+                                          maxIterations: Int,
+                                          convergenceTol: Double,
+                                          seed: Long,
                                           gaussians: List[List[String]]) extends Serializable

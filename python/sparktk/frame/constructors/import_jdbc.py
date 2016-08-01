@@ -1,8 +1,7 @@
-from sparktk.lazyloader import implicit
 from sparktk.tkcontext import TkContext
 
 
-def import_jdbc(connection_url, table_name, tc=implicit):
+def import_jdbc(connection_url, table_name, tc=TkContext.implicit):
     """
     Import data from jdbc table into frame.
 
@@ -40,10 +39,7 @@ def import_jdbc(connection_url, table_name, tc=implicit):
         raise ValueError("connection url parameter must be a string, but is {0}.".format(type(connection_url)))
     if not isinstance(table_name, basestring):
         raise ValueError("table name parameter must be a string, but is {0}.".format(type(table_name)))
-    if tc is implicit:
-        implicit.error("tc")
-    if not isinstance(tc, TkContext):
-        raise ValueError("tc must be type TkContext, received %s" % type(tc))
+    TkContext.validate(tc)
 
     scala_frame = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.constructors.Import.importJdbc(tc.jutils.get_scala_sc(), connection_url, table_name)
 

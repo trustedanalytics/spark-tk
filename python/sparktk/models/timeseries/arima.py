@@ -3,10 +3,10 @@ ARIMA (Autoregressive Integrated Moving Average) Model
 """
 
 from sparktk.loggers import log_load; log_load(__name__); del log_load
-from sparktk.lazyloader import implicit
 from sparktk.propobj import PropertiesObject
+from sparktk import TkContext
 
-def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=None, tc=implicit):
+def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=None, tc=TkContext.implicit):
     """
     Creates Autoregressive Integrated Moving Average (ARIMA) Model from the specified time series values.
 
@@ -44,6 +44,7 @@ def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=Non
     if init_params is not None:
         if not isinstance(init_params, list):
             raise TypeError("'init_params' parameter must be a list")
+    TkContext.validate(tc)
 
     _scala_obj = _get_scala_obj(tc)
     scala_ts = tc.jutils.convert.to_scala_list_double(ts)
@@ -52,10 +53,9 @@ def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=Non
 
     return ArimaModel(tc, scala_model)
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load ArimaModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, ArimaModel)
 
 def _get_scala_obj(tc):
