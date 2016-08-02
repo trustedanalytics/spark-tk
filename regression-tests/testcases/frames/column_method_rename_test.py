@@ -1,5 +1,6 @@
 """Tests methods that access or alter columns"""
 import unittest
+import exceptions as e
 
 import sys
 import os
@@ -94,14 +95,15 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_rename_non_existent(self):
         """Test renaming a non-existent column fails"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(Exception, "Invalid column"):
             self.frame.rename_columns({'no-such-name': 'not-a-name'})
 
     def test_rename_with_special_characters(self):
         """Test renaming with special characters errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+            Exception, "alpha-numeric"):
             self.frame.rename_columns(
-                {'letter': 'Long ugly !@#$%^&*(?)_+|}{[\\]\|'})
+                {'int': 'Long ugly !@#$%^&*(?)_+|}{[\\]\|'})
 
 
 if __name__ == "__main__":
