@@ -26,7 +26,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         self.frame.flatten_columns('col_B')
         flat_copy = self.frame.copy()
         self.frame.unflatten_columns(['col_A'])
-	c1 = original_copy.copy(['col_A', 'col_B'])
+        c1 = original_copy.copy(['col_A', 'col_B'])
         c2 = self.frame.copy(['col_A', 'col_B'])
         c1.sort('col_A')
         c2.sort('col_A')
@@ -85,7 +85,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                       ["o", "p/q", "7,25,6"]]
         block_schema = [("col1", str), ("col2", str), ("col3", str)]
         frame = self.context.frame.create(block_data, schema=block_schema)
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             frame.flatten_columns(["col1", "col2", "col3"], [' ', '/'])
 
     def test_flatten_delim_same(self):
@@ -106,7 +106,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                          ["l", "n", None],
                          ["o", "p", "7"]]
         frame = self.context.frame.create(block_data, schema=block_schema)
-        frame.flatten_columns(('col1', '='), ('col2', '='), ('col3','='))
+        frame.flatten_columns(('col1', '='), ('col2', '='), ('col3', '='))
         actual_flat = frame.take(frame.row_count).data
         self.assertItemsEqual(expected_flat, actual_flat)
 
@@ -148,7 +148,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                       [3, "g,h,i"]]
         block_schema = [("col1", int), ("col2", str)]
         frame = self.context.frame.create(block_data, schema=block_schema)
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Invalid column"):
             frame.flatten_columns("col1")
 
 if __name__ == "__main__":
