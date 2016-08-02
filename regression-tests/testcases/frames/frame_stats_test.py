@@ -39,6 +39,16 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
         stats = frame.column_median("item")
         self.assertEqual(stats, 499)
 
+    def test_column_bad_input_median(self):
+        """Validate column median for bad input"""
+        schema = [("item", str)]
+        frame = self.context.frame.create(
+            [['Psyduck'], ['Balatoise'], ['Slowbro']],
+            schema=schema)
+        with self.assertRaisesRegexp(
+                Exception, "Could not parse .* as a Double"):
+            stats = frame.column_median("item")
+
     def test_summary_statistics(self):
         """Valiadate results of summary statistics"""
         schema = [("item", float)]
