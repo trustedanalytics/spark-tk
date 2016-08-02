@@ -1,6 +1,5 @@
 """Tests methods that access or alter columns"""
 import unittest
-import exceptions as e
 
 import sys
 import os
@@ -100,8 +99,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
 
     def test_rename_with_special_characters(self):
         """Test renaming with special characters errors"""
-        with self.assertRaisesRegexp(
-            Exception, "alpha-numeric"):
+        with self.assertRaisesRegexp(Exception, "alpha-numeric"):
             self.frame.rename_columns(
                 {'int': 'Long ugly !@#$%^&*(?)_+|}{[\\]\|'})
 
