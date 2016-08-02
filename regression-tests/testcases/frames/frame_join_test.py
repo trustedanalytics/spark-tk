@@ -4,11 +4,12 @@ import unittest
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.realpath(__file__)))))
 from qalib import sparktk_test
 from sparktk import dtypes
 from py4j.protocol import Py4JJavaError
+
 
 class JoinTest(sparktk_test.SparkTKTestCase):
 
@@ -31,7 +32,8 @@ class JoinTest(sparktk_test.SparkTKTestCase):
         schema = [("idnum", int), ("count", str)]
 
         self.frame = self.context.frame.create(data=block_data, schema=schema)
-        self.right_frame = self.context.frame.create(data=right_data, schema=schema)
+        self.right_frame = self.context.frame.create(data=right_data,
+                                                     schema=schema)
         self.empty_frame = self.context.frame.create(data=[], schema=schema)
 
     def test_name_collision(self):
@@ -144,13 +146,21 @@ class JoinTest(sparktk_test.SparkTKTestCase):
         self.assertEquals(int32_frame.row_count, join_i32_f32.row_count)
 
         # int and float are not compatible with each other.
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "Join columns must have compatible data types")):
             flt32_frame.join(int32_frame, "idnum")
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "Join columns must have compatible data types")):
             flt32_frame.join(int64_frame, "idnum")
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "Join columns must have compatible data types")):
             flt64_frame.join(int32_frame, "idnum")
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "Join columns must have compatible data types")):
             flt64_frame.join(int64_frame, "idnum")
 
     def test_type_fail(self):
@@ -158,39 +168,38 @@ class JoinTest(sparktk_test.SparkTKTestCase):
         bad_schema = [("a", str), ('idnum', str)]
         frame2 = self.context.frame.create(data=[], schema=bad_schema)
 
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "Join columns must have compatible data types")):
             self.frame.join_inner(frame2, "idnum")
-
-    #def test_join_how_fail(self):
-    #    """ test join faults on unsupported join type """
-        #with(self.assertRaises(ia.rest.command.CommandServerError)):
-    #    self.frame.join(self.frame, "idnum", how="full")
 
     def test_join_no_column_left(self):
         """ test join faults on invalid left column"""
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "No column named no_such_column")):
             self.frame.join_inner(
-            self.frame, left_on="no_such_column", right_on="idnum")
+                self.frame, left_on="no_such_column", right_on="idnum")
 
     def test_join_no_column_right(self):
         """ test join faults on ivalid right column"""
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(
+                Exception,
+                "No column named no_such_column")):
             self.frame.join_inner(
-            self.frame, left_on="idnum", right_on="no_such_column")
+                self.frame, left_on="idnum", right_on="no_such_column")
 
     def test_join_no_column_either(self):
         """ test join faults on invalid left and right column"""
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(Exception, "No column named no_column")):
             self.frame.join_inner(
-            self.frame, left_on="no_column", right_on="no_column")
+                self.frame, left_on="no_column", right_on="no_column")
 
     def test_join_empty_column(self):
         """ test join faults with empty string for column"""
-        with(self.assertRaises(Exception)):
+        with(self.assertRaisesRegexp(Exception, "No column named")):
             self.frame.join_inner(self.frame, left_on="idnum", right_on="")
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
