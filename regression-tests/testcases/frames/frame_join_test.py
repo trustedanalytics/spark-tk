@@ -1,7 +1,5 @@
 """Test column naming and quantity of joins"""
 import unittest
-
-
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(
@@ -100,10 +98,7 @@ class JoinTest(sparktk_test.SparkTKTestCase):
 
     @unittest.skip("Compatibility check is changing")
     def test_type_compatible(self):
-        """
-        Check compatibility among the numeric types
-        """
-
+        """Check compatibility among the numeric types"""
         block_data = [
             [0, "sifuri"],
             [1, "moja"],
