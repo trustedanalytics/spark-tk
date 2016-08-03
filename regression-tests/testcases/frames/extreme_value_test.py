@@ -152,7 +152,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
                        3: dtypes.float64(2) ** 1023,
                        3.1: 5.4}
             return new_val.get(row.Factors, row.Factors)
-
+        expected_stats = [1624.6, 56, 563700.64]
         data_corner = self.get_file("SummaryStats2.csv")
         schema_corner = [("Item", dtypes.float64), ("Factors", dtypes.float64)]
 
@@ -163,19 +163,19 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         stat_frame.drop_columns("Factors")
         stats = stat_frame.column_summary_statistics(
                            "Item", weights_column="Weight")
+        self.assertAlmostEqual([stats.mean,
+                               stats.good_row_count,
+                               stats.variance], expected_stats)
 
-        self.assertEqual(stats.mean, 1624.6)
-        self.assertEqual(stats.good_row_count, 56)
-        self.assertAlmostEqual(stats.variance, 563700.64)
-
-        stat_frame.drop_rows(lambda row: row)  # Just drops all rows
+    def test_extreme_col_summary_empty_frame(self):
+        expected_stats = [float('nan'), 0, 1.0]
+        schema = [("Item", dtypes.float64), ("Weight", dtypes.float64)]
+        stat_frame = self.context.frame.create([], schema=schema)
         stats = stat_frame.column_summary_statistics(
                            "Item", weights_column="Weight")
-
-        self.assertTrue(math.isnan(stats.maximum))
-        self.assertEqual(stats.good_row_count, 0)
-        self.assertEqual(stats.geometric_mean, 1.0)
-
+        self.assertTrue([math.isnan(stats.maximum),
+                         stats.good_row_count,
+                         stats.geometric_mean], expected_stats)
 
 if __name__ == "__main__":
     unittest.main()
