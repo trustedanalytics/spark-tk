@@ -22,6 +22,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         original_copy = self.frame.copy()
         row_count = self.frame.row_count
         self.assertEqual(row_count, 11)
+
         # check that flatten into unflatten retuns the same original frame
         self.frame.flatten_columns('col_B')
         flat_copy = self.frame.copy()
@@ -31,6 +32,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         c1.sort('col_A')
         c2.sort('col_A')
         self.assertFramesEqual(c1, c2)
+
         # flatten again, see that is equivalent to flattening first time
         self.frame.flatten_columns('col_B')
         reflat_copy = self.frame.copy()
@@ -61,6 +63,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                          [2, "Turtle necks"],
                          [1, "Partridge in a Parody"]]
         frame = self.context.frame.create(block_data, schema=block_schema)
+
         # Validate flatten against hand crafted results
         frame.flatten_columns("day", "gift")
         frame_take = frame.take(frame.row_count).data
@@ -72,6 +75,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         expected_take = [['1', 'a'], ['2', 'b'], ['3', 'c'], [None, 'd']]
         block_schema = [("col1", str), ("col2", str)]
         frame = self.context.frame.create(block_data, schema=block_schema)
+
         # Validate flatten on known results
         frame.flatten_columns('col1', 'col2')
         frame_take = frame.take(frame.row_count).data
