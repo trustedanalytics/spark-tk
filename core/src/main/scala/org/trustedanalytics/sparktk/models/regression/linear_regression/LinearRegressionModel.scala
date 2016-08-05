@@ -70,7 +70,7 @@ object LinearRegressionModel extends TkSaveableObject {
     LinearRegressionModel(valueColumn,
       observationColumns,
       linRegModel.intercept,
-      linRegModel.weights.toArray.toSeq,
+      linRegModel.coefficients.toArray.toSeq,
       linRegModel.summary.explainedVariance,
       linRegModel.summary.meanAbsoluteError,
       linRegModel.summary.meanSquaredError,
