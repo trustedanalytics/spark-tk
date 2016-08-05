@@ -2,7 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 import os
 
 def train(frame,
@@ -76,10 +76,9 @@ def __get_categorical_features_info(tc, c):
     return tc.jutils.convert.to_scala_option(c)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load RandomForestClassifierModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, RandomForestClassifierModel)
 
 

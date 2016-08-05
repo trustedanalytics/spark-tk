@@ -44,11 +44,22 @@
   <!--</properties>-->
 
     <repositories>
+    <repository>
+        <id>central</id>
+        <url>http://repo1.maven.org/maven2</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
       <repository>
         <id>atk</id>
         <url>https://maven.trustedanalytics.org/content/repositories/public/</url>
         <snapshots>
           <enabled>true</enabled>
+            <updatePolicy>daily</updatePolicy>
         </snapshots>
         <releases>
           <enabled>true</enabled>
@@ -66,13 +77,7 @@
         </snapshots>
       </repository>
 
-      <repository>
-        <id>central</id>
-        <url>http://repo1.maven.org/maven2</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </repository>
+
 
       <repository>
         <id>apache</id>
@@ -93,6 +98,10 @@
         <releases>
           <enabled>true</enabled>
         </releases>
+      </repository>
+      <repository>
+        <id>SparkPackagesRepo</id>
+        <url>http://dl.bintray.com/spark-packages/maven</url>
       </repository>
     </repositories>
 
@@ -124,6 +133,7 @@
       <maven>3.0</maven>
     </prerequisites>
     <properties>
+     <downloadSources>true</downloadSources>
       <project.version>master-SNAPSHOT</project.version>
       <top.dir>${project.basedir}</top.dir>
       <buildtype>test</buildtype>
@@ -141,6 +151,7 @@
       <dep.hive.version>1.1.0-${dep.cdh.version}</dep.hive.version>
       <dev.spark.hive.version>1.5.0-${dep.cdh.version}</dev.spark.hive.version>
       <dep.daal.version>2016.0.109</dep.daal.version>
+      <dep.graphframes.version>0.1.0-spark1.5</dep.graphframes.version>
       <!--START GAO MAVEN -->
 
       <scala.long.version>2.10.4</scala.long.version>
@@ -198,7 +209,9 @@
             <name>!skipTests</name>
           </property>
         </activation>
+
         <modules>
+
           <module>integration-tests</module>
         </modules>
       </profile>
@@ -371,6 +384,7 @@
           <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.short.version}</artifactId>
+              <scope>test</scope>
           </dependency>
         </dependencies>
       </profile>
@@ -412,7 +426,6 @@
             <plugin>
               <groupId>org.scoverage</groupId>
               <artifactId>scoverage-maven-plugin</artifactId>
-              <version>${scoverage-plugin.version}</version>
             </plugin>
               <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -520,8 +533,9 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <version>1.9</version>
                 <configuration>
-                    <excludedScopes>provided</excludedScopes>
+                    <excludedScopes>provided,test,system</excludedScopes>
                     <includeTransitiveDependencies>false</includeTransitiveDependencies>
+                    <includedScopes>compile</includedScopes>
                 </configuration>
                 <executions>
                     <execution>
@@ -565,53 +579,6 @@
                   <goal>check</goal>
                   <goal>format</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <!--Create our jars-->
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>2.3</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>shade</goal>
-                </goals>
-                <configuration>
-                  <shadeTestJar>true</shadeTestJar>
-                  <finalName>${project.artifactId}</finalName>
-                  <shadedArtifactAttached>false</shadedArtifactAttached>
-                  <shadedClassifierName>${project.artifactId}</shadedClassifierName>
-                  <artifactSet>
-                    <excludes>
-                      <exclude>org.apache.maven:*</exclude>
-                      <exclude>org.apache.hadoop:hadoop-core:jar:*mr1*</exclude>
-                    </excludes>
-                  </artifactSet>
-                  <filters>
-                    <filter>
-                      <artifact>*:*</artifact>
-                      <excludes>
-                        <exclude>*.html</exclude>
-                        <exclude>META-INF/*.SF</exclude>
-                        <exclude>META-INF/*.DSA</exclude>
-                        <exclude>META-INF/*.RSA</exclude>
-                      </excludes>
-                    </filter>
-                  </filters>
-                  <transformers>
-                    <transformer
-                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                      <resource>reference.conf</resource>
-                    </transformer>
-                    <transformer
-                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                  </transformers>
-                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -750,7 +717,7 @@
           <executions>
             <execution>
               <id>copy-dependencies</id>
-              <phase>package</phase>
+              <phase>prepare-package</phase>
               <goals>
                 <goal>copy-dependencies</goal>
               </goals>
@@ -758,14 +725,35 @@
                 <!-- needed on build server -->
                   <excludeTransitive>true</excludeTransitive>
                 <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
-                <overWriteReleases>false</overWriteReleases>
-                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteReleases>true</overWriteReleases>
+                <overWriteSnapshots>true</overWriteSnapshots>
                 <overWriteIfNewer>true</overWriteIfNewer>
                 <excludeGroupIds>${groupIdExcludes}</excludeGroupIds>
                 <excludeArtifactIds>${artifactIdExcludes}</excludeArtifactIds>
                 <excludeScope>provided</excludeScope>
               </configuration>
             </execution>
+            <execution>
+              <id>copy-sources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>sources</goal>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <!-- needed on build server -->
+                <classifier>sources</classifier>
+                  <excludeTransitive>true</excludeTransitive>
+                <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                <overWriteReleases>true</overWriteReleases>
+                <overWriteSnapshots>true</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+                <excludeGroupIds>${groupIdExcludes}</excludeGroupIds>
+                <excludeArtifactIds>${artifactIdExcludes}</excludeArtifactIds>
+                <excludeScope>provided</excludeScope>
+              </configuration>
+            </execution>
+            
           </executions>
         </plugin>
 
@@ -791,7 +779,11 @@
           <artifactId>daal-core</artifactId>
           <version>${dep.daal.version}</version>
         </dependency>
-        
+        <dependency>
+          <groupId>graphframes</groupId>
+          <artifactId>graphframes</artifactId>
+          <version>${dep.graphframes.version}</version>
+        </dependency>
         <dependency>
           <groupId>com.cloudera.sparkts</groupId>
           <artifactId>sparkts</artifactId>

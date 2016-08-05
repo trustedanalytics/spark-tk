@@ -1,7 +1,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 
 
 def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=None, init_mode="k-means||"):
@@ -37,10 +37,9 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     return KMeansModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load KMeansModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, KMeansModel)
 
 

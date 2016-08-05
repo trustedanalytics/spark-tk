@@ -1,8 +1,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
-from sparktk.lazyloader import implicit
-
+from sparktk import TkContext
 
 def train(frame, columns, mean_centered=True, k=None):
     """
@@ -27,10 +26,9 @@ def train(frame, columns, mean_centered=True, k=None):
     return PcaModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load PcaModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, PcaModel)
 
 

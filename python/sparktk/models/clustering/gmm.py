@@ -1,6 +1,6 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 import os
 
 def train(frame,
@@ -39,10 +39,9 @@ def train(frame,
     return GaussianMixtureModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load GaussianMixtureModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, GaussianMixtureModel)
 
 

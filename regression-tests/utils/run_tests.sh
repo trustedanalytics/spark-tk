@@ -8,9 +8,9 @@ MAINDIR="$(dirname $MAINDIR)"
 
 
 
-export SPARKTK_HOME=$MAINDIR/core/target/spark-tk
+export SPARKTK_HOME=$MAINDIR/sparktk_jars/spark-tk/
 
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-nosetests $MAINDIR/regression-tests
+py.test $MAINDIR/regression-tests
