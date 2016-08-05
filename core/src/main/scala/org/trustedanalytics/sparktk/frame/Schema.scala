@@ -240,14 +240,13 @@ object SchemaHelper {
     left ++ right
   }
 
-
   /**
-    * Resolve name conflicts (alias) in frame before sending it to spark data frame join
-    * @param left Left Frame
-    * @param right Right Frame
-    * @param joinColumns List of Join Columns (common to both frames)
-    * @return Aliased Left and Right Frame
-    */
+   * Resolve name conflicts (alias) in frame before sending it to spark data frame join
+   * @param left Left Frame
+   * @param right Right Frame
+   * @param joinColumns List of Join Columns (common to both frames)
+   * @return Aliased Left and Right Frame
+   */
   def resolveColumnNamesConflictForJoin(left: FrameRdd, right: FrameRdd, joinColumns: List[Column]): (FrameRdd, FrameRdd) = {
     val leftColumns = left.schema.columns.toList
     val rightColumns = right.schema.columns.toList
