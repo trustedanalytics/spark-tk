@@ -82,16 +82,6 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   val rowWrapper = new RowWrapper(frameSchema)
 
   /**
-   * Convert this FrameRdd into an RDD of type Array[Any].
-   *
-   * This was added to support some legacy plugin code.
-   */
-  @deprecated("use FrameRdd and Rows instead")
-  def toRowRdd: RDD[Array[Any]] = {
-    mapRows(_.toArray)
-  }
-
-  /**
    * Spark schema representation of Frame Schema to be used with Spark SQL APIs
    */
   lazy val sparkSchema = FrameRdd.schemaToStructType(frameSchema)
@@ -433,7 +423,7 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   def save(absolutePath: String, storageFormat: String = "file/parquet"): Unit = {
     storageFormat match {
       case "file/sequence" => this.saveAsObjectFile(absolutePath)
-      case "file/parquet" => this.toDataFrame.saveAsParquetFile(absolutePath)
+      case "file/parquet" => this.toDataFrame.write.parquet(absolutePath)
       case format => throw new IllegalArgumentException(s"Unrecognized storage format: $format")
     }
   }

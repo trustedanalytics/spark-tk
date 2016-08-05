@@ -249,6 +249,10 @@
                         <arg>-g:vars</arg>
                         <arg>-deprecation</arg>
                         <arg>-feature</arg>
+                        <arg>-unchecked</arg>
+                        <arg>-Xfatal-warnings</arg>
+                        <arg>-language:implicitConversions</arg>
+                        <arg>-language:existentials</arg>
                       </args>
                     </configuration>
                   </execution>
