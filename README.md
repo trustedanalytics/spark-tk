@@ -58,7 +58,7 @@ Train a K-Means model
     >>> km = tc.models.clustering.kmeans.train(frame1, "c", k=3, seed=5)
   
     >>> km.centroids
-    [[7.0], [16.5], [3.5]]
+    [[5.6000000000000005], [15.333333333333332], [20.0]]
 
 Add cluster predictions to the frame
 
@@ -70,13 +70,12 @@ Add cluster predictions to the frame
     [0]  2  3   7        0
     [1]  1  4   6        0
     [2]  7  1  15        1
-    [3]  1  1   3        2
-    [4]  9  2  20        1
+    [3]  1  1   3        0
+    [4]  9  2  20        2
     [5]  2  4   8        0
-    [6]  0  4   4        2
+    [6]  0  4   4        0
     [7]  6  3  15        1
     [8]  5  6  16        1
-
 
 Upload some new data and predict
 
@@ -87,10 +86,10 @@ Upload some new data and predict
     >>> frame2.inspect()
     [#]  x   cluster
     ================
-    [0]   3        2
+    [0]   3        0
     [1]   8        0
     [2]  16        1
-    [3]   1        2
+    [3]   1        0
     [4]  13        1
-    [5]  18        1
+    [5]  18        2
 

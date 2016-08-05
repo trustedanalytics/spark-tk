@@ -55,13 +55,23 @@ object JoinRddFunctions extends Serializable {
       left.innerBroadcastJoin(right, useBroadcast)
     }
     else {
-      val leftFrame = left.frame.toDataFrame
-      val rightFrame = right.frame.toDataFrame
-      val joinedFrame = leftFrame.join(
+      val leftFrame = left.frame
+      val rightFrame = right.frame
+
+      // Alias columns before using spark data frame join
+      val (aliasedLeftFrame, aliasedRightFrame) = SchemaHelper.resolveColumnNamesConflictForJoin(leftFrame,
         rightFrame,
+        leftFrame.schema.copySubset(left.joinColumns).columns.toList)
+
+      val joinedFrame = aliasedLeftFrame.toDataFrame.join(
+        aliasedRightFrame.toDataFrame,
         left.joinColumns
       )
-      joinedFrame.rdd
+
+      // Get RDD out of the dataframe with frame columns in order
+      val columnsInJoinedFrame = aliasedLeftFrame.schema.columnNames ++
+        aliasedRightFrame.schema.columnNames.filterNot(left.joinColumns.contains(_))
+      joinedFrame.selectExpr(columnsInJoinedFrame: _*).rdd
     }
     createJoinedFrame(joinedRdd, left, right, "inner")
   }

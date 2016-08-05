@@ -2,12 +2,10 @@ package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
-import org.relaxng.datatype.Datatype
 import org.trustedanalytics.sparktk.frame._
 import org.apache.spark.sql.types.{ StructType, StructField }
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Schema, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.trustedanalytics.sparktk.frame.internal.constructors.HbaseHelper
 
 object Import {
 
