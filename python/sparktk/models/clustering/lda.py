@@ -11,7 +11,8 @@ def train(frame,
           alpha = None,
           beta = 1.1,
           num_topics = 10,
-          random_seed = None):
+          random_seed = None,
+          check_point_interval = 10):
     """
     Creates a LdaModel by training on the given frame
     See the discussion about `Latent Dirichlet Allocation at Wikipedia. <http://en.wikipedia.org/wiki/Latent_Dirichlet_allocation>`
@@ -45,6 +46,11 @@ def train(frame,
                       used in the LDA model. Setting the random seed to the same value every
                       time the model is trained, allows LDA to generate the same topic distribution
                       if the corpus and LDA parameters are unchanged.
+    :param checkPointInterval (int) Period (in iterations) between checkpoints (default = 10).
+                              Checkpointing helps with recovery (when nodes fail). It also helps with eliminating
+                              temporary shuffle files on disk, which can be important when LDA is run for many
+                              iterations. If the checkpoint directory is not set, this setting is ignored.
+
     :return: (LdaModel) Trained Lda Model
 
 
@@ -63,7 +69,8 @@ def train(frame,
                                    scala_alpha,
                                    beta,
                                    num_topics,
-                                   scala_seed)
+                                   scala_seed,
+                                   check_point_interval)
     return LdaModel(tc, scala_model)
 
 
@@ -133,6 +140,9 @@ class LdaModel(PropertiesObject):
         >>> model.training_data_row_count
         16L
 
+        >>> model.check_point_interval
+        10
+
         >>> model.topics_given_doc_frame.schema
         [(u'doc_id', <type 'unicode'>), (u'topic_probabilities', vector(2))]
 
@@ -194,6 +204,9 @@ class LdaModel(PropertiesObject):
         >>> restored = tc.load("sandbox/lda")
 
         >>> restored.document_column_name == model.document_column_name
+        True
+
+        >>> restored.check_point_interval == model.check_point_interval
         True
 
         >>> restored.max_iterations == model.max_iterations
@@ -265,6 +278,11 @@ class LdaModel(PropertiesObject):
     def random_seed(self):
         """Random seed used to train the model"""
         return self._tc.jutils.convert.from_scala_option(self._scala.randomSeed())
+
+    @property
+    def check_point_interval(self):
+        """Checkpoint Interval used to train the model"""
+        return self._scala.checkPointInterval()
 
     @property
     def report(self):

@@ -48,6 +48,10 @@ object LdaModel extends TkSaveableObject {
    *                   used in the LDA model. Setting the random seed to the same value every
    *                   time the model is trained, allows LDA to generate the same topic distribution
    *                   if the corpus and LDA parameters are unchanged.
+   * @param checkPointInterval Period (in iterations) between checkpoints (default = 10).
+   *                           Checkpointing helps with recovery (when nodes fail). It also helps with eliminating
+   *                           temporary shuffle files on disk, which can be important when LDA is run for many
+   *                           iterations. If the checkpoint directory is not set, this setting is ignored.
    * @return Trained LdaModel
    */
   def train(frame: Frame,
@@ -58,7 +62,8 @@ object LdaModel extends TkSaveableObject {
             alpha: Option[List[Double]] = None,
             beta: Float = 1.1f,
             numTopics: Int = 10,
-            randomSeed: Option[Long] = None): LdaModel = {
+            randomSeed: Option[Long] = None,
+            checkPointInterval: Int = 10): LdaModel = {
 
     // validate arguments
     val edgeFrame = frame
@@ -74,7 +79,8 @@ object LdaModel extends TkSaveableObject {
       alpha,
       beta,
       numTopics,
-      randomSeed
+      randomSeed,
+      checkPointInterval
     )
 
     val ldaModel: TkLdaModel = LdaTrainFunctions.trainLdaModel(arguments)
@@ -87,6 +93,7 @@ object LdaModel extends TkSaveableObject {
       beta,
       numTopics,
       randomSeed,
+      checkPointInterval,
       frame.rowCount(),
       ldaModel)
   }
@@ -105,6 +112,7 @@ object LdaModel extends TkSaveableObject {
       m.beta,
       m.numTopics,
       m.randomSeed,
+      m.checkPointInterval,
       m.trainingDataRowCount,
       sparkModel)
   }
@@ -155,6 +163,10 @@ object LdaModel extends TkSaveableObject {
  *                  result in more computation but lead to more specific topics.
  *                  Valid value range is all positive int.
  *                  Default is 10.
+ * @param checkPointInterval Period (in iterations) between checkpoints (default = 10).
+ *                           Checkpointing helps with recovery (when nodes fail). It also helps with eliminating
+ *                           temporary shuffle files on disk, which can be important when LDA is run for many
+ *                           iterations. If the checkpoint directory is not set, this setting is ignored.
  * @param randomSeed An optional random seed.
  *                   The random seed is used to initialize the pseudorandom number generator
  *                   used in the LDA model. Setting the random seed to the same value every
@@ -170,6 +182,7 @@ case class LdaModel private[lda] (documentColumnName: String,
                                   beta: Float,
                                   numTopics: Int,
                                   randomSeed: Option[Long],
+                                  checkPointInterval: Int,
                                   trainingDataRowCount: Long,
                                   sparkModel: TkLdaModel) extends Serializable {
 
@@ -210,6 +223,7 @@ case class LdaModel private[lda] (documentColumnName: String,
       beta,
       numTopics,
       randomSeed,
+      checkPointInterval,
       trainingDataRowCount)
     TkSaveLoad.saveTk(sc, path, LdaModel.formatId, formatVersion, tkMetadata)
   }
@@ -224,5 +238,6 @@ case class LdaModelTkMetaData(documentColumnName: String,
                               beta: Float,
                               numTopics: Int,
                               randomSeed: Option[Long],
+                              checkPointInterval: Int,
                               trainingDataRowCount: Long) extends Serializable
 
