@@ -1,14 +1,19 @@
 package org.trustedanalytics.sparktk.frame.internal
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{ SQLContext, DataFrame, Row }
+
+import org.slf4j.LoggerFactory
 import org.trustedanalytics.sparktk.frame.Schema
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 import scala.util.{ Failure, Success }
 
 trait BaseFrame {
 
   private var frameState: FrameState = null
+
+  lazy val logger = LoggerFactory.getLogger("sparktk")
 
   /**
    * The content of the frame as an RDD of Rows.
@@ -19,6 +24,15 @@ trait BaseFrame {
    * Current frame column names and types.
    */
   def schema: Schema = if (frameState != null) frameState.schema else null
+
+  /**
+   * The content of the frame as a Spark DataFrame
+   */
+  def dataframe: DataFrame = if (frameState != null) {
+    val frameRdd = new FrameRdd(schema, rdd)
+    frameRdd.toDataFrame
+  }
+  else null
 
   /**
    * Validates the data against the specified schema. Attempts to parse the data to the column's data type.  If
@@ -62,14 +76,17 @@ trait BaseFrame {
   }
 
   protected def execute(transform: FrameTransform): Unit = {
+    logger.info("Frame transform {}", transform.getClass.getName)
     frameState = transform.work(frameState)
   }
 
   protected def execute[T](summarization: FrameSummarization[T]): T = {
+    logger.info("Frame summarization {}", summarization.getClass.getName)
     summarization.work(frameState)
   }
 
   protected def execute[T](transform: FrameTransformWithResult[T]): T = {
+    logger.info("Frame transform (with result) {}", transform.getClass.getName)
     val r = transform.work(frameState)
     frameState = r.state
     r.result

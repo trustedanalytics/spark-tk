@@ -17,6 +17,7 @@
 package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.trustedanalytics.sparktk.frame.{ Column, FrameSchema, DataTypes }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
@@ -115,6 +116,40 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       // Specify the schema to treat booleans as strings, so this should pass
       val frame = Import.importCsv(sparkContext, path, ",", inferSchema = false, schema = Some(schema))
       assert(frame.rowCount() == 5)
+    }
+
+    "Import multiple csv files" in {
+      val path = "../integration-tests/datasets/movie-part*.csv"
+
+      val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
+
+      assert(frame.rowCount() == 20)
+      assert(frame.schema == FrameSchema(Vector(Column("user", DataTypes.int32),
+        Column("vertex_type", DataTypes.string),
+        Column("movie", DataTypes.int32),
+        Column("weight", DataTypes.int32),
+        Column("edge_type", DataTypes.string))))
+    }
+
+    "Import csv with missing values" in {
+      val path = "../integration-tests/datasets/missing_values.csv"
+      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
+      assert(frame.rowCount() == 5)
+      assert(frame.schema == FrameSchema(Vector(Column("C0", DataTypes.string),
+        Column("C1", DataTypes.int32),
+        Column("C2", DataTypes.int32),
+        Column("C3", DataTypes.int32),
+        Column("C4", DataTypes.int32),
+        Column("C5", DataTypes.float64))))
+      val data = frame.take(frame.rowCount().toInt)
+      val expectedData: Array[Row] = Array(
+        new GenericRow(Array[Any]("1", 2, null, 4, 5, null)),
+        new GenericRow(Array[Any]("1", 2, 3, null, null, 2.5)),
+        new GenericRow(Array[Any]("2", 1, 3, 4, 5, null)),
+        new GenericRow(Array[Any]("dog", 20, 30, 40, 50, 60.5)),
+        new GenericRow(Array[Any]("", null, 13, 14, 15, 16.5))
+      )
+      assert(data.sameElements(expectedData))
     }
   }
 

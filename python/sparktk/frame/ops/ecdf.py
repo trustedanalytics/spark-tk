@@ -47,4 +47,5 @@ def ecdf(self, column):
         [4]        4           1.0
 
     """
-    return self._tc.frame.create(self._scala.ecdf(column))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.ecdf(column))

@@ -1,12 +1,10 @@
-from sparktk.lazyloader import implicit
 from sparktk.tkcontext import TkContext
 from pyspark.rdd import RDD
-from pyspark.sql import SQLContext
 from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
 
-def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None, tc=implicit):
+def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None, tc=TkContext.implicit):
     """
     Creates a frame with data from a csv file.
 
@@ -65,10 +63,7 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
         raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
     if not isinstance(inferschema, bool):
         raise ValueError("inferschema parameter must be a boolean, but is {0}.".format(type(inferschema)))
-    if tc is implicit:
-        implicit.error('tc')
-    if not isinstance(tc, TkContext):
-        raise ValueError("tc must be type TkContext, received %s" % type(tc))
+    TkContext.validate(tc)
 
     header_str = str(header).lower()
     inferschema_str = str(inferschema).lower()
@@ -83,11 +78,12 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
                 raise TypeError("Unsupported type {0} in schema for column {1}.".format(column[1], column[0]))
         pyspark_schema = StructType(fields)
 
-    sqlContext = SQLContext(tc.sc)
-    df = sqlContext.read.format("com.databricks.spark.csv").options(delimiter=delimiter,
-                                                                    header=header_str,
-                                                                    dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
-                                                                    inferschema=inferschema_str).load(path, schema=pyspark_schema)
+    df = tc.sql_context.read.format(
+        "com.databricks.spark.csv.org.trustedanalytics.sparktk").options(
+            delimiter=delimiter,
+            header=header_str,
+            dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
+            inferschema=inferschema_str).load(path, schema=pyspark_schema)
 
     df_schema = []
 
@@ -118,13 +114,12 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
                 data.append(row[column_index])
         return data
 
-    rdd = df.rdd
+    jrdd = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(df._jdf.rdd())
+    rdd = RDD(jrdd, tc.sc)
 
     if any(c[1] == dtypes.datetime for c in df_schema):
         # If any columns are date/time we must do this map
         rdd = df.rdd.map(cast_datetime)
 
     from sparktk.frame.frame import Frame  # circular dependency, so import late
-    jrdd = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(df._jdf.rdd())
-    rdd = RDD(jrdd, tc.sc)
     return Frame(tc, rdd, df_schema)

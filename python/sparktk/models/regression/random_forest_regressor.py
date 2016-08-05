@@ -1,6 +1,6 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
-
 from sparktk.propobj import PropertiesObject
+from sparktk import TkContext
 import os
 
 def train(frame,
@@ -61,10 +61,18 @@ def train(frame,
 
     return RandomForestRegressorModel(tc, scala_model)
 
+
 def __get_categorical_features_info(tc, c):
     if c is not None:
         c = tc.jutils.convert.to_scala_map(c)
     return tc.jutils.convert.to_scala_option(c)
+
+
+def load(path, tc=TkContext.implicit):
+    """load RandomForestRegressorModel from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, RandomForestRegressorModel)
+
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
@@ -134,7 +142,7 @@ class RandomForestRegressorModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         """Loads a random forest regressor model from a scala model"""
         return RandomForestRegressorModel(tc, scala_model)
 

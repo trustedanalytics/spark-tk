@@ -2,7 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
-
+from sparktk import TkContext
 
 def train(frame,
           label_column,
@@ -53,6 +53,12 @@ def train(frame,
                                    mini_batch_fraction)
 
     return SvmModel(tc, scala_model)
+
+
+def load(path, tc=TkContext.implicit):
+    """load SvmModel from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, SvmModel)
 
 
 def get_scala_obj(tc):
@@ -142,7 +148,7 @@ class SvmModel(PropertiesObject):
         self._scala = scala_model
 
     @staticmethod
-    def load(tc, scala_model):
+    def _from_scala(tc, scala_model):
         return SvmModel(tc, scala_model)
 
     @property

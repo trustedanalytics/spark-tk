@@ -40,7 +40,7 @@ class JConvert(object):
         result = self.scala_map_to_python(m)
         python_map_with_iterable_values = {}
         for k,v in result.items():
-            python_map_with_iterable_values[k] = self.scala.scalaSeqToPython(v)
+            python_map_with_iterable_values[k] = list(self.scala.scalaSeqToPython(v))
         return python_map_with_iterable_values
 
     def scala_map_to_python(self, m):
@@ -80,3 +80,6 @@ class JConvert(object):
     def from_scala_vector(self, vector):
         return list(self.scala.scalaVectorToPython(vector))
 
+    def to_scala_group_by_aggregation_args(self, python_map):
+        scala_map = self.to_scala_map(python_map)
+        return self.sc._jvm.org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupByAggregationArgs(scala_map)

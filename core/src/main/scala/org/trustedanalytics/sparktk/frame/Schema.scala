@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.frame
 
 import java.util.{ ArrayList => JArrayList }
 
+import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.commons.lang.{ StringUtils => CommonsStringUtils }
@@ -185,6 +186,10 @@ trait GraphElementSchema extends Schema {
 
 object SchemaHelper {
 
+  val config = ConfigFactory.load(this.getClass.getClassLoader)
+
+  lazy val defaultInferSchemaSampleSize = config.getInt("trustedanalytics.sparktk.frame.schema.infer-schema-sample-size")
+
   /**
    * Appends letter to the conflicting columns
    *
@@ -341,6 +346,7 @@ object SchemaHelper {
   private def inferDataTypes(row: Row): Vector[DataType] = {
     row.toSeq.map(value => {
       value match {
+        case null => DataTypes.int32
         case i: Int => DataTypes.int32
         case l: Long => DataTypes.int64
         case f: Float => DataTypes.float32
@@ -359,8 +365,9 @@ object SchemaHelper {
    * @param data RDD of data
    * @return Schema inferred from the data
    */
-  def inferSchema(data: RDD[Row], sampleSize: Int, columnNames: Option[List[String]]): Schema = {
-    val sampleSet = data.take(math.min(data.count.toInt, sampleSize))
+  def inferSchema(data: RDD[Row], sampleSize: Option[Int] = None, columnNames: Option[List[String]] = None): Schema = {
+
+    val sampleSet = data.take(math.min(data.count.toInt, sampleSize.getOrElse(defaultInferSchemaSampleSize)))
 
     val dataTypes = sampleSet.foldLeft(inferDataTypes(sampleSet.head)) {
       case (v: Vector[DataType], r: Row) => mergeTypes(v, inferDataTypes(r))
@@ -376,6 +383,22 @@ object SchemaHelper {
 
     FrameSchema(columns)
   }
+
+  /**
+   * Return if list of schema can be merged. Throw exception on name conflicts
+   * @param schema List of schema to be merged
+   * @return true if schemas can be merged, false otherwise
+   */
+  def isMergeable(schema: Schema*): Boolean = {
+    def merge(schema_l: Schema, schema_r: Schema): Schema = {
+      require(schema_l.columnNames.intersect(schema_r.columnNames).isEmpty, "Schemas have conflicting column names." +
+        s" Please rename before merging. Left Schema: ${schema_l.columnNamesAsString} Right Schema: ${schema_r.columnNamesAsString}")
+      FrameSchema(schema_l.columns ++ schema_r.columns)
+    }
+    schema.reduce(merge)
+    true
+  }
+
 }
 
 /**

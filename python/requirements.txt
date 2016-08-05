@@ -1,4 +1,5 @@
 py4j
+glob2
 numpy
 decorator
 nose
@@ -7,3 +8,5 @@ python-dateutil
 pytest
 pdoc
 importlib
+pytz
+pandas

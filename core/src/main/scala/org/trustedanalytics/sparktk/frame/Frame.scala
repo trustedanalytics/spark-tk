@@ -1,27 +1,28 @@
 package org.trustedanalytics.sparktk.frame
 
-import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{ DataFrame, Row }
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.sparktk.frame.internal.{ ValidationReport, BaseFrame }
+import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, ValidationReport }
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
-import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ MultiClassClassificationMetricsSummarization, BinaryClassificationMetricsSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ BinaryClassificationMetricsSummarization, MultiClassClassificationMetricsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
 import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinInnerSummarization, JoinLeftSummarization, JoinOuterSummarization, JoinRightSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvSummarization, ExportToHbaseSummarization, ExportToHiveSummarization, ExportToJdbcSummarization, ExportToJsonSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
+import org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupBySummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
+import org.trustedanalytics.sparktk.frame.internal.ops.poweriterationclustering.PowerIterationClusteringSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.sortedk.SortedKSummarization
-import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationSummarization, CorrelationMatrixSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ CorrelationMatrixSummarization, CorrelationSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
-import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization, CategoricalSummarySummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ CategoricalSummarySummarization, ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
-import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization, TimeSeriesDurbinWatsonTestSummarization, TimeSeriesAugmentedDickeyFullerTestSummarization, TimeSeriesBreuschGodfreyTestSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
@@ -56,12 +57,14 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToJdbcSummarization
     with ExportToJsonSummarization
     with FlattenColumnsTransform
+    with GroupBySummarization
     with HistogramSummarization
     with JoinInnerSummarization
     with JoinLeftSummarization
     with JoinOuterSummarization
     with JoinRightSummarization
     with MultiClassClassificationMetricsSummarization
+    with PowerIterationClusteringSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
@@ -72,14 +75,21 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with TakeSummarization
     with TallyPercentTransform
     with TallyTransform
+    with TimeSeriesAugmentedDickeyFullerTestSummarization
+    with TimeSeriesBreuschGodfreyTestSummarization
+    with TimeSeriesDurbinWatsonTestSummarization
     with TimeSeriesFromObseravationsSummarization
     with TimeSeriesSliceSummarization
     with TopKSummarization
     with UnflattenColumnsTransform {
 
-  private val log: Logger = Logger.getLogger(Frame.getClass)
+  init(frameRdd, frameSchema)
 
   val validationReport = init(frameRdd, frameSchema, validateSchema)
+
+  def this(frameRdd: FrameRdd, validateSchema: Boolean = false) = {
+    this(frameRdd.rdd, frameRdd.schema, validateSchema)
+  }
 
   /**
    * Initialize the frame and call schema validation, if it's enabled.
@@ -94,7 +104,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
 
     // Infer the schema, if a schema was not provided
     val updatedSchema = if (frameSchema == null) {
-      SchemaHelper.inferSchema(frameRdd, 100, None)
+      SchemaHelper.inferSchema(frameRdd)
     }
     else
       frameSchema
@@ -104,7 +114,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
       val schemaValidation = super.validateSchema(frameRdd, updatedSchema)
 
       if (schemaValidation.validationReport.numBadValues > 0)
-        log.warn(s"Schema validation found ${schemaValidation.validationReport.numBadValues} bad values.")
+        logger.warn(s"Schema validation found ${schemaValidation.validationReport.numBadValues} bad values.")
 
       validationReport = Some(schemaValidation.validationReport)
       schemaValidation.validatedRdd
@@ -127,6 +137,17 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
   def this(jrdd: JavaRDD[Array[Any]], schema: Schema) = {
     this(PythonJavaRdd.toRowRdd(jrdd.rdd, schema), schema)
   }
+
+  private[frame] def this(sparktkFrameRdd: FrameRdd) = {
+    this(sparktkFrameRdd, sparktkFrameRdd.schema)
+  }
+
+  /**
+   * Construct a spark-tk Frame from a Spark DataFrame
+   */
+  def this(df: DataFrame) = {
+    this(FrameRdd.toFrameRdd(df))
+  }
 }
 
 object Frame extends TkSaveableObject {
@@ -142,12 +163,11 @@ object Frame extends TkSaveableObject {
    * @param tkMetadata TK metadata
    * @return
    */
-  def load(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
+  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int = tkFormatVersion, tkMetadata: JValue = null): Any = {
     require(tkFormatVersion == formatVersion, s"Frame load only supports version $tkFormatVersion.  Got version $formatVersion")
     // no extra metadata in version 1
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val df = sqlContext.read.parquet(path)
-    val frameRdd = FrameRdd.toFrameRdd(df)
-    new Frame(frameRdd, frameRdd.frameSchema)
+    new Frame(df)
   }
 }
