@@ -133,6 +133,63 @@ def test_bgt_invalid_column(tc):
     # numerical data should not have an error
     frame.timeseries_breusch_godfrey_test("float_column", ["int_column"], max_lag=1)
 
+def test_bpt_invalid_params(tc):
+    """
+    Tests the Breusch-Pagan test with invalid parameters
+    """
+    data = [[1, "a", 1.5], [2, "b", 18.5], [4, "c", 22.1], [5, "d", 19.0], [7, "e", 25.6], [8, "f", 36.75]]
+    schema = [("int_column", int), ("str_column", str), ("float_column", float)]
+    frame = tc.frame.create(data, schema)
+
+    try:
+        frame.timeseries_breusch_pagan_test(1, ["int_column", "float_column"])
+        raise RuntimeError("Expected an error since residuals parameter should be a string")
+    except TypeError as e:
+        assert("residuals parameter should be a str" in e.message)
+
+    try:
+        frame.timeseries_breusch_pagan_test("int_column", 10)
+        raise RuntimeError("Expected an error since the factors parameter should be a list of strings")
+    except Exception as e:
+        assert("factors parameter should be a list of strings" in e.message)
+
+    try:
+        frame.timeseries_breusch_pagan_test("int_column", ["bogus"])
+        raise RuntimeError("Expected an error since there is no column named 'bogus'")
+    except Exception as e:
+        assert("No column named bogus" in str(e))
+
+    try:
+        frame.timeseries_breusch_pagan_test("bogus", ["float_column"])
+        raise RuntimeError("Expected an error, since there is no column named 'bogus'.")
+    except Exception as e:
+        assert("No column named bogus" in str(e))
+
+def test_bpt_invalid_column(tc):
+    """
+    Tests the Breusch-Godfrey test with non-numerical data, and expects an error
+    """
+    data = [[1, "a", 1.5], [2, "b", 18.5], [4, "c", 22.1], [5, "d", 19.0], [7, "e", 25.6], [8, "f", 36.75]]
+    schema = [("int_column", int), ("str_column", str), ("float_column", float)]
+    frame = tc.frame.create(data, schema)
+
+    try:
+        frame.timeseries_breusch_pagan_test("str_column", ["int_column", "float_column"])
+        raise RuntimeError("Expected error since the residuals column specified has strings")
+    except Exception as e:
+        assert("Column str_column was not numerical" in str(e))
+
+    try:
+        frame.timeseries_breusch_pagan_test("float_column", ["int_column", "str_column"])
+        raise RuntimeError("Expected error since one of the factors columns specified has strings.", max_lag=1)
+    except Exception as e:
+        assert("Column str_column was not numerical" in str(e))
+
+    # numerical data should not have an error
+    assert(frame.timeseries_breusch_pagan_test("float_column", ["int_column"])  != None)
+
+
+
 
 
 
