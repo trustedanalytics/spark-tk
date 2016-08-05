@@ -854,7 +854,7 @@ trait Schema {
     var newName = candidate
     var i: Int = 0
     while (columnNames.contains(newName)) {
-      newName = newName + s"_$i"
+      newName = candidate + s"_$i"
       i += 1
     }
     newName
