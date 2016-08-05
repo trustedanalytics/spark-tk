@@ -6,8 +6,8 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.util.Bytes
 import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.hbase.mapreduce.TableOutputFormat
-import org.apache.hadoop.hbase.{ HColumnDescriptor, HTableDescriptor, HBaseConfiguration }
-import org.apache.hadoop.hbase.client.{ Put, HBaseAdmin }
+import org.apache.hadoop.hbase.{TableName, HColumnDescriptor, HTableDescriptor, HBaseConfiguration}
+import org.apache.hadoop.hbase.client.{ConnectionFactory, Put, HBaseAdmin}
 import org.trustedanalytics.sparktk.frame.{ Schema, DataTypes }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
@@ -49,19 +49,21 @@ object ExportToHbase {
       familyName,
       keyColumnName.getOrElse(StringUtils.EMPTY))
 
-    val hBaseAdmin = new HBaseAdmin(HBaseConfiguration.create())
-    if (!hBaseAdmin.tableExists(tableName)) {
-      val desc = new HTableDescriptor(tableName)
+    val connection = ConnectionFactory.createConnection(conf)
+    val hBaseAdmin = connection.getAdmin
+    val hBaseTableName = TableName.valueOf(tableName)
+    if (!hBaseAdmin.tableExists(hBaseTableName)) {
+      val desc = new HTableDescriptor(hBaseTableName);
       desc.addFamily(new HColumnDescriptor(familyName))
 
       hBaseAdmin.createTable(desc)
     }
     else {
-      val desc = hBaseAdmin.getTableDescriptor(tableName.getBytes())
+      val desc = hBaseAdmin.getTableDescriptor(hBaseTableName)
       if (!desc.hasFamily(familyName.getBytes())) {
         desc.addFamily(new HColumnDescriptor(familyName))
 
-        hBaseAdmin.modifyTable(tableName, desc)
+        hBaseAdmin.modifyTable(hBaseTableName, desc)
       }
     }
 
@@ -94,7 +96,7 @@ object ExportToHbase {
   private def createConfig(tableName: String): Configuration = {
     val conf = HBaseConfiguration.create()
     conf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
-    val job = new Job(conf)
+    val job = Job.getInstance(conf)
     job.setOutputFormatClass(classOf[TableOutputFormat[ImmutableBytesWritable]])
     job.getConfiguration
   }
@@ -122,7 +124,7 @@ object ExportToHbase {
     val put = new Put(keyColumnValue)
     for (index <- 0 to valuesAsByteArray.length - 1) {
       if (valuesAsByteArray(index) != null) {
-        put.add(familyColumnAsByteArray, Bytes.toBytes(columnNames(index)), valuesAsByteArray(index))
+        put.addColumn(familyColumnAsByteArray, Bytes.toBytes(columnNames(index)), valuesAsByteArray(index))
       }
     }
 
