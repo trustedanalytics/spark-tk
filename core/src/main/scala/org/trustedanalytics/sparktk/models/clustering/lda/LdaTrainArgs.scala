@@ -37,6 +37,11 @@ import org.trustedanalytics.sparktk.frame.Frame
  *                   used in the LDA model. Setting the random seed to the same value every
  *                   time the model is trained, allows LDA to generate the same topic distribution
  *                   if the corpus and LDA parameters are unchanged.
+ * @param checkPointInterval Period (in iterations) between checkpoints (default = 10).
+ *                           Checkpointing helps with recovery (when nodes fail). It also helps with eliminating
+ *                           temporary shuffle files on disk, which can be important when LDA is run for many
+ *                           iterations. If the checkpoint directory is not set, this setting is ignored.
+ *
  */
 case class LdaTrainArgs(frame: Frame,
                         documentColumnName: String,
@@ -46,7 +51,8 @@ case class LdaTrainArgs(frame: Frame,
                         alpha: Option[List[Double]] = None,
                         beta: Float = 1.1f,
                         numTopics: Int = 10,
-                        randomSeed: Option[Long] = None) {
+                        randomSeed: Option[Long] = None,
+                        checkPointInterval: Int = 10) {
 
   require(frame != null, "frame is required")
   require(StringUtils.isNotBlank(documentColumnName), "document column name is required")
