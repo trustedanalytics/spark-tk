@@ -193,10 +193,12 @@ class KMeansModel(PropertiesObject):
         c = self.__columns_to_option(columns)
         self._scala.addDistanceColumns(frame._scala, c)
 
-    def __columns_to_option(self, c):
-        if c is not None:
-            c = self._tc.jutils.convert.to_scala_vector_string(c)
-        return self._tc.jutils.convert.to_scala_option(c)
+    def __columns_to_option(self, columns):
+        if isinstance(columns, basestring):
+            columns = [columns]
+        if columns is not None:
+            columns = self._tc.jutils.convert.to_scala_vector_string(columns)
+        return self._tc.jutils.convert.to_scala_option(columns)
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
