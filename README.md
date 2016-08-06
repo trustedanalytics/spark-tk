@@ -79,12 +79,12 @@ Add cluster predictions to the frame
 
 Upload some new data and predict
 
-    >>> frame2 = tc.frame.create(data=[[3], [8], [16], [1], [13], [18]], schema=[("x", int)])
+    >>> frame2 = tc.frame.create([[3], [8], [16], [1], [13], [18]])
 
-    >>> km.predict(frame2, 'x')
+    >>> km.predict(frame2, 'C0')
 
     >>> frame2.inspect()
-    [#]  x   cluster
+    [#]  C0  cluster
     ================
     [0]   3        0
     [1]   8        0
