@@ -217,7 +217,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
   def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
-      require(columns.length == observationColumns.get.length, "Number of columns for train and predict should be same")
+      require(columns.length == observationColumns.get.length, s"Number of columns for train and predict should be same (train columns=$columns, observation columns=$observationColumns)")
     }
 
     val vectorMaker = KMeansModel.getDenseVectorMaker(observationColumns.getOrElse(columns), scalings)
@@ -227,7 +227,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(Column("cluster", DataTypes.int32)))
+    frame.addColumns(predictMapper, Seq(Column(frame.schema.getNewColumnName("cluster"), DataTypes.int32)))
   }
 
   /**

@@ -22,7 +22,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ 
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ CategoricalSummarySummarization, ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
-import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization, TimeSeriesDurbinWatsonTestSummarization, TimeSeriesAugmentedDickeyFullerTestSummarization, TimeSeriesBreuschGodfreyTestSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization, TimeSeriesDurbinWatsonTestSummarization, TimeSeriesAugmentedDickeyFullerTestSummarization, TimeSeriesBreuschGodfreyTestSummarization, TimeSeriesBreuschPaganTestSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
@@ -77,6 +77,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with TallyTransform
     with TimeSeriesAugmentedDickeyFullerTestSummarization
     with TimeSeriesBreuschGodfreyTestSummarization
+    with TimeSeriesBreuschPaganTestSummarization
     with TimeSeriesDurbinWatsonTestSummarization
     with TimeSeriesFromObseravationsSummarization
     with TimeSeriesSliceSummarization

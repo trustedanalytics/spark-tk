@@ -32,15 +32,15 @@ RUN wget -nv https://bootstrap.pypa.io/get-pip.py
 RUN python get-pip.py
 
 # DOWNLOAD SPARK BINARY AND SET SPARK_HOME
-RUN wget -nv http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz
-RUN tar xzf spark-1.5.0-bin-hadoop2.6.tgz
-RUN mv spark-1.5.0-bin-hadoop2.6 spark
-RUN rm spark-1.5.0-bin-hadoop2.6.tgz
+RUN wget -nv http://archive.apache.org/dist/spark/spark-1.6.2/spark-1.6.2-bin-hadoop2.6.tgz
+RUN tar xzf spark-1.6.2-bin-hadoop2.6.tgz
+RUN mv spark-1.6.2-bin-hadoop2.6 spark
+RUN rm spark-1.6.2-bin-hadoop2.6.tgz
 
 ENV SPARK_HOME /usr/src/app/spark
 
 # INSTALL GRAPHFRAMES DEPENDENCY
-RUN wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar -O graphframes.zip
+RUN wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.6/graphframes-0.1.0-spark1.6.jar -O graphframes.zip
 RUN unzip -q graphframes.zip
 RUN ln -s `pwd`/graphframes /usr/lib/python2.7/dist-packages/graphframes
 RUN rm -rf graphframes.zip

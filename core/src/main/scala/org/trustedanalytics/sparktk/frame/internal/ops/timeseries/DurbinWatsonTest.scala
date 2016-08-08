@@ -23,7 +23,7 @@ case class TimeSeriesDurbinWatsonTest(residuals: String) extends FrameSummarizat
   require(StringUtils.isNotEmpty(residuals), "residuals must not be null or empty.")
 
   override def work(state: FrameState): Double = {
-    return TimeSeriesStatisticalTests.dwtest(TimeSeriesFunctions.getVectorFromFrame(state, residuals))
+    TimeSeriesStatisticalTests.dwtest(TimeSeriesFunctions.getVectorFromFrame(state, residuals))
   }
 }
 
