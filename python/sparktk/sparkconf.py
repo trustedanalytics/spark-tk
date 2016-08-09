@@ -9,7 +9,7 @@ from zip import zip_sparktk
 
 LIB_DIR="dependencies"
 SPARK_ASSEMBLY_SEARCH="**/spark-assembly*.jar"
-
+CORE_TARGET="sparktk-core/target"
 import logging
 logger = logging.getLogger('sparktk')
 
@@ -17,7 +17,7 @@ def get_source_code_target_dir():
     """gets the core/target folder as if this is running from source code"""
     d = os.path.dirname
     root = os.path.join(d(d(d(os.path.abspath(__file__)))))
-    target = os.path.join(root, 'core/target')
+    target = os.path.join(root, CORE_TARGET)
     return target
 
 
