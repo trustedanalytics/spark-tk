@@ -4,13 +4,14 @@ DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
 MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
 
 
+export PYTHONPATH=$MAINDIR/regression-tests/sparkregtests:$PYTHONPATH
 
-export SPARKTK_HOME=$MAINDIR/sparktk_jars/spark-tk/
+export SPARKTK_HOME=$MAINDIR/core/target
 
 echo "spark tk home"
 echo $SPARKTK_HOME
+echo $PYTHONPATH
 
 py.test $MAINDIR/regression-tests
