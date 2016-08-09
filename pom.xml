@@ -186,7 +186,7 @@
           </property>
         </activation>
         <modules>
-          <module>core</module>
+          <module>sparktk-core</module>
         </modules>
       </profile>
 
@@ -212,7 +212,7 @@
 
         <modules>
 
-          <module>integration-tests</module>
+          <module>sparktk-integration-tests</module>
         </modules>
       </profile>
 
