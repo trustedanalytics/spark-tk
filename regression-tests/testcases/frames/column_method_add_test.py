@@ -46,7 +46,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(
             len(self.new_col_schema)+3, len((self.frame.take(1)).data[0]))
 
-        columns = self.frame.take(self.frame.row_count).data
+        columns = self.frame.take(self.frame.count()).data
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
@@ -60,7 +60,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
             len(self.new_col_schema)+3, len((self.frame.take(1)).data[0]))
 
         self.frame.inspect()
-        columns = self.frame.take(self.frame.row_count).data
+        columns = self.frame.take(self.frame.count()).data
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 

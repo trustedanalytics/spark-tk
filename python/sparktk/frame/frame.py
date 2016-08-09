@@ -282,31 +282,6 @@ class Frame(object):
         """
         return [name for name, data_type in self.schema]
 
-    @property
-    def row_count(self):
-        """
-        Number of rows in the current frame.
-
-        :return: The number of rows in the frame
-
-        Counts all of the rows in the frame.
-
-        Examples
-        --------
-        Get the number of rows:
-
-            <hide>
-            >>> frame = tc.frame.create([[item] for item in range(0, 4)],[("a", int)])
-            </hide>
-
-            >>> frame.row_count
-            4
-
-        """
-        if self._is_scala:
-            return int(self._scala.rowCount())
-        return self.rdd.count()
-
     def append_csv_file(self, file_name, schema, separator=','):
         self._scala.appendCsvFile(file_name, schema_to_scala(self._tc.sc, schema), separator)
 

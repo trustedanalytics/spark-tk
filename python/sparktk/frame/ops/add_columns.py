@@ -98,14 +98,6 @@ def add_columns(self, func, schema, columns_accessed=None):
 
         >>> frame.add_columns(add_name_by_adult_tenure, ('tenured_name', unicode))
 
-        <skip>
-        >>> frame
-        Frame "example_frame"
-        row_count = 4
-        schema = [name:unicode, age:int32, tenure:int32, phone:unicode, adult_years:int32, of_age:float32, of_adult:float32, tenured_name:unicode]
-        status = ACTIVE  (last_read_date = -etc-)
-        </skip>
-
         >>> frame.inspect(columns=['name', 'of_adult', 'tenured_name'], round=2)
         [#]  name      of_adult  tenured_name
         =====================================
