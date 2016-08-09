@@ -9,7 +9,7 @@ MAINDIR="$(dirname $MAINDIR)"
 
 export PYTHONPATH=$MAINDIR/regression-tests:$PYTHONPATH
 
-export SPARKTK_HOME=$MAINDIR/sparktk_jars/spark-tk/
+export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
 
 echo "spark tk home"
 echo $SPARKTK_HOME
