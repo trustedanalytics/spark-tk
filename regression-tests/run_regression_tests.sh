@@ -6,7 +6,7 @@ echo "$NAME DIR=$DIR"
 MAINDIR="$(dirname $DIR)"
 
 
-export PYTHONPATH=$MAINDIR/regression-tests/sparkregtests:$PYTHONPATH
+export PYTHONPATH=$MAINDIR/regression-tests:$PYTHONPATH
 
 export SPARKTK_HOME=$MAINDIR/core/target
 
