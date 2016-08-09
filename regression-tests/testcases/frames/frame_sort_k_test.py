@@ -11,19 +11,16 @@ from qalib import sparktk_test
 # @DPNG-9405 - multiple params with different ascending/descending values
 # @DPNG-9407 - tuples
 
-
 class FrameSortTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
         super(FrameSortTest, self).setUp()
-
         dataset = self.get_file("dogs.csv")
         schema = [("age", int),
                   ("name", str),
                   ("owner", str),
                   ("weight", int),
                   ("hair_type", str)]
-
         self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True)
 
     def test_frame_sortedk_col_single_descending(self):

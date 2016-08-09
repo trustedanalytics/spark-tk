@@ -10,7 +10,8 @@ from qalib import sparktk_test
 #@DPNG-9407 frame sort does not allow tuples
 #@DPNG-9405 frame sort allows ascending parameter to be a list
 #@DPNG-9401 import_csv allows the user to set inferschema to true and also provide a schema
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+from qalib import sparktk_test
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
     """Test fixture the Frame sort function"""
