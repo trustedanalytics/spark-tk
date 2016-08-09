@@ -59,8 +59,9 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
                           517.8922702118355,
                           1.0,
                           288.5307609250702]
-        stat_frame = self.context.frame.import_csv(
-            self.get_file("summary_stats.csv"),
+        stats_data = [[i] for i in xrange(1, 1000)]
+        stat_frame = self.context.frame.create(
+            stats_data,
             schema=schema)
         stats = stat_frame.column_summary_statistics("item")
         self.assertItemsEqual([stats.geometric_mean,

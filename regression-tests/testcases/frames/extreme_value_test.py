@@ -32,7 +32,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
             return new_val.get(row["col_A"], row["col_A"])
 
         master.add_columns(add_extremes, ("col_D", dtypes.float64))
-
+        
         proj_3col = master.copy(['col_D', 'Double', 'Text'])
         self.assertEqual(proj_3col.row_count, master.row_count)
         self.assertEqual(len(proj_3col.column_names), 3)
@@ -40,6 +40,14 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         proj_1col = master.copy({'col_A': 'extremes'})
         self.assertEqual(proj_1col.row_count, master.row_count)
         self.assertEqual(len(proj_1col.column_names), 1)
+
+        #check if NaN/inf values are present
+        test_extreme = master.download()
+        for index, row in test_extreme.iterrows():
+            if(row['col_A'] == 123456 or row['col_A'] == 777):
+                self.assertTrue(math.isinf(row['col_D']))
+            if(row['col_A'] == 4321):
+                self.assertTrue(math.isnan(row['col_D']))
 
     def test_extreme_copy(self):
         """ Test copy with Inf / NaN data """
@@ -69,8 +77,8 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         extreme32.add_columns(lambda row: [np.sqrt(-9)],
                               [('neg_root', dtypes.float32)])
         extake = extreme32.download(extreme32.row_count)
-        for _, j in extake.iterrows():
-            self.assertTrue(math.isnan(j['neg_root']))
+        for index, row in extake.iterrows():
+            self.assertTrue(math.isnan(row['neg_root']))
 
     def test_extreme_maxmin64(self):
         """ Test extreme large and small magnitudes on 64-bit floats."""
@@ -85,14 +93,16 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
                               [row.col_A*2, np.sqrt(-9)],
                               [("twice", dtypes.float64),
                                ('neg_root', dtypes.float64)])
-
         extake = extreme64.download(extreme64.row_count)
-        for _, j in extake.iterrows():
-            if j['col_A'] > 1 or j['col_A'] < 0:
-                self.assertTrue(math.isinf(j['twice']))
+
+        #check for inf when values exceed 64-bit range;
+        #double the value if outside the range [0,1)
+        for index, row in extake.iterrows():
+            if row['col_A'] >= 1 or row['col_A'] < 0:
+                self.assertTrue(math.isinf(row['twice']))
             else:
-                self.assertEqual(j['twice'], j['col_A'] * 2)
-            self.assertTrue(math.isnan(j['neg_root']))
+                self.assertEqual(row['twice'], row['col_A'] * 2)
+            self.assertTrue(math.isnan(row['neg_root']))
 
     def test_extreme_colmode(self):
         """ Insert NaN and +/-Inf for weights"""
