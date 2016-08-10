@@ -31,9 +31,11 @@ class BinColTest(sparktk_test.SparkTKTestCase):
         self.frame.bin_column("index", 10)
         self.frame.bin_column("index", 10)
 
-        self.assertIn("index_binned_0_1", self.frame.column_names)
-        self.assertIn("index_binned_0_1_2_3", self.frame.column_names)
-        self.assertIn("index_binned_0_1_2_3_4", self.frame.column_names)
+        self.assertIn("index_binned_0", self.frame.column_names)
+        self.assertIn("index_binned_1", self.frame.column_names)
+        self.assertIn("index_binned_2", self.frame.column_names)
+        self.assertIn("index_binned_3", self.frame.column_names)
+        self.assertIn("index_binned_4", self.frame.column_names)
 
         self.frame.drop_columns("index_binned_0")
         self.assertNotIn("index_binned_0", self.frame.column_names)
