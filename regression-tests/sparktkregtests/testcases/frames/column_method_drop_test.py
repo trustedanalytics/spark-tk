@@ -1,11 +1,7 @@
 """Tests methods that access or alter columns"""
 import unittest
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-from qalib import sparktk_test
+from sparktkregtests.lib import sparktk_test
 
 dummy_int_val = -77     # placeholder data value for added column
 dummy_col_count = 1000  # length of dummy list for column add
