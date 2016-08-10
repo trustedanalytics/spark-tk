@@ -47,7 +47,7 @@ class FrameQuantileTest(sparktk_test.SparkTKTestCase):
 
     def test_histogram_bad_quantiles(self):
         """Tests the behavior when string quantiles provided"""
-        with self.assertRaisesRegexp(ValueError, "could not convert string to float"):
+        with self.assertRaises(Exception):
             self.frame_histogram.quantiles(
                 "value", ['str'])
 if __name__ == '__main__':

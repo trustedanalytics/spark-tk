@@ -12,7 +12,7 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
     def setUp(self):
         """Build test frame"""
         super(FrameStatsTest, self).setUp()
-        self.schema = [("weight", float), ("item", int)]
+        self.schema = [("weight", float), ("item", str)]
         self.stat_frame = self.context.frame.import_csv(
             self.get_file("mode_stats.tsv"),
             schema=self.schema,
@@ -21,10 +21,11 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
     def test_column_mode(self):
         """Validate column mode"""
         stats = self.stat_frame.column_mode(
-            "item", "weight", max_modes_returned=3)
-        expected_mode = {60, 54}
+            "item", "weight", max_modes_returned=50)
+        expected_mode = {'Poliwag', 'Pumpkaboo', 'Scrafty',
+                         'Psyduck', 'Alakazam'}
 
-        self.assertEqual(stats.mode_count, 2)
+        self.assertEqual(stats.mode_count, 5)
         self.assertEqual(stats.total_weight, 1749)
         self.assertEqual(set(stats.modes), expected_mode)
 
@@ -40,7 +41,7 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
         """Validate column median for bad input"""
         schema = [("item", str)]
         frame = self.context.frame.create(
-            [['Duck'], ['Tortoise'], ['Slug']],
+            [['Psyduck'], ['Balatoise'], ['Slowbro']],
             schema=schema)
         with self.assertRaisesRegexp(
                 Exception, "Could not parse .* as a Double"):
