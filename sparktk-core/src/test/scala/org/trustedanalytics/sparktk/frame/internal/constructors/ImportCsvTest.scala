@@ -22,7 +22,7 @@ import org.trustedanalytics.sparktk.frame.{ Column, FrameSchema, DataTypes }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ImportCsvTest extends TestingSparkContextWordSpec {
-  val TEST_DATA = "../sparktk-integration-tests/datasets"
+  val TEST_DATA = "../integration-tests/datasets"
   "ImportCsv" should {
     "Import frame with delimiter = |, header = true, inferSchema = true" in {
       val path = TEST_DATA + "/cities.csv"
