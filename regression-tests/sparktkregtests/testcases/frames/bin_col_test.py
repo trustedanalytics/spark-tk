@@ -64,7 +64,7 @@ class BinColTest(sparktk_test.SparkTKTestCase):
         """Validate mutliple cutoffs with tupled parameters"""
         cutoff_tuple = tuple(self.cutoff_list)
         self.frame.bin_column("index", cutoff_tuple)
-        frame_take = self.frame.take(self.frame.row_count)[0]
+        frame_take = self.frame.take(self.frame.row_count).data
 
         for i in frame_take:
             if i[0] < 10:
@@ -88,7 +88,7 @@ class BinColTest(sparktk_test.SparkTKTestCase):
                               strict_binning=True,
                               bin_column_name="single_bin")
 
-        frame_take = self.frame.take(self.frame.row_count)[0]
+        frame_take = self.frame.take(self.frame.row_count).data
 
         for i in frame_take:
             self.assertEqual(i[2], 0)
