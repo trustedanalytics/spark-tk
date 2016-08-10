@@ -2,13 +2,13 @@
 
 WD=target/
 
-MODULE=spark-tk
+MODULE=sparktk-core
 
 pushd $WD
 
 	mkdir -p $MODULE/dependencies
 	
-	cp core*.jar $MODULE/
+	cp sparktk-core*.jar $MODULE/
 
     for source in `find \`pwd\` -iname "*sources.jar"`
     do

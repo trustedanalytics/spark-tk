@@ -22,10 +22,10 @@ import org.trustedanalytics.sparktk.frame.{ Column, FrameSchema, DataTypes }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ImportCsvTest extends TestingSparkContextWordSpec {
-
+  val TEST_DATA = "../integration-tests/datasets"
   "ImportCsv" should {
     "Import frame with delimiter = |, header = true, inferSchema = true" in {
-      val path = "../integration-tests/datasets/cities.csv"
+      val path = TEST_DATA + "/cities.csv"
       val delimiter = "|"
       val header = true
       val inferSchema = true
@@ -43,7 +43,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import frame with delimiter = , and string, int, float, bool, datetime types" in {
-      val path = "../integration-tests/datasets/importcsvtest.csv"
+      val path = TEST_DATA + "/importcsvtest.csv"
 
       val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
 
@@ -60,7 +60,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import frame without a header row" in {
-      val path = "../integration-tests/datasets/noheader.csv"
+      val path = TEST_DATA + "/noheader.csv"
 
       val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
 
@@ -73,7 +73,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import frame without inferring schema and no header row" in {
-      val path = "../integration-tests/datasets/noheader.csv"
+      val path = TEST_DATA + "/noheader.csv"
 
       val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false)
 
@@ -86,7 +86,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import frame with a header row, but no inferred schema" in {
-      val path = "../integration-tests/datasets/importcsvtest.csv"
+      val path = TEST_DATA + "/importcsvtest.csv"
 
       val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = false)
 
@@ -101,7 +101,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import frame with unsupport data types" in {
-      val path = "../integration-tests/datasets/unsupported_types.csv"
+      val path = TEST_DATA + "/unsupported_types.csv"
 
       intercept[Exception] {
         // Frame contains booleans, which aren't supported, so this should cause an exception when inferring the schema
@@ -119,7 +119,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import multiple csv files" in {
-      val path = "../integration-tests/datasets/movie-part*.csv"
+      val path = TEST_DATA + "/movie-part*.csv"
 
       val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
 
@@ -132,7 +132,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     }
 
     "Import csv with missing values" in {
-      val path = "../integration-tests/datasets/missing_values.csv"
+      val path = TEST_DATA + "/missing_values.csv"
       val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
       assert(frame.rowCount() == 5)
       assert(frame.schema == FrameSchema(Vector(Column("C0", DataTypes.string),
