@@ -94,30 +94,30 @@ class BinColTest(sparktk_test.SparkTKTestCase):
     def test_bin_column_cutoff_monad(self):
         """Test no legal bin"""
         cutoff_monad = [-131]
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "number of bins"):
             self.frame.bin_column("index", cutoff_monad)
 
     def test_bin_column_bad_col(self):
         """Test bad column name"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.frame.bin_column(
                 "non_existent_name",
                 self.cutoff_list, bin_column_name="letters")
 
     def test_bin_column_cutoff_string(self):
         """Test bad cutoff type, string"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(ValueError, "convert string"):
             self.frame.bin_column(
                 "index", "su", bin_column_name="tr_te_va_bin")
 
     def test_bin_column_cutoff_string_list(self):
         """Test bad cutoff type, list of strings"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(ValueError, "convert string"):
             self.frame.bin_column("index", ["a", "b"])
 
     def test_bin_column_cutoff_none(self):
         """None for bin cutoffs errors"""
-        with self.assertRaises(TypeError):
+        with self.assertRaisesRegexp(TypeError, "must be a string"):
             self.frame.bin_column("index", None)
 
     @unittest.skip("empty list of cutoffs is accepted")
@@ -144,7 +144,7 @@ class BinColTest(sparktk_test.SparkTKTestCase):
 
     def test_bin_column_name_dup(self):
         """ Duplicate column errors"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "duplicated"):
             self.frame.bin_column(
                 "index", self.cutoff_list, bin_column_name='index')
 
