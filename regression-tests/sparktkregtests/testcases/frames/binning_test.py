@@ -3,9 +3,7 @@
 import unittest
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(
-    os.path.realpath(__file__)))))
-from qalib import sparktk_test
+from sparktkregtests.lib import sparktk_test
 from sparktk import dtypes
 
 
@@ -147,9 +145,9 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
 
     def test_negative_bin_number(self):
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "number of bins must be 1 or greater"):
             self.frame_5ratings.bin_column(
-            "rating", -1)
+                "rating", -1)
 
 if __name__ == '__main__':
     unittest.main()
