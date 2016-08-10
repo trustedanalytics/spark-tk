@@ -18,5 +18,5 @@ sudo ln -fs /opt/cloudera/parcels/CDH/lib/spark/python/pyspark /usr/lib/python2.
 echo "inflating jars"
 pushd $MAINDIR/regression-tests/automation
 cp $MAINDIR/*.zip .
-unzip *.zip -d
+unzip *.zip
 popd
