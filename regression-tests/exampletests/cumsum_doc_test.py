@@ -22,6 +22,7 @@ class CumSumTest(unittest.TestCase):
         # Cumulative sum finds the sum up to and including a given order
         # Create context
         tc = TkContext()
+
         # Create the frame using a list object
         frame = tc.frame.create(data=[[0, 100],
                                       [3, 20],
@@ -30,11 +31,14 @@ class CumSumTest(unittest.TestCase):
                                 schema=[("order", int),
                                         ("value", int)])
         print frame.inspect()
+
         # Sort on order, note this is a side effect based operation
         frame.sort('order')
+
         # calculate the cumulative sum
         frame.cumulative_sum('value')
         print frame.inspect()
+
         # Fetch the results, and validate they are what you would expect
         result = frame.take(frame.row_count)
         self.assertItemsEqual(
