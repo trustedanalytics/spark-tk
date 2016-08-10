@@ -74,42 +74,43 @@ class KMeansModel(PropertiesObject):
         >>> sizes = model.compute_sizes(frame)
 
         >>> sizes
-        [4, 1, 4]
+        [2, 2, 5]
 
         >>> wsse = model.compute_wsse(frame)
 
         >>> wsse
-        9.75
+        5.3
 
         >>> model.predict(frame)
 
         >>> frame.inspect()
         [#]  data  name  cluster
         ========================
-        [0]   2.0  ab          0
-        [1]   1.0  cd          0
-        [2]   7.0  ef          1
-        [3]   1.0  gh          0
-        [4]   9.0  ij          1
-        [5]   2.0  kl          0
-        [6]   0.0  mn          2
-        [7]   6.0  op          1
-        [8]   5.0  qr          1
+        [0]   2.0  ab          1
+        [1]   1.0  cd          1
+        [2]   7.0  ef          0
+        [3]   1.0  gh          1
+        [4]   9.0  ij          0
+        [5]   2.0  kl          1
+        [6]   0.0  mn          1
+        [7]   6.0  op          2
+        [8]   5.0  qr          2
+
 
         >>> model.add_distance_columns(frame)
 
         >>> frame.inspect()
         [#]  data  name  cluster  distance0  distance1  distance2
         =========================================================
-        [0]   2.0  ab          0       0.25    22.5625        4.0
-        [1]   1.0  cd          0       0.25    33.0625        1.0
-        [2]   7.0  ef          1      30.25     0.0625       49.0
-        [3]   1.0  gh          0       0.25    33.0625        1.0
-        [4]   9.0  ij          1      56.25     5.0625       81.0
-        [5]   2.0  kl          0       0.25    22.5625        4.0
-        [6]   0.0  mn          2       2.25    45.5625        0.0
-        [7]   6.0  op          1      20.25     0.5625       36.0
-        [8]   5.0  qr          1      12.25     3.0625       25.0
+        [0]   2.0  ab          1       36.0       0.64      12.25
+        [1]   1.0  cd          1       49.0       0.04      20.25
+        [2]   7.0  ef          0        1.0      33.64       2.25
+        [3]   1.0  gh          1       49.0       0.04      20.25
+        [4]   9.0  ij          0        1.0      60.84      12.25
+        [5]   2.0  kl          1       36.0       0.64      12.25
+        [6]   0.0  mn          1       64.0       1.44      30.25
+        [7]   6.0  op          2        4.0      23.04       0.25
+        [8]   5.0  qr          2        9.0      14.44       0.25
 
         >>> model.columns
         [u'data']
@@ -192,10 +193,12 @@ class KMeansModel(PropertiesObject):
         c = self.__columns_to_option(columns)
         self._scala.addDistanceColumns(frame._scala, c)
 
-    def __columns_to_option(self, c):
-        if c is not None:
-            c = self._tc.jutils.convert.to_scala_vector_string(c)
-        return self._tc.jutils.convert.to_scala_option(c)
+    def __columns_to_option(self, columns):
+        if isinstance(columns, basestring):
+            columns = [columns]
+        if columns is not None:
+            columns = self._tc.jutils.convert.to_scala_vector_string(columns)
+        return self._tc.jutils.convert.to_scala_option(columns)
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
