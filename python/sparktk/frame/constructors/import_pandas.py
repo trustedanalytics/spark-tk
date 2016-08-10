@@ -1,11 +1,10 @@
-from sparktk.lazyloader import implicit
 from sparktk.tkcontext import TkContext
 from sparktk import dtypes
 import datetime
 import logging
 logger = logging.getLogger('sparktk')
 
-def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=False, tc=implicit):
+def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=False, tc=TkContext.implicit):
     """
     Imports data from the specified pandas data frame.
 
@@ -98,10 +97,7 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
 
     if not isinstance(pandas_frame, pandas.DataFrame):
         raise TypeError("data_frame must be a pandas DataFrame.")
-    if tc is implicit:
-        implicit.error('tc')
-    if not isinstance(tc, TkContext):
-        raise ValueError("tc must be type TkContext, received %s" % type(tc))
+    TkContext.validate(tc)
     if schema is not None:
         schema = _validate(schema)
     else:

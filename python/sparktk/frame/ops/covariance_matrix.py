@@ -53,5 +53,6 @@ def covariance_matrix(self, data_column_names):
         [4]    0.0   0.0   0.0   0.0  0.0
 
     """
-    return self._tc.frame.create(
-        self._scala.covarianceMatrix(self._tc.jutils.convert.to_scala_list_string(data_column_names)))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc,
+                 self._scala.covarianceMatrix(self._tc.jutils.convert.to_scala_list_string(data_column_names)))

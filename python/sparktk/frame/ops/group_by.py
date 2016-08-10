@@ -1,6 +1,5 @@
 import json
-from sparktk.lazyloader import implicit
-from sparktk.tkcontext import TkContext
+
 
 class AggregationFunctions(object):
     """
@@ -217,6 +216,6 @@ def group_by(self, group_by_columns, *aggregations):
     scala_group_by_aggregation_args = []
     for item in aggregation_list:
         scala_group_by_aggregation_args.append(self._tc.jutils.convert.to_scala_group_by_aggregation_args(item))
-
-    return self._tc.frame.create(self._scala.groupBy(self._tc.jutils.convert.to_scala_list_string(group_by_columns),
-                        self._tc.jutils.convert.to_scala_list(scala_group_by_aggregation_args)))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.groupBy(self._tc.jutils.convert.to_scala_list_string(group_by_columns),
+                                               self._tc.jutils.convert.to_scala_list(scala_group_by_aggregation_args)))

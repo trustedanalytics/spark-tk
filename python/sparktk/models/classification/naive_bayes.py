@@ -2,7 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
-from sparktk.lazyloader import implicit
+from sparktk import TkContext
 
 
 def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
@@ -26,10 +26,9 @@ def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     return NaiveBayesModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load NaiveBayesModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, NaiveBayesModel)
 
 

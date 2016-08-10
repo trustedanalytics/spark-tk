@@ -162,7 +162,8 @@ def join_outer(self,
     if len(left_on) != len(right_on):
         raise ValueError("Please provide equal number of join columns")
 
-    return self._tc.frame.create(self._scala.joinOuter(right._scala,
-                                                   self._tc.jutils.convert.to_scala_list_string(left_on),
-                                                   self._tc.jutils.convert.to_scala_option(
-                                                           self._tc.jutils.convert.to_scala_list_string(right_on))))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.joinOuter(right._scala,
+                                                 self._tc.jutils.convert.to_scala_list_string(left_on),
+                                                 self._tc.jutils.convert.to_scala_option(
+                                                     self._tc.jutils.convert.to_scala_list_string(right_on))))

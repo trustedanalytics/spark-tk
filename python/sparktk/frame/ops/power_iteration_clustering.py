@@ -52,18 +52,18 @@ def power_iteration_clustering(self, source_column, destination_column, similari
         >>> x.frame.inspect()
         [#]  id  cluster
         ================
-        [0]   4        1
-        [1]   0        2
-        [2]   6        3
-        [3]   2        3
-        [4]   1        3
+        [0]   4        2
+        [1]   0        3
+        [2]   6        2
+        [3]   2        1
+        [4]   1        1
         [5]   3        1
-        [6]   5        3
+        [6]   5        2
 
         >>> x.k
         3
         >>> x.cluster_sizes
-        {u'2': 1, u'3': 4, u'1': 2}
+        {u'2': 3, u'3': 1, u'1': 3}
 
     """
     result = self._scala.powerIterationClustering(source_column,
@@ -74,5 +74,6 @@ def power_iteration_clustering(self, source_column, destination_column, similari
                                                   initialization_mode)
     k_val = result.k()
     cluster_sizes = self._tc.jutils.convert.scala_map_to_python(result.clusterSizes())
-    py_frame = self._tc.frame.create(result.clusterMapFrame())
+    from sparktk.frame.frame import Frame
+    py_frame = Frame(self._tc, result.clusterMapFrame())
     return PicResult(frame=py_frame, k=k_val, cluster_sizes=cluster_sizes)

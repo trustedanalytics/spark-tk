@@ -1,16 +1,16 @@
-from sparktk.lazyloader import implicit
 from sparktk.tkcontext import TkContext
 from sparktk.dtypes import dtypes
 
-def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=implicit):
+def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=TkContext.implicit):
     """
     Import data from hbase table into frame
 
-    :param table_name: hbase table name
-    :param schema: hbase schema as a List of List(string) (columnFamily, columnName, dataType for cell value)
-    :param start_tag: optional start tag for filtering
-    :param end_tag: optional end tag for filtering
-    :return: frame with data from hbase table
+    :param table_name: (str) hbase table name
+    :param schema: (list[list[str, str, type]]) hbase schema as a List of List(string) (columnFamily, columnName,
+                   dataType for cell value)
+    :param start_tag: (Optional(str)) optional start tag for filtering
+    :param end_tag: (Optional(str)) optional end tag for filtering
+    :return: (Frame) frame with data from hbase table
 
     Example
     ---------
@@ -108,10 +108,7 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=implicit):
         raise ValueError("table name parameter must be a string, but is {0}.".format(type(table_name)))
     if not isinstance(schema, list):
         raise ValueError("schema parameter must be a list, but is {0}.".format(type(table_name)))
-    if tc is implicit:
-        implicit.error("tc")
-    if not isinstance(tc, TkContext):
-        raise ValueError("tc must be type TkContext, received %s" % type(tc))
+    TkContext.validate(tc)
 
     inner_lists=[tc._jutils.convert.to_scala_list([item[0], item[1], dtypes.to_string(item[2])]) for item in schema]
     scala_final_schema = tc.jutils.convert.to_scala_list(inner_lists)

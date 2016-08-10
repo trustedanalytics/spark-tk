@@ -2,8 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
-from sparktk.lazyloader import implicit
-
+from sparktk import TkContext
 
 def train(frame,
           label_column,
@@ -56,10 +55,9 @@ def train(frame,
     return SvmModel(tc, scala_model)
 
 
-def load(path, tc=implicit):
+def load(path, tc=TkContext.implicit):
     """load SvmModel from given path"""
-    if tc is implicit:
-        implicit.error("tc")
+    TkContext.validate(tc)
     return tc.load(path, SvmModel)
 
 
