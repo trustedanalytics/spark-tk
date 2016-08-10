@@ -2,9 +2,7 @@
 import unittest
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(
-    os.path.realpath(__file__)))))
-from qalib import sparktk_test
+from sparktkregtests.lib import sparktk_test
 from sparktk import dtypes
 from py4j.protocol import Py4JJavaError
 
