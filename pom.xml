@@ -212,7 +212,7 @@
 
         <modules>
 
-          <module>sparktk-integration-tests</module>
+          <module>integration-tests</module>
         </modules>
       </profile>
 
