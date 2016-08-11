@@ -53,7 +53,7 @@ def test_missing_values_add_column(tc):
             return x
 
     # Use add columns to create a new column that replaces missing values with 0.
-    frame.add_columns(lambda row: noneToZero(row['a']), ('a_corrected', int), columns_accessed='a')
+    frame.add_columns(lambda row: noneToZero(row['a']), ('a_corrected', int))
     expected = [[1],[4],[0],[0],[10],[0]]
     assert(expected, frame.take(frame.row_count, columns='a_corrected'))
 
