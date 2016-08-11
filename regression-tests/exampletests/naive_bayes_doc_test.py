@@ -11,9 +11,9 @@ from sparktk import TkContext
 class ClassifierTest(unittest.TestCase):
 
     def test_model_class_doc(self):
-        """Generate a naive bayes dataset, use sparktk to train a model and verify"""
+        """Generate a naive bayes dataset, use sparktk to train and verify"""
         # Naive bayes is a machine learning algorithm
-        # We can use it to classify some item with properties into a group probabilistically
+        # We can use it to classify some item into a group probabilistically
         # The general work flow is to generate a dataset
         # then we calculate the coefficient table and probabilities
         # Finally we build a frame of the data and create a naive bayes model
@@ -37,9 +37,11 @@ class ClassifierTest(unittest.TestCase):
         schema.append(("x" + str(numCoeffs), int))
 
         # get all permutations of 0, 1 of length numCoeffs
-        binaryPermutations = list(itertools.product(range(2), repeat=numCoeffs))
+        binaryPermutations = list(itertools.product(range(2),
+            repeat=numCoeffs))
 
-        # now we compute the probability for each row and add the probability for each row as a column to the table
+        # now we compute the probability for each row
+        # and add the probability for each row as a column to the table
         for element in binaryPermutations:
             product = 1
             element = list(element)
@@ -63,14 +65,20 @@ class ClassifierTest(unittest.TestCase):
                 newRow[len(newRow) -1] = 0
             dataRows.append(newRow)
 
-        # Finally we create the frame and model and check that it performs as we would expect
+        # Finally we create the frame and model
+        # and check that it performs as we would expect
         # We create a sparktk context
         context = TkContext()
         # Then we create a frame from the data
         frame = context.frame.create(dataRows, schema=schema)
         # we train a naive bayes model
-        nb_model = context.models.classification.naive_bayes.train(frame, "x" + str(numCoeffs -1), obsCols)
+        # we give the model lots of information on both data and outcomes
+        # in this way it learns which outcome to expect from data
+        nb_model = context.models.classification.naive_bayes.train(frame,
+                "x" + str(numCoeffs -1), obsCols)
         # then we test the model
+        # meaning we try to see how it behaves in predicting outcomes
+        # from data that it has been trained to recognize patterns in
         nb_model.predict(frame)
         result = nb_model.test(frame)
 
