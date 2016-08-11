@@ -3,9 +3,6 @@
 import unittest
 from sparktkregtests.lib import sparktk_test
 
-# Related bugs:
-# @DPNG-9685 - weighted median with negative weights does not error
-
 
 class WeightedMedians(sparktk_test.SparkTKTestCase):
 
