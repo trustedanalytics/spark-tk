@@ -112,16 +112,16 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
             return new_val.get(row["item"], row['weight'])
 
         data_stat = self.get_file("mode_stats.tsv")
-        schema_stat = [("weight", dtypes.float64), ("item", str)]
+        schema_stat = [("weight", dtypes.float64), ("item", int)]
         stat_frame = self.context.frame.import_csv(
             data_stat, schema=schema_stat, delimiter="\t")
         stat_frame.add_columns(add_extremes, ("weight2", dtypes.float64))
         stats = stat_frame.column_mode(
             "item", "weight2", max_modes_returned=50)
 
-        self.assertEqual(stats.mode_count, 5)
-        self.assertEqual(stats.total_weight, 1743)
-        self.assertIn("Scrafty", stats.modes)
+        self.assertEqual(stats.mode_count, 2)
+        self.assertEqual(stats.total_weight, 1749)
+        self.assertIn(60 , stats.modes)
 
     def test_extreme_col_summary(self):
         """ Test column_summary_stats with Inf / NaN data """
