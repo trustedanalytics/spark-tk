@@ -15,6 +15,12 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                             ("reading", int)]
 
         frame = self.context.frame.import_csv(datafile_unflatten, schema=schema_unflatten)
+        frame_copy = frame.copy()
+        print ""
+        print ""
+        print "frame copy: " + str(frame_copy.inspect())
+        print ""
+
 
         datafile_unflatten_sparse = self.get_file("unflatten_data_sparse.csv")
         schema_unflatten_sparse = [("user", int),
@@ -25,27 +31,33 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         frame_sparse = self.context.frame.import_csv(
             datafile_unflatten_sparse, schema=schema_unflatten_sparse)
         
-        frame_copy = frame.download()
+        frame_copy_pandas = frame.download()
         frame.unflatten_columns(['user', 'day'])
-
-        print "frame_copy: " + str(frame_copy.take(frame_copy.row_count))
-
-
-        unflat_copy = frame.download()
-        print "unflat_copy: " + str(unflat_copy.take(unflat_copy.row_count))
-        for (unflatrow, row) in zip(unflat_copy.sort(['user', 'day', 'time', 'reading']).iterrows(), frame_copy.sort(['user', 'day', 'time', 'reading']).iterrows()):
-            print "unflatten copy row time: " + str(unflatrow)
-            print "frame row time: " + str(row)
-            self.assertEqual(
-                len(str(unflatrow['time']).split(',')),
-                len(str(unflatrow['reading']).split(',')))
+        unflat_copy = frame
+        
+        print "unflat_copy: " + str(unflat_copy.inspect())
+        print ""
+        print "frame copy again: " + str(frame_copy.inspect())
+        for (unflatrow, row) in zip(unflat_copy.take(unflat_copy.row_count), frame_copy.take(frame_copy.row_count)):
+            self.assertEqual(unflatrow, row)
 
         self.assertEqual(frame.row_count, 5)
 
         frame_sparse.unflatten_columns(['user', 'day'])
         unflat_sparse_copy = frame_sparse.download()
 
+
+        #for row, unflatRow in zip(frame_copy_pandas.iterrows(), unflat_sparse_copy.iterrows()):
+            #print "pandas frame row: " + str(row)
+            #print "pandas frame unflatten row: " + str(unflatRow)
+            #print "pandas frame row time split: " + str(str(row['time']).split(','))
+            #print "pandas frame reading split: " + str(str(row['reading']).split(','))
+
+
         for index, row in unflat_sparse_copy.iterrows():
+            #print "row time split: " + str(str(row['time']).split(','))
+            #print "row reading split: " + str(str(row['reading']).split(','))
+            #print "pandas frame unflattened row: " + str(row)
             self.assertEqual(
                 len(str(row['time']).split(',')),
                 len(str(row['reading']).split(',')))
