@@ -86,15 +86,15 @@ class LinearRegressionModel(PropertiesObject):
         >>> model
         explained_variance      = 49.2759280303
         intercept               = -0.0327272727273
-        iterations              = 3
+        iterations              = 1
         mean_absolute_error     = 0.529939393939
         mean_squared_error      = 0.630096969697
-        objective_history       = [0.5, 0.007324606455391056, 0.006312834669731454]
+        objective_history       = [0.0]
         observation_columns     = [u'x1']
         r2                      = 0.987374330661
         root_mean_squared_error = 0.793786476136
         value_column            = y
-        weights                 = WrappedArray(2.4439393939393934)
+        weights                 = WrappedArray(2.4439393939393925)
 
         >>> predicted_frame = model.predict(frame, ["x1"])
         <progress>
