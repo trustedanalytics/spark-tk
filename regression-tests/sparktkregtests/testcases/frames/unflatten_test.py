@@ -24,16 +24,23 @@ class Unflatten(sparktk_test.SparkTKTestCase):
 
         frame_sparse = self.context.frame.import_csv(
             datafile_unflatten_sparse, schema=schema_unflatten_sparse)
-
+        
+        frame_copy = frame.download()
         frame.unflatten_columns(['user', 'day'])
 
-        unflat_copy = frame.download()
-        for index, row in unflat_copy.iterrows():
-            self.assertEqual(
-                len(str(row['time']).split(',')),
-                len(str(row['reading']).split(',')))
+        print "frame_copy: " + str(frame_copy.take(frame_copy.row_count))
 
-        self.assertEqual(frame.row_count, 1 * 5)
+
+        unflat_copy = frame.download()
+        print "unflat_copy: " + str(unflat_copy.take(unflat_copy.row_count))
+        for (unflatrow, row) in zip(unflat_copy.sort(['user', 'day', 'time', 'reading']).iterrows(), frame_copy.sort(['user', 'day', 'time', 'reading']).iterrows()):
+            print "unflatten copy row time: " + str(unflatrow)
+            print "frame row time: " + str(row)
+            self.assertEqual(
+                len(str(unflatrow['time']).split(',')),
+                len(str(unflatrow['reading']).split(',')))
+
+        self.assertEqual(frame.row_count, 5)
 
         frame_sparse.unflatten_columns(['user', 'day'])
         unflat_sparse_copy = frame_sparse.download()
