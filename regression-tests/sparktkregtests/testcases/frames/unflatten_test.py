@@ -18,32 +18,42 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         """ test for unflatten comma-separated rows """
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)
+        # download as a pandas frame to access data
+        pandas_frame = frame.download()
+        pandas_data = []
         # use this dictionary to store expected results by name
         name_lookup = {}
+        
 
         # generate our expected results by unflattening
         # each row ourselves and storing it by name
-        for row in frame.take(frame.row_count)[0]:
+        for index, row in pandas_frame.iterrows():
             # if the name is not already in name lookup
             # index 0 refers to user name (see schema above)
-            if row[0] not in name_lookup:
-                name_lookup[row[0]] = row
+            if row['user'] not in name_lookup:
+                name_lookup[row['user']] = row
             else:
-                row_copy = name_lookup[row[0]]
+                row_copy = name_lookup[row['user']]
                 # append each item in the row to a comma
                 # delineated string
                 for index in range(1, len(row_copy)):
                     row_copy[index] = str(row_copy[index]) + "," + str(row[index])
-                name_lookup[row[0]] = row_copy
+                name_lookup[row['user']] = row_copy
 
         # now we unflatten the columns using sparktk
         frame.unflatten_columns(['user'])
-
+        
         # finally we iterate through what we got
         # from sparktk unflatten and compare
         # it to the expected results we created
-        for row in frame.take(frame.row_count)[0]:
-            self.assertEqual(name_lookup[row[0]], row)
+        unflatten_pandas = frame.download()
+        print "dict vals: " + str(list(name_lookup.values()))
+        for index, row in unflatten_pandas.iterrows():
+            pandas_data.append(row)
+        print "pandas data: " + str(list(pandas_data))
+        self.assertItemsEqual(list(pandas_data), list(name_lookup.values()))
+        #for row in frame.take(frame.row_count).data:
+        #    self.assertEqual(name_lookup[row[0]], row)
         self.assertEqual(frame.row_count, 5)
 
     def test_unflatten_multiple_cols(self):
@@ -53,7 +63,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
 
         # same logic as for unflatten_one_column,
         # generate our expected results by unflattening
-        for row in frame.take(frame.row_count)[0]:
+        for row in frame.take(frame.row_count).data:
             if row[0] not in name_lookup:
                 name_lookup[row[0]] = row
             else:
@@ -87,7 +97,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         name_lookup_sparse = {}
 
         # similar logic to the above tests
-        for row in frame_sparse.take(frame_sparse.row_count)[0]:
+        for row in frame_sparse.take(frame_sparse.row_count).data:
             if row[0] not in name_lookup_sparse:
                 name_lookup_sparse[row[0]] = row
             else:
@@ -99,7 +109,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         frame_sparse.unflatten_columns(['user'])
 
         # compare sparktk results with expected data
-        for row in frame_sparse.take(frame_sparse.row_count)[0]:
+        for row in frame_sparse.take(frame_sparse.row_count).data:
             self.assertEqual(name_lookup_sparse[row[0]], row)
 
 
