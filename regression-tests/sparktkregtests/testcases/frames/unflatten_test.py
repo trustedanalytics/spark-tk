@@ -6,7 +6,7 @@ from sparktkregtests.lib import sparktk_test
 
 class Unflatten(sparktk_test.SparkTKTestCase):
 
-    def test_unflatten_basic(self):
+    def test_unflatten_one_column(self):
         """ test for unflatten comma-separated rows """
         datafile_unflatten = self.get_file("unflatten_data_no_spaces.csv")
         schema_unflatten = [("user", str),
@@ -15,13 +15,24 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                             ("reading", int)]
 
         frame = self.context.frame.import_csv(datafile_unflatten, schema=schema_unflatten)
-        frame_copy = frame.copy()
-        print ""
-        print ""
-        print "frame copy: " + str(frame_copy.inspect())
-        print ""
+        self.name_lookup = {}
 
+        for row in frame.take(frame.row_count)[0]:
+            if row[0] not in self.name_lookup:
+                self.name_lookup[row[0]] = row
+            else:
+                row_copy = self.name_lookup[row[0]]
+                for index in range(1, len(row_copy)):
+                    row_copy[index] = str(row_copy[index]) + "," + str(row[index])
+                self.name_lookup[row[0]] = row_copy
 
+        frame.unflatten_columns(['user']) # also test with multi-column include "day"
+        
+        for row in frame.take(frame.row_count)[0]:
+            self.assertEqual(self.name_lookup[row[0]], row)
+        self.assertEqual(frame.row_count, 5)
+    
+    def test_unflatten_sparse_data(self):
         datafile_unflatten_sparse = self.get_file("unflatten_data_sparse.csv")
         schema_unflatten_sparse = [("user", int),
                                    ("day", str),
@@ -29,40 +40,22 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                                    ("reading", str)]
 
         frame_sparse = self.context.frame.import_csv(
-            datafile_unflatten_sparse, schema=schema_unflatten_sparse)
+            datafile_unflatten_sparse, schema=schema_unflatten_sparse) 
+        name_lookup_sparse = {}
+        for row in frame_sparse.take(frame_sparse.row_count)[0]:
+            if row[0] not in name_lookup_sparse:
+                name_lookup_sparse[row[0]] = row
+            else:
+                row_copy = name_lookup_sparse[row[0]]
+                for index in range(1, len(row_copy)):
+                    row_copy[index] = str(row_copy[index]) + "," + str(row[index])
+                name_lookup_sparse[row[0]] = row_copy
         
-        frame_copy_pandas = frame.download()
-        frame.unflatten_columns(['user', 'day'])
-        unflat_copy = frame
-        
-        print "unflat_copy: " + str(unflat_copy.inspect())
-        print ""
-        print "frame copy again: " + str(frame_copy.inspect())
-        for (unflatrow, row) in zip(unflat_copy.take(unflat_copy.row_count), frame_copy.take(frame_copy.row_count)):
-            self.assertEqual(unflatrow, row)
-
-        self.assertEqual(frame.row_count, 5)
-
-        frame_sparse.unflatten_columns(['user', 'day'])
+        frame_sparse.unflatten_columns(['user']) # multi column day
         unflat_sparse_copy = frame_sparse.download()
-
-
-        #for row, unflatRow in zip(frame_copy_pandas.iterrows(), unflat_sparse_copy.iterrows()):
-            #print "pandas frame row: " + str(row)
-            #print "pandas frame unflatten row: " + str(unflatRow)
-            #print "pandas frame row time split: " + str(str(row['time']).split(','))
-            #print "pandas frame reading split: " + str(str(row['reading']).split(','))
-
-
-        for index, row in unflat_sparse_copy.iterrows():
-            #print "row time split: " + str(str(row['time']).split(','))
-            #print "row reading split: " + str(str(row['reading']).split(','))
-            #print "pandas frame unflattened row: " + str(row)
-            self.assertEqual(
-                len(str(row['time']).split(',')),
-                len(str(row['reading']).split(',')))
-
-        self.assertEqual(frame_sparse.row_count, 2 * 100)
+         
+        for row in frame_sparse.take(frame_sparse.row_count)[0]:
+            self.assertEqual(name_lookup_sparse[row[0]], row)
 
 
 if __name__ == "__main__":
