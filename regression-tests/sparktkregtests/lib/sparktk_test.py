@@ -48,7 +48,7 @@ class SparkTKTestCase(unittest.TestCase):
     def get_name(self, prefix):
         """build a guid hardened unique name """
         datestamp = datetime.datetime.now().strftime("%m_%d_%H_%M_")
-        name = prefix + datestamp + uuid.uuid1().hex + config.qa_suffix
+        name = prefix + datestamp + uuid.uuid1().hex
 
         return name
 
