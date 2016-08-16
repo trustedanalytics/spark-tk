@@ -12,7 +12,7 @@ NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
 # Developers
 
 There are two environment variables that need to be set; `SPARKTK_HOME` and
-`PYTHONPATH`. I would recommend setting them in your shell rc file (.bashrc for
+`PYTHONPATH`. It is recommended to set them in your shell rc file (.bashrc for
 most users).
 
 You also need to download the latest graphframes library, and add it to your `PYTHONPATH`
