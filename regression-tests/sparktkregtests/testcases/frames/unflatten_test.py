@@ -23,7 +23,6 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         pandas_data = []
         # use this dictionary to store expected results by name
         name_lookup = {}
-        
 
         # generate our expected results by unflattening
         # each row ourselves and storing it by name
@@ -47,27 +46,24 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         # from sparktk unflatten and compare
         # it to the expected results we created
         unflatten_pandas = frame.download()
-        print "dict vals: " + str(list(name_lookup.values()))
         for index, row in unflatten_pandas.iterrows():
-            pandas_data.append(row)
-        print "pandas data: " + str(list(pandas_data))
-        self.assertItemsEqual(list(pandas_data), list(name_lookup.values()))
-        #for row in frame.take(frame.row_count).data:
-        #    self.assertEqual(name_lookup[row[0]], row)
+            self.assertTrue(row.equals(name_lookup[row['user']]))
         self.assertEqual(frame.row_count, 5)
 
     def test_unflatten_multiple_cols(self):
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)
+        # download a pandas frame of the data
+        pandas_frame = frame.download()
         name_lookup = {}
 
         # same logic as for unflatten_one_column,
         # generate our expected results by unflattening
-        for row in frame.take(frame.row_count).data:
-            if row[0] not in name_lookup:
-                name_lookup[row[0]] = row
+        for index, row in pandas_frame.iterrows():
+            if row['user'] not in name_lookup:
+                name_lookup[row['user']] = row
             else:
-                row_copy = name_lookup[row[0]]
+                row_copy = name_lookup[row['user']]
                 for index in range(1, len(row_copy)):
                     # then only difference between multi col and single col
                     # is that we will expect any data in the column at index 1
@@ -76,16 +72,22 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                     # so we only append data if it isn't already there
                     if index is not 1 or str(row[index]) not in str(row_copy[index]):
                         row_copy[index] = str(row_copy[index]) + "," + str(row[index])
-                name_lookup[row[0]] = row_copy
+                name_lookup[row['user']] = row_copy
 
         # now we unflatten using sparktk
         frame.unflatten_columns(['user', 'day'])
 
         # and compare our expected data with sparktk results
-        for row in frame.take(frame.row_count)[0]:
-            self.assertEqual(name_lookup[row[0]], row)
+        # which we have downloaded as a pandas frame
+        unflatten_pandas = frame.download()
+        for index, row in unflatten_pandas.iterrows():
+            self.assertTrue(row.equals(name_lookup[row['user']]))
 
     # same logic as single column but with sparse data
+    # because there are so many rows in this data
+    # (datafile contains thousands and thousands of lines)
+    # we will not compare the content of the unflatten frame
+    # as this would require us to iterate multiple times
     def test_unflatten_sparse_data(self):
         datafile_unflatten_sparse = self.get_file("unflatten_data_sparse.csv")
         schema_unflatten_sparse = [("user", int),
@@ -94,24 +96,21 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                                    ("reading", str)]
         frame_sparse = self.context.frame.import_csv(
             datafile_unflatten_sparse, schema=schema_unflatten_sparse)
-        name_lookup_sparse = {}
-
-        # similar logic to the above tests
-        for row in frame_sparse.take(frame_sparse.row_count).data:
-            if row[0] not in name_lookup_sparse:
-                name_lookup_sparse[row[0]] = row
-            else:
-                row_copy = name_lookup_sparse[row[0]]
-                for index in range(1, len(row_copy)):
-                    row_copy[index] = str(row_copy[index]) + "," + str(row[index])
-                name_lookup_sparse[row[0]] = row_copy
 
         frame_sparse.unflatten_columns(['user'])
+        pandas_frame_sparse = frame_sparse.download()
 
-        # compare sparktk results with expected data
-        for row in frame_sparse.take(frame_sparse.row_count).data:
-            self.assertEqual(name_lookup_sparse[row[0]], row)
-
+        # since this data set is huge we will just iterate once
+        # to make sure the data has been appended for time and
+        # reading for each row and that there are the correct
+        # number of items that we would expect for the
+        # unflattened frame
+        for index, row in pandas_frame_sparse.iterrows():
+            self.assertEqual(
+                    len(str(row['time']).split(",")),
+                    len(str(row['reading']).split(",")))
+        self.assertEqual(frame_sparse.row_count, 100)
+        
 
 if __name__ == "__main__":
     unittest.main()
