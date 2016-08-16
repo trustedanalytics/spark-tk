@@ -65,6 +65,10 @@ class FrameInspectTest(sparktk_test.SparkTKTestCase):
         inspect = self.frame.inspect(n=self.frame.row_count*10)
         self.assertEqual(len(inspect.rows), self.frame.row_count)
 
+        #compare 'inspect' with the actual entire frame RowInspection object
+        self.assertEqual(str(inspect), 
+                         str(self.frame.inspect(n=self.frame.row_count)))
+
     @unittest.skip("offset not implemented")
     def test_negative_offset(self):
         """Test a negative offset errors"""
