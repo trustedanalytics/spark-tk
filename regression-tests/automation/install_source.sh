@@ -10,7 +10,7 @@ echo "Uninstalling spark_tk"
 sudo pip2.7 uninstall -y sparktk
 
 echo "installing spark_tk"
-sudo pip2.7 install $MAINDIR/python/dist/*.gz
+sudo pip2.7 install $MAINDIR/python/dist/sparktk-1.0.dev$BUILD_NUMBER.tar.gz 
 
 echo "linking pyspark"
 sudo ln -fs /opt/cloudera/parcels/CDH/lib/spark/python/pyspark /usr/lib/python2.7/site-packages/
