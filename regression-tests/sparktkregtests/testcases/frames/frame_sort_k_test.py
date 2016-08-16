@@ -87,42 +87,42 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_sortedk_bad_k(self):
         """Test sortedk with a bad type of k"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "does not exist"):
             self.frame.sorted_k("5", [("weight", False)])
 
     def test_frame_sortedk_negative_k(self):
         """Test sortedk with a negative k value"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "k should be greater than zero"):
             self.frame.sorted_k(-1, [("weight", False)])
 
     def test_frame_sortedk_k_0(self):
         """Test sorted k with k equal to 0"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "k should be greater than zero"):
             self.frame.sorted_k(0, [("weight", False)])
 
     def test_frame_sortedk_bad_depth(self):
         """Test sorted k with a tree depth type error"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "does not exist"):
             self.frame.sorted_k(5, [("weight", False)], reduce_tree_depth="5")
 
     def test_frame_sortedk_negative_depth(self):
         """Test sortedk with a negative depth"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Depth of reduce tree"):
             self.frame.sorted_k(5, [("weight", False)], reduce_tree_depth=-1)
 
     def test_frame_sorted_k_0_depth(self):
         """test sorted k with a depth of 0"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Depth of reduce tree"):
             self.frame.sorted_k(5, [("weight", False)], reduce_tree_depth=0)
 
     def test_frame_sortedk_bad_column(self):
         """Test sorted k errors on bad column"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.frame.sorted_k(5, [('no-such-column', True)])
 
     def test_frame_sort_typerror(self):
         """Test sort with no arguments raises a type error"""
-        with self.assertRaises(TypeError):
+        with self.assertRaisesRegexp(TypeError, "2 arguments"):
             self.frame.sort()
 
 
