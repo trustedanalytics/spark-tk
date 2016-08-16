@@ -37,11 +37,11 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         # is less than current while updating current
         for i in range(len(sorted_data)):
             assert sorted_data[i][0] >= last
-            last = sorted_data[i][0] 
+            last = sorted_data[i][0]
 
     # this test will instead of comparing just the weight column
     # it will make sure row integrity is preserved across all cols
-    # as a sanity check that the algorithm is not just sorting 
+    # as a sanity check that the algorithm is not just sorting
     # the weight column but is in fact sorting all of the rows by
     # the weight column value
     def test_frame_sort_single_column_ascending_compare_all_cols(self):
@@ -53,25 +53,24 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         sorted_data = sorted.take(sorted.row_count).data
         last = -1 * sys.maxint
         for i in range(len(sorted_data)):
-            assert sorted_data[i][3] >= last 
+            assert sorted_data[i][3] >= last
             last = sorted_data[i][3]
             # here we are making sure that the row integrity is
             # preserved by checking that the entire row
             # exists as is in the original data
             if sorted_data[i] not in unsorted_data:
                 raise ValueError("integrity of row not preserved through sorting")
-            
-              
+
     def test_frame_sort_single_column_descending(self):
         """ Test single-column sorting descending with the argument"""
         self.frame.sort("weight", ascending=False)
         sorted = self.frame.copy("weight")
-        sorted_data = sorted.take(sys.maxint).data 
+        sorted_data = sorted.take(sys.maxint).data
         last = sys.maxint
         for i in range(len(sorted_data)):
             assert sorted_data[i][0] <= last
             last = sorted_data[i][0]
-    
+
     def test_frame_sort_multiple_column_ascending(self):
         """ Test multiple-column sorting ascending"""
         unsorted = self.frame.download(self.frame.row_count)
@@ -85,24 +84,26 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(
                 up_take.iloc[i]['hair_type'], sorted_vals.iloc[i]['hair_type'])
 
-    @unittest.skip("frame.sort does not allow tuples") 
+    @unittest.skip("frame.sort does not allow tuples")
     def test_frame_sort_multiple_column_tuple_descending(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort([("weight", False), ("hair_type", False)])
         up_take = self.frame.download(self.frame.row_count)
-        sorted_vals = up_take.sort_values(['weight', 'hair_type'], ascending=[False, False])
+        sorted_vals = up_take.sort_values(['weight', 'hair_type'],
+                ascending=[False, False])
         for i in range(len(sorted_vals)):
             self.assertEqual(
                 up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
             self.assertEqual(
-                up_take.iloc[i]['hair_type'], sorted_vals.iloc[i]['hair_type'])   
+                up_take.iloc[i]['hair_type'], sorted_vals.iloc[i]['hair_type'])
 
     @unittest.skip("frame.sort allows ascending param to be an array, does not work as expected")
     def test_frame_sort_multiple_column_descending(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort(['weight', 'hair_type'], ascending=[False, False])
         up_take = self.frame.download(self.frame.row_count)
-        sorted_vals = up_take.sort_values(['weight', 'hair_type'], ascending=[False, False])
+        sorted_vals = up_take.sort_values(['weight', 'hair_type'],
+                ascending=[False, False])
         for i in range(len(sorted_vals)):
             self.assertEqual(
                 up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
