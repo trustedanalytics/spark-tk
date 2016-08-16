@@ -9,23 +9,23 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
         edges_dataset = self.get_file("clustering_graph_edges.csv")
-        nodes_dataset = self.get_file("clustering_graph_nodes.csv")
+        vertex_dataset = self.get_file("clustering_graph_vertices.csv")
 
         edge_schema = [('src', int),
                        ('dst', int),
                        ('xit_cost', int)]
-        node_schema = [('id', int),
-                       ('prop1', float),
-                       ('prop2', str)]
+        vertex_schema = [('id', int),
+                         ('prop1', float),
+                         ('prop2', str)]
 
         self.edges = self.context.frame.import_csv(
             edges_dataset, schema=edge_schema)
-        self.nodes = self.context.frame.import_csv(
-            nodes_dataset, schema=node_schema)
+        self.vertices= self.context.frame.import_csv(
+            vertex_dataset, schema=vertex_schema)
 
     def test_graph_creation(self):
         """Build a simple non-bipartite graph"""
-        graph = self.context.graph.create(self.nodes, self.edges)
+        graph = self.context.graph.create(self.vertices, self.edges)
 
         self.assertEqual(6, graph.vertex_count())
         self.assertEqual(6, graph.create_vertices_frame().row_count)
@@ -33,7 +33,7 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
 
     def test_graph_save_and_load(self):
         """Build a simple graph, save it, load it"""
-        graph = self.context.graph.create(self.nodes, self.edges)
+        graph = self.context.graph.create(self.vertices, self.edges)
         file_path = self.get_file(self.get_name("graph"))
         graph.save(file_path)
 
@@ -44,7 +44,7 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
 
     def test_graph_graphframe(self):
         """Test the underlying graphframe is properly exposed"""
-        graph = self.context.graph.create(self.nodes, self.edges)
+        graph = self.context.graph.create(self.vertices, self.edges)
 
         graph_frame = graph.graphframe.degrees
         degree_frame = self.context.frame.create(graph_frame)
