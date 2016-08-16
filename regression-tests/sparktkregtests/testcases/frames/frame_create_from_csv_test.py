@@ -1,6 +1,7 @@
 """ Tests import_csv functionality with varying parameters"""
 
 import sys
+import csv
 import unittest
 from sparktkregtests.lib import sparktk_test
 import sparktk
@@ -25,6 +26,9 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.import_csv(self.dataset, schema=self.schema)
         self.assertEqual(frame.row_count, 3)
         self.assertEqual(len(frame.take(3).data), 3)
+        # test to see if taking more rows than exist still
+        # returns only the right number of rows
+        self.assertEqual(len(frame.take(10).data), 3)
 
     def test_schema_duplicate_names_diff_type(self):
         """CsvFile creation fails with duplicate names, different type."""
@@ -62,6 +66,10 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
                          ("userName", str),
                          ("home", str),
                          ("shell", str)]
+        with open(dataset_passwd, 'r') as file:
+            reader = csv.reader(file, delimter=':')
+            csv_list = list(reader)
+            print str(csv_list)
         passwd_frame = self.context.frame.import_csv(dataset_passwd, schema=passwd_schema, delimiter=':')
         self.assertEqual(len(passwd_frame.take(1).data[0]), len(passwd_schema))
 
