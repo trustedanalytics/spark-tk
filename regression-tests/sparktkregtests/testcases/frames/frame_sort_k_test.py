@@ -1,15 +1,7 @@
 """Test interface functionality of frame.sort"""
 import unittest
+from sparktkregtests.lib import sparktk_test
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-from qalib import sparktk_test
-
-# Related bugs:
-# @DPNG-9405 - multiple params with different ascending/descending values
-# @DPNG-9407 - tuples
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
 
@@ -21,7 +13,8 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                   ("owner", str),
                   ("weight", int),
                   ("hair_type", str)]
-        self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True)
+        self.frame = self.context.frame.import_csv(dataset,
+                schema=schema, header=True)
 
     def test_frame_sortedk_col_single_descending(self):
         """ Test single-column sorting descending"""
@@ -50,7 +43,8 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         for i in range(0, len(up_take) - 1):
             # If 1st sort key is equal, compare the 2nd
             if up_take[i][3] == up_take[i + 1][3]:
-                self.assertLessEqual(up_take.data[i][4], up_take.data[i + 1][4])
+                self.assertLessEqual(up_take.data[i][4],
+                        up_take.data[i + 1][4])
             else:
                 self.assertLessEqual(
                     up_take.data[i][3], up_take.data[i + 1][3])
@@ -70,6 +64,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                 self.assertGreaterEqual(
                     down_take.data[i][3], down_take.data[i + 1][3])
 
+    @unittest.skip("frame.sort does not allow tuples")
     def test_frame_sortedk_col_multiple_mixed(self):
         """ Test multiple-column sorting, mixed ascending/descending"""
         topk_frame = self.frame.sorted_k(
