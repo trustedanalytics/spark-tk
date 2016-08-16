@@ -10,6 +10,7 @@ echo "Uninstalling spark_tk"
 sudo pip2.7 uninstall -y sparktk
 
 echo "installing spark_tk"
+ls $MAINDIR/python/dist
 sudo pip2.7 install $MAINDIR/python/dist/sparktk-1.0.dev$BUILD_NUMBER.tar.gz 
 
 echo "linking pyspark"
