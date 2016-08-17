@@ -1,10 +1,6 @@
 """Test cumulative sum against known values"""
 import unittest
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-from qalib import sparktk_test
+from sparktkregtests.lib import sparktk_test
 
 
 class TestCumulativeSum(sparktk_test.SparkTKTestCase):
@@ -18,7 +14,8 @@ class TestCumulativeSum(sparktk_test.SparkTKTestCase):
                       ("col1", int),
                       ("cumulative_sum", int),
                       ("percent_sum", float)]
-        self.sum_frame = self.context.frame.import_csv(data_sum, schema=schema_sum)
+        self.sum_frame = self.context.frame.import_csv(data_sum,
+                schema=schema_sum)
 
     def test_cumulative_sum_and_percent(self):
         """Test cumulative sum and cumulative percent"""
@@ -52,24 +49,28 @@ class TestCumulativeSum(sparktk_test.SparkTKTestCase):
                        u'col1_cumulative_percent',
                        u'col1_cumulative_sum_0',
                        u'col1_cumulative_percent_0',
-                       u'col1_cumulative_sum_0_1',
-                       u'col1_cumulative_percent_0_1']
+                       u'col1_cumulative_sum_1',
+                       u'col1_cumulative_percent_1']
         self.assertItemsEqual(new_columns, self.sum_frame.column_names)
 
-    def test_cumulative_bad_colname(self):
+    def test_cumulative_bad_colname_sum(self):
         """Test non-existant column errors"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.sum_frame.cumulative_sum("no_such_column")
 
-        with self.assertRaises(Exception):
+    def test_cumulative_bad_column_name_percent(self):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.sum_frame.cumulative_percent("no_such_column")
 
-    def test_cumulative_none_column(self):
+    def test_cumulative_none_column_sum(self):
         """Test none for column errors"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception,
+                "column name for sample is required"):
             self.sum_frame.cumulative_sum(None)
 
-        with self.assertRaises(Exception):
+    def test_cumulative_none_column_percent(self):
+        with self.assertRaisesRegexp(Exception,
+                "column name for sample is required"):
             self.sum_frame.cumulative_percent(None)
 
 
