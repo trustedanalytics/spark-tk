@@ -15,13 +15,12 @@ class CovarianceCorrelationTest(sparktk_test.SparkTKTestCase):
 
     def test_covar(self):
         """Test covariance between 2 columns"""
-        print "schema: " + str(self.base_frame.schema)
-        covar_2_5 = self.base_frame.covariance('C2','C5')
+        covar_2_5 = self.base_frame.covariance('C3','C6')
         self.assertEqual(covar_2_5, -5.25513196480937949673)
 
     def test_correl(self):
         """Test correlation between 2 columns"""
-        correl_1_3 = self.base_frame.correlation('C1', 'C3')
+        correl_1_3 = self.base_frame.correlation('C2', 'C4')
         self.assertEqual(correl_1_3, 0.124996244847393425669857)
 
     def test_covar_matrix(self):
