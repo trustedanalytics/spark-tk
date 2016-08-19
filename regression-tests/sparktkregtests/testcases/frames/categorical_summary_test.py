@@ -10,12 +10,8 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         super(CategoricalSummaryTest, self).setUp()
         datafile = self.get_file("movie_small.csv")
         schema = [('movie', int),
-                  ('vertexType', str),
                   ('user', int),
                   ('rating', int),
-                  ('splits', str),
-                  ('percent', int),
-                  ('predict', int),
                   ('weight', int),
                   ('age', int)]
 
