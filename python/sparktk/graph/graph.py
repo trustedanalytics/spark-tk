@@ -257,5 +257,6 @@ class Graph(object):
         return Frame(self._tc, self._scala.graphFrame().edges())
 
     # Graph Operations
+    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
     from sparktk.graph.ops.save import save
     from sparktk.graph.ops.vertex_count import vertex_count
