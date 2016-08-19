@@ -16,7 +16,9 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
                   ('age', int)]
 
         # Create basic movie frame
-        self.frame = self.context.frame.import_csv(datafile, schema=schema, header=True)
+        self.frame = self.context.frame.import_csv(datafile,
+                                                   schema=schema,
+                                                   header=True)
 
     def test_cat_summary_single_column_defaults(self):
         """Test categorical summary with defaults"""
@@ -25,21 +27,21 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
 
     def test_cat_summary_single_column_top_k(self):
         """Categorical summary with top k"""
-        stats = self.frame.categorical_summary('age', top_k= 11)
+        stats = self.frame.categorical_summary('age', top_k=11)
         self.assertTrue(self._compare_equal("age", stats, 11))
 
     def test_cat_summary_single_column_threshold(self):
         """Categorical summary with threshold """
         stats = self.frame.categorical_summary('age', threshold=.02)
-        self.assertTrue(self._compare_equal("age",
-            stats, None, threshold=.02))
+        self.assertTrue(self._compare_equal("age", stats,
+                                            None, threshold=.02))
 
     def test_cat_summary_single_column_top_k_and_threshold(self):
         """Categorical summary with top_k & threshold"""
         stats = self.frame.categorical_summary(
             'age', threshold=.02, top_k=11)
-        self.assertTrue(self._compare_equal("age",
-            stats, 11, threshold=0.02))
+        self.assertTrue(self._compare_equal("age", stats,
+                                            11, threshold=0.02))
 
     @unittest.skip("Percentage is inaccurate for Nones in categorical summary")
     def test_cat_summary_single_column_with_None(self):
@@ -59,22 +61,29 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(add_nones, ('Nones', int))
         stats = self.frame.categorical_summary('Nones', top_k=8)
 
-
         self.assertTrue(self._compare_equal("Nones", stats, 10))
 
     def test_cat_summary_multi_column(self):
         """Categorical summary using multiple columns"""
-        stats = self.frame.categorical_summary(['movie', 'user', 'age', 'rating', 'weight'], top_k=[None, 10, None, 10, 10], threshold=[None, None, 0.02, 0.02, None])
+        stats = self.frame.categorical_summary(['movie', 'user', 'age', 'rating', 'weight'],
+                                               top_k=[None, 10, None, 10, 10],
+                                               threshold=[None, None, 0.02, 0.02, None])
         self.assertEqual(len(stats), 5)
         for i in stats:
-            if i.column_name  == 'age':
-                self.assertTrue(self._compare_equal(
-                    i.column_name, {"categorical_summary": [i]}, None, threshold= 0.02))
+            if i.column_name == 'age':
+                self.assertTrue(self._compare_equal(i.column_name,
+                                                    {"categorical_summary": [i]},
+                                                    None,
+                                                    threshold=0.02))
             elif i.column_name == 'rating':
-                self.assertTrue(self._compare_equal(
-                    i.column_name, {"categorical_summary": [i]}, 10, threshold=0.02))
+                self.assertTrue(self._compare_equal(i.column_name,
+                                                    {"categorical_summary": [i]},
+                                                    10,
+                                                    threshold=0.02))
             else:
-                self.assertTrue(self._compare_equal(i.column_name, {"categorical_summary": [i]}, 10))
+                self.assertTrue(self._compare_equal(i.column_name,
+                                                    {"categorical_summary": [i]},
+                                                    10))
 
     def test_cat_summary_invalid_column_name_error(self):
         """Bad column name errors"""
@@ -99,22 +108,24 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
     def _compare_equal(self, column, catsum_result, k, threshold=None):
         # Group and count the values, drop any ignored values, validate
         pf = self.frame.download(self.frame.row_count)
-        # here we do our own analysis to compare with the results of the categorical summary
+        # here we do our own analysis to compare
+        # with the results of the categorical summary
         pandas_frame_sorted = pf.groupby(column).size().sort_values(ascending=False)
 
         sum = float(pandas_frame_sorted.sum())
         nones = pandas_frame_sorted.get("", 0)
         pandas_frame_sorted = pandas_frame_sorted.drop("", errors="ignore")
-        
+
         # the way in which the stats result is returned is inconsistent
         # sometimes we have to get it by the key, othertimes there is no categorical_summary key
         if "categorical_summary" in catsum_result:
             catsum_result = catsum_result["categorical_summary"]
         else:
             catsum_result = catsum_result
-       
+
         levels = catsum_result[0].levels
-        # I believe the -2 the author wrote here is to not include the bottom "missing" and "other" columns
+        # I believe the -2 the author wrote here is to
+        # exclude the bottom "missing" and "other" columns
         num_levels = len(levels)-2
         level_values = []
         self.assertEqual(catsum_result[0].column_name, column)
@@ -123,8 +134,9 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(len(size), num_levels)
         else:
             self.assertLessEqual(num_levels, k)
-        
-        # for each level, compare the result from the categorical_summary frequency and percentage with our own expected values
+
+        # for each level, compare the result from the categorical_summary
+        # frequency and percentage with our own expected values
         for i in levels:
             if str(i.level) == "<Missing>":
                 self.assertEqual(i.frequency, nones)
