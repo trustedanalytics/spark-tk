@@ -100,7 +100,7 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.frame.categorical_summary(('age', {"top_k": -1}))
 
-    def _compare_equal(self, column, stats, k, threshold=None):
+    def _compare_equal(self, column, catsum_result, k, threshold=None):
         # Group and count the values, drop any ignored values, validate
         pf = self.frame.download(self.frame.row_count)
         # here we do our own analysis to compare with the results of the categorical summary
@@ -109,24 +109,27 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         sum = float(pandas_frame_sorted.sum())
         nones = pandas_frame_sorted.get("", 0)
         pandas_frame_sorted = pandas_frame_sorted.drop("", errors="ignore")
+        
         # the way in which the stats result is returned is inconsistent
         # sometimes we have to get it by the key, othertimes there is no categorical_summary key
-        if "categorical_summary" in stats:
-            catsum = stats["categorical_summary"]
+        if "categorical_summary" in catsum_result:
+            catsum_result = catsum_result["categorical_summary"]
         else:
-            catsum = stats
+            catsum_result = catsum_result
+       
+        levels = catsum_result[0].levels
         # I believe the -2 the author wrote here is to not include the bottom "missing" and "other" columns
-        num_levels = len(catsum[0].levels)-2
+        num_levels = len(levels)-2
         level_values = []
-        self.assertEqual(catsum[0].column_name, column)
+        self.assertEqual(catsum_result[0].column_name, column)
         if k is None:
             size = filter(lambda x: x/sum > threshold, pandas_frame_sorted.values)
             self.assertEqual(len(size), num_levels)
         else:
-            print "comparing num levels with k"
             self.assertLessEqual(num_levels, k)
+        
         # for each level, compare the result from the categorical_summary frequency and percentage with our own expected values
-        for i in catsum[0].levels:
+        for i in levels:
             if str(i.level) == "<Missing>":
                 self.assertEqual(i.frequency, nones)
                 self.assertAlmostEqual(i.percentage, nones/sum)
