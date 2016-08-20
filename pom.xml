@@ -151,7 +151,8 @@
       <dep.hive.version>1.1.0-${dep.cdh.version}</dep.hive.version>
       <dev.spark.hive.version>1.6.0-${dep.cdh.version}</dev.spark.hive.version>
       <dep.daal.version>2016.0.109</dep.daal.version>
-      <dep.graphframes.version>0.1.0-spark1.5</dep.graphframes.version>
+      <dep.graphframes.version>0.1.0-spark1.6</dep.graphframes.version>
+      <dep.orientdb.version>2.2.6</dep.orientdb.version>
       <!--START GAO MAVEN -->
 
       <scala.long.version>2.10.5</scala.long.version>
@@ -329,7 +330,7 @@
                   <filereports>WDF TestSuite.txt</filereports>
                   <parallel>false</parallel>
                   <stdout>FTD</stdout>
-                  <argLine>-Xmx512m -XX:PermSize=256m</argLine>
+                  <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
                 </configuration>
                 <executions>
                   <execution>
@@ -787,6 +788,21 @@
           <groupId>graphframes</groupId>
           <artifactId>graphframes</artifactId>
           <version>${dep.graphframes.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.orientechnologies</groupId>
+          <artifactId>orientdb-graphdb</artifactId>
+          <version>${dep.orientdb.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.orientechnologies</groupId>
+          <artifactId>orientdb-core</artifactId>
+          <version>${dep.orientdb.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.tinkerpop.blueprints</groupId>
+          <artifactId>blueprints-core</artifactId>
+          <version>2.6.0</version>
         </dependency>
         <dependency>
           <groupId>com.cloudera.sparkts</groupId>
@@ -1280,6 +1296,12 @@
           <groupId>com.googlecode.json-simple</groupId>
           <artifactId>json-simple</artifactId>
           <version>1.1.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.concurrentlinkedhashmap/concurrentlinkedhashmap-lru -->
+        <dependency>
+          <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+          <artifactId>concurrentlinkedhashmap-lru</artifactId>
+          <version>1.4.1</version>
         </dependency>
           <dependency>
               <groupId>com.fasterxml.jackson.module</groupId>

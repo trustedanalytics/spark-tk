@@ -32,11 +32,11 @@ class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf) extends Se
           }
         }
       }
-      /*catch {
+      catch {
         case e: Exception =>
           orientGraph.rollback()
           throw new RuntimeException(s"Unable to add vertices to OrientDB graph: ${e.getMessage}")
-      }*/
+      }
       finally {
         orientGraph.shutdown(true, true) // commit and close the graph database
       }

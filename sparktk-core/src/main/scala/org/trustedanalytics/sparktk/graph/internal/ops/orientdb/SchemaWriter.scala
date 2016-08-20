@@ -1,5 +1,6 @@
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
+import com.orientechnologies.orient.core.sql.OCommandSQL
 import com.tinkerpop.blueprints.{ Vertex, Parameter }
 import com.tinkerpop.blueprints.impls.orient.{ OrientEdgeType, OrientVertexType, OrientGraphNoTx }
 import org.apache.spark.sql.types.StructType
@@ -33,7 +34,8 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
           orientVertexType.createProperty(columnField.name, orientColumnDataType)
         }
       }
-      orientGraph.createKeyIndex(GraphFrame.ID + "_", classOf[Vertex], new Parameter("class", vertexType), new Parameter("type", "UNIQUE"))
+      //orientGraph.createKeyIndex(GraphFrame.ID + "_", classOf[Vertex],new Parameter("type", "UNIQUE"),new Parameter("class", vertexType))
+      orientGraph.command(new OCommandSQL(s"CREATE INDEX vertexIds ON $vertexType (${GraphFrame.ID + "_"}) NOTUNIQUE METADATA {ignoreNullValues:true}")).execute()
       orientVertexType
     }
     catch {
