@@ -63,7 +63,8 @@ class WeightedDegreeTest extends TestingSparkContextWordSpec with Matchers {
     "called with an invalid string" should {
       "throw an exception" in {
         val graph = buildGraph()
-        an[IllegalArgumentException] should be thrownBy graph.weightedDegree("count", "invalid", 0)
+        val thrown = the[IllegalArgumentException] thrownBy graph.weightedDegree("count", "invalid", 0)
+        thrown.getMessage should equal("requirement failed: Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
       }
     }
 
