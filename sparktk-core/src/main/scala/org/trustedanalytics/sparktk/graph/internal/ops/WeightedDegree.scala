@@ -17,6 +17,8 @@ trait WeightedDegreeSummarization extends BaseGraph {
    * weighted by a given edge weight
    *
    * @param edgeWeight the name of the weight value in the edge
+   * @param degreeOption One of "in", "out" or "undirected". Determines the edge direction for the degree
+   * @param defaultWeight A weight value to use if there is no entry for the weight property on an edge
    * @return The dataframe containing the vertices and their corresponding weights
    */
   def weightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float): Frame = {
@@ -26,11 +28,11 @@ trait WeightedDegreeSummarization extends BaseGraph {
 
 case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float) extends GraphSummarization[Frame] {
   val grouper = "weighted_degree_groupby"
-  require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected")
+  require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 
   override def work(state: GraphState): Frame = {
-    require(state.graphFrame.edges.columns.contains(edgeWeight))
-    val graphFrame = state.graphFrame
+    require(state.graphFrame.edges.columns.contains(edgeWeight), s"Property $edgeWeight not found")
+    val graphFrame = GraphFrame(state.graphFrame.vertices, state.graphFrame.edges.na.fill(defaultWeight, List(edgeWeight)))
     // If you are counting the in Degrees you are looking at the destination of
     // the edges, if you are looking at the out degrees you are looking at the
     // source

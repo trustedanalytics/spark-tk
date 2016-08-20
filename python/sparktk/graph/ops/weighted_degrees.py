@@ -26,36 +26,36 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
     Examples
     --------
 
-    >>> vertex_schema = [('id', int), ('label', float)]
-    >>> edge_schema = [('src', int), ('dst', int), ('weight', int)]
+        >>> vertex_schema = [('id', int), ('label', float)]
+        >>> edge_schema = [('src', int), ('dst', int), ('weight', int)]
 
-    >>> vertex_rows = [ [1, 1], [2, 1], [3, 5], [4, 5], [5, 5] ]
-    >>> edge_rows = [ [1, 2, 2], [1, 3, 1], [2, 3, 1], [1, 4, 1], [4, 5, 1] ]
-    >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
-    >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+        >>> vertex_rows = [ [1, 1], [2, 1], [3, 5], [4, 5], [5, 5] ]
+        >>> edge_rows = [ [1, 2, 2], [1, 3, 1], [2, 3, 1], [1, 4, 1], [4, 5, 1] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
 
-    >>> graph = tc.graph.create(vertex_frame, edge_frame)
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
 
-    >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="out")
-    >>> result.inspect() 
-    [#]  Node  Degree
-    =================
-    [0]     1       4
-    [1]     2       1
-    [2]     3       0
-    [3]     4       1
-    [4]     5       0
+        >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="out")
+        >>> result.inspect() 
+        [#]  Node  Degree
+        =================
+        [0]     1       4
+        [1]     2       1
+        [2]     3       0
+        [3]     4       1
+        [4]     5       0
 
 
-    >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="in")
-    >>> result.inspect()
-    [#]  Node  Degree
-    =================
-    [0]     1       0
-    [1]     2       2
-    [2]     3       2
-    [3]     4       1
-    [4]     5       1
+        >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="in")
+        >>> result.inspect()
+        [#]  Node  Degree
+        =================
+        [0]     1       0
+        [1]     2       2
+        [2]     3       2
+        [3]     4       1
+        [4]     5       1
 
     """
     from sparktk.frame.frame import Frame
