@@ -27,7 +27,7 @@ class WeightedDegreeTest extends TestingSparkContextWordSpec with Matchers {
         val graph = new Graph(vertexFrame, edgeFrame)
         val weightedDegree = graph.weightedDegree("count", "in", 0)
         println(weightedDegree.schema.columns.toString)
-        weightedDegree.schema.columns should equal(List(Column("Node", DataTypes.int32), Column("Degree", DataTypes.int64)))
+        weightedDegree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64)))
         weightedDegree.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 0)), new GenericRow(Array[Any](3, 2)), new GenericRow(Array[Any](5, 18)), new GenericRow(Array[Any](4, 3))))
 
       }
@@ -50,7 +50,7 @@ class WeightedDegreeTest extends TestingSparkContextWordSpec with Matchers {
         val graph = new Graph(vertexFrame, edgeFrame)
         val weightedDegree = graph.weightedDegree("count", "out", 0)
         println(weightedDegree.schema.columns.toString)
-        weightedDegree.schema.columns should equal(List(Column("Node", DataTypes.int32), Column("Degree", DataTypes.int64)))
+        weightedDegree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64)))
         weightedDegree.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 5)), new GenericRow(Array[Any](3, 7)), new GenericRow(Array[Any](5, 0)), new GenericRow(Array[Any](4, 11))))
 
       }
@@ -73,7 +73,7 @@ class WeightedDegreeTest extends TestingSparkContextWordSpec with Matchers {
         val graph = new Graph(vertexFrame, edgeFrame)
         val weightedDegree = graph.weightedDegree("count", "undirected", 0)
         println(weightedDegree.schema.columns.toString)
-        weightedDegree.schema.columns should contain theSameElementsInOrderAs List(Column("Node", DataTypes.int32), Column("Degree", DataTypes.int64))
+        weightedDegree.schema.columns should contain theSameElementsInOrderAs List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64))
         weightedDegree.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 5)), new GenericRow(Array[Any](3, 9)), new GenericRow(Array[Any](5, 18)), new GenericRow(Array[Any](4, 14)))
 
       }
