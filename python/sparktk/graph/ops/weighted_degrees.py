@@ -16,12 +16,14 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
     the edges entering it, and the weighted out-degree is the sum
     of the weights of the edges leaving the vertex.
 
-    parameters
+    Parameters
     ----------
 
-    :Param edge_weight: (String) name of the property that contains an edge weight
-    :Param degree_option: (String) either in, out or undirected. String describing the direction of edges
-    :Param default_weight: (Numeric) default weight value if no value is provided. Default is None
+    :param edge_weight: (String) Name of the property that contains an edge weight
+    :param degree_option: (String) Either in, out or undirected. String describing the direction of edges
+    :param default_weight: (Numeric) Default weight value if no value is provided.
+
+    :return: (Frame) Frame containing the node id's an their weights
 
     Examples
     --------
