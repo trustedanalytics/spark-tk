@@ -26,7 +26,7 @@ trait WeightedDegreeSummarization extends BaseGraph {
   }
 }
 
-case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float) extends GraphSummarization[Frame] {
+case class WeightedDegree(edgeWeight: String, degreeOption: String = "undirected", defaultWeight: Float = 0.0f) extends GraphSummarization[Frame] {
   val grouper = "weighted_degree_groupby"
   require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 

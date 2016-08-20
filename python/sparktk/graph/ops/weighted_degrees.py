@@ -19,9 +19,9 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
     parameters
     ----------
 
-    :param edge_weight: (String) name of the property that contains an edge weight
-    :param degree_option: (String) either in, out or undirected. String describing the direction of edges
-    :param default_weight: (Numeric) default weight value if no value is provided. Default is None
+    :Param edge_weight: (String) name of the property that contains an edge weight
+    :Param degree_option: (String) either in, out or undirected. String describing the direction of edges
+    :Param default_weight: (Numeric) default weight value if no value is provided. Default is None
 
     Examples
     --------
