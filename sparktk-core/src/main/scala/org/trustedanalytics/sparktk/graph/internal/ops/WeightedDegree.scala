@@ -21,12 +21,12 @@ trait WeightedDegreeSummarization extends BaseGraph {
    * @param defaultWeight A weight value to use if there is no entry for the weight property on an edge
    * @return The dataframe containing the vertices and their corresponding weights
    */
-  def weightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float): Frame = {
+  def weightedDegree(edgeWeight: String, degreeOption: String = "undirected", defaultWeight: Float = 0.0f): Frame = {
     execute[Frame](WeightedDegree(edgeWeight, degreeOption, defaultWeight))
   }
 }
 
-case class WeightedDegree(edgeWeight: String, degreeOption: String = "undirected", defaultWeight: Float = 0.0f) extends GraphSummarization[Frame] {
+case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float) extends GraphSummarization[Frame] {
   val grouper = "weighted_degree_groupby"
   require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 
