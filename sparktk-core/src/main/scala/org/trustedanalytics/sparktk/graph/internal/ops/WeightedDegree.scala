@@ -13,7 +13,7 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait WeightedDegreeSummarization extends BaseGraph {
   /**
-   * Returns a graph with annotations concerning the degree of each node,
+   * Returns a frame with annotations concerning the degree of each node,
    * weighted by a given edge weight
    *
    * @param edgeWeight the name of the weight value in the edge
