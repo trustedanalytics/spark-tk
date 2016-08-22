@@ -7,7 +7,7 @@ MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
 
 
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark /usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
+export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:/usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
 
 export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
 
