@@ -12,7 +12,7 @@ min_age = 0
 
 def generate_dogs(number):
     dogs = []
-    csv = open("dogs.csv", "w")
+    csv = open("../datasets/dogs.csv", "w")
     for index in range(0, number):
         weight = random.randint(min_weight, max_weight)
         age = random.randint(min_age, max_age)
