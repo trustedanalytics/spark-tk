@@ -49,8 +49,8 @@ class JoinTest(sparktk_test.SparkTKTestCase):
     def test_type_int32(self):
         """Test join on int32"""
         joined_frame = self.frame.join_inner(self.frame, "idnum")
-        pd_joined_sparktk = joined_frame.download(joined_frame.row_count)
-        pd_df = self.frame.download(self.frame.row_count)
+        pd_joined_sparktk = joined_frame.download(joined_frame.count())
+        pd_df = self.frame.download(self.frame.count())
         joined_pd = pd_df.merge(
             pd_df, on='idnum', suffixes=('_L', '_R'), how='inner')
         del pd_joined_sparktk['idnum']
@@ -61,38 +61,38 @@ class JoinTest(sparktk_test.SparkTKTestCase):
     def test_empty_partner_left(self):
         """Join with empty frame Left"""
         join_frame = self.empty_frame.join_outer(self.frame, "idnum")
-        self.assertEquals(6, join_frame.row_count)
+        self.assertEquals(6, join_frame.count())
 
     def test_empty_partner_right(self):
         """Join with empty frame Right"""
         join_frame = self.frame.join_outer(self.empty_frame, "idnum")
-        self.assertEquals(6, join_frame.row_count)
+        self.assertEquals(6, join_frame.count())
 
     def test_empty_partner_inner(self):
         """Join with empty frame Inner"""
         join_frame = self.empty_frame.join_inner(
             self.empty_frame, "idnum")
-        self.assertEquals(0, join_frame.row_count)
+        self.assertEquals(0, join_frame.count())
 
     def test_disjoint_outer(self):
         """Test with no overlaps in the join column, outer join"""
         join_frame = self.frame.join_outer(self.right_frame, "idnum")
-        self.assertEquals(11, join_frame.row_count)
+        self.assertEquals(11, join_frame.count())
 
     def test_disjoint_left(self):
         """Test with no overlaps in the join column, left join"""
         join_frame = self.frame.join_left(self.right_frame, "idnum")
-        self.assertEquals(6, join_frame.row_count)
+        self.assertEquals(6, join_frame.count())
 
     def test_disjoint_right(self):
         """Test with no overlaps in the join column, right join"""
         join_frame = self.frame.join_right(self.right_frame, "idnum")
-        self.assertEquals(5, join_frame.row_count)
+        self.assertEquals(5, join_frame.count())
 
     def test_disjoint_inner(self):
         """Test with no overlaps in the join column, inner join"""
         join_frame = self.frame.join_inner(self.right_frame, "idnum")
-        self.assertEquals(0, join_frame.row_count)
+        self.assertEquals(0, join_frame.count())
 
     @unittest.skip("Compatibility check is changing")
     def test_type_compatible(self):
@@ -133,10 +133,10 @@ class JoinTest(sparktk_test.SparkTKTestCase):
         #   int32 & int64 are compatible pairs.
         join_i32_i64 = int32_frame.join(int64_frame, "idnum")
         print join_i32_i64.inspect()
-        self.assertEquals(int32_frame.row_count, join_i32_i64.row_count)
+        self.assertEquals(int32_frame.count(), join_i32_i64.count())
         join_i32_f32 = int32_frame.join(flt32_frame, "idnum")
         print join_i32_f32.inspect()
-        self.assertEquals(int32_frame.row_count, join_i32_f32.row_count)
+        self.assertEquals(int32_frame.count(), join_i32_f32.count())
 
         # int and float are not compatible with each other.
         with(self.assertRaisesRegexp(

@@ -47,10 +47,10 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sort_single_column_ascending_compare_all_cols(self):
         """ Test single-column sorting ascending with the argument"""
         frame_copy = self.frame.copy()
-        unsorted_data = frame_copy.take(frame_copy.row_count).data
+        unsorted_data = frame_copy.take(frame_copy.count()).data
         self.frame.sort("weight", ascending=True)
         sorted = self.frame.copy()
-        sorted_data = sorted.take(sorted.row_count).data
+        sorted_data = sorted.take(sorted.count()).data
         last = -1 * sys.maxint
         for i in range(len(sorted_data)):
             assert sorted_data[i][3] >= last
@@ -73,9 +73,9 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_sort_multiple_column_ascending(self):
         """ Test multiple-column sorting ascending"""
-        unsorted = self.frame.download(self.frame.row_count)
+        unsorted = self.frame.download(self.frame.count())
         self.frame.sort(["weight", "hair_type"])
-        up_take = self.frame.download(self.frame.row_count)
+        up_take = self.frame.download(self.frame.count())
         sorted_vals = unsorted.sort_values(['weight', 'hair_type'])
         # compare the data we sorted with the sorted frame
         for i in range(len(sorted_vals)):
@@ -88,7 +88,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sort_multiple_column_tuple_descending(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort([("weight", False), ("hair_type", False)])
-        up_take = self.frame.download(self.frame.row_count)
+        up_take = self.frame.download(self.frame.count())
         sorted_vals = up_take.sort_values(['weight', 'hair_type'],
                 ascending=[False, False])
         for i in range(len(sorted_vals)):
@@ -101,7 +101,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sort_multiple_column_descending(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort(['weight', 'hair_type'], ascending=[False, False])
-        up_take = self.frame.download(self.frame.row_count)
+        up_take = self.frame.download(self.frame.count())
         sorted_vals = up_take.sort_values(['weight', 'hair_type'],
                 ascending=[False, False])
         for i in range(len(sorted_vals)):
@@ -113,7 +113,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sort_multiple_column_mixed(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort([("weight", False), ("hair_type", True), ('age', True)])
-        up_take = self.frame.download(self.frame.row_count)
+        up_take = self.frame.download(self.frame.count())
         sorted_vals = up_take.sort_values(
             ['weight', 'hair_type', 'age'], ascending=[False, True, True])
         for i in range(len(sorted_vals)):

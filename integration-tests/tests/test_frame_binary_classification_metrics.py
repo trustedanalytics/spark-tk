@@ -12,7 +12,7 @@ def test_binary_classification_metrics_001(tc):
     schema = [('labels', str),('predictions', str)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute binary_classification_metrics()")
@@ -33,7 +33,7 @@ def test_binary_classification_metrics_002(tc):
     schema = [('labels', float32),('predictions', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute binary_classification_metrics()")
@@ -54,7 +54,7 @@ def test_binary_classification_metrics_003(tc):
     schema = [('labels', float32),('predictions', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute binary_classification_metrics()")
