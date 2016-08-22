@@ -1,0 +1,7 @@
+43,5999,3.6,5000.6,"This is a 'string'! (with double quotes at each end)."
+123456,5000000,1.0,6.02214129E23,'String with single quotes at the ends.'
+8766,-99999999999399,4398046511109,-7E25,"String with no quotes; and! punctuation:"
+0777,-8888787878888,0.00000000000002,23E-20,"How's 'bout - apostrophes in the string?"
+4321,10000000000000001,8000000000000000.7,-7E-30,"Double inside single quotes."
+120,61,1.0e38,3.14159,"Normal text."
+23,12300000000,7.8,3E32,"This line should import."
