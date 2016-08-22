@@ -11,9 +11,9 @@ from sparktk import TkContext
 class ClassifierTest(unittest.TestCase):
 
     def test_model_class_doc(self):
-        """Generate a naive bayes dataset, use sparktk to train and verify"""
+        """Generate a naive bayes dataset, use sparktk to train a model and verify"""
         # Naive bayes is a machine learning algorithm
-        # We can use it to classify some item into a group probabilistically
+        # We can use it to classify some item with properties into a group probabilistically
         # The general work flow is to generate a dataset
         # then we calculate the coefficient table and probabilities
         # Finally we build a frame of the data and create a naive bayes model
