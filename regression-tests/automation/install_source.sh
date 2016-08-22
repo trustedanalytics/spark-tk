@@ -6,6 +6,9 @@ echo "$NAME DIR=$DIR"
 MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
 
+echo "Install dependencies"
+sudo pip2.7 install --upgrade teamcity-mesages pandas numpy scipy
+
 echo "Uninstalling spark_tk"
 sudo pip2.7 uninstall -y sparktk
 
@@ -15,8 +18,11 @@ sudo pip2.7 install $MAINDIR/python/dist/*.gz
 # Do this before we download the graphframes
 echo "inflating jars"
 pushd $MAINDIR/regression-tests/automation
+ls $MAINDIR/
 cp $MAINDIR/*.zip .
+ls
 unzip *.zip
+ls
 popd
 
 echo "Downloading graphframes"
