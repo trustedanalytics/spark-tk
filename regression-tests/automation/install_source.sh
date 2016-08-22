@@ -12,8 +12,10 @@ sudo pip2.7 uninstall -y sparktk
 echo "installing spark_tk"
 sudo pip2.7 install $MAINDIR/python/dist/*.gz
 
-echo "linking pyspark"
-sudo ln -fs /opt/cloudera/parcels/CDH/lib/spark/python/pyspark /usr/lib/python2.7/site-packages/
+echo "Downloading graphframes"
+rm -f graphframes.zip
+wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar -O graphframes.zip
+unzip -q graphframes.zip
 
 echo "inflating jars"
 pushd $MAINDIR/regression-tests/automation
