@@ -18,11 +18,8 @@ sudo pip2.7 install $MAINDIR/python/dist/*.gz
 # Do this before we download the graphframes
 echo "inflating jars"
 pushd $MAINDIR/regression-tests/automation
-ls $MAINDIR/
 cp $MAINDIR/*.zip .
-ls
 unzip *.zip
-ls
 popd
 
 echo "Downloading graphframes"
