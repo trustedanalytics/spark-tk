@@ -10,6 +10,15 @@ NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
 
 
 # Developers
+NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
+
+There are two environment variables that need to be set; `SPARKTK_HOME` and
+`PYTHONPATH`. It is recommended to set them in your shell rc file (.bashrc for
+most users).
+
+`SPARKTK_HOME` needs to be set to `$PWD/../core/target` from this directory
+`PYTHONPATH` needs to be set to `$PWD/sparktkregtests` from this directory
+# Developers
 
 There are two environment variables that need to be set; `SPARKTK_HOME` and
 `PYTHONPATH`. It is recommended to set them in your shell rc file (.bashrc for
