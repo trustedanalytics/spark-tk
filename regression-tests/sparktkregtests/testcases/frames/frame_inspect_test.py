@@ -37,7 +37,7 @@ class FrameInspectTest(sparktk_test.SparkTKTestCase):
     @unittest.skip("offset not implemented")
     def test_frame_inspect_offset_overflow(self):
         """Test inspecting more lines than in frrame from offset truncates"""
-        inspect = self.frame.inspect(n=10, offset=self.frame.row_count-3)
+        inspect = self.frame.inspect(n=10, offset=self.frame.count()-3)
         self.assertEqual(len(inspect.rows), 3)
 
     def test_frame_inspect_0_count(self):
@@ -57,17 +57,18 @@ class FrameInspectTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_inspect_all(self):
         """Test inspecting entire frame returns entire frame"""
-        inspect = self.frame.inspect(n=self.frame.row_count)
-        self.assertEqual(len(inspect.rows), self.frame.row_count)
+        inspect = self.frame.inspect(n=self.frame.count())
+        self.assertEqual(len(inspect.rows), self.frame.count())
 
     def test_frame_inspect_count_overflow(self):
         """Test inspecting more than entire frame returns the entire frame"""
-        inspect = self.frame.inspect(n=self.frame.row_count*10)
-        self.assertEqual(len(inspect.rows), self.frame.row_count)
+        row_count = self.frame.count()
+        inspect = self.frame.inspect(n=row_count*10)
+        self.assertEqual(len(inspect.rows), row_count)
 
         #compare 'inspect' with the actual entire frame RowInspection object
         self.assertEqual(str(inspect), 
-                         str(self.frame.inspect(n=self.frame.row_count)))
+                         str(self.frame.inspect(n=row_count)))
 
     @unittest.skip("offset not implemented")
     def test_negative_offset(self):

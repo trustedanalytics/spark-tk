@@ -17,7 +17,7 @@ class FrameQuantileTest(sparktk_test.SparkTKTestCase):
         """Tests the default behavior of histogram."""
         result = self.frame_histogram.quantiles(
             "value", [5, 10, 30, 70, 75, 80, 95])
-        values = result.take(result.row_count).data
+        values = result.take(result.count()).data
 
         # These values are known from the construction of the dataset
         correct_values = [[5.0, 1.0], [10.0, 1.0], [30.0, 3.0], [70.0, 7.0],

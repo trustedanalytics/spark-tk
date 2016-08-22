@@ -57,9 +57,9 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=TkContext.
 
         >>> frame = tc.frame.import_hbase("test_startendtag", [["startendtag", "number", int]], start_tag="20", end_tag="50")
         -etc-
-        >>> frame.row_count
+        >>> frame.count()
         33
-        >>> frame.inspect(frame.row_count)
+        >>> frame.inspect(33)
         [##]  startendtag_number
         ========================
         [0]                    6
