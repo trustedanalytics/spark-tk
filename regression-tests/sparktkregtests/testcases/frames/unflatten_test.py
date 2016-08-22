@@ -48,7 +48,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         unflatten_pandas = frame.download()
         for index, row in unflatten_pandas.iterrows():
             self.assertTrue(row.equals(name_lookup[row['user']]))
-        self.assertEqual(frame.row_count, 5)
+        self.assertEqual(frame.count(), 5)
 
     def test_unflatten_multiple_cols(self):
         frame = self.context.frame.import_csv(self.datafile_unflatten,
@@ -109,7 +109,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
             self.assertEqual(
                     len(str(row['time']).split(",")),
                     len(str(row['reading']).split(",")))
-        self.assertEqual(frame_sparse.row_count, 100)
+        self.assertEqual(frame_sparse.count(), 100)
         
 
 if __name__ == "__main__":

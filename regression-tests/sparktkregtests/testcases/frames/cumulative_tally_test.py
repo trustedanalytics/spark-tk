@@ -25,7 +25,7 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
         self.tally_frame.tally("rating", '5')
         self.tally_frame.tally_percent("rating", '5')
 
-        pd_frame = self.tally_frame.download(self.tally_frame.row_count)
+        pd_frame = self.tally_frame.download(self.tally_frame.count())
         for index, row in pd_frame.iterrows():
             self.assertAlmostEqual(
                 row['percent_count'], row['rating_tally_percent'], delta=.0001)
@@ -103,7 +103,7 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
     def test_tally_no_element(self):
         """Test tallying on non-present element is correct"""
         self.tally_frame.tally_percent("rating", "12")
-        local_frame = self.tally_frame.download(self.tally_frame.row_count)
+        local_frame = self.tally_frame.download(self.tally_frame.count())
 
         for index, row in local_frame.iterrows():
             self.assertEqual(row["rating_tally_percent"], 1.0)
