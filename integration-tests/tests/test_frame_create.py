@@ -41,7 +41,7 @@ def test_create_frame_with_column_names(tc):
     Create a frame with a list of column names.  Data types should be inferred.
     """
     frame = tc.frame.create([[1,"a",1.5],[2,"b",5.0],[3,"c",22.7]],["number", "letter", "decimal"])
-    assert(frame.row_count == 3)
+    assert(frame.count() == 3)
     assert(frame.schema == [("number", int), ("letter", str), ("decimal", float)])
 
 def test_create_frame_without_schema(tc):
@@ -49,7 +49,7 @@ def test_create_frame_without_schema(tc):
     Creates a frame without a schema.  Column names should be numbered, and data types should be inferred.
     """
     frame = tc.frame.create([[1,"a",1.5],[2,"b",5.0],[3,"c",22.7]])
-    assert(frame.row_count == 3)
+    assert(frame.count() == 3)
     assert(frame.schema == [("C0", int), ("C1", str), ("C2", float)])
 
 def test_create_frame_with_not_enough_column_names(tc):
@@ -58,7 +58,7 @@ def test_create_frame_with_not_enough_column_names(tc):
     be numbered.  Data types should be inferred.
     """
     frame = tc.frame.create([[1,"a",1.5],[2,"b",5.0],[3,"c",22.7]],["number", "letter"])
-    assert(frame.row_count == 3)
+    assert(frame.count() == 3)
     assert(frame.schema == [("number", int), ("letter", str), ("C2", float)])
 
 def test_create_frame_with_schema(tc):
@@ -66,7 +66,7 @@ def test_create_frame_with_schema(tc):
     Tests creating a frame with a custom schema
     """
     frame = tc.frame.create([[1,"a",1.5],[2,"b",5.0],[3,"c",22.7]], [("col_a", int),("col_b", str),("col_c", float)])
-    assert(frame.row_count == 3)
+    assert(frame.count() == 3)
     assert(frame.schema == [("col_a", int), ("col_b", str), ("col_c", float)])
 
 def test_create_frame_with_vectors(tc):
@@ -75,7 +75,7 @@ def test_create_frame_with_vectors(tc):
     """
     # Create a frame with vectors
     frame = tc.frame.create([[[1,2,3,0]],[[0,4,5,6]],[[7,8,9,10]]])
-    assert(frame.row_count == 3)
+    assert(frame.count() == 3)
     assert(len(frame.schema) == 1)
     assert(isinstance(frame.schema[0][1], dtypes.vector))   # schema data type should be a vector
     assert(frame.schema[0][1].length == 4)                  # vector length should be 4
@@ -96,21 +96,23 @@ def test_create_with_schema_validation(tc):
     # Test use case where we have more than 100 rows, all integers
     data = [[i] for i in xrange(0,110)]
     frame = tc.frame.create(data, validate_schema=True)
-    assert(frame.row_count == 110)
+    row_count = frame.count()
+    assert(row_count == 110)
     assert(frame.schema == [("C0", int)])
-    assert(len(frame.take(frame.row_count).data) == frame.row_count)
+    assert(len(frame.take(row_count).data) == frame.count())
     # Test use case where we have more than 100 rows, with a mix of integers and floats
     data = [[i] for i in xrange(0,55)] + [[i + .5] for i in xrange(0,55)]
     frame = tc.frame.create(data, validate_schema=True)
-    assert(frame.row_count == 110)
+    row_count = frame.count()
+    assert(row_count == 110)
     assert(frame.schema == [("C0", float)])
-    data = frame.take(frame.row_count).data
-    assert(len(data) == frame.row_count)
+    data = frame.take(row_count).data
+    assert(len(data) == frame.count())
     assert(all(isinstance(row[0], float) for row in data))
     # Test use case where we have more than 100 rows of integers and then strings
     data = [[i] for i in xrange(0,100)] + [["xyz" + str(i)] for i in xrange(0,20)]
     frame = tc.frame.create(data, validate_schema=True)
-    values = frame.take(frame.row_count).data
+    values = frame.take(frame.count()).data
     # The last 20 rows of "xyz" should be None since they can't be parsed to integers
     for item in values[100:len(values)]:
         assert(item == [None])
@@ -155,10 +157,10 @@ def test_create_empty_frame(tc):
     Tests creating an empty frame.
     """
     frame = tc.frame.create(None)
-    assert(frame.row_count == 0)
+    assert(frame.count() == 0)
     assert(len(frame.schema) == 0)
     frame = tc.frame.create([])
-    assert(frame.row_count == 0)
+    assert(frame.count() == 0)
     assert(len(frame.schema) == 0)
 
 def test_invalid_frame_data_source(tc):
@@ -167,7 +169,7 @@ def test_invalid_frame_data_source(tc):
     """
     # create a valid frame to test as a data source
     frame = tc.frame.create([[1, "a"],[2, "b"]])
-    assert(frame.row_count == 2)
+    assert(frame.count() == 2)
     assert(frame._is_python)
 
     try:
