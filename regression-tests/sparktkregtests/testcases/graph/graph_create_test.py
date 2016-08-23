@@ -35,8 +35,8 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
         vertices = graph.create_vertices_frame()
         edges = graph.create_edges_frame()
 
-        vertex_take = vertices.take(vertices.row_count).data
-        edge_take = edges.take(edges.row_count).data
+        vertex_take = vertices.take(vertices.count()).data
+        edge_take = edges.take(edges.count()).data
 
         self.assertEqual(6, graph.vertex_count())
 
