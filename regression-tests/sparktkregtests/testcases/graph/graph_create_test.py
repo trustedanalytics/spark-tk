@@ -53,8 +53,8 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
 
         vertices = new_graph.create_vertices_frame()
         edges = new_graph.create_edges_frame()
-        vertex_take = vertices.take(vertices.row_count).data
-        edge_take = edges.take(edges.row_count).data
+        vertex_take = vertices.take(vertices.count()).data
+        edge_take = edges.take(edges.count()).data
 
         self.assertEqual(6, new_graph.vertex_count())
 
@@ -70,7 +70,7 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
 
         baseline = [[1, 2], [2, 2], [3, 2], [4, 4], [5, 2], [6, 2]]
         self.assertItemsEqual(
-            baseline, degree_frame.take(degree_frame.row_count).data)
+            baseline, degree_frame.take(degree_frame.count()).data)
 
 if __name__ == "__main__":
     unittest.main()
