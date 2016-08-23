@@ -14,14 +14,14 @@ class EntropyTest(sparktk_test.SparkTKTestCase):
 
         # create the frame
         frame = self.context.frame.create(frame_load,
-                schema=[("data", str)])
+                                          schema=[("data", str)])
 
         # call the entropy function
         computed_entropy = frame.entropy("data")
 
         # test that we get the expected result
         self.assertAlmostEqual(computed_entropy,
-                expected, delta=.001)
+                               expected, delta=.001)
 
     def test_entropy_exponential(self):
         """ Get entropy on exponential distribution. """
@@ -31,7 +31,8 @@ class EntropyTest(sparktk_test.SparkTKTestCase):
 
         # create frame
         frame = self.context.frame.create(frame_load,
-                schema=[("data", int), ("weight", int)])
+                                          schema=[("data", int),
+                                                  ("weight", int)])
 
         # call the entropy function to calculate
         computed_entropy = frame.entropy("data", "weight")
