@@ -17,7 +17,6 @@ class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf) extends Se
    * @return the number of exported vertices
    */
   def exportVertexFrame(batchSize: Int): Long = {
-
     val verticesCountRdd = vertexFrame.mapPartitions(iter => {
       var batchCounter = 0L
       val orientGraph = OrientdbGraphFactory.graphDbConnector(dbConfig)
@@ -25,11 +24,12 @@ class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf) extends Se
         while (iter.hasNext) {
           val row = iter.next()
           val vertexWriter = new VertexWriter(orientGraph)
-          vertexWriter.create(GraphSchema.vertexTypeColumnName, row)
+          val vertex = vertexWriter.create(GraphSchema.vertexTypeColumnName, row)
           batchCounter += 1
           if (batchCounter % batchSize == 0 && batchCounter != 0) {
             orientGraph.commit()
           }
+
         }
       }
       catch {

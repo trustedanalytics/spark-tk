@@ -22,22 +22,11 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
       // Vertex DataFrame
       val v = sqlContext.createDataFrame(List(
         ("a", "Alice", 34),
-        ("b", "Bob", 36),
-        ("c", "Charlie", 30),
-        ("d", "David", 29),
-        ("e", "Esther", 32),
-        ("f", "Fanny", 36),
-        ("g", "Gabby", 60))).toDF("id", "name", "age")
+        ("b", "Bob", 36))).toDF("id", "name", "age")
       // Edge DataFrame
       val e = sqlContext.createDataFrame(List(
         ("a", "b", "friend"),
-        ("b", "c", "follow"),
-        ("c", "b", "follow"),
-        ("f", "c", "follow"),
-        ("e", "f", "follow"),
-        ("e", "d", "friend"),
-        ("d", "a", "friend"),
-        ("a", "e", "friend")
+        ("b", "c", "follow")
       )).toDF("src", "dst", "relationship")
       // Create a org.graphframes.GraphFrame
       GraphFrame(v, e)

@@ -4,43 +4,47 @@ import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx
 import org.apache.spark.sql.Row
 import org.graphframes.GraphFrame
+import collection.JavaConverters._
+import scala.collection.mutable
 
 /**
- * exports Spark graph frame vertex to OrientDB
+ * exports graph frame vertex to OrientDB
  *
  * @param orientGraph OrientDB graph database
  */
 class VertexWriter(orientGraph: OrientGraphNoTx) {
 
+  val schemaWriter = new SchemaWriter(orientGraph)
+
   /**
-   * reads Spark graphframe vertex and converts it to a new OrientDB vertex
+   * converts Spark SQL Row to OrientDB vertex
    *
    * @param vertexClassName vertex type or class name
-   * @param row Spark graph frame vertex
+   * @param row             row
    */
   def create(vertexClassName: String, row: Row): Vertex = {
-    val orientVertex: Vertex = orientGraph.addVertex(vertexClassName, null)
-    val rowSchemaIterator = row.schema.iterator
-    while (rowSchemaIterator.hasNext) {
-      val propName = rowSchemaIterator.next().name
-      if (propName == GraphFrame.ID) {
-        orientVertex.setProperty(GraphFrame.ID + "_", row.getAs(propName))
+    val propMap = mutable.Map[String, Any]()
+    val propKeysIterator = orientGraph.getRawGraph.getMetadata.getSchema.getClass(vertexClassName).properties().iterator()
+    while (propKeysIterator.hasNext) {
+      val propKey = propKeysIterator.next().getName
+      if (propKey == schemaWriter.exportedVertexId) {
+        propMap.put(propKey, row.getAs(GraphFrame.ID))
       }
       else {
-        orientVertex.setProperty(propName, row.getAs(propName))
+        propMap.put(propKey, row.getAs(propKey))
       }
     }
-    orientVertex
+    orientGraph.addVertex(s"class:$vertexClassName", propMap.asJava)
   }
 
   /**
-   * a method that finds a vertex
+   * finds a vertex
    *
    * @param vertexId vertex ID
-   * @return  OrientDB vertex if exists or null if not found
+   * @return OrientDB vertex if exists or null if not found
    */
   def find(vertexId: Any, className: String): Option[Vertex] = {
-    val vertices = orientGraph.getVertices(GraphFrame.ID + "_", vertexId)
+    val vertices = orientGraph.getVertices(schemaWriter.exportedVertexId, vertexId)
     val vertexIterator = vertices.iterator()
     if (vertexIterator.hasNext) {
       val existingVertex = vertexIterator.next()
@@ -50,60 +54,20 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
   }
 
   /**
-   * a method for looking up a vertex in OrientDB graph or creates a new vertex if not found
+   * looking up a vertex in OrientDB graph or creates a new vertex if not found
    *
-   * @param vertexId vertex ID
+   * @param vertexId  vertex ID
    * @param className vertex type or class name
    * @return OrientDB vertex
    */
   def findOrCreate(vertexId: Any, className: String): Vertex = {
     val vertex = find(vertexId, className)
     if (vertex.isEmpty) {
-      val newVertex = orientGraph.addVertex(className, null)
-      newVertex.setProperty(GraphFrame.ID + "_", vertexId)
-      newVertex
+      orientGraph.addVertex(s"class:$className", schemaWriter.exportedVertexId, vertexId.toString)
     }
     else {
       vertex.get
     }
-  }
-
-  /**
-   * updates an existing OrientDB vertex
-   *
-   * @param row row
-   * @param orientVertex OrientDB vertex
-   * @return updated OrientDB vertex
-   */
-  def update(row: Row, orientVertex: Vertex): Vertex = {
-    val rowSchemaIterator = row.schema.iterator
-    while (rowSchemaIterator.hasNext) {
-      val propName = rowSchemaIterator.next().name
-      if (propName == GraphFrame.ID) {
-        orientVertex.setProperty(GraphFrame.ID + "_", row.getAs(propName))
-      }
-      else {
-        orientVertex.setProperty(propName, row.getAs(propName))
-      }
-    }
-    orientVertex
-  }
-
-  /**
-   *
-   * @param row row
-   * @param className vertex type or class name
-   * @return OrientDB vertex
-   */
-  def updateOrCreate(row: Row, className: String): Vertex = {
-    val orientVertex = find(row.getAs(GraphFrame.ID), className)
-    val newVertex = if (orientVertex.isEmpty) {
-      create(className, row)
-    }
-    else {
-      update(row, orientVertex.get)
-    }
-    newVertex
   }
 
 }

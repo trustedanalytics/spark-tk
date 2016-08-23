@@ -24,7 +24,7 @@ import scala.collection.immutable.Map
  * @param dbUri the database URI
  */
 
-case class ExportOrientDbGraphReturn(exportedVertices: Map[String, Statistics], exportedEdges: Map[String, Statistics], dbUri: String)
+case class ExportToOrientdbReturn(exportedVertices: Map[String, Statistics], exportedEdges: Map[String, Statistics], dbUri: String)
 
 /**
  * returns statistics for the exported graph elements

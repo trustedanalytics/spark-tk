@@ -1,6 +1,5 @@
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
-import com.orientechnologies.orient.core.sql.OCommandSQL
 import com.tinkerpop.blueprints.{ Vertex, Parameter }
 import com.tinkerpop.blueprints.impls.orient.{ OrientEdgeType, OrientVertexType, OrientGraphNoTx }
 import org.apache.spark.sql.types.StructType
@@ -12,6 +11,9 @@ import org.graphframes.GraphFrame
  * @param orientGraph OrientDB graph database
  */
 class SchemaWriter(orientGraph: OrientGraphNoTx) {
+
+  val exportedVertexId = GraphFrame.ID + "_"
+  val exportedEdgeType = GraphFrame.EDGE + "_"
 
   /**
    * exports vertex schema to OrientDB vertex schema
@@ -28,14 +30,13 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
         val columnField = vertexSchemaIterator.next()
         val orientColumnDataType = DataTypesConverter.sparkToOrientdb(columnField.dataType)
         if (columnField.name == GraphFrame.ID) {
-          orientVertexType.createProperty(GraphFrame.ID + "_", orientColumnDataType)
+          orientVertexType.createProperty(exportedVertexId, orientColumnDataType)
         }
         else {
           orientVertexType.createProperty(columnField.name, orientColumnDataType)
         }
       }
-      //orientGraph.createKeyIndex(GraphFrame.ID + "_", classOf[Vertex],new Parameter("type", "UNIQUE"),new Parameter("class", vertexType))
-      orientGraph.command(new OCommandSQL(s"CREATE INDEX vertexIds ON $vertexType (${GraphFrame.ID + "_"}) NOTUNIQUE METADATA {ignoreNullValues:true}")).execute()
+      orientGraph.createKeyIndex(exportedVertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", vertexType))
       orientVertexType
     }
     catch {
@@ -52,11 +53,11 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
    */
   def edgeSchema(edgeSchema: StructType): OrientEdgeType = {
     try {
-      val orientEdgeType = orientGraph.createEdgeType(GraphFrame.EDGE + "_")
+      val orientEdgeType = orientGraph.createEdgeType(exportedEdgeType)
       edgeSchema.fields.map(col => {
         val orientColumnDataType = DataTypesConverter.sparkToOrientdb(col.dataType)
         if (col.name == GraphFrame.EDGE) {
-          orientEdgeType.createProperty(GraphFrame.EDGE + "_", orientColumnDataType)
+          orientEdgeType.createProperty(exportedEdgeType, orientColumnDataType)
         }
         else {
           orientEdgeType.createProperty(col.name, orientColumnDataType)

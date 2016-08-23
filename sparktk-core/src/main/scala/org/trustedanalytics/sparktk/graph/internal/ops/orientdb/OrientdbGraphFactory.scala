@@ -22,6 +22,7 @@ object OrientdbGraphFactory {
    */
   def graphDbConnector(dbConfigurations: OrientConf): OrientGraphNoTx = {
     val orientDb: ODatabaseDocumentTx = new ODatabaseDocumentTx(dbConfigurations.dbUri)
+
     dbConfigurations.dbProperties.foreach(propertyMap => {
       propertyMap.foreach { case (key, value) => orientDb.setProperty(key, value) }
     })

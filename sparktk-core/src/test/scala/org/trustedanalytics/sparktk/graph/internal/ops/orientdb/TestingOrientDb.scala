@@ -36,7 +36,7 @@ trait TestingOrientDb {
   var orientMemoryGraph: OrientGraphNoTx = null
   var orientFileGraph: OrientGraphNoTx = null
   val dbProperties: Map[String, Any] = Map(("storage.diskCache.bufferSize", 256))
-  val verticesClassName = "friends"
+  val verticesClassName = "vertex_"
   /**
    * create in memory Orient graph database
    */
