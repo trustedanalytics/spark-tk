@@ -72,5 +72,26 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
         self.assertItemsEqual(
             baseline, degree_frame.take(degree_frame.count()).data)
 
+    def test_graph_bad_src(self):
+        """Test the underlying graphframe fails to build if missing src"""
+        self.edges.rename_columns({"src": "bad"})
+        
+        with self.assertRaisesRegexp(ValueError, "\'src\' missing"):
+            graph = self.context.graph.create(self.vertices, self.edges)
+
+    def test_graph_bad_dst(self):
+        """Test the underlying graphframe fails to build if missing dst"""
+        self.edges.rename_columns({"dst": "bad"})
+        
+        with self.assertRaisesRegexp(ValueError, "\'dst\' missing"):
+            graph = self.context.graph.create(self.vertices, self.edges)
+
+    def test_graph_bad_ids(self):
+        """Test the underlying graphframe fails to build if missing id"""
+        self.vertices.rename_columns({"id": "bad"})
+        
+        with self.assertRaisesRegexp(ValueError, "\'id\' missing"):
+            graph = self.context.graph.create(self.vertices, self.edges)
+
 if __name__ == "__main__":
     unittest.main()

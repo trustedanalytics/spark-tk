@@ -3,6 +3,9 @@ NAME="[`basename $BASH_SOURCE[0]`]"
 DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
+# This needs to be kept in sync with the parent POM file
+GRAPHFRAMES_SOURCE=http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar
+
 MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
 
@@ -24,6 +27,6 @@ popd
 
 echo "Downloading graphframes"
 rm -f graphframes.zip
-wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar -O graphframes.zip
+wget -nv --no-check-certificate $GRAPHFRAMES_SOURCE  -O graphframes.zip
 unzip -q graphframes.zip
 
