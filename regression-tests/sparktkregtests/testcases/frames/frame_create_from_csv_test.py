@@ -38,6 +38,12 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(Exception, "more than one char"):
             self.context.frame.import_csv(self.dataset, bad)
 
+    def test_given_schema_is_honored(self):
+        schema = [("num1", float), ("letter", str), ("num2", int)]
+        frame = self.context.frame.import_csv(self.dataset, schema=schema)
+        for row in frame.take(frame.count()).data:
+            self.assertEqual(str(type(row[0])), str(float))
+
     def test_schema_duplicate_names_same_type(self):
         """CsvFile creation fails with duplicate names, same type."""
         # two num1's with same type
