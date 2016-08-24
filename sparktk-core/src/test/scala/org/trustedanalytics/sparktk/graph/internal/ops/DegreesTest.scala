@@ -32,7 +32,7 @@ class DegreeTest extends TestingSparkContextWordSpec with Matchers {
         val graph = buildGraph()
         val degree = graph.degree("in")
         degree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64)))
-        degree.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 0)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 2)), new GenericRow(Array[Any](4, 1))))
+        degree.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 0)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 2)), new GenericRow(Array[Any](4, 1)))
 
       }
     }
@@ -42,7 +42,7 @@ class DegreeTest extends TestingSparkContextWordSpec with Matchers {
         val graph = buildGraph()
         val degree = graph.degree("out")
         degree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64)))
-        degree.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 2)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 0)), new GenericRow(Array[Any](4, 1))))
+        degree.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 2)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 0)), new GenericRow(Array[Any](4, 1)))
 
       }
     }
