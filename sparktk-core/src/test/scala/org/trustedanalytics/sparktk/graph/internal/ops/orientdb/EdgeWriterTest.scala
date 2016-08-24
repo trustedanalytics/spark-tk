@@ -65,7 +65,6 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
     }
 
     "find edge" in {
-      val dbConfig = new OrientConf(dbUri, dbUserName, dbPassword, rootPassword)
       val schemaWriter = new SchemaWriter(orientFileGraph)
       schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
       val edgeType = schemaWriter.edgeSchema(friends.edges.schema)
@@ -84,8 +83,6 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
     }
 
     "update edge" in {
-      val arguments = new OrientGraphWriterArgs(batchSize)
-      val dbConfig = new OrientConf(dbUri, dbUserName, dbPassword, rootPassword)
       val schemaWriter = new SchemaWriter(orientFileGraph)
       schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
       val edgeType = schemaWriter.edgeSchema(friends.edges.schema)
