@@ -4,13 +4,13 @@ import java.awt.image.Raster
 import java.io._
 import java.util.Iterator
 import javax.imageio.stream.ImageInputStream
-import javax.imageio.{ImageIO, ImageReader}
+import javax.imageio.{ ImageIO, ImageReader }
 
 import org.apache.commons.io.FileUtils
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
-import org.dcm4che3.imageio.plugins.dcm.{DicomImageReadParam, DicomImageReader}
+import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
 import org.dcm4che3.tool.dcm2xml.Dcm2Xml
 import org.scalatest.Matchers
@@ -24,13 +24,13 @@ class DicomHdfs extends TestingSparkContextWordSpec with Matchers {
   "dicom folder" should {
     "dicom files load and create dataframe test" in {
 
-     val dicomFilesRdd = sparkContext.binaryFiles("hdfs://10.7.151.97:8020/user/kvadla/dicom_images_decompressed")
+      val dicomFilesRdd = sparkContext.binaryFiles("hdfs://10.7.151.97:8020/user/kvadla/dicom_images_decompressed")
 
-      var id =0
+      var id = 0
 
-      val dcmMetadataPixelArrayRDD = dicomFilesRdd.map{
+      val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {
 
-        case (filePath, fileData)  =>
+        case (filePath, fileData) =>
 
           //val myInputStream: InputStream  = new ByteArrayInputStream(fileData.toArray())
 
@@ -59,14 +59,13 @@ class DicomHdfs extends TestingSparkContextWordSpec with Matchers {
 
           val data = Array.ofDim[Double](w, h)
 
-          for{
+          for {
             i <- 0 until h
             j <- 0 until w
           } data(i)(j) = raster.getSample(i, j, 0)
 
           //dicom pixel array
-          val pixel_data_array: Array[Double]= data.flatten
-
+          val pixel_data_array: Array[Double] = data.flatten
 
           //Create a dense matrix for pixel array
           val dm1 = new DenseMatrix(h, w, pixel_data_array)
@@ -77,9 +76,9 @@ class DicomHdfs extends TestingSparkContextWordSpec with Matchers {
           // val metaData = dis.readDataset(-1, -1)
 
           val dis: DicomInputStream = new DicomInputStream(tmpFile)
-          val dcm2xml:Dcm2Xml =new Dcm2Xml()
+          val dcm2xml: Dcm2Xml = new Dcm2Xml()
 
-          id = id +1
+          id = id + 1
 
           //redirecting output stream
           val myOutputStream = new ByteArrayOutputStream()
@@ -99,20 +98,18 @@ class DicomHdfs extends TestingSparkContextWordSpec with Matchers {
       dcmMetadataPixelArrayRDD.foreach(println)
 
       //create metadata pairrdd
-      val metaDataPairRDD:RDD[(Int, String)] = dcmMetadataPixelArrayRDD.map(row => (row._1, row._2))
+      val metaDataPairRDD: RDD[(Int, String)] = dcmMetadataPixelArrayRDD.map(row => (row._1, row._2))
       //metaDataPairRDD.foreach(println)
 
       //create image matrix pair rdd
-      val imageMatrixPairRDD:RDD[(Int, DenseMatrix)] = dcmMetadataPixelArrayRDD.map(row => (row._1, row._3))
+      val imageMatrixPairRDD: RDD[(Int, DenseMatrix)] = dcmMetadataPixelArrayRDD.map(row => (row._1, row._3))
       //imageMatrixPairRDD.foreach(println)
-
 
       val sqlCtx = new SQLContext(sparkContext)
       import sqlCtx.implicits._
 
-
       println("---------------Metadata----------------")
-      val metadataDF= metaDataPairRDD.toDF("id", "metadata")
+      val metadataDF = metaDataPairRDD.toDF("id", "metadata")
       //metadataDF.show(5)
       //println(metadataDF.printSchema())
 
