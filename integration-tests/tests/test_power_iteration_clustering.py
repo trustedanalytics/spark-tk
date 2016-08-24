@@ -12,7 +12,7 @@ def test_power_iteration_clustering_001(tc):
     schema = [('src', int),('dest', int),('similarity', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 8, "frame should have 8 rows")
+    assert(frame.count(), 8, "frame should have 8 rows")
     assert(frame.column_names, ['src', 'dest', 'similarity'])
 
     logger.info("compute power_iteration_clustering()")
@@ -27,7 +27,7 @@ def test_power_iteration_clustering_002(tc):
     schema = [('src', int),('dest', int),('similarity', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 8, "frame should have 8 rows")
+    assert(frame.count(), 8, "frame should have 8 rows")
     assert(frame.column_names, ['src', 'dest', 'similarity'])
 
     logger.info("compute power_iteration_clustering()")

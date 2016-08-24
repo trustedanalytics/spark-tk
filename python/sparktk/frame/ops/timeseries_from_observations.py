@@ -27,7 +27,7 @@ def timeseries_from_observations(self, date_time_index, timestamp_column, key_co
 
     </hide>
 
-        >>> my_frame.inspect( my_frame.row_count )
+        >>> my_frame.inspect(my_frame.count())
         [#]  name     date                  resting_heart_rate
         ======================================================
         [0]  Edward   2016-01-01T12:00:00Z                  62

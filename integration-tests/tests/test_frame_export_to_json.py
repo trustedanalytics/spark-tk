@@ -14,7 +14,7 @@ def test_export_to_json_file_path(tc):
     schema = [('a', int), ('b', float),('c', int) ,('d', int)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['a', 'b', 'c', 'd'])
 
     logger.info("compute dot product")
@@ -37,7 +37,7 @@ def test_strange_strings(tc):
     schema = [("name", str), ("message", str)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 6, "frame should have 6 rows")
+    assert(frame.count(), 6, "frame should have 6 rows")
     assert(frame.column_names, ['name', 'message'])
     dir_name = "sandbox/json_strange_string"
     logger.info("export frame in json format to local file system")

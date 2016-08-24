@@ -13,7 +13,7 @@ def test_frame_to_pandas_to_frame(tc):
     df = frame1.download()
     assert(df.columns.tolist() == ['string_column', 'integer_column', 'float_column', 'datetime_column'])
     assert([str(d) for d in df.dtypes] == ['object', 'int32', 'float64', 'datetime64[ns]'])
-    assert(frame1.row_count == len(df))
+    assert(frame1.count() == len(df))
 
     # import the data frame back to a frame
     frame2 = tc.frame.import_pandas(df, frame1.schema, validate_schema=True)
@@ -23,6 +23,6 @@ def test_frame_to_pandas_to_frame(tc):
     for col1, col2 in zip(frame1.schema, frame2.schema):
         assert(col1[0] == col2[0])
         assert(dtypes.dtypes.get_from_type(col1[1]) == dtypes.dtypes.get_from_type(col2[1]))
-    assert(frame2.take(frame2.row_count).data == frame1.take(frame1.row_count).data)
+    assert(frame2.take(frame2.count()).data == frame1.take(frame1.count()).data)
 
 

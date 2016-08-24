@@ -11,7 +11,7 @@ def test_multiclass_classification_metrics_001(tc):
     schema = [('labels', str),('predictions', str)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 6 rows")
+    assert(frame.count(), 4, "frame should have 6 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute multiclass_classification_metrics()")
@@ -32,7 +32,7 @@ def test_multiclass_classification_metrics_002(tc):
     schema = [('labels', float32),('predictions', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 6 rows")
+    assert(frame.count(), 4, "frame should have 6 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute multiclass_classification_metrics()")

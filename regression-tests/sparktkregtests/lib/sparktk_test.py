@@ -53,7 +53,7 @@ class SparkTKTestCase(unittest.TestCase):
         return name
 
     def assertFramesEqual(self, frame1, frame2):
-        frame1_take = frame1.take(frame1.row_count).data
-        frame2_take = frame2.take(frame2.row_count).data
+        frame1_take = frame1.take(frame1.count()).data
+        frame2_take = frame2.take(frame2.count()).data
 
         self.assertItemsEqual(frame1_take, frame2_take)
