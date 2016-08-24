@@ -17,12 +17,13 @@ object GraphSchema {
   val edgeDestinationColumnName = GraphFrame.DST
 
   // These column names are used by sparktk's convention
-  val vertexTypeColumnName = "vertex_type"
-  val edgeTypeColumnName = GraphFrame.EDGE
+  val vertexTypeColumnName = "vertex_"
+  val edgeTypeColumnName = GraphFrame.EDGE + "_"
 
   implicit def frameToSchema(frame: Frame): Schema = frame.schema
 
   /**
+   * s
    * Validates the frame has the proper schema to represent a Vertices Frame
    */
   def validateSchemaForVerticesFrame(frameSchema: Schema) = {

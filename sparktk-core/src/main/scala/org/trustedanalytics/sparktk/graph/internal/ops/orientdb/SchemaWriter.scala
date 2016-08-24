@@ -4,6 +4,7 @@ import com.tinkerpop.blueprints.{ Vertex, Parameter }
 import com.tinkerpop.blueprints.impls.orient.{ OrientEdgeType, OrientVertexType, OrientGraphNoTx }
 import org.apache.spark.sql.types.StructType
 import org.graphframes.GraphFrame
+import org.trustedanalytics.sparktk.graph.internal.GraphSchema
 
 /**
  * exports the graph frame schema to OrientDB graph schema
@@ -13,7 +14,6 @@ import org.graphframes.GraphFrame
 class SchemaWriter(orientGraph: OrientGraphNoTx) {
 
   val exportedVertexId = GraphFrame.ID + "_"
-  val exportedEdgeType = GraphFrame.EDGE + "_"
 
   /**
    * exports vertex schema to OrientDB vertex schema
@@ -53,11 +53,11 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
    */
   def edgeSchema(edgeSchema: StructType): OrientEdgeType = {
     try {
-      val orientEdgeType = orientGraph.createEdgeType(exportedEdgeType)
+      val orientEdgeType = orientGraph.createEdgeType(GraphSchema.edgeTypeColumnName)
       edgeSchema.fields.map(col => {
         val orientColumnDataType = DataTypesConverter.sparkToOrientdb(col.dataType)
         if (col.name == GraphFrame.EDGE) {
-          orientEdgeType.createProperty(exportedEdgeType, orientColumnDataType)
+          orientEdgeType.createProperty(GraphSchema.edgeTypeColumnName, orientColumnDataType)
         }
         else {
           orientEdgeType.createProperty(col.name, orientColumnDataType)

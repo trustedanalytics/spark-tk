@@ -37,6 +37,7 @@ trait TestingOrientDb {
   var orientFileGraph: OrientGraphNoTx = null
   val dbProperties: Map[String, Any] = Map(("storage.diskCache.bufferSize", 256))
   val verticesClassName = "vertex_"
+  val batchSize = 1000
   /**
    * create in memory Orient graph database
    */
@@ -52,7 +53,7 @@ trait TestingOrientDb {
     val uuid = java.util.UUID.randomUUID.toString
     tmpDir = DirectoryUtils.createTempDirectory("orientgraphtests")
     dbUri = "plocal:" + tmpDir.getAbsolutePath + "/" + dbName + uuid
-    dbConfig = new OrientConf(dbUri, dbUserName, dbUserName, rootPassword, Some(dbProperties))
+    dbConfig = new OrientConf(dbUri, dbUserName, dbUserName, rootPassword, batchSize, Some(dbProperties))
     val factory = new OrientGraphFactory(dbUri, dbUserName, dbPassword)
     orientFileGraph = factory.getNoTx
     orientFileGraph.declareIntent(new OIntentMassiveInsert())

@@ -47,13 +47,12 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
       // Create a org.graphframes.GraphFrame
       GraphFrame(v, e)
     }
-    val batchSize = 1000
     "create edge" in {
       val schemaWriter = new SchemaWriter(orientFileGraph)
       schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
       schemaWriter.edgeSchema(friends.edges.schema)
       val vertexFrameWriter = new VertexFrameWriter(friends.vertices, dbConfig)
-      vertexFrameWriter.exportVertexFrame(batchSize)
+      vertexFrameWriter.exportVertexFrame(dbConfig.batchSize)
       friends.edges.collect().foreach(row => {
         val edgeWriter = new EdgeWriter(orientFileGraph)
         //call method under test
@@ -65,14 +64,13 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
     }
 
     "find edge" in {
-      val dbConfig = new OrientConf(dbUri, dbUserName, dbPassword, rootPassword)
       val schemaWriter = new SchemaWriter(orientFileGraph)
       schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
       val edgeType = schemaWriter.edgeSchema(friends.edges.schema)
       val vertexFrameWriter = new VertexFrameWriter(friends.vertices, dbConfig)
-      vertexFrameWriter.exportVertexFrame(batchSize)
+      vertexFrameWriter.exportVertexFrame(dbConfig.batchSize)
       val edgeFrameWriter = new EdgeFrameWriter(friends.edges, dbConfig)
-      edgeFrameWriter.exportEdgeFrame(batchSize)
+      edgeFrameWriter.exportEdgeFrame(dbConfig.batchSize)
       val edgeWriter = new EdgeWriter(orientFileGraph)
       val row = friends.edges.collect.apply(0)
       //call method under test
@@ -84,15 +82,13 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
     }
 
     "update edge" in {
-      val arguments = new OrientGraphWriterArgs(batchSize)
-      val dbConfig = new OrientConf(dbUri, dbUserName, dbPassword, rootPassword)
       val schemaWriter = new SchemaWriter(orientFileGraph)
       schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
       val edgeType = schemaWriter.edgeSchema(friends.edges.schema)
       val vertexFrameWriter = new VertexFrameWriter(friends.vertices, dbConfig)
-      vertexFrameWriter.exportVertexFrame(batchSize)
+      vertexFrameWriter.exportVertexFrame(dbConfig.batchSize)
       val edgeFrameWriter = new EdgeFrameWriter(friends.edges, dbConfig)
-      edgeFrameWriter.exportEdgeFrame(batchSize)
+      edgeFrameWriter.exportEdgeFrame(dbConfig.batchSize)
       val row = newGraphFrame.edges.collect.apply(0)
       // call method under test
       val edgeWriter = new EdgeWriter(orientFileGraph)
