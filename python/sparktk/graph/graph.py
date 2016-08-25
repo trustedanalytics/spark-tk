@@ -261,3 +261,4 @@ class Graph(object):
     from sparktk.graph.ops.save import save
     from sparktk.graph.ops.vertex_count import vertex_count
     from sparktk.graph.ops.weighted_degrees import weighted_degrees
+    from sparktk.graph.ops.triangle_count import triangle_count
