@@ -67,6 +67,11 @@ class TkContext(object):
         return get_lazy_loader(self, "graph", implicit_kwargs={'tc': self}).graph  # .graph to account for extra 'graph' in name vis-a-vis scala
 
     @property
+    def dicom(self):
+        return get_lazy_loader(self, "dicom", implicit_kwargs={'tc': self}).dicom  # .dicom to account for extra 'graph' in name vis-a-vis scala
+
+
+    @property
     def examples(self):
         return get_lazy_loader(self, "examples", implicit_kwargs={'tc': self})
 

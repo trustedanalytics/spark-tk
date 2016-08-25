@@ -1,11 +1,12 @@
 package org.trustedanalytics.sparktk.frame.internal.rdd
 
 import breeze.linalg.DenseVector
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.MatrixUDT
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.{ LabeledPointWithFrequency => SparktkLabeledPointWithFrequency }
 
 //import FrameOrderingUtils
-import org.trustedanalytics.sparktk.frame.DataTypes.{ float32, float64, int32, int64 }
+import org.trustedanalytics.sparktk.frame.DataTypes._
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
 
@@ -20,7 +21,7 @@ import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics 
 //import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
 //import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
-import org.apache.spark.mllib.linalg.{ Vector, Vectors, VectorUDT, DenseVector => MllibDenseVector }
+import org.apache.spark.mllib.linalg.{ DenseVector => MllibDenseVector, DenseMatrix, Vector, Vectors, VectorUDT }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
@@ -723,6 +724,8 @@ object FrameRdd {
     val decimalType = classOf[DecimalType] // DecimalType.getClass return value (DecimalType$) differs from expected DecimalType
     val shortType = ShortType.getClass
 
+    val matrixType = classOf[MatrixUDT]
+
     val a = dataType.getClass
     a match {
       case `intType` => int32
@@ -736,6 +739,7 @@ object FrameRdd {
       case `byteType` => int32
       //case `booleanType` => int32
       case `timeStampType` => DataTypes.datetime
+      case `matrixType` => matrix
       case _ => throw new IllegalArgumentException(s"unsupported column data type $a")
     }
   }

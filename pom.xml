@@ -797,6 +797,12 @@
           <artifactId>dcm4che-tool-dcm2xml</artifactId>
           <version>3.3.7</version>
         </dependency>
+        <dependency>
+          <groupId>org.dcm4che</groupId>
+          <artifactId>dcm4che-image</artifactId>
+          <version>3.3.7</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.github.jai-imageio/jai-imageio-core -->
         <!--<dependency>-->
           <!--<groupId>com.github.jai-imageio</groupId>-->
