@@ -5,14 +5,17 @@ import org.apache.spark.sql.DataFrame
 import org.graphframes.GraphFrame
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
+import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization
 import org.trustedanalytics.sparktk.graph.internal.{ GraphSchema, GraphState, BaseGraph }
 import org.trustedanalytics.sparktk.graph.internal.ops.{ SaveSummarization, VertexCountSummarization, WeightedDegreeSummarization, DegreeSummarization }
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
+    with ExportToOrientdbSummarization
     with SaveSummarization
     with WeightedDegreeSummarization
     with DegreeSummarization
+    with TriangleCountSummarization
     with VertexCountSummarization {
 
   def this(verticesFrame: DataFrame, edgesFrame: DataFrame) = {
