@@ -14,4 +14,4 @@ export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-py.test $MAINDIR/regression-tests
+py.test -n 48 $MAINDIR/regression-tests
