@@ -14,8 +14,6 @@ import scala.collection.mutable
  */
 class VertexWriter(orientGraph: OrientGraphNoTx) {
 
-  val schemaWriter = new SchemaWriter(orientGraph)
-
   /**
    * converts Spark SQL Row to OrientDB vertex
    *
@@ -27,7 +25,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
     val propKeysIterator = orientGraph.getRawGraph.getMetadata.getSchema.getClass(vertexClassName).properties().iterator()
     while (propKeysIterator.hasNext) {
       val propKey = propKeysIterator.next().getName
-      if (propKey == schemaWriter.exportedVertexId) {
+      if (propKey == exportgraphParam.vertexId) {
         propMap.put(propKey, row.getAs(GraphFrame.ID))
       }
       else {
@@ -44,7 +42,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
    * @return OrientDB vertex if exists or null if not found
    */
   def find(vertexId: Any, className: String): Option[Vertex] = {
-    val vertices = orientGraph.getVertices(schemaWriter.exportedVertexId, vertexId)
+    val vertices = orientGraph.getVertices(exportgraphParam.vertexId, vertexId)
     val vertexIterator = vertices.iterator()
     if (vertexIterator.hasNext) {
       val existingVertex = vertexIterator.next()
@@ -63,7 +61,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
   def findOrCreate(vertexId: Any, className: String): Vertex = {
     val vertex = find(vertexId, className)
     if (vertex.isEmpty) {
-      orientGraph.addVertex(s"class:$className", schemaWriter.exportedVertexId, vertexId.toString)
+      orientGraph.addVertex(s"class:$className", exportgraphParam.vertexId, vertexId.toString)
     }
     else {
       vertex.get

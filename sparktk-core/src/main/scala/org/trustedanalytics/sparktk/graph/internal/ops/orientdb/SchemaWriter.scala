@@ -13,8 +13,6 @@ import org.trustedanalytics.sparktk.graph.internal.GraphSchema
  */
 class SchemaWriter(orientGraph: OrientGraphNoTx) {
 
-  val exportedVertexId = GraphFrame.ID + "_"
-
   /**
    * exports vertex schema to OrientDB vertex schema
    *
@@ -30,13 +28,13 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
         val columnField = vertexSchemaIterator.next()
         val orientColumnDataType = DataTypesConverter.sparkToOrientdb(columnField.dataType)
         if (columnField.name == GraphFrame.ID) {
-          orientVertexType.createProperty(exportedVertexId, orientColumnDataType)
+          orientVertexType.createProperty(exportgraphParam.vertexId, orientColumnDataType)
         }
         else {
           orientVertexType.createProperty(columnField.name, orientColumnDataType)
         }
       }
-      orientGraph.createKeyIndex(exportedVertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", vertexType))
+      orientGraph.createKeyIndex(exportgraphParam.vertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", vertexType))
       orientVertexType
     }
     catch {
@@ -72,4 +70,11 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
     }
   }
 
+}
+
+/**
+ * hard coded parameters
+ */
+object exportgraphParam {
+  val vertexId = GraphFrame.ID + "_"
 }
