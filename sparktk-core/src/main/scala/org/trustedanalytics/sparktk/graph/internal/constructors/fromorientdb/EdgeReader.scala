@@ -9,7 +9,7 @@ import org.apache.spark.sql.types.StructType
  * converts OrientDB edge to Spark SQL Row
  *
  * @param graph      OrientDB graph
- * @param edgeSchema edges schema
+ * @param edgeSchema edge schema
  */
 class EdgeReader(graph: OrientGraphNoTx, edgeSchema: StructType) {
 

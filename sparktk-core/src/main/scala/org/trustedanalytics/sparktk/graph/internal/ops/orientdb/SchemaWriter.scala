@@ -28,13 +28,13 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
         val columnField = vertexSchemaIterator.next()
         val orientColumnDataType = DataTypesConverter.sparkToOrientdb(columnField.dataType)
         if (columnField.name == GraphFrame.ID) {
-          orientVertexType.createProperty(exportgraphParam.vertexId, orientColumnDataType)
+          orientVertexType.createProperty(exportGraphParam.vertexId, orientColumnDataType)
         }
         else {
           orientVertexType.createProperty(columnField.name, orientColumnDataType)
         }
       }
-      orientGraph.createKeyIndex(exportgraphParam.vertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", vertexType))
+      orientGraph.createKeyIndex(exportGraphParam.vertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", vertexType))
       orientVertexType
     }
     catch {
@@ -75,6 +75,6 @@ class SchemaWriter(orientGraph: OrientGraphNoTx) {
 /**
  * hard coded parameters
  */
-object exportgraphParam {
+object exportGraphParam {
   val vertexId = GraphFrame.ID + "_"
 }
