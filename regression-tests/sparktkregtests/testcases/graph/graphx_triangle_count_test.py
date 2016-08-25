@@ -12,11 +12,9 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
     def test_triangle_counts(self):
         """Build frames and graphs to exercise"""
         super(TriangleCount, self).setUp()
-        graph_data = self.get_file("cliques_10_10.csv")
+        graph_data = self.get_file("clique_10.csv")
         schema = [('src', str),
-                  ('dst', str),
-                  ('max_k', int),
-                  ('cc', int)]
+                  ('dst', str)]
 
         # set up the vertex frame, which is the union of the src and
         # the dst columns of the edges
@@ -24,9 +22,9 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
         self.vertices = self.frame.copy()
         self.vertices2 = self.frame.copy()
         self.vertices.rename_columns({"src": "id"})
-        self.vertices.drop_columns(["dst", "max_k", "cc"])
+        self.vertices.drop_columns(["dst"])
         self.vertices2.rename_columns({"dst": "id"})
-        self.vertices2.drop_columns(["src", "max_k", "cc"])
+        self.vertices2.drop_columns(["src"])
         self.vertices.append(self.vertices2)
         self.vertices.drop_duplicates()
 
