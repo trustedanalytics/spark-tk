@@ -17,6 +17,7 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
                        ("b", int),
                        ("labels", int),
                        ("predictions", int)]
+        
         self.frame = self.context.frame.create(self.dataset,
                                                schema=self.schema)
 
@@ -31,12 +32,18 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         conf_matrix = class_metrics.confusion_matrix.values
         # labeling each of the cells in our confusion matrix
         # makes this easier for me to read
+        # the confusion matrix should look something like this:
+        #            predicted pos       predicted neg
+        # actual pos    [0][0]              [0][1]
+        # actual neg    [1][0]              [1][1]
         actual_pos_predicted_pos = conf_matrix[0][0]
         actual_pos_predicted_neg = conf_matrix[0][1]
         actual_neg_predicted_pos = conf_matrix[1][0]
         actual_neg_predicted_neg = conf_matrix[1][1]
-        # the total number of predictions
+        # the total number of predictions, total number pos and neg
         total = conf_matrix[0][0] + conf_matrix[0][1] + conf_matrix[1][0] + conf_matrix[1][1]
+        total_pos = actual_pos_predicted_pos + actual_pos_predicted_neg
+        total_neg = actual_neg_predicted_pos + actual_neg_predicted_neg
 
         # recall is defined in the docs as the total number of true pos
         # results divided by the false negatives
@@ -49,12 +56,22 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         # is defined as the total correct predictions divided by the
         # total number of predictions
         accuracy = float(actual_pos_predicted_pos + actual_neg_predicted_neg) / float(total)
+        pos_count = 0
+        pandas_frame = self.frame.download()
+        # calculate the number of pos results and neg results in the data
+        for index, row in pandas_frame.iterrows():
+            if row["labels"] is 1:
+                pos_count = pos_count + 1
+        neg_count = total - pos_count
 
         # finally we compare our results with sparktk's
         self.assertAlmostEqual(class_metrics.recall, recall)
         self.assertAlmostEqual(class_metrics.precision, precision)
         self.assertAlmostEqual(class_metrics.f_measure, f_measure)
         self.assertAlmostEqual(class_metrics.accuracy, accuracy)
+        self.assertEqual(total_pos, pos_count)
+        self.assertEqual(total_neg, neg_count)
+
 
     @unittest.skip("binary_classification_metrics does not allow beta param")
     def test_binary_classification_metrics_bad_beta(self):
@@ -129,18 +146,30 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         actual_neg_predicted_pos = conf_matrix[1][0]
         actual_neg_predicted_neg = conf_matrix[1][1]
         total = conf_matrix[0][0] + conf_matrix[0][1] + conf_matrix[1][0] + conf_matrix[1][1]
+        total_pos = actual_pos_predicted_pos + actual_pos_predicted_neg
+        total_neg = actual_neg_predicted_pos + actual_neg_predicted_neg
 
         # these calculations use the definitions from the docs
         recall = actual_pos_predicted_pos / actual_pos_predicted_neg
         precision = actual_pos_predicted_pos / actual_neg_predicted_pos
         f_measure = (recall * precision) / (recall + precision)
         accuracy = float(actual_pos_predicted_pos + actual_neg_predicted_neg) / float(total)
+        pos_count = 0
+        pandas_frame = self.frame.download()
+        # calculate the number of pos results and neg results in the data
+        for index, row in pandas_frame.iterrows():
+            if row["labels"] is 1:
+                pos_count = pos_count + 1
+        neg_count = total - pos_count
+
 
         # finally we check that our values match sparktk's
         self.assertAlmostEqual(class_metrics.recall, recall)
         self.assertAlmostEqual(class_metrics.precision, precision)
         self.assertAlmostEqual(class_metrics.f_measure, f_measure)
         self.assertAlmostEqual(class_metrics.accuracy, accuracy)
+        self.assertEqual(total_pos, pos_count)
+        self.assertEqual(total_neg, neg_count)
 
     def test_binary_classification_metrics_with_invalid_frequency_col(self):
         """test binary class metrics with a frequency col of invalid type"""
