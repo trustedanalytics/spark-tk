@@ -1,18 +1,3 @@
-/**
- *  Copyright (c) 2015 Intel Corporation 
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
 import java.io.File
@@ -37,6 +22,7 @@ trait TestingOrientDb {
   var orientFileGraph: OrientGraphNoTx = null
   val dbProperties: Map[String, Any] = Map(("storage.diskCache.bufferSize", 256))
   val verticesClassName = "vertex_"
+  val batchSize = 1000
   /**
    * create in memory Orient graph database
    */
@@ -52,7 +38,7 @@ trait TestingOrientDb {
     val uuid = java.util.UUID.randomUUID.toString
     tmpDir = DirectoryUtils.createTempDirectory("orientgraphtests")
     dbUri = "plocal:" + tmpDir.getAbsolutePath + "/" + dbName + uuid
-    dbConfig = new OrientConf(dbUri, dbUserName, dbUserName, rootPassword, Some(dbProperties))
+    dbConfig = new OrientConf(dbUri, dbUserName, dbUserName, rootPassword, batchSize, Some(dbProperties))
     val factory = new OrientGraphFactory(dbUri, dbUserName, dbPassword)
     orientFileGraph = factory.getNoTx
     orientFileGraph.declareIntent(new OIntentMassiveInsert())

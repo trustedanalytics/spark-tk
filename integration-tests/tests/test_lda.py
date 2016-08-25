@@ -31,7 +31,7 @@ def test_lda(tc):
 
     logger.info("inspect frame")
     frame.inspect(20)
-    logger.info("frame row count " + str(frame.row_count))
+    logger.info("frame row count " + str(frame.count()))
 
     model = tc.models.clustering.lda.train(frame,
                           'doc_id', 'word_id', 'word_count',
@@ -73,4 +73,4 @@ def test_lda(tc):
 
     group_frame = frame.group_by('word_id_L', {'word_count': tc.agg.histogram(word_hist.cutoffs), 'lda_score':  tc.agg.histogram(lda_hist.cutoffs)})
     group_frame.inspect()
-    assert group_frame.row_count is 8
+    assert group_frame.count() is 8

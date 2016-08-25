@@ -12,7 +12,7 @@ import org.trustedanalytics.sparktk.graph.internal.GraphSchema
 class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf) extends Serializable {
 
   /**
-   *
+   * exports edges data frame to OrientDB edges class
    * @param batchSize batch size
    * @return the number of edges
    */
@@ -22,9 +22,9 @@ class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf) extends Serial
       var batchCounter = 0L
       val orientGraph = OrientdbGraphFactory.graphDbConnector(dbConfig)
       try {
+        val edgeWriter = new EdgeWriter(orientGraph)
         while (iter.hasNext) {
           val row = iter.next()
-          val edgeWriter = new EdgeWriter(orientGraph)
           edgeWriter.create(row, GraphSchema.vertexTypeColumnName)
           batchCounter += 1
           if (batchCounter % batchSize == 0 && batchCounter != 0) {

@@ -21,7 +21,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         """ Test projection including Inf / NaN data """
         master = self.context.frame.import_csv(
             self.data_proj, schema=self.schema_proj)
-        self.assertEqual(master.row_count, 7)
+        self.assertEqual(master.count(), 7)
 
         # Add a new column; replace some values with +/-Inf or NaN
         def add_extremes(row):
@@ -33,11 +33,11 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         master.add_columns(add_extremes, ("col_D", dtypes.float64))
         
         proj_3col = master.copy(['col_D', 'Double', 'Text'])
-        self.assertEqual(proj_3col.row_count, master.row_count)
+        self.assertEqual(proj_3col.count(), master.count())
         self.assertEqual(len(proj_3col.column_names), 3)
 
         proj_1col = master.copy({'col_A': 'extremes'})
-        self.assertEqual(proj_1col.row_count, master.row_count)
+        self.assertEqual(proj_1col.count(), master.count())
         self.assertEqual(len(proj_1col.column_names), 1)
 
         #check if NaN/inf values are present
@@ -72,10 +72,10 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         extreme32 = self.context.frame.import_csv(
             self.get_file("BigAndTinyFloat32s.csv"),
             schema=schema_maxmin32)
-        self.assertEqual(extreme32.row_count, 16)
+        self.assertEqual(extreme32.count(), 16)
         extreme32.add_columns(lambda row: [np.sqrt(-9)],
                               [('neg_root', dtypes.float32)])
-        extake = extreme32.download(extreme32.row_count)
+        extake = extreme32.download(extreme32.count())
         for index, row in extake.iterrows():
             self.assertTrue(math.isnan(row['neg_root']))
 
@@ -86,13 +86,13 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
                            ("col_B", dtypes.float64)]
         extreme64 = self.context.frame.import_csv(
             data_maxmin64, schema=schema_maxmin64)
-        self.assertEqual(extreme64.row_count, 16)
+        self.assertEqual(extreme64.count(), 16)
 
         extreme64.add_columns(lambda row:
                               [row.col_A*2, np.sqrt(-9)],
                               [("twice", dtypes.float64),
                                ('neg_root', dtypes.float64)])
-        extake = extreme64.download(extreme64.row_count)
+        extake = extreme64.download(extreme64.count())
 
         #check for inf when values exceed 64-bit range;
         #double the value if outside the range [0,1)

@@ -23,6 +23,7 @@ object GraphSchema {
   implicit def frameToSchema(frame: Frame): Schema = frame.schema
 
   /**
+   * s
    * Validates the frame has the proper schema to represent a Vertices Frame
    */
   def validateSchemaForVerticesFrame(frameSchema: Schema) = {

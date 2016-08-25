@@ -156,7 +156,7 @@ def set_env_for_sparktk(spark_home=None,
             address = int(debug)
         except:
             address = 5005  # default
-        details = """-agentlib:jdwp=transport=dt_socket,server=n,address=wtaie.jf.intel.com:5005,suspend=y"""
+        details = """-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address"""
         set_env('SPARK_JAVA_OPTS', details) # '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address)
 
 

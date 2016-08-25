@@ -21,9 +21,9 @@ class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf) extends Se
       var batchCounter = 0L
       val orientGraph = OrientdbGraphFactory.graphDbConnector(dbConfig)
       try {
+        val vertexWriter = new VertexWriter(orientGraph)
         while (iter.hasNext) {
           val row = iter.next()
-          val vertexWriter = new VertexWriter(orientGraph)
           val vertex = vertexWriter.create(GraphSchema.vertexTypeColumnName, row)
           batchCounter += 1
           if (batchCounter % batchSize == 0 && batchCounter != 0) {

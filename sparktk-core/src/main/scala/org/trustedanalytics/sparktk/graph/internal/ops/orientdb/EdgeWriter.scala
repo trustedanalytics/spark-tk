@@ -4,6 +4,7 @@ import com.tinkerpop.blueprints.Edge
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx
 import org.apache.spark.sql.Row
 import org.graphframes.GraphFrame
+import org.trustedanalytics.sparktk.graph.internal.GraphSchema
 
 /**
  * exports Spark SQL Row to OrientDB edge
@@ -13,6 +14,7 @@ import org.graphframes.GraphFrame
 class EdgeWriter(orientGraph: OrientGraphNoTx) {
 
   /**
+   * exports row to OrientDB vertex
    *
    * @param row edge row
    * @param vertexType vertices type or class name
@@ -23,7 +25,7 @@ class EdgeWriter(orientGraph: OrientGraphNoTx) {
     val srcVertex = vertexWriter.findOrCreate(row.getAs(GraphFrame.SRC), vertexType)
     val dstVertex = vertexWriter.findOrCreate(row.getAs(GraphFrame.DST), vertexType)
     //create OrientDB edge
-    val orientEdge = orientGraph.addEdge("class:" + GraphFrame.EDGE + "_", srcVertex, dstVertex, null)
+    val orientEdge = orientGraph.addEdge("class:" + GraphSchema.edgeTypeColumnName, srcVertex, dstVertex, null)
     val rowSchemaIterator = row.schema.iterator
     while (rowSchemaIterator.hasNext) {
       val propName = rowSchemaIterator.next().name
@@ -34,11 +36,12 @@ class EdgeWriter(orientGraph: OrientGraphNoTx) {
 
   /**
    * finds OrientDB edge
+   *
    * @param row row
    * @return OrientDB edge
    */
   def find(row: Row): Option[Edge] = {
-    val edges = orientGraph.getEdgesOfClass(GraphFrame.EDGE + "_", GraphFrame.SRC == row.getAs(GraphFrame.SRC) && GraphFrame.DST == row.getAs(GraphFrame.DST))
+    val edges = orientGraph.getEdgesOfClass(GraphSchema.edgeTypeColumnName, GraphFrame.SRC == row.getAs(GraphFrame.SRC) && GraphFrame.DST == row.getAs(GraphFrame.DST))
     val edgeIterator = edges.iterator()
     if (edgeIterator.hasNext) {
       val existingEdge = edgeIterator.next()
@@ -49,6 +52,7 @@ class EdgeWriter(orientGraph: OrientGraphNoTx) {
 
   /**
    * updates OrientDB edge
+   *
    * @param row row
    * @param orientEdge OrientDB edge
    * @return updated OrientDB edge
@@ -64,6 +68,7 @@ class EdgeWriter(orientGraph: OrientGraphNoTx) {
 
   /**
    * updates OrientDB edge if exists or creates a new edge if not found
+   *
    * @param row row
    * @param vertexType vertex type or class name
    * @return OrientDB edge
