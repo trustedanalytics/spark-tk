@@ -33,7 +33,7 @@ class VertexReader(graph: OrientGraphNoTx, vertexSchema: StructType) {
   def createVertex(orientVertex: Vertex): Row = {
     val row = vertexSchema.fields.map(field => {
       if (field.name == GraphFrame.ID) {
-        orientVertex.getProperty(field.name + "_"): Any
+        orientVertex.getProperty(graphParameters.orientVertexId): Any
       }
       else {
         orientVertex.getProperty(field.name): Any

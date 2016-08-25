@@ -18,7 +18,7 @@ object GraphSchema {
 
   // These column names are used by sparktk's convention
   val vertexTypeColumnName = "vertex_"
-  val edgeTypeColumnName = GraphFrame.EDGE
+  val edgeTypeColumnName = GraphFrame.EDGE + "_"
 
   implicit def frameToSchema(frame: Frame): Schema = frame.schema
 
