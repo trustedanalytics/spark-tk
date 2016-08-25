@@ -4,7 +4,7 @@ DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
 # This needs to be kept in sync with the parent POM file
-GRAPHFRAMES_SOURCE=http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.6/graphframes-0.1.0-spark1.6.jar
+GRAPHFRAMES_SOURCE=http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.5/graphframes-0.1.0-spark1.5.jar
 
 MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
