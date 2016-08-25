@@ -151,7 +151,7 @@
       <dep.hive.version>1.1.0-${dep.cdh.version}</dep.hive.version>
       <dev.spark.hive.version>1.6.0-${dep.cdh.version}</dev.spark.hive.version>
       <dep.daal.version>2016.0.109</dep.daal.version>
-      <dep.graphframes.version>0.1.0-spark1.5</dep.graphframes.version>
+      <dep.graphframes.version>0.1.0-spark1.6</dep.graphframes.version>
       <!--START GAO MAVEN -->
 
       <scala.long.version>2.10.5</scala.long.version>
