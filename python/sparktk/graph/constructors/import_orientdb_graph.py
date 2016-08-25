@@ -7,12 +7,9 @@ def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContex
 
     Parameters
     ----------
-    :param dn_url: OrientDB URI
-
+    :param db_url: OrientDB URI
     :param user_name: the database username
-
     :param password: the database password
-
     :param root_password: OrientDB server password
     """
     TkContext.validate(tc)

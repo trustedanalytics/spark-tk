@@ -113,6 +113,6 @@ class SchemaReader(graph: OrientGraphNoTx) {
 
 }
 
-object graphParameters{
+object graphParameters {
   val orientVertexId = GraphFrame.ID + "_"
 }
