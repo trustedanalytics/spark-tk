@@ -473,6 +473,7 @@ object DataTypes {
     override def isInteger = false
 
     override def isMatrix = true
+
   }
 
   /**

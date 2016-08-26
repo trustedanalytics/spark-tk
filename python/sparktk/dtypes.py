@@ -32,7 +32,53 @@ import pytz
 # Here's a long thread discussing numpy's datetime64 timezone problem:
 #   http://mail.scipy.org/pipermail/numpy-discussion/2013-April/066038.html
 # If need be, UDFs can create numpy objects from x using: numpy.datatime64(x.isoformat())
+class _Matrix(object):
+    base_type = np.ndarray
+    # re_pattern = re.compile(r"^matrix$")
+    re_pattern = "matrix"
 
+    def __init__(self):
+        self.constuctor = self._get_constructor()
+
+    def _get_constructor(self):
+
+        def constructor(value):
+            """
+            Creates a numpy array from a value, which can be one of many types
+            """
+            if value is None:
+                return None
+            try:
+                # first try numpy's constructor
+                array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+            except:
+                # also support json or comma-sep string
+                if dtypes.value_is_string(value):
+                    try:
+                        value = json.loads(value)
+                    except:
+                        value = [np.float64(item.strip()) for item in value.split(',') if item]
+                    array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+                else:
+                    raise
+            return array
+        return constructor
+
+    @property
+    def is_complex_type(self):
+        return True
+
+    @staticmethod
+    def get_from_string(data_type_str):
+        #return _Matrix(_Matrix.re_pattern.match(data_type_str).group(1))
+        if _Matrix.re_pattern != data_type_str:
+            raise "Invalid data type"
+        return _Matrix()
+
+    def __repr__(self):
+        return "matrix"
+
+matrix = _Matrix
 
 class _Vector(object):
 
@@ -79,10 +125,6 @@ class _Vector(object):
     @staticmethod
     def get_from_string(data_type_str):
         return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
-
-    @property
-    def is_complex_type(self):
-        return True
 
     def __repr__(self):
         return "vector(%d)" % self.length
@@ -155,6 +197,7 @@ _primitive_alias_type_to_type_table = {
     long: int64,
     str: unicode,
     list: vector,
+    np.ndarray: matrix,
 }
 
 _primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _primitive_alias_type_to_type_table.iteritems()])
@@ -309,7 +352,13 @@ class _DataTypes(object):
                 return _primitive_alias_str_to_type_table[data_type_str]
             except KeyError:
                 try:
-                    return vector.get_from_string(data_type_str)
+                    #return matrix.get_from_string(data_type_str)
+                    if data_type_str == 'matrix':
+                        print "Hitting my matrix"
+                        return matrix.get_from_string(data_type_str)
+                    else:
+                        print "Hitting my vector"
+                        return vector.get_from_string(data_type_str)
                 except:
                     raise ValueError("Unsupported type string '%s' " % data_type_str)
 
@@ -370,6 +419,7 @@ class _DataTypes(object):
 
     @staticmethod
     def get_constructor(to_type):
+        print "To type", to_type
         """gets the constructor for the to_type"""
         try:
             return to_type.constructor
@@ -378,8 +428,14 @@ class _DataTypes(object):
                 return get_float_constructor(to_type)
             if to_type == datetime:
                 return datetime_constructor
+            if to_type == matrix:
+                print "if to_type matrix"
+                #return matrix._get_constructor
 
             def constructor(value):
+                print "Inside constructor "
+                #print to_type
+                #print value
                 if value is None:
                     return None
                 try:

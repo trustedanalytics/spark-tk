@@ -35,8 +35,6 @@ object Import {
     //val mypath="hdfs://10.7.151.97:8020/user/kvadla/dicom_images_decompressed"
     val dicomFilesRdd = sc.binaryFiles(path)
 
-    var id = 0
-
     val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {
 
       case (filePath, fileData) =>
@@ -58,7 +56,7 @@ object Import {
         val w = raster.getWidth
         val h = raster.getHeight
 
-        val data = Array.ofDim[Double](w, h)
+        val data = Array.ofDim[Double](h, w)
 
         for {
           i <- 0 until h
@@ -74,8 +72,6 @@ object Import {
         val dis: DicomInputStream = new DicomInputStream(tmpFile)
         val dcm2xml: Dcm2Xml = new Dcm2Xml()
 
-        id = id + 1
-
         //redirecting output stream
         val myOutputStream = new ByteArrayOutputStream()
         val myStream: PrintStream = new PrintStream(myOutputStream)
@@ -88,14 +84,14 @@ object Import {
 
         // myStream.toString
         val xml: String = myOutputStream.toString()
-        (id, xml, dm1)
-    }
+        (xml, dm1)
+    }.zipWithUniqueId()
 
     //create metadata pairrdd
-    val metaDataPairRDD: RDD[(Int, String)] = dcmMetadataPixelArrayRDD.map(row => (row._1, row._2))
+    val metaDataPairRDD: RDD[(Long, String)] = dcmMetadataPixelArrayRDD.map(row => (row._2, row._1._1))
 
     //create image matrix pair rdd
-    val imageMatrixPairRDD: RDD[(Int, DenseMatrix)] = dcmMetadataPixelArrayRDD.map(row => (row._1, row._3))
+    val imageMatrixPairRDD: RDD[(Long, DenseMatrix)] = dcmMetadataPixelArrayRDD.map(row => (row._2, row._1._2))
 
     val sqlCtx = new SQLContext(sc)
     import sqlCtx.implicits._
