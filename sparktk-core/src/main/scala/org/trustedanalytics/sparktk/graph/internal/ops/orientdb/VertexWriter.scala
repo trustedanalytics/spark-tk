@@ -25,7 +25,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
     val propKeysIterator = orientGraph.getRawGraph.getMetadata.getSchema.getClass(vertexClassName).properties().iterator()
     while (propKeysIterator.hasNext) {
       val propKey = propKeysIterator.next().getName
-      if (propKey == exportgraphParam.vertexId) {
+      if (propKey == exportGraphParam.vertexId) {
         propMap.put(propKey, row.getAs(GraphFrame.ID))
       }
       else {
@@ -42,7 +42,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
    * @return OrientDB vertex if exists or null if not found
    */
   def find(vertexId: Any, className: String): Option[Vertex] = {
-    val vertices = orientGraph.getVertices(exportgraphParam.vertexId, vertexId)
+    val vertices = orientGraph.getVertices(exportGraphParam.vertexId, vertexId)
     val vertexIterator = vertices.iterator()
     if (vertexIterator.hasNext) {
       val existingVertex = vertexIterator.next()
@@ -61,7 +61,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
   def findOrCreate(vertexId: Any, className: String): Vertex = {
     val vertex = find(vertexId, className)
     if (vertex.isEmpty) {
-      orientGraph.addVertex(s"class:$className", exportgraphParam.vertexId, vertexId.toString)
+      orientGraph.addVertex(s"class:$className", exportGraphParam.vertexId, vertexId.toString)
     }
     else {
       vertex.get
