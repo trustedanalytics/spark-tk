@@ -1,4 +1,5 @@
-package org.trustedanalytics.sparktk.dicom.internal.constructors
+package org.trustedanalytics.sparktk.dicom.internal
+
 import org.slf4j.LoggerFactory
 import org.trustedanalytics.sparktk.dicom.DicomFrame
 
