@@ -46,7 +46,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
       val badVertexSchema = StructType(Array(StructField("id_", StringType)))
       val schemaReader = new SchemaReader(orientMemoryGraph)
       intercept[IllegalArgumentException] {
-        //call method under validation
+        //call method under test
         schemaReader.validateVertexSchema(badVertexSchema)
       }
     }
@@ -66,7 +66,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
       val badEdgeSchema = StructType(Array(StructField("src_vertex", StringType), StructField("dst_vertex", StringType)))
       val schemaReader = new SchemaReader(orientMemoryGraph)
       intercept[IllegalArgumentException] {
-        //call method under validation
+        //call method under test
         schemaReader.validateEdgeSchema(badEdgeSchema)
       }
     }
