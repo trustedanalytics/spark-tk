@@ -11,7 +11,7 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
 object ImportFromOrientdb {
 
   /**
-   *
+   * imports OrientDB graph to spark-tk graph
    * @param sc spark context
    * @param dbUrl database URI
    * @param userName username

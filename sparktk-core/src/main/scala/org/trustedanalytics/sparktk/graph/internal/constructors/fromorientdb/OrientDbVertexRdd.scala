@@ -23,7 +23,7 @@ class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf) extends 
     val partition = split.asInstanceOf[OrientDbPartition]
     val vertexBuffer = new ArrayBuffer[Row]()
     val schemaReader = new SchemaReader(graph)
-    val vertexSchema = schemaReader.importVertexSchema(partition.className)
+    val vertexSchema = schemaReader.importVertexSchema
     val vertices: OrientDynaElementIterable = graph.command(
       new OCommandSQL(s"select from cluster:${partition.clusterId} where @class='${partition.className}'")
     ).execute()
@@ -46,13 +46,13 @@ class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf) extends 
     val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations)
     val classBaseNames = graph.getVertexBaseType.getName
     val classIterator = graph.getVertexType(classBaseNames).getAllSubclasses.iterator()
-    var paritionIdx = 0
+    var partitionIdx = 0
     while (classIterator.hasNext) {
       val classLabel = classIterator.next().getName
       val clusterIds = graph.getVertexType(classLabel).getClusterIds
       clusterIds.foreach(id => {
-        partitionBuffer += new OrientDbPartition(id, classLabel, paritionIdx)
-        paritionIdx += 1
+        partitionBuffer += new OrientDbPartition(id, classLabel, partitionIdx)
+        partitionIdx += 1
       })
     }
     partitionBuffer.toArray

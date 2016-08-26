@@ -44,13 +44,13 @@ class OrientDbEdgeRdd(sc: SparkContext, dbConfigurations: OrientConf) extends RD
     val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations)
     val classBaseNames = graph.getEdgeBaseType.getName
     val classIterator = graph.getEdgeType(classBaseNames).getAllSubclasses.iterator()
-    var paritionIdx = 0
+    var partitionIdx = 0
     while (classIterator.hasNext) {
       val classLabel = classIterator.next().getName
       val clusterIds = graph.getEdgeType(classLabel).getClusterIds
       clusterIds.foreach(id => {
-        partitionBuffer += new OrientDbPartition(id, classLabel, paritionIdx)
-        paritionIdx += 1
+        partitionBuffer += new OrientDbPartition(id, classLabel, partitionIdx)
+        partitionIdx += 1
       })
     }
     partitionBuffer.toArray

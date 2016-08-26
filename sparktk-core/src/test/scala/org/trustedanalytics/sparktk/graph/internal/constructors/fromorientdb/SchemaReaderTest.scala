@@ -34,13 +34,23 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     "import vertex schema" in {
       val schemaReader = new SchemaReader(orientMemoryGraph)
       // call method under test
-      val vertexSchema = schemaReader.importVertexSchema(verticesClassName)
+      val vertexSchema = schemaReader.importVertexSchema
       // validate results
       assert(vertexSchema.fieldNames.toList == List("id", "name", "age"))
       assert(vertexSchema.fields.apply(0).dataType == StringType)
       assert(vertexSchema.fields.apply(1).dataType == StringType)
       assert(vertexSchema.fields.apply(2).dataType == IntegerType)
     }
+
+    "validate vertex schema should throw exception on schemas missing required column names" in {
+      val badVertexSchema = StructType(Array(StructField("id_", StringType)))
+      val schemaReader = new SchemaReader(orientMemoryGraph)
+      intercept[IllegalArgumentException] {
+        //call method under validation
+        schemaReader.validateVertexSchema(badVertexSchema)
+      }
+    }
+
     "import edge schema" in {
       val schemaReader = new SchemaReader(orientMemoryGraph)
       //call method under test
@@ -50,6 +60,15 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
       assert(edgeSchema.fields.apply(0).dataType == StringType)
       assert(edgeSchema.fields.apply(1).dataType == StringType)
       assert(edgeSchema.fields.apply(2).dataType == StringType)
+    }
+
+    "validate edge schema should throw exception on schemas missing required column names" in {
+      val badEdgeSchema = StructType(Array(StructField("src_vertex", StringType), StructField("dst_vertex", StringType)))
+      val schemaReader = new SchemaReader(orientMemoryGraph)
+      intercept[IllegalArgumentException] {
+        //call method under validation
+        schemaReader.validateEdgeSchema(badEdgeSchema)
+      }
     }
   }
 

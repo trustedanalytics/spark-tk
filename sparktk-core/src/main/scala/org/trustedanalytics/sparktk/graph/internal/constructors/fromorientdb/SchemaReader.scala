@@ -9,21 +9,22 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.DataTypesConvert
 import scala.collection.mutable.ListBuffer
 
 /**
- * converts the OrientDB graph schema to Spark graph frame schema
- *
+ * converts OrientDB graph schema to Spark graph frame schema
  * @param graph OrientDB graph database
  */
 class SchemaReader(graph: OrientGraphNoTx) {
 
   /**
-   * imports vertex schema from OrientDB to Spark graph frame vertex schema
+   * imports vertex schema from OrientDB to vertex data frame schema
    *
-   * @return Spark graph frame vertex schema
+   * @return  vertex schema for spark data frame
    */
-  def importVertexSchema(className: String): StructType = {
+  def importVertexSchema: StructType = {
 
     try {
-      createVertexSchema(className)
+      val vertexSchema = createVertexSchema
+      validateVertexSchema(vertexSchema)
+      vertexSchema
     }
     catch {
       case e: Exception =>
@@ -32,12 +33,17 @@ class SchemaReader(graph: OrientGraphNoTx) {
   }
 
   /**
-   * creates Spark graph frame vertex schema
+   * imports and validates OrientDB graph schema for vertices and converts it to vertex data frame schema
    *
-   * @param className OrientDB vertex class name
-   * @return Spark graph frame vertex schema
+   * @return vertex schema for spark data frame
    */
-  def createVertexSchema(className: String): StructType = {
+  def createVertexSchema: StructType = {
+
+    // validate that OrientDB graph has the proper edge type name to be imported as a graph frame
+    val classBaseNames = graph.getVertexBaseType.getName
+    val className = graph.getVertexType(classBaseNames).getAllSubclasses.iterator().next().getName
+    require(className == GraphSchema.vertexTypeColumnName, s"OrientDB graph must have single vertex type named ${GraphSchema.vertexTypeColumnName} to be imported as Graph Frame")
+    // import properties
     val vertexSchemaFields = new ListBuffer[StructField]
     val propKeysIterator = graph.getRawGraph.getMetadata.getSchema.getClass(className).properties().iterator()
     while (propKeysIterator.hasNext) {
@@ -57,13 +63,15 @@ class SchemaReader(graph: OrientGraphNoTx) {
   }
 
   /**
-   * converts OrientDB edges schema to Spark graph frame edges schema
+   * converts OrientDB edge schema to spark dataframe edge schema
    *
-   * @return Spark graph frame edges schema
+   * @return edge schema for spark data frame
    */
   def importEdgeSchema: StructType = {
     try {
-      createEdgeSchema
+      val edgeSchema = createEdgeSchema
+      validateEdgeSchema(edgeSchema)
+      edgeSchema
     }
     catch {
       case e: Exception =>
@@ -72,11 +80,15 @@ class SchemaReader(graph: OrientGraphNoTx) {
   }
 
   /**
-   * creates Spark graph frame edges schema
+   * imports and validates OrientDB graph schema for edges and converts it to edge data frame schema
    *
-   * @return Spark graph frame edges schema
+   * @return edge schema for spark data frame
    */
   def createEdgeSchema: StructType = {
+
+    // validate that OrientDB graph has the proper edge type name to be imported as a graph frame
+    val classBaseNames = graph.getEdgeBaseType.getName
+    require(graph.getEdgeType(classBaseNames).getAllSubclasses.iterator().next().getName == GraphSchema.edgeTypeColumnName, s"OrientDB graph must have single edge type named ${GraphSchema.edgeTypeColumnName} to be imported as Graph Frame")
 
     val schemaFields = new ListBuffer[StructField]
     val propKeysIterator = graph.getRawGraph.getMetadata.getSchema.getClass(GraphSchema.edgeTypeColumnName).properties().iterator()
@@ -96,10 +108,27 @@ class SchemaReader(graph: OrientGraphNoTx) {
     new StructType(schemaFields.toArray)
   }
 
-}
+  /**
+   * validates the imported vertex schema is proper to represent a vertices frame schema
+   *
+   * @param vertexSchema vertex schema
+   */
+  def validateVertexSchema(vertexSchema: StructType) = {
+    require(vertexSchema.fieldNames.contains(GraphSchema.vertexIdColumnName), s"Schema must contain field named ${GraphSchema.vertexIdColumnName}")
+  }
 
+  /**
+   * validates the imported edge schema is proper to represent a edges frame schema
+   *
+   * @param edgeSchema edge schema
+   */
+  def validateEdgeSchema(edgeSchema: StructType) = {
+    require(edgeSchema.fieldNames.contains(GraphSchema.edgeSourceColumnName), s"Schema must contain field named $GraphSchema.edgeSourceColumnName")
+    require(edgeSchema.fieldNames.contains(GraphSchema.edgeDestinationColumnName), s"Schema must contain field named $GraphSchema.edgeDestinationColumnName")
+  }
+}
 /**
- * hard coded parameters
+ * column names are used by OrientDB graph
  */
 object graphParameters {
 

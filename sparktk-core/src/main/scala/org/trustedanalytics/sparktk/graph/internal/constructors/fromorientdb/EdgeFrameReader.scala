@@ -13,16 +13,10 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
 class EdgeFrameReader(orientConf: OrientConf) {
 
   /**
-   * A method imports the edges class from OrientDB graph database
-   *
-   * @return RDD[Row]
-   */
-
-  /**
    * imports edges class from OrientDB and converts it to Spark RDD
    *
    * @param sc Spark context
-   * @return
+   * @return RDD[Row]
    */
   def importOrientDbEdgeClass(sc: SparkContext): RDD[Row] = {
     val edgeRdd = new OrientDbEdgeRdd(sc, orientConf)

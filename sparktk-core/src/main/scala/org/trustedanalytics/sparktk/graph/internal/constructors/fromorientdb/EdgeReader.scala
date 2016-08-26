@@ -9,15 +9,15 @@ import org.apache.spark.sql.types.StructType
  * converts OrientDB edge to Spark SQL Row
  *
  * @param graph      OrientDB graph
- * @param edgeSchema edge schema
+ * @param edgeSchema schema of edges data frame
  */
 class EdgeReader(graph: OrientGraphNoTx, edgeSchema: StructType) {
 
   /**
-   * A method imports OrientDB edge from OrientDB database Spark SQL Row
+   * imports OrientDB edge from OrientDB database Spark SQL Row
    *
    * @param orientEdge OrientDB edge
-   * @return Apache Spark SQL Row
+   * @return spark SQL row
    */
   def importEdge(orientEdge: Edge): Row = {
     try {
@@ -30,10 +30,10 @@ class EdgeReader(graph: OrientGraphNoTx, edgeSchema: StructType) {
   }
 
   /**
-   * A method creates Spark SQL Row
+   * creates Spark SQL Row
    *
    * @param orientEdge OrientDB edge
-   * @return Apache Spark SQL Row
+   * @return spark SQL row
    */
   def createEdge(orientEdge: Edge): Row = {
 
