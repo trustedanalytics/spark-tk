@@ -6,16 +6,16 @@ import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
 
 /**
- * converts vertex class from OrientDB database to Spark RDD
+ * converts vertex class from OrientDB database to RDD of vertices
  *
  * @param dbConfigurations OrientDB configurations
  */
 class VertexFrameReader(dbConfigurations: OrientConf) {
 
   /**
-   * A method imports vertex class from OrientDB to Spark RDD
+   * imports vertex class from OrientDB to RDD of vertices
    *
-   * @return RDD[Row]
+   * @return RDD of vertices
    */
   def importOrientDbVertexClass(sc: SparkContext): RDD[Row] = {
 

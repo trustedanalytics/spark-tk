@@ -9,7 +9,7 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphF
 /**
  * imports OrientDB graph and converts it to Apache Spark GraphFrame
  *
- * @param sqlContext Apche Spark SQL context
+ * @param sqlContext Spark SQL context
  */
 class ImportGraphFunctions(sqlContext: SQLContext) {
   def orientGraphFrame(orientConf: OrientConf): GraphFrame = {

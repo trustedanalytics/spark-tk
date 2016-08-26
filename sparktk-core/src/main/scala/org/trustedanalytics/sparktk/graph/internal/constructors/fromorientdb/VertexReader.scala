@@ -9,10 +9,10 @@ import org.graphframes.GraphFrame
 class VertexReader(graph: OrientGraphNoTx, vertexSchema: StructType) {
 
   /**
-   * converts OrientDB vertex to Apache Spark SQL Row
+   * converts OrientDB vertex to graph frame vertex
    *
    * @param orientVertex OrientDB vertex
-   * @return Apache Spark SQL Row
+   * @return graph frame vertex
    */
   def importVertex(orientVertex: Vertex): Row = {
     try {
@@ -25,10 +25,10 @@ class VertexReader(graph: OrientGraphNoTx, vertexSchema: StructType) {
   }
 
   /**
-   * A method creates Spark SQL row
+   * creates graph frame vertex
    *
    * @param orientVertex OrientDB vertex
-   * @return Apache Spark SQL Row
+   * @return graph frame vertex
    */
   def createVertex(orientVertex: Vertex): Row = {
     val row = vertexSchema.fields.map(field => {

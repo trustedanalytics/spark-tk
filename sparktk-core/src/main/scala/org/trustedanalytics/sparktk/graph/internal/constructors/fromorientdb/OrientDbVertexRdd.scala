@@ -37,9 +37,9 @@ class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf) extends 
   }
 
   /**
-   * divides OrientDB vertices to partitions, each partition has data from a single cluster and class
+   * divides OrientDB vertices to partitions based on OrientDB vertex class type and cluster ID
    *
-   * @return Array of partitions for OrientDB graph vertices to be imported in parallel
+   * @return spark partitions for OrientDB graph vertices to be imported in parallel
    */
   override protected def getPartitions: Array[Partition] = {
     val partitionBuffer = new ArrayBuffer[OrientDbPartition]()

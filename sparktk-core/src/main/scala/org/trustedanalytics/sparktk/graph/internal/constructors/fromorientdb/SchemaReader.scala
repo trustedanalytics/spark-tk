@@ -127,6 +127,7 @@ class SchemaReader(graph: OrientGraphNoTx) {
     require(edgeSchema.fieldNames.contains(GraphSchema.edgeDestinationColumnName), s"Schema must contain field named $GraphSchema.edgeDestinationColumnName")
   }
 }
+
 /**
  * column names are used by OrientDB graph
  */

@@ -35,7 +35,7 @@ class OrientDbEdgeRdd(sc: SparkContext, dbConfigurations: OrientConf) extends RD
   }
 
   /**
-   * divides OrientDB edges to partitions, each partition has data from a single cluster and class
+   * divides OrientDB edges to partitions based on OrientDB edge class type and cluster ID
    *
    * @return Array of partitions for OrientDB graph edges to be imported in parallel
    */

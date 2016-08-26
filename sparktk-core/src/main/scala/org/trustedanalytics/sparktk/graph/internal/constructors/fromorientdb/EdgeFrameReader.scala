@@ -16,7 +16,7 @@ class EdgeFrameReader(orientConf: OrientConf) {
    * imports edges class from OrientDB and converts it to Spark RDD
    *
    * @param sc Spark context
-   * @return RDD[Row]
+   * @return RDD of edges
    */
   def importOrientDbEdgeClass(sc: SparkContext): RDD[Row] = {
     val edgeRdd = new OrientDbEdgeRdd(sc, orientConf)
