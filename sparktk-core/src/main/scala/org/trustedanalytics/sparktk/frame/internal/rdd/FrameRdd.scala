@@ -680,6 +680,8 @@ object FrameRdd {
    */
   val VectorType = ArrayType(DoubleType, containsNull = false)
 
+  val MatrixType = new MatrixUDT
+
   /**
    * Converts the schema object to a StructType for use in creating a SchemaRDD
    *
@@ -703,6 +705,7 @@ object FrameRdd {
       case x if x.equals(DataTypes.datetime) => LongType
       case x if x.isVector => VectorType
       case x if x.equals(DataTypes.ignore) => StringType
+      case x if x.equalsDataType(DataTypes.matrix) => MatrixType
     }
   }
 

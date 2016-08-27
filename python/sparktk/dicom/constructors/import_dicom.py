@@ -1,5 +1,5 @@
 from sparktk.tkcontext import TkContext
-from sparktk.propobj import PropertiesObject
+
 
 def import_dicom(dicom_dir_path, tc=TkContext.implicit):
     """
@@ -26,25 +26,6 @@ def import_dicom(dicom_dir_path, tc=TkContext.implicit):
 
     TkContext.validate(tc)
 
-    scala_dicom_frame = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDicom(tc.jutils.get_scala_sc(), dicom_dir_path)
-    return DicomFrame(tc, scala_dicom_frame)
-
-
-
-class DicomFrame(PropertiesObject):
-    """
-    python DicomFrame
-    """
-    def __init__(self, tc,  scala_dicom_frame):
-        self._tc = tc
-        from sparktk.frame.frame import Frame
-        self._metadata_frame = Frame(self._tc, scala_dicom_frame.metadataFrame())
-        self._imagedata_frame = Frame(self._tc, scala_dicom_frame.imagedataFrame())
-
-    @property
-    def metadata_frame(self):
-        return self._metadata_frame
-
-    @property
-    def imagedata_frame(self):
-        return self._imagedata_frame
+    scala_dicom = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDicom(tc.jutils.get_scala_sc(), dicom_dir_path)
+    from sparktk.dicom.dicom import Dicom
+    return Dicom(tc, scala_dicom)

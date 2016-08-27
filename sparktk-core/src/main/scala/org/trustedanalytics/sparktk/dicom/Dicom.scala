@@ -2,15 +2,22 @@ package org.trustedanalytics.sparktk.dicom
 
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.sparktk.dicom.internal.BaseDicomFrame
+import org.trustedanalytics.sparktk.dicom.internal.{ BaseDicom, DicomState }
 import org.trustedanalytics.sparktk.dicom.internal.ops.SaveSummarization
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
-class DicomFrame(val metadataFrame: Frame, val imagedataFrame: Frame) extends BaseDicomFrame with Serializable with SaveSummarization
+class DicomFrame(val metadata: Frame, val imagedata: Frame) extends Serializable
 
-object DicomFrame extends TkSaveableObject {
+class Dicom(dicomFrame: DicomFrame) extends BaseDicom with Serializable with SaveSummarization {
+  def this(metadataFrame: Frame, imagedataFrame: Frame) = {
+    this(new DicomFrame(metadataFrame, imagedataFrame))
+  }
+  dicomState = DicomState(dicomFrame)
+}
+
+object Dicom extends TkSaveableObject {
 
   val tkFormatVersion = 1
 
@@ -36,7 +43,7 @@ object DicomFrame extends TkSaveableObject {
     val imagedataFrameRdd = FrameRdd.toFrameRdd(imageDF)
     val imagedataFrame = new Frame(imagedataFrameRdd, imagedataFrameRdd.frameSchema)
 
-    new DicomFrame(metadataFrame, imagedataFrame)
+    new Dicom(new DicomFrame(metadataFrame, imagedataFrame))
   }
 }
 

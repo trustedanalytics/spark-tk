@@ -38,7 +38,7 @@ class _Matrix(object):
     re_pattern = "matrix"
 
     def __init__(self):
-        self.constuctor = self._get_constructor()
+        self.constructor = self._get_constructor()
 
     def _get_constructor(self):
 
@@ -70,7 +70,6 @@ class _Matrix(object):
 
     @staticmethod
     def get_from_string(data_type_str):
-        #return _Matrix(_Matrix.re_pattern.match(data_type_str).group(1))
         if _Matrix.re_pattern != data_type_str:
             raise "Invalid data type"
         return _Matrix()
@@ -352,12 +351,9 @@ class _DataTypes(object):
                 return _primitive_alias_str_to_type_table[data_type_str]
             except KeyError:
                 try:
-                    #return matrix.get_from_string(data_type_str)
                     if data_type_str == 'matrix':
-                        print "Hitting my matrix"
                         return matrix.get_from_string(data_type_str)
                     else:
-                        print "Hitting my vector"
                         return vector.get_from_string(data_type_str)
                 except:
                     raise ValueError("Unsupported type string '%s' " % data_type_str)
@@ -419,7 +415,6 @@ class _DataTypes(object):
 
     @staticmethod
     def get_constructor(to_type):
-        print "To type", to_type
         """gets the constructor for the to_type"""
         try:
             return to_type.constructor
@@ -429,13 +424,9 @@ class _DataTypes(object):
             if to_type == datetime:
                 return datetime_constructor
             if to_type == matrix:
-                print "if to_type matrix"
-                #return matrix._get_constructor
+                return matrix.constructor
 
             def constructor(value):
-                print "Inside constructor "
-                #print to_type
-                #print value
                 if value is None:
                     return None
                 try:

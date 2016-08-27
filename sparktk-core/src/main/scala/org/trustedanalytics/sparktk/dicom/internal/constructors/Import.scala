@@ -15,7 +15,7 @@ import org.apache.spark.sql.SQLContext
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
 import org.dcm4che3.tool.dcm2xml.Dcm2Xml
-import org.trustedanalytics.sparktk.dicom.DicomFrame
+import org.trustedanalytics.sparktk.dicom.{ Dicom, DicomFrame }
 import org.trustedanalytics.sparktk.frame._
 import org.apache.spark.sql.types.{ StructType, StructField }
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Schema, Frame }
@@ -30,7 +30,7 @@ object Import {
    * @param path Full path to the DICOM files directory
    * @return DicomFrame case class with MetadataFrame and ImageDataFrame
    */
-  def importDicom(sc: SparkContext, path: String): DicomFrame = {
+  def importDicom(sc: SparkContext, path: String): Dicom = {
 
     //val mypath="hdfs://10.7.151.97:8020/user/kvadla/dicom_images_decompressed"
     val dicomFilesRdd = sc.binaryFiles(path)
@@ -104,7 +104,7 @@ object Import {
     val imagedataFrameRdd = FrameRdd.toFrameRdd(imageDF)
     val imagedataFrame = new Frame(imagedataFrameRdd, imagedataFrameRdd.frameSchema)
 
-    new DicomFrame(metadataFrame, imagedataFrame)
+    new Dicom(new DicomFrame(metadataFrame, imagedataFrame))
   }
 
 }

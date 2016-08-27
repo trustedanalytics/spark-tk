@@ -1,10 +1,10 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
-import org.trustedanalytics.sparktk.dicom.DicomFrame
-import org.trustedanalytics.sparktk.dicom.internal.{ DicomFrameState, DicomFrameSummarization, BaseDicomFrame }
+import org.trustedanalytics.sparktk.dicom.Dicom
+import org.trustedanalytics.sparktk.dicom.internal.{ DicomState, DicomSummarization, BaseDicom }
 import org.trustedanalytics.sparktk.saveload.TkSaveLoad
 
-trait SaveSummarization extends BaseDicomFrame {
+trait SaveSummarization extends BaseDicom {
   /**
    * Save the current frame.
    *
@@ -15,13 +15,13 @@ trait SaveSummarization extends BaseDicomFrame {
   }
 }
 
-case class Save(path: String) extends DicomFrameSummarization[Unit] {
+case class Save(path: String) extends DicomSummarization[Unit] {
 
-  override def work(state: DicomFrameState): Unit = {
-    state.dicomFrame.metadataFrame.dataframe.write.parquet(path + "/metadata")
-    state.dicomFrame.imagedataFrame.dataframe.write.parquet(path + "/imagedata")
-    val formatId = DicomFrame.formatId
-    val formatVersion = DicomFrame.tkFormatVersion
-    TkSaveLoad.saveTk(state.dicomFrame.metadataFrame.dataframe.sqlContext.sparkContext, path, formatId, formatVersion, "No Metadata")
+  override def work(state: DicomState): Unit = {
+    state.dicomFrame.metadata.dataframe.write.parquet(path + "/metadata")
+    state.dicomFrame.imagedata.dataframe.write.parquet(path + "/imagedata")
+    val formatId = Dicom.formatId
+    val formatVersion = Dicom.tkFormatVersion
+    TkSaveLoad.saveTk(state.dicomFrame.metadata.dataframe.sqlContext.sparkContext, path, formatId, formatVersion, "No Metadata")
   }
 }
