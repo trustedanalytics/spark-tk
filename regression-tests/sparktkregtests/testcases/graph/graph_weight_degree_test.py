@@ -9,51 +9,47 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
     def setUp(self):
         """Build frames and graphs to be tested."""
         super(WeightedDegreeTest, self).setUp()
-        schema_vertex = [("id", str),
-                         ("in", int),
-                         ("out", int),
-                         ("undirectedcount", int),
-                         ("isundirected", int),
-                         ("outlabel", int),
-                         ("insum", float),
-                         ("outsum", float),
-                         ("undirectedsum", float),
-                         ("labelsum", float),
-                         ("nolabelsum", float),
-                         ("defaultsum", float),
-                         ("integersum", int)]
+        graph_data = self.get_file("clique_10.csv")
+        schema = [('src', str),
+                  ('dst', str)]
 
-        schema_directed = [("src", str),
-                           ("dst", str),
-                           ("value", float),
-                           ("badvalue", str),
-                           ("intvalue", int),
-                           ("int64value", int)]
+        # set up the vertex frame, which is the union of the src and
+        # the dst columns of the edges
+        self.frame = self.context.frame.import_csv(graph_data, schema=schema)
+        self.vertices = self.frame.copy()
+        self.vertices2 = self.frame.copy()
+        self.vertices.rename_columns({"src": "id"})
+        self.vertices.drop_columns(["dst"])
+        self.vertices2.rename_columns({"dst": "id"})
+        self.vertices2.drop_columns(["src"])
+        self.vertices.append(self.vertices2)
+        self.vertices.drop_duplicates()
 
-        self.vertex_frame = self.context.frame.import_csv(
-            self.get_file("annotate_node_list.csv"), schema=schema_vertex)
-
-        directed_frame = self.context.frame.import_csv(
-            self.get_file("annotate_directed_list.csv"),
-            schema=schema_directed)
-
-        self.graph = self.context.graph.create(
-            self.vertex_frame, directed_frame)
+        self.graph = self.context.graph.create(self.vertices, self.frame)
 
     def test_degree_out(self):
         """Test degree count annotation."""
         graph_result = self.graph.degrees(degree_option="out")
-        self._verify_frame(graph_result, "out")
+        res = graph_result.download(graph_result.count())
+        for _, row in res.iterrows():
+            row_val = row['Vertex'].split('_')
+            self.assertEqual(int(row_val[2])-1, row['Degree'])
 
     def test_degree_in(self):
         """Test degree count annotation for in edges."""
         graph_result = self.graph.degrees(degree_option="in")
-        self._verify_frame(graph_result, "in")
+        res = graph_result.download(graph_result.count())
+        for _, row in res.iterrows():
+            row_val = row['Vertex'].split('_')
+            self.assertEqual(int(row_val[1])-int(row_val[2]), row['Degree'])
 
     def test_degree_undirected(self):
         """Test degree count annotation for undirected edges."""
         graph_result = self.graph.degrees(degree_option="undirected")
-        self._verify_frame(graph_result, "undirectedcount")
+        res = graph_result.download(graph_result.count())
+        for _, row in res.iterrows():
+            row_val = row['Vertex'].split('_')
+            self.assertEqual(int(row_val[1])-1, row['Degree'])
 
     def test_annotate_weight_degree_in(self):
         """Test degree count annotation weighted on in edges."""
@@ -105,9 +101,11 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
 
     def _verify_frame(self, frame, second):
         # isundirected is either a 0 or a 1, booleans are not supported
-        result = frame.download(frame.count())
         self.vertex_frame.rename_columns({'id': 'Vertex'})
-        result.join(self.vertex_frame)
+        val = frame.join_inner(self.vertex_frame, 'Vertex')
+        print frame.inspect()
+        print val.inspect()
+        result = val.download(val.count())
 
         for _, i in result.iterrows():
             self.assertEqual(i["Degree"], i[second])
