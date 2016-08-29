@@ -2,6 +2,9 @@
 import unittest
 from sparktkregtests.lib import sparktk_test
 
+# Related bugs:
+# @DPNG-9405 - multiple params with different ascending/descending values
+# @DPNG-9407 - tuples
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
 
@@ -13,8 +16,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                   ("owner", str),
                   ("weight", int),
                   ("hair_type", str)]
-        self.frame = self.context.frame.import_csv(dataset,
-                schema=schema, header=True)
+        self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True)
 
     def test_frame_sortedk_col_single_descending(self):
         """ Test single-column sorting descending"""
