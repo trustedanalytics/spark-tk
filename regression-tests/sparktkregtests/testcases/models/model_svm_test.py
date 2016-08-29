@@ -98,7 +98,7 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # Test against the original training data;
         #   this should match almost perfectly.
-        predicted_frame = svm_model.predict(training_frame)
+        svm_model.predict(training_frame)
 
         test_obj = svm_model.test(training_frame)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
@@ -151,7 +151,7 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # Test against the original training data;
         #   this should match almost perfectly.
-        predicted_frame = svm_model.predict(training_frame)
+        svm_model.predict(training_frame)
 
         test_obj = svm_model.test(training_frame)
         self.assertGreaterEqual(test_obj.accuracy, 0.75)
