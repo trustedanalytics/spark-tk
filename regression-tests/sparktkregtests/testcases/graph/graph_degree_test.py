@@ -7,7 +7,7 @@ from sparktkregtests.lib import sparktk_test
 class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
-        """Build frames and graphs to be tested."""
+        """Build frames and graphs to be tested"""
         super(WeightedDegreeTest, self).setUp()
         graph_data = self.get_file("clique_10.csv")
         schema = [('src', str),
@@ -28,7 +28,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
         self.graph = self.context.graph.create(self.vertices, self.frame)
 
     def test_degree_out(self):
-        """Test degree count annotation."""
+        """Test degree count for out edges"""
         graph_result = self.graph.degrees(degree_option="out")
         res = graph_result.download(graph_result.count())
         for _, row in res.iterrows():
@@ -36,7 +36,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(int(row_val[2])-1, row['Degree'])
 
     def test_degree_in(self):
-        """Test degree count annotation for in edges."""
+        """Test degree count for in edges"""
         graph_result = self.graph.degrees(degree_option="in")
         res = graph_result.download(graph_result.count())
         for _, row in res.iterrows():
@@ -44,7 +44,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(int(row_val[1])-int(row_val[2]), row['Degree'])
 
     def test_degree_undirected(self):
-        """Test degree count annotation for undirected edges."""
+        """Test degree count for undirected edges"""
         graph_result = self.graph.degrees(degree_option="undirected")
         res = graph_result.download(graph_result.count())
         for _, row in res.iterrows():
@@ -52,7 +52,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(int(row_val[1])-1, row['Degree'])
 
     def test_degree_no_name(self):
-        """Fails when given no property name."""
+        """Fails when given no property name"""
         with self.assertRaises(Exception):
             self.graph.degrees("")
 
