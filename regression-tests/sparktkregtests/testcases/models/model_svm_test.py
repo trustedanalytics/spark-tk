@@ -52,7 +52,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         origin_y = len(matrix)/2
         origin_x = len(matrix[origin_y])/2
 
-        # print "L2M TRACE", matrix, "origin at", origin_x, origin_y
+        # find the svm class for each item in the matrix
+        # and append it to the block_data
         for y in range(len(matrix)):
             for x in range(len(matrix[y])):
                 svm_class = None
@@ -66,8 +67,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                 if svm_class is not None:
                     block_data.append([x-origin_x, origin_y-y, svm_class])
         block_data.sort()
-        # print "L2M TRACE", block_data
 
+        # create frame from the data
         if len(block_data) == 0:
             frame = None
         else:
@@ -90,30 +91,34 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                         "+   -",
                         "- - -"]
 
+        # create a frame from the training data
         training_frame = self.lattice2frame(train_lattice)
 
+        # train the model on the data
         svm_model = self.context.models.classification.svm.train(training_frame,
                                                                  "model_class",
                                                                  ["x", "y"])
 
         # Test against the original training data;
-        #   this should match almost perfectly.
+        # this should match almost perfectly.
         svm_model.predict(training_frame)
 
+        # test the model, check that the accuracy is sufficient
         test_obj = svm_model.test(training_frame)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
+        # create a frame from the test data and predict
         outer_square = self.lattice2frame(test_lattice)
         svm_model.predict(outer_square, ["x", "y"])
 
+        # test the model and check accuracy
         test_obj = svm_model.test(outer_square)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
     def test_multi_dim(self):
         """ Verify that SvmModel operates as expected in 3 dimensions"""
         # Test set is a 3D model on the plane x + y - 2z > 0
-
-        train_data = [  # x + y - 2z >= 0
+        train_data = [
             (0, 0, 0, 1),
             (1, 1, 1, 1),
             (1, 1, 4, 0),
@@ -143,6 +148,7 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                   ('d3', float),
                   ('model_class', int),
                   ]
+        # create a frame from the training data and train the model
         training_frame = self.context.frame.create(train_data,
                                                    schema=schema)
         svm_model = self.context.models.classification.svm.train(training_frame,
@@ -150,16 +156,19 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                                  ["d1", "d2", "d3"])
 
         # Test against the original training data;
-        #   this should match almost perfectly.
+        # this should match almost perfectly.
         svm_model.predict(training_frame)
 
+        # test the model and verify accuracy
         test_obj = svm_model.test(training_frame)
         self.assertGreaterEqual(test_obj.accuracy, 0.75)
 
+        # create a frame from the test data and predict
         outer_square = self.context.frame.create(
             test_data, schema=schema)
         svm_model.predict(outer_square, ["d1", "d2", "d3"])
 
+        # test the model and verify accuracy
         test_obj = svm_model.test(outer_square)
         self.assertGreaterEqual(test_obj.accuracy, 0.75)
 
@@ -185,13 +194,12 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                         ]
 
         training_frame = self.lattice2frame(train_lattice)
-
         svm_model = self.context.models.classification.svm.train(training_frame,
                                                                  "model_class",
                                                                  ["x", "y"])
 
         # Test against the original training data;
-        #   this should match almost perfectly.
+        # this should match almost perfectly.
         svm_model.predict(training_frame)
 
         test_obj = svm_model.test(training_frame)
@@ -246,7 +254,7 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                                  ["x", "y"])
 
         # Test against the original training data;
-        #   this should match almost perfectly.
+        # this should match almost perfectly.
         svm_model.predict(training_frame)
 
         test_obj = svm_model.test(training_frame)
@@ -310,10 +318,11 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
             return full_line
 
         # Build training frame and train the model
-        train_frame = self.context.frame.import_csv(
-            self.shuttle_file_tr, schema=[("input_line", str)])
+        train_frame = self.context.frame.import_csv(self.shuttle_file_tr,
+                                                    schema=[("input_line", str)])
 
-        train_frame.add_columns(split_input_line, self.shuttle_schema)
+        train_frame.add_columns(split_input_line,
+                                self.shuttle_schema)
         train_frame.drop_columns("input_line")
 
         svm_model = self.context.models.classification.svm.train(train_frame,
@@ -321,10 +330,11 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                                  observe_list)
 
         # Build testing frame and test the model
-        test_frame = self.context.frame.import_csv(
-            self.shuttle_file_te, schema=[("input_line", str)])
+        test_frame = self.context.frame.import_csv(self.shuttle_file_te,
+                                                   schema=[("input_line", str)])
 
-        test_frame.add_columns(split_input_line, self.shuttle_schema)
+        test_frame.add_columns(split_input_line,
+                               self.shuttle_schema)
         test_frame.drop_columns("input_line")
 
         test_result = svm_model.test(test_frame)
@@ -337,10 +347,11 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         self.assertLess((fp+fn)/total_row_count, 0.01)
 
         # Build prediction frame and use the model to forecast
-        pred_frame = self.context.frame.import_csv(
-            self.shuttle_file_va, schema=[("input_line", str)])
+        pred_frame = self.context.frame.import_csv(self.shuttle_file_va,
+                                                   schema=[("input_line", str)])
 
-        pred_frame.add_columns(split_input_line, self.shuttle_schema)
+        pred_frame.add_columns(split_input_line,
+                               self.shuttle_schema)
         pred_frame.drop_columns("input_line")
 
         svm_model.predict(pred_frame, observe_list)
