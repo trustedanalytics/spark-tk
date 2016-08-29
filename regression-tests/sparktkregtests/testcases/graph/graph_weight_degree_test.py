@@ -35,7 +35,6 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
         res = degree_weighted.download(degree_weighted.count())
         for _, row in res.iterrows():
             row_val = row['Vertex'].split('_')
-            print row
             self.assertEqual(2*(int(row_val[2])-1), row['Degree'])
 
     def test_weight_degree_in(self):
@@ -57,12 +56,12 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
 
     def test_weight_type_error(self):
         """Test degree count weighted with type error."""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(TypeError, "unexpected keyword"):
             self.graph.weighted_degrees(edge_weight_property="badvalue")
 
     def test_weight_non_value(self):
         """Test degree count weighted with type error"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(TypeError, "unexpected keyword"):
             self.graph.weighted_degrees(edge_weight_property="nonvalue")
 
 

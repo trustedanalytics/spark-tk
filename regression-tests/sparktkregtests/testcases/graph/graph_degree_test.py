@@ -53,7 +53,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
 
     def test_degree_no_name(self):
         """Fails when given no property name"""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "Invalid degree option"):
             self.graph.degrees("")
 
 
