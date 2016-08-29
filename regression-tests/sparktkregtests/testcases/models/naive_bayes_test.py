@@ -10,7 +10,7 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         """Build the frames needed for the tests."""
         super(NaiveBayes, self).setUp()
 
-        dataset = self.get_file("naive_bayes_data.txt")
+        dataset = self.get_file("naive_bayes.csv")
         schema = [("label", int),
                   ("f1", int),
                   ("f2", int),
@@ -40,18 +40,18 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
                                                                      ['f1', 'f2', 'f3'])
 
         res = model.test(self.frame)
-        self.assertAlmostEqual(res.recall, 1.0)
-        self.assertAlmostEqual(res.precision, 1.0)
-        self.assertAlmostEqual(res.f_measure, 1.0)
-        self.assertAlmostEqual(res.accuracy, 1.0)
-        self.assertAlmostEqual(
-            res.confusion_matrix["Predicted_Pos"]["Actual_Pos"], 2)
-        self.assertAlmostEqual(
-            res.confusion_matrix["Predicted_Pos"]["Actual_Neg"], 0)
-        self.assertAlmostEqual(
-            res.confusion_matrix["Predicted_Neg"]["Actual_Neg"], 4)
-        self.assertAlmostEqual(
-            res.confusion_matrix["Predicted_Neg"]["Actual_Pos"], 0)
+        true_pos = float(res.confusion_matrix["Predicted_Pos"]["Actual_Pos"])
+        false_neg = float(res.confusion_matrix["Predicted_Neg"]["Actual_Pos"])
+        false_pos = float(res.confusion_matrix["Predicted_Pos"]["Actual_Neg"])
+        true_neg = float(res.confusion_matrix["Predicted_Neg"]["Actual_Neg"])
+        recall = true_pos / (false_neg + true_pos)
+        precision = true_pos / (false_pos + true_pos)
+        f_measure = float(2) / (float(1/precision) + float(1/recall))
+        accuracy = float(true_pos + true_neg) / self.frame.count()
+        self.assertAlmostEqual(res.recall, recall)
+        self.assertAlmostEqual(res.precision, precision)
+        self.assertAlmostEqual(res.f_measure, f_measure)
+        self.assertAlmostEqual(res.accuracy, accuracy)
 
     @unittest.skip("model publish does not yet exist in dev")
     def test_model_publish_bayes(self):
