@@ -12,9 +12,7 @@ class ecdfTest(sparktk_test.SparkTKTestCase):
 
         # generate a dataset to test ecdf on
         # it will just be a single column of ints
-        column = []
-        for index in range(0, 20):
-            column.append([random.randint(0, 5)])
+        column = [[random.randint(0, 5)] for index in xrange(0, 20)]
         schema = [("C0", int)]
 
         self.frame = self.context.frame.create(column,
