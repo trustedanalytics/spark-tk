@@ -40,7 +40,7 @@ class CumSumTest(unittest.TestCase):
         print frame.inspect()
 
         # Fetch the results, and validate they are what you would expect
-        result = frame.take(frame.row_count)
+        result = frame.take(frame.count())
         self.assertItemsEqual(
             result.data, [[0, 100, 100],
                           [3, 20, 235],
