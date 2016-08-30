@@ -40,17 +40,17 @@ class Svm2DSlope1(sparktk_test.SparkTKTestCase):
         self.assertEqual(cf['Predicted_Pos']['Actual_Neg'], 0)
         self.assertEqual(cf['Predicted_Neg']['Actual_Neg'], 105)
 
-    @unittest.skip("svm model predict returns none")
     def test_svm_model_predict(self):
         """Test the predict function"""
         model = self.context.models.classification.svm.train(self.trainer,
                                                              "Class", ["Dim_1", "Dim_2"])
-        validation = model.predict(self.frame)
+        model.predict(self.frame)
 
-        outcome = validation.take(validation.row_count)
+        outcome = self.frame.download()
         # Verify that values in 'predict' and 'Class' columns match.
-        for row in outcome:
-            self.assertEqual(row[0], row[3])
+        for index, row in outcome.iterrows():
+            self.assertEqual(row["Class"], row["predicted_label"])
+
 
 if __name__ == "__main__":
     unittest.main()
