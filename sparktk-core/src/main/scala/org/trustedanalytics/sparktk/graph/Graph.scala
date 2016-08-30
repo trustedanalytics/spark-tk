@@ -7,7 +7,7 @@ import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization
 import org.trustedanalytics.sparktk.graph.internal.{ GraphSchema, GraphState, BaseGraph }
-import org.trustedanalytics.sparktk.graph.internal.ops.{ SaveSummarization, VertexCountSummarization, WeightedDegreeSummarization, DegreeSummarization, ConnectedComponentsSummarization, TriangleCountSummarization }
+import org.trustedanalytics.sparktk.graph.internal.ops.{ SaveSummarization, VertexCountSummarization, WeightedDegreeSummarization, DegreeSummarization, ConnectedComponentsSummarization, TriangleCountSummarization, PageRankSummarization }
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
@@ -15,6 +15,7 @@ class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
     with SaveSummarization
     with WeightedDegreeSummarization
     with ConnectedComponentsSummarization
+    with PageRankSummarization
     with DegreeSummarization
     with TriangleCountSummarization
     with VertexCountSummarization {
