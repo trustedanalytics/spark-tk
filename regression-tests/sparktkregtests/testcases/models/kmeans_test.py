@@ -47,6 +47,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
             self.frame_train, ["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"],
             scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5)
         print "test kmeans standard: " + str(result)
+        #print "standard frame: " + str(self.frame_train.take(self.frame_train.count()))
         self._validate(result, self.frame_train)
 
     def test_column_weights(self):
