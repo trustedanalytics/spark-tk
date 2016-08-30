@@ -14,13 +14,13 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
 
     def test_correl(self):
         """Test correlation between 2 columns"""
-        correl_1_3 = self.base_frame.correlation('C0', 'C2')
-        C1_C3_columns_data = self.base_frame.take(self.base_frame.row_count,
+        correl_0_2 = self.base_frame.correlation('C0', 'C2')
+        C0_C2_columns_data = self.base_frame.take(self.base_frame.row_count,
                                                   columns=["C0", "C2"]).data
-        numpy_result = numpy.ma.corrcoef(list(C1_C3_columns_data),
+        numpy_result = numpy.ma.corrcoef(list(C0_C2_columns_data),
                                          rowvar=False)
 
-        self.assertAlmostEqual(correl_1_3, float(numpy_result[0][1]))
+        self.assertAlmostEqual(correl_0_2, float(numpy_result[0][1]))
 
     @unittest.skip("Correlation matrix produces value different than numpy correl")
     def test_correl_matrix(self):
