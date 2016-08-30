@@ -80,6 +80,13 @@ class JConvert(object):
     def from_scala_vector(self, vector):
         return list(self.scala.scalaVectorToPython(vector))
 
+    def from_scala_matrix(self, matrix):
+        result = self.scala.scalaMatrixToPython(matrix)
+        python_list = list(result)
+        for i in range(0, len(python_list)):
+            python_list[i] = list(python_list[i])
+        return python_list
+
     def to_scala_group_by_aggregation_args(self, python_map):
         scala_map = self.to_scala_map(python_map)
         return self.sc._jvm.org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupByAggregationArgs(scala_map)

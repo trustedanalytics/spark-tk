@@ -1,3 +1,3 @@
 
 def save(self, path):
-    self._dicom.save(path)
+    self._scala.save(path)

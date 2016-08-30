@@ -10,13 +10,13 @@ class Dicom(PropertiesObject):
 
     def __init__(self, tc, scala_dicom):
         self._tc = tc
-        self._dicom = scala_dicom
+        self._scala = scala_dicom
         from sparktk.frame.frame import Frame
         self._metadata = Frame(self._tc, scala_dicom.dicomFrame().metadata())
         self._imagedata = Frame(self._tc, scala_dicom.dicomFrame().imagedata())
 
     def __repr__(self):
-        return self._dicom.toString()
+        return self._scala.toString()
 
 
     @property

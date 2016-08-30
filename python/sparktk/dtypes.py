@@ -4,7 +4,7 @@ definitions for Data Types
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime']
+__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -34,7 +34,6 @@ import pytz
 # If need be, UDFs can create numpy objects from x using: numpy.datatime64(x.isoformat())
 class _Matrix(object):
     base_type = np.ndarray
-    # re_pattern = re.compile(r"^matrix$")
     re_pattern = "matrix"
 
     def __init__(self):
@@ -44,23 +43,15 @@ class _Matrix(object):
 
         def constructor(value):
             """
-            Creates a numpy array from a value, which can be one of many types
+            Creates a numpy ndarray from a value, which can be one of many types
             """
             if value is None:
                 return None
             try:
-                # first try numpy's constructor
-                array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+                # create ndarray numpy's constructor
+                array = np.array([np.array(xi, dtype=np.float64) for xi in value])
             except:
-                # also support json or comma-sep string
-                if dtypes.value_is_string(value):
-                    try:
-                        value = json.loads(value)
-                    except:
-                        value = [np.float64(item.strip()) for item in value.split(',') if item]
-                    array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
-                else:
-                    raise
+                raise
             return array
         return constructor
 
@@ -282,7 +273,7 @@ class _DataTypes(object):
 
     def __repr__(self):
         aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
-        return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"])) + aliases
+        return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
 
     @staticmethod
     def value_is_string(value):
@@ -415,6 +406,7 @@ class _DataTypes(object):
 
     @staticmethod
     def get_constructor(to_type):
+
         """gets the constructor for the to_type"""
         try:
             return to_type.constructor
@@ -423,8 +415,6 @@ class _DataTypes(object):
                 return get_float_constructor(to_type)
             if to_type == datetime:
                 return datetime_constructor
-            if to_type == matrix:
-                return matrix.constructor
 
             def constructor(value):
                 if value is None:
