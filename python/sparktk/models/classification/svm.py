@@ -4,6 +4,8 @@ from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
 
+__all__ = ["train", "load"]
+
 def train(frame,
           label_column,
           observation_columns,

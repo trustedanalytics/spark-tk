@@ -7,6 +7,8 @@ from sparktk import TkContext
 
 from sparktk.propobj import PropertiesObject
 
+__all__ = ["train", "load"]
+
 def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False):
     """
     Creates a ARX model by training on the given frame. Fit an autoregressive model with additional
