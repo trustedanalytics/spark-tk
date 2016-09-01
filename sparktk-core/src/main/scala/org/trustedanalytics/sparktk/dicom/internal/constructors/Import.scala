@@ -12,7 +12,7 @@ import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.trustedanalytics.sparktk.dicom.{ Dicom, DicomFrame }
-import org.trustedanalytics.sparktk.frame. Frame
+import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }

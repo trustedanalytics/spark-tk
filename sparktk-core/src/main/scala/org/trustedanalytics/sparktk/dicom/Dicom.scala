@@ -9,18 +9,18 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 /**
-  * DicomFrame class holds metadataFrame and imagedataFrame
-  *
-  * @param metadata contains id and dicom metadata as xml string
-  * @param imagedata contains id and dicom pixel data as DenseMatrix
-  */
+ * DicomFrame class holds metadataFrame and imagedataFrame
+ *
+ * @param metadata contains id and dicom metadata as xml string
+ * @param imagedata contains id and dicom pixel data as DenseMatrix
+ */
 class DicomFrame(val metadata: Frame, val imagedata: Frame) extends Serializable
 
 /**
-  * Dicom class holds DicomFrame
-  *
-  * @param dicomFrame dicomFrame
-  */
+ * Dicom class holds DicomFrame
+ *
+ * @param dicomFrame dicomFrame
+ */
 class Dicom(dicomFrame: DicomFrame) extends BaseDicom with Serializable with SaveSummarization {
   def this(metadataFrame: Frame, imagedataFrame: Frame) = {
     this(new DicomFrame(metadataFrame, imagedataFrame))
