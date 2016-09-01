@@ -87,7 +87,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         def bad_divide(row):
             return float(row.float) / 0
 
-        with self.assertRaisesRegexp(ValueError, "Unsupported type e"):
+        with self.assertRaisesRegexp(ValueError, "schema expected to contain tuples, encountered type <type 'str'>"):
             self.frame.add_columns(
                 bad_divide, schema=["result", float])
             self.assertEqual(schema_before, self.frame.schema)
@@ -123,7 +123,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
     def test_add_column_null_schema(self):
         """Test adding a column with a null schema errors"""
         with self.assertRaisesRegexp(
-                TypeError, "'NoneType' object has no attribute '__getitem__'"):
+                ValueError, "schema expected to contain tuples, encountered type <type 'NoneType'>"):
             self.frame.add_columns(lambda row: udf_int_val, None)
             self.frame.inspect()
 
