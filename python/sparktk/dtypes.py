@@ -32,6 +32,8 @@ import pytz
 # Here's a long thread discussing numpy's datetime64 timezone problem:
 #   http://mail.scipy.org/pipermail/numpy-discussion/2013-April/066038.html
 # If need be, UDFs can create numpy objects from x using: numpy.datatime64(x.isoformat())
+
+
 class _Matrix(object):
     base_type = np.ndarray
     re_pattern = "matrix"
@@ -49,7 +51,7 @@ class _Matrix(object):
                 return None
             try:
                 # create ndarray numpy's constructor
-                array = np.array([np.array(xi, dtype=np.float64) for xi in value])
+                array = np.array(value, dtype=np.float64)
             except:
                 raise
             return array

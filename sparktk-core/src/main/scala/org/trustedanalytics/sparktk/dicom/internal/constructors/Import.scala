@@ -7,19 +7,17 @@ import javax.imageio.stream.ImageInputStream
 import javax.imageio.{ ImageIO, ImageReader }
 
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
+import org.trustedanalytics.sparktk.dicom.{ Dicom, DicomFrame }
+import org.trustedanalytics.sparktk.frame. Frame
+import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
 import org.dcm4che3.tool.dcm2xml.Dcm2Xml
-import org.trustedanalytics.sparktk.dicom.{ Dicom, DicomFrame }
-import org.trustedanalytics.sparktk.frame._
-import org.apache.spark.sql.types.{ StructType, StructField }
-import org.trustedanalytics.sparktk.frame.{ DataTypes, Schema, Frame }
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 import scala.util.Random
 
@@ -28,11 +26,10 @@ object Import {
    * Creates a dicom frame by importing .dcm files from directory
    *
    * @param path Full path to the DICOM files directory
-   * @return DicomFrame case class with MetadataFrame and ImageDataFrame
+   * @return DicomFrame object with MetadataFrame and ImageDataFrame
    */
   def importDicom(sc: SparkContext, path: String): Dicom = {
 
-    //val mypath="hdfs://10.7.151.97:8020/user/kvadla/dicom_images_decompressed"
     val dicomFilesRdd = sc.binaryFiles(path)
 
     val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {

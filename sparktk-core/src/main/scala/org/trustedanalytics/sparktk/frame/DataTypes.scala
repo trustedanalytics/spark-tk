@@ -443,7 +443,7 @@ object DataTypes {
   }
 
   /**
-   * Dense Matrix
+   * DenseMatrix
    */
   case object matrix extends DataType {
     override type ScalaType = DenseMatrix
