@@ -29,6 +29,8 @@ class Frame(object):
             self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source)
         elif isinstance(source, DataFrame):
             self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
+        elif isinstance(source, PythonFrame):
+            self._frame = source
         else:
             if not isinstance(source, RDD):
                 if not isinstance(source, list) or (len(source) > 0 and any(not isinstance(row, (list, tuple)) for row in source)):
@@ -324,6 +326,7 @@ class Frame(object):
     from sparktk.frame.ops.join_left import join_left
     from sparktk.frame.ops.join_right import join_right
     from sparktk.frame.ops.join_outer import join_outer
+    from sparktk.frame.ops.map_columns import map_columns
     from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
     from sparktk.frame.ops.power_iteration_clustering import power_iteration_clustering
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column

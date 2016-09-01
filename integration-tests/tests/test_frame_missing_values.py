@@ -3,7 +3,7 @@ from setup import tc, rm, get_sandbox_path
 def test_load_csv_with_missing_values_infer_schema(tc):
     # Load frame with missing values, inferring the schema
     path = "../datasets/missing_values.csv"
-    frame = tc.frame.import_csv(path, header=False, inferschema=True)
+    frame = tc.frame.import_csv(path, header=False, infer_schema=True)
 
     # Check row count
     assert(5 == frame.count())
@@ -53,7 +53,7 @@ def test_missing_values_add_column(tc):
             return x
 
     # Use add columns to create a new column that replaces missing values with 0.
-    frame.add_columns(lambda row: noneToZero(row['a']), ('a_corrected', int), columns_accessed='a')
+    frame.add_columns(lambda row: noneToZero(row['a']), ('a_corrected', int))
     expected = [[1],[4],[0],[0],[10],[0]]
     assert(expected, frame.take(frame.count(), columns='a_corrected'))
 
