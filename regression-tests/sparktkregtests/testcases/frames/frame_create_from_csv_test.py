@@ -95,7 +95,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(len(passwd_frame.take(1).data[0]),
                          len(passwd_schema))
         passwd_frame_rows = passwd_frame.take(passwd_frame.count()).data
-        
+
         for frame_row, csv_row in zip(passwd_frame_rows, csv_list):
             for frame_item, csv_item in zip(frame_row, csv_row):
                 if type(frame_item) is float:
@@ -132,7 +132,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         # finally we extract the data from the frame and compare it to
         # what we got from reading the csv file directly
         delim_frame_data = tab_delim_frame.take(tab_delim_frame.count()).data
-        
+
         for (frame_row, csv_line) in zip(delim_frame_data, numpy.array(csv_list)):
             for (frame_item, csv_item) in zip(frame_row, csv_line):
                 if type(frame_item) is float:
