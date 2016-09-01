@@ -3,7 +3,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 
-__all__ = ["train", "load"]
+__all__ = ["train", "load", "KMeansModel"]
 
 def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=None, init_mode="k-means||"):
     """

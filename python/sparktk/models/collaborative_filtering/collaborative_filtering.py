@@ -2,7 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from collections import namedtuple
 
-__all__ = ["train", "load"]
+__all__ = ["train"]
 
 RecommendReturnTuple = namedtuple("RecommendReturnTuple", ['user', 'product', 'rating'])
 

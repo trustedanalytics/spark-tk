@@ -6,7 +6,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 
-__all__ = ["train", "load"]
+__all__ = ["train", "load", "ArimaModel"]
 
 def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=None, tc=TkContext.implicit):
     """
@@ -48,7 +48,7 @@ def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=Non
             raise TypeError("'init_params' parameter must be a list")
     TkContext.validate(tc)
 
-    _scala_obj = _get_scala_obj(tc)
+    _scala_obj = get_scala_obj(tc)
     scala_ts = tc.jutils.convert.to_scala_list_double(ts)
     scala_init_params = tc.jutils.convert.to_scala_option_list_double(init_params)
     scala_model = _scala_obj.train(scala_ts, p, d, q, include_intercept, method, scala_init_params)
@@ -60,7 +60,7 @@ def load(path, tc=TkContext.implicit):
     TkContext.validate(tc)
     return tc.load(path, ArimaModel)
 
-def _get_scala_obj(tc):
+def get_scala_obj(tc):
     """Gets reference to the ARIMA model scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
 
@@ -180,7 +180,7 @@ class ArimaModel(PropertiesObject):
     """
     def __init__(self, tc, scala_model):
         self._tc = tc
-        tc.jutils.validate_is_jvm_instance_of(scala_model, _get_scala_obj(tc))
+        tc.jutils.validate_is_jvm_instance_of(scala_model, get_scala_obj(tc))
         self._scala = scala_model
 
     @staticmethod

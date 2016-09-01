@@ -3,7 +3,7 @@ from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 import os
 
-__all__ = ["train", "load"]
+__all__ = ["train", "load", "GaussianMixtureModel"]
 
 def train(frame,
           observation_columns,
@@ -58,7 +58,7 @@ class GaussianMixtureModel(PropertiesObject):
 
     Example
     -------
-       
+
         >>> import numpy as np
         >>> frame = tc.frame.create([[2, "ab"],
         ...                          [1,"cd"],
@@ -107,6 +107,7 @@ class GaussianMixtureModel(PropertiesObject):
         True
 
         >>> model.predict(frame)
+
         <skip>
         >>> x = frame.take(9)
         [#]  data  name  predicted_cluster
@@ -121,6 +122,7 @@ class GaussianMixtureModel(PropertiesObject):
         [7]   6.0  op                    0
         [8]   2.0  kl                    1
         </skip>
+
         <hide>
         >>> x = frame.take(9)
         >>> val = set(map(lambda y : y[2], x[0]))

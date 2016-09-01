@@ -6,7 +6,7 @@ from sparktk.propobj import PropertiesObject
 log_load(__name__)
 del log_load
 
-__all__ = ["train", "load"]
+__all__ = ["train", "LogisticRegressionModel"]
 
 def train(frame,
           observation_columns,

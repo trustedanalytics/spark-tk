@@ -17,6 +17,7 @@ from sparktk.frame.constructors.import_jdbc import import_jdbc
 from sparktk.frame.constructors.import_pandas import import_pandas
 
 __all__ = ["create",
+           "Frame",
            "import_csv",
            "import_hbase",
            "import_hive",
