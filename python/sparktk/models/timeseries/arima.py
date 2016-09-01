@@ -250,7 +250,7 @@ class ArimaModel(PropertiesObject):
         """
         return list(self._tc.jutils.convert.from_scala_seq(self._scala.coefficients()))
 
-    def predict(self, future_periods = 0):
+    def predict(self, future_periods = 0, ts = None):
         """
         Forecasts future periods using ARIMA.
 
@@ -261,11 +261,19 @@ class ArimaModel(PropertiesObject):
 
         :param future_periods: (int) Periods in the future to forecast (beyond length of time series that the
                                model was trained with).
+        :param ts: (Optional(List[float])) Optional list of time series values to use as golden values.  If no time
+                   series values are provided, the values used during training will be used during forecasting.
 
         """
         if not isinstance(future_periods, int):
             raise TypeError("'future_periods' parameter must be an integer.")
-        return list(self._tc.jutils.convert.from_scala_seq(self._scala.predict(future_periods)))
+        if ts is not None:
+            if not isinstance(ts, list):
+                raise TypeError("'ts' parameter must be a list of float values." )
+
+        ts_predict_values = self._tc.jutils.convert.to_scala_option_list_double(ts)
+
+        return list(self._tc.jutils.convert.from_scala_seq(self._scala.predict(future_periods, ts_predict_values)))
 
     def save(self, path):
         """
