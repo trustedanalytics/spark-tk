@@ -32,13 +32,13 @@ def page_rank(self, convergence_tolerance=None, reset_probability=None, max_iter
 
         >>> result = graph.page_rank(max_iterations=20)
         >>> result.inspect()
-        [#]  PageRank  Vertex
-        =======================
-        [0]         1      0.15
-        [1]         2    0.1925
-        [2]         3  0.356125
-        [3]         4    0.1925
-        [4]         5  0.313625
+        [#]  Vertex  PageRank
+        =====================
+        [0]       1      0.15
+        [1]       2    0.1925
+        [2]       3  0.356125
+        [3]       4    0.1925
+        [4]       5  0.313625
 
     """
     from sparktk.frame.frame import Frame

@@ -36,14 +36,28 @@ class PageRank(sparktk_test.SparkTKTestCase):
 
     def test_string_in_max_iterations(self):
         """Negative test to verify integer type for max_iterations."""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "cannot be cast"):
             self.graph.page_rank(max_iterations="20")
 
     def test_string_convergence_tol(self):
         """Negative test to verify convergence_tolerance type is checked."""
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "cannot be cast"):
+            self.graph.page_rank(convergence_tolerance="0.001")
+
+    def test_max_and_tol(self):
+        """Negative test to verify convergence_tolerance type is checked."""
+        with self.assertRaisesRegexp(
+            Exception,
+            "Only set one of max iterations or convergence tolerance"):
             self.graph.page_rank(
-                max_iterations=0, convergence_tolerance="0.001")
+                max_iterations=20, convergence_tolerance=0.001)
+
+    def test_no_max_or_tol(self):
+        """Negative test to verify convergence_tolerance type is checked."""
+        with self.assertRaisesRegexp(
+            Exception,
+            "Must set one of max iterations or convergence tolerance"):
+            self.graph.page_rank()
 
     def test_page_rank_networkx_comparison_parquet(self):
         """ Tests the graphx pagerank exposed in ATK on parquet graph"""
@@ -58,6 +72,12 @@ class PageRank(sparktk_test.SparkTKTestCase):
         G = nx.Graph()
         G.add_edges_from(edge_list)
         nx_pagerank = nx.pagerank(G, max_iter=self.MAX_ITERATIONS, tol=self.CONVERGENCE_TOLERANCE)
+
+        vals = {ix['Vertex']: ix['PageRank']
+                for _, ix in pandas_vertices.iterrows()}
+
+        self.assertItemsEqual(vals, nx_pagerank)
+            
 
 if __name__ == '__main__':
     unittest.main()
