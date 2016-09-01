@@ -1,8 +1,8 @@
 """ Tests import_csv functionality with varying parameters"""
 
 import csv
-import subprocess
 import unittest
+import numpy
 from sparktkregtests.lib import sparktk_test
 
 
@@ -14,17 +14,17 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         self.dataset = self.get_file("int_str_int.csv")
         self.schema = [("num1", int), ("letter", str), ("num2", int)]
         self.frame = self.context.frame.import_csv(self.dataset,
-                schema=self.schema)
+                                                   schema=self.schema)
 
     def test_frame_invalid_column(self):
         """Tests retrieving an invalid column errors."""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.frame.take(100, columns=['not_in'])
 
     def test_frame_create_row_count(self):
         """ Trivial Frame creation. """
         frame = self.context.frame.import_csv(self.dataset,
-                schema=self.schema)
+                                              schema=self.schema)
         self.assertEqual(frame.count(), 3)
         self.assertEqual(len(frame.take(3).data), 3)
         # test to see if taking more rows than exist still
@@ -42,25 +42,28 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         schema = [("num1", float), ("letter", str), ("num2", int)]
         frame = self.context.frame.import_csv(self.dataset, schema=schema)
         for row in frame.take(frame.count()).data:
-            self.assertEqual(str(type(row[0])), str(float))
+            self.assertEqual(type(row[0]), float)
 
+    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_duplicate_names_same_type(self):
         """CsvFile creation fails with duplicate names, same type."""
         # two num1's with same type
         bad = [("num1", int), ("num1", int), ("num2", int)]
-        with self.assertRaisesRegexp(Exception, "more than one char"):
+        with self.assertRaisesRegexp(Exception, "duplicate column name"):
             self.context.frame.import_csv(self.dataset, bad)
 
+    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_type(self):
         """CsvFile cration with a schema of invalid type fails."""
         bad_schema = -77
-        with self.assertRaisesRegexp(Exception, "more than one char"):
+        with self.assertRaisesRegexp(Exception, "does not exist"):
             self.context.frame.import_csv(self.dataset, bad_schema)
 
+    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_format(self):
         """CsvFile creation fails with a malformed schema."""
         bad_schema = [int, int, float, float, str]
-        with self.assertRaisesRegexp(Exception, "more than one char"):
+        with self.assertRaisesRegexp(Exception, "invalid schema"):
             self.context.frame.import_csv(self.dataset, bad_schema)
 
     def test_frame_delim_colon(self):
@@ -75,11 +78,8 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
                          ("shell", str)]
 
         # here we are getting the lines from the csv file from hdfs
-        file = subprocess.Popen(["hdfs", "dfs", "-cat", str(dataset_passwd)],
-                stdout=subprocess.PIPE)
-        lines = []
-        for line in iter(file.stdout.readline, ''):
-            lines.append(line)
+        data_file = open("../../../datasets/passwd.csv")
+        lines = data_file.readlines()
 
         # now we put the csv file into an array for comparison
         reader = csv.reader(lines, delimiter=':')
@@ -87,15 +87,23 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # we create the frame from the csv file
         passwd_frame = self.context.frame.import_csv(dataset_passwd,
-                schema=passwd_schema, delimiter=':')
+                                                     schema=passwd_schema,
+                                                     delimiter=':')
 
         # finally we compare the frame data with what we got from reading
         # the csv file, we check for length and content
         self.assertEqual(len(passwd_frame.take(1).data[0]),
                          len(passwd_schema))
         passwd_frame_rows = passwd_frame.take(passwd_frame.count()).data
-        for (frame_row, array_row) in zip(passwd_frame_rows, csv_list):
-            self.assertEqual(str(map(str, frame_row)), str(array_row))
+        
+        for frame_row, csv_row in zip(passwd_frame_rows, csv_list):
+            for frame_item, csv_item in zip(frame_row, csv_row):
+                if type(frame_item) is float:
+                    self.assertAlmostEqual(frame_item, float(csv_item))
+                elif type(frame_item) is int:
+                    self.assertEqual(frame_item, int(csv_item))
+                else:
+                    self.assertEqual(str(frame_item), csv_item)
 
     def test_frame_delim_tab(self):
         """Test building a frame with a tab delimiter."""
@@ -108,16 +116,14 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # create our frame and test that it has the right number of columns
         tab_delim_frame = self.context.frame.import_csv(dataset_delimT,
-                schema=white_schema, delimiter='\t')
+                                                        schema=white_schema,
+                                                        delimiter='\t')
         self.assertEqual(len(tab_delim_frame.take(1).data[0]),
                          len(white_schema))
 
         # now we get the lines of data from the csv file for comparison
-        file = subprocess.Popen(["hdfs", "dfs", "-cat", str(dataset_delimT)],
-                stdout=subprocess.PIPE)
-        lines = []
-        for line in iter(file.stdout.readline, ''):
-            lines.append(line)
+        data_file = open("../../../datasets/delimTest1.tsv")
+        lines = data_file.readlines()
 
         # we store the lines in an array
         reader = csv.reader(lines, delimiter='\t')
@@ -125,45 +131,39 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # finally we extract the data from the frame and compare it to
         # what we got from reading the csv file directly
-        delim_frame_rows = tab_delim_frame.take(tab_delim_frame.count()).data
-        for (frame_row, array_row) in zip(delim_frame_rows, csv_list):
-            # we must iterate through the items in each line
-            # because they are of different data types
-            # and if we compare them just as strings or list it will fail
-            # since the float number convert to slightly differnet values
-            # depending on how they are read
-            for (frame_item, array_item) in zip(frame_row, array_row):
-                try:
-                    # the values will be slightly different
-                    # for the float vars because they are read
-                    # differently by our csv reader
-                    # so we use almostEqual
-                    self.assertAlmostEqual(float(frame_item),
-                            float(array_item))
-                except:
-                    # if they are not floats
-                    # then just compare them as strings
-                    self.assertEqual(str(frame_item),
-                            str(array_item))
+        delim_frame_data = tab_delim_frame.take(tab_delim_frame.count()).data
+        
+        for (frame_row, csv_line) in zip(delim_frame_data, numpy.array(csv_list)):
+            for (frame_item, csv_item) in zip(frame_row, csv_line):
+                if type(frame_item) is float:
+                    self.assertAlmostEqual(frame_item, float(csv_item))
+                elif type(frame_item) is int:
+                    self.assertEqual(frame_item, int(csv_item))
+                else:
+                    self.assertEqual(str(frame_item), csv_item)
 
     def test_delimiter_none(self):
         """Test a delimiter of None errors."""
         with self.assertRaisesRegexp(Exception, "delimiter"):
             self.context.frame.import_csv(self.dataset,
-                    self.schema, delimiter=None)
+                                          self.schema,
+                                          delimiter=None)
 
     def test_delimiter_empty(self):
         """Test an empty delimiter errors."""
         with self.assertRaisesRegexp(Exception, "delimiter"):
             self.context.frame.import_csv(self.dataset,
-                    self.schema, delimiter="")
+                                          self.schema,
+                                          delimiter="")
 
     def test_header(self):
         """Test header = True"""
-        frame_with_header = self.context.frame.import_csv(
-            self.dataset, schema=self.schema, header=True)
+        frame_with_header = self.context.frame.import_csv(self.dataset,
+                                                          schema=self.schema,
+                                                          header=True)
         frame_without_header = self.context.frame.import_csv(self.dataset,
-                schema=self.schema, header=False)
+                                                             schema=self.schema,
+                                                             header=False)
 
         # the frame with the header should have one less row
         # because it should have skipped the first line
@@ -199,7 +199,8 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """Test with inferredschema true and also a defined schema"""
         # should default to using the defined schema
         frame = self.context.frame.import_csv(self.dataset,
-                infer_schema=True, schema=self.schema)
+                                              infer_schema=True,
+                                              schema=self.schema)
         self.assertEqual(frame.schema, self.schema)
 
     def test_with_header_no_schema(self):

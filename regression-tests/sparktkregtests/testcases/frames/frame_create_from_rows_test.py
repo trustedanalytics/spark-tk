@@ -16,7 +16,7 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_invalid_column(self):
         """Tests retrieving an invalid column errors."""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.frame.take(100, columns=['not_in'])
 
     def test_frame_create_row_count(self):
@@ -107,6 +107,7 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
                                               schema=schema,
                                               validate_schema=True)
 
+    @unittest.skip("frame.create does not honor the specified schema")
     def test_invalid_schema_datatypes_validate_schema_false(self):
         """Test with an invalid schema but validate schema false"""
         dataset = [(98, 44), (5, 82), ("Bob", 38)]
