@@ -4,6 +4,7 @@ import unittest
 
 from sparktkregtests.lib import sparktk_test
 
+
 class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
