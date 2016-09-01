@@ -17,7 +17,7 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
                        ("b", int),
                        ("labels", int),
                        ("predictions", int)]
-        
+
         self.frame = self.context.frame.create(self.dataset,
                                                schema=self.schema)
 
@@ -36,26 +36,26 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         #            predicted pos       predicted neg
         # actual pos    [0][0]              [0][1]
         # actual neg    [1][0]              [1][1]
-        actual_pos_predicted_pos = conf_matrix[0][0]
-        actual_pos_predicted_neg = conf_matrix[0][1]
-        actual_neg_predicted_pos = conf_matrix[1][0]
-        actual_neg_predicted_neg = conf_matrix[1][1]
+        true_pos = conf_matrix[0][0]
+        false_neg = conf_matrix[0][1]
+        false_pos = conf_matrix[1][0]
+        true_neg = conf_matrix[1][1]
         # the total number of predictions, total number pos and neg
-        total = conf_matrix[0][0] + conf_matrix[0][1] + conf_matrix[1][0] + conf_matrix[1][1]
-        total_pos = actual_pos_predicted_pos + actual_pos_predicted_neg
-        total_neg = actual_neg_predicted_pos + actual_neg_predicted_neg
+        total_pos = true_pos + false_neg
+        total_neg = true_neg + false_pos
+        total = total_pos + total_neg
 
         # recall is defined in the docs as the total number of true pos
-        # results divided by the false negatives
-        recall = actual_pos_predicted_pos / actual_pos_predicted_neg
-        # from the docs, precision = true pos / false pos
-        precision = actual_pos_predicted_pos / actual_neg_predicted_pos
+        # results divided by the false negatives + pos
+        recall = true_pos / (false_neg + true_pos)
+        # from the docs, precision = true pos / false pos + true pos
+        precision = true_pos / (false_pos + true_pos)
         # from the docs this is the def of f_measure
         f_measure = (recall * precision) / (recall + precision)
         # according to the documentation the accuracy
         # is defined as the total correct predictions divided by the
         # total number of predictions
-        accuracy = float(actual_pos_predicted_pos + actual_neg_predicted_neg) / float(total)
+        accuracy = float(true_pos + true_neg) / float(total)
         pos_count = 0
         pandas_frame = self.frame.download()
         # calculate the number of pos results and neg results in the data
@@ -71,7 +71,6 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(class_metrics.accuracy, accuracy)
         self.assertEqual(total_pos, pos_count)
         self.assertEqual(total_neg, neg_count)
-
 
     @unittest.skip("binary_classification_metrics does not allow beta param")
     def test_binary_classification_metrics_bad_beta(self):
@@ -141,19 +140,19 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
 
         conf_matrix = class_metrics.confusion_matrix.values
 
-        actual_pos_predicted_pos = conf_matrix[0][0]
-        actual_pos_predicted_neg = conf_matrix[0][1]
-        actual_neg_predicted_pos = conf_matrix[1][0]
-        actual_neg_predicted_neg = conf_matrix[1][1]
-        total = conf_matrix[0][0] + conf_matrix[0][1] + conf_matrix[1][0] + conf_matrix[1][1]
-        total_pos = actual_pos_predicted_pos + actual_pos_predicted_neg
-        total_neg = actual_neg_predicted_pos + actual_neg_predicted_neg
+        true_pos = conf_matrix[0][0]
+        false_neg = conf_matrix[0][1]
+        false_pos = conf_matrix[1][0]
+        true_neg = conf_matrix[1][1]
+        total_pos = true_pos + false_neg
+        total_neg = true_neg + false_pos
+        total = total_pos + total_neg
 
         # these calculations use the definitions from the docs
-        recall = actual_pos_predicted_pos / actual_pos_predicted_neg
-        precision = actual_pos_predicted_pos / actual_neg_predicted_pos
+        recall = true_pos / (false_neg + true_pos)
+        precision = true_pos / (false_pos + true_pos)
         f_measure = (recall * precision) / (recall + precision)
-        accuracy = float(actual_pos_predicted_pos + actual_neg_predicted_neg) / float(total)
+        accuracy = float(true_pos + true_neg) / float(total)
         pos_count = 0
         pandas_frame = self.frame.download()
         # calculate the number of pos results and neg results in the data
@@ -161,7 +160,6 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
             if row["labels"] is 1:
                 pos_count = pos_count + 1
         neg_count = total - pos_count
-
 
         # finally we check that our values match sparktk's
         self.assertAlmostEqual(class_metrics.recall, recall)
