@@ -14,7 +14,18 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                   ("Vec4", float),
                   ("Vec5", float),
                   ("term", str)]
-
+        # copied from the documentation
+        self.doc_data = [(2, "ab"),
+                    (1, "cd"),
+                    (7, "ef"),
+                    (1, "gh"),
+                    (9, "ij"),
+                    (2, "kl"),
+                    (0, "mn"),
+                    (6, "op"),
+                    (5, "qr")]
+        self.vectors = ["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"]
+        self.doc_frame = self.context.frame.create(self.doc_data)
         self.frame_train = self.context.frame.import_csv(
             self.get_file("kmeans_train.csv"), schema=schema)
         self.frame_test = self.context.frame.import_csv(
@@ -41,13 +52,31 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
         for i in grouped.size():
             self.assertEqual(10000, i)
 
+    def test_add_distance_columns_twice(self):
+        model = self.context.models.clustering.kmeans.train(self.frame_train, self.vectors, k=5)
+        model.add_distance_columns(self.doc_frame)
+        model.add_distance_columns(self.doc_frame)
+
+    def test_doc_data(self):
+        """Tests with the data used in the doc example"""
+        model = self.context.models.clustering.kmeans.train(self.doc_frame, ["C0"], 3, seed=5)
+        model.predict(self.doc_frame)
+        print "model.centroids: " + str(model.centroids)
+        model.add_distance_columns(self.doc_frame)
+        print "doc frame inspect: " + str(self.doc_frame.take(10))
+        doc_frame2 = self.context.frame.create(self.doc_data)
+        model2 = self.context.models.clustering.kmeans.train(doc_frame2, ["C0"], 3, seed=5)
+        model.predict(doc_frame2)
+        print "model2.centroids: " + str(model2.centroids)
+        model.add_distance_columns(doc_frame2)
+        print "doc frame model2 inspect: " + str(doc_frame2.take(10))
+
     def test_kmeans_standard(self):
         """Tests standard usage of the kmeans cluster algorithm."""
-        result = self.context.models.clustering.kmeans.train(
+        model = self.context.models.clustering.kmeans.train(
             self.frame_train, ["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"],
             scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5)
-        print "test kmeans standard: " + str(result)
-        #print "standard frame: " + str(self.frame_train.take(self.frame_train.count()))
+        model.predict(self.frame_test)
         self._validate(result, self.frame_train)
 
     def test_column_weights(self):
