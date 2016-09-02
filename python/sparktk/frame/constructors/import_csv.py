@@ -4,7 +4,7 @@ from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
 
-def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None, tc=TkContext.implicit):
+def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, tc=TkContext.implicit):
     """
     Creates a frame with data from a csv file.
 
@@ -17,7 +17,7 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
                       is a comma (,).
     :param header: (Optional[bool]) Boolean value indicating if the first line of the file will be used to name columns,
                    and not be included in the data.  The default value is false.
-    :param inferschema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
+    :param infer_schema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
                        It requires one extra pass over the data and is false by default.
     :param: schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
                     columns specified in the schema must match the number of columns in the csv file provided.
@@ -30,7 +30,7 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
 
         >>> file_path = "../integration-tests/datasets/cities.csv"
 
-        >>> frame = tc.load_frame_from_csv(file_path, "|", header=True, inferschema=True)
+        >>> frame = tc.load_frame_from_csv(file_path, "|", header=True, infer_schema=True)
         -etc-
 
         >>> frame.inspect()
@@ -58,18 +58,18 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
 
 
     if schema is not None:
-        inferschema = False   # if a custom schema is provided, don't waste time inferring the schema during load
+        infer_schema = False   # if a custom schema is provided, don't waste time inferring the schema during load
     if not isinstance(header, bool):
         raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
-    if not isinstance(inferschema, bool):
-        raise ValueError("inferschema parameter must be a boolean, but is {0}.".format(type(inferschema)))
+    if not isinstance(infer_schema, bool):
+        raise ValueError("infer_schema parameter must be a boolean, but is {0}.".format(type(infer_schema)))
     TkContext.validate(tc)
 
     header_str = str(header).lower()
-    inferschema_str = str(inferschema).lower()
+    infer_schema_str = str(infer_schema).lower()
     pyspark_schema = None
 
-    if (not inferschema) and (schema is not None):
+    if (not infer_schema) and (schema is not None):
         fields = []
         for column in schema:
             if dtypes._data_type_to_pyspark_type_table.has_key(column[1]):
@@ -83,7 +83,7 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
             delimiter=delimiter,
             header=header_str,
             dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
-            inferschema=inferschema_str).load(path, schema=pyspark_schema)
+            inferschema=infer_schema_str).load(path, schema=pyspark_schema)
 
     df_schema = []
 

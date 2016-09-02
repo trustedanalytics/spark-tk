@@ -388,7 +388,7 @@ object SchemaHelper {
    * @param schema List of schema to be merged
    * @return true if schemas can be merged, false otherwise
    */
-  def isMergeable(schema: Schema*): Boolean = {
+  def validateIsMergeable(schema: Schema*): Boolean = {
     def merge(schema_l: Schema, schema_r: Schema): Schema = {
       require(schema_l.columnNames.intersect(schema_r.columnNames).isEmpty, "Schemas have conflicting column names." +
         s" Please rename before merging. Left Schema: ${schema_l.columnNamesAsString} Right Schema: ${schema_r.columnNamesAsString}")
