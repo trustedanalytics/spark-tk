@@ -1,4 +1,4 @@
-"""Tests PageRank exposed in ATK from graphx. Validated against networkx"""
+"""Tests PageRank exposed from graphx. Validated against networkx"""
 import unittest
 import operator
 
