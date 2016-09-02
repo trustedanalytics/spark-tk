@@ -72,7 +72,12 @@ class ArxModel(PropertiesObject):
     -------
     
     Consider the following model trained and tested on the sample data set in *frame* 'frame'.
-    The frame has a snippet of air quality data from https://archive.ics.uci.edu/ml/datasets/Air+Quality.
+    The frame has a snippet of air quality data from:
+
+    https://archive.ics.uci.edu/ml/datasets/Air+Quality.
+
+    Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml].
+    Irvine, CA: University of California, School of Information and Computer Science.
     
     <hide>
         

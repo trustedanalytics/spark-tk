@@ -23,6 +23,14 @@ import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ArxModelTest extends TestingSparkContextWordSpec with Matchers {
+  /**
+   * Air quality data from:
+   *
+   * https://archive.ics.uci.edu/ml/datasets/Air+Quality.
+   *
+   * Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml].
+   * Irvine, CA: University of California, School of Information and Computer Science.
+   */
   val rows: Array[Row] = Array(
     new GenericRow(Array[Any]("10/03/2004", "18.00.00", 2.6, 1360, 150, 11.9, 1046, 166, 1056, 113, 1692, 1268, 13.6, 48.9, 0.7578)),
     new GenericRow(Array[Any]("10/03/2004", "19.00.00", 2, 1292, 112, 9.4, 955, 103, 1174, 92, 1559, 972, 13.3, 47.7, 0.7255)),

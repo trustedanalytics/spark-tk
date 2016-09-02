@@ -30,7 +30,12 @@ def timeseries_breusch_godfrey_test(self, residuals, factors, max_lag):
         >>> frame = tc.frame.create(data=data, schema=columns)
     </hide>
 
-    Consider the following frame:
+    Consider the following frame that uses a snippet of air quality and sensor data from:
+
+    https://archive.ics.uci.edu/ml/datasets/Air+Quality.
+
+    Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml].
+    Irvine, CA: University of California, School of Information and Computer Science.
 
         >>> frame.inspect()
         [#]  Date        Time      CO_GT  PT08_S1_CO  NMHC_GT  C6H6_GT  Temp
