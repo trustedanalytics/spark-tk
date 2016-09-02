@@ -59,8 +59,8 @@ class PageRank(sparktk_test.SparkTKTestCase):
             "Must set one of max iterations or convergence tolerance"):
             self.graph.page_rank()
 
-    def test_page_rank_networkx_comparison_parquet(self):
-        """ Tests the graphx pagerank exposed in ATK on parquet graph"""
+    def test_page_rank_networkx_comparison(self):
+        """ Tests the graphx pagerank exposed in graph"""
         result = self.graph.page_rank(
             convergence_tolerance=self.CONVERGENCE_TOLERANCE)
 
