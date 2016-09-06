@@ -65,6 +65,10 @@ object ArimaxModel extends TkSaveableObject {
    * @param xregMaxLag The maximum lag order for exogenous variables.
    * @param includeOriginalXreg If true, the model is fit with an intercept for exogenous variables. Default is True.
    * @param includeIntercept If true, the model was fit with an intercept.
+   * @param initParams A set of user provided initial parameters for optimization. If the list is empty
+   *                   (default), initialized using Hannan-Rissanen algorithm. If provided, order of parameter
+   *                   should be: intercept term, AR parameters (in increasing order of lag), MA parameters
+   *                   (in increasing order of lag).
    * @return The trained ARIMAX model
    */
   def train(frame: Frame,
@@ -84,12 +88,14 @@ object ArimaxModel extends TkSaveableObject {
 
     val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
     trainFrameRdd.cache()
-    val userInitParams = if (initParams.isDefined) initParams.get.toArray else null
 
     val (yVector, xMatrix) = TimeSeriesFunctions.getYAndXFromFrame(trainFrameRdd, timeseriesColumn, xColumns)
     val ts = new DenseVector(yVector.toArray)
 
+    val userInitParams: Option[Array[Double]] = if (initParams.isDefined) Some(initParams.get.toArray) else None
+
     val arimaxModel = SparkTsArimax.fitModel(p, d, q, ts, xMatrix, xregMaxLag, includeOriginalXreg, includeIntercept, userInitParams)
+
     trainFrameRdd.unpersist()
 
     ArimaxModel(timeseriesColumn, xColumns, p, d, q, xregMaxLag, includeOriginalXreg, includeIntercept, initParams, arimaxModel)
@@ -140,22 +146,22 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
   /**
    * An intercept term
    */
-  def c: Double = arimaxModel.coefficients(0)
+  lazy val c: Double = arimaxModel.coefficients(0)
 
   /**
    * Coefficient values: AR with increasing degrees
    */
-  def ar: Seq[Double] = arimaxModel.coefficients.slice(1, p + 1)
+  lazy val ar: Seq[Double] = arimaxModel.coefficients.slice(1, p + 1)
 
   /**
    * Coefficient values: MA with increasing degrees
    */
-  def ma: Seq[Double] = arimaxModel.coefficients.slice(p + 1, p + q + 1)
+  lazy val ma: Seq[Double] = arimaxModel.coefficients.slice(p + 1, p + q + 1)
 
   /**
    * Coefficient values: xreg with increasing degrees
    */
-  def xreg: Seq[Double] = arimaxModel.coefficients.drop(p + q + 1)
+  lazy val xreg: Seq[Double] = arimaxModel.coefficients.drop(p + q + 1)
 
   def predict(frame: Frame,
               predictTimeseriesColumn: String,

@@ -6,7 +6,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.lazyloader import implicit
 from sparktk.propobj import PropertiesObject
 
-def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x, include_intercept=True, init_params=None):
+def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=True, include_intercept=True, init_params=None):
 
     if not isinstance(ts_column, basestring):
         raise TypeError("'ts_column' should be a string (name of the column that has the timeseries value).")
@@ -55,6 +55,8 @@ class ArimaxModel(PropertiesObject):
 
     Example
     -------
+    Data from Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml].
+    Irvine, CA: University of California, School of Information and Computer Science.
 
     Consider the following model trained and tested on the sample data set in *frame* 'frame'.
     The frame has five columns where "CO_GT" is the time series value and "C6H6_GT", "PT08_S2_NMHC"
@@ -244,7 +246,7 @@ class ArimaxModel(PropertiesObject):
     @property
     def c(self):
         """
-        Incercept
+        Intercept
         """
         return self._scala.c()
 
