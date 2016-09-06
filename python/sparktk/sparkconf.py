@@ -156,8 +156,8 @@ def set_env_for_sparktk(spark_home=None,
             address = int(debug)
         except:
             address = 5005  # default
-        details = """-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address"""
-        set_env('SPARK_JAVA_OPTS', details) # '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address)
+        details = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address
+        set_env('SPARK_JAVA_OPTS', details)
 
 
 def create_sc(master=None,
@@ -167,6 +167,7 @@ def create_sc(master=None,
               pyspark_submit_args=None,
               app_name="sparktk",
               extra_conf=None,
+              use_local_fs=False,
               debug=None):
     """
     Creates a SparkContext with sparktk defaults
@@ -180,6 +181,8 @@ def create_sc(master=None,
     :param sparktk_home: override $SPARKTK_HOME
     :param app_name: name of spark app
     :param extra_conf: dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param use_local_fs: simpler way to specify using local file system, rather than hdfs or other
+    :param debug: provide an port address to attach a debugger to the JVM that gets started
     :return: pyspark SparkContext
     """
 
@@ -196,6 +199,9 @@ def create_sc(master=None,
     if extra_conf:
         for k, v in extra_conf.items():
             conf = conf.set(k, v)
+
+    if use_local_fs:
+        conf.set("spark.hadoop.fs.default.name", "file:///")
 
     if not py_files:
         py_files = []

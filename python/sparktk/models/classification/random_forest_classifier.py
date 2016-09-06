@@ -5,6 +5,8 @@ from sparktk.frame.ops.classification_metrics_value import ClassificationMetrics
 from sparktk import TkContext
 import os
 
+__all__ = ["train", "load", "RandomForestClassifierModel"]
+
 def train(frame,
           label_column,
           observation_columns,
