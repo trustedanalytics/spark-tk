@@ -95,6 +95,7 @@ def print_bash_cmds_for_sparktk_env():
 def set_env_for_sparktk(spark_home=None,
                         sparktk_home=None,
                         pyspark_submit_args=None,
+                        other_libs=None,
                         debug=None):
 
     """Set env vars necessary to start up a Spark Context with sparktk"""
@@ -118,6 +119,14 @@ def set_env_for_sparktk(spark_home=None,
     # Everything else go in PYSPARK_SUBMIT_ARGS
     spark_dirs = get_spark_dirs()
     spark_dirs.extend(get_sparktk_dirs())
+
+    # Get library directories from other_libs
+    if other_libs is not None:
+        if not isinstance(other_libs, list):
+            other_libs = [other_libs]
+        for other_lib in other_libs:
+            other_lib_dirs = other_lib.get_library_dirs()
+            spark_dirs.extend(other_lib_dirs)
 
     jars, driver_class_path = get_jars_and_classpaths(spark_dirs)
 
@@ -160,7 +169,8 @@ def set_env_for_sparktk(spark_home=None,
         set_env('SPARK_JAVA_OPTS', details) # '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address)
 
 
-def create_sc(master=None,
+def create_sc(other_libs=None,
+              master=None,
               py_files=None,
               spark_home=None,
               sparktk_home=None,
@@ -173,6 +183,7 @@ def create_sc(master=None,
 
     Many parameters can be overwritten
 
+    :param other_libs: other libraries that will be used along with spark-tk, which need to be added to the class path
     :param master: spark master setting
     :param py_files: list of str of paths to python dependencies; Note the the current python
     package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
@@ -183,7 +194,10 @@ def create_sc(master=None,
     :return: pyspark SparkContext
     """
 
-    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, debug)
+    if other_libs is not None and not isinstance(other_libs, list):
+        raise TypeError("other_libs parameter should be a list of libraries (or None), but received: %s" % type(other_libs))
+
+    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
 
     # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
     set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))

@@ -20,9 +20,24 @@ import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRe
 
 object Loaders {
 
-  def load(sc: SparkContext, path: String): Any = {
+  def load(sc: SparkContext, path: String, otherLoaders: Option[Map[String, LoaderType]]): Any = {
     val result = TkSaveLoad.loadTk(sc, path)
-    val loader = loaders.getOrElse(result.formatId, throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}"))
+    val loaderOption = loaders.get(result.formatId)
+
+    // Function that other libraries for the specified loader, if the format was not a spark-tk format
+    def getOtherLoader(formatId: String): LoaderType = {
+      var registeredLoaders = "None" // string of other loaders for exception message
+      if (otherLoaders.isDefined) {
+        val l = otherLoaders.get.get(formatId)
+        if (l.isDefined)
+          return l.get
+        registeredLoaders = otherLoaders.get.keys.mkString("\n")
+      }
+      throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${registeredLoaders}")
+    }
+
+    val loader = loaders.getOrElse(result.formatId, getOtherLoader(result.formatId))
+
     loader(sc, path, result.formatVersion, result.data)
   }
 
