@@ -178,6 +178,38 @@
       <groupIdExcludes></groupIdExcludes>
     </properties>
     <profiles>
+      <!--doc generation-->
+        <profile>
+            <id>docs</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!NEVERSETME</name>
+                </property>
+            </activation>
+            <modules>
+                <module>python</module>
+            </modules>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.scala-tools</groupId>
+                        <artifactId>maven-scala-plugin</artifactId>
+                        <version>2.15.2</version>
+                        <executions>
+                            <execution>
+                                <id>scaladocs-all</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>doc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
       <profile>
         <id>modules-all</id>
         <activation>
@@ -202,7 +234,6 @@
           <module>python</module>
         </modules>
       </profile>
-
       <profile>
         <id>integration-tests</id>
         <activation>
@@ -272,7 +303,7 @@
                   <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
                 </configuration>
               </plugin>
-              <plugin>
+             <!-- <plugin>
                 <groupId>org.trustedanalytics</groupId>
                 <artifactId>atk-maven-plugin</artifactId>
                 <version>1.0-SNAPSHOT</version>
@@ -284,7 +315,7 @@
                     </goals>
                   </execution>
                 </executions>
-              </plugin>
+              </plugin>-->
               <!--END DO NOT TOUCH-->
             </plugins>
           </pluginManagement>
@@ -393,7 +424,7 @@
           </dependency>
         </dependencies>
       </profile>
-      <profile>
+      <!--<profile>
         <id>scala-coverage</id>
         <activation>
           <activeByDefault>false</activeByDefault>
@@ -417,10 +448,10 @@
               <artifactId>scoverage-maven-plugin</artifactId>
               <version>${scoverage-plugin.version}</version>
               <configuration>
-                <!--
+                &lt;!&ndash;
                     If you are using Scala 2.11.1 or less,
                     then highlighting will not work (due to this bug which was fixed in 2.11.2
-                -->
+                &ndash;&gt;
                 <highlighting>false</highlighting>
               </configuration>
             </plugin>
@@ -438,7 +469,7 @@
               </plugin>
           </plugins>
         </reporting>
-      </profile>
+      </profile>-->
       <profile>
         <id>devonly</id>
         <activation>
