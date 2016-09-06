@@ -32,7 +32,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
     :param column_name: (str) Name of column to be evaluated.
     :param num_bins: (Optional[int]) Number of bins in histogram.
                      Default is Square-root choice will be used
-                     (in other words math.floor(math.sqrt(frame.row_count)).
+                     (in other words math.floor(math.sqrt(frame.count())).
     :param weight_column_name: (Optional[str]) Name of column containing weights.
                                Default is all observations are weighted equally.
     :param bin_type: (str["equalwidth"|"equaldepth"]) The type of binning algorithm to use:

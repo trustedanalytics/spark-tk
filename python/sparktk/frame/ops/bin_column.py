@@ -177,7 +177,7 @@ def bin_column(self, column_name, bins=None, include_lowest=True, strict_binning
         >>> print cutoffs
         [1.0, 30.333333333333332, 59.666666666666664, 89.0]
 
-        >>> frame.inspect(n=frame.row_count)
+        >>> frame.inspect(n=frame.count())
         [##]  a   equal_width_bins
         ==========================
         [0]    1                 0

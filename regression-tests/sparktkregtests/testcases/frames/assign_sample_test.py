@@ -45,7 +45,7 @@ class AssignSample(sparktk_test.SparkTKTestCase):
 
         # Check expected results
         self._test_frame_assign("default", baseline)
-        frame_take = self.frame.take(self.frame.row_count)
+        frame_take = self.frame.take(self.frame.count())
         seed_d = [i[2] for i in frame_take.data]
         seed_0 = [i[3] for i in frame_take.data]
         seed_5 = [i[4] for i in frame_take.data]
@@ -58,7 +58,7 @@ class AssignSample(sparktk_test.SparkTKTestCase):
 
     def _test_frame_assign(self, column_name, sample):
         """Tests the assign method on the given column and sample"""
-        pd = self.frame.download(self.frame.row_count)
+        pd = self.frame.download(self.frame.count())
         groupby_rows = pd.groupby(column_name).size()
         count = float(groupby_rows.sum())
         normalized = groupby_rows.map(lambda x: x/count)

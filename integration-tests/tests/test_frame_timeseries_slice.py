@@ -13,7 +13,7 @@ def test_date_without_time(tc):
     start = "2016-01-02"
     end = "2016-01-04"
     f = ts_frame.timeseries_slice(datetimeindex, start, end)
-    assert(f.row_count == 3)
+    assert(f.count() == 3)
 
 def test_invalid_string_start(tc):
     """

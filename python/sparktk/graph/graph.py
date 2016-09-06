@@ -9,7 +9,7 @@ from sparktk.arguments import require_type
 
 # import constructors for the API's sake (not actually dependencies of the Graph)
 from sparktk.graph.constructors.create import create
-# from sparktk.graph.constructors.import_orientdb import import_orientdb  (Wafaa, you get to uncomment this line)
+from sparktk.graph.constructors.import_orientdb_graph import import_orientdb_graph
 
 
 class Graph(object):
@@ -162,7 +162,6 @@ class Graph(object):
         </hide>
 
     """
-
     def __init__(self, tc, source_or_vertices_frame, edges_frame=None):
         self._tc = tc
         self._scala = None
@@ -197,6 +196,7 @@ class Graph(object):
                 self._scala = self.create_scala_graph_from_scala_graphframe(self._tc, source)
             else:
                 raise TypeError("Cannot create from source type %s" % type(source))
+
 
     def __repr__(self):
         return self._scala.toString()
@@ -257,5 +257,11 @@ class Graph(object):
         return Frame(self._tc, self._scala.graphFrame().edges())
 
     # Graph Operations
+    from sparktk.graph.ops.connected_components import connected_components
+    from sparktk.graph.ops.degrees import degrees
+    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.page_rank import page_rank
     from sparktk.graph.ops.save import save
+    from sparktk.graph.ops.triangle_count import triangle_count
     from sparktk.graph.ops.vertex_count import vertex_count
+    from sparktk.graph.ops.weighted_degrees import weighted_degrees
