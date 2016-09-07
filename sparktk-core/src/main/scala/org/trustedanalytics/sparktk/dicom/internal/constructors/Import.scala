@@ -36,7 +36,7 @@ object Import {
 
       case (filePath, fileData) =>
 
-        //create .dcm files in /tmp and create file Obj. Currently reading bytes from hdfs is not supported
+        //TODO: create .dcm files in /tmp and create file Obj. Currently reading bytes from hdfs is not supported (Temporary)
         val tmpFile = File.createTempFile(s"dicom-test-${Random.nextInt()}", ".dcm")
         FileUtils.writeByteArrayToFile(tmpFile, fileData.toArray())
 
@@ -69,6 +69,7 @@ object Import {
         val dis: DicomInputStream = new DicomInputStream(tmpFile)
         val dcm2xml: Dcm2Xml = new Dcm2Xml()
 
+        //TODO: Fix the redirecting output stream (Temporary)
         //redirecting output stream
         val myOutputStream = new ByteArrayOutputStream()
         val myStream: PrintStream = new PrintStream(myOutputStream)
@@ -82,7 +83,7 @@ object Import {
         // myStream.toString
         val xml: String = myOutputStream.toString()
         (xml, dm1)
-    }.zipWithUniqueId()
+    }.zipWithIndex()
 
     //create metadata pairrdd
     val metaDataPairRDD: RDD[(Long, String)] = dcmMetadataPixelArrayRDD.map(row => (row._2, row._1._1))

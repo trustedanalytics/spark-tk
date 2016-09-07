@@ -69,6 +69,7 @@ class Dicom(PropertiesObject):
 
         >>> load_imagedata_frame = load_dicom.imagedata.take(1)
 
+        <skip>
         >>> load_imagedata_frame
         TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
@@ -77,6 +78,7 @@ class Dicom(PropertiesObject):
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
         [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        </skip>
 
         >>> load_image_ndarray= load_imagedata_frame.data[0][1]
 
@@ -86,6 +88,68 @@ class Dicom(PropertiesObject):
         >>> load_image_ndarray.shape
         (512, 512)
 
+        <skip>
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+        </skip>
+
+        >>> import xml.etree.ElementTree as ET
+
+        #sample custom filter function
+        >>> def filter_meta(tag_name, tag_value):
+        ...    def _filter_meta(row):
+        ...        root = ET.fromstring(row["metadata"])
+        ...        for attribute in root.findall('DicomAttribute'):
+        ...            keyword = attribute.get('keyword')
+        ...            if attribute.get('keyword') is not None:
+        ...                if attribute.find('Value') is not None:
+        ...                    value = attribute.find('Value').text
+        ...                    if keyword == tag_name and value == tag_value:
+        ...                        return True
+        ...    return _filter_meta
+
+        >>> tag_name = "SOPInstanceUID"
+
+        >>> tag_value = "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"
+
+        >>> dicom.filter(filter_meta(tag_name, tag_value))
+
+        #After filter
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+
+        #sample function to apply on row - add_columns
+        >>> def extractor(tag_name):
+        ...    def _extractor(row):
+        ...        root = ET.fromstring(row["metadata"])
+        ...        for attribute in root.findall('DicomAttribute'):
+        ...            keyword = attribute.get('keyword')
+        ...            value = None
+        ...            if attribute.find('Value') is not None:
+        ...                value = attribute.find('Value').text
+        ...            if keyword == tag_name:
+        ...                return value
+        ...    return _extractor
+
+        >>> tag_name = "SOPInstanceUID"
+
+        >>> load_dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
+
+        <skip>
+        >>> load_dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata                        SOPInstanceUID
+        =======================================================================
+        [0]   0  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
+        [1]   1  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
+        [2]   2  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
+        </skip>
+
     """
 
     def __init__(self, tc, scala_dicom):
@@ -94,6 +158,40 @@ class Dicom(PropertiesObject):
         from sparktk.frame.frame import Frame
         self._metadata = Frame(self._tc, scala_dicom.dicomFrame().metadata())
         self._imagedata = Frame(self._tc, scala_dicom.dicomFrame().imagedata())
+
+
+        # Imagedata frame operations added at runtime
+        def transform(frame, udf):
+            """
+            0. Convert to python frame using _python
+            1. Convert frame column data to ndarray
+            2. Execute udf on ndfarray
+            3. Convert column datatype to matrix
+            :param frame:
+            :param udf:
+            :return:
+            """
+        self._imagedata.__setattr__("transform", transform)
+
+        def pca(frame, **args):
+            """
+            pca will take frame and other parameters(yet to finalize)
+
+            :param frame:
+            :return:
+            """
+            self._imagedata.__setattr__("pca", pca)
+
+        def svd(frame, **args):
+            """
+            svd will take frame and other parameters(yet to finalize)
+
+            :param frame:
+            :param args:
+            :return:
+            """
+            self._imagedata.__setattr__("svd", svd)
+
 
     def __repr__(self):
         return self._scala.toString()
@@ -112,5 +210,10 @@ class Dicom(PropertiesObject):
         """creates a python Frame for the given scala Frame"""
         return Dicom(tc, scala_frame)
 
+
     # Dicom Operations
+    from sparktk.dicom.ops.add_columns import add_columns, add_columns_by_keyword, add_columns_by_tag
+    from sparktk.dicom.ops.export_to_dcm import export_to_dcm
+    from sparktk.dicom.ops.filter import filter, filter_by_keyword, filter_by_tag, drop_by_keyword, drop_by_tag
     from sparktk.dicom.ops.save import save
+
