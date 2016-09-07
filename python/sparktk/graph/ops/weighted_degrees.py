@@ -20,7 +20,7 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
     Parameters
     ----------
 
-    :param edge_weight: (String) Name of the property that contains an edge weight
+    :param edge_weight: (String) Name of the property that contains and edge weight
     :param degree_option: (String) Either in, out or undirected. String describing the direction of edges
     :param default_weight: (Numeric) Default weight value if a vertex has no value for the edge weight property
 

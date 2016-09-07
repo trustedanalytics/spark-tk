@@ -48,12 +48,12 @@ class SparkTKTestCase(unittest.TestCase):
     def get_name(self, prefix):
         """build a guid hardened unique name """
         datestamp = datetime.datetime.now().strftime("%m_%d_%H_%M_")
-        name = prefix + datestamp + uuid.uuid1().hex + config.qa_suffix
+        name = prefix + datestamp + uuid.uuid1().hex
 
         return name
 
     def assertFramesEqual(self, frame1, frame2):
-        frame1_take = frame1.take(frame1.row_count).data
-        frame2_take = frame2.take(frame2.row_count).data
+        frame1_take = frame1.take(frame1.count()).data
+        frame2_take = frame2.take(frame2.count()).data
 
         self.assertItemsEqual(frame1_take, frame2_take)

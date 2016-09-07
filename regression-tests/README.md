@@ -5,7 +5,7 @@
 
 1. First build the source code, this requires maven to be installed. Run
    `mvn install` at the top level of this repo.
-2. Run `./run_tests.sh` in this folder
+2. Run `./run_regression_tests.sh` in this folder
 NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
 
 

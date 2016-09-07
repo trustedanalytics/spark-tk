@@ -151,12 +151,13 @@ def set_env_for_sparktk(spark_home=None,
     set_env('PYSPARK_SUBMIT_ARGS', pyspark_submit_args)
 
     if debug:
+        print "Adding args for remote java debugger"
         try:
             address = int(debug)
         except:
             address = 5005  # default
-
-        set_env('SPARK_JAVA_OPTS', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address)
+        details = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address
+        set_env('SPARK_JAVA_OPTS', details)
 
 
 def create_sc(master=None,
@@ -165,7 +166,9 @@ def create_sc(master=None,
               sparktk_home=None,
               pyspark_submit_args=None,
               app_name="sparktk",
-              extra_conf=None):
+              extra_conf=None,
+              use_local_fs=False,
+              debug=None):
     """
     Creates a SparkContext with sparktk defaults
 
@@ -178,10 +181,12 @@ def create_sc(master=None,
     :param sparktk_home: override $SPARKTK_HOME
     :param app_name: name of spark app
     :param extra_conf: dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param use_local_fs: simpler way to specify using local file system, rather than hdfs or other
+    :param debug: provide an port address to attach a debugger to the JVM that gets started
     :return: pyspark SparkContext
     """
 
-    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args)
+    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, debug)
 
     # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
     set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))
@@ -194,6 +199,9 @@ def create_sc(master=None,
     if extra_conf:
         for k, v in extra_conf.items():
             conf = conf.set(k, v)
+
+    if use_local_fs:
+        conf.set("spark.hadoop.fs.default.name", "file:///")
 
     if not py_files:
         py_files = []
