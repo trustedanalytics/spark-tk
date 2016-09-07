@@ -2,6 +2,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 
+__all__ = ["train"]  # load to be added when 1.6
 
 def train(frame,
           value_column,
