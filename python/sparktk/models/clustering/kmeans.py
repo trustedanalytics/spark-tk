@@ -3,6 +3,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 
+__all__ = ["train", "load", "KMeansModel"]
 
 def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=None, init_mode="k-means||"):
     """
@@ -24,6 +25,8 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     """
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
+    if isinstance(columns, basestring):
+        columns = [columns]
     scala_columns = tc.jutils.convert.to_scala_vector_string(columns)
     if scalings:
         scala_scalings = tc.jutils.convert.to_scala_vector_double(scalings)

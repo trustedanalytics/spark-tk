@@ -179,13 +179,13 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
     def test_with_no_specified_or_inferred_schema(self):
         """Test import_csv with inferredschema false and no schema"""
         # should default to creating a schema of all strings
-        frame = self.context.frame.import_csv(self.dataset, inferschema=False)
+        frame = self.context.frame.import_csv(self.dataset, infer_schema=False)
         expected_schema = [("C0", str), ("C1", str), ("C2", str)]
         self.assertEqual(frame.schema, expected_schema)
 
     def test_with_inferred_schema(self):
         """Test import_csv without a specified schema"""
-        frame = self.context.frame.import_csv(self.dataset, inferschema=True)
+        frame = self.context.frame.import_csv(self.dataset, infer_schema=True)
         expected_inferred_schema = [("C0", int), ("C1", str), ("C2", int)]
         self.assertEqual(frame.schema, expected_inferred_schema)
 
@@ -193,7 +193,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """Test with inferredschema true and also a defined schema"""
         # should default to using the defined schema
         frame = self.context.frame.import_csv(self.dataset,
-                inferschema=True, schema=self.schema)
+                infer_schema=True, schema=self.schema)
         self.assertEqual(frame.schema, self.schema)
 
     def test_with_header_no_schema(self):
