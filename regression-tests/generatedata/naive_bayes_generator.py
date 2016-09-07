@@ -2,10 +2,13 @@ import random
 import itertools
 
 
-# list of coefficients is an array of the coefficients
-# numDiceRolls is the number of times the code will generate
-# a line *for each permutation/possibility* (i.e., each line in the probability table)
 def generate_data_set(listOfCoeffs, numDiceRolls):
+    """generatre a naive bayes dataset"""
+    # numDiceRolls denotes the number of times to generate
+    # a data row for each probability, e.g., if the numDiceRolls
+    # is 100, for each probability in the probability table
+    # we will generate 100 rows of data, so the number of
+    # data rows will be the number of probabilities * numDiceRolls
     # the number of rows should be 2 ^ count(listOfCoeffs)
     numCoeffs = len(listOfCoeffs)
     dataRows = ""
@@ -18,8 +21,8 @@ def generate_data_set(listOfCoeffs, numDiceRolls):
         file.write(dataRows)
 
 
-# for each line in the probability table, generate numDiceRolls lines of data
 def generate_random_data_from_probability_table(coeffTable, dataRows, numCoeffs, numDiceRolls):
+    """given a probability table, generate data from it"""
     for row in coeffTable:
         probability = row[len(row) - 1]
         for n in range(0, numDiceRolls):
@@ -33,8 +36,8 @@ def generate_random_data_from_probability_table(coeffTable, dataRows, numCoeffs,
     return dataRows
 
 
-# generate the probability table
 def generate_naive_bayes_table(listOfCoeffs, numCoeffs):
+    """compute the coefficient table for naive bayes dataset"""
     # gets all permutations of 0 and 1 of length numCoeffs
     binaryPermutations = list(itertools.product(range(2), repeat=numCoeffs))
     coeffTable = []
@@ -53,9 +56,8 @@ def generate_naive_bayes_table(listOfCoeffs, numCoeffs):
     return coeffTable
 
 
-# generate a 1 or 0 based off of the
-# given probability (probability of generating a 1)
 def roll_dice(probability):
+    """given a probability, generate 1 or 0"""
     randomResult = random.uniform(0, 1)
     if probability >= randomResult:
         return 1
