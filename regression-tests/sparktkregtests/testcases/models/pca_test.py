@@ -236,6 +236,22 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
             self.context.models.dimreduction.pca.train(
                 self.frame, 10, False, 10)
 
+    def test_pca_invalid_k(self):
+        """Test k < 1 in train"""
+        #with self.assertRaises(ta.rest.command.CommandServerError):
+        self.context.models.dimreduction.pca.train(self.frame,
+                               ["X1", "X2", "X3", "X4", "X5",
+                                "X6", "X7", "X8", "X9", "X10"],
+                               0)
+
+    def test_pca_bad_column_name(self):
+        """Test bad feature column name"""
+        #with self.assertRaises(ta.rest.command.CommandServerError):
+        self.context.models.dimreduction.pca.train(self.frame,
+                               ["ERR", "X2", "X3", "X4", "X5",
+                                "X6", "X7", "X8", "X9", "X10"],
+                               10)
+
     def test_pca_orthogonality(self):
         """Test orthogonality of resulting vectors"""
         pca_model = self.context.models.dimreduction.pca.train(
