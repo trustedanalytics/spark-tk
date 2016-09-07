@@ -3,6 +3,8 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk.lazyloader import implicit
 
+__all__ = ["train", "load", "LdaModel"]
+
 def train(frame,
           document_column_name,
           word_column_name,

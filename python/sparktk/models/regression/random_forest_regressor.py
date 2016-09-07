@@ -3,6 +3,8 @@ from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 import os
 
+__all__ = ["train", "load", "RandomForestRegressorModel"]
+
 def train(frame,
           value_column,
           observation_columns,
