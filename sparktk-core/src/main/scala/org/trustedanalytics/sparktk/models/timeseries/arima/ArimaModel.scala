@@ -141,15 +141,19 @@ case class ArimaModel private[arima] (ts: DenseVector,
    *
    * @param futurePeriods Periods in the future to forecast (beyond length of time series that the model was
    *                      trained with)
+   * @param tsValues Optional list of time series values to use as the gold standard.  If time series values are not
+   *                 provided, the values used for training will be used for forecasting.
    * @return a series consisting of fitted 1-step ahead forecasts for historicals and then
    *         the number of future periods of forecasts. Note that in the future values error terms become
    *         zero and prior predictions are used for any AR terms.
    */
-  def predict(futurePeriods: Int): Seq[Double] = {
+  def predict(futurePeriods: Int, tsValues: Option[Seq[Double]] = None): Seq[Double] = {
     require(futurePeriods >= 0, "number of futurePeriods should be a positive value.")
 
+    val tsPredictValues = if (tsValues.isDefined) new DenseVector(tsValues.get.toArray) else ts
+
     // Call the ARIMA model to forecast values using the specified golden value
-    arimaModel.forecast(ts, futurePeriods).toArray
+    arimaModel.forecast(tsPredictValues, futurePeriods).toArray
   }
 
   /**

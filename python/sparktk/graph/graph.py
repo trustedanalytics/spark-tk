@@ -11,6 +11,9 @@ from sparktk.arguments import require_type
 from sparktk.graph.constructors.create import create
 from sparktk.graph.constructors.import_orientdb_graph import import_orientdb_graph
 
+__all__ = ["create",
+           "Graph",
+           "import_orientdb_graph"]
 
 class Graph(object):
     """
@@ -257,10 +260,11 @@ class Graph(object):
         return Frame(self._tc, self._scala.graphFrame().edges())
 
     # Graph Operations
-    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
-    from sparktk.graph.ops.save import save
-    from sparktk.graph.ops.vertex_count import vertex_count
-    from sparktk.graph.ops.weighted_degrees import weighted_degrees
     from sparktk.graph.ops.connected_components import connected_components
     from sparktk.graph.ops.degrees import degrees
+    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.page_rank import page_rank
+    from sparktk.graph.ops.save import save
     from sparktk.graph.ops.triangle_count import triangle_count
+    from sparktk.graph.ops.vertex_count import vertex_count
+    from sparktk.graph.ops.weighted_degrees import weighted_degrees
