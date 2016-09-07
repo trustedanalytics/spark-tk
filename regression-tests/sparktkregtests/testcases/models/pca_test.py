@@ -208,36 +208,6 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
             ["X1", "X2", "X3", "X4", "X5",
              "X6", "X7", "X8", "X9", "X10"],
             False, 11)
-<<<<<<< HEAD
-
-    def test_pca_invalid_k(self):
-        """Test k < 1 in train"""
-        with self.assertRaisesRegexp(
-                Exception, ".* greater than equal to 1"):
-            self.context.models.dimreduction.pca.train(
-                self.frame,
-                ["X1", "X2", "X3", "X4", "X5",
-                 "X6", "X7", "X8", "X9", "X10"],
-                False, 0)
-
-    def test_pca_bad_column_name(self):
-        """Test bad feature column name"""
-        with self.assertRaisesRegexp(
-               Exception, "column ERR was not found"):
-            self.context.models.dimreduction.pca.train(
-                self.frame,
-                ["ERR", "X2", "X3", "X4", "X5",
-                 "X6", "X7", "X8", "X9", "X10"],
-                False, 10)
-
-    def test_pca_bad_column_type(self):
-        """Test bad feature column name type"""
-        with self.assertRaisesRegexp(
-                Exception, "\'int\' object is not iterable"):
-            self.context.models.dimreduction.pca.train(
-                self.frame, 10, False, 10)
-=======
->>>>>>> Adds validation data for train
 
     def test_pca_invalid_k(self):
         """Test k < 1 in train"""
