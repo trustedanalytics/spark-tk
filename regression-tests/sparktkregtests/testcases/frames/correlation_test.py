@@ -15,7 +15,7 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
     def test_correl(self):
         """Test correlation between 2 columns"""
         correl_0_2 = self.base_frame.correlation('C0', 'C2')
-        C0_C2_columns_data = self.base_frame.take(self.base_frame.row_count,
+        C0_C2_columns_data = self.base_frame.take(self.base_frame.count(),
                                                   columns=["C0", "C2"]).data
         numpy_result = numpy.ma.corrcoef(list(C0_C2_columns_data),
                                          rowvar=False)
@@ -26,11 +26,11 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
     def test_correl_matrix(self):
         """Verify correlation matrix on all columns"""
         correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names)
-        numpy_correl = list(numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.row_count).data),
+        numpy_correl = list(numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count()).data),
                                               rowvar=False))
 
         # convert to lists for ease of comparison
-        correl_flat = list(numpy.array(correl_matrix.take(correl_matrix.row_count).data).flat)
+        correl_flat = list(numpy.array(correl_matrix.take(correl_matrix.count()).data).flat)
         numpy_correl = list(numpy.array(numpy_correl).flat)
 
         # compare the correl matrix values with the expected results

@@ -19,11 +19,11 @@ class CovarVect400ColX2KRowTest(sparktk_test.SparkTKTestCase):
         cov_matrix = cov_frame.covariance_matrix(['items'])
 
         # call numpy to get numpy result
-        numpy_result = list(numpy.cov(list(cov_frame.take(cov_frame.row_count).data),
+        numpy_result = list(numpy.cov(list(cov_frame.take(cov_frame.count()).data),
                                       rowvar=False))
 
         # convert the frame rows into lists for ease of comparison
-        sparktk_flat = list(numpy.array(cov_matrix.take(cov_matrix.row_count)).flat)
+        sparktk_flat = list(numpy.array(cov_matrix.take(cov_matrix.count())).flat)
         numpy_flat = list(numpy.array(numpy_result).flat)
 
         # finally compare the expected results with those resturned by sparktk

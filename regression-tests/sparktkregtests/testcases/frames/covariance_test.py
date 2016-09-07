@@ -15,7 +15,7 @@ class CovarianceTest(sparktk_test.SparkTKTestCase):
     def test_covar(self):
         """Test covariance between 2 columns"""
         sparktk_result = self.base_frame.covariance('C1', 'C4')
-        C1_C4_columns_data = self.base_frame.take(self.base_frame.row_count,
+        C1_C4_columns_data = self.base_frame.take(self.base_frame.count(),
                                                   columns=["C1", "C4"]).data
         numpy_result = numpy.cov(list(C1_C4_columns_data), rowvar=False)
 
@@ -27,8 +27,8 @@ class CovarianceTest(sparktk_test.SparkTKTestCase):
         covar_matrix = self.base_frame.covariance_matrix(self.base_frame.column_names)
 
         # convert to list for ease of comparison
-        covar_flat = list(numpy.array(covar_matrix.take(covar_matrix.row_count).data).flat)
-        numpy_covar_result = list(numpy.cov(list(self.base_frame.take(self.base_frame.row_count).data),
+        covar_flat = list(numpy.array(covar_matrix.take(covar_matrix.count()).data).flat)
+        numpy_covar_result = list(numpy.cov(list(self.base_frame.take(self.base_frame.count()).data),
                                             rowvar=False))
         # flatten the numpy result
         numpy_covar_result = list(numpy.array(numpy_covar_result).flat)
