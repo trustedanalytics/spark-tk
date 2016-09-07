@@ -131,7 +131,7 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
 
         pca_model.predict(
             self.frame, mean_centered=False)
-        pd_frame = self.frame.download(self.frame.row_count)
+        pd_frame = self.frame.download(self.frame.count())
         actual_R_singular_vec = map(
             list, zip(*pca_model.right_singular_vectors))
 
