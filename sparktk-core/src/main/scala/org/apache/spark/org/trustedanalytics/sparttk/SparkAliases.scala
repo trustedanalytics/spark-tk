@@ -9,7 +9,13 @@ import org.apache.spark.mllib.api.python.{ SerDe => SparkMLLibSerDe }
 
 object SparkAliases {
 
-  val SerDeUtil = SparkSerDeUtil
+  lazy val SerDeUtil = getSparkSerDeUtil
+
+  def getSparkSerDeUtil = {
+    SparkMLLibSerDe.initialize()
+    SparkSerDeUtil
+  }
+
   val MLLibSerDe = SparkMLLibSerDe
   type AutoBatchedPickler = SerDeUtil.AutoBatchedPickler
   type BoundedPriorityQueue[A] = SparkBoundedPriorityQueue[A]

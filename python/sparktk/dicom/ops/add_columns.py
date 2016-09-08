@@ -31,7 +31,7 @@ def add_columns(self, func, schema):
     #If it is on HDFS, path should be like hdfs://<ip-address>:8020/user/<user-name>/<dicom-directory-name>
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
-        >>> dicom = tc.dicom.import_dicom(dicom_path)
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
 
         <skip>
         >>> dicom.metadata.inspect(truncate=30)

@@ -17,7 +17,6 @@ import scala.collection.JavaConverters._
 object PythonJavaRdd {
 
   def scalaToPython(rdd: RDD[Row]): JavaRDD[Array[Byte]] = {
-    SparkAliases.MLLibSerDe.initialize()
     rdd.map(_.toSeq.asJava).mapPartitions { iter => new SparkAliases.AutoBatchedPickler(iter) }
   }
 

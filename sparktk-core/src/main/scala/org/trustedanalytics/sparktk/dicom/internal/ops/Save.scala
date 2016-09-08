@@ -6,7 +6,7 @@ import org.trustedanalytics.sparktk.saveload.TkSaveLoad
 
 trait SaveSummarization extends BaseDicom {
   /**
-   * Save the current frame.
+   * Save the current dicom.
    *
    * @param path The destination path.
    */
@@ -18,10 +18,10 @@ trait SaveSummarization extends BaseDicom {
 case class Save(path: String) extends DicomSummarization[Unit] {
 
   override def work(state: DicomState): Unit = {
-    state.dicomFrame.metadata.dataframe.write.parquet(path + "/metadata")
-    state.dicomFrame.imagedata.dataframe.write.parquet(path + "/imagedata")
+    state.metadata.dataframe.write.parquet(path + "/metadata")
+    state.imagedata.dataframe.write.parquet(path + "/imagedata")
     val formatId = Dicom.formatId
     val formatVersion = Dicom.tkFormatVersion
-    TkSaveLoad.saveTk(state.dicomFrame.metadata.dataframe.sqlContext.sparkContext, path, formatId, formatVersion, "No Metadata")
+    TkSaveLoad.saveTk(state.metadata.dataframe.sqlContext.sparkContext, path, formatId, formatVersion, "No Metadata")
   }
 }

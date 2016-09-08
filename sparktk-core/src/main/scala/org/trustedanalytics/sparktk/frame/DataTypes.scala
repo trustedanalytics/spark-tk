@@ -460,8 +460,7 @@ object DataTypes {
     override def scalaType = classOf[DenseMatrix]
 
     override def typedJson(raw: Any) = {
-      //      raw.asInstanceOf[DenseMatrix].toJson
-      throw new Exception("Cannot convert matrix to josn value")
+      throw new Exception("Cannot convert matrix to json value")
     }
 
     override def asDouble(raw: Any): Double = {

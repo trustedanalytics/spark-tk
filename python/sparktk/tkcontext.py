@@ -68,7 +68,7 @@ class TkContext(object):
 
     @property
     def dicom(self):
-        return get_lazy_loader(self, "dicom", implicit_kwargs={'tc': self}).dicom  # .dicom to account for extra 'graph' in name vis-a-vis scala
+        return get_lazy_loader(self, "dicom", implicit_kwargs={'tc': self}).dicom  # .dicom to account for extra 'dicom' in name vis-a-vis scala
 
 
     @property

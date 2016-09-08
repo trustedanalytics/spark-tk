@@ -11,7 +11,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
-import org.trustedanalytics.sparktk.dicom.{ Dicom, DicomFrame }
+import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
@@ -23,10 +23,10 @@ import scala.util.Random
 
 object Import {
   /**
-   * Creates a dicom frame by importing .dcm files from directory
+   * Creates a dicom object with metadata and imagedata frames
    *
    * @param path Full path to the DICOM files directory
-   * @return DicomFrame object with MetadataFrame and ImageDataFrame
+   * @return Dicom object with MetadataFrame and ImageDataFrame
    */
   def importDicom(sc: SparkContext, path: String): Dicom = {
 
@@ -37,8 +37,9 @@ object Import {
       case (filePath, fileData) =>
 
         //TODO: create .dcm files in /tmp and create file Obj. Currently reading bytes from hdfs is not supported (Temporary)
-        val tmpFile = File.createTempFile(s"dicom-test-${Random.nextInt()}", ".dcm")
+        val tmpFile: File = File.createTempFile(s"dicom-temp-${Random.nextInt()}", ".dcm")
         FileUtils.writeByteArrayToFile(tmpFile, fileData.toArray())
+        tmpFile.deleteOnExit()
 
         //create matrix
         val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
@@ -60,10 +61,8 @@ object Import {
           j <- 0 until w
         } data(i)(j) = raster.getSample(i, j, 0)
 
-        //dicom pixel array
-        val pixel_data_array: Array[Double] = data.flatten
         //Create a dense matrix for pixel array
-        val dm1 = new DenseMatrix(h, w, pixel_data_array)
+        val dm1 = new DenseMatrix(h, w, data.flatten)
 
         //Metadata
         val dis: DicomInputStream = new DicomInputStream(tmpFile)
@@ -85,24 +84,34 @@ object Import {
         (xml, dm1)
     }.zipWithIndex()
 
-    //create metadata pairrdd
-    val metaDataPairRDD: RDD[(Long, String)] = dcmMetadataPixelArrayRDD.map(row => (row._2, row._1._1))
-
-    //create image matrix pair rdd
-    val imageMatrixPairRDD: RDD[(Long, DenseMatrix)] = dcmMetadataPixelArrayRDD.map(row => (row._2, row._1._2))
+    dcmMetadataPixelArrayRDD.cache()
 
     val sqlCtx = new SQLContext(sc)
     import sqlCtx.implicits._
+
+    //create metadata pairrdd
+    val metaDataPairRDD: RDD[(Long, String)] = dcmMetadataPixelArrayRDD.map {
+      case (metadataImagedata, id) => (id, metadataImagedata._1)
+    }
+
+    metaDataPairRDD.cache()
 
     val metadataDF = metaDataPairRDD.toDF("id", "metadata")
     val metadataFrameRdd = FrameRdd.toFrameRdd(metadataDF)
     val metadataFrame = new Frame(metadataFrameRdd, metadataFrameRdd.frameSchema)
 
+    //create image matrix pair rdd
+    val imageMatrixPairRDD: RDD[(Long, DenseMatrix)] = dcmMetadataPixelArrayRDD.map {
+      case (metadataImagedata, id) => (id, metadataImagedata._2)
+    }
+
+    imageMatrixPairRDD.cache()
+
     val imageDF = imageMatrixPairRDD.toDF("id", "imagematrix")
     val imagedataFrameRdd = FrameRdd.toFrameRdd(imageDF)
     val imagedataFrame = new Frame(imagedataFrameRdd, imagedataFrameRdd.frameSchema)
 
-    new Dicom(new DicomFrame(metadataFrame, imagedataFrame))
+    new Dicom(metadataFrame, imagedataFrame)
   }
 
 }

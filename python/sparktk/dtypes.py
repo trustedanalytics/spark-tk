@@ -49,12 +49,8 @@ class _Matrix(object):
             """
             if value is None:
                 return None
-            try:
-                # create ndarray numpy's constructor
-                array = np.array(value, dtype=np.float64)
-            except:
-                raise
-            return array
+            else:
+                return np.array(value, dtype=np.float64)
         return constructor
 
     @property
@@ -70,7 +66,7 @@ class _Matrix(object):
     def __repr__(self):
         return "matrix"
 
-matrix = _Matrix
+matrix = _Matrix()
 
 class _Vector(object):
 
