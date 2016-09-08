@@ -2,6 +2,7 @@ import logging
 logger = logging.getLogger('sparktk')
 
 from sparktk.propobj import PropertiesObject
+import types
 
 # import constructors for the API's sake (not actually dependencies of the Dicom class)
 from sparktk.dicom.constructors.import_dcm import import_dcm
@@ -11,31 +12,32 @@ class Dicom(PropertiesObject):
     """
     sparktk Dicom
 
-    Represents a collection of DICOM data objects. Reference: https://en.wikipedia.org/wiki/DICOM
+    Represents a collection of DICOM data objects. Reference: [https://en.wikipedia.org/wiki/DICOM](https://en.wikipedia.org/wiki/DICOM)
 
     The metadata property is a sparktk frame which defines the metadata of the collection of DICOM objects.
     Its schema has a column named "id" which holds a unique integer ID for the record and another column which
-    holds a string of XML comprised of the metadata.  Users can run XQuery...
+    holds a string of XML comprised of the metadata.  Users can run XQuery or invoke canned column extraction/filter
+    operations on this frame.
 
     The imagedata property is a sparktk frame which defines the imagedata of the collection of DICOM objects.
     Its schema has a column named "id" which holds a unique integer ID for the record and another column which
     holds a matrix(internally it is a numpy.ndarray) comprised of the imagedata.  Users can run numpy supported transformations on it.
 
     dcm4che-3.x dependencies are used to support various operations on dicom images. It is available as java library
-    Reference: https://github.com/dcm4che/dcm4che
+    Reference: [https://github.com/dcm4che/dcm4che](https://github.com/dcm4che/dcm4che)
+
+    Note: Currently sparktk Dicom supports only uncompressed dicom images
+
+    Load a set of uncompressed sample .dcm files from path (integration-tests/datasets/dicom_uncompressed)
+    and create a dicom object. The below examples helps you to understand how to access dicom object properties.
 
     Examples
     --------
-        Note: Currently sparktk Dicom supports only uncompressed dicom images
-        
-        Load a set of uncompressed sample .dcm files from path (integration-tests/datasets/dicom_uncompressed)
-        and create a dicom object. The below examples helps you to understand how to access dicom object properties.
-        
-        
+
         #Path can be local/hdfs to dcm file(s)
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
-        #use import_dcm available inside dicom module to create a dicom object from given dicom_path 
+        #use import_dcm available inside dicom module to create a dicom object from given dicom_path
         >>> dicom = tc.dicom.import_dcm(dicom_path)
 
         #Type of dicom object created
@@ -118,9 +120,9 @@ class Dicom(PropertiesObject):
         #Using to built-in xml libraries to run xquery on metadata
         >>> import xml.etree.ElementTree as ET
 
-        Performing filter and add_columns operation.
+        #Performing filter and add_columns operation.
 
-        Filter xml content with specified tag_name and tag_value.
+        #Filter xml content with specified tag_name and tag_value.
 
         #sample custom filter function
         >>> def filter_meta(tag_name, tag_value):
@@ -150,8 +152,8 @@ class Dicom(PropertiesObject):
         =======================================
         [0]   0  <?xml version="1.0" encodin...
 
-        Add xml tag as column in dicom metadata frame
-        Here we add SOPInstanceUID as column to metadaframe
+        #Add xml tag as column in dicom metadata frame
+        #Here we add SOPInstanceUID as column to metadaframe
 
         #sample function to apply on row - add_columns
         >>> def extractor(tag_name):
@@ -200,7 +202,8 @@ class Dicom(PropertiesObject):
             :param udf:
             :return:
             """
-        self._imagedata.__setattr__("transform", transform)
+        self._imagedata.transform = types.MethodType(transform, self._imagedata, Frame)
+
 
         def pca(frame, **args):
             """
@@ -209,7 +212,8 @@ class Dicom(PropertiesObject):
             :param frame:
             :return:
             """
-            self._imagedata.__setattr__("pca", pca)
+        self._imagedata.pca = types.MethodType(pca, self._imagedata, Frame)
+
 
         def svd(frame, **args):
             """
@@ -219,7 +223,7 @@ class Dicom(PropertiesObject):
             :param args:
             :return:
             """
-            self._imagedata.__setattr__("svd", svd)
+        self._imagedata.svd = types.MethodType(svd, self._imagedata, Frame)
 
 
     def __repr__(self):

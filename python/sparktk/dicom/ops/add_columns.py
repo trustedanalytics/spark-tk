@@ -28,7 +28,9 @@ def add_columns(self, func, schema):
     :param func: function to apply on row
     :param schema: schema for the column(s) to be added
 
-    #If it is on HDFS, path should be like hdfs://<ip-address>:8020/user/<user-name>/<dicom-directory-name>
+    Examples:
+    ---------
+
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
@@ -69,5 +71,6 @@ def add_columns(self, func, schema):
         [1]   1  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
         [2]   2  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
         </skip>
+
     """
     self.metadata.add_columns(func, schema)

@@ -47,7 +47,9 @@ def filter(self, predicate):
     :param self: dicom
     :param predicate: predicate to apply on filter
 
-    #If it is on HDFS, path should be like hdfs://<ip-address>:8020/user/<user-name>/<dicom-directory-name>
+    Examples:
+    ---------
+
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
@@ -88,7 +90,23 @@ def filter(self, predicate):
         =======================================
         [0]   0  <?xml version="1.0" encodin...
 
+        >>> dicom.imagedata.inspect(truncate=30)
+        [#]  id  imagematrix
+        =========================================
+        [0]   0  [[ 0.  0.  0. ...,  0.  0.  0.]
+        [ 0.  7.  5. ...,  5.  7.  8.]
+        [ 0.  7.  6. ...,  5.  6.  7.]
+        ...,
+        [ 0.  6.  7. ...,  5.  5.  6.]
+        [ 0.  2.  5. ...,  5.  5.  4.]
+        [ 1.  1.  3. ...,  1.  1.  0.]]
+
     """
 
     self.metadata.filter(predicate)
+    filtered_id_frame = self.metadata.copy(columns = "id")
+    self._imagedata = filtered_id_frame.join_inner(self.imagedata, "id")
+
+
+
 
