@@ -3,13 +3,13 @@ from sparktk.tkcontext import TkContext
 
 def import_dcm(dicom_dir_path, tc=TkContext.implicit):
     """
-    Creates a dicom object with metadataFrame and imagedataFrame from a dcm file(s)
+    Creates a dicom object with metadataFrame and pixeldataFrame from a dcm file(s)
 
     Parameters
     ----------
 
     :param dicom_dir_path: (str) Local/HDFS path of the dcm file(s)
-    :return: (Dicom) returns a dicom object with metadata and imagedata frames
+    :return: (Dicom) returns a dicom object with metadata and pixeldata frames
 
     Examples
     --------

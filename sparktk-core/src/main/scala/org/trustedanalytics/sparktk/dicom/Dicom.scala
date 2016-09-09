@@ -9,13 +9,13 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 /**
- * Dicom holds metadata and imagedata frames
+ * Dicom holds metadata and pixeldata frames
  *
  * @param metadata dicom metadata frame
- * @param imagedata dicom imagedata frame
+ * @param pixeldata dicom pixeldata frame
  */
-class Dicom(metadata: Frame, imagedata: Frame) extends BaseDicom with Serializable with SaveSummarization {
-  super.init(metadata, imagedata)
+class Dicom(metadata: Frame, pixeldata: Frame) extends BaseDicom with Serializable with SaveSummarization {
+  super.init(metadata, pixeldata)
 }
 
 object Dicom extends TkSaveableObject {
@@ -23,7 +23,7 @@ object Dicom extends TkSaveableObject {
   val tkFormatVersion = 1
 
   /**
-   * Loads the parquet files (the metadata and imagedata dataframes) found at the given path and returns a DicomFrame
+   * Loads the parquet files (the metadata and pixeldata dataframes) found at the given path and returns a DicomFrame
    *
    * @param sc active SparkContext
    * @param path path to the file
@@ -36,15 +36,15 @@ object Dicom extends TkSaveableObject {
     // no extra metadata in version 1
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val metadataDF = sqlContext.read.parquet(path + "/metadata")
-    val imageDF = sqlContext.read.parquet(path + "/imagedata")
+    val imageDF = sqlContext.read.parquet(path + "/pixeldata")
 
     val metadataFrameRdd = FrameRdd.toFrameRdd(metadataDF)
     val metadataFrame = new Frame(metadataFrameRdd, metadataFrameRdd.frameSchema)
 
-    val imagedataFrameRdd = FrameRdd.toFrameRdd(imageDF)
-    val imagedataFrame = new Frame(imagedataFrameRdd, imagedataFrameRdd.frameSchema)
+    val pixeldataFrameRdd = FrameRdd.toFrameRdd(imageDF)
+    val pixeldataFrame = new Frame(pixeldataFrameRdd, pixeldataFrameRdd.frameSchema)
 
-    new Dicom(metadataFrame, imagedataFrame)
+    new Dicom(metadataFrame, pixeldataFrame)
   }
 }
 

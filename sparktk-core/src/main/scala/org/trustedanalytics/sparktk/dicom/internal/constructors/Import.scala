@@ -23,10 +23,10 @@ import scala.util.Random
 
 object Import {
   /**
-   * Creates a dicom object with metadata and imagedata frames
+   * Creates a dicom object with metadata and pixeldata frames
    *
    * @param path Full path to the DICOM files directory
-   * @return Dicom object with MetadataFrame and ImageDataFrame
+   * @return Dicom object with MetadataFrame and PixeldataFrame
    */
   def importDicom(sc: SparkContext, path: String): Dicom = {
 
@@ -36,7 +36,7 @@ object Import {
 
       case (filePath, fileData) =>
 
-        //TODO: create .dcm files in /tmp and create file Obj. Currently reading bytes from hdfs is not supported (Temporary)
+        //TODO: create .dcm files in /tmp and create file Obj. Currently dicom library does not support byte arrays (Temporary)
         val tmpFile: File = File.createTempFile(s"dicom-temp-${Random.nextInt()}", ".dcm")
         FileUtils.writeByteArrayToFile(tmpFile, fileData.toArray())
         tmpFile.deleteOnExit()
@@ -91,10 +91,8 @@ object Import {
 
     //create metadata pairrdd
     val metaDataPairRDD: RDD[(Long, String)] = dcmMetadataPixelArrayRDD.map {
-      case (metadataImagedata, id) => (id, metadataImagedata._1)
+      case (metadataPixeldata, id) => (id, metadataPixeldata._1)
     }
-
-    metaDataPairRDD.cache()
 
     val metadataDF = metaDataPairRDD.toDF("id", "metadata")
     val metadataFrameRdd = FrameRdd.toFrameRdd(metadataDF)
@@ -102,16 +100,14 @@ object Import {
 
     //create image matrix pair rdd
     val imageMatrixPairRDD: RDD[(Long, DenseMatrix)] = dcmMetadataPixelArrayRDD.map {
-      case (metadataImagedata, id) => (id, metadataImagedata._2)
+      case (metadataPixeldata, id) => (id, metadataPixeldata._2)
     }
 
-    imageMatrixPairRDD.cache()
-
     val imageDF = imageMatrixPairRDD.toDF("id", "imagematrix")
-    val imagedataFrameRdd = FrameRdd.toFrameRdd(imageDF)
-    val imagedataFrame = new Frame(imagedataFrameRdd, imagedataFrameRdd.frameSchema)
+    val pixeldataFrameRdd = FrameRdd.toFrameRdd(imageDF)
+    val pixeldataFrame = new Frame(pixeldataFrameRdd, pixeldataFrameRdd.frameSchema)
 
-    new Dicom(metadataFrame, imagedataFrame)
+    new Dicom(metadataFrame, pixeldataFrame)
   }
 
 }

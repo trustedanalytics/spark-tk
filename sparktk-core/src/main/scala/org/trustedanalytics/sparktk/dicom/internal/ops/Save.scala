@@ -19,7 +19,7 @@ case class Save(path: String) extends DicomSummarization[Unit] {
 
   override def work(state: DicomState): Unit = {
     state.metadata.dataframe.write.parquet(path + "/metadata")
-    state.imagedata.dataframe.write.parquet(path + "/imagedata")
+    state.pixeldata.dataframe.write.parquet(path + "/pixeldata")
     val formatId = Dicom.formatId
     val formatVersion = Dicom.tkFormatVersion
     TkSaveLoad.saveTk(state.metadata.dataframe.sqlContext.sparkContext, path, formatId, formatVersion, "No Metadata")

@@ -6,12 +6,12 @@ import org.trustedanalytics.sparktk.frame.Frame
 /**
  * State-backend for Dicom
  *
- * DicomState class holds metadataFrame and imagedataFrame
+ * DicomState class holds metadataFrame and pixeldataFrame
  *
  * @param metadata contains id and dicom metadata as xml string
- * @param imagedata contains id and dicom pixel data as DenseMatrix
+ * @param pixeldata contains id and dicom pixel data as DenseMatrix
  */
-case class DicomState(val metadata: Frame, val imagedata: Frame)
+case class DicomState(val metadata: Frame, val pixeldata: Frame)
 
 /**
  * Base Trait
@@ -21,12 +21,12 @@ trait BaseDicom {
   private var dicomState: DicomState = null
 
   def metadata: Frame = if (dicomState != null) dicomState.metadata else null
-  def imagedata: Frame = if (dicomState != null) dicomState.imagedata else null
+  def pixeldata: Frame = if (dicomState != null) dicomState.pixeldata else null
 
   lazy val logger = LoggerFactory.getLogger("sparktk")
 
-  private[sparktk] def init(metadata: Frame, imagedata: Frame): Unit = {
-    dicomState = DicomState(metadata, imagedata)
+  private[sparktk] def init(metadata: Frame, pixeldata: Frame): Unit = {
+    dicomState = DicomState(metadata, pixeldata)
   }
 
   protected def execute[T](summarization: DicomSummarization[T]): T = {
