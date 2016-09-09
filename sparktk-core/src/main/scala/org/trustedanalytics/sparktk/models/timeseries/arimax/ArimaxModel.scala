@@ -177,7 +177,7 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
     val maxLag = max(arimaxModel.p, arimaxModel.q)
     val ts = new BreezeDenseVector(yVector.toArray)
 
-    val predictions = Array.fill(maxLag) { null } ++ arimaxModel.predict(ts, xMatrix).toArray
+    val predictions = arimaxModel.predict(ts, xMatrix).toArray
     val numPredictions = predictions.length
 
     val dataWithPredictions = frame.rdd.zipWithIndex().map {

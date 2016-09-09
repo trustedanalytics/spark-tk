@@ -109,20 +109,20 @@ class ArimaxModel(PropertiesObject):
         [9]    2.6      1.7         561.0  10.3
 
 
-        >>> model = tc.models.timeseries.arimax.train(frame, "CO_GT", ["C6H6_GT", "PT08_S2_NMHC", "T"], 1, 1, 1, 2, False, False)
+        >>> model = tc.models.timeseries.arimax.train(frame, "CO_GT", ["C6H6_GT", "PT08_S2_NMHC", "T"], 1, 1, 1, 1, True, False)
         <progress>
 
         >>> model.c
-        0.2488530386393618
+        0.24886373113659435
 
         >>> model.ar
-        [-0.8612376157564607]
+        [-0.8612398115782316]
 
         >>> model.ma
         [-0.45556700539598505]
 
         >>> model.xreg
-        [0.5467607590900653, 0.2813500304366492, -0.010069971601612855, -0.004834805073405469, -0.1265006124761375, -0.0025163337617979554
+        [0.09496697769170012, -0.00043805552312166737, 0.0006888829627820128, 0.8523170824191132, -0.017901092786057428, 0.017936687425751337]
 
     In this example, we will call predict using the same frame that was used for training, again specifying the name
     of the time series column and the names of the columns that contain exogenous regressors.
@@ -139,21 +139,20 @@ class ArimaxModel(PropertiesObject):
         >>> predicted_frame.inspect(columns=["CO_GT","predicted_y"])
         [#]  CO_GT  predicted_y
         =========================
-        [0]    2.6  None
-        [1]    2.0  2.38533563132
-        [2]    2.2   2.2572598393
-        [3]    2.2  2.22538778928
-        [4]    1.6  2.21745633278
-        [5]    1.2  2.21548256573
-        [6]    1.2  2.21499138781
-        [7]    1.0  2.21486915669
-        [8]    2.9   2.2148387391
-        [9]    2.6  2.21483116959
-
+        [0]    2.6  2.83896716391
+        [1]    2.0  2.89056663602
+        [2]    2.2  2.84550712171
+        [3]    2.2  2.88445194591
+        [4]    1.6  2.85091111286
+        [5]    1.2   2.8798667019
+        [6]    1.2  2.85451566607
+        [7]    1.0  2.87634898739
+        [8]    2.9  2.85726970866
+        [9]    2.6  2.87356376648
 
     The trained model can be saved to be used later:
 
-        >>> model_path = "sandbox/savedArxModel"
+        >>> model_path = "sandbox/savedArimaxModel"
         >>> model.save(model_path)
 
     The saved model can be loaded through the tk context and then used for forecasting values the same way
@@ -166,18 +165,19 @@ class ArimaxModel(PropertiesObject):
         >>> predicted_frame.inspect(columns=["CO_GT","predicted_y"])
         [#]  CO_GT  predicted_y
         =========================
-        [0]    2.6  None
-        [1]    2.0  2.38533563132
-        [2]    2.2   2.2572598393
-        [3]    2.2  2.22538778928
-        [4]    1.6  2.21745633278
-        [5]    1.2  2.21548256573
-        [6]    1.2  2.21499138781
-        [7]    1.0  2.21486915669
-        [8]    2.9   2.2148387391
-        [9]    2.6  2.21483116959
+        [0]    2.6  2.83896716391
+        [1]    2.0  2.89056663602
+        [2]    2.2  2.84550712171
+        [3]    2.2  2.88445194591
+        [4]    1.6  2.85091111286
+        [5]    1.2   2.8798667019
+        [6]    1.2  2.85451566607
+        [7]    1.0  2.87634898739
+        [8]    2.9  2.85726970866
+        [9]    2.6  2.87356376648
 
     """
+
     def __init__(self, tc, scala_model):
         self._tc = tc
         tc.jutils.validate_is_jvm_instance_of(scala_model, _get_scala_obj(tc))
