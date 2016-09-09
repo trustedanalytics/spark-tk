@@ -134,5 +134,12 @@ class FrameInitTest extends TestingSparkContextWordSpec {
       assert(frame.take(frame.rowCount.toInt).length == frame.rowCount)
       assert(frame.validationReport.isDefined == false)
     }
+
+    "throw an exception for duplicate column names" in {
+      intercept[IllegalArgumentException] {
+        // duplicate column names should cause an exception
+        val schema = FrameSchema(List(Column("a", DataTypes.int32), Column("a", DataTypes.str)))
+      }
+    }
   }
 }
