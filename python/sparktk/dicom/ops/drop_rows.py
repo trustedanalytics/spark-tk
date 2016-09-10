@@ -1,7 +1,7 @@
-def filter(self, predicate):
+def drop_rows(self, predicate):
 
     """
-    Filter dicom using  given predicate
+    Drop rows of dicom metadata and pixeldata frames using  given predicate
 
     :param self: dicom
     :param predicate: predicate to apply on filter
@@ -25,8 +25,8 @@ def filter(self, predicate):
         >>> import xml.etree.ElementTree as ET
 
         #sample custom filter function
-        >>> def filter_meta(tag_name, tag_value):
-        ...    def _filter_meta(row):
+        >>> def drop_meta(tag_name, tag_value):
+        ...    def _drop_meta(row):
         ...        root = ET.fromstring(row["metadata"])
         ...        for attribute in root.findall('DicomAttribute'):
         ...            keyword = attribute.get('keyword')
@@ -35,35 +35,46 @@ def filter(self, predicate):
         ...                    value = attribute.find('Value').text
         ...                    if keyword == tag_name and value == tag_value:
         ...                        return True
-        ...    return _filter_meta
+        ...    return _drop_meta
 
         >>> tag_name = "SOPInstanceUID"
 
         >>> tag_value = "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"
 
-        >>> dicom.filter(filter_meta(tag_name, tag_value))
+        >>> dicom.drop_rows(drop_meta(tag_name, tag_value))
 
         <skip>
         #After filter
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
-        [0]   0  <?xml version="1.0" encodin...
+        [0]   1  <?xml version="1.0" encodin...
+        [1]   2  <?xml version="1.0" encodin...
 
         >>> dicom.pixeldata.inspect(truncate=30)
         [#]  id  imagematrix
         =========================================
-        [0]   0  [[ 0.  0.  0. ...,  0.  0.  0.]
-        [ 0.  7.  5. ...,  5.  7.  8.]
-        [ 0.  7.  6. ...,  5.  6.  7.]
+        [1]   1  [[  0.   1.   0. ...,   0.   0.   1.]
+        [  1.   9.  10. ...,   2.   4.   6.]
+        [  0.  12.  11. ...,   4.   4.   7.]
         ...,
-        [ 0.  6.  7. ...,  5.  5.  6.]
-        [ 0.  2.  5. ...,  5.  5.  4.]
-        [ 1.  1.  3. ...,  1.  1.  0.]]
+        [  0.   4.   2. ...,   3.   5.   5.]
+        [  0.   8.   5. ...,   7.   8.   8.]
+        [  0.  10.  10. ...,   8.   8.   8.]]
+        [2]   2  [[ 0.  0.  0. ...,  0.  0.  0.]
+        [ 0.  2.  2. ...,  6.  5.  5.]
+        [ 0.  7.  8. ...,  4.  4.  5.]
+        ...,
+        [ 0.  4.  1. ...,  4.  5.  6.]
+        [ 0.  4.  5. ...,  6.  6.  5.]
+        [ 1.  6.  8. ...,  4.  5.  4.]]
         </skip>
 
     """
 
-    self.metadata.filter(predicate)
-    filtered_id_frame = self.metadata.copy(columns = "id")
+    def inverted_predicate(row):
+        return not predicate(row)
+
+    self.metadata.filter(inverted_predicate)
+    filtered_id_frame = self.metadata.copy(columns= "id")
     self._pixeldata = filtered_id_frame.join_inner(self.pixeldata, "id")

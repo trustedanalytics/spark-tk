@@ -1,5 +1,5 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
-class AddColumns {
+class ExportDcm {
 
 }

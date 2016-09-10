@@ -1,8 +1,6 @@
 import logging
 logger = logging.getLogger('sparktk')
 
-import types
-
 # import constructors for the API's sake (not actually dependencies of the Dicom class)
 from sparktk.dicom.constructors.import_dcm import import_dcm
 
@@ -73,10 +71,10 @@ class Dicom(object):
         >>> pylab.show()
         </skip>
 
-        #Save method helps to save dicom object in parquet format
+        #Save method persists the dicom object to disk
         >>> dicom.save("sandbox/dicom_data")
 
-        #Loading the saved dicom object
+        #loads the saved dicom object
         >>> load_dicom = tc.load("sandbox/dicom_data")
 
         #Re-check whether we loaded back the dicom object or not
@@ -108,7 +106,7 @@ class Dicom(object):
 
         #Inspect metadata property to see dicom metadata xml content
         <skip>
-        >>> dicom.metadata.inspect(truncate=30)
+        >>> load_dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
         [0]   0  <?xml version="1.0" encodin...
@@ -158,27 +156,6 @@ class Dicom(object):
         self._metadata = Frame(self._tc, scala_dicom.metadata())
         self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
 
-
-        def pca(frame, **args):
-            """
-            pca will take frame and other parameters(yet to finalize)
-
-            :param frame:
-            :return:
-            """
-        self._pixeldata.pca = types.MethodType(pca, self._pixeldata, Frame)
-
-
-        def svd(frame, **args):
-            """
-            svd will take frame and other parameters(yet to finalize)
-
-            :param frame:
-            :param args:
-            :return:
-            """
-        self._pixeldata.svd = types.MethodType(svd, self._pixeldata, Frame)
-
     def __repr__(self):
         #TODO Python friendly repr
         #Write a string summary
@@ -199,8 +176,14 @@ class Dicom(object):
 
 
     # Dicom Operations
-    from sparktk.dicom.ops.add_columns import extract_keywords, extract_tags
-    from sparktk.dicom.ops.export_to_dcm import export_to_dcm
-    from sparktk.dicom.ops.filter import filter, filter_by_keywords, filter_by_tags, drop_rows, drop_rows_by_keywords, drop_rows_by_tags
+    from sparktk.dicom.ops.drop_rows import drop_rows
+    from sparktk.dicom.ops.drop_rows_by_keywords import drop_rows_by_keywords
+    from sparktk.dicom.ops.drop_rows_by_tags import drop_rows_by_tags
+    from sparktk.dicom.ops.extract_keywords import extract_keywords
+    from sparktk.dicom.ops.extract_tags import extract_tags
+    from sparktk.dicom.ops.export_dcm import export_dcm
+    from sparktk.dicom.ops.filter import filter
+    from sparktk.dicom.ops.filter_by_keywords import filter_by_keywords
+    from sparktk.dicom.ops.filter_by_tags import filter_by_tags
     from sparktk.dicom.ops.save import save
 

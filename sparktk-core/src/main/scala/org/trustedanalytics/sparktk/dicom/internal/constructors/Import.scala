@@ -28,7 +28,7 @@ object Import {
    * @param path Full path to the DICOM files directory
    * @return Dicom object with MetadataFrame and PixeldataFrame
    */
-  def importDicom(sc: SparkContext, path: String): Dicom = {
+  def importDcm(sc: SparkContext, path: String): Dicom = {
 
     val dicomFilesRdd = sc.binaryFiles(path)
 
