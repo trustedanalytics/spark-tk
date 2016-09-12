@@ -25,11 +25,9 @@ class TkContext(object):
         self._jtc = self._sc._jvm.org.trustedanalytics.sparktk.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
         self._scala_sc = self._jutils.get_scala_sc()
-        self._other_libs = other_libs
-        if other_libs is not None:
-            if not isinstance(other_libs, list):
-                raise TypeError("other_libs parameter should be a list (or None).  Received type %s" % type(other_libs))
-            for lib in other_libs:
+        self._other_libs = other_libs if other_libs is None or isinstance(other_libs, list) else [other_libs]
+        if self._other_libs is not None:
+            for lib in self._other_libs:
                 lib_obj = lib.get_main_object(self)
                 setattr(self, lib.__name__, lib_obj)
         loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time

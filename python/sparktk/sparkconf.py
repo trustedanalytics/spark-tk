@@ -116,14 +116,15 @@ def set_env_for_sparktk(spark_home=None,
     if not os.environ.get('PYSPARK_PYTHON'):
         set_env('PYSPARK_PYTHON', 'python2.7')
 
+    # Validate other libraries to verify they have the required functions
+    other_libs = _validate_other_libs(other_libs)
+
     # Everything else go in PYSPARK_SUBMIT_ARGS
     spark_dirs = get_spark_dirs()
     spark_dirs.extend(get_sparktk_dirs())
 
     # Get library directories from other_libs
     if other_libs is not None:
-        if not isinstance(other_libs, list):
-            other_libs = [other_libs]
         for other_lib in other_libs:
             other_lib_dirs = other_lib.get_library_dirs()
             spark_dirs.extend(other_lib_dirs)
@@ -194,9 +195,6 @@ def create_sc(other_libs=None,
     :return: pyspark SparkContext
     """
 
-    if other_libs is not None and not isinstance(other_libs, list):
-        raise TypeError("other_libs parameter should be a list of libraries (or None), but received: %s" % type(other_libs))
-
     set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
 
     # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
@@ -232,3 +230,26 @@ def create_sc(other_libs=None,
     sc = SparkContext(conf=conf, pyFiles=py_files)
 
     return sc
+
+def _validate_other_libs(other_libs):
+    """
+    Validates the other_libs parameter.  Makes it a list, if it isn't already and verifies that all the items in the
+    list are python modules with the required functions.
+
+    Raises a TypeError, if the other_libs parameter is not valid.
+
+    :param other_libs: parameter to validate
+    :return: validated other_libs parameter
+    """
+    if other_libs is not None:
+        if not isinstance(other_libs, list):
+            other_libs = [other_libs]
+        import types
+        required_functions = ["get_loaders","get_main_object","get_library_dirs"]
+        for lib in other_libs:
+            if not isinstance(lib, types.ModuleType):
+                raise TypeError("Expected other_libs to contain python modules, but received %s." % type(lib) )
+            for required_function in required_functions:
+                if not hasattr(lib, required_function):
+                    raise TypeError("other_lib '%s' is missing %s() function." % (lib.__name__,required_function))
+    return other_libs
