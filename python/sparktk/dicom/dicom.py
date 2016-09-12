@@ -181,7 +181,7 @@ class Dicom(object):
     from sparktk.dicom.ops.drop_rows_by_tags import drop_rows_by_tags
     from sparktk.dicom.ops.extract_keywords import extract_keywords
     from sparktk.dicom.ops.extract_tags import extract_tags
-    from sparktk.dicom.ops.export_dcm import export_dcm
+    from sparktk.dicom.ops.export_to_dcm import export_to_dcm
     from sparktk.dicom.ops.filter import filter
     from sparktk.dicom.ops.filter_by_keywords import filter_by_keywords
     from sparktk.dicom.ops.filter_by_tags import filter_by_tags
