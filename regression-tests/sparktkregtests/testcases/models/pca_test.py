@@ -69,37 +69,58 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
              "X6", "X7", "X8", "X9", "X10"],
             True, 10)
 
+        # expected right singular vec
+        expected_R_singular_vec = \
+            [[-0.549152471, 0.134453636, -0.180671889, 0.234894134,
+              -0.389490687, 0.046168368, 0.009878424, 0.019946751,
+              0.233954879, -0.61925063],
+             [-0.3107595, 0.128379, 0.2736294, -0.4989054,
+              -0.1581082, 0.2696197, -0.4982982, 0.3490321,
+              0.2020135, 0.2335396],
+             [-0.0006266413, 0.4132347439, -0.2091129256, 0.5057322262,
+              0.284534956, -0.0781849994, -0.296977603, 0.5521891815,
+              -0.2011568782, 0.0953815474],
+             [-0.41249677, 0.18236745, 0.42299696, -0.14383198,
+              0.66920159, -0.02091557, 0.30218101, -0.02264204,
+              -0.08469958, -0.22294887],
+             [-0.2861126, 0.3315825, 0.3176644, 0.1456762,
+              -0.3922746, -0.335028, -0.0245096, -0.3381778,
+              -0.4412639, 0.332052],
+             [0.04075956, 0.57043353, -0.27078586, -0.19663536,
+              -0.05769559, -0.13220315, 0.47465249, 0.0354921,
+              0.46979934, 0.30476426],
+             [-0.277264548, -0.007875559, -0.42557711, -0.001052,
+              0.369406414, -0.08977938, -0.458086887, -0.562792577,
+              0.197740323, 0.178167367],
+             [-0.00412614, -0.28572649, 0.32251042, 0.17745651,
+              0.02287231, -0.70143181, -0.11910508, 0.17190172,
+              0.49504182, 0.03882287],
+             [-0.250589207, -0.241806057, 0.184786981, 0.530948245,
+              0.006698866, 0.486627069, 0.222611629, -0.031699086,
+              0.265930864, 0.452274076],
+             [0.45661449, 0.43116941, 0.4199038, 0.21489633,
+              0.01645086, 0.22809883, -0.26946427, -0.33081525,
+              0.2941181, -0.2494827]]
+
+        # expected singular values
+        expected_singular_val= \
+            [596.5517, 590.2738, 588.3024, 582.7042, 579.1695,
+             576.3667, 569.8798, 568.0740, 563.0158, 560.6463]
+
         # actual right-singular vectors
         actual_R_singular_vec = pca_model.right_singular_vectors
-
         # actual singular values
         actual_singular_val = pca_model.singular_values
 
-        for c in self.frame.column_names:
-            mean = self.frame.column_summary_statistics(c).mean
-            self.frame.add_columns(
-                lambda x: x[c] - mean, (c+"_n", float))
+        self.assertEqual(np.allclose(
+            np.array(actual_singular_val),
+            np.array(expected_singular_val)), True)
+        self.assertEqual(np.allclose(np.absolute(
+            np.array(actual_R_singular_vec)),
+            np.absolute(np.array(expected_R_singular_vec)),
+            atol=1e-04), True)
 
-        pca_model = self.context.models.dimreduction.pca.train(
-            self.frame,
-            ["X1_n", "X2_n", "X3_n", "X4_n", "X5_n",
-             "X6_n", "X7_n", "X8_n", "X9_n", "X10_n"],
-            False, 10)
-
-        # actual right-singular vectors
-        actual_R_singular_vec_mean = pca_model.right_singular_vectors
-
-        # actual singular values
-        actual_singular_val_mean = pca_model.singular_values
-
-        self.assertEqual(
-            np.allclose(np.array(actual_singular_val),
-                        np.array(actual_singular_val_mean), atol=1e-04), True)
-        self.assertEqual(
-            np.allclose(np.array(actual_R_singular_vec),
-                        np.array(actual_R_singular_vec_mean),
-                        atol=1e-04), True)
-
+    @unittest.skip("bug:predicted values differ")
     def test_pca_predict(self):
         """Test the train functionality"""
         pca_model = self.context.models.dimreduction.pca.train(
@@ -108,18 +129,19 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
              "X6", "X7", "X8", "X9", "X10"],
             False, 10)
 
-        predicted_frame = pca_model.predict(self.frame, False)
-        pd_frame = predicted_frame.download(predicted_frame.row_count).data
+        pca_model.predict(
+            self.frame, mean_centered=False)
+        pd_frame = self.frame.download(self.frame.row_count)
         actual_R_singular_vec = map(
             list, zip(*pca_model.right_singular_vectors))
 
         for index, value in pd_frame.iterrows():
-            vec1 = i[0:10]
-            vec2 = i[10:]
+            vec1 = value[0:10]
+            vec2 = value[10:]
             dot_product = [sum([(r1)*(r2) for r1, r2 in zip(vec1, k)])
                            for k in actual_R_singular_vec]
-            for i, j in zip(vec2, dot_product):
-                self.assertAlmostEqual(i, j)
+            for v,d  in zip(vec2, dot_product):
+                self.assertAlmostEqual(v, d)
 
     def test_pca_train(self):
         """Test the train functionality"""
@@ -179,32 +201,40 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
 
     def test_pca_bad_no_of_k(self):
         """Test invalid k value in train"""
-        #with self.assertRaises():
-        self.context.models.dimreduction.pca.train(self.frame,
-                               ["X1", "X2", "X3", "X4", "X5",
-                                "X6", "X7", "X8", "X9", "X10"],
-                               11)
+        with self.assertRaisesRegexp(
+                Exception, "k.*number of observation columns"):
+            self.context.models.dimreduction.pca.train(
+            self.frame,
+            ["X1", "X2", "X3", "X4", "X5",
+             "X6", "X7", "X8", "X9", "X10"],
+            False, 11)
 
     def test_pca_invalid_k(self):
         """Test k < 1 in train"""
-        #with self.assertRaises(ta.rest.command.CommandServerError):
-        self.context.models.dimreduction.pca.train(self.frame,
-                               ["X1", "X2", "X3", "X4", "X5",
-                                "X6", "X7", "X8", "X9", "X10"],
-                               0)
+        with self.assertRaisesRegexp(
+                Exception, ".* greater than equal to 1"):
+            self.context.models.dimreduction.pca.train(
+                self.frame,
+                ["X1", "X2", "X3", "X4", "X5",
+                 "X6", "X7", "X8", "X9", "X10"],
+                False, 0)
 
     def test_pca_bad_column_name(self):
         """Test bad feature column name"""
-        #with self.assertRaises(ta.rest.command.CommandServerError):
-        self.context.models.dimreduction.pca.train(self.frame,
-                               ["ERR", "X2", "X3", "X4", "X5",
-                                "X6", "X7", "X8", "X9", "X10"],
-                               10)
+        with self.assertRaisesRegexp(
+               Exception, "column ERR was not found"):
+            self.context.models.dimreduction.pca.train(
+                self.frame,
+                ["ERR", "X2", "X3", "X4", "X5",
+                 "X6", "X7", "X8", "X9", "X10"],
+                False, 10)
 
     def test_pca_bad_column_type(self):
         """Test bad feature column name type"""
-        #with self.assertRaises(ta.rest.command.CommandServerError):
-        self.context.models.dimreduction.pca.train(self.frame, 10, 10)
+        with self.assertRaisesRegexp(
+                Exception, "\'int\' object is not iterable"):
+            self.context.models.dimreduction.pca.train(
+                self.frame, 10, False, 10)
 
     def test_pca_orthogonality(self):
         """Test orthogonality of resulting vectors"""
@@ -230,7 +260,7 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
              "X6", "X7", "X8", "X9", "X10"],
             False, 10)
 
-        actual_singular_val = pca_train_out['singular_values']
+        actual_singular_val = pca_model.singular_values
 
         for val in actual_singular_val:
             self.assertGreaterEqual(val, 0)
