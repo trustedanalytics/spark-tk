@@ -11,9 +11,9 @@ object SparkAliases {
 
   val SerDeUtil = SparkSerDeUtil
 
-  lazy val MLLibSerDe = getSparkSerDeUtil
+  lazy val MLLibSerDe = getSparkMLLibSerDe
 
-  def getSparkSerDeUtil = {
+  def getSparkMLLibSerDe = {
     SparkMLLibSerDe
     SparkMLLibSerDe.initialize()
   }
