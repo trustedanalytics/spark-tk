@@ -156,6 +156,8 @@ class Frame(object):
             return True
         elif type(data_type) is dtypes.vector:
             return True
+        elif data_type is dtypes.matrix:
+            return True
         else:
             return False
 

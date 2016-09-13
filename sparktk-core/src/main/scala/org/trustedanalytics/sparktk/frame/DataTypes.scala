@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.frame
 
 import java.util
 
+import org.apache.spark.mllib.linalg.DenseMatrix
 import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{ DateTimeZone, DateTime }
 import org.slf4j.LoggerFactory
@@ -49,6 +50,8 @@ object DataTypes {
     def isInteger: Boolean
 
     def isVector: Boolean = false
+
+    def isMatrix: Boolean = false
 
     /**
      * Looser type equality than strict object equals, to enable things like vector.equalsDataType(vector(4)) returns true
@@ -440,6 +443,39 @@ object DataTypes {
   }
 
   /**
+   * DenseMatrix
+   */
+  case object matrix extends DataType {
+    override type ScalaType = DenseMatrix
+
+    override def parse(raw: Any) = Try {
+      raw.asInstanceOf[DenseMatrix]
+    }
+
+    override def isType(raw: Any): Boolean = {
+      // TODO: nulls aren't allowed for now but we will need to support nulls or Nones later
+      raw != null && raw.isInstanceOf[DenseMatrix]
+    }
+
+    override def scalaType = classOf[DenseMatrix]
+
+    override def typedJson(raw: Any) = {
+      throw new Exception("Cannot convert matrix to json value")
+    }
+
+    override def asDouble(raw: Any): Double = {
+      throw new Exception("Cannot convert matrix to double value")
+    }
+
+    override def isNumerical = false
+
+    override def isInteger = false
+
+    override def isMatrix = true
+
+  }
+
+  /**
    * An alias for string
    */
   val str = string
@@ -501,6 +537,7 @@ object DataTypes {
     s match {
       case vectorPattern(length) => vector(length.toLong)
       case "vector" => DataTypes.string
+      case "matrix" => DataTypes.matrix
       case _ => throw new IllegalArgumentException(s"Invalid datatype: '$s'")
     }
   }

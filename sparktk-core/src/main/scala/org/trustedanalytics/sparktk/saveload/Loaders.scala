@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.saveload
 
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.models.clustering.lda.LdaModel
@@ -13,6 +14,7 @@ import org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
+import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
@@ -47,7 +49,9 @@ object Loaders {
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
+      ArimaxModel,
       CollaborativeFilteringModel,
+      Dicom,
       Frame,
       GaussianMixtureModel,
       Graph,
