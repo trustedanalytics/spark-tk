@@ -7,6 +7,8 @@ from sparktk import TkContext
 
 from sparktk.propobj import PropertiesObject
 
+__all__ = ["train", "load", "ArxModel"]
+
 def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False):
     """
     Creates a ARX model by training on the given frame. Fit an autoregressive model with additional
@@ -46,7 +48,7 @@ def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False)
         raise TypeError("'no_intercept' should be a boolean.")
 
     tc = frame._tc
-    _scala_obj = _get_scala_obj(tc)
+    _scala_obj = get_scala_obj(tc)
     scala_x_columns = tc.jutils.convert.to_scala_vector_string(x_columns)
     scala_model = _scala_obj.train(frame._scala, ts_column, scala_x_columns, x_max_lag, y_max_lag, no_intercept)
 
@@ -59,7 +61,7 @@ def load(path, tc=TkContext.implicit):
     return tc.load(path, ArxModel)
 
 
-def _get_scala_obj(tc):
+def get_scala_obj(tc):
     """Gets reference to the ArxModel scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 
@@ -242,7 +244,7 @@ class ArxModel(PropertiesObject):
     """
     def __init__(self, tc, scala_model):
         self._tc = tc
-        tc.jutils.validate_is_jvm_instance_of(scala_model, _get_scala_obj(tc))
+        tc.jutils.validate_is_jvm_instance_of(scala_model, get_scala_obj(tc))
         self._scala = scala_model
 
     @staticmethod

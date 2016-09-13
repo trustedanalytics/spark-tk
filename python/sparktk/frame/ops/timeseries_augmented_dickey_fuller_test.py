@@ -50,7 +50,7 @@ def timeseries_augmented_dickey_fuller_test(self, ts_column, max_lag, regression
     values and the max_lag.  The function returns an object that has properties for the p-value and test statistic.
 
         >>> frame.timeseries_augmented_dickey_fuller_test("timeseries_values", 0)
-        p_value   = 1.0
+        p_value   = 3.3005431721e-11
         test_stat = -7.54504405591
 
     """
