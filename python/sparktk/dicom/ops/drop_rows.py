@@ -3,11 +3,14 @@ def drop_rows(self, predicate):
     """
     Drop rows of dicom metadata and pixeldata frames using  given predicate
 
-    :param self: dicom
+    Parameters
+    ----------
+
     :param predicate: predicate to apply on filter
 
-    Examples:
-    ---------
+
+    Examples
+    --------
 
         >>> dicom_path = "../datasets/dicom_uncompressed"
 

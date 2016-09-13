@@ -11,6 +11,7 @@ def import_dcm(dicom_dir_path, tc=TkContext.implicit):
     :param dicom_dir_path: (str) Local/HDFS path of the dcm file(s)
     :return: (Dicom) returns a dicom object with metadata and pixeldata frames
 
+
     Examples
     --------
         #Path can be local/hdfs to dcm file(s)
