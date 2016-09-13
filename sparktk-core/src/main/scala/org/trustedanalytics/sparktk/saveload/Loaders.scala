@@ -25,14 +25,9 @@ object Loaders {
     val loaderOption = loaders.get(result.formatId)
 
     // Find a loader that matches the specified formatId
-    val loader = loaders.getOrElse(result.formatId, {
-      // If it's not a spark-tk format, check other libraries for a matching loader
-      if (otherLoaders.isDefined) {
-        otherLoaders.get.getOrElse(result.formatId, throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaders.get.keys.mkString("\n")}"))
-      }
-      else
-        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}")
-    })
+    val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
+    val loader = loaders.getOrElse(result.formatId, { otherLoaders.flatMap(_.get(result.formatId)).getOrElse(
+      throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}")) })
 
     loader(sc, path, result.formatVersion, result.data)
   }
