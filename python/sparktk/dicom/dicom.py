@@ -45,6 +45,7 @@ class Dicom(object):
         >>> pixeldata = dicom.pixeldata.take(1)
 
         #dispaly
+        <skip>
         >>> pixeldata
         TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
@@ -53,6 +54,7 @@ class Dicom(object):
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
         [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        </skip>
 
         #Access ndarray
         >>> image_ndarray= pixeldata.data[0][1]
