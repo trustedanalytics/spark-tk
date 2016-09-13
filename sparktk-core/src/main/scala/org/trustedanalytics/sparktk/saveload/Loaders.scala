@@ -20,7 +20,7 @@ import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRe
 
 object Loaders {
 
-  def load(sc: SparkContext, path: String, otherLoaders: Option[Map[String, LoaderType]]): Any = {
+  def load(sc: SparkContext, path: String, otherLoaders: Option[Map[String, LoaderType]] = None): Any = {
     val result = TkSaveLoad.loadTk(sc, path)
     val loaderOption = loaders.get(result.formatId)
 
