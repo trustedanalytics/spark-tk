@@ -88,3 +88,7 @@ class JConvert(object):
     def to_scala_group_by_aggregation_args(self, python_map):
         scala_map = self.to_scala_map(python_map)
         return self.sc._jvm.org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupByAggregationArgs(scala_map)
+
+    def combine_scala_maps(self, python_list_of_scala_maps):
+        scala_list = self.to_scala_list(python_list_of_scala_maps)
+        return self.scala.combineScalaMap(scala_list)
