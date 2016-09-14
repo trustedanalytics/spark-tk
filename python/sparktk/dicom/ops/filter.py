@@ -3,8 +3,11 @@ def filter(self, predicate):
     """
     Filter dicom using  given predicate
 
-    :param self: dicom
+    Parameters
+    ----------
+
     :param predicate: predicate to apply on filter
+
 
     Examples:
     ---------

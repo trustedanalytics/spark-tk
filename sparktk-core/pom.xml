@@ -85,19 +85,37 @@
                             </execution>
                         </executions>
                     </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <instructions>
-                            <!-- Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)",osgi.extender;filter:="(osgi.extender=osgi.serviceloader.processor)",osgi.serviceloader;filter:="(osgi.serviceloader=*)";cardinality:=multiple</Require-Capability>
-                            <Provide-Capability>osgi.serviceloader;osgi.serviceloader=javax.imageio.spi.ImageReaderSpi</Provide-Capability-->
-                            <SPI-Consumer>*</SPI-Consumer>
-                            <SPI-Provider>javax.imageio.spi.ImageReaderSpi</SPI-Provider>
-                        </instructions>
-                    </configuration>
-                </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.outputDirectory}/maven.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <!-- Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)",osgi.extender;filter:="(osgi.extender=osgi.serviceloader.processor)",osgi.serviceloader;filter:="(osgi.serviceloader=*)";cardinality:=multiple</Require-Capability>
+                        <Provide-Capability>osgi.serviceloader;osgi.serviceloader=javax.imageio.spi.ImageReaderSpi</Provide-Capability-->
+                        <SPI-Consumer>*</SPI-Consumer>
+                        <SPI-Provider>javax.imageio.spi.ImageReaderSpi</SPI-Provider>
+                    </instructions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -259,6 +277,10 @@
         <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
         </dependency>
     </dependencies>
 </project>
