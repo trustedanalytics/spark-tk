@@ -10,13 +10,14 @@ logger = logging.getLogger('sparktk')
 
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
+    _other_libs = None
 
-    def __init__(self, sc=None, **create_sc_kwargs):
+    def __init__(self, sc=None, other_libs=None, **create_sc_kwargs):
         if not sc:
             if SparkContext._active_spark_context:
                 sc = SparkContext._active_spark_context
             else:
-                sc = create_sc(**create_sc_kwargs)
+                sc = create_sc(other_libs=other_libs, **create_sc_kwargs)
         if type(sc) is not SparkContext:
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc
@@ -24,6 +25,11 @@ class TkContext(object):
         self._jtc = self._sc._jvm.org.trustedanalytics.sparktk.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
         self._scala_sc = self._jutils.get_scala_sc()
+        self._other_libs = other_libs if other_libs is None or isinstance(other_libs, list) else [other_libs]
+        if self._other_libs is not None:
+            for lib in self._other_libs:
+                lib_obj = lib.get_main_object(self)
+                setattr(self, lib.__name__, lib_obj)
         loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     from sparktk.arguments import implicit
@@ -67,12 +73,23 @@ class TkContext(object):
         return get_lazy_loader(self, "graph", implicit_kwargs={'tc': self}).graph  # .graph to account for extra 'graph' in name vis-a-vis scala
 
     @property
+    def dicom(self):
+        return get_lazy_loader(self, "dicom", implicit_kwargs={'tc': self}).dicom  # .dicom to account for extra 'dicom' in name vis-a-vis scala
+
+
+    @property
     def examples(self):
         return get_lazy_loader(self, "examples", implicit_kwargs={'tc': self})
 
     def load(self, path, validate_type=None):
         """loads object from the given path (if validate_type is provided, error raised if loaded obj does not match"""
-        scala_obj = self._jtc.load(path)
+        loaders_map = None
+        if self._other_libs is not None:
+            other_loaders = []
+            for other_lib in self._other_libs:
+                other_loaders.append(other_lib.get_loaders(self))
+            loaders_map =  self.jutils.convert.combine_scala_maps(other_loaders)
+        scala_obj = self._jtc.load(path, self.jutils.convert.to_scala_option(loaders_map))
         python_obj = self._create_python_proxy(scala_obj)
         if validate_type and not isinstance(python_obj, validate_type):
           raise RuntimeError("load expected to get type %s but got type %s" % (validate_type, type(python_obj)))
@@ -98,7 +115,16 @@ class TkContext(object):
         try:
             relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
         except ValueError as e:
-            raise ValueError("Trouble with class name %s, %s" % ('.'.join(name_parts), str(e)))
+            # check if it's from another library
+            relevant_path = ""
+            for other_lib in self._other_libs:
+                other_lib_name = other_lib.__name__
+                if other_lib_name in name_parts:
+                    relevant_path = ".".join(name_parts[name_parts.index(other_lib_name):])
+                    break
+            # if it's not from of the other libraries, then raise an error
+            if relevant_path == "":
+                raise ValueError("Trouble with class name %s, %s" % ('.'.join(name_parts), str(e)))
         cmd = "tc.%s._from_scala(tc, scala_obj)" % relevant_path
         logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
         proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})

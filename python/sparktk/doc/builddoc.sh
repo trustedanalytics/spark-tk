@@ -2,9 +2,6 @@
 
 # builds the python documentation using pdoc
 
-docutils=$(pip list | grep docutils)
-if [ $? -eq 0 ]; then
-
 NAME="[`basename $0`]"
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 echo "$NAME DIR=$DIR"
@@ -49,9 +46,3 @@ echo $NAME rm $tmp_dir
 rm -r $tmp_dir
 
 echo $NAME Done.
-
-else
-
-    echo "can't generate python docs docutils is not installed"
-
-fi
