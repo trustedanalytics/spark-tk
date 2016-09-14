@@ -30,7 +30,7 @@ class TkContext(jsc: JavaSparkContext) extends Serializable {
       if (sparkBuildVersion.getMajorVersion == sparkRuntimeVersion.getMajorVersion) {
         if (sparkBuildVersion.getMinorVersion == sparkRuntimeVersion.getMinorVersion) {
           if (sparkBuildVersion.getIncrementalVersion != sparkRuntimeVersion.getIncrementalVersion)
-            logger.warn(s"Minor version mismatch: Spark Build Version $sparkBuildVersion " +
+            logger.warn(s"Incremental version mismatch: Spark Build Version $sparkBuildVersion " +
               s"Spark Runtime $sparkRuntimeVersion")
           true
         }
