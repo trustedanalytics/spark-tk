@@ -143,7 +143,7 @@ class LinearRegressionModel(PropertiesObject):
     @property
     def weights(self):
         """Weights of the trained model"""
-        return self._scala.weights()
+        return self._tc.jutils.convert.from_scala_seq(self._scala.weights())
 
     @property
     def explained_variance(self):
