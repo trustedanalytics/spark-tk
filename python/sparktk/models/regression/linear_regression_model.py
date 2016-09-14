@@ -95,7 +95,7 @@ class LinearRegressionModel(PropertiesObject):
         r2                      = 0.987374330661
         root_mean_squared_error = 0.793786476136
         value_column            = y
-        weights                 = WrappedArray(2.4439393939393925)
+        weights                 = [2.4439393939393925]
 
         >>> predicted_frame = model.predict(frame, ["x1"])
         <progress>
