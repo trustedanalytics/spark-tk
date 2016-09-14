@@ -26,18 +26,14 @@ class TkContext(jsc: JavaSparkContext) extends Serializable {
   private val logger = LoggerFactory.getLogger(this.getClass)
 
   private def checkSparkBuildVersionCompatibility() = {
-    val result =
-      if (sparkBuildVersion.getMajorVersion == sparkRuntimeVersion.getMajorVersion) {
-        if (sparkBuildVersion.getMinorVersion == sparkRuntimeVersion.getMinorVersion) {
-          if (sparkBuildVersion.getIncrementalVersion != sparkRuntimeVersion.getIncrementalVersion)
-            logger.warn(s"Incremental version mismatch: Spark Build Version $sparkBuildVersion " +
-              s"Spark Runtime $sparkRuntimeVersion")
-          true
-        }
-        else false
-      }
-      else false
-    result
+    if (sparkBuildVersion.getMajorVersion == sparkRuntimeVersion.getMajorVersion &&
+      sparkBuildVersion.getMinorVersion == sparkRuntimeVersion.getMinorVersion) {
+      if (sparkBuildVersion.getIncrementalVersion != sparkRuntimeVersion.getIncrementalVersion)
+        logger.warn(s"Incremental version mismatch: Spark Build Version $sparkBuildVersion " +
+          s"Spark Runtime $sparkRuntimeVersion")
+      true
+    }
+    else false
   }
 
   require(checkSparkBuildVersionCompatibility(), s"Spark Build Version $sparkBuildVersion " +

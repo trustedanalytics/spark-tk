@@ -99,6 +99,11 @@
           <enabled>true</enabled>
         </releases>
       </repository>
+        <repository>
+            <id>www.dcm4che.org</id>
+            <name>dcm4che Repository</name>
+            <url>http://www.dcm4che.org/maven2</url>
+        </repository>
       <repository>
         <id>SparkPackagesRepo</id>
         <url>http://dl.bintray.com/spark-packages/maven</url>
@@ -153,6 +158,7 @@
       <dep.daal.version>2016.0.109</dep.daal.version>
       <dep.graphframes.version>0.1.0-spark1.6</dep.graphframes.version>
       <dep.orientdb.version>2.2.6</dep.orientdb.version>
+      <dep.dicom.version>3.3.7</dep.dicom.version>
       <!--START GAO MAVEN -->
 
       <scala.long.version>2.10.5</scala.long.version>
@@ -768,6 +774,30 @@
 
     <dependencyManagement>
       <dependencies>
+
+        <!-- START dicom dependencies -->
+        <dependency>
+          <groupId>org.dcm4che</groupId>
+          <artifactId>dcm4che-core</artifactId>
+          <version>${dep.dicom.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.dcm4che</groupId>
+          <artifactId>dcm4che-imageio</artifactId>
+          <version>${dep.dicom.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.dcm4che.tool</groupId>
+          <artifactId>dcm4che-tool-dcm2xml</artifactId>
+          <version>${dep.dicom.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.dcm4che</groupId>
+          <artifactId>dcm4che-image</artifactId>
+          <version>${dep.dicom.version}</version>
+        </dependency>
+        <!-- END dicom dependencies -->
+
         <!-- START Intel DAAL dependencies -->
         <dependency>
           <groupId>com.intel.daal</groupId>

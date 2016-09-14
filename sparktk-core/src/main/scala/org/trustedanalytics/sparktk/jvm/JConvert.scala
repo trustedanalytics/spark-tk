@@ -1,8 +1,10 @@
 package org.trustedanalytics.sparktk.jvm
 
-import java.util.{ List => JList, Map => JMap }
+import java.util
+import java.util.{ List => JList, Map => JMap, ArrayList => JArrayList }
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
+import org.apache.spark.mllib.linalg.DenseMatrix
 import org.joda.time.{ DateTimeZone, DateTime }
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
 import scala.collection.JavaConverters._
@@ -48,6 +50,17 @@ object JConvert extends Serializable {
   def scalaSeqToPython[T](seq: Seq[T]): JList[T] = seq.asJava
 
   def scalaVectorToPython[T](vector: Vector[T]): JList[T] = vector.asJava
+
+  def scalaMatrixToPython(matrix: DenseMatrix): JList[JList[Double]] = {
+    val (numRows, numCols) = (matrix.numRows, matrix.numCols)
+    val result = new JArrayList[JArrayList[Double]]()
+    for (i <- 0 until numRows) {
+      val r = new JArrayList[Double]()
+      for (j <- 0 until numCols) r.add(matrix(i, j))
+      result.add(r)
+    }
+    result.asInstanceOf[JList[JList[Double]]]
+  }
 
   def toScalaTuple2[T](a: T, b: T): (T, T) = (a, b)
 

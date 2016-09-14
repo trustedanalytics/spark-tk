@@ -1,0 +1,8 @@
+{
+	"sparktk-java": {
+		"label": "Spark-tk java package"
+	},
+	"sparktk-pip": {
+		"label": "Spark-tk pip package"
+	}
+}

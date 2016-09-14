@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.saveload
 
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.models.clustering.lda.LdaModel
@@ -50,6 +51,7 @@ object Loaders {
       ArxModel,
       ArimaxModel,
       CollaborativeFilteringModel,
+      Dicom,
       Frame,
       GaussianMixtureModel,
       Graph,
