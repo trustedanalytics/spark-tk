@@ -54,6 +54,11 @@ class Frame(object):
                                   len(item) == 2 and
                                   isinstance(item[0], basestring) for item in schema):
                         raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type, but received type %s." % type(schema))
+                    # check for duplicate column names
+                    column_names = [col[0] for col in schema]
+                    duplicate_column_names = set([col for col in column_names if column_names.count(col) > 1])
+                    if len(duplicate_column_names) > 0:
+                        raise ValueError("Invalid schema, column names cannot be duplicated: %s" % ", ".join(duplicate_column_names))
                 elif schema is None:
                     schema = self._infer_schema(source)
                     inferred_schema = True

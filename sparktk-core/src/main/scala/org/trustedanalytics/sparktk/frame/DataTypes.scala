@@ -616,7 +616,10 @@ object DataTypes {
    */
   def convertToType(value: Any, dataType: DataType): Any = {
     dataType match {
+      case `int32` => toInt(value)
       case `int64` => toLong(value)
+
+      case `float32` => toFloat(value)
       case `float64` => toDouble(value)
       // TODO: finish implementation (sorry, I only implemented the minimal I needed)
       // TODO: throw exceptions when needed
