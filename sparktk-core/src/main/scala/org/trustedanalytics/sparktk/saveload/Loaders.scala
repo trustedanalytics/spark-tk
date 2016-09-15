@@ -28,8 +28,10 @@ object Loaders {
 
     // Find a loader that matches the specified formatId
     val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
-    val loader = loaders.getOrElse(result.formatId, { otherLoaders.flatMap(_.get(result.formatId)).getOrElse(
-      throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}")) })
+    val loader = loaders.getOrElse(result.formatId, {
+      otherLoaders.flatMap(_.get(result.formatId)).getOrElse(
+        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}"))
+    })
 
     loader(sc, path, result.formatVersion, result.data)
   }

@@ -71,7 +71,6 @@ class Dicom(object):
         >>> import pylab
         >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
         >>> pylab.show()
-        </skip>
 
         #Save method persists the dicom object to disk
         >>> dicom.save("sandbox/dicom_data")
@@ -87,7 +86,7 @@ class Dicom(object):
         >>> load_pixeldata = load_dicom.pixeldata.take(1)
 
         #Order may differ when you load back dicom object
-        <skip>
+
         >>> load_pixeldata
         TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
@@ -96,7 +95,6 @@ class Dicom(object):
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
         [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
-        </skip>
 
         >>> load_image_ndarray= load_pixeldata.data[0][1]
 
@@ -107,14 +105,13 @@ class Dicom(object):
         (512, 512)
 
         #Inspect metadata property to see dicom metadata xml content
-        <skip>
+
         >>> load_dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
-        </skip>
 
         #Using to built-in xml libraries to run xquery on metadata
         >>> import xml.etree.ElementTree as ET
@@ -138,10 +135,9 @@ class Dicom(object):
 
         >>> tag_name = "SOPInstanceUID"
 
-        >>> load_dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
+        >>> dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
 
-        <skip>
-        >>> load_dicom.metadata.inspect(truncate=30)
+        >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata                        SOPInstanceUID
         =======================================================================
         [0]   0  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
