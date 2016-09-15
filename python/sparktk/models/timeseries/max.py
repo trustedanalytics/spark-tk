@@ -1,27 +1,23 @@
 """
-ARIMAX (Autoregressive Integrated Moving Average with Exogeneous Variables) Model
+MAx (Moving Average with Exogeneous Variables) Model
 """
+import unittest
 
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.lazyloader import implicit
 from sparktk.propobj import PropertiesObject
 
-def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=True, include_intercept=True, init_params=None):
+def train(frame, ts_column, x_columns, q, x_max_lag, include_original_x=True, include_intercept=True, init_params=None):
     """
-    Creates Autoregressive Integrated Moving Average with Explanatory Variables (ARIMAX) Model from the specified
-    time series values.
+    Creates Moving Average with Explanatory Variables (MAX) Model from the specified time series values.
 
-    Given a time series, fits an non-seasonal Autoregressive Integrated Moving Average with Explanatory Variables
-    (ARIMAX) model of order (p, d, q) where p represents the autoregression terms, d represents the order of differencing
-    and q represents the moving average error terms. X_max_lag represents the maximum lag order for exogenous variables.
-    If include_original_x is true, the model is fitted with an original exogenous variables. If includeIntercept is true,
-    the model is fitted with an intercept.
+    Given a time series, fits Moving Average with Explanatory Variables (MAX) model. Q represents the moving average error
+    terms, x_max_lag represents the maximum lag order for exogenous variables. If include_original_x is true, the model is
+    fitted with an original exogenous variables. If includeIntercept is true, the model is fitted with an intercept.
 
     :param frame: (Frame) Frame used for training.
     :param ts_column: (str) Name of the column that contains the time series values.
     :param x_columns: (List(str)) Names of the column(s) that contain the values of exogenous regressors.
-    :param p: (int) Autoregressive order
-    :param d: (int) Differencing order
     :param q: (int) Moving average order
     :param x_max_lag: (int) The maximum lag order for exogenous variables.
     :param include_original_x: (Optional(boolean)) If True, the model is fit with an original exogenous variables
@@ -29,10 +25,9 @@ def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=Tr
     :param include_intercept: (Optional(boolean)) If True, the model is fit with an intercept.  Default is True.
     :param init_params: (Optional(List[float]) A set of user provided initial parameters for optimization. If the
                         list is empty (default), initialized using Hannan-Rissanen algorithm. If provided, order
-                        of parameter should be: intercept term, AR parameters (in increasing order of lag), MA
-                        parameters (in increasing order of lag) and paramteres for exogenous variables (in
-                        increasing order of lag).
-    :return: (ArimaxModel) Trained ARIMAX model
+                        of parameter should be: intercept term (mostly 0), MA parameters (in increasing order of lag)
+                        and paramteres for exogenous variables (in increasing order of lag).
+    :return: (MaxModel) Trained MAX model
     """
 
     if not isinstance(ts_column, basestring):
@@ -41,10 +36,6 @@ def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=Tr
         raise TypeError("'x_columns' should be a list of strings (names of the exogenous columns).")
     elif len(x_columns) <= 0:
         raise ValueError("'x_columns' should not be empty.")
-    if not isinstance(p, int):
-        raise TypeError("'p' parameter must be an integer.")
-    if not isinstance(d, int):
-        raise TypeError("'d' parameter must be an integer.")
     if not isinstance(q, int):
         raise TypeError("'q' parameter must be an integer.")
     if not isinstance(x_max_lag, int):
@@ -61,24 +52,24 @@ def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=Tr
     _scala_obj = _get_scala_obj(tc)
     scala_x_columns = tc.jutils.convert.to_scala_vector_string(x_columns)
     scala_init_params = tc.jutils.convert.to_scala_option_list_double(init_params)
-    scala_model = _scala_obj.train(frame._scala, ts_column, scala_x_columns, p, d, q, x_max_lag, include_original_x, include_intercept, scala_init_params)
+    scala_model = _scala_obj.train(frame._scala, ts_column, scala_x_columns, q, x_max_lag, include_original_x, include_intercept, scala_init_params)
 
-    return ArimaxModel(tc, scala_model)
+    return MaxModel(tc, scala_model)
 
 def load(path, tc=implicit):
-    """load ARIMAXModel from given path"""
+    """load MaxModel from given path"""
     if tc is implicit:
         implicit.error("tc")
-    return tc.load(path, ArimaxModel)
+    return tc.load(path, MaxModel)
 
 def _get_scala_obj(tc):
-    """Gets reference to the ARIMAX model scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
+    """Gets reference to the MAX model scala object"""
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 
 
-class ArimaxModel(PropertiesObject):
+class MaxModel(PropertiesObject):
     """
-    A trained ARIMAX model.
+    A trained MAX model.
 
     Example
     -------
@@ -108,14 +99,7 @@ class ArimaxModel(PropertiesObject):
         ...                          [2.6, 1.7, 561.0, 10.3],
         ...                          [2.0, 1.3, 527.0, 10.1],
         ...                          [2.7, 1.1, 512.0, 11.0],
-        ...                          [2.7, 1.6, 553.0, 10.5],
-        ...                          [1.1, 3.2, 667.0, 10.2],
-        ...                          [2.0, 8.0, 900.0, 10.8],
-        ...                          [2.2, 9.5, 960.0, 10.5],
-        ...                          [2.7, 6.3, 827.0, 10.8],
-        ...                          [2.5, 5.0, 762.0, 10.5],
-        ...                          [2.6, 5.2, 774.0, 9.5],
-        ...                          [2.9, 7.3, 869.0, 8.3]],
+        ...                          [2.7, 1.6, 553.0, 10.5]],
         ...                          schema=schema, validate_schema=True)
         -etc-
 
@@ -136,20 +120,14 @@ class ArimaxModel(PropertiesObject):
         [9]    2.6      1.7         561.0  10.3
 
 
-        >>> model = tc.models.timeseries.arimax.train(frame, "CO_GT", ["C6H6_GT", "PT08_S2_NMHC", "T"], 1, 1, 1, 1, True, False)
+        >>> model = tc.models.timeseries.max.train(frame, "CO_GT", ["C6H6_GT", "PT08_S2_NMHC", "T"], 2, 1)
         <progress>
 
-        >>> model.c
-        0.24886373113659435
-
-        >>> model.ar
-        [-0.8612398115782316]
-
         >>> model.ma
-        [-0.45556700539598505]
+        [0.5777638449118448, -0.06530007715221572]
 
         >>> model.xreg
-        [0.09496697769170012, -0.00043805552312166737, 0.0006888829627820128, 0.8523170824191132, -0.017901092786057428, 0.017936687425751337]
+        [-0.021849032465107086, 0.0009772982251014968, 0.028419655845061332, 1.329220909234935, -0.026697271514035982, -0.099174926201381]
 
     In this example, we will call predict using the same frame that was used for training, again specifying the name
     of the time series column and the names of the columns that contain exogenous regressors.
@@ -163,23 +141,35 @@ class ArimaxModel(PropertiesObject):
         >>> predicted_frame.column_names
         [u'CO_GT', u'C6H6_GT', u'PT08_S2_NMHC', u'T', u'predicted_y']
 
+    <skip>
         >>> predicted_frame.inspect(columns=["CO_GT","predicted_y"])
         [#]  CO_GT  predicted_y
         =========================
-        [0]    2.6  2.83896716391
-        [1]    2.0  2.89056663602
-        [2]    2.2  2.84550712171
-        [3]    2.2  2.88445194591
-        [4]    1.6  2.85091111286
-        [5]    1.2   2.8798667019
-        [6]    1.2  2.85451566607
-        [7]    1.0  2.87634898739
-        [8]    2.9  2.85726970866
-        [9]    2.6  2.87356376648
+        [0]    2.6  2.61411194003
+        [1]    2.0  2.41046087551
+        [2]    2.2  2.39156069744
+        [3]    2.2  2.36598300718
+        [4]    1.6  2.37166693834
+        [5]    1.2  2.37166693834
+        [6]    1.2  2.37450890393
+        [7]    1.0  2.35745711042
+        [8]    2.9  2.35745711042
+        [9]    2.6  2.34608924808
+    </skip>
+
+    <hide>
+        >>> results = predicted_frame.take(5, columns=["predicted_y"]).data
+
+        >>> guess = [2.73574878613, 2.32499522807, 2.37166693834, 2.37166693834, 2.37450890393]
+
+        >>> tc.testing.compare_floats(results, guess, precision=0.15)
+
+    </hide>
 
     The trained model can be saved to be used later:
 
-        >>> model_path = "sandbox/savedArimaxModel"
+        >>> model_path = "sandbox/savedMaxModel"
+
         >>> model.save(model_path)
 
     The saved model can be loaded through the tk context and then used for forecasting values the same way
@@ -189,19 +179,21 @@ class ArimaxModel(PropertiesObject):
 
         >>> predicted_frame = loaded_model.predict(frame, "CO_GT", ["C6H6_GT", "PT08_S2_NMHC", "T"])
 
+    <skip>
         >>> predicted_frame.inspect(columns=["CO_GT","predicted_y"])
         [#]  CO_GT  predicted_y
         =========================
-        [0]    2.6  2.83896716391
-        [1]    2.0  2.89056663602
-        [2]    2.2  2.84550712171
-        [3]    2.2  2.88445194591
-        [4]    1.6  2.85091111286
-        [5]    1.2   2.8798667019
-        [6]    1.2  2.85451566607
-        [7]    1.0  2.87634898739
-        [8]    2.9  2.85726970866
-        [9]    2.6  2.87356376648
+        [0]    2.6  2.61411194003
+        [1]    2.0  2.41046087551
+        [2]    2.2  2.39156069744
+        [3]    2.2  2.36598300718
+        [4]    1.6  2.37166693834
+        [5]    1.2  2.37166693834
+        [6]    1.2  2.37450890393
+        [7]    1.0  2.35745711042
+        [8]    2.9  2.35745711042
+        [9]    2.6  2.34608924808
+    </skip>
 
     """
 
@@ -213,27 +205,13 @@ class ArimaxModel(PropertiesObject):
     @staticmethod
     def _from_scala(tc, scala_model):
         """
-        Load an ARIMAX model
+        Load an MAX model
 
         :param tc: (TkContext) Active TkContext
-        :param scala_model: (scala ArimaxModel) Scala model to load.
-        :return: (ArimaxModel) ArimaxModel object
+        :param scala_model: (scala MaxModel) Scala model to load.
+        :return: (MaxModel) MaxModel object
         """
-        return ArimaxModel(tc, scala_model)
-
-    @property
-    def p(self):
-        """
-        Autoregressive order
-        """
-        return self._scala.p()
-
-    @property
-    def d(self):
-        """
-        Differencing order
-        """
-        return self._scala.d()
+        return MaxModel(tc, scala_model)
 
     @property
     def q(self):
@@ -303,7 +281,7 @@ class ArimaxModel(PropertiesObject):
         """
         New frame with column of predicted y values
 
-        Predict the time series values for a test frame, based on the specified x values.  Creates a new frame
+        Predict the time series values for a test frame, based on the specified x values. Creates a new frame
         revision with the existing columns and a new predicted_y column.
 
         :param frame: (Frame) Frame used for predicting the ts values

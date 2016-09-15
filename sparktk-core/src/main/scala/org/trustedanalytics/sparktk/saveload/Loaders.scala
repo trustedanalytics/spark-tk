@@ -16,6 +16,7 @@ import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
 import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
+import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
 import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
@@ -56,6 +57,7 @@ object Loaders {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
       ArimaxModel,
+      MaxModel,
       CollaborativeFilteringModel,
       Dicom,
       Frame,
