@@ -128,13 +128,13 @@ def sort(self, columns, ascending=True):
                 raise ValueError("If the columns paramter is a list of tuples, each tuple must have a string (column name)"
                                  "and a bool (True for ascending).")
 
+            column_names = [c[0] for c in columns]  # Grab just the column names from the list of tuples
+
             # Check ascending booleans in the tuples to see if they're all the same
             are_all_same_ascending = all(c[1] == columns[0][1] for c in columns)
 
             if are_all_same_ascending:
                 columns_ascending = columns[0][1]
-                column_names = [c[0] for c in columns]  # Grab just the column names from the list of tuples
-
         else:
             are_all_same_ascending = True
 
