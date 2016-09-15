@@ -160,9 +160,9 @@ class MaxModel(PropertiesObject):
     <hide>
         >>> results = predicted_frame.take(5, columns=["predicted_y"]).data
 
-        >>> guess = [[2.73574878613], [2.32499522807], [2.37166693834], [2.37166693834], [2.37450890393]]
+        >>> guess = [2.73574878613, 2.32499522807, 2.37166693834, 2.37166693834, 2.37450890393]
 
-        >>> tc.testing.compare_floats(results, guess, precision=0.15)
+        >>> tc.testing.compare_floats(sum(results, []), guess, precision=0.15)
 
     </hide>
 
