@@ -2,8 +2,7 @@ from sparktk.propobj import PropertiesObject
 
 class LinearRegressionTestMetrics(PropertiesObject):
     """
-    ClassificationMetricsValue class used to hold the data returned from binary_classification_metrics()
-    and multiclass_classification_metrics().
+    RegressionMetrics class used to hold the data returned from linear regression test
     """
     def __init__(self, tc,  scala_result):
         self._tc = tc
