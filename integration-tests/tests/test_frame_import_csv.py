@@ -146,3 +146,14 @@ def test_frame_loading_multiple_files_with_wildcard(tc):
                                                     [-1648, 'R', 1, 3, 'tr'],
                                                     [3, 'L', -2347, 3, 'tr'],
                                                     [-2347, 'R', 1, 3, 'tr']])
+def test_import_csv_with_duplicate_coluns(tc):
+    path = "../datasets/importcsvtest.csv"
+    schema = [("string", str),
+              ("numeric", int),
+              ("numeric", float),
+              ("datetime", dtypes.datetime)]
+    try:
+        # Try to create a frame from csv, using a schema that has duplicate column names
+        tc.frame.import_csv(path, schema=schema, header=True, infer_schema=False)
+    except Exception as e:
+        assert("duplicate entry: 'numeric'" in str(e))

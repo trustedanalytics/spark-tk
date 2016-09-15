@@ -36,6 +36,18 @@ def invalid_schema_type(tc):
     except TypeError:
         pass
 
+    try:
+        tc.frame.create([[1,2,3]], schema=[("col0", int), ("col1", int), ("col0", int)])
+        raise RuntimeError("Expected ValueError due to invalid schema")
+    except ValueError as e:
+        assert("Invalid schema, column names cannot be duplicated: col0" in e.message)
+
+    try:
+        tc.frame.create([[1,2,3]], schema=["col0", "col1", "col0"])
+        raise RuntimeError("Expected ValueError due to invalid schema")
+    except ValueError as e:
+        assert("Invalid schema, column names cannot be duplicated: col0" in e.message)
+
 def test_create_frame_with_column_names(tc):
     """
     Create a frame with a list of column names.  Data types should be inferred.
