@@ -28,6 +28,7 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Schema }
 
 import scala.collection.mutable.ArrayBuffer
+import scala.xml.{ XML, NodeSeq }
 
 /**
  * This class wraps raw row data adding schema information - this allows for a richer easier to use API.
@@ -46,6 +47,7 @@ class RowWrapper(override val schema: Schema) extends AbstractRow with Serializa
 
   /**
    * Set the data in this wrapper
+   *
    * @param row the data to set inside this Wrapper
    * @return this instance
    */
@@ -70,6 +72,7 @@ trait AbstractRow {
 
   /**
    * Determine whether the property exists
+   *
    * @param name name of the property
    * @return boolean value indicating whether the property exists
    */
@@ -85,6 +88,7 @@ trait AbstractRow {
 
   /**
    * Get property
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -92,6 +96,7 @@ trait AbstractRow {
 
   /**
    * Get more than one value as a List
+   *
    * @param columnNames the columns to get values for
    * @return the values for the columns
    */
@@ -101,6 +106,7 @@ trait AbstractRow {
 
   /**
    * Get property of boolean data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -108,6 +114,7 @@ trait AbstractRow {
 
   /**
    * Get property of integer data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -115,6 +122,7 @@ trait AbstractRow {
 
   /**
    * Get property of long data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -122,6 +130,7 @@ trait AbstractRow {
 
   /**
    * Get property of float data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -129,6 +138,7 @@ trait AbstractRow {
 
   /**
    * Get property of double data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -136,6 +146,7 @@ trait AbstractRow {
 
   /**
    * Get property of string data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -143,6 +154,7 @@ trait AbstractRow {
 
   /**
    * Get property of string data type
+   *
    * @param columnName name of the property
    * @return property value
    */
@@ -154,6 +166,17 @@ trait AbstractRow {
   }
 
   /**
+   * Get property of string data type
+   *
+   * @param columnName name of the property
+   * @return property value
+   */
+  def nodeSeqValue(columnName: String, nodeName: String): NodeSeq = {
+    val result = row(schema.columnIndex(columnName)).toString
+    XML.loadString(result) \ nodeName
+  }
+
+  /**
    * True if value for this column is null.
    *
    * (It is non-intuitive but SparkSQL seems to allow null primitives).
@@ -162,6 +185,7 @@ trait AbstractRow {
 
   /**
    * Set a value in a column - validates the supplied value is the correct type
+   *
    * @param name the name of the column to set
    * @param value the value of the column
    */
@@ -172,6 +196,7 @@ trait AbstractRow {
 
   /**
    * Set all of the values for an entire row with validation
+   *
    * @param values the values to set
    * @return the row
    */
@@ -182,6 +207,7 @@ trait AbstractRow {
 
   /**
    * Validate the supplied value matches the schema for the supplied columnName.
+   *
    * @param name column name
    * @param value the value to check
    */
@@ -199,6 +225,7 @@ trait AbstractRow {
 
   /**
    * Set the value in a column - don't validate the type
+   *
    * @param name the name of the column to set
    * @param value the value of the column
    */
@@ -213,6 +240,7 @@ trait AbstractRow {
 
   /**
    * Set all of the values for a row - don't validate type
+   *
    * @param values all of the values
    * @return the row
    */
@@ -268,6 +296,7 @@ trait AbstractRow {
 
   /**
    * Get underlying data for this row
+   *
    * @return the actual row
    */
   def data: Row = row
@@ -282,6 +311,7 @@ trait AbstractRow {
 
   /**
    * Select several property values from their names
+   *
    * @param names the names of the properties to put into an array
    * @param flattenInputs If true, flatten vector data types
    * @return values for the supplied properties
@@ -301,6 +331,7 @@ trait AbstractRow {
 
   /**
    * Select several property values from their names as an array of doubles
+   *
    * @param names the names of the properties to put into an array
    * @param flattenInputs If true, flatten vector data types
    * @return array of doubles with values for the supplied properties
@@ -373,6 +404,7 @@ trait AbstractRow {
 
   /**
    * Create a row with values
+   *
    * @param content the values
    * @return the row
    */

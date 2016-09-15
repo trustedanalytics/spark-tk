@@ -5,6 +5,20 @@ def extract_keywords(self, keywords):
 
     Ex: keywords -> ["PatientID"]
 
+    Parameters
+    ----------
+
     :param keywords: (str or list(str)) List of keywords from metadata xml string
 
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.extract_keywords(["SOPInstanceUID", "Manufacturer", "StudyDate"])
+
     """
+    self._scala.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))

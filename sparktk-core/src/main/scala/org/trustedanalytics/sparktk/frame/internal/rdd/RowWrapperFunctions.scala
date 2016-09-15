@@ -10,6 +10,7 @@ import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 
 import scala.beans.BeanInfo
+import scala.xml.NodeSeq
 
 class RowWrapperFunctions(self: RowWrapper) {
 
@@ -27,6 +28,13 @@ class RowWrapperFunctions(self: RowWrapper) {
   def valuesAsBreezeDenseVector(columnNames: Seq[String]): BDV[Double] = {
     val array = self.valuesAsDoubleArray(columnNames)
     new BDV[Double](array)
+  }
+
+  /**
+   * Convert Row into MLlib Dense Vector
+   */
+  def valueAsNodeSeq(columnName: String, nodeName: String): NodeSeq = {
+    self.nodeSeqValue(columnName, nodeName)
   }
 
   /**
