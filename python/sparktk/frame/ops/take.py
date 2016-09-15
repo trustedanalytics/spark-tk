@@ -100,6 +100,8 @@ def _get_scala_row_to_python_converter(tc, schema):
         try:
             if type(dtype) == sparktk.dtypes.vector:
                 value = tc.jutils.convert.from_scala_vector(value)
+            if type(dtype) == sparktk.dtypes._Matrix:
+                value = tc.jutils.convert.from_scala_matrix(value)
             return dtypes.cast(value, dtype)
         except:
             return None

@@ -16,7 +16,7 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
                    string column names and data type), column names (list of strings, and the column data types will
                    be inferred) or None (column data types will be inferred and column names will be numbered like C0,
                    C1, C2, etc).
-    :param validate_schema: (Optional(bool)) When True, all data is is checked to ensure that it matches the schema.
+    :param validate_schema: (Optional(bool)) When True, all data is checked to ensure that it matches the schema.
                             If the data does not match the schema's data type, it attempts to cast the data to the
                             proper data type.  When the data is unable to be casted to the schema's data type, a
                             ValueError is raised. Defaults to False.

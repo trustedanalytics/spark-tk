@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.saveload
 
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.models.clustering.lda.LdaModel
@@ -13,6 +14,7 @@ import org.trustedanalytics.sparktk.models.classification.svm.SvmModel
 import org.trustedanalytics.sparktk.models.clustering.kmeans.KMeansModel
 import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
+import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
@@ -20,9 +22,15 @@ import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRe
 
 object Loaders {
 
-  def load(sc: SparkContext, path: String): Any = {
+  def load(sc: SparkContext, path: String, otherLoaders: Option[Map[String, LoaderType]] = None): Any = {
     val result = TkSaveLoad.loadTk(sc, path)
-    val loader = loaders.getOrElse(result.formatId, throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}"))
+    val loaderOption = loaders.get(result.formatId)
+
+    // Find a loader that matches the specified formatId
+    val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
+    val loader = loaders.getOrElse(result.formatId, { otherLoaders.flatMap(_.get(result.formatId)).getOrElse(
+      throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}")) })
+
     loader(sc, path, result.formatVersion, result.data)
   }
 
@@ -47,7 +55,9 @@ object Loaders {
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
+      ArimaxModel,
       CollaborativeFilteringModel,
+      Dicom,
       Frame,
       GaussianMixtureModel,
       Graph,

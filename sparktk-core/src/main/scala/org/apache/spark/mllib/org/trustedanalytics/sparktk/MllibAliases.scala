@@ -1,6 +1,6 @@
 package org.apache.spark.mllib.org.trustedanalytics.sparktk
 
-import org.apache.spark.mllib.linalg.{ Vector => SparkVector, Vectors => SparkVectors }
+import org.apache.spark.mllib.linalg.{ Vector => SparkVector, Vectors => SparkVectors, MatrixUDT => SparkMatrixUDT }
 import org.apache.spark.mllib.util.{ Loader => SparkLoader, NumericParser => SparkNumericParser }
 
 object MllibAliases {
@@ -10,5 +10,6 @@ object MllibAliases {
   val MllibVectors = SparkVectors // public, but makes it easier to get at here
   val NumericParser = SparkNumericParser
   def parseNumeric(any: Any): SparkVector = SparkVectors.parseNumeric(any)
+  type MatrixUDT = SparkMatrixUDT
 }
 
