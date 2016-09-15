@@ -133,6 +133,8 @@ def sort(self, columns, ascending=True):
 
             if are_all_same_ascending:
                 columns_ascending = columns[0][1]
+                column_names = [c[0] for c in columns]  # Grab just the column names from the list of tuples
+
         else:
             are_all_same_ascending = True
 
