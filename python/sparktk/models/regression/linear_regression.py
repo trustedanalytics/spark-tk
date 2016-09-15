@@ -227,14 +227,16 @@ class LinearRegressionModel(PropertiesObject):
         return Frame(self._tc, self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
 
     def test(self, frame, value_column, observation_columns=None):
-        """test the frame given the trained model"""
-        obs = self.__columns_to_option(observation_columns)
-        return LinearRegressionTestMetrics(self._tc, self._scala.test(frame._scala, value_column, obs))
+        """
+        Test the frame given the trained model
 
-    def __columns_to_option(self, c):
-        if c is not None:
-                c = self._tc.jutils.convert.to_scala_list_string(c)
-        return self._tc.jutils.convert.to_scala_option(c)
+        :param frame: (Frame) The frame to predict on
+        :param value_column: (String) Column name containing the value for each observation
+        :param observation_columns: Optional(List[str]) List of column(s) containing the observations
+        :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test
+        """
+        obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
+        return LinearRegressionTestMetrics(self._tc, self._scala.test(frame._scala, value_column, obs))
 
     def save(self, path):
         """
