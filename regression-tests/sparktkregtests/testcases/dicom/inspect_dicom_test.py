@@ -7,11 +7,11 @@ import dicom
 import numpy
 
 
-class CreateDicomTest(sparktk_test.SparkTKTestCase):
+class InspectDicomTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
         """import dicom data for testing"""
-        super(CreateDicomTest, self).setUp()
+        super(InspectDicomTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
         self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
