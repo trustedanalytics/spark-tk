@@ -40,7 +40,7 @@ object ExtractKeywords extends Serializable {
       da => (da \ "@keyword").text == keyword
     }
     if (resultNodeSeq.nonEmpty)
-      resultNodeSeq.take(1)(0).text
+      resultNodeSeq.head.text
     else
       null
   }

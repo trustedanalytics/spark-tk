@@ -40,7 +40,7 @@ object ExtractTags extends Serializable {
       da => (da \ "@tag").text == tag
     }
     if (resultNodeSeq.nonEmpty)
-      resultNodeSeq.take(1)(0).text
+      resultNodeSeq.head.text
     else
       null
   }
