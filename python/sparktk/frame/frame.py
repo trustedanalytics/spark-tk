@@ -350,6 +350,7 @@ class Frame(object):
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.sort import sort
     from sparktk.frame.ops.sortedk import sorted_k
+    from sparktk.frame.ops.svd import svd
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent
