@@ -4,8 +4,7 @@ class LinearRegressionTestMetrics(PropertiesObject):
     """
     RegressionMetrics class used to hold the data returned from linear regression test
     """
-    def __init__(self, tc,  scala_result):
-        self._tc = tc
+    def __init__(self, scala_result):
         self._explained_variance = scala_result.explainedVariance()
         self._mean_absolute_error = scala_result.meanAbsoluteError()
         self._mean_squared_error = scala_result.meanSquaredError()

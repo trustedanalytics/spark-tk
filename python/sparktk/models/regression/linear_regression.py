@@ -1,7 +1,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
-from sparktk.frame.ops.linear_regression_test_metrics import LinearRegressionTestMetrics
+from sparktk.models.regression.linear_regression_test_metrics import LinearRegressionTestMetrics
 from sparktk import TkContext
 
 
@@ -18,7 +18,7 @@ def train(frame,
           standardization=True,
           tolerance=1E-6):
     """
-    Creates a PcaModel by training on the given frame
+    Creates a LinearRegressionModel by training on the given frame
 
     Parameters
     ----------
@@ -236,7 +236,7 @@ class LinearRegressionModel(PropertiesObject):
         :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test
         """
         obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
-        return LinearRegressionTestMetrics(self._tc, self._scala.test(frame._scala, value_column, obs))
+        return LinearRegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
 
     def save(self, path):
         """
