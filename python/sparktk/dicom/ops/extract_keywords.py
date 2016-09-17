@@ -39,4 +39,32 @@ def extract_keywords(self, keywords):
 
     """
 
-    self._scala.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))
+    if isinstance(keywords, basestring):
+        keywords = [keywords]
+
+    if self._metadata._is_scala:
+        def f(scala_dicom):
+            scala_dicom.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))
+        results = self._call_scala(f)
+        return results
+
+    # metadata is python frame, run below udf
+    import xml.etree.ElementTree as ET
+
+    def extractor(dkeywords):
+        def _extractor(row):
+            root = ET.fromstring(row["metadata"])
+            values=[None]*len(dkeywords)
+            for attribute in root.findall('DicomAttribute'):
+                dkeyword = attribute.get('keyword')
+                if dkeyword in dkeywords:
+                    if attribute.find('Value') is not None:
+                        values[dkeywords.index(dkeyword)]=attribute.find('Value').text
+            return values
+        return _extractor
+
+    cols_type = [(key, str) for key in keywords]
+    self._metadata.add_columns(extractor(keywords), cols_type)
+
+
+

@@ -149,7 +149,7 @@ class Dicom(object):
 
     def __init__(self, tc, scala_dicom):
         self._tc = tc
-        self._scala = scala_dicom
+        #self._scala = scala_dicom
         from sparktk.frame.frame import Frame
         self._metadata = Frame(self._tc, scala_dicom.metadata())
         self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
@@ -168,10 +168,20 @@ class Dicom(object):
         return self._pixeldata
 
     @staticmethod
-    def _from_scala(tc, scala_frame):
-        """creates a python Frame for the given scala Frame"""
-        return Dicom(tc, scala_frame)
+    def _from_scala(tc, scala_dicom):
+        """creates a python dicom for the given scala dicom"""
+        return Dicom(tc, scala_dicom)
 
+    def _get_new_scala(self):
+        return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
+
+    def _call_scala(self, func):
+        from sparktk.frame.frame import Frame
+        scala_dicom = self._get_new_scala()
+        results = func(scala_dicom)
+        self._metadata = Frame(self._tc, scala_dicom.metadata())
+        self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+        return results
 
     # Dicom Operations
     from sparktk.dicom.ops.drop_rows import drop_rows
