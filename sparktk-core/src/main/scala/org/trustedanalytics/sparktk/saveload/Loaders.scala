@@ -16,6 +16,7 @@ import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
 import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
+import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
 import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
@@ -27,37 +28,39 @@ object Loaders {
     val loaderOption = loaders.get(result.formatId)
 
     // Find a loader that matches the specified formatId
-    val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
     val loader = loaders.getOrElse(result.formatId, {
-      otherLoaders.flatMap(_.get(result.formatId)).getOrElse(
-        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}"))
+      otherLoaders.flatMap(_.get(result.formatId)).getOrElse({
+        val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
+        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}")
+      })
     })
 
     loader(sc, path, result.formatVersion, result.data)
   }
 
   /**
-   * required signature for a Loader
-   *
-   * sc:  SparkContext
-   * path: String  the location of the file to load
-   * formatVersion: Int  the version of SaveLoad format found in the accompanying tk/ folder
-   * tkMetadata: JValue  the metadata loaded from the accompanying tk/ folder
-   */
+    * required signature for a Loader
+    *
+    * sc:  SparkContext
+    * path: String  the location of the file to load
+    * formatVersion: Int  the version of SaveLoad format found in the accompanying tk/ folder
+    * tkMetadata: JValue  the metadata loaded from the accompanying tk/ folder
+    */
   type LoaderType = (SparkContext, String, Int, JValue) => Any
 
   // todo: use a fancier technique that probably involves reflections/macros
   /**
-   * Registry of all the loaders
-   *
-   * If you have an class that wants to play TkSaveLoad, it needs an entry in here:
-   *
-   * formatId -> loader function
-   */
+    * Registry of all the loaders
+    *
+    * If you have an class that wants to play TkSaveLoad, it needs an entry in here:
+    *
+    * formatId -> loader function
+    */
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
       ArimaxModel,
+      MaxModel,
       CollaborativeFilteringModel,
       Dicom,
       Frame,
