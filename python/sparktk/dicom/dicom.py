@@ -149,7 +149,6 @@ class Dicom(object):
 
     def __init__(self, tc, scala_dicom):
         self._tc = tc
-        #self._scala = scala_dicom
         from sparktk.frame.frame import Frame
         self._metadata = Frame(self._tc, scala_dicom.metadata())
         self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())

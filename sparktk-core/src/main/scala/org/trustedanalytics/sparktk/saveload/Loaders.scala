@@ -39,23 +39,23 @@ object Loaders {
   }
 
   /**
-    * required signature for a Loader
-    *
-    * sc:  SparkContext
-    * path: String  the location of the file to load
-    * formatVersion: Int  the version of SaveLoad format found in the accompanying tk/ folder
-    * tkMetadata: JValue  the metadata loaded from the accompanying tk/ folder
-    */
+   * required signature for a Loader
+   *
+   * sc:  SparkContext
+   * path: String  the location of the file to load
+   * formatVersion: Int  the version of SaveLoad format found in the accompanying tk/ folder
+   * tkMetadata: JValue  the metadata loaded from the accompanying tk/ folder
+   */
   type LoaderType = (SparkContext, String, Int, JValue) => Any
 
   // todo: use a fancier technique that probably involves reflections/macros
   /**
-    * Registry of all the loaders
-    *
-    * If you have an class that wants to play TkSaveLoad, it needs an entry in here:
-    *
-    * formatId -> loader function
-    */
+   * Registry of all the loaders
+   *
+   * If you have an class that wants to play TkSaveLoad, it needs an entry in here:
+   *
+   * formatId -> loader function
+   */
   private lazy val loaders: Map[String, LoaderType] = {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
