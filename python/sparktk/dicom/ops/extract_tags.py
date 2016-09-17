@@ -25,7 +25,7 @@ def extract_tags(self, tags):
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
 
-        #Extract values for given keywords and add as new columns in metadata frame
+        #Extract value for each tag from column holding xml string
         >>> dicom.extract_tags(["00080018", "00080070", "00080030"])
 
         >>> dicom.metadata.inspect(truncate=20)
@@ -38,4 +38,29 @@ def extract_tags(self, tags):
 
     """
 
-    self._scala.extractTags(self._tc.jutils.convert.to_scala_vector_string(tags))
+    if isinstance(tags, basestring):
+        tags = [tags]
+
+    if self._metadata._is_scala:
+        def f(scala_dicom):
+            scala_dicom.extractTags(self._tc.jutils.convert.to_scala_vector_string(tags))
+        results = self._call_scala(f)
+        return results
+
+    # metadata is python frame, run below udf
+    import xml.etree.ElementTree as ET
+
+    def extractor(dtags):
+        def _extractor(row):
+            root = ET.fromstring(row["metadata"])
+            values=[None]*len(dtags)
+            for attribute in root.findall('DicomAttribute'):
+                dtag = attribute.get('tag')
+                if dtag in dtags:
+                    if attribute.find('Value') is not None:
+                        values[dtags.index(dtag)]=attribute.find('Value').text
+            return values
+        return _extractor
+
+    cols_type = [(tag, str) for tag in tags]
+    self._metadata.add_columns(extractor(tags), cols_type)
