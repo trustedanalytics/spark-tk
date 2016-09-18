@@ -5,25 +5,28 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 trait ExportToOrientdbSummarization extends BaseGraph {
 
   /**
-   * Save the current frame as OrientDB graph.
+   * Save GraphFrame to OrientDB graph
    *
-   * @param batchSize
-   * @param dbUrl
-   * @param userName
-   * @param password
-   * @param rootPassword
+   * @param batchSize batch size
+   * @param dbUrl OrientDB database full URI
+   * @param userName the database user name
+   * @param password the database password
+   * @param rootPassword OrientDB server password
+   * @param vertexTypeColumnName vertex type column name
+   * @param edgeTypeColumnName edge type column name
+   * @return summary statistics for the number of exported edges and vertices
    */
-  def exportToOrientdb(batchSize: Int, dbUrl: String, userName: String, password: String, rootPassword: String): ExportToOrientdbReturn = {
-    execute(ExportToOrientdb(batchSize, dbUrl, userName, password, rootPassword))
+  def exportToOrientdb(batchSize: Int, dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
+    execute(ExportToOrientdb(batchSize, dbUrl, userName, password, rootPassword, vertexTypeColumnName, edgeTypeColumnName))
   }
 }
 
-case class ExportToOrientdb(batchSize: Int, dbUrl: String, userName: String, password: String, rootPassword: String) extends GraphSummarization[ExportToOrientdbReturn] {
+case class ExportToOrientdb(batchSize: Int, dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None) extends GraphSummarization[ExportToOrientdbReturn] {
 
   override def work(state: GraphState): ExportToOrientdbReturn = {
 
     val exporter = new GraphFrameFunctions(state)
-    exporter.saveToOrientGraph(batchSize, dbUrl, userName, password, rootPassword)
+    exporter.saveToOrientGraph(batchSize, dbUrl, userName, password, rootPassword, vertexTypeColumnName, edgeTypeColumnName)
   }
 }
 

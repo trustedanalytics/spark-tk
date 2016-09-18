@@ -13,10 +13,12 @@ class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf) extends Serial
 
   /**
    * exports edges data frame to OrientDB edges class
+   *
    * @param batchSize batch size
-   * @return the number of edges
+   * @param edgeTypeColumnName the given column name for edge type
+   * @return the number of exported edges
    */
-  def exportEdgeFrame(batchSize: Int): Long = {
+  def exportEdgeFrame(batchSize: Int, edgeTypeColumnName: Option[String] = None): Long = {
 
     val edgesCountRdd = edgeFrame.mapPartitions(iter => {
       var batchCounter = 0L
@@ -25,7 +27,7 @@ class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf) extends Serial
         val edgeWriter = new EdgeWriter(orientGraph)
         while (iter.hasNext) {
           val row = iter.next()
-          edgeWriter.create(row, GraphSchema.vertexTypeColumnName)
+          edgeWriter.create(row, edgeTypeColumnName)
           batchCounter += 1
           if (batchCounter % batchSize == 0 && batchCounter != 0) {
             orientGraph.commit()

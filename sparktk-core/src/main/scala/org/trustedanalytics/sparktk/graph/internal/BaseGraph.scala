@@ -1,7 +1,6 @@
 package org.trustedanalytics.sparktk.graph.internal
 
 import org.apache.spark.sql.DataFrame
-import org.graphframes
 import org.slf4j.LoggerFactory
 import org.graphframes.GraphFrame
 import org.trustedanalytics.sparktk.frame.{ Frame, Schema }
@@ -17,13 +16,12 @@ object GraphSchema {
   val edgeDestinationColumnName = GraphFrame.DST
 
   // These column names are used by sparktk's convention
-  val vertexTypeColumnName = "vertex_"
+  val vertexTypeColumnName = "type"
   val edgeTypeColumnName = GraphFrame.EDGE + "_"
 
   implicit def frameToSchema(frame: Frame): Schema = frame.schema
 
   /**
-   * s
    * Validates the frame has the proper schema to represent a Vertices Frame
    */
   def validateSchemaForVerticesFrame(frameSchema: Schema) = {
