@@ -1,6 +1,7 @@
 def extract_tags(self, tags):
     """
-    Extract value for each tag from column holding xml string
+    Extracts value for each tag from column holding xml string and adds column for each tag to assign value.
+    For missing tag, the value is None
 
     Ex: tags -> ["00020001", "00020002"]
 
@@ -41,13 +42,16 @@ def extract_tags(self, tags):
     if isinstance(tags, basestring):
         tags = [tags]
 
+    if not isinstance(tags, list):
+        raise TypeError("keywords type should be either str or list but found type as %s" % type(tags))
+
     if self._metadata._is_scala:
         def f(scala_dicom):
             scala_dicom.extractTags(self._tc.jutils.convert.to_scala_vector_string(tags))
         results = self._call_scala(f)
         return results
 
-    # metadata is python frame, run below udf
+    #If metadata is python frame, run below udf
     import xml.etree.ElementTree as ET
 
     def extractor(dtags):

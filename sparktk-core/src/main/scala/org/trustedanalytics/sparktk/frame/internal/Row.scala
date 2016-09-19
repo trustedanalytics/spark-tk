@@ -166,12 +166,13 @@ trait AbstractRow {
   }
 
   /**
-   * Get property of string data type
+   * Get the row as NodeSeq
    *
-   * @param columnName name of the property
-   * @return property value
+   * @param columnName Column name in frame holding xml string
+   * @param nodeName Name of the node to extract from column holding xml string
+   * @return NodeSeq (i.e Seq[Node])
    */
-  def nodeSeqValue(columnName: String, nodeName: String): NodeSeq = {
+  def xmlNodeSeqValue(columnName: String, nodeName: String): NodeSeq = {
     val result = row(schema.columnIndex(columnName)).toString
     XML.loadString(result) \ nodeName
   }

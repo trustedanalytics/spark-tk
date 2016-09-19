@@ -1,6 +1,7 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
 import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.dicom.internal.{ BaseDicom, DicomTransform, DicomState }
 import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
 import org.trustedanalytics.sparktk.frame._
@@ -11,7 +12,7 @@ import scala.xml.NodeSeq
 trait ExtractTagsTransform extends BaseDicom {
 
   /**
-   * Extracts the value for each tag from column holding xml string
+   * Extracts value for each tag from column holding xml string and adds column for each tag to assign value. For missing tag, the value is null
    *
    * @param tags tags to extract from column holding xml string
    */
@@ -22,6 +23,7 @@ trait ExtractTagsTransform extends BaseDicom {
 
 case class ExtractTags(tags: Seq[String]) extends DicomTransform {
 
+  //The addColumns changes the state, so the changed state is returned here.
   override def work(state: DicomState): DicomState = {
     ExtractTags.extractTagsImpl(state.metadata, tags)
     state
@@ -53,11 +55,11 @@ object ExtractTags extends Serializable {
    */
   private def customDicomAttributeRowWrapper(tags: Seq[String]) = {
     val rowMapper: RowWrapper => Row = row => {
-      val columnName = "metadata" //This should be name of the column holding xml string as value in a frame
+
       val nodeName = "DicomAttribute" //This should be node name in xml string
 
       //Creates NodeSeq of DicomAttribute
-      val nodeSeqOfDicomAttribute = row.valueAsNodeSeq(columnName, nodeName)
+      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.columnName, nodeName)
 
       //Filter each DicomAttribute node with given tag and extract value
       val nodeValues = tags.map(getTagValue(nodeSeqOfDicomAttribute))
@@ -69,7 +71,7 @@ object ExtractTags extends Serializable {
   }
 
   /**
-   * Extracts the value for each tag from column holding xml string
+   * Extracts value for each tag from column holding xml string and adds column for each tag to assign value. For missing tag, the value is null
    *
    * @param metadataFrame metadata frame with column holding xml string
    * @param tags tags to extract from column holding xml string

@@ -1,6 +1,7 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
 import org.apache.spark.sql.Row
+import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.dicom.internal.{ BaseDicom, DicomTransform, DicomState }
 import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
 import org.trustedanalytics.sparktk.frame._
@@ -11,7 +12,7 @@ import scala.xml.NodeSeq
 trait ExtractKeywordsTransform extends BaseDicom {
 
   /**
-   * Extracts the value for each keyword from column holding xml string
+   * Extracts value for each keyword from column holding xml string and adds column for each keyword to assign value. For missing keyword, the value is null.
    *
    * @param keywords keywords to extract from column holding xml string
    */
@@ -22,6 +23,7 @@ trait ExtractKeywordsTransform extends BaseDicom {
 
 case class ExtractKeywords(keywords: Seq[String]) extends DicomTransform {
 
+  //The addColumns changes the state, so the changed state is returned here.
   override def work(state: DicomState): DicomState = {
     ExtractKeywords.extractKeywordsImpl(state.metadata, keywords)
     state
@@ -53,11 +55,11 @@ object ExtractKeywords extends Serializable {
    */
   private def customDicomAttributeRowWrapper(keywords: Seq[String]) = {
     val rowMapper: RowWrapper => Row = row => {
-      val columnName = "metadata" //This should be name of the column holding xml string as value in a frame
+
       val nodeName = "DicomAttribute" //This should be node name in xml string
 
       //Creates NodeSeq of DicomAttribute
-      val nodeSeqOfDicomAttribute = row.valueAsNodeSeq(columnName, nodeName)
+      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.columnName, nodeName)
 
       //Filter each DicomAttribute node with given keyword and extract value
       val nodeValues = keywords.map(getKeywordValue(nodeSeqOfDicomAttribute))
@@ -69,7 +71,7 @@ object ExtractKeywords extends Serializable {
   }
 
   /**
-   * Extracts the value for each keyword from column holding xml string
+   * Extracts value for each keyword from column holding xml string and adds column for each keyword to assign value. For missing keyword, the value is null.
    *
    * @param metadataFrame metadata frame with column holding xml string
    * @param keywords keywords to extract from column holding xml string

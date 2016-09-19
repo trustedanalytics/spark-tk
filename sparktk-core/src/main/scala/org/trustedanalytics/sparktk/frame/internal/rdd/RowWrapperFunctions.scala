@@ -23,7 +23,7 @@ class RowWrapperFunctions(self: RowWrapper) {
   }
 
   /**
-   * Convert Row into MLlib Dense Vector
+   * Convert Row into Breeze Dense Vector
    */
   def valuesAsBreezeDenseVector(columnNames: Seq[String]): BDV[Double] = {
     val array = self.valuesAsDoubleArray(columnNames)
@@ -31,10 +31,14 @@ class RowWrapperFunctions(self: RowWrapper) {
   }
 
   /**
-   * Convert Row into MLlib Dense Vector
+   *  Convert Row into NodeSeq (i.e., Seq[Node])
+   *
+   * @param columnName Column name in frame holding xml string
+   * @param nodeName Name of the node to extract from column holding xml string
+   * @return NodeSeq (i.e Seq[Node])
    */
-  def valueAsNodeSeq(columnName: String, nodeName: String): NodeSeq = {
-    self.nodeSeqValue(columnName, nodeName)
+  def valueAsXmlNodeSeq(columnName: String, nodeName: String): NodeSeq = {
+    self.xmlNodeSeqValue(columnName, nodeName)
   }
 
   /**

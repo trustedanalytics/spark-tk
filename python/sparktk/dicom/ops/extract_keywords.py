@@ -1,7 +1,8 @@
 def extract_keywords(self, keywords):
     """
 
-    Extract value for each keyword from column holding xml string
+    Extracts value for each keyword from column holding xml string and adds column for each keyword to assign value
+    For missing keyword, the value is None
 
     Ex: keywords -> ["PatientID"]
 
@@ -42,13 +43,16 @@ def extract_keywords(self, keywords):
     if isinstance(keywords, basestring):
         keywords = [keywords]
 
+    if not isinstance(keywords, list):
+        raise TypeError("keywords type should be either str or list but found type as %s" % type(keywords))
+
     if self._metadata._is_scala:
         def f(scala_dicom):
             scala_dicom.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))
         results = self._call_scala(f)
         return results
 
-    # metadata is python frame, run below udf
+    # If metadata is python frame, run below udf
     import xml.etree.ElementTree as ET
 
     def extractor(dkeywords):
