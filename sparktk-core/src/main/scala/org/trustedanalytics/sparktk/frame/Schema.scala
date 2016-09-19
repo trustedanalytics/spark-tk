@@ -41,7 +41,7 @@ case class Column(name: String, dataType: DataType) {
   require(name != null, "column name is required")
   require(dataType != null, "column data type is required")
   require(name != "", "column name can't be empty")
-  require(StringUtils.isAlphanumericUnderscore(name), "column name must be alpha-numeric with underscores")
+  require(Column.isValidColumnName(name), "column name must be alpha-numeric with valid symbols")
 }
 
 object Column {
@@ -56,7 +56,7 @@ object Column {
     require(name != null, "column name is required")
     require(dtype != null, "column data type is required")
     require(name != "", "column name can't be empty")
-    require(StringUtils.isAlphanumericUnderscore(name), "column name must be alpha-numeric with underscores")
+    require(Column.isValidColumnName(name), "column name must be alpha-numeric with valid symbols")
 
     Column(name,
       dtype match {
@@ -66,6 +66,20 @@ object Column {
         case t if t <:< definitions.DoubleTpe => DataTypes.float64
         case _ => DataTypes.string
       })
+  }
+
+  /**
+   * Check if the column name is valid
+   *
+   * @param str Column name
+   * @return Boolean indicating if the column name was valid
+   */
+  def isValidColumnName(str: String): Boolean = {
+    for (c <- str.iterator) {
+      if (c <= 0x20)
+        return false
+    }
+    true
   }
 }
 
