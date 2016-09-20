@@ -23,7 +23,7 @@ class Dicom(metadata: Frame, pixeldata: Frame) extends BaseDicom with Serializab
 
 object Dicom extends TkSaveableObject {
 
-  val columnName = "metadata" //Name of the column holding xml string as value in a frame. To access while convert Row to NodeSeq.
+  val metadataColumnName = "metadata" //Name of the column holding xml string as value in a frame. To access while convert Row to NodeSeq.
   val tkFormatVersion = 1
 
   /**

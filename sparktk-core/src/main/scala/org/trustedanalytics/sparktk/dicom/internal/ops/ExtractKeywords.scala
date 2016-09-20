@@ -59,7 +59,7 @@ object ExtractKeywords extends Serializable {
       val nodeName = "DicomAttribute" //This should be node name in xml string
 
       //Creates NodeSeq of DicomAttribute
-      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.columnName, nodeName)
+      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, nodeName)
 
       //Filter each DicomAttribute node with given keyword and extract value
       val nodeValues = keywords.map(getKeywordValue(nodeSeqOfDicomAttribute))

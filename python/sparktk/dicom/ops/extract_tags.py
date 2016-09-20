@@ -26,6 +26,14 @@ def extract_tags(self, tags):
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
 
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                ...
+
         #Extract value for each tag from column holding xml string
         >>> dicom.extract_tags(["00080018", "00080070", "00080030"])
 
@@ -43,7 +51,7 @@ def extract_tags(self, tags):
         tags = [tags]
 
     if not isinstance(tags, list):
-        raise TypeError("keywords type should be either str or list but found type as %s" % type(tags))
+        raise TypeError("tags type should be either str or list but found type as %s" % type(tags))
 
     if self._metadata._is_scala:
         def f(scala_dicom):

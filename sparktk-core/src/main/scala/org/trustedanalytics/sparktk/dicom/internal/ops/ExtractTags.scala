@@ -59,7 +59,7 @@ object ExtractTags extends Serializable {
       val nodeName = "DicomAttribute" //This should be node name in xml string
 
       //Creates NodeSeq of DicomAttribute
-      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.columnName, nodeName)
+      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, nodeName)
 
       //Filter each DicomAttribute node with given tag and extract value
       val nodeValues = tags.map(getTagValue(nodeSeqOfDicomAttribute))
