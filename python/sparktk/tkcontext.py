@@ -12,12 +12,32 @@ class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
     _other_libs = None
 
-    def __init__(self, sc=None, other_libs=None, **create_sc_kwargs):
+    def __init__(self,
+                 sc=None,
+                 master=None,
+                 py_files=None,
+                 spark_home=None,
+                 sparktk_home=None,
+                 pyspark_submit_args=None,
+                 app_name="sparktk",
+                 other_libs=None,
+                 extra_conf=None,
+                 use_local_fs=False,
+                 debug=None):
         if not sc:
             if SparkContext._active_spark_context:
                 sc = SparkContext._active_spark_context
             else:
-                sc = create_sc(other_libs=other_libs, **create_sc_kwargs)
+                sc = create_sc(master=master,
+                               py_files=py_files,
+                               spark_home=spark_home,
+                               sparktk_home=sparktk_home,
+                               pyspark_submit_args=pyspark_submit_args,
+                               app_name=app_name,
+                               other_libs=other_libs,
+                               extra_conf=extra_conf,
+                               use_local_fs=use_local_fs,
+                               debug=debug)
         if type(sc) is not SparkContext:
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc

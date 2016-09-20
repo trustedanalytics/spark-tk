@@ -22,7 +22,7 @@ class TestCumulativeSum(sparktk_test.SparkTKTestCase):
         self.sum_frame.cumulative_sum("col1")
         self.sum_frame.cumulative_percent("col1")
 
-        pd_frame = self.sum_frame.download(self.sum_frame.count())
+        pd_frame = self.sum_frame.to_pandas(self.sum_frame.count())
         for _, i in pd_frame.iterrows():
             self.assertAlmostEqual(
                 i['cumulative_sum'], i['col1_cumulative_sum'], delta=.0001)

@@ -150,15 +150,15 @@ class Graph(object):
 
         # compare the data to be sure...
 
-        >>> rv = sorted(restored.create_vertices_frame().take(20).data)
+        >>> rv = sorted(restored.create_vertices_frame().take(20))
 
-        >>> gv = sorted(graph.create_vertices_frame().take(20).data)
+        >>> gv = sorted(graph.create_vertices_frame().take(20))
 
         >>> assert rv == gv
 
-        >>> re = sorted(restored.create_edges_frame().take(20).data)
+        >>> re = sorted(restored.create_edges_frame().take(20))
 
-        >>> ge = sorted(graph.create_edges_frame().take(20).data)
+        >>> ge = sorted(graph.create_edges_frame().take(20))
 
         >>> assert re == ge
 

@@ -57,7 +57,7 @@ class Dicom(object):
         </skip>
 
         #Access ndarray
-        >>> image_ndarray= pixeldata.data[0][1]
+        >>> image_ndarray= pixeldata[0][1]
 
         >>> type(image_ndarray)
         <type 'numpy.ndarray'>
@@ -98,7 +98,7 @@ class Dicom(object):
         [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
         </skip>
 
-        >>> load_image_ndarray= load_pixeldata.data[0][1]
+        >>> load_image_ndarray= load_pixeldata[0][1]
 
         >>> type(load_image_ndarray)
         <type 'numpy.ndarray'>

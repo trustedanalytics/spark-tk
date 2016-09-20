@@ -170,13 +170,13 @@ def set_env_for_sparktk(spark_home=None,
         set_env('SPARK_JAVA_OPTS', details)
 
 
-def create_sc(other_libs=None,
-              master=None,
+def create_sc(master=None,
               py_files=None,
               spark_home=None,
               sparktk_home=None,
               pyspark_submit_args=None,
               app_name="sparktk",
+              other_libs=None,
               extra_conf=None,
               use_local_fs=False,
               debug=None):

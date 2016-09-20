@@ -107,7 +107,7 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
 
     def _compare_equal(self, column, catsum_result, k, threshold=None):
         # Group and count the values, drop any ignored values, validate
-        pf = self.frame.download(self.frame.count())
+        pf = self.frame.to_pandas(self.frame.count())
         # here we do our own analysis to compare
         # with the results of the categorical summary
         pandas_frame_sorted = pf.groupby(column).size().sort_values(ascending=False)

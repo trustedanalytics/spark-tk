@@ -38,7 +38,7 @@ def test_import_csv_with_custom_schema_parse_error(tc):
     # Test with good schema, but bad value in file --bad value should render as None
     path = "../datasets/parse_error.csv"
     f = tc.frame.import_csv(path, schema=[("a", str),("b", int), ("c", float)], header=True)
-    rows = f.take(f.count()).data
+    rows = f.take(f.count())
     assert(len(rows) == 4)
     assert(rows[2] == ["blue",100, None])
 
@@ -126,7 +126,7 @@ def test_frame_loading_multiple_files_with_wildcard(tc):
                                 ('movie', int),
                                 ('weight', int),
                                 ('edge_type', str)])
-        assert(frame.take(frame.count()).data == [[1, 'L', -131, 0, 'tr'],
+        assert(frame.take(frame.count()) == [[1, 'L', -131, 0, 'tr'],
                                                     [-131, 'R', 1, 0, 'tr'],
                                                     [1, 'L', -300, 2, 'tr'],
                                                     [-300, 'R', 1, 2, 'tr'],

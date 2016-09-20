@@ -58,7 +58,7 @@ class AssignSample(sparktk_test.SparkTKTestCase):
 
     def _test_frame_assign(self, column_name, sample):
         """Tests the assign method on the given column and sample"""
-        pd = self.frame.download(self.frame.count())
+        pd = self.frame.to_pandas(self.frame.count())
         groupby_rows = pd.groupby(column_name).size()
         count = float(groupby_rows.sum())
         normalized = groupby_rows.map(lambda x: x/count)

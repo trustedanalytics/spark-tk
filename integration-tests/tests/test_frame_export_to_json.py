@@ -48,15 +48,15 @@ def test_strange_strings(tc):
 
     data = subprocess.Popen("cat %s/* | grep 'DD'" % dir_name, stdout=subprocess.PIPE, shell=True).communicate()[0]
     json_data = json.loads(str(data))
-    assert(json_data['message'] == frame.take(6).data[3][1], "the value for DD should be #$this is something, amazing''s")
+    assert(json_data['message'] == frame.take(6)[3][1], "the value for DD should be #$this is something, amazing''s")
 
     data1 = subprocess.Popen("cat %s/* | grep 'EE'" % dir_name, stdout=subprocess.PIPE, shell=True).communicate()[0]
     json_data1 = json.loads(str(data1))
-    assert(json_data1['message'] == frame.take(6).data[4][1], "the value for EE should be He said, \\\"Hello!\\\"")
+    assert(json_data1['message'] == frame.take(6)[4][1], "the value for EE should be He said, \\\"Hello!\\\"")
 
     data2 = subprocess.Popen("cat %s/* | grep 'FF'" % dir_name, stdout=subprocess.PIPE, shell=True).communicate()[0]
     json_data2 = json.loads(str(data2))
-    assert(json_data2['message'] == frame.take(6).data[5][1], "the value for FF should be u'It is 15 \u00f8c outside'")
+    assert(json_data2['message'] == frame.take(6)[5][1], "the value for FF should be u'It is 15 \u00f8c outside'")
 
     logger.info("Removing created file")
     shutil.rmtree(dir_name)

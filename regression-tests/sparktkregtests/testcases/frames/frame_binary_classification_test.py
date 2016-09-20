@@ -57,7 +57,7 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         # total number of predictions
         accuracy = float(true_pos + true_neg) / float(total)
         pos_count = 0
-        pandas_frame = self.frame.download()
+        pandas_frame = self.frame.to_pandas()
         # calculate the number of pos results and neg results in the data
         for index, row in pandas_frame.iterrows():
             if row["labels"] is 1:
@@ -154,7 +154,7 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         f_measure = (recall * precision) / (recall + precision)
         accuracy = float(true_pos + true_neg) / float(total)
         pos_count = 0
-        pandas_frame = self.frame.download()
+        pandas_frame = self.frame.to_pandas()
         # calculate the number of pos results and neg results in the data
         for index, row in pandas_frame.iterrows():
             if row["labels"] is 1:

@@ -35,6 +35,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with BinColumnTransformWithResult
     with BinaryClassificationMetricsSummarization
     with CategoricalSummarySummarization
+    with CollectSummarization
     with ColumnMedianSummarization
     with ColumnModeSummarization
     with ColumnSummaryStatisticsSummarization
@@ -83,8 +84,6 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with TimeSeriesSliceSummarization
     with TopKSummarization
     with UnflattenColumnsTransform {
-
-  init(frameRdd, frameSchema)
 
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 

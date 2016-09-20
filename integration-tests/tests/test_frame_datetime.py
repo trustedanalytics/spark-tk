@@ -13,12 +13,12 @@ def test_frame_datetime(tc):
     assert(frame._is_python)
     row_count = frame.count()
     assert(row_count == 3)
-    assert(frame.take(row_count).data == data)
+    assert(frame.take(row_count) == data)
 
     # frame to scala
     frame._scala
     assert(frame._is_scala)
-    frame_data = frame.take(frame.count()).data
+    frame_data = frame.take(frame.count())
     for original, row in zip(data, frame_data):
         assert(len(original) == len(row) == 3)
         assert(original[0] == row[0])
@@ -29,7 +29,7 @@ def test_frame_datetime(tc):
     # back to python
     frame._python
     assert(frame._is_python)
-    frame_data = frame.take(frame.count()).data
+    frame_data = frame.take(frame.count())
     for original, row in zip(data, frame_data):
         assert(len(original) == len(row) == 3)
         assert(original[0] == row[0])
