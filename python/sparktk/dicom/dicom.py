@@ -71,7 +71,6 @@ class Dicom(object):
         >>> import pylab
         >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
         >>> pylab.show()
-        </skip>
 
         #Save method persists the dicom object to disk
         >>> dicom.save("sandbox/dicom_data")
@@ -87,7 +86,7 @@ class Dicom(object):
         >>> load_pixeldata = load_dicom.pixeldata.take(1)
 
         #Order may differ when you load back dicom object
-        <skip>
+
         >>> load_pixeldata
         TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
@@ -96,7 +95,6 @@ class Dicom(object):
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
         [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
-        </skip>
 
         >>> load_image_ndarray= load_pixeldata[0][1]
 
@@ -107,14 +105,13 @@ class Dicom(object):
         (512, 512)
 
         #Inspect metadata property to see dicom metadata xml content
-        <skip>
+
         >>> load_dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
-        </skip>
 
         #Using to built-in xml libraries to run xquery on metadata
         >>> import xml.etree.ElementTree as ET
@@ -138,10 +135,9 @@ class Dicom(object):
 
         >>> tag_name = "SOPInstanceUID"
 
-        >>> load_dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
+        >>> dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
 
-        <skip>
-        >>> load_dicom.metadata.inspect(truncate=30)
+        >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata                        SOPInstanceUID
         =======================================================================
         [0]   0  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
@@ -153,7 +149,6 @@ class Dicom(object):
 
     def __init__(self, tc, scala_dicom):
         self._tc = tc
-        self._scala = scala_dicom
         from sparktk.frame.frame import Frame
         self._metadata = Frame(self._tc, scala_dicom.metadata())
         self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
@@ -172,10 +167,24 @@ class Dicom(object):
         return self._pixeldata
 
     @staticmethod
-    def _from_scala(tc, scala_frame):
-        """creates a python Frame for the given scala Frame"""
-        return Dicom(tc, scala_frame)
+    def _from_scala(tc, scala_dicom):
+        """creates a python dicom for the given scala dicom"""
+        return Dicom(tc, scala_dicom)
 
+    #Creating new scala dicom to handle mutability issue.
+    # When import_dcm is invoked, it returns scala dicom object(scala metadata frame and pixeldata frame).
+    # When user performs add_columns or any operation which turns scala frame to python frame, the link is lost
+    # To avoid such issues, we create new dicom object using (metadata and pixeldata frames) when accessing scala method
+    def _get_new_scala(self):
+        return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
+
+    def _call_scala(self, func):
+        from sparktk.frame.frame import Frame
+        scala_dicom = self._get_new_scala()
+        results = func(scala_dicom)
+        self._metadata = Frame(self._tc, scala_dicom.metadata())
+        self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+        return results
 
     # Dicom Operations
     from sparktk.dicom.ops.drop_rows import drop_rows

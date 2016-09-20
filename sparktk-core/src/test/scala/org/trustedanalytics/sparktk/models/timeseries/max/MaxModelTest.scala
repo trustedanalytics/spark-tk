@@ -14,15 +14,16 @@
  *  limitations under the License.
  */
 
-package org.trustedanalytics.sparktk.models.timeseries.arimax
+package org.trustedanalytics.sparktk.models.timeseries.max
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
+import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
-class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
+class MaxModelTest extends TestingSparkContextWordSpec with Matchers {
   /**
    * Air quality data from:
    *
@@ -80,7 +81,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
     "throw an exception for a null frame" in {
       intercept[IllegalArgumentException] {
         // Frame is null, so this should fail
-        ArimaxModel.train(null, y_column, x_columns, 1, 1, 1, 0)
+        MaxModel.train(null, y_column, x_columns, 1, 0)
       }
     }
 
@@ -90,7 +91,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
 
       intercept[IllegalArgumentException] {
         // There is no column named "ts" so this should fail
-        ArimaxModel.train(frame, "ts", x_columns, 1, 1, 1, 0)
+        MaxModel.train(frame, "ts", x_columns, 1, 0)
       }
     }
 
@@ -100,7 +101,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
 
       intercept[IllegalArgumentException] {
         // There is no column named "bogus" so this should fail
-        ArimaxModel.train(frame, y_column, List("CO_GT", "bogus", "NMHC_GT", "C6H6_GT"), 1, 1, 1, 0)
+        MaxModel.train(frame, y_column, List("CO_GT", "bogus", "NMHC_GT", "C6H6_GT"), 1, 0)
       }
     }
 
@@ -109,16 +110,15 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
 
       // Train
-      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+      val trainResult = MaxModel.train(frame, y_column, x_columns, 1, 0)
     }
   }
-
   "predict" should {
 
     "throw an exception for a null frame" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+      val trainResult = MaxModel.train(frame, y_column, x_columns, 1, 0)
 
       intercept[IllegalArgumentException] {
         // This should throw an excpetion since frame is null
@@ -129,7 +129,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
     "throw an exception for a bad ts column name" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+      val trainResult = MaxModel.train(frame, y_column, x_columns, 1, 0)
 
       intercept[IllegalArgumentException] {
         // This should throw an excpetion since there is no "ts" column
@@ -140,7 +140,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
     "throw an exception for a bad x column name" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+      val trainResult = MaxModel.train(frame, y_column, x_columns, 1, 0)
 
       intercept[IllegalArgumentException] {
         // This should throw an excpetion since there is no "bogus" column
@@ -151,10 +151,10 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
     "throw an exception for a different number of x columns, compared to training" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+      val trainResult = MaxModel.train(frame, y_column, x_columns, 1, 0)
 
       intercept[IllegalArgumentException] {
-        // This should throw an excpetion since we are predicting with a different number of columns
+        // This should throw an excpetion since there is no "bogus" column
         trainResult.predict(frame, y_column, List("CO_GT", "NMHC_GT", "C6H6_GT"))
       }
     }
@@ -162,7 +162,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
     "add a predicted_y column when passed valid parameters" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+      val trainResult = MaxModel.train(frame, y_column, x_columns, 1, 0)
 
       // Predict
       val predictResult = trainResult.predict(frame, y_column, x_columns)

@@ -16,6 +16,7 @@ import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
 import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
+import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
 import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
@@ -27,10 +28,11 @@ object Loaders {
     val loaderOption = loaders.get(result.formatId)
 
     // Find a loader that matches the specified formatId
-    val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
     val loader = loaders.getOrElse(result.formatId, {
-      otherLoaders.flatMap(_.get(result.formatId)).getOrElse(
-        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}"))
+      otherLoaders.flatMap(_.get(result.formatId)).getOrElse({
+        val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
+        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}")
+      })
     })
 
     loader(sc, path, result.formatVersion, result.data)
@@ -58,6 +60,7 @@ object Loaders {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
       ArimaxModel,
+      MaxModel,
       CollaborativeFilteringModel,
       Dicom,
       Frame,

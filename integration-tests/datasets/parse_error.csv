@@ -2,4 +2,4 @@ string_column,integer_column,float_column
 "green",1,1.0
 "red",7,4.2
 "blue",100,"Bad Float"
-"purple",87,3.33333
+"purple","Bad Int",3.33333

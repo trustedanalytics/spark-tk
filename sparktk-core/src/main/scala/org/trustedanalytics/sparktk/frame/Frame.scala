@@ -50,6 +50,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with DotProductTransform
     with DropColumnsTransform
     with DropDuplicatesTransform
+    with DropRowsTransform
     with EcdfSummarization
     with EntropySummarization
     with ExportToCsvSummarization
@@ -57,6 +58,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToHiveSummarization
     with ExportToJdbcSummarization
     with ExportToJsonSummarization
+    with FilterTransform
     with FlattenColumnsTransform
     with GroupBySummarization
     with HistogramSummarization

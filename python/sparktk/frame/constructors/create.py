@@ -19,7 +19,7 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
     :param validate_schema: (Optional(bool)) When True, all data is checked to ensure that it matches the schema.
                             If the data does not match the schema's data type, it attempts to cast the data to the
                             proper data type.  When the data is unable to be casted to the schema's data type, a
-                            ValueError is raised. Defaults to False.
+                            missing value (None) is inserted in it's place. Defaults to False.
     :param tc: TkContext
     :return: (Frame) Frame loaded with the specified data
 
