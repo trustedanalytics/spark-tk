@@ -171,6 +171,10 @@ class Dicom(object):
         """creates a python dicom for the given scala dicom"""
         return Dicom(tc, scala_dicom)
 
+    #Creating new scala dicom to handle mutability issue.
+    # When import_dcm is invoked, it returns scala dicom object(scala metadata frame and pixeldata frame).
+    # When user performs add_columns or any operation which turns scala frame to python frame, the link is lost
+    # To avoid such issues, we create new dicom object using (metadata and pixeldata frames) when accessing scala method
     def _get_new_scala(self):
         return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
 
