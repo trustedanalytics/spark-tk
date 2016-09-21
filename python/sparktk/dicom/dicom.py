@@ -178,6 +178,7 @@ class Dicom(object):
     def _get_new_scala(self):
         return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
 
+    #method to call passed function with new scala dicom
     def _call_scala(self, func):
         from sparktk.frame.frame import Frame
         scala_dicom = self._get_new_scala()

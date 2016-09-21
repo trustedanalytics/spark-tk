@@ -62,8 +62,8 @@ def extract_keywords(self, keywords):
     if self._metadata._is_scala:
         def f(scala_dicom):
             scala_dicom.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))
-        results = self._call_scala(f)
-        return results
+        self._call_scala(f)
+        return
 
     # If metadata is python frame, run below udf
     import xml.etree.ElementTree as ET
