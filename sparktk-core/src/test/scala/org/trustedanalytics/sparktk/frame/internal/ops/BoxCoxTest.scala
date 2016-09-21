@@ -26,7 +26,7 @@ class BoxCoxTest extends TestingSparkContextWordSpec with Matchers {
       val results = BoxCox.boxCox(frameRdd, "A", 0.3)
       val boxCox = results.map(row => row(2).asInstanceOf[Double]).collect()
 
-      assert(boxCox == Array(2.81913279907, -1.25365381375, 2.46673638752, 2.76469126003, 2.06401101556))
+      assert(boxCox sameElements Array(2.8191327990706947, -1.253653813751204, 2.4667363875200685, 2.7646912600285254, 2.064011015565803))
     }
   }
 
@@ -54,7 +54,7 @@ class BoxCoxTest extends TestingSparkContextWordSpec with Matchers {
       val lambda = 0.0
       val boxCoxTransform = BoxCox.computeBoxCoxTransformation(input, lambda)
 
-      assert(boxCoxTransform == 1.60644747012)
+      assert(boxCoxTransform == 1.6064474701212843)
     }
   }
 }

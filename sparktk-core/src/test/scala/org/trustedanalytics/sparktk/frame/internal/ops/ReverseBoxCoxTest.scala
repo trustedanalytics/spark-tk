@@ -10,10 +10,10 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 class ReverseBoxCoxTest extends TestingSparkContextWordSpec with Matchers {
 
   val reverseBoxCoxRows: Array[Row] = Array(new GenericRow(Array[Any](2.8191327990706947, 1.2)),
-      new GenericRow(Array[Any](-1.253653813751204, 2.3)),
-      new GenericRow(Array[Any](2.4667363875200685, 3.4)),
-      new GenericRow(Array[Any](2.7646912600285254, 4.5)),
-      new GenericRow(Array[Any](2.064011015565803, 5.6)))
+    new GenericRow(Array[Any](-1.253653813751204, 2.3)),
+    new GenericRow(Array[Any](2.4667363875200685, 3.4)),
+    new GenericRow(Array[Any](2.7646912600285254, 4.5)),
+    new GenericRow(Array[Any](2.064011015565803, 5.6)))
 
   val reverseBoxCoxSchema = FrameSchema(List(Column("A", DataTypes.float64), Column("B", DataTypes.float64)))
 
@@ -26,7 +26,7 @@ class ReverseBoxCoxTest extends TestingSparkContextWordSpec with Matchers {
       val results = ReverseBoxCox.reverseBoxCox(frameRdd, "A", 0.3)
       val reverseBoxCox = results.map(row => row(2).asInstanceOf[Double]).collect()
 
-      assert(reverseBoxCox == Array(7.713206432669999, 0.20751949359399996, 6.3364823492600015, 7.488038825390002, 4.98507012303))
+      assert(reverseBoxCox sameElements Array(7.713206432669999, 0.20751949359399996, 6.3364823492600015, 7.488038825390002, 4.98507012303))
     }
   }
 
@@ -54,7 +54,7 @@ class ReverseBoxCoxTest extends TestingSparkContextWordSpec with Matchers {
       val lambda = 0.0
       val reverseBoxCoxTransform = ReverseBoxCox.computeReverseBoxCoxTransformation(input, lambda)
 
-      assert(reverseBoxCoxTransform == 4.98507012303)
+      assert(reverseBoxCoxTransform == 4.985070123023598)
     }
   }
 }

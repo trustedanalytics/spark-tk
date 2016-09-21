@@ -1,6 +1,7 @@
 def box_cox(self, column_name, lambda_value=0.0):
     """
-    Calculate the box-cox transformation for each row on a given column of the current frame
+    Calculate the box-cox transformation for each row on a given column of the
+     current frame
 
     Parameters
     ----------
