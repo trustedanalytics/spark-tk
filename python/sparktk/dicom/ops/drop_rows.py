@@ -46,6 +46,9 @@ def drop_rows(self, predicate):
 
         >>> dicom.drop_rows(drop_meta(tag_name, tag_value))
 
+        >>> dicom.metadata.count()
+        2
+
         <skip>
         #After filter
         >>> dicom.metadata.inspect(truncate=30)

@@ -10,10 +10,10 @@ import org.trustedanalytics.sparktk.frame.internal._
 trait FilterByTagsTransform extends BaseDicom {
 
   /**
-    * Filter the rows based on Map(tag, value) from column holding xml string
-    *
-    * @param tagsValuesMap Map with tag and associated value from xml string
-    */
+   * Filter the rows based on Map(tag, value) from column holding xml string
+   *
+   * @param tagsValuesMap Map with tag and associated value from xml string
+   */
   def filterByTags(tagsValuesMap: Map[String, String]) = {
     execute(FilterByTags(tagsValuesMap))
   }
@@ -56,11 +56,11 @@ object FilterByTags extends Serializable {
   }
 
   /**
-    * Filter the rows based on Map(tag, value) from column holding xml string
-    *
-    * @param metadataFrame metadata frame with column holding xml string
-    * @param tagsValuesMap  Map with tag and associated value from xml string
-    */
+   * Filter the rows based on Map(tag, value) from column holding xml string
+   *
+   * @param metadataFrame metadata frame with column holding xml string
+   * @param tagsValuesMap  Map with tag and associated value from xml string
+   */
   def filterByTagsImpl(metadataFrame: Frame, tagsValuesMap: Map[String, String]) = {
     implicit val schema = metadataFrame.schema
     metadataFrame.filter(customTagsFilter(tagsValuesMap))

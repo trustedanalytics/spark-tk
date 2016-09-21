@@ -10,10 +10,10 @@ import org.trustedanalytics.sparktk.frame.internal._
 trait DropRowsByTagsTransform extends BaseDicom {
 
   /**
-    * Drop the rows based on Map(tag, value) from column holding xml string
-    *
-    * @param tagsValuesMap Map with tag and associated value from xml string
-    */
+   * Drop the rows based on Map(tag, value) from column holding xml string
+   *
+   * @param tagsValuesMap Map with tag and associated value from xml string
+   */
   def dropRowsByTags(tagsValuesMap: Map[String, String]) = {
     execute(DropRowsByTags(tagsValuesMap))
   }
@@ -56,11 +56,11 @@ object DropRowsByTags extends Serializable {
   }
 
   /**
-    * Drop the rows based on Map(tag, value) from column holding xml string
-    *
-    * @param metadataFrame metadata frame with column holding xml string
-    * @param tagsValuesMap  Map with tag and associated value from xml string
-    */
+   * Drop the rows based on Map(tag, value) from column holding xml string
+   *
+   * @param metadataFrame metadata frame with column holding xml string
+   * @param tagsValuesMap  Map with tag and associated value from xml string
+   */
   def dropRowsByTagsImpl(metadataFrame: Frame, tagsValuesMap: Map[String, String]) = {
     implicit val schema = metadataFrame.schema
     metadataFrame.dropRows(customTagsDrop(tagsValuesMap))

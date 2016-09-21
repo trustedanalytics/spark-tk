@@ -10,10 +10,10 @@ import org.trustedanalytics.sparktk.frame.internal._
 trait DropRowsByKeywordsTransform extends BaseDicom {
 
   /**
-    * Drop the rows based on Map(keyword, value) from column holding xml string
-    *
-    * @param keywordsValuesMap Map with keyword and associated value from xml string
-    */
+   * Drop the rows based on Map(keyword, value) from column holding xml string
+   *
+   * @param keywordsValuesMap Map with keyword and associated value from xml string
+   */
   def dropRowsByKeywords(keywordsValuesMap: Map[String, String]) = {
     execute(DropRowsByKeywords(keywordsValuesMap))
   }
@@ -56,11 +56,11 @@ object DropRowsByKeywords extends Serializable {
   }
 
   /**
-    * Drop the rows based on Map(keyword, value) from column holding xml string
-    *
-    * @param metadataFrame metadata frame with column holding xml string
-    * @param keywordsValuesMap  Map with keyword and associated value from xml string
-    */
+   * Drop the rows based on Map(keyword, value) from column holding xml string
+   *
+   * @param metadataFrame metadata frame with column holding xml string
+   * @param keywordsValuesMap  Map with keyword and associated value from xml string
+   */
   def dropRowsByKeywordsImpl(metadataFrame: Frame, keywordsValuesMap: Map[String, String]) = {
     implicit val schema = metadataFrame.schema
     metadataFrame.dropRows(customKeywordsDrop(keywordsValuesMap))
