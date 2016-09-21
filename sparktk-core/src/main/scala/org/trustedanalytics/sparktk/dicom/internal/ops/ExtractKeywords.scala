@@ -39,7 +39,7 @@ object ExtractKeywords extends Serializable {
   //Get value if keyword exists else return null
   def getKeywordValue(nodeSeqOfDicomAttribute: NodeSeq)(keyword: String): String = {
     val resultNodeSeq = nodeSeqOfDicomAttribute.filter {
-      da => (da \ "@keyword").text == keyword
+      dicomAttribute => (dicomAttribute \ "@keyword").text == keyword
     }
     if (resultNodeSeq.nonEmpty)
       resultNodeSeq.head.text
@@ -56,10 +56,8 @@ object ExtractKeywords extends Serializable {
   private def customDicomAttributeRowWrapper(keywords: Seq[String]) = {
     val rowMapper: RowWrapper => Row = row => {
 
-      val nodeName = "DicomAttribute" //This should be node name in xml string
-
       //Creates NodeSeq of DicomAttribute
-      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, nodeName)
+      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, Dicom.nodeNameInMetadata)
 
       //Filter each DicomAttribute node with given keyword and extract value
       val nodeValues = keywords.map(getKeywordValue(nodeSeqOfDicomAttribute))

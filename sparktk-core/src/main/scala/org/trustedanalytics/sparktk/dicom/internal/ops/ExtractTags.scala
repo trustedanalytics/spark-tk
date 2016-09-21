@@ -39,7 +39,7 @@ object ExtractTags extends Serializable {
   //Get value if tag exists else return null
   def getTagValue(nodeSeqOfDicomAttribute: NodeSeq)(tag: String): String = {
     val resultNodeSeq = nodeSeqOfDicomAttribute.filter {
-      da => (da \ "@tag").text == tag
+      dicomAttribute => (dicomAttribute \ "@tag").text == tag
     }
     if (resultNodeSeq.nonEmpty)
       resultNodeSeq.head.text
@@ -56,10 +56,8 @@ object ExtractTags extends Serializable {
   private def customDicomAttributeRowWrapper(tags: Seq[String]) = {
     val rowMapper: RowWrapper => Row = row => {
 
-      val nodeName = "DicomAttribute" //This should be node name in xml string
-
       //Creates NodeSeq of DicomAttribute
-      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, nodeName)
+      val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, Dicom.nodeNameInMetadata)
 
       //Filter each DicomAttribute node with given tag and extract value
       val nodeValues = tags.map(getTagValue(nodeSeqOfDicomAttribute))

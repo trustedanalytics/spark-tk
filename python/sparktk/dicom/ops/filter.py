@@ -45,6 +45,8 @@ def filter(self, predicate):
         >>> tag_value = "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"
 
         >>> dicom.filter(filter_meta(tag_name, tag_value))
+        >>> dicom.metadata.count()
+        1
 
         <skip>
         #After filter
