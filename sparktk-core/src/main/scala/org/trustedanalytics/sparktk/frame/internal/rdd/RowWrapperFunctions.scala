@@ -10,6 +10,7 @@ import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 
 import scala.beans.BeanInfo
+import scala.xml.NodeSeq
 
 class RowWrapperFunctions(self: RowWrapper) {
 
@@ -22,11 +23,22 @@ class RowWrapperFunctions(self: RowWrapper) {
   }
 
   /**
-   * Convert Row into MLlib Dense Vector
+   * Convert Row into Breeze Dense Vector
    */
   def valuesAsBreezeDenseVector(columnNames: Seq[String]): BDV[Double] = {
     val array = self.valuesAsDoubleArray(columnNames)
     new BDV[Double](array)
+  }
+
+  /**
+   *  Convert Row into NodeSeq (i.e., Seq[Node])
+   *
+   * @param columnName Column name in frame holding xml string
+   * @param nodeName Name of the node to extract from column holding xml string
+   * @return NodeSeq (i.e Seq[Node])
+   */
+  def valueAsXmlNodeSeq(columnName: String, nodeName: String): NodeSeq = {
+    self.xmlNodeSeqValue(columnName, nodeName)
   }
 
   /**
