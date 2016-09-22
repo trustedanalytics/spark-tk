@@ -17,6 +17,7 @@ class SchemaWriter extends Serializable {
   /**
    * exports the schema of the vertex dataframe to OrientDB. if a column is specified for vertex types,
    * it creates vertex classes based on the given types and exports the corresponding schema, otherwise all vertices are exported to OrientDB base vertex class "V" or to
+   *
    * @param vertexFrame vertex dataframe
    * @param orientGraph OrientDB graph
    * @param vertexTypeColumnName vertex type column name
@@ -26,10 +27,10 @@ class SchemaWriter extends Serializable {
       if (vertexTypeColumnName.isDefined) {
         val aggRdd = inferSchema(vertexFrame, vertexTypeColumnName.get)
         aggRdd.foreach(vertexType => {
-          val orientVertexType = exportVertexType(vertexType._1, orientGraph)
-          val schema = vertexType._2
+          val (name, schema) = vertexType
+          val orientVertexType = getOrCreateVertexType(name, orientGraph)
           exportVertexColumnsSchema(orientVertexType, schema)
-          orientGraph.createKeyIndex(exportGraphParam.vertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", vertexType._1))
+          orientGraph.createKeyIndex(exportGraphParam.vertexId, classOf[Vertex], new Parameter("type", "UNIQUE"), new Parameter("class", name))
         })
       }
       else {
@@ -57,8 +58,8 @@ class SchemaWriter extends Serializable {
       if (edgeTypeColumnName.isDefined) {
         val aggRdd = inferSchema(edgeFrame, edgeTypeColumnName.get)
         aggRdd.foreach(edgeType => {
-          val orientEdgeType = exportEdgeType(edgeType._1, orientGraph)
-          val schema = edgeType._2
+          val (name, schema) = edgeType
+          val orientEdgeType = getOrCreateEdgeType(name, orientGraph)
           exportEdgeColumnsSchema(orientEdgeType, schema)
         })
       }
@@ -102,20 +103,21 @@ class SchemaWriter extends Serializable {
 
   /**
    * infer the row schema
+   *
    * @param fields schema
    * @param row  vertex or edge row
    * @return row schema
    */
   def inferSchemaFromRow(fields: Set[StructField], row: Row): Set[StructField] = {
-    var fieldBuffer = fields.toBuffer
+    var fieldSet = fields
     val rowSchemaIterator = row.schema.iterator
     while (rowSchemaIterator.hasNext) {
       val columnField = rowSchemaIterator.next()
-      val schema = if (row.getAs[String](columnField.name) != null) {
-        fieldBuffer += columnField
+      if (row.getAs[String](columnField.name) != null) {
+        fieldSet += columnField
       }
     }
-    fieldBuffer.toSet
+    fieldSet
   }
 
   /**
@@ -136,7 +138,7 @@ class SchemaWriter extends Serializable {
    * @param orientGraph OrientDB graph
    * @return OrientDB vertex type
    */
-  def exportVertexType(vertexType: String, orientGraph: OrientGraphNoTx): OrientVertexType = {
+  def getOrCreateVertexType(vertexType: String, orientGraph: OrientGraphNoTx): OrientVertexType = {
     val orientType = if (orientGraph.getVertexType(vertexType) == null) {
       orientGraph.createVertexType(vertexType)
     }
@@ -153,7 +155,7 @@ class SchemaWriter extends Serializable {
    * @param orientGraph OrientDB graph
    * @return OrientDB edge type
    */
-  def exportEdgeType(edgeType: String, orientGraph: OrientGraphNoTx): OrientEdgeType = {
+  def getOrCreateEdgeType(edgeType: String, orientGraph: OrientGraphNoTx): OrientEdgeType = {
     val orientType = if (orientGraph.getEdgeType(edgeType) == null) {
       orientGraph.createEdgeType(edgeType)
     }

@@ -42,17 +42,16 @@ class OrientDbEdgeRdd(sc: SparkContext, dbConfigurations: OrientConf) extends RD
   override protected def getPartitions: Array[Partition] = {
     val partitionBuffer = new ArrayBuffer[OrientDbPartition]()
     val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations)
-    val classBaseNames = graph.getEdgeBaseType.getName
-    val classIterator = graph.getEdgeType(classBaseNames).getAllSubclasses.iterator()
+    val schemaReader = new SchemaReader(graph)
+    val edgeTypes = schemaReader.getEdgeClasses.getOrElse(Set(graph.getEdgeBaseType.getName))
     var partitionIdx = 0
-    while (classIterator.hasNext) {
-      val classLabel = classIterator.next().getName
-      val clusterIds = graph.getEdgeType(classLabel).getClusterIds
+    edgeTypes.foreach(edgeType => {
+      val clusterIds = graph.getEdgeType(edgeType).getClusterIds
       clusterIds.foreach(id => {
-        partitionBuffer += new OrientDbPartition(id, classLabel, partitionIdx)
+        partitionBuffer += new OrientDbPartition(id, edgeType, partitionIdx)
         partitionIdx += 1
       })
-    }
+    })
     partitionBuffer.toArray
   }
 }

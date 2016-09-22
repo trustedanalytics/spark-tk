@@ -4,8 +4,8 @@ import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx
 import org.apache.spark.sql.Row
 import org.graphframes.GraphFrame
-import org.trustedanalytics.sparktk.graph.internal.GraphSchema
-import collection.JavaConverters._
+
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
@@ -18,12 +18,17 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
   /**
    * converts Spark SQL Row to OrientDB vertex
    *
-   * @param row             row
+   * @param row                  row
    * @param vertexTypeColumnName the given column name for vertex type
    */
   def create(row: Row, vertexTypeColumnName: Option[String] = None): Vertex = {
     val propMap = mutable.Map[String, Any]()
-    val vertexType = if (vertexTypeColumnName.isDefined) { row.getAs[String](vertexTypeColumnName.get) } else { orientGraph.getVertexBaseType.getName }
+    val vertexType = if (vertexTypeColumnName.isDefined) {
+      row.getAs[String](vertexTypeColumnName.get)
+    }
+    else {
+      orientGraph.getVertexBaseType.getName
+    }
     val propKeysIterator = orientGraph.getRawGraph.getMetadata.getSchema.getClass(vertexType).properties().iterator()
     while (propKeysIterator.hasNext) {
       val propKey = propKeysIterator.next().getName
@@ -56,7 +61,7 @@ class VertexWriter(orientGraph: OrientGraphNoTx) {
   /**
    * looking up a vertex in OrientDB graph or creates a new vertex if not found
    *
-   * @param vertexId  vertex ID
+   * @param vertexId vertex ID
    * @return OrientDB vertex
    */
   def findOrCreate(vertexId: Any): Vertex = {
