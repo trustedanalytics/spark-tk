@@ -57,4 +57,4 @@ def import_dcm(dicom_dir_path, tc=TkContext.implicit):
 
     scala_dicom = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDcm(tc.jutils.get_scala_sc(), dicom_dir_path)
     from sparktk.dicom.dicom import Dicom
-    return Dicom(tc, scala_dicom)
+    return Dicom._from_scala(tc, scala_dicom)

@@ -9,8 +9,8 @@ def filter(self, predicate):
     :param predicate: predicate to apply on filter
 
 
-    Examples:
-    ---------
+    Examples
+    --------
 
         >>> dicom_path = "../datasets/dicom_uncompressed"
 

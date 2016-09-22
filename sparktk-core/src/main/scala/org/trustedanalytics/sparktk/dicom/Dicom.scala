@@ -3,7 +3,7 @@ package org.trustedanalytics.sparktk.dicom
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.dicom.internal.BaseDicom
-import org.trustedanalytics.sparktk.dicom.internal.ops.SaveSummarization
+import org.trustedanalytics.sparktk.dicom.internal.ops.{ ExtractTagsTransform, ExtractKeywordsTransform, SaveSummarization }
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
@@ -14,12 +14,16 @@ import org.trustedanalytics.sparktk.saveload.TkSaveableObject
  * @param metadata dicom metadata frame
  * @param pixeldata dicom pixeldata frame
  */
-class Dicom(metadata: Frame, pixeldata: Frame) extends BaseDicom with Serializable with SaveSummarization {
+class Dicom(metadata: Frame, pixeldata: Frame) extends BaseDicom with Serializable
+    with ExtractKeywordsTransform
+    with ExtractTagsTransform
+    with SaveSummarization {
   super.init(metadata, pixeldata)
 }
 
 object Dicom extends TkSaveableObject {
 
+  val metadataColumnName = "metadata" //Name of the column holding xml string as value in a frame. To access while convert Row to NodeSeq.
   val tkFormatVersion = 1
 
   /**
