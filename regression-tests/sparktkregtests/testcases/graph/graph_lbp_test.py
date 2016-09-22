@@ -36,11 +36,11 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       5: (0.0, 0.0, 1.0)}
         potts_vals = potts.download(potts.count())
 
-        for _, i in potts_vals.iterrows():
-            values = map(float, i["Posterior"][1:-1].split(","))
-            self.assertAlmostEqual(known_vals[i["id"]][0], values[0])
-            self.assertAlmostEqual(known_vals[i["id"]][1], values[1])
-            self.assertAlmostEqual(known_vals[i["id"]][2], values[2])
+        for _, row in potts_vals.iterrows():
+            values = map(float, row["Posterior"][1:-1].split(","))
+            self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
+            self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
+            self.assertAlmostEqual(known_vals[row["id"]][2], values[2])
 
     def test_lbp_cross_50(self):
         """Test a balanced graph"""
@@ -72,10 +72,10 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       5: (0.0, 1.0)}
         potts_vals = potts.download(potts.count())
 
-        for _, i in potts_vals.iterrows():
-            values = map(float, i["Posterior"][1:-1].split(","))
-            self.assertAlmostEqual(known_vals[i["id"]][0], values[0])
-            self.assertAlmostEqual(known_vals[i["id"]][1], values[1])
+        for _, row in potts_vals.iterrows():
+            values = map(float, row["Posterior"][1:-1].split(","))
+            self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
+            self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
     def test_lbp_cross_3_1(self):
         """Test LBP on a cross with a 3-1 split on the distribution"""
@@ -109,10 +109,10 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
 
         potts_vals = potts.download(potts.count())
 
-        for _, i in potts_vals.iterrows():
-            values = map(float, i["Posterior"][1:-1].split(","))
-            self.assertAlmostEqual(known_vals[i["id"]][0], values[0])
-            self.assertAlmostEqual(known_vals[i["id"]][1], values[1])
+        for _, row in potts_vals.iterrows():
+            values = map(float, row["Posterior"][1:-1].split(","))
+            self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
+            self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
     def test_lbp_cross(self):
         """Test lbp on a basic cross with a 4-0 split"""
@@ -144,10 +144,10 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
 
         potts_vals = potts.download(potts.count())
 
-        for _, i in potts_vals.iterrows():
-            values = map(float, i["Posterior"][1:-1].split(","))
-            self.assertAlmostEqual(known_vals[i["id"]][0], values[0])
-            self.assertAlmostEqual(known_vals[i["id"]][1], values[1])
+        for _, row in potts_vals.iterrows():
+            values = map(float, row["Posterior"][1:-1].split(","))
+            self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
+            self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
 
     def test_lbp_double_cross(self):
@@ -191,10 +191,10 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       "8": (1.0, 0.0)}
         potts_vals = potts.download(potts.count())
 
-        for _, i in potts_vals.iterrows():
-            values = map(float, i["Posterior"][1:-1].split(","))
-            self.assertAlmostEqual(known_vals[i["id"]][0], values[0])
-            self.assertAlmostEqual(known_vals[i["id"]][1], values[1])
+        for _, row in potts_vals.iterrows():
+            values = map(float, row["Posterior"][1:-1].split(","))
+            self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
+            self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
 
 

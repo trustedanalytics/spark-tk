@@ -8,9 +8,10 @@ import org.graphframes.GraphFrame.ID
 import org.apache.spark.sql.DataFrame
 import org.graphframes.lib.AggregateMessages
 import org.apache.spark.sql.expressions.{ MutableAggregationBuffer, UserDefinedAggregateFunction }
-import org.apache.spark.mllib.linalg.{ Vector => MLLibVector, Vectors, VectorUDT, DenseVector }
+import org.apache.spark.mllib.linalg.{ Vector => MLLibVector, Vectors, VectorUDT, DenseVector => MLLibDenseVector }
 import org.apache.spark.sql.types.{ StructType, ArrayType, DoubleType }
 import scala.collection.mutable.WrappedArray
+import breeze.linalg._
 
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.lit
@@ -20,31 +21,32 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 trait LoopyBeliefPropagationSummarization extends BaseGraph {
   /**
    * Returns a frame with annotations concerning the posterior distribution given a prior distribution.
-   * This Assumes the graph is a Potts model, that is a triangle free graph with weights on each edge
+   * This assumes the graph is a Potts model, that is a triangle free graph with weights on each edge
    * and each vertex represents a discrete distribution, which is annotated in a property on the vertex.
    *
    * This method returns the result of the loopy belief optimizer on that Potts model given the priors.
    *
    * @param maxIterations the maximum number of iterations to run for
-   * @param weight the label weight
-   * @param prior The prior distribution. This is a space seperated string
+   * @param edgeWeight the column name for the edge weight
+   * @param prior The column name for the prior distribution. This is a space separated string
    * @return The dataframe containing the vertices and their corresponding label weights
    */
-  def loopyBeliefPropagation(maxIterations: Int = 10, weight: String, prior: String): Frame = {
-    execute[Frame](LoopyBeliefPropagation(maxIterations, weight, prior))
+  def loopyBeliefPropagation(prior: String, edgeWeight: String, maxIterations: Int = 10): Frame = {
+    execute[Frame](LoopyBeliefPropagation(prior, edgeWeight, maxIterations))
   }
 }
 
-case class LoopyBeliefPropagation(maxIterations: Int, weight: String, prior: String) extends GraphSummarization[Frame] {
+case class LoopyBeliefPropagation(prior: String, edgeWeight: String, maxIterations: Int) extends GraphSummarization[Frame] {
+  require(maxIterations > 0, "maxIterations must be greater than 0")
 
-  val post = "_posterior"
-  val margin = "_margins"
-  val newMargin = "_unnormed_margins"
-  val weightedMargin = "_weighted_margins"
+  def post(name: String) = name + "_posterior"
+  def margin(name: String) = name + "_margins"
+  def newMargin(name: String) = name + "_unnormed_margins"
+  def weightedMargin(name: String) = name + "_weighted_margins"
 
   override def work(state: GraphState): Frame = {
-    // alias to shorten code
-    val AM = AggregateMessages
+    require(state.graphFrame.edges.columns.contains(edgeWeight), s"Property $edgeWeight not found for edge weight")
+    require(state.graphFrame.vertices.columns.contains(prior), s"Property $prior not found for prior")
 
     val graphVertices = state.graphFrame.vertices
     state.graphFrame.edges.cache()
@@ -53,64 +55,35 @@ case class LoopyBeliefPropagation(maxIterations: Int, weight: String, prior: Str
     val firstRow = graphVertices.first
     val stateSpaceSize = splitDistribution(firstRow(firstRow.fieldIndex(prior)).toString).toArray.length
 
-    val stateRange = (0 to stateSpaceSize - 1).toVector
-
-    // Set up the priors, parse from string or set to uniform
-    val distributionAsFloats = udf {
-      (value: String) =>
-        l1Normalize(splitDistribution(value).toArray)
-    }
-
-    // helper methods that do minor transformations
-    val mapPriors = udf { (v: String, p: MLLibVector) => Map(v -> p) }
-    val normalize = udf { (prior: MLLibVector, posterior: MLLibVector) =>
-      l1Normalize(overflowProtectedProduct(List(prior, posterior)).toArray)
-    }
-
     // parse the distribution into a vector of floats, set it up as the initial posterior
     val vertexDoubles = graphVertices
-      .withColumn(prior + post, distributionAsFloats(graphVertices(prior)))
-      .withColumn(prior + margin, mapPriors(col(ID), col(prior + post)))
+      .withColumn(post(prior), distributionAsFloats(graphVertices(prior)))
+      .withColumn(margin(prior), mapPriors(col(ID), col(post(prior))))
 
     // Build a new graph to work on, with a proper vector of floats for the prior and posteriror
     var graphDoubles = GraphFrame(vertexDoubles, state.graphFrame.edges)
 
-    // The main message that get's passed to each vertex
-    // This is the map of each other vertex multiplied by the senders priors
-    val msg = udf { (src: String, dst: String, prior: MLLibVector, marginals: Map[String, MLLibVector], edgeWeight: Double) =>
-
-      val values = (marginals - dst).map({ case (id, values) => values }).toList
-      val reducedMessages = overflowProtectedProduct(prior :: values)
-      val statesUnPosteriors = stateRange.zip(reducedMessages.toArray)
-      val unnormalizedMessage = stateRange.map(i => statesUnPosteriors.map({
-        case (j, x: Double) =>
-          x * Math.exp(potentialFunction(i, j, edgeWeight))
-      }).sum)
-
-      val message = l1Normalize(unnormalizedMessage.toArray)
-
-      message
-    }
-
+    // alias to shorten code
+    val AM = AggregateMessages
     // Iteratively send messeges to each vertex, and aggregate those messages by multiplication. Then Post process the results
     // Based off of prior, normalize the results
     for (i <- Range(0, maxIterations)) {
 
       // Send mesages, aggregate. This algorithm has no direction on edges, so both source and destination are sent to
       val aggregate = graphDoubles.aggregateMessages
-        .sendToSrc(msg(AM.dst(ID), AM.src(ID), AM.dst(prior + post), AM.dst(prior + margin), AM.edge(weight)))
-        .sendToDst(msg(AM.src(ID), AM.dst(ID), AM.src(prior + post), AM.src(prior + margin), AM.edge(weight)))
-        .agg(new VectorProduct(stateSpaceSize)(AM.msg).as(prior + newMargin))
+        .sendToSrc(beliefPropagate(AM.dst(ID), AM.src(ID), AM.dst(post(prior)), AM.dst(margin(prior)), AM.edge(edgeWeight), lit(stateSpaceSize)))
+        .sendToDst(beliefPropagate(AM.src(ID), AM.dst(ID), AM.src(post(prior)), AM.src(margin(prior)), AM.edge(edgeWeight), lit(stateSpaceSize)))
+        .agg(new VectorProduct(stateSpaceSize)(AM.msg).as(newMargin(prior)))
 
       // move the results of this iteration to the new posterior, drop the old posterior
       val newCol = graphDoubles
         .vertices
         .join(aggregate, graphDoubles.vertices(ID) === aggregate(ID))
         .drop(aggregate(ID))
-        .withColumn(prior + weightedMargin, mapPriors(col(ID), normalize(col(prior + post), col(prior + newMargin))))
-        .drop(prior + newMargin)
-        .drop(prior + margin)
-        .withColumnRenamed(prior + weightedMargin, prior + margin)
+        .withColumn(weightedMargin(prior), mapPriors(col(ID), normalize(col(post(prior)), col(newMargin(prior)))))
+        .drop(newMargin(prior))
+        .drop(margin(prior))
+        .withColumnRenamed(weightedMargin(prior), margin(prior))
 
       // Workaround for bug SPARK-13346
       val unCachedVertices = AM.getCachedDataFrame(newCol)
@@ -123,9 +96,40 @@ case class LoopyBeliefPropagation(maxIterations: Int, weight: String, prior: Str
     // clean up intermediate values
     new Frame(graphDoubles
       .vertices
-      .withColumn("Posterior", stringifier(col(prior + margin), col(ID)))
-      .drop(prior + post)
-      .drop(prior + margin))
+      .withColumn("Posterior", stringifier(col(margin(prior)), col(ID)))
+      .drop(post(prior))
+      .drop(margin(prior)))
+  }
+
+  // Set up the priors, parse from string or set to uniform
+  val distributionAsFloats = udf {
+    (value: String) =>
+      l1Normalize(splitDistribution(value).toArray)
+  }
+
+  // helper methods that do minor transformations
+  val mapPriors = udf { (v: String, p: MLLibVector) => Map(v -> p) }
+  val normalize = udf { (prior: MLLibVector, posterior: MLLibVector) =>
+    l1Normalize((new DenseVector(prior.toArray) :* new DenseVector(posterior.toArray)).toArray)
+  }
+
+  // The main message that get's passed to each vertex
+  // This is the map of each other vertex multiplied by the senders priors
+  private val beliefPropagate = udf { (src: String, dst: String, prior: MLLibVector, marginals: Map[String, MLLibVector], edgeWeight: Double, stateSpaceSize: Int) =>
+
+    val stateRange = (0 to stateSpaceSize - 1).toVector
+
+    val value = (marginals - dst).map({ case (id, values) => new DenseVector(values.toArray) }).toList.reduce((x, y) => x :* y)
+    val reducedMessages = (new DenseVector(prior.toArray) :* value)
+    val statesUnPosteriors = stateRange.zip(reducedMessages.toArray)
+    val unnormalizedMessage = stateRange.map(i => statesUnPosteriors.map({
+      case (j, x: Double) =>
+        x * Math.exp(potentialFunction(i, j, edgeWeight))
+    }).sum)
+
+    val message = l1Normalize(unnormalizedMessage.toArray)
+
+    message
   }
 
   // Potential function (weighted Kroenecker Delta)
@@ -137,10 +141,10 @@ case class LoopyBeliefPropagation(maxIterations: Int, weight: String, prior: Str
   private def l1Normalize(v: Array[Double]): MLLibVector = {
     val norm = l1Norm(v)
     if (norm > 0d) {
-      new DenseVector(v.toArray.map(x => x / norm))
+      new MLLibDenseVector(v.toArray.map(x => x / norm))
     }
     else {
-      new DenseVector(v) // only happens if v is the zero vector
+      new MLLibDenseVector(v) // only happens if v is the zero vector
     }
   }
 
@@ -155,40 +159,12 @@ case class LoopyBeliefPropagation(maxIterations: Int, weight: String, prior: Str
 
   // This helper method splits our string representation of a distribution and converts it to a vector of doubles
   private def splitDistribution(distribution: String): MLLibVector = {
-    val separatorDefault: Array[Char] = Array(' ', ',', '\t')
-    new DenseVector(distribution
+    val separatorDefault: String = "\\s+"
+    new MLLibDenseVector(distribution
       .split(separatorDefault)
-      .filter(_.nonEmpty)
       .map(_.toDouble))
   }
 
-  def overflowProtectedProduct(vectors: List[MLLibVector]): MLLibVector = {
-    val logs = vectors.map(x => x.toArray.toVector.map(Math.log))
-    val sumOfLogs = logs.reduce(sumVectors(_, _, Double.NegativeInfinity))
-    val product = sumOfLogs.map({ case x: Double => Math.exp(x) })
-    new DenseVector(product.toArray)
-  }
-
-  // Helper to add two vectors elementwise
-  def sumVectors(v1: Vector[Double], v2: Vector[Double], padValue: Double = 0d): Vector[Double] = {
-    val length1 = v1.length
-    val length2 = v2.length
-
-    val liftedV1 = if (length1 < length2) {
-      v1 ++ (1 to (length2 - length1)).map(x => padValue)
-    }
-    else {
-      v1
-    }
-
-    val liftedV2 = if (length2 < length1) {
-      v2 ++ (1 to (length1 - length2)).map(x => padValue)
-    }
-    else {
-      v2
-    }
-    liftedV1.zip(liftedV2).map({ case (x, y) => x + y })
-  }
 }
 
 // Custom aggregate for multiplying MLLib vectors
