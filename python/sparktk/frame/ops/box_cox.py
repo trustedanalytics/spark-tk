@@ -35,10 +35,10 @@ def box_cox(self, column_name, lambda_value=0.0):
         [3]   7.48803882539
         [4]   4.98507012303
 
-        Compute the box-cox transformation on the 'input' column
+    Compute the box-cox transformation on the 'input' column
         >>> my_frame.box_cox('input',0.3)
 
-        A new column gets added to the frame which stores the box-cox transformation for each row
+    A new column gets added to the frame which stores the box-cox transformation for each row
         >>> my_frame.inspect()
         [#]  input           input_lambda_0.3
         =====================================

@@ -35,12 +35,12 @@ def reverse_box_cox(self, column_name, lambda_value=0.0):
         [3]   7.48803882539     2.76469126003
         [4]   4.98507012303     2.06401101556
 
-        Compute the reverse box-cox transformation on the 'input_lambda_0.3' column which stores the box-cox transformed
-        value on column 'input' with lambda 0.3
+    Compute the reverse box-cox transformation on the 'input_lambda_0.3' column which stores the box-cox transformed
+    value on column 'input' with lambda 0.3
         >>> my_frame.reverse_box_cox('input_lambda_0.3',0.3)
 
-        A new column gets added to the frame which stores the reverse box-cox transformation for each row.
-        This value is equal to the original vales in 'input' column
+    A new column gets added to the frame which stores the reverse box-cox transformation for each row.
+    This value is equal to the original vales in 'input' column
         >>> my_frame.inspect()
         [#]  input           input_lambda_0.3  input_lambda_0.3reverse_lambda_0.3
         =========================================================================
@@ -49,7 +49,5 @@ def reverse_box_cox(self, column_name, lambda_value=0.0):
         [2]   6.33648234926     2.46673638752                       6.33648234926
         [3]   7.48803882539     2.76469126003                       7.48803882539
         [4]   4.98507012303     2.06401101556                       4.98507012303
-
-
     """
     self._scala.reverseBoxCox(column_name, lambda_value)
