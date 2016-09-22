@@ -81,6 +81,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
             [15,2], [11,2], [1,1], [17,2], [3,1], [7,1], [9,1], [5,1]]  
         self.assertItemsEqual(actual_assignment, expected_assignment)
 
+
     def test_neg_similarity(self):
         """ Test pic with negative similarity values """
         bad_frame = self.context.frame.create(
@@ -90,5 +91,29 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
                 Exception, "Similarity must be nonnegative but found .*"):
             result = bad_frame.power_iteration_clustering(
                 "Source", "Destination", "Similarity", k=2, max_iterations=10)
+
+    def test_bad_column_name(self):
+        """ Test behavior for bad source column name """
+        with self.assertRaisesRegexp(
+                Exception, "Invalid column name ERR .*"):
+            result = self.frame.power_iteration_clustering(
+                "ERR", "Destination", "Similarity")
+
+    def test_bad_k_value(self):
+        """ Tests behavior for bad number of k """
+        with self.assertRaisesRegexp(
+                Exception,
+                "Number of clusters must be must be greater than 1"):
+            result = self.frame.power_iteration_clustering(
+                "Source", "Destination", "Similarity", k=0)
+
+    def test_bad_max_iterations(self):
+        """ Tests behavior for negative max_iterations """
+        with self.assertRaisesRegexp(
+                Exception,
+                "Maximum number of iterations must be greater than 0"):
+            result = self.frame.power_iteration_clustering(
+                "Source", "Destination", "Similarity", k=2,
+                max_iterations=-1)
 if __name__ == "__main__":
     unittest.main()
