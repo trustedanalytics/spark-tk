@@ -27,11 +27,11 @@ class LabelPropagationTest extends TestingSparkContextWordSpec with Matchers {
     graph
   }
 
-  "triangle count" in {
+  "Label Prpagation" in {
     val graph = buildGraph()
-    val weightedDegree = graph.labelPropagation(10)
-    weightedDegree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Community", DataTypes.int64)))
-    weightedDegree.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 1)), new GenericRow(Array[Any](3, 3)), new GenericRow(Array[Any](5, 1)), new GenericRow(Array[Any](4, 3))))
+    val propagatedLabels = graph.labelPropagation(10)
+    propagatedLabels.schema.columns should equal(List(Column("id", DataTypes.int32), Column("label", DataTypes.int64)))
+    propagatedLabels.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 1)), new GenericRow(Array[Any](3, 3)), new GenericRow(Array[Any](5, 1)), new GenericRow(Array[Any](4, 3))))
 
   }
 }

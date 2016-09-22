@@ -15,7 +15,7 @@ trait LabelPropagationSummarization extends BaseGraph {
   /**
    *
    * Label propagation attempts to determine communities based off of neighbor associations. A community
-   * is a label that any verteex can have assigned to it, vertices are assumed to be more likely members
+   * is a label that any vertex can have assigned to it, vertices are assumed to be more likely members
    * of communities they are near.
    *
    * This algorithm can fail to converge, oscillate or return the trivial solution (all members of one
@@ -32,6 +32,6 @@ trait LabelPropagationSummarization extends BaseGraph {
 case class LabelPropagation(maxIterations: Int) extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(state.graphFrame.labelPropagation.maxIter(maxIterations).run().toDF("Vertex", "Community"))
+    new Frame(state.graphFrame.labelPropagation.maxIter(maxIterations).run())
   }
 }
