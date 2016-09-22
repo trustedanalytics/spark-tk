@@ -1,0 +1,94 @@
+"""Test power iteration Clustering against known values"""
+import math
+import unittest
+from sparktkregtests.lib import sparktk_test
+
+
+class PowerIterationTest(sparktk_test.SparkTKTestCase):
+
+    def setUp(self):
+        """Import the files to be tested."""
+        super(PowerIterationTest, self).setUp()
+        data = self.get_file("pic_circles_data.csv")
+        self.schema = [('Source', int),
+                       ('Destination', int),
+                       ('Similarity', float)]
+
+        self.frame = self.context.frame.import_csv(data, schema=self.schema)
+
+    def test_doc_example(self):
+        """ Example from the API documentation """
+        data = [[1,2,1.0],
+                [1,3,0.3],
+                [2,3,0.3],
+                [3,0,0.03],
+                [0,5,0.01],
+                [5,4,0.3],
+                [5,6,1.0],
+                [4,6,0.3]]
+
+        frame = self.context.frame.create(data, schema=self.schema)
+        result = frame.power_iteration_clustering(
+            "Source", "Destination", "Similarity", k=3, max_iterations=10)
+
+        #check cluster sizes
+        actual_cluster_sizes = sorted(result.cluster_sizes.values())
+        expected_cluster_sizes = [1, 3, 3]
+        self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
+
+        #check values assigned to each cluster
+        actual_assignment = result.frame.download(
+            frame.count()).values.tolist()
+        expected_assignment = [[4, 2], [0, 3], [1, 1],
+            [5, 2], [6, 2], [2, 1], [3, 1]]
+        self.assertItemsEqual(actual_assignment, expected_assignment)
+
+    def test_circles_default(self):
+        """ Test pic on similarity matrix for two concentric cicles """
+        result = self.frame.power_iteration_clustering(
+            "Source", "Destination", "Similarity", k=2)
+
+        #check cluster sizes
+        actual_cluster_sizes = sorted(result.cluster_sizes.values())
+        expected_cluster_sizes = [5, 15]
+        self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
+
+        #check values assigned to each cluster
+        actual_assignment = result.frame.download(
+            result.frame.count()).values.tolist()
+        expected_assignment = \
+            [[4,1], [16,1], [14,1], [0,1], [6,1], [8,1],
+            [12,1], [18,1], [10,1], [2,1], [13,2], [19,2],
+            [15,2], [11,2], [1,1], [17,2], [3,1], [7,1], [9,1], [5,1]]
+        self.assertItemsEqual(actual_assignment, expected_assignment)
+
+    def test_circles_max_iterations(self):
+        """ Test pic with max_iteration = 40 """
+        result = self.frame.power_iteration_clustering(
+            "Source", "Destination", "Similarity", k=2, max_iterations=40)
+
+        #check cluster sizes
+        actual_cluster_sizes = sorted(result.cluster_sizes.values())
+        expected_cluster_sizes = [10, 10]
+        self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
+
+        #check values assigned to each cluster
+        actual_assignment = result.frame.download(
+            result.frame.count()).values.tolist()
+        expected_assignment = \
+            [[4,1], [16,2], [14,2], [0,1], [6,1], [8,1],
+            [12,2], [18,2], [10,2], [2,1], [13,2], [19,2],
+            [15,2], [11,2], [1,1], [17,2], [3,1], [7,1], [9,1], [5,1]]  
+        self.assertItemsEqual(actual_assignment, expected_assignment)
+
+    def test_neg_similarity(self):
+        """ Test pic with negative similarity values """
+        bad_frame = self.context.frame.create(
+            [[1, 0, -1.0], [1, 2, 0.1]], schema=self.schema)
+
+        with self.assertRaisesRegexp(
+                Exception, "Similarity must be nonnegative but found .*"):
+            result = bad_frame.power_iteration_clustering(
+                "Source", "Destination", "Similarity", k=2, max_iterations=10)
+if __name__ == "__main__":
+    unittest.main()
