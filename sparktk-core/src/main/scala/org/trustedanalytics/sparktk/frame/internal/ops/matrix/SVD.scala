@@ -3,10 +3,10 @@ package org.trustedanalytics.sparktk.frame.internal.ops.matrix
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.Row
-import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrices }
-import breeze.linalg.{ DenseMatrix => BDM }
-import org.trustedanalytics.sparktk.frame.{ Column, DataTypes }
-import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, FrameTransform, VectorFunctions }
+import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrix, Matrices }
+import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM }
+import org.trustedanalytics.sparktk.frame.{ Frame, Column, DataTypes }
+import org.trustedanalytics.sparktk.frame.internal._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait SVDTransform extends BaseFrame {
@@ -21,34 +21,50 @@ case class SVD(matrixColumnName: String) extends FrameTransform {
   require(matrixColumnName != null, "Matrix column name cannot be null")
 
   override def work(state: FrameState): FrameState = {
-    // run the operation
-    val svdRdd = SVD.svd(state, matrixColumnName)
 
-    // save results
-    val updatedSchema = state.schema.addColumns(Seq(Column("U", DataTypes.matrix), Column("V", DataTypes.matrix), Column("singular_values", DataTypes.matrix)))
+    val frame = new Frame(state.rdd, state.schema)
 
-    FrameState(svdRdd, updatedSchema)
+    frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
+    //run the operation
+    frame.addColumns(SVD.svd(matrixColumnName), Seq(Column("U", DataTypes.matrix),
+      Column("Vt", DataTypes.matrix),
+      Column("SingularVectors", DataTypes.matrix)))
+    FrameState(frame.rdd, frame.schema)
+
   }
 }
 
 object SVD extends Serializable {
   /**
    * Computes the svd for each matrix of the frame
-   *
-   *
    */
-  def svd(frameRdd: FrameRdd, matrixColumnName: String): RDD[Row] = {
-    frameRdd.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
-    var singularValuesSize = 0
-    frameRdd.mapRows(row => {
-      val matrix = row.value(matrixColumnName).asInstanceOf[DM]
-      val breezeMatrix = new BDM(matrix.numRows, matrix.numCols, matrix.toArray)
-      val svdResult = breeze.linalg.svd(breezeMatrix)
-      val newColumns = (new DM(svdResult.U.rows, svdResult.U.cols, svdResult.U.data, svdResult.U.isTranspose),
-        new DM(svdResult.Vt.rows, svdResult.Vt.cols, svdResult.Vt.data, svdResult.Vt.isTranspose),
-        new DM(1, svdResult.singularValues.length, svdResult.singularValues.toArray, false))
-      new GenericRow(row.valuesAsArray() :+ newColumns)
-    })
+  def svd(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
+    
+    val matrix = rowWrapper.value(matrixColumnName).asInstanceOf[DM]
+    val breezeMatrix = asBreeze(matrix)
+
+    val svdResult = breeze.linalg.svd(breezeMatrix)
+
+    val uMatrix = fromBreeze(svdResult.Vt).asInstanceOf[DM]
+    val vMatrix = fromBreeze(svdResult.U).asInstanceOf[DM]
+    val singularVectors = new DM(1, svdResult.singularValues.length, svdResult.singularValues.toArray, false)
+
+    Row.apply(uMatrix, vMatrix, singularVectors)
+  }
+
+  def fromBreeze(breezeDM: BDM[Double]): Matrix = {
+    new DM(breezeDM.rows, breezeDM.cols, breezeDM.data, breezeDM.isTranspose)
+
+  }
+
+  def asBreeze(mllibDM: DM): BDM[Double] = {
+    if (!mllibDM.isTransposed) {
+      new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values)
+    }
+    else {
+      val breezeMatrix = new BDM[Double](mllibDM.numCols, mllibDM.numRows, mllibDM.values)
+      breezeMatrix.t
+    }
   }
 
 }
