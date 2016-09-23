@@ -12,6 +12,7 @@ def timeseries_from_observations(self, date_time_index, timestamp_column, key_co
     as a time series.  The time series frame will have columns for the key and a vector of the observed values that
     correspond to the date/time index.
 
+
     Examples
     --------
     In this example, we will use a frame of observations of resting heart rate for three individuals over three days.
