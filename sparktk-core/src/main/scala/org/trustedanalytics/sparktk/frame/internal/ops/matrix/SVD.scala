@@ -39,7 +39,7 @@ object SVD extends Serializable {
    * Computes the svd for each matrix of the frame
    */
   def svd(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
-    
+
     val matrix = rowWrapper.value(matrixColumnName).asInstanceOf[DM]
     val breezeMatrix = asBreeze(matrix)
 
