@@ -174,18 +174,18 @@ class Graph(object):
         if isinstance(source_or_vertices_frame, Frame):
             # Python Vertices and Edges Frames
             vertices_frame = source_or_vertices_frame
-            require_type(edges_frame,
+            require_type(Frame,
+                         edges_frame,
                          'edges_frame',
-                         Frame,
                          "Providing a vertices frame requires also providing an edges frame")
             self._scala = self.create_scala_graph_from_scala_frames(self._tc,
                                                                     vertices_frame._scala,
                                                                     edges_frame._scala)
         else:
             source = source_or_vertices_frame
-            require_type(edges_frame,
+            require_type(None,
+                         edges_frame,
                          'edges_frame',
-                         None,
                          'If edges_frames is provided, then a valid vertex frame must be provided as the first arg, instead of type %s' % type(source))
             if self._is_scala_graph(source):
                 # Scala Graph
@@ -199,7 +199,6 @@ class Graph(object):
                 self._scala = self.create_scala_graph_from_scala_graphframe(self._tc, source)
             else:
                 raise TypeError("Cannot create from source type %s" % type(source))
-
 
     def __repr__(self):
         return self._scala.toString()

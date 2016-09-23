@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import sparktk.frame.schema
 from sparktk.dtypes import dtypes
-from sparktk.arguments import affirm_type
+from sparktk.arguments import affirm_type, require_type
 from sparktk.frame.schema import get_schema_for_columns
 
 
@@ -61,8 +61,8 @@ def take(self, n, offset=0, columns=None):
     </hide>
 
     """
-    n = affirm_type.non_negative_int(n, "n")
-    offset = affirm_type.non_negative_int(offset, "offset")
+    require_type.non_negative_int(n, "n")
+    require_type.non_negative_int(offset, "offset")
     if columns is not None:
         columns = affirm_type.list_of_str(columns, "columns")
 
@@ -71,7 +71,7 @@ def take(self, n, offset=0, columns=None):
         schema = get_schema_for_columns(self.schema, columns) if columns else self.schema
         data = TakeCollectHelper.scala_rows_to_python(self._tc, scala_data, schema)
     else:
-        affirm_type.non_negative_int(n, "n")
+        require_type.non_negative_int(n, "n")
         if offset:
             data = _take_offset(self, n, offset, columns)
         elif columns:

@@ -62,7 +62,7 @@ class TkContext(object):
         Since tc is so commonly used as an implicit variable, it's worth the special code here to save a lot of imports otherwise
 
         """
-        require_type(tc, arg_name, TkContext)
+        require_type(TkContext, tc, arg_name)
 
     @property
     def sc(self):
