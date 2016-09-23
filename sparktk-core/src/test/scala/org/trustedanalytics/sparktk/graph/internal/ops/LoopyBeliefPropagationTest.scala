@@ -27,17 +27,44 @@ class LoopyBeliefPropagationTest extends TestingSparkContextWordSpec with Matche
     graph
   }
 
-  "loopy belief propgation" in {
-    val graph = buildGraph()
-    val posteriorBelief = graph.loopyBeliefPropagation("priors", "weights")
-    posteriorBelief.schema.columns should equal(List(Column("id", DataTypes.int32), Column("priors", DataTypes.string), Column("Posterior", DataTypes.string)))
-    posteriorBelief.rdd.toArray.toList should equal(List(
-      new GenericRow(Array[Any](1, "1.0 0", "[1.0,0.0]")),
-      new GenericRow(Array[Any](3, "1.0 0", "[1.0,0.0]")),
-      new GenericRow(Array[Any](5, "0 1.0", "[0.0,1.0]")),
-      new GenericRow(Array[Any](4, "1.0 0", "[1.0,0.0]"))
-    )
-    )
+  "loopy belief propgation" when {
+    "called with good inputs" should {
 
+      "optimize over the priors" in {
+        val graph = buildGraph()
+        val posteriorBelief = graph.loopyBeliefPropagation("priors", "weights")
+        posteriorBelief.schema.columns should equal(List(Column("id", DataTypes.int32), Column("priors", DataTypes.string), Column("Posterior", DataTypes.string)))
+        posteriorBelief.rdd.toArray.toList should equal(List(
+          new GenericRow(Array[Any](1, "1.0 0", "[1.0,0.0]")),
+          new GenericRow(Array[Any](3, "1.0 0", "[1.0,0.0]")),
+          new GenericRow(Array[Any](5, "0 1.0", "[0.0,1.0]")),
+          new GenericRow(Array[Any](4, "1.0 0", "[1.0,0.0]"))))
+
+      }
+    }
+
+    "called with invalid prior" should {
+      "throw an exception" in {
+        val graph = buildGraph()
+        val thrown = the[IllegalArgumentException] thrownBy graph.loopyBeliefPropagation("invalid_prior", "weights")
+        thrown.getMessage should equal("requirement failed: Property invalid_prior not found for prior")
+      }
+    }
+
+    "called with an invalid weight" should {
+      "throw an exception" in {
+        val graph = buildGraph()
+        val thrown = the[IllegalArgumentException] thrownBy graph.loopyBeliefPropagation("prior", "invalid_prior")
+        thrown.getMessage should equal("requirement failed: Property invalid_prior not found for edge weight")
+      }
+    }
+
+    "called with invalid iterations" should {
+      "throw an exception" in {
+        val graph = buildGraph()
+        val thrown = the[IllegalArgumentException] thrownBy graph.loopyBeliefPropagation("prior", "invalid_prior", -3)
+        thrown.getMessage should equal("requirement failed: maxIterations must be greater than 0")
+      }
+    }
   }
 }
