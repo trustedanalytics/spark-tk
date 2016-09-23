@@ -67,7 +67,7 @@ class PageRank(sparktk_test.SparkTKTestCase):
         pandas_vertices = result.to_pandas(result.count())
         edges_frame = self.graph.create_edges_frame()
 
-        edge_list = map(tuple, edges_frame.take(edges_frame.count()).data)
+        edge_list = map(tuple, edges_frame.take(edges_frame.count()))
 
         G = nx.Graph()
         G.add_edges_from(edge_list)

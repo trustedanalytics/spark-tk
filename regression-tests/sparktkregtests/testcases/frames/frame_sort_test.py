@@ -29,7 +29,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         # get just the weight column
         sorted = self.frame.copy("weight")
         # take all rows and examine data
-        sorted_data = sorted.take(sys.maxint).data
+        sorted_data = sorted.take(sys.maxint)
         # last will keep track of the previous item
         # we initialize it to an integer minimum
         last = -1 * sys.maxint
@@ -47,10 +47,10 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     def test_frame_sort_single_column_ascending_compare_all_cols(self):
         """ Test single-column sorting ascending with the argument"""
         frame_copy = self.frame.copy()
-        unsorted_data = frame_copy.take(frame_copy.count()).data
+        unsorted_data = frame_copy.take(frame_copy.count())
         self.frame.sort("weight", ascending=True)
         sorted = self.frame.copy()
-        sorted_data = sorted.take(sorted.count()).data
+        sorted_data = sorted.take(sorted.count())
         last = -1 * sys.maxint
         for i in range(len(sorted_data)):
             assert sorted_data[i][3] >= last
@@ -65,7 +65,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         """ Test single-column sorting descending with the argument"""
         self.frame.sort("weight", ascending=False)
         sorted = self.frame.copy("weight")
-        sorted_data = sorted.take(sys.maxint).data
+        sorted_data = sorted.take(sys.maxint)
         last = sys.maxint
         for i in range(len(sorted_data)):
             assert sorted_data[i][0] <= last

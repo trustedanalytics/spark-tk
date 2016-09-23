@@ -65,6 +65,8 @@ def take(self, n, offset=0, columns=None):
     require_type.non_negative_int(offset, "offset")
     if columns is not None:
         columns = affirm_type.list_of_str(columns, "columns")
+        if not columns:
+            return []
 
     if self._is_scala:
         scala_data = self._scala.take(n, offset, self._tc.jutils.convert.to_scala_option_list_string(columns))

@@ -38,7 +38,7 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
                                         for (_, i) in triangles.iterrows()}
 
         edge_list = self.frame.take(
-            n=self.frame.count(), columns=['src', 'dst']).data
+            n=self.frame.count(), columns=['src', 'dst'])
 
         # build the network x result
         g = nx.Graph()

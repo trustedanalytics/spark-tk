@@ -37,9 +37,11 @@ def collect(self, columns=None):
     """
     if columns is not None:
         affirm_type.list_of_str(columns, "columns")
+        if not columns:
+            return []
     if self._is_scala:
         scala_data = self._scala.collect(self._tc.jutils.convert.to_scala_option_list_string(columns))
-        schema = get_schema_for_columns(self.schema, columns)
+        schema = get_schema_for_columns(self.schema, columns) if columns else self.schema
         data = TakeCollectHelper.scala_rows_to_python(self._tc, scala_data, schema)
     else:
         if columns:
