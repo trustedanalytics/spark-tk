@@ -46,9 +46,9 @@ class AssignSample(sparktk_test.SparkTKTestCase):
         # Check expected results
         self._test_frame_assign("default", baseline)
         frame_take = self.frame.take(self.frame.count())
-        seed_d = [i[2] for i in frame_take.data]
-        seed_0 = [i[3] for i in frame_take.data]
-        seed_5 = [i[4] for i in frame_take.data]
+        seed_d = [i[2] for i in frame_take]
+        seed_0 = [i[3] for i in frame_take]
+        seed_5 = [i[4] for i in frame_take]
 
         # seed=0 and default give the same results.
         self.assertEqual(seed_0, seed_d)

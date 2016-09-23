@@ -40,9 +40,9 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
             ColumnMethodTest.static_udf, self.new_col_schema)
         self.assertEqual(self.frame.column_names, self.expected_header)
         self.assertEqual(
-            len(self.new_col_schema)+3, len((self.frame.take(1)).data[0]))
+            len(self.new_col_schema)+3, len((self.frame.take(1))[0]))
 
-        columns = self.frame.take(self.frame.count()).data
+        columns = self.frame.take(self.frame.count())
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
@@ -53,30 +53,30 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(self.frame.column_names, self.expected_header)
 
         self.assertEqual(
-            len(self.new_col_schema)+3, len((self.frame.take(1)).data[0]))
+            len(self.new_col_schema)+3, len((self.frame.take(1))[0]))
 
         self.frame.inspect()
-        columns = self.frame.take(self.frame.count()).data
+        columns = self.frame.take(self.frame.count())
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
     def test_add_columns_lambda_single(self):
         """Test adding individual columns from a lambda"""
-        col_count = len((self.frame.take(1)).data[0])
+        col_count = len((self.frame.take(1))[0])
         self.frame.add_columns(
             lambda row: row.int*row.float, ('a_times_b', int))
         self.assertIn('a_times_b', self.frame.column_names)
-        self.assertEqual(col_count+1, len((self.frame.take(1)).data[0]))
+        self.assertEqual(col_count+1, len((self.frame.take(1))[0]))
 
     def test_add_columns_lambda_multiple(self):
         """Test adding multiple columns from a lambda"""
-        col_count = len((self.frame.take(1)).data[0])
+        col_count = len((self.frame.take(1))[0])
         self.frame.add_columns(
             lambda row: [row.int * row.float, row.int + row.float],
             [("a_times_b", float), ("a_plus_b", float)])
         self.assertIn('a_times_b', self.frame.column_names)
         self.assertIn('a_plus_b', self.frame.column_names)
-        self.assertEqual(col_count+2, len((self.frame.take(1)).data[0]))
+        self.assertEqual(col_count+2, len((self.frame.take(1))[0]))
 
     def test_add_columns_abort(self):
         """Test divide by zero errors"""
@@ -144,7 +144,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         """Test renaming with unicode names"""
         self.frame.add_columns(
             lambda row: udf_int_val, ('product', int))
-        col_count = len(self.frame.take(1).data[0])
+        col_count = len(self.frame.take(1)[0])
         self.frame.rename_columns({'product': u'unicode'})
         self.assertEqual(col_count, len(self.frame.take(1)[0][0]))
         self.assertNotIn('product', self.frame.column_names)

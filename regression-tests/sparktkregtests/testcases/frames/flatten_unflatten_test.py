@@ -64,7 +64,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
 
         # Validate flatten against hand crafted results
         frame.flatten_columns("day", "gift")
-        frame_take = frame.take(frame.count()).data
+        frame_take = frame.take(frame.count())
         self.assertItemsEqual(frame_take, expected_take)
 
     def test_flatten_vary_len(self):
@@ -76,7 +76,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
 
         # Validate flatten on known results
         frame.flatten_columns('col1', 'col2')
-        frame_take = frame.take(frame.count()).data
+        frame_take = frame.take(frame.count())
         self.assertItemsEqual(frame_take, expected_take)
 
     def test_flatten_delim_variety(self):
@@ -109,7 +109,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                          ["o", "p", "7"]]
         frame = self.context.frame.create(block_data, schema=block_schema)
         frame.flatten_columns(('col1', '='), ('col2', '='), ('col3', '='))
-        actual_flat = frame.take(frame.count()).data
+        actual_flat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_flat)
 
     def test_flatten_mult_example(self):
@@ -135,12 +135,12 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         self.assertEqual(9, frame1.count())
 
         frame.flatten_columns("col1", "col2", "col3")
-        actual_flat = frame.take(frame.count()).data
+        actual_flat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_flat)
 
         # Unflatten should do nothing: there are no common elements.
         frame.unflatten_columns(["col1", "col2", "col3"])
-        actual_unflat = frame.take(frame.count()).data
+        actual_unflat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_unflat)
 
     def test_flatten_int_column(self):
