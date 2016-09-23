@@ -144,7 +144,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         """Test renaming with unicode names"""
         self.frame.add_columns(
             lambda row: udf_int_val, ('product', int))
-        col_count = len(self.frame.take(1))
+        col_count = len(self.frame.take(1)[0])
         self.frame.rename_columns({'product': u'unicode'})
         self.assertEqual(col_count, len(self.frame.take(1)[0]))
         self.assertNotIn('product', self.frame.column_names)
