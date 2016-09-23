@@ -14,9 +14,31 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait ClusteringCoefficientSummarization extends BaseGraph {
   /**
-   * Returns a frame with the number of triangles each vertex is contained in
+   * The clustering coefficient of a vertex provides a measure of how
+   * tightly clustered that vertex's neighborhood is.
+   * Informally, if the edge relation denotes "friendship", the clustering
+   * coefficient at a vertex :math:`v` is the probability that two acquaintances of
+   * :math:`v` are themselves friends.
    *
-   * @return The dataframe containing the vertices and their corresponding triangle counts
+   * More formally:
+   *
+   * .. math::
+   *
+   *    cc(v)  = \frac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+   *        E \} \| }{\| \{ (u,v,w) \in V^3: \ \{v, u \}, \{v, w\} \in E \} \|}
+   *
+   *
+   * The toolkit provides the function clustering_coefficient which computes both
+   * local and global clustering coefficients for a given undirected graph.
+   *
+   * For more details on the mathematics and applications of clustering
+   * coefficients, see http://en.wikipedia.org/wiki/Clustering_coefficient.
+   *
+   * This method returns a frame with the vertex id associated with it's local
+   * clustering coefficient
+   *
+   * @return The DataFrame associating each vertex id with it's local clustering coefficient
+   *
    */
   def clusteringCoefficient(): Frame = {
     execute[Frame](ClusteringCoefficient())
