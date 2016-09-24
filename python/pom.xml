@@ -66,6 +66,37 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
+        <profile>
+            <id>docs</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!NEVERSETME</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>python-sparktk-docs</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>./builddoc.sh</executable>
+                                    <workingDirectory>${basedir}/sparktk/doc/</workingDirectory>
 
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 </project>

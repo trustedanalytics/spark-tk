@@ -339,13 +339,13 @@ case class TkCsvRelation protected[spark] (
           index = 0
           while (index < schemaFields.length) {
             val field = schemaFields(index)
-            // **sparktk addition - catch a ParseException and fill with null
+            // **sparktk addition - catch a ParseException or NumberFormatException and fill with null
             val item = try {
               TypeCast.castTo(tokens(index), field.dataType, field.nullable,
                 treatEmptyValuesAsNulls, nullValue, simpleDateFormatter)
             }
             catch {
-              case e: ParseException => null
+              case e @ (_: ParseException | _: NumberFormatException) => null
             }
             rowArray(index) = item
             index = index + 1

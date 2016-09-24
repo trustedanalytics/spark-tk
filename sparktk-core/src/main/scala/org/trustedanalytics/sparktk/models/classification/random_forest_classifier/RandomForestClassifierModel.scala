@@ -37,6 +37,7 @@ object RandomForestClassifierModel extends TkSaveableObject {
    * @param labelColumn Column name containing the label for each observation
    * @param observationColumns Column(s) containing the observations
    * @param numClasses Number of classes for classification. Default is 2
+   *                   numClasses should not exceed the number of distinct values in labelColumn
    * @param numTrees Number of tress in the random forest. Default is 1
    * @param impurity Criterion used for information gain calculation. Supported values "gini" or "entropy".
    *                 Default is "gini"

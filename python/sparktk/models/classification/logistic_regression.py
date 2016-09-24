@@ -104,7 +104,7 @@ def train(frame,
                                    convergence_tolerance,
                                    num_corrections,
                                    mini_batch_fraction,
-                                   step_size)
+                                   float(step_size))
 
     return LogisticRegressionModel(tc, scala_model)
 

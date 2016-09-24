@@ -5,9 +5,19 @@ import org.apache.spark.util.{ BoundedPriorityQueue => SparkBoundedPriorityQueue
 import org.apache.spark.util.collection.{ Utils => SparkCollectionUtils }
 import org.apache.spark.api.java.{ JavaUtils => SparkJavaUtils }
 
+import org.apache.spark.mllib.api.python.{ SerDe => SparkMLLibSerDe }
+
 object SparkAliases {
 
   val SerDeUtil = SparkSerDeUtil
+
+  lazy val MLLibSerDe = getSparkMLLibSerDe
+
+  def getSparkMLLibSerDe = {
+    SparkMLLibSerDe
+    SparkMLLibSerDe.initialize()
+  }
+
   type AutoBatchedPickler = SerDeUtil.AutoBatchedPickler
   type BoundedPriorityQueue[A] = SparkBoundedPriorityQueue[A]
   val CollectionUtils = SparkCollectionUtils

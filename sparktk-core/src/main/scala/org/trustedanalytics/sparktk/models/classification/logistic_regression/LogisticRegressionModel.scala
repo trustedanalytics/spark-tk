@@ -25,6 +25,7 @@ object LogisticRegressionModel extends TkSaveableObject {
    * @param labelColumn          Column name containing the label for each observation.
    * @param frequencyColumn      Optional column containing the frequency of observations.
    * @param numClasses           Number of classes
+   *                             numClasses should not exceed the number of distinct values in labelColumn
    * @param optimizer            Set type of optimizer.
    *                             LBFGS - Limited-memory BFGS.
    *                             LBFGS supports multinomial logistic regression.
