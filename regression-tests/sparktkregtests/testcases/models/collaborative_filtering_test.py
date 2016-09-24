@@ -31,7 +31,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering and recommend"""
         model = self.context.models.collaborative_filtering \
             .collaborative_filtering \
-            .train(self.frame, "user_int", "item_int", "rating", max_steps=25)
+            .train(self.frame, "user_int", "item_int", "rating")
         recommend = model.recommend(0, 40)
         recommend_dict = {i['product']: i['rating'] for i in recommend}
 
@@ -92,7 +92,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering and predict"""
         model = self.context.models.collaborative_filtering \
             .collaborative_filtering \
-            .train(self.frame, "user_int", "item_int", "rating", max_steps=25)
+            .train(self.frame, "user_int", "item_int", "rating")
         scores = model.create_predict_frame(
             self.old_frame, "user_int", "item_int")
 
