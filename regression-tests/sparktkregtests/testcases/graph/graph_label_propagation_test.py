@@ -7,7 +7,7 @@ from sparktkregtests.lib import sparktk_test
 class LbpGraphx(sparktk_test.SparkTKTestCase):
 
     def test_label_propagation(self):
-    """label propagation on plus sign, deterministic, not conververgent"""
+        """label propagation on plus sign, deterministic, not conververgent"""
         vertex_frame = self.context.frame.create(
                           [["vertex1"],
                            ["vertex2"],
