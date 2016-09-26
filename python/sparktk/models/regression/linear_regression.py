@@ -219,6 +219,9 @@ class LinearRegressionModel(PropertiesObject):
         """
         Predict values for a frame using a trained Linear Regression model
 
+        Parameters
+        ----------
+
         :param frame: (Frame) The frame to predict on
         :param observation_columns: Optional(List[str]) List of column(s) containing the observations
         :return: (Frame) returns frame with predicted column added
@@ -229,6 +232,9 @@ class LinearRegressionModel(PropertiesObject):
     def test(self, frame, value_column, observation_columns=None):
         """
         Test the frame given the trained model
+
+        Parameters
+        ----------
 
         :param frame: (Frame) The frame to predict on
         :param value_column: (String) Column name containing the value for each observation
@@ -242,6 +248,24 @@ class LinearRegressionModel(PropertiesObject):
         """
         Saves the model to given path
 
+        Parameters
+        ----------
+
         :param path: (str) path to save
         """
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        self._scala.exportToMar(path)

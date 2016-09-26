@@ -12,6 +12,8 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import scala.language.implicitConversions
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.sparktk.models.ScoringModelUtils
 
 object LogisticRegressionModel extends TkSaveableObject {
 
@@ -267,7 +269,7 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
                                                                  stepSize: Double,
                                                                  trainingSummary: LogisticRegressionSummaryTable,
                                                                  hessianMatrix: Option[DenseMatrix[Double]],
-                                                                 sparkModel: LogisticRegressionModelWithFrequency) extends Serializable {
+                                                                 sparkModel: LogisticRegressionModelWithFrequency) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -283,10 +285,9 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
    * @return Frame containing the original frame's columns and a column with the predicted label.
    */
-  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Unit = {
+  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Frame = {
     require(frame != null, "frame is required")
 
-    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     //Running MLLib
     if (observationColumnsPredict.isDefined) {
       require(observationColumns.length == observationColumnsPredict.get.length,
@@ -303,7 +304,11 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(predictColumn))
+    val predictSchema = frame.schema.addColumn(predictColumn)
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -385,6 +390,18 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
     }
   }
 
+  override def score(row: Array[Any]): Array[Any] = ???
+
+  override def modelMetadata(): ModelMetaDataArgs = ???
+
+  override def input(): Array[Field] = ???
+
+  override def output(): Array[Field] = ???
+
+  def exportToMar(path: String): Unit = {
+    // TODO: Implement exportToMar
+    throw new NotImplementedError("exportToMar is not implemented yet")
+  }
 }
 
 /**

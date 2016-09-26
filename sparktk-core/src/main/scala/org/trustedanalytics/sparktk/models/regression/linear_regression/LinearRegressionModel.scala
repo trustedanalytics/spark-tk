@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.models.regression.linear_regression
 
 import org.apache.spark.SparkContext
 import org.apache.spark.ml.regression.LinearRegression
+import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{ LinearRegressionData, TkLinearRegressionModel }
 import org.apache.spark.mllib.evaluation.RegressionMetrics
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
@@ -14,9 +15,11 @@ import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegr
 import scala.collection.mutable.ListBuffer
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.apache.commons.lang.StringUtils
-
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.sparktk.models.ScoringModelUtils
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
+import org.apache.spark.mllib.linalg.Vectors
 
 object LinearRegressionModel extends TkSaveableObject {
 
@@ -139,7 +142,15 @@ case class LinearRegressionModel(valueColumn: String,
                                  r2: Double,
                                  rootMeanSquaredError: Double,
                                  iterations: Int,
-                                 sparkModel: SparkLinearRegressionModel) extends Serializable {
+                                 sparkModel: SparkLinearRegressionModel) extends Serializable with Model {
+
+  /**
+   * Name of scoring model reader
+   */
+  private val modelReader: String = "SparkTkModelReader"
+
+  // TkLinearRegressionModel, used to accessing protected methods in the Spark LinearRegressionModel
+  lazy val tkLinearRegModel = new TkLinearRegressionModel(LinearRegressionData(sparkModel, observationColumnsTrain, valueColumn))
 
   /**
    * Get the predictions for observations in a test frame
@@ -237,6 +248,39 @@ case class LinearRegressionModel(valueColumn: String,
       iterations)
 
     TkSaveLoad.saveTk(sc, path, LinearRegressionModel.formatId, formatVersion, tkMetadata)
+  }
+
+  override def score(data: Array[Any]): Array[Any] = {
+    val x: Array[Double] = new Array[Double](data.length)
+    data.zipWithIndex.foreach {
+      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
+    }
+
+    // Call to tkLinearRegModel, since predict() in the spark LinearRegressionModel is protected
+    data :+ tkLinearRegModel.vectorPredict(Vectors.dense(x))
+  }
+
+  override def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Linear Regression Model", classOf[LinearRegressionModel].getName, modelReader, Map())
+  }
+
+  override def input(): Array[Field] = {
+    val obsCols = observationColumnsTrain
+    var input = Array[Field]()
+    obsCols.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("Prediction", "Double")
+  }
+
+  def exportToMar(path: String): Unit = {
+    // TODO: Implement exportToMar
+    throw new NotImplementedError("exportToMar is not implemented yet")
   }
 }
 

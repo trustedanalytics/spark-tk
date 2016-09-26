@@ -1,3 +1,4 @@
+# coding=utf-8
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
@@ -111,9 +112,9 @@ class RandomForestRegressorModel(PropertiesObject):
         ...                                                                max_depth=4,
         ...                                                                max_bins=100)
 
-        >>> model.predict(frame, ['Dim_1', 'Dim_2'])
+        >>> predict_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
-        >>> frame.inspect()
+        >>> predict_frame.inspect()
         [#]  Class  Dim_1          Dim_2         predicted_value
         ========================================================
         [0]      1  19.8446136104  2.2985856384                1.0
@@ -197,9 +198,26 @@ class RandomForestRegressorModel(PropertiesObject):
         return self._tc.jutils.convert.from_scala_option(self._scala.featureSubsetCategory())
 
     def predict(self, frame, columns=None):
-        """predict the frame given the trained model"""
+        """
+        Predict the values for the data points.
+
+        Predict the values for a test frame using trained Random Forest Classifier model, and create a new frame revision
+        with existing columns and a new predicted value’s column.
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
+                      over which the model is trained.
+        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
+                        By default, we predict the labels over columns the Random Forest model was trained on.
+        :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted
+                 value for each observation.
+        """
+
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc,self._scala.predict(frame._scala, c))
 
     def __columns_to_option(self, c):
         if c is not None:
@@ -207,7 +225,29 @@ class RandomForestRegressorModel(PropertiesObject):
         return self._tc.jutils.convert.to_scala_option(c)
 
     def save(self, path):
-        """save the trained model to path"""
+        """
+        Save the trained model to path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save
+        """
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        self._scala.exportToMar(path)
 
 del PropertiesObject

@@ -14,6 +14,9 @@ def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False)
     Creates a ARX model by training on the given frame. Fit an autoregressive model with additional
     exogenous variables.
 
+    Parameters
+    ----------
+
     :param frame: (Frame) Frame used for training
     :param ts_column: (str) Name of the column that contains the time series values.
     :param x_columns: (List(str)) Names of the column(s) that contain the values of exogenous regressors.
@@ -301,6 +304,8 @@ class ArxModel(PropertiesObject):
         Predict the time series values for a test frame, based on the specified x values.  Creates a new frame
         revision with the existing columns and a new predicted_y column.
 
+        Parameters
+        ----------
         :param frame: (Frame) Frame used for predicting the ts values
         :param ts_column: (str) Name of the time series column
         :param x_columns: (List[str]) Names of the column(s) that contain the values of the exogenous inputs.
@@ -321,8 +326,26 @@ class ArxModel(PropertiesObject):
     def save(self, path):
         """
         Save the trained model to the specified path.
+
+        Parameters
+        ----------
         :param path: (str) Path to save
         """
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        self._scala.exportToMar(path)
 
 del PropertiesObject

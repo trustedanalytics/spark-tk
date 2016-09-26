@@ -1,3 +1,4 @@
+# coding=utf-8
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
@@ -113,9 +114,9 @@ class RandomForestClassifierModel(PropertiesObject):
 
         >>> model = tc.models.classification.random_forest_classifier.train(frame, 'Class', ['Dim_1', 'Dim_2'], num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
 
-        >>> model.predict(frame, ['Dim_1', 'Dim_2'])
+        >>> predicted_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
-        >>> frame.inspect()
+        >>> predicted_frame.inspect()
         [#]  Class  Dim_1          Dim_2         predicted_class
         ========================================================
         [0]      1  19.8446136104  2.2985856384                1
@@ -215,12 +216,47 @@ class RandomForestClassifierModel(PropertiesObject):
         return self._tc.jutils.convert.from_scala_option(self._scala.featureSubsetCategory())
 
     def predict(self, frame, columns=None):
-        """predict the frame given the trained model"""
+        """
+        Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame
+        revision with existing columns and a new predicted label’s column.
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
+                      over which the model is trained.
+        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
+                        By default, we predict the labels over columns the RandomForestModel was trained on.
+        :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted
+                 label for each observation.
+        """
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def test(self, frame, columns=None):
-        """test the frame given the trained model"""
+        """
+        Predict test frame labels and return metrics.
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) The frame whose labels are to be predicted
+        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
+                        By default, we predict the labels over columns the RandomForest was trained on.
+        :return: (ClassificationMetricsValue) Binary classification metrics comprised of:
+
+                 'accuracy' : double
+                 The proportion of predictions that are correctly identified
+                 'confusion_matrix' : dictionary
+                 A table used to describe the performance of a classification model
+                 'f_measure' : double
+                 The harmonic mean of precision and recall
+                 'precision' : double
+                 The proportion of predicted positive instances that are correctly identified
+                 'recall' : double
+                 The proportion of positive instances that are correctly identified.
+        """
         c = self.__columns_to_option(columns)
         return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
 
@@ -230,7 +266,30 @@ class RandomForestClassifierModel(PropertiesObject):
         return self._tc.jutils.convert.to_scala_option(c)
 
     def save(self, path):
-        """save the trained model to path"""
+        """
+        Save the trained model to path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save
+        """
+        """"""
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        self._scala.exportToMar(path)
 
 del PropertiesObject

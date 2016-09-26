@@ -23,11 +23,13 @@ import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
-import breeze.linalg.{ max, DenseVector => BreezeDenseVector }
+import breeze.linalg.{ max, DenseVector => BreezeDenseVector, DenseMatrix => BreezeDenseMatrix }
 import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.sparktk.models.ScoringModelUtils
 
 object ArimaxModel extends TkSaveableObject {
 
@@ -141,7 +143,12 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
                                         includeOriginalXreg: Boolean = true,
                                         includeIntercept: Boolean = true,
                                         initParams: Option[Seq[Double]],
-                                        arimaxModel: SparkTsArimaxModel) extends Serializable {
+                                        arimaxModel: SparkTsArimaxModel) extends Serializable with Model {
+
+  /**
+   * Name of scoring model reader
+   */
+  private val modelReader: String = "SparkTkModelReader"
 
   /**
    * An intercept term
@@ -201,6 +208,63 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
   def save(sc: SparkContext, path: String): Unit = {
     val tkMetadata = ArimaxModelTkMetaData(timeseriesColumn, xColumns, p, d, q, xregMaxLag, includeOriginalXreg, includeIntercept, arimaxModel.coefficients, initParams)
     TkSaveLoad.saveTk(sc, path, ArimaxModel.formatId, ArimaxModel.currentFormatVersion, tkMetadata)
+  }
+
+  override def score(data: Array[Any]): Array[Any] = {
+    val xColumnsLength = xColumns.length
+
+    if (data.length == 0)
+      throw new IllegalArgumentException("Unable to score using ARIMAX model, because the array of data passed in is empty.")
+
+    var predictedValues = Array[Any]()
+
+    // We should have an array of y values, and an array of x values
+    if (data.length != 2)
+      throw new IllegalArgumentException("Expected 2 arrays of data (for y values and x values), but received " +
+        data.length.toString + " items.")
+
+    val yValues = data(0) match {
+      case yList: List[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)).toArray)
+      case _ => throw new IllegalArgumentException("Expected first element in data array to be an List[Double] of y values.")
+    }
+    //    if (!data(0).isInstanceOf[List[Double]])
+    //      throw new IllegalArgumentException("Expected first element in data array to be an List[Double] of y values.")
+
+    val xArray = data(1) match {
+      case xList: List[_] => xList.map(ScoringModelUtils.asDouble(_)).toArray
+      case _ => throw new IllegalArgumentException("Expected second element in data array to be an List[Double] of x values.")
+    }
+
+    //    if (!data(1).isInstanceOf[List[Double]])
+    //      throw new IllegalArgumentException("Expected second element in data array to be an List[Double] of x values.")
+    //
+    //
+
+    if (xArray.length != (yValues.length * xColumnsLength))
+      throw new IllegalArgumentException("Expected " + (yValues.length * xColumnsLength) + " x values, but received " +
+        xArray.length.toString)
+
+    val xValues = new BreezeDenseMatrix(rows = yValues.length, cols = xColumnsLength, data = xArray)
+
+    data :+ arimaxModel.predict(yValues, xValues).toArray
+  }
+
+  override def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("ARIMAX Model", classOf[SparkTsArimaxModel].getName, modelReader, Map())
+  }
+
+  override def input(): Array[Field] = {
+    Array[Field](Field("y", "Array[Double]"), Field("x_values", "Array[Double]"))
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("score", "Array[Double]")
+  }
+
+  def exportToMar(path: String): Unit = {
+    // TODO: Implement exportToMar
+    throw new NotImplementedError("exportToMar is not implemented yet")
   }
 }
 

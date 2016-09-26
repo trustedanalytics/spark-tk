@@ -16,14 +16,22 @@
 
 package org.trustedanalytics.sparktk.models.timeseries.arima
 
+import java.util.zip.ZipOutputStream
+
+import com.google.common.base.Charsets
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.SparkContext
-import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import com.cloudera.sparkts.models.{ ARIMA => SparkTsArima, ARIMAModel => SparkTsArimaModel }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.sparktk.models.ScoringModelUtils
+import org.trustedanalytics.model.archive.format.ModelArchiveFormat
+import java.io.{ BufferedOutputStream, FileOutputStream, File }
+import org.apache.commons.io.{ FileUtils, IOUtils }
+import spray.json._
 
 object ArimaModel extends TkSaveableObject {
 
@@ -119,7 +127,12 @@ case class ArimaModel private[arima] (ts: DenseVector,
                                       includeIntercept: Boolean,
                                       method: String,
                                       initParams: Option[Seq[Double]],
-                                      arimaModel: SparkTsArimaModel) extends Serializable {
+                                      arimaModel: SparkTsArimaModel) extends Serializable with Model {
+
+  /**
+   * Name of scoring model reader
+   */
+  private val modelReader: String = "SparkTkModelReader"
 
   /**
    * Coefficient values: intercept, AR, MA, with increasing degrees
@@ -166,6 +179,93 @@ case class ArimaModel private[arima] (ts: DenseVector,
     TkSaveLoad.saveTk(sc, path, ArimaModel.formatId, ArimaModel.currentFormatVersion, tkMetadata)
   }
 
+  override def score(data: Array[Any]): Array[Any] = {
+    // Scoring expects the data array to contain:
+    //  (1) an integer for the number of future values to forecast
+    //  (2) optional list of time series values
+    if (data.length != 1 && data.length != 2)
+      throw new IllegalArgumentException(s"Unexpected number of elements in the data array.  The ARIMA score model expects 1 or 2 elements, but received ${data.length}")
+
+    if (data(0).isInstanceOf[Int] == false)
+      throw new IllegalArgumentException(s"The ARIMA score model expects the first item in the data array to be an integer.  Instead received ${data(0).getClass.getSimpleName}.")
+
+    // Get number of future periods from the first item in the data array
+    val futurePeriods = ScoringModelUtils.asInt(data(0))
+
+    // If there is a second item in the data array, it should be a list of doubles (to use as the timeseries vector)
+    val timeseries: Option[Seq[Double]] = if (data.length == 2) {
+      data(1) match {
+        case tsList: List[_] => Some(tsList.map(ScoringModelUtils.asDouble(_)).toArray)
+        case _ => throw new IllegalArgumentException(s"The ARIMA score model expectes the second item in the data array to be a " +
+          s"List[Double].  Instead received ${data(1).getClass.getSimpleName} ")
+      }
+    }
+    else None
+
+    data :+ predict(futurePeriods, timeseries).toArray
+  }
+
+  override def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("ARIMA Model", classOf[SparkTsArimaModel].getName, modelReader, Map())
+  }
+
+  override def input(): Array[Field] = {
+    Array[Field](Field("future", "Int"))
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("predicted_values", "Array[Double]")
+  }
+
+  def exportToMar(path: String): Unit = {
+    val marFile: File = new File(path)
+    //    val jsonData = this.toJson
+    //    val marArchive = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(marFile)))
+    //
+    //    try {
+    //      ModelArchiveFormat.addFileToZip(marArchive, marFile)
+    //      val bytes = jsonData.toString.getBytes(Charsets.UTF_8)
+    //      ModelArchiveFormat.addByteArrayToZip(marArchive, "model-data", bytes.length, bytes)
+    //
+    //    }
+    //    finally {
+    //      marArchive.finish()
+    //      IOUtils.closeQuietly(marArchive)
+    //    }
+    //    val dir = sys.env("SPARKTK_HOME")
+    //    val f = new File(dir)
+    // TODO: Implement exportToMar
+    throw new NotImplementedError("exportToMar is not implemented yet")
+
+    //    val testZipFile = File.createTempFile("TestZip", ".mar")
+    //    val testJarFile = File.createTempFile("test", ".jar")
+    //    val testZipArchive = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(testZipFile)))
+    //    val modelLoaderFile = File.createTempFile("descriptor", ".json")
+    //
+    //    try {
+    //      ModelArchiveFormat.addFileToZip(testZipArchive, testJarFile)
+    //      ModelArchiveFormat.addByteArrayToZip(testZipArchive, "descriptor.json", 256, "{\"modelLoaderClassName\": \"org.trustedanalytics.model.archive.format.TestModelReader\"}".getBytes("utf-8"))
+    //
+    //      testZipArchive.finish()
+    //      IOUtils.closeQuietly(testZipArchive)
+    //
+    //      val testModel = ModelArchiveFormat.read(testZipFile, this.getClass.getClassLoader, None)
+    //
+    //      assert(testModel.isInstanceOf[Model])
+    //      assert(testModel != null)
+    //    }
+    //    catch {
+    //      case e: Exception =>
+    //        throw e
+    //    }
+    //    finally {
+    //      FileUtils.deleteQuietly(modelLoaderFile)
+    //      FileUtils.deleteQuietly(testZipFile)
+    //      FileUtils.deleteQuietly(testJarFile)
+    //    }
+    //  }
+  }
 }
 
 /**
