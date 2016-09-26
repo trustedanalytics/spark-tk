@@ -44,12 +44,12 @@ class SchemaReader(graph: OrientGraphNoTx) {
   def getVertexClasses: Option[Set[String]] = {
     val classBaseNames = graph.getVertexBaseType.getName
     val vertexClassesIterator = graph.getVertexType(classBaseNames).getAllSubclasses.iterator()
-    var vertexTypesBuffer = new ArrayBuffer[String]
+    var vertexTypesBuffer = Set[String]()
     while (vertexClassesIterator.hasNext) {
       vertexTypesBuffer += vertexClassesIterator.next().getName
     }
     if (vertexTypesBuffer.nonEmpty) {
-      return Some(vertexTypesBuffer.toSet)
+      return Some(vertexTypesBuffer)
     }
     None
   }
@@ -62,7 +62,7 @@ class SchemaReader(graph: OrientGraphNoTx) {
    * @return vertex class schema
    */
   def getSchemaPerClass(className: String, orientGraph: OrientGraphNoTx): Set[StructField] = {
-    val propertiesBuffer = new ListBuffer[StructField]
+    var propertiesBuffer = Set[StructField]()
     val propKeysIterator = graph.getRawGraph.getMetadata.getSchema.getClass(className).properties().iterator()
     while (propKeysIterator.hasNext) {
       val prop = propKeysIterator.next()
@@ -70,7 +70,7 @@ class SchemaReader(graph: OrientGraphNoTx) {
       if (prop.getName == graphParameters.orientVertexId) propertiesBuffer += new StructField(GraphFrame.ID, columnType)
       else propertiesBuffer += new StructField(prop.getName, columnType)
     }
-    propertiesBuffer.toSet
+    propertiesBuffer
   }
 
   /**
@@ -80,11 +80,11 @@ class SchemaReader(graph: OrientGraphNoTx) {
    * @return dataframe schema
    */
   def mergeSchema(classNames: Set[String]): StructType = {
-    val schemaFields = new ArrayBuffer[StructField]
+    var schemaFields = Set[StructField]()
     classNames.foreach(className => {
       schemaFields ++= getSchemaPerClass(className, graph)
     })
-    new StructType(schemaFields.distinct.toArray)
+    new StructType(schemaFields.toArray)
   }
 
   /**
@@ -114,12 +114,12 @@ class SchemaReader(graph: OrientGraphNoTx) {
   def getEdgeClasses: Option[Set[String]] = {
     val classBaseNames = graph.getEdgeBaseType.getName
     val edgeClassesIterator = graph.getEdgeType(classBaseNames).getAllSubclasses.iterator()
-    var edgeTypesBuffer = new ArrayBuffer[String]
+    var edgeTypesBuffer = Set[String]()
     while (edgeClassesIterator.hasNext) {
       edgeTypesBuffer += edgeClassesIterator.next().getName
     }
     if (edgeTypesBuffer.nonEmpty) {
-      return Some(edgeTypesBuffer.toSet)
+      return Some(edgeTypesBuffer)
     }
     None
   }

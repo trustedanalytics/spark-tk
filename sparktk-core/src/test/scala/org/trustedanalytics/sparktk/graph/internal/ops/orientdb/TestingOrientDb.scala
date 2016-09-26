@@ -22,7 +22,7 @@ trait TestingOrientDb {
   var orientFileGraph: OrientGraphNoTx = null
   val dbProperties: Map[String, Any] = Map(("storage.diskCache.bufferSize", 256))
   val verticesClassName = "vertex_"
-  val batchSize = 1000
+  val batchSize = Some(1000)
   /**
    * create in memory Orient graph database
    */
