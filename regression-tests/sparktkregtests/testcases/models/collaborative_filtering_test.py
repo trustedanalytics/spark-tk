@@ -50,7 +50,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                    "user_int",
                    "item_int",
                    "rating",
-                   25,
+                   15,
                    0.7,
                    0.8,
                    3,
@@ -59,6 +59,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                    5,
                    8,
                    0.4)
+
         self.assertEqual(model.source_column_name, "user_int")
         self.assertEqual(model.dest_column_name, "item_int")
         self.assertEqual(model.weight_column_name, "rating")
