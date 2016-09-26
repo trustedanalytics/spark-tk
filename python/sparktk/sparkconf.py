@@ -44,7 +44,19 @@ def get_jars_and_classpaths(dirs):
     :return: (jars, classpath)
     """
     classpath = ':'.join(["%s/*" % d for d in dirs])
-    jar_files = [os.path.join(d, f) for d in dirs for f in os.listdir(d) if f.endswith('.jar')]
+
+    # list of tuples with the directory and jar file
+    dir_jar = [(d, f) for d in dirs for f in os.listdir(d) if f.endswith('.jar')]
+
+    # Get jar file list without any duplicate jars (use the one from the first directory it's found in).  If
+    # we don't remove duplicates, we get warnings about the jar already having been registered.
+    distinct_jars = set()
+    jar_files = []
+    for dir, jar in dir_jar:
+        if jar not in distinct_jars:
+            jar_files.append(os.path.join(dir, jar))
+            distinct_jars.add(jar)
+
     jars = ','.join(jar_files)
     return jars, classpath
 
