@@ -16,22 +16,15 @@ trait ClusteringCoefficientSummarization extends BaseGraph {
   /**
    * The clustering coefficient of a vertex provides a measure of how
    * tightly clustered that vertex's neighborhood is.
-   * Informally, if the edge relation denotes "friendship", the clustering
-   * coefficient at a vertex :math:`v` is the probability that two acquaintances of
-   * :math:`v` are themselves friends.
    *
-   * More formally:
+   * Formally:
    *
    * .. math::
    *
    *    cc(v)  = \frac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
    *        E \} \| }{\| \{ (u,v,w) \in V^3: \ \{v, u \}, \{v, w\} \in E \} \|}
    *
-   *
-   * The toolkit provides the function clustering_coefficient which computes both
-   * local and global clustering coefficients for a given undirected graph.
-   *
-   * For more details on the mathematics and applications of clustering
+   * For further reading on clustering
    * coefficients, see http://en.wikipedia.org/wiki/Clustering_coefficient.
    *
    * This method returns a frame with the vertex id associated with it's local
