@@ -1,7 +1,7 @@
 def filter(self, predicate):
 
     """
-    Filter dicom using  given predicate
+    Filter the rows of dicom metadata and prixeldata based on given predicate
 
     Parameters
     ----------

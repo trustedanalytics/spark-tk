@@ -63,7 +63,7 @@ object FilterByKeywords extends Serializable {
    */
   def filterOrDropByKeywordsImpl(metadataFrame: Frame, keywordsValuesMap: Map[String, String], isDropRows: Boolean) = {
     implicit val schema = metadataFrame.schema
-    if(isDropRows)
+    if (isDropRows)
       metadataFrame.dropRows(customKeywordsFunc(keywordsValuesMap))
     else
       metadataFrame.filter(customKeywordsFunc(keywordsValuesMap))

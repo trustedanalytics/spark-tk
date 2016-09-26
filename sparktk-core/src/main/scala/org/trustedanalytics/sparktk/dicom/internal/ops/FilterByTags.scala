@@ -56,14 +56,14 @@ object FilterByTags extends Serializable {
   }
 
   /**
-    * Filter or Drop the rows based on Map(tag, value) from column holding xml string
-    *
-    * @param metadataFrame metadata frame with column holding xml string
-    * @param tagsValuesMap  Map with tag and associated value from xml string
-    */
+   * Filter or Drop the rows based on Map(tag, value) from column holding xml string
+   *
+   * @param metadataFrame metadata frame with column holding xml string
+   * @param tagsValuesMap  Map with tag and associated value from xml string
+   */
   def filterOrDropByTagsImpl(metadataFrame: Frame, tagsValuesMap: Map[String, String], isDropRows: Boolean) = {
     implicit val schema = metadataFrame.schema
-    if(isDropRows)
+    if (isDropRows)
       metadataFrame.dropRows(customTagsFunc(tagsValuesMap))
     else
       metadataFrame.filter(customTagsFunc(tagsValuesMap))

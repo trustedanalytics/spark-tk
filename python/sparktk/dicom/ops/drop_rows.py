@@ -1,7 +1,7 @@
 def drop_rows(self, predicate):
 
     """
-    Drop rows of dicom metadata and pixeldata frames using  given predicate
+    Drop the rows of dicom metadata and pixeldata frames using  given predicate
 
     Parameters
     ----------
