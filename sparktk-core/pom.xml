@@ -121,6 +121,7 @@
             <groupId>org.trustedanalytics</groupId>
             <artifactId>model-archive-format</artifactId>
         </dependency>
+        <!-- Model scoring interfaces -->
         <dependency>
             <groupId>org.trustedanalytics</groupId>
             <artifactId>scoring-interfaces</artifactId>
