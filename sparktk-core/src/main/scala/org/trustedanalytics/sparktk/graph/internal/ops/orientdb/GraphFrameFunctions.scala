@@ -10,17 +10,17 @@ import org.trustedanalytics.sparktk.graph.internal.GraphState
 class GraphFrameFunctions(state: GraphState) {
 
   /**
-   * save GraphFrame to OrientDB graph
-   *
-   * @param batchSize            batch size
-   * @param dbUrl                OrientDB database full URI
-   * @param userName             the database user name
-   * @param password             the database password
-   * @param rootPassword         OrientDB server password
-   * @param vertexTypeColumnName vertex type column name
-   * @param edgeTypeColumnName   edge type column name
-   * @return summary statistics for the number of exported edges and vertices
-   */
+    * Save GraphFrame to OrientDB graph
+    *
+    * @param dbUrl OrientDB database full URI
+    * @param userName the database user name
+    * @param password the database password
+    * @param rootPassword OrientDB server password
+    * @param vertexTypeColumnName vertex type column name
+    * @param edgeTypeColumnName edge type column name
+    * @param batchSize batch size
+    * @return summary statistics for the number of exported edges and vertices
+    */
   def saveToOrientGraph(dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None, batchSize: Option[Int] = Some(1000)): ExportToOrientdbReturn = {
     val orientConf = OrientConf(dbUrl, userName, password, rootPassword, batchSize)
     val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf)

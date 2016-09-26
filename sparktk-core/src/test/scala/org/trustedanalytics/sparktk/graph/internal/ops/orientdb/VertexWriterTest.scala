@@ -54,11 +54,10 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
       friends.vertices.collect().foreach(row => {
         vertexWriter.create(row)
       })
-      /*//method under test
-      val vertex = vertexWriter.find("a", verticesClassName)
+      //method under test
+      val vertex = vertexWriter.find("a")
       //validate the results
-      val agePropValue: Any = orientMemoryGraph.getVertices("id_", "a").iterator().next().getProperty("age")
-      assert(agePropValue == 34)*/
+      assert(vertex.get.getProperty[Int]("age") == 34)
     }
   }
 
