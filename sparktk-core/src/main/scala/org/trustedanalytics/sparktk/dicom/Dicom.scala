@@ -3,7 +3,7 @@ package org.trustedanalytics.sparktk.dicom
 import org.apache.spark.SparkContext
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.dicom.internal.BaseDicom
-import org.trustedanalytics.sparktk.dicom.internal.ops.{ExportToDcmSummarization, ExtractTagsTransform, ExtractKeywordsTransform, SaveSummarization}
+import org.trustedanalytics.sparktk.dicom.internal.ops.{ ExportToDcmSummarization, ExtractTagsTransform, ExtractKeywordsTransform, SaveSummarization }
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
