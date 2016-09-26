@@ -1,9 +1,11 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
 import java.io.File
+import java.net.URI
 
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.permission.{ FsAction, FsPermission }
 import org.apache.hadoop.fs.{ Path, FileSystem }
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
@@ -51,28 +53,27 @@ object ExportToDcm {
         FileUtils.writeByteArrayToFile(tmpFile, oneMetadata.getBytes)
         tmpFile.deleteOnExit()
 
-        val dcmAttrs = Xml2Dcm.parseXML(tmpFile.getAbsolutePath)
+        val dcmAttributes = Xml2Dcm.parseXML(tmpFile.getAbsolutePath)
 
         onePixeldata = onePixeldata.transpose
         val pixel = onePixeldata.toArray.map(x => x.toInt)
-        dcmAttrs.setInt(Tag.PixelData, VR.OW, pixel: _*)
-        dcmAttrs.setInt(Tag.Rows, VR.US, onePixeldata.numRows)
-        dcmAttrs.setInt(Tag.Columns, VR.US, onePixeldata.numCols)
+        dcmAttributes.setInt(Tag.PixelData, VR.OW, pixel: _*) //inserting modified pixeldata
+        dcmAttributes.setInt(Tag.Rows, VR.US, onePixeldata.numRows)
+        dcmAttributes.setInt(Tag.Columns, VR.US, onePixeldata.numCols)
 
+        //write to /tmp directory and from there copy to hdfs
         val exportFile: File = File.createTempFile(s"export", ".dcm")
         exportFile.deleteOnExit()
-
         val dos: DicomOutputStream = new DicomOutputStream(exportFile)
-        dcmAttrs.writeTo(dos)
+        dcmAttributes.writeTo(dos)
 
-        val conf = new Configuration()
-        conf.set("fs.defaultFS", "hdfs://10.7.151.97:8020")
-        val fs = FileSystem.get(conf)
-
-        val destPath = new Path(path + "/" + exportFile.getName)
-        val srcPath = new Path(exportFile.getAbsolutePath)
-
-        fs.copyFromLocalFile(srcPath, destPath)
+        //copy to given path from /tmp
+        val dcmTargetFileName = path + "/" + exportFile.getName
+        val hdfsPath = new Path(dcmTargetFileName)
+        val hdfsFileSystem = FileSystem.get(new URI(dcmTargetFileName), new Configuration())
+        val localTmpPath = new Path(exportFile.getAbsolutePath)
+        hdfsFileSystem.copyFromLocalFile(false, true, localTmpPath, hdfsPath)
+        hdfsFileSystem.setPermission(hdfsPath, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.NONE))
       }
     }
 
