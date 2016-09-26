@@ -63,7 +63,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(model.source_column_name, "user_int")
         self.assertEqual(model.dest_column_name, "item_int")
         self.assertEqual(model.weight_column_name, "rating")
-        self.assertEqual(model.max_steps, 25)
+        self.assertEqual(model.max_steps, 15)
         self.assertEqual(model.regularization, 0.7)
         self.assertEqual(model.alpha, 0.8)
         self.assertEqual(model.num_factors, 3)
