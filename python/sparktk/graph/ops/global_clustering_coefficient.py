@@ -1,7 +1,17 @@
 
 def global_clustering_coefficient(self):
     """
-    Calculates the global clustering coeffcicient across the entire graph
+
+    The clustering coefficient of a graph provides a measure of how tightly
+    clustered an undirected graph is.
+
+    More formally:
+
+    .. math::
+
+        cc(G)  = \frac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+            E \} \| }{\| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\} \in E \} \|}
+
 
     Parameters
     ----------

@@ -14,9 +14,18 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait GlobalClusteringCoefficientSummarization extends BaseGraph {
   /**
-   * Returns a frame with the number of triangles each vertex is contained in
+   * The clustering coefficient of a graph provides a measure of how tightly
+   * clustered an undirected graph is.
    *
-   * @return The dataframe containing the vertices and their corresponding triangle counts
+   * More formally:
+   *
+   * .. math::
+   *
+   *    cc(G)  = \frac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+   *        E \} \| }{\| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\} \in E \} \|}
+   *
+   *
+   * @return The global clustering coefficient for the graph
    */
   def globalClusteringCoefficient(): Double = {
     execute[Double](GlobalClusteringCoefficient())
