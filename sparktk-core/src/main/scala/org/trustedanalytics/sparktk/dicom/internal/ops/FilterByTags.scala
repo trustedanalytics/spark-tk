@@ -22,7 +22,7 @@ trait FilterByTagsTransform extends BaseDicom {
 case class FilterByTags(tagsValuesMap: Map[String, String]) extends DicomTransform {
 
   override def work(state: DicomState): DicomState = {
-    FilterByTags.filterByTagsImpl(state.metadata, tagsValuesMap)
+    FilterByTags.filterOrDropByTagsImpl(state.metadata, tagsValuesMap, isDropRows = false)
     val filteredIdFrame = state.metadata.copy(Some(Map("id" -> "id")))
     val filteredPixeldata = filteredIdFrame.joinInner(state.pixeldata, List("id"))
     DicomState(state.metadata, filteredPixeldata)
@@ -38,7 +38,7 @@ object FilterByTags extends Serializable {
   }
 
   //custom filter based on given tagsValuesMap
-  def customTagsFilter(tagsValuesMap: Map[String, String])(row: Row)(implicit schema: Schema): Boolean = {
+  def customTagsFunc(tagsValuesMap: Map[String, String])(row: Row)(implicit schema: Schema): Boolean = {
 
     //Creates NodeSeq of DicomAttribute
     val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, Dicom.nodeNameInMetadata)
@@ -56,14 +56,17 @@ object FilterByTags extends Serializable {
   }
 
   /**
-   * Filter the rows based on Map(tag, value) from column holding xml string
-   *
-   * @param metadataFrame metadata frame with column holding xml string
-   * @param tagsValuesMap  Map with tag and associated value from xml string
-   */
-  def filterByTagsImpl(metadataFrame: Frame, tagsValuesMap: Map[String, String]) = {
+    * Filter or Drop the rows based on Map(tag, value) from column holding xml string
+    *
+    * @param metadataFrame metadata frame with column holding xml string
+    * @param tagsValuesMap  Map with tag and associated value from xml string
+    */
+  def filterOrDropByTagsImpl(metadataFrame: Frame, tagsValuesMap: Map[String, String], isDropRows: Boolean) = {
     implicit val schema = metadataFrame.schema
-    metadataFrame.filter(customTagsFilter(tagsValuesMap))
+    if(isDropRows)
+      metadataFrame.dropRows(customTagsFunc(tagsValuesMap))
+    else
+      metadataFrame.filter(customTagsFunc(tagsValuesMap))
   }
 
 }

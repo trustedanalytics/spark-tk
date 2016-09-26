@@ -22,7 +22,7 @@ trait FilterByKeywordsTransform extends BaseDicom {
 case class FilterByKeywords(keywordsValuesMap: Map[String, String]) extends DicomTransform {
 
   override def work(state: DicomState): DicomState = {
-    FilterByKeywords.filterByKeywordsImpl(state.metadata, keywordsValuesMap)
+    FilterByKeywords.filterOrDropByKeywordsImpl(state.metadata, keywordsValuesMap, isDropRows = false)
     val filteredIdFrame = state.metadata.copy(Some(Map("id" -> "id")))
     val filteredPixeldata = filteredIdFrame.joinInner(state.pixeldata, List("id"))
     DicomState(state.metadata, filteredPixeldata)
@@ -38,7 +38,7 @@ object FilterByKeywords extends Serializable {
   }
 
   //custom filter based on given keywordsValuesMap
-  def customKeywordsFilter(keywordsValuesMap: Map[String, String])(row: Row)(implicit schema: Schema): Boolean = {
+  def customKeywordsFunc(keywordsValuesMap: Map[String, String])(row: Row)(implicit schema: Schema): Boolean = {
 
     //Creates NodeSeq of DicomAttribute
     val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, Dicom.nodeNameInMetadata)
@@ -56,14 +56,17 @@ object FilterByKeywords extends Serializable {
   }
 
   /**
-   * Filter the rows based on Map(keyword, value) from column holding xml string
+   * Filter or Drop the rows based on Map(keyword, value) from column holding xml string
    *
    * @param metadataFrame metadata frame with column holding xml string
    * @param keywordsValuesMap  Map with keyword and associated value from xml string
    */
-  def filterByKeywordsImpl(metadataFrame: Frame, keywordsValuesMap: Map[String, String]) = {
+  def filterOrDropByKeywordsImpl(metadataFrame: Frame, keywordsValuesMap: Map[String, String], isDropRows: Boolean) = {
     implicit val schema = metadataFrame.schema
-    metadataFrame.filter(customKeywordsFilter(keywordsValuesMap))
+    if(isDropRows)
+      metadataFrame.dropRows(customKeywordsFunc(keywordsValuesMap))
+    else
+      metadataFrame.filter(customKeywordsFunc(keywordsValuesMap))
   }
 
 }
