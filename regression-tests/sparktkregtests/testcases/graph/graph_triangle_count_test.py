@@ -33,7 +33,7 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
         result = self.graph.triangle_count()
 
         triangles = result.to_pandas(result.count())
-        # Create a dictionary of triangle count per node:
+        # Create a dictionary of triangle count per triangle:
         dictionary_of_triangle_count = {i['Vertex']: (i['Triangles'])
                                         for (_, i) in triangles.iterrows()}
 
