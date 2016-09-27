@@ -1,6 +1,7 @@
 from sparktk.propobj import PropertiesObject
 
-def export_to_orientdb(self, db_url, user_name, password, root_password,vertex_type_column_name=None, edge_type_column_name=None, batch_size = 1000):
+
+def export_to_orientdb(self, db_url, user_name, password, root_password,vertex_type_column_name=None, edge_type_column_name=None,batch_size=1000):
 
     """
     Export Spark-tk Graph (GraphFrame) to OrientDB API creates OrientDB database with the given database name, URL
@@ -10,18 +11,18 @@ def export_to_orientdb(self, db_url, user_name, password, root_password,vertex_t
     Parameters
     ----------
 
-    :param db_url: OrientDB URI
-    :param user_name: the database username
-    :param password: the database password
-    :param root_password: OrientDB server password
-    :param vertex_type_column_name: column name from the vertex data frame specified to be the vertex type
-    :param edge_type_column_name: column name from the edge data frame specified to be the edge type
+    :param:(str) db_url: OrientDB URI
+    :param:(str) user_name: the database username
+    :param:(str) password: the database password
+    :param:(str) root_password: OrientDB server password
+    :param:(Optional(str)) vertex_type_column_name: column name from the vertex data frame specified to be the vertex type
+    :param:(Optional(str)) edge_type_column_name: column name from the edge data frame specified to be the edge type
+    :param:(int) batch_size: batch size for graph ETL to OrientDB database
 
     Example
     -------
-        >>> sc = tc.sql_context
 
-        >>> v = sc.createDataFrame([("a", "Alice", 34,"F"),
+        >>> v = tc.frame.create([("a", "Alice", 34,"F"),
         ...     ("b", "Bob", 36,"M"),
         ...     ("c", "Charlie", 30,"M"),
         ...     ("d", "David", 29,"M"),
@@ -29,7 +30,7 @@ def export_to_orientdb(self, db_url, user_name, password, root_password,vertex_t
         ...     ("f", "Fanny", 36,"F"),
         ...     ], ["id", "name", "age","gender"])
 
-        >>> e = sc.createDataFrame([("a", "b", "friend"),
+        >>> e = tc.frame.create([("a", "b", "friend"),
         ...     ("b", "c", "follow"),
         ...     ("c", "b", "follow"),
         ...     ("f", "c", "follow"),
@@ -39,19 +40,22 @@ def export_to_orientdb(self, db_url, user_name, password, root_password,vertex_t
         ...     ("a", "e", "friend")
         ...     ], ["src", "dst", "relationship"])
 
-        >>> from graphframes import *
-
-        >>> g= GraphFrame(v,e)
-
-        >>> sparktk_graph = tc.graph.create(g)
+        >>> sparktk_graph = tc.graph.create(v,e)
 
   <skip>
         >>> db = "test_db"
 
-        >>> sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+        >>> result = sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+
+        >>> result
+        db_uri                    = remote:hostname:2424/test_db
+        edge_types                = {u'follow': 4L, u'friend': 4L}
+        exported_edges_summary    = {u'Total Exported Edges Count': 8L, u'Failure Count': 0L}
+        exported_vertices_summary = {u'Total Exported Vertices Count': 6L, u'Failure Count': 0L}
+        vertex_types              = {u'M': 3L, u'F': 3L}
   </skip>
     """
-    return ExportToOrientdbReturn(self._tc,self._scala.exportToOrientdb(db_url, user_name, password, root_password,self._tc._jutils.convert.to_scala_option(vertex_type_column_name),self._tc._jutils.convert.to_scala_option(edge_type_column_name), self._tc._jutils.convert.to_scala_option(batch_size)))
+    return ExportToOrientdbReturn(self._tc,self._scala.exportToOrientdb(db_url, user_name, password, root_password,self._tc._jutils.convert.to_scala_option(vertex_type_column_name),self._tc._jutils.convert.to_scala_option(edge_type_column_name), batch_size))
 
 
 class ExportToOrientdbReturn(PropertiesObject):

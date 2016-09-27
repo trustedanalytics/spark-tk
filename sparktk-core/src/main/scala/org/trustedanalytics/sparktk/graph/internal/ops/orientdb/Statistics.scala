@@ -22,7 +22,7 @@ class Statistics(orientConf: OrientConf) {
    */
   def getStats(verticesCount: Long, edgesCount: Long): ExportToOrientdbReturn = {
     val verticesSummary = getExportedVerticesSummary(verticesCount)
-    val verticesTypesStats = getExportVertexCLassStats
+    val verticesTypesStats = getExportVertexClassStats
     val edgesSummary = getExportedEdgesSummary(edgesCount)
     val edgesTypesStats = getExportEdgeClassStats
     orientGraphInstance.shutdown()
@@ -34,7 +34,7 @@ class Statistics(orientConf: OrientConf) {
    *
    * @return dictionary for the exported vertices types and count
    */
-  def getExportVertexCLassStats: Map[String, Long] = {
+  def getExportVertexClassStats: Map[String, Long] = {
     val exportedVertices = mutable.Map[String, Long]()
     val schemaReader = new SchemaReader(orientGraphInstance)
     val vertexTypes = schemaReader.getVertexClasses.getOrElse(Set(orientGraphInstance.getVertexBaseType.getName))

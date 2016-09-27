@@ -5,10 +5,6 @@ import org.apache.spark.sql.types.{ DataType, StructField, StructType }
 import org.graphframes.GraphFrame
 import org.trustedanalytics.sparktk.graph.internal.GraphSchema
 import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.DataTypesConverter
-
-import scala.collection.mutable
-import scala.collection.mutable.{ ArrayBuffer, ListBuffer }
-
 /**
  * converts OrientDB graph schema to Spark graph frame schema
  *

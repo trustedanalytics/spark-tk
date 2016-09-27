@@ -16,17 +16,17 @@ trait ExportToOrientdbSummarization extends BaseGraph {
    * @param batchSize batch size
    * @return summary statistics for the number of exported edges and vertices
    */
-  def exportToOrientdb(dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None, batchSize: Option[Int] = Some(1000)): ExportToOrientdbReturn = {
+  def exportToOrientdb(dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None, batchSize: Int = 1000): ExportToOrientdbReturn = {
     execute(ExportToOrientdb(dbUrl, userName, password, rootPassword, vertexTypeColumnName, edgeTypeColumnName, batchSize))
   }
 }
 
-case class ExportToOrientdb(dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None, batchSize: Option[Int] = Some(1000)) extends GraphSummarization[ExportToOrientdbReturn] {
+case class ExportToOrientdb(dbUrl: String, userName: String, password: String, rootPassword: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None, batchSize: Int = 1000) extends GraphSummarization[ExportToOrientdbReturn] {
 
   override def work(state: GraphState): ExportToOrientdbReturn = {
 
-    val exporter = new GraphFrameFunctions(state)
-    exporter.saveToOrientGraph(dbUrl, userName, password, rootPassword, vertexTypeColumnName, edgeTypeColumnName, batchSize)
+    val graphFrameExporter = new GraphFrameFunctions(state)
+    graphFrameExporter.saveToOrientGraph(dbUrl, userName, password, rootPassword, vertexTypeColumnName, edgeTypeColumnName, batchSize)
   }
 }
 

@@ -1,6 +1,5 @@
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
-import com.orientechnologies.orient.core.metadata.schema.OType
 import org.apache.spark.sql.SQLContext
 import org.graphframes.GraphFrame
 import org.scalatest.{ BeforeAndAfterEach, WordSpec }
@@ -34,10 +33,10 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
 
     "create edge" in {
       val schemaWriter = new SchemaWriter
-      schemaWriter.vertexSchema(friends.vertices,orientFileGraph)
-      schemaWriter.edgeSchema(friends.edges,orientFileGraph)
+      schemaWriter.vertexSchema(friends.vertices, orientFileGraph)
+      schemaWriter.edgeSchema(friends.edges, orientFileGraph)
       val vertexFrameWriter = new VertexFrameWriter(friends.vertices, dbConfig)
-      vertexFrameWriter.exportVertexFrame(dbConfig.batchSize.get)
+      vertexFrameWriter.exportVertexFrame(dbConfig.batchSize)
       friends.edges.collect().foreach(row => {
         val edgeWriter = new EdgeWriter(orientFileGraph)
         //call method under test

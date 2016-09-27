@@ -7,16 +7,15 @@ def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContex
 
     Parameters
     ----------
-    :param db_url: OrientDB URI
-    :param user_name: the database username
-    :param password: the database password
-    :param root_password: OrientDB server password
+    :param:(str) db_url: OrientDB URI
+    :param:(str) user_name: the database username
+    :param:(str) password: the database password
+    :param :(str)root_password: OrientDB server password
 
     Example
     -------
-        >>> sc = tc.sql_context
 
-        >>> v = sc.createDataFrame([("a", "Alice", 34,"F"),
+       >>> v = tc.frame.create([("a", "Alice", 34,"F"),
         ...     ("b", "Bob", 36,"M"),
         ...     ("c", "Charlie", 30,"M"),
         ...     ("d", "David", 29,"M"),
@@ -24,7 +23,7 @@ def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContex
         ...     ("f", "Fanny", 36,"F"),
         ...     ], ["id", "name", "age","gender"])
 
-        >>> e = sc.createDataFrame([("a", "b", "friend"),
+        >>> e = tc.frame.create([("a", "b", "friend"),
         ...     ("b", "c", "follow"),
         ...     ("c", "b", "follow"),
         ...     ("f", "c", "follow"),
@@ -34,16 +33,12 @@ def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContex
         ...     ("a", "e", "friend")
         ...     ], ["src", "dst", "relationship"])
 
-        >>> from graphframes import *
-
-        >>> g= GraphFrame(v,e)
-
-        >>> sparktk_graph = tc.graph.create(g)
+        >>> sparktk_graph = tc.graph.create(v,e)
 
   <skip>
         >>> db = "test_db"
 
-        >>> sparktk_graph.export_to_orientdb(batch_size = 1000,db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+        >>> sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
 
         >>> imported_gf = tc.graph.import_orientdb_graph(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password")
 

@@ -1,10 +1,8 @@
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
 import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.types.{ IntegerType, DataType }
 import org.graphframes.GraphFrame
 import org.scalatest.{ WordSpec, Matchers, BeforeAndAfterEach }
-import org.trustedanalytics.sparktk.graph.internal.GraphSchema
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with TestingSparkContextWordSpec with BeforeAndAfterEach {
