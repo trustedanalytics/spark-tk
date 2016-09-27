@@ -796,7 +796,7 @@ export MAVEN_OPTS="-Xmx512m -XX:PermSize=256m"
     <dependencyManagement>
         <dependencies>
 
-            <!-- START dicom dependencies -->
+            <!-- START dicom dependencies , dcm4che maven dependencies-->
             <dependency>
                 <groupId>org.dcm4che</groupId>
                 <artifactId>dcm4che-core</artifactId>
