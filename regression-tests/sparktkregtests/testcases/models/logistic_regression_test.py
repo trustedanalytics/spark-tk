@@ -1,7 +1,5 @@
 """ Tests Logistic Regression Model against known values, calculated in R"""
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 from numpy import array
 
