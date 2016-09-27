@@ -1,7 +1,5 @@
 """Tests Linear Regression Model against known values"""
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
 
