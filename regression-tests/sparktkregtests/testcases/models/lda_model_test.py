@@ -41,7 +41,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         lda_model = self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count32',
             num_topics=5, max_iterations=50, random_seed=5,
-            alpha=-1.0, check_point_interval=1)
+            alpha=[-1.0], check_point_interval=1)
 
         self._confirm_model_valid(lda_model)
 
