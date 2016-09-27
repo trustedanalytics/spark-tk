@@ -300,7 +300,6 @@
                   <parallel>false</parallel>
                   <stdout>FTD</stdout>
                   <argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxDirectMemorySize=1000m</argLine>
-                    <parallel>true</parallel>
                 </configuration>
                 <executions>
                   <execution>
