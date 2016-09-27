@@ -20,6 +20,9 @@ def global_clustering_coefficient(self):
 
     Examples
     --------
+        
+        The clustering coefficient on a graph with some triangles will be
+        greater than 0
 
         >>> vertex_schema = [('id', int)]
         >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
@@ -37,11 +40,11 @@ def global_clustering_coefficient(self):
         The clustering coefficient on a graph with no triangles (a tree) is
         0
 
-        >>> vertex_rows_staar = [ [1], [2], [3], [4]]
-        >>> vertex_frame = tc.frame.create(vertex_rows_star, vertex_schema)
+        >>> vertex_rows_star = [ [1], [2], [3], [4]]
+        >>> vertex_frame_star = tc.frame.create(vertex_rows_star, vertex_schema)
 
         >>> edge_rows_star = [ [1, 2], [1, 3], [1, 4]]
-        >>> edge_frame = tc.frame.create(edge_rows_star, edge_schema)
+        >>> edge_frame_star = tc.frame.create(edge_rows_star, edge_schema)
 
         >>> graph_star = tc.graph.create(vertex_frame_star, edge_frame_star)
 
