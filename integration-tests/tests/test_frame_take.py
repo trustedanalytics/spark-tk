@@ -22,6 +22,18 @@ def test_take_python_backend(tc):
     data4 = frame.take(0, offset=2, columns=['name', 'tenure'])
     assert(data4 == [])
 
+    data5 = frame.take(10)
+    assert(data5 == [[u'Fred', 39, 16, u'555-1234'], [u'Susan', 33, 3, u'555-0202'], [u'Thurston', 65, 26, u'555-4510'], [u'Judy', 44, 14, u'555-2183']])
+
+    data6 = frame.take(3, offset=3)
+    assert(data6 == [[u'Judy', 44, 14, u'555-2183']])
+
+    data7 = frame.take(3, offset=3, columns=['name', 'tenure'])
+    assert(data7 == [['Judy', 14]])
+
+    data8 = frame.take(2, offset=6, columns=['name', 'tenure'])  # offset beyond
+    assert(data8 == [])
+
 
 def test_take_scala_backend(tc):
     frame = _make_frame(tc)
@@ -37,6 +49,18 @@ def test_take_scala_backend(tc):
 
     data4 = frame.take(0, offset=2, columns=['name', 'tenure'])
     assert(data4 == [])
+
+    data5 = frame.take(10)
+    assert(data5 == [[u'Fred', 39, 16, u'555-1234'], [u'Susan', 33, 3, u'555-0202'], [u'Thurston', 65, 26, u'555-4510'], [u'Judy', 44, 14, u'555-2183']])
+
+    data6 = frame.take(3, offset=3)
+    assert(data6 == [[u'Judy', 44, 14, u'555-2183']])
+
+    data7 = frame.take(3, offset=3, columns=['name', 'tenure'])
+    assert(data7 == [['Judy', 14]])
+
+    data8 = frame.take(2, offset=6, columns=['name', 'tenure'])  # offset beyond
+    assert(data8 == [])
 
 
 def test_take_python_backend_negative(tc):

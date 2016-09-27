@@ -61,7 +61,7 @@ case class Take(n: Int, offset: Int, columns: Option[Seq[String]]) extends Frame
       }
 
       // check if we need to truncate
-      if (row_index < n) { array.slice(0, n) } else array
+      if (row_index < n) { array.slice(0, row_index) } else array
     }
   }
 }
