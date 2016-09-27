@@ -1,4 +1,4 @@
-"""tests dicom.filter functionality"""
+"""tests dicom.extract_keywords functionality"""
 
 import unittest
 from sparktkregtests.lib import sparktk_test
@@ -18,51 +18,81 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
         self.count = self.dicom.metadata.count()
 
     def test_extract_one_column_basic(self):
+        """test extract keyword with one col"""
         self.dicom.extract_keywords(["PatientID"])
+
+        # ensure column was added
         columns = self.dicom.metadata.column_names
         if u'PatientID' not in columns:
             raise Exception("PatientID not added to columns")
+
+        # compare expected results with extract_keywords result
         expected_result = self._get_expected_column_data_from_xml(["PatientID"])
         take_result = self.dicom.metadata.take(self.count, columns=[u'PatientID']).data
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_multiple_columns_basic(self):
-        self.dicom.extract_keywords(["PatientID", "SOPInstanceUID"])
+        """test extract keywords with mult cols"""
+        keywords = ["PatientID", "SOPInstanceUID"]
+        self.dicom.extract_keywords(keywords)
+
+        # ensure columns were added
         columns = self.dicom.metadata.column_names
         if u'PatientID' not in columns:
             raise Exception("PatientID not added to columns")
         if u'SOPInstanceUID' not in columns:
             raise Exception("SOPInstanceUID not added to columns")
 
+        # compare expected and actual result
+        expected_result = self._get_expected_column_data_from_xml(keywords)
+        take_result = self.dicom.metadata.take(self.count, columns=keywords).data
+        numpy.testing.assert_equal(take_result, expected_result)
+
     def test_extract_invalid_column(self):
+        """test extract keyword with invalid column"""
         self.dicom.extract_keywords(["invalid"])
+
+        # ensure column was added
         columns = self.dicom.metadata.column_names
         if u'invalid' not in columns:
             raise Exception("Invalid column not added")
+
+        # compare expected and actual result
         invalid_column = self.dicom.metadata.take(self.count, columns=[u'invalid']).data
         expected_result = [[None] for x in range(0, self.count)]
         self.assertEqual(invalid_column, expected_result)
 
     def test_extract_multiple_invalid_columns(self):
-        self.dicom.extract_keywords(["invalid", "another_invalid_col"])
+        """test extract keyword mult invalid cols"""
+        keywords = ["invalid", "another_invalid_col"]
+        self.dicom.extract_keywords(keywords)
+
+        # test that columns were added
         columns = self.dicom.metadata.column_names
         if u'invalid' not in columns:
             raise Exception("invalid column not added to columns")
         if u'another_invalid_col' not in columns:
             raise Exception("another_invalid_col not added to columns")
-        invalid_columns = self.dicom.metadata.take(self.count, columns=[u'invalid', u'another_invalid_col']).data
+
+        # compare actual with expected result
+        invalid_columns = self.dicom.metadata.take(self.count, columns=keywords).data
         expected_result = [[None, None] for x in range(0, self.count)]
         self.assertEqual(invalid_columns, expected_result)
 
     def test_extract_invalid_valid_col_mix(self):
-        self.dicom.extract_keywords(["PatientID", "Invalid"])
+        keywords = ["PatientID", "Invalid"]
+        self.dicom.extract_keywords(keywords)
+
+        # test that columns were added
         columns = self.dicom.metadata.column_names
         if u'PatientID' not in columns:
             raise Exception("PatientID not added to columns")
         if u'Invalid' not in columns:
             raise Exception("Invalid not added to columns")
-        take_result = self.dicom.metadata.take(self.count, columns=[u'PatientID', u'Invalid']).data
-        expected_result = self._get_expected_column_data_from_xml(["PatientID", "Invalid"])
+
+        # compare actual with expected result
+        take_result = self.dicom.metadata.take(self.count, columns=keywords).data
+        expected_result = self._get_expected_column_data_from_xml(keywords)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_invalid_type(self):
@@ -70,25 +100,49 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
             self.dicom.extract_keywords(1)
 
     def test_extract_unicode_columns(self):
-        self.dicom.extract_keywords([u'PatientID'])
+        keywords = [u'PatientID']
+        self.dicom.extract_keywords(keywords)
+
+        # test that column was added
         columns = self.dicom.metadata.column_names
         if u'PatientID' not in columns:
             raise Exception("PatientID not added to columns")
 
+        # compare actual with expected result
+        take_result = self.dicom.metadata.take(self.count, columns=keywords).data
+        expected_result = self._get_expected_column_data_from_xml(keywords)
+        numpy.testing.assert_equal(take_result, expected_result)
+
     def _get_expected_column_data_from_xml(self, tags):
+        # generate expected data by extracting the keywords ourselves
         expected_column_data = []
+
+        # download to pandas for easy access
         metadata_pandas = self.dicom.metadata.download()
+
+        # iterate through the metadata rows
         for index, row in metadata_pandas.iterrows():
+            # convert metadata to ascii string
             metadata = row["metadata"].encode("ascii", "ignore")
+            # create a lxml tree object from xml metadata
             xml_root = etree.fromstring(metadata)
+
             expected_row = []
             for tag in tags:
+                # for lxml the search query means
+                # look for all DicomAttribute elements with
+                # attribute keyword equal to our keyword
+                # then get the value element underneath it and extract the
+                # inner text
                 tag_query = ".//DicomAttribute[@keyword='" + tag + "']/Value/text()"
                 query_result = xml_root.xpath(tag_query)
+
+                # if result is [] use None, otherwise format in unicode
                 if not query_result:
                     query_result = None
                 else:
                     query_result = query_result[0].decode("ascii", "ignore")
+
                 expected_row.append(query_result)
             expected_column_data.append(expected_row)
         return expected_column_data
