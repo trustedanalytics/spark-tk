@@ -1,6 +1,5 @@
 """Tests PageRank exposed from graphx. Validated against networkx"""
 import unittest
-import operator
 
 import networkx as nx
 
@@ -77,7 +76,7 @@ class PageRank(sparktk_test.SparkTKTestCase):
                 for _, ix in pandas_vertices.iterrows()}
 
         self.assertItemsEqual(vals, nx_pagerank)
-            
+
 
 if __name__ == '__main__':
     unittest.main()
