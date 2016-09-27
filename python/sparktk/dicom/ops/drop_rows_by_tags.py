@@ -36,8 +36,6 @@ def drop_rows_by_tags(self, tags_values_dict):
 
         >>> tags_values_dict = {"00080018":"1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336", "00080070":"SIEMENS", "00080020":"20040305"}
         >>> dicom.drop_rows_by_tags(tags_values_dict)
-        >>> dicom.metadata.count()
-        2
 
         <skip>
         #After drop_rows
