@@ -105,6 +105,11 @@
       <akka.version>2.2.3-shaded-protobuf</akka.version>
       <akka.group>org.spark-project.akka</akka.group>
     </properties>
+    <modules>
+        <module>python</module>
+        <module>sparktk-core</module>
+        <module>regression-tests</module>
+    </modules>
     <profiles>
       <!--doc generation-->
         <profile>
@@ -144,7 +149,7 @@
                 </plugins>
             </build>
         </profile>
-      <profile>
+     <!-- <profile>
         <id>modules-all</id>
         <activation>
           <activeByDefault>true</activeByDefault>
@@ -155,7 +160,7 @@
         <modules>
           <module>sparktk-core</module>
         </modules>
-      </profile>
+      </profile>-->
 
       <profile>
         <id>python-unit-tests</id>
