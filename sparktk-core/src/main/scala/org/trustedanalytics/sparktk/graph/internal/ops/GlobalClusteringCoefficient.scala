@@ -34,7 +34,9 @@ trait GlobalClusteringCoefficientSummarization extends BaseGraph {
 
 case class GlobalClusteringCoefficient() extends GraphSummarization[Double] {
 
+  // Set by GraphFrames
   val triangles = "count"
+
   val degree = "Degree"
   val degreeChoose2 = "DegreeChoose2"
   val vertex = "Vertex"
