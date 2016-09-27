@@ -29,9 +29,9 @@ graphframes=$(find `pwd`/lib/ -name "graphframes*.jar")
 unzip -o $graphframes "graphframes/*" .
 cp python/setup.py graphframes/
 
-pip install graphframes/
+pip install -U graphframes/
 
-pip install python/sparktk*.tar.gz
+pip install -U python/sparktk*.tar.gz
 
 
 
