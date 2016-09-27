@@ -265,6 +265,7 @@ class Graph(object):
     from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
     from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
     from sparktk.graph.ops.label_propagation import label_propagation
+    from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
     from sparktk.graph.ops.page_rank import page_rank
     from sparktk.graph.ops.save import save
     from sparktk.graph.ops.triangle_count import triangle_count

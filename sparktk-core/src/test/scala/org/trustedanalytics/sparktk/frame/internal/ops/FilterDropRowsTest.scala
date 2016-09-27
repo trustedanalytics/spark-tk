@@ -2,9 +2,8 @@ package org.trustedanalytics.sparktk.frame.internal.ops
 
 import org.apache.spark.sql.Row
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.{Frame, DataTypes, Column, FrameSchema}
+import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
-
 
 class FilterDropRowsTest extends TestingSparkContextWordSpec with Matchers {
 
@@ -34,7 +33,6 @@ class FilterDropRowsTest extends TestingSparkContextWordSpec with Matchers {
       frame.filter(row => row(0) == "Kathy")
       frame.rowCount() shouldBe 3
 
-
     }
 
     "drop rows based on predicate" in {
@@ -60,7 +58,6 @@ class FilterDropRowsTest extends TestingSparkContextWordSpec with Matchers {
       //drop rows of frame by predicate
       frame.dropRows(row => row(0) == "Kathy")
       frame.rowCount() shouldBe 4
-
 
     }
   }
