@@ -20,6 +20,8 @@ WD=target/
 
 MODULE="sparktk-core-$VERSION.$POST_TAG$BUILD_NUMBER"
 
+echo $MODULE
+
 PYTHON_PKG=$(find `pwd`/../python/dist/ -name "sparktk-*.tar.gz")
 
 pushd $WD
