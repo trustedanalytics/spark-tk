@@ -34,7 +34,7 @@ trait GlobalClusteringCoefficientSummarization extends BaseGraph {
 
 case class GlobalClusteringCoefficient() extends GraphSummarization[Double] {
 
-  // Set by GraphFrames
+  // GraphFrames sets hardcoded names for columns, count is the name of triangles from triangle count
   val triangles = "count"
 
   val degree = "Degree"
@@ -44,7 +44,7 @@ case class GlobalClusteringCoefficient() extends GraphSummarization[Double] {
   override def work(state: GraphState): Double = {
     val triangleCount = state.graphFrame.triangleCount.run().agg(sum(col(triangles))).first.getLong(0)
 
-    val chooseTwo = udf { degree: Double => if (degree <= 1) 0 else (degree * (degree - 1)) }
+    val chooseTwo = udf { vertexDegree: Double => if (vertexDegree <= 1) 0 else (vertexDegree * (vertexDegree - 1)) }
 
     val weightedDegrees: Double = state
       .graphFrame
