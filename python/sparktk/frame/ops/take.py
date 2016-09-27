@@ -84,7 +84,7 @@ def take(self, n, offset=0, columns=None):
     return data
 
 
-TakeRichResult = namedtuple("TakeResult", ['data', 'n', 'offset', 'schema'])
+TakeRichResult = namedtuple("TakeRichResult", ['data', 'n', 'offset', 'schema'])
 
 
 def take_rich(frame, n, offset=0, columns=None):

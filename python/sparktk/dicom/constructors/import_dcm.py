@@ -38,15 +38,15 @@ def import_dcm(dicom_dir_path, tc=TkContext.implicit):
         >>> pixeldata = dicom.pixeldata.take(1)
 
         <skip>
-        #dispaly
+
         >>> pixeldata
-        TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
         [ 0.,  7.,  6., ...,  5.,  6.,  7.],
         ...,
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
         </skip>
 
     """
