@@ -6,6 +6,7 @@ from sparktkregtests.lib import sparktk_test
 import os
 import dicom
 import numpy
+import datetime
 
 
 class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
@@ -17,11 +18,12 @@ class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
         self.dicom = self.context.dicom.import_dcm(self.dataset)
         self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
         self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
-        self.location = "save_load_test"
+        # generate a unique name to save the dicom object under
+        self.location = "save_load_test" + str(datetime.datetime.now()).replace(":", "-")
 
     def test_basic_save_load_content_test(self):
         self.dicom.save(self.location)
-        load_dicom = self.context.load("save_load_test")
+        load_dicom = self.context.load(self.location)
         original_metadata = self.dicom.metadata.download()["metadata"]
         load_metadata = load_dicom.metadata.download()["metadata"]
         
