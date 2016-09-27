@@ -2,8 +2,8 @@
 def connected_components(self):
     """
 
-    Connected components determines groups all the nodes in a particular graph
-    by whether or not there is path between these nodes. This method returns
+    Connected components determines groups all the vertices in a particular graph
+    by whether or not there is path between these vertices. This method returns
     a frame with the vertices and their corresponding component
 
     Parameters

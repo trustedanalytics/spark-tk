@@ -16,6 +16,7 @@ class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
     with DegreeSummarization
     with ExportToOrientdbSummarization
     with LabelPropagationSummarization
+    with LoopyBeliefPropagationSummarization
     with PageRankSummarization
     with SaveSummarization
     with TriangleCountSummarization
