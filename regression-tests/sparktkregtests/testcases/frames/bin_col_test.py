@@ -6,7 +6,6 @@ import numpy as np
 from sparktkregtests.lib import sparktk_test
 
 
-
 class BinColTest(sparktk_test.SparkTKTestCase):
 
     # baseline cutoffs
