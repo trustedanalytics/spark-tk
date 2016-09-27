@@ -14,7 +14,7 @@ if [ -f $SPARK_HOME ]; then
     EXIT=1
 else
     echo "Verifying Spark version"
-    SPARK_VERSION=$SPARK_VERSION bash -c " $SPARK_HOME/bin/spark-shell -i version.scala 2> /dev/null"
+    SPARK_VERSION=$SPARK_VERSION bash -c " $SPARK_HOME/bin/spark-shell --conf spark.master=local -i version.scala 2> /dev/null"
     if [ $? -ne 0 ]; then
         echo "SPARK version mismatch. This version of sparktk requires $SPARK_VERSION."
         EXIT=1
