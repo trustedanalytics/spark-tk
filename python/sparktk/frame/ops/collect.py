@@ -18,21 +18,21 @@ def collect(self, columns=None):
     Examples
     --------
 
-    >>> schema = [('name',str), ('age', int), ('tenure', int), ('phone', str)]
-    >>> rows = [['Fred', 39, 16, '555-1234'], ['Susan', 33, 3, '555-0202'], ['Thurston', 65, 26, '555-4510'], ['Judy', 44, 14, '555-2183']]
-    >>> frame = tc.frame.create(rows, schema)
-    >>> frame.collect()
-    [['Fred', 39, 16, '555-1234'], ['Susan', 33, 3, '555-0202'], ['Thurston', 65, 26, '555-4510'], ['Judy', 44, 14, '555-2183']]
+        >>> schema = [('name',str), ('age', int), ('tenure', int), ('phone', str)]
+        >>> rows = [['Fred', 39, 16, '555-1234'], ['Susan', 33, 3, '555-0202'], ['Thurston', 65, 26, '555-4510'], ['Judy', 44, 14, '555-2183']]
+        >>> frame = tc.frame.create(rows, schema)
+        >>> frame.collect()
+        [['Fred', 39, 16, '555-1234'], ['Susan', 33, 3, '555-0202'], ['Thurston', 65, 26, '555-4510'], ['Judy', 44, 14, '555-2183']]
 
-    >>> frame.collect(['name', 'phone'])
-    [['Fred', '555-1234'], ['Susan', '555-0202'], ['Thurston', '555-4510'], ['Judy', '555-2183']]
+        >>> frame.collect(['name', 'phone'])
+        [['Fred', '555-1234'], ['Susan', '555-0202'], ['Thurston', '555-4510'], ['Judy', '555-2183']]
 
-    <hide>
-    >>> tmp = frame._scala
-    >>> frame.collect(['name', 'phone'])
-    [[u'Fred', u'555-1234'], [u'Susan', u'555-0202'], [u'Thurston', u'555-4510'], [u'Judy', u'555-2183']]
+        <hide>
+        >>> tmp = frame._scala
+        >>> frame.collect(['name', 'phone'])
+        [[u'Fred', u'555-1234'], [u'Susan', u'555-0202'], [u'Thurston', u'555-4510'], [u'Judy', u'555-2183']]
 
-    </hide>
+        </hide>
 
     """
     if columns is not None:

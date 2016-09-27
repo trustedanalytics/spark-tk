@@ -197,16 +197,19 @@ def create_sc(master=None,
 
     Many parameters can be overwritten
 
-    :param other_libs: other libraries that will be used along with spark-tk, which need to be added to the class path
-    :param master: spark master setting
-    :param py_files: list of str of paths to python dependencies; Note the the current python
+    :param master: (str) spark master setting; for ex. 'local[4]' or 'yarn-client'
+    :param py_files: (list) list of str of paths to python dependencies; Note the the current python
     package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
-    :param spark_home: override $SPARK_HOME
-    :param sparktk_home: override $SPARKTK_HOME
-    :param app_name: name of spark app
-    :param extra_conf: dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
-    :param use_local_fs: simpler way to specify using local file system, rather than hdfs or other
-    :param debug: provide an port address to attach a debugger to the JVM that gets started
+    :param spark_home: (str) override $SPARK_HOME, the location of spark
+    :param sparktk_home: (str) override $SPARKTK_HOME, the location of spark-tk
+    :param pyspark_submit_args: (str) extra args passed to the pyspark submit
+    :param app_name: (str) name of spark app that will be created
+    :param other_libs: (list) other libraries (actual packages/modules) that are compatible with spark-tk,
+                       which need to be added to the spark context.  These libraries must be developed for usage with
+                       spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+    :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
+    :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
     :return: pyspark SparkContext
     """
 
@@ -263,6 +266,7 @@ def _validate_other_libs(other_libs):
         if not isinstance(other_libs, list):
             other_libs = [other_libs]
         import types
+        # todo: formalize and document the 'other_libs' for integration with spark-tk
         required_functions = ["get_loaders","get_main_object","get_library_dirs"]
         for lib in other_libs:
             if not isinstance(lib, types.ModuleType):

@@ -50,7 +50,7 @@ class _AffirmType(object):
             raise value_error("list of str of length %s" % length, value, name, extra_msg)
         if not isinstance(value, list):
             raise type_error("str or list of str", type(value), name, extra_msg)
-        if not all(isinstance(c, str) for c in value):
+        if not all(isinstance(c, basestring) for c in value):
             raise value_error("str or list of str", value, name, extra_msg)
         return value
 

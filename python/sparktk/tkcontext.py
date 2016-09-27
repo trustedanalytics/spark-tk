@@ -24,6 +24,29 @@ class TkContext(object):
                  extra_conf=None,
                  use_local_fs=False,
                  debug=None):
+        """
+        Creates a TkContext.
+
+        If SparkContext sc is not provided, a new spark context will be created using the
+        given settings and otherwise default values
+
+        :param sc: (SparkContext) Active Spark Context, if not provided a new Spark Context is created with the
+                   rest of the args
+        :param master: (str) override spark master setting; for ex. 'local[4]' or 'yarn-client'
+        :param py_files: (list) list of str of paths to python dependencies; Note the the current python
+        package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
+        :param spark_home: (str) override $SPARK_HOME, the location of spark
+        :param sparktk_home: (str) override $SPARKTK_HOME, the location of spark-tk
+        :param pyspark_submit_args: (str) extra args passed to the pyspark submit
+        :param app_name: (str) name of spark app that will be created
+        :param other_libs: (list) other libraries (actual python packages or modules) that are compatible with spark-tk,
+                           which need to be added to the spark context.  These libraries must be developed for use with
+                           spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+        :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+        :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
+        :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
+        :return: TkContext
+        """
         if not sc:
             if SparkContext._active_spark_context:
                 sc = SparkContext._active_spark_context
