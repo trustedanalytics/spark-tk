@@ -85,4 +85,9 @@ def column_median(self, data_column, weights_column=None):
         3
 
     """
-    return self._scala.columnMedian(data_column, self._tc.jutils.convert.to_scala_option(weights_column)).value()
+    val = self._scala.columnMedian(data_column, self._tc.jutils.convert.to_scala_option(weights_column))
+    optional_val = self._tc.jutils.convert.from_scala_option(val)
+    if optional_val is None:
+        return None
+    else:
+        return optional_val.value()

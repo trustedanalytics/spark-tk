@@ -63,7 +63,7 @@ object ColumnStatistics extends Serializable {
   def columnMedian(dataColumnIndex: Int,
                    dataType: DataType,
                    weightsColumnIndexAndType: Option[(Int, DataType)],
-                   rowRDD: RDD[Row]): ColumnMedianReturn = {
+                   rowRDD: RDD[Row]): Option[Any] = {
 
     val dataWeightPairs: RDD[(Any, Double)] =
       getDataWeightPairs(dataColumnIndex, weightsColumnIndexAndType, rowRDD)
@@ -72,7 +72,7 @@ object ColumnStatistics extends Serializable {
 
     val orderStatistics = new OrderStatistics[Any](dataWeightPairs)
 
-    ColumnMedianReturn(orderStatistics.medianOption.getOrElse(None))
+    orderStatistics.medianOption
   }
 
   private class NumericalOrdering(dataType: DataType) extends Ordering[Any] {
