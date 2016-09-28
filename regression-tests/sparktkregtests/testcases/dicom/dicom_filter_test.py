@@ -25,7 +25,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
     def test_filter_one_key(self):
         """test filter with basic filter function"""
         # extract a key-value pair from the first row metadata for our use
-        first_row = self.dicom.metadata.download()["metadata"][0]
+        first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
@@ -42,7 +42,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         """test filter with basic filter function mult keyval pairs"""
         # first we extract key-value pairs from the first row's metadata
         # for our own use to generate a key-val dictionary
-        first_row = self.dicom.metadata.download()["metadata"][0]
+        first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
         sopi_id = xml.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
@@ -62,7 +62,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         # we give dicom a filter function which filters by
         # key-value and give it a key-value pair which will
         # return 0 records
-        pandas = self.dicom.metadata.download()
+        pandas = self.dicom.metadata.to_pandas()
         self.dicom.filter(self._filter_key_values({ "PatientID" : -6 }))
         self.assertEqual(0, self.dicom.metadata.count())
 
@@ -89,7 +89,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         # here we will generate our own result by filtering for records
         # which meet our criteria
         expected_result = []
-        pandas = self.dicom.metadata.download()
+        pandas = self.dicom.metadata.to_pandas()
         # iterate through the rows and append all records with
         # a study date between our begin and end date
         for index, row in pandas.iterrows():
@@ -207,7 +207,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         # here we are generating the expected result
         matching_records = []
 
-        pandas_metadata = self.dicom.metadata.download()["metadata"]
+        pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
         for row in pandas_metadata:
             ascii_xml = row.encode("ascii", "ignore")
             xml = etree.fromstring(row.encode("ascii", "ignore"))
@@ -220,7 +220,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
                 
     def _compare_dicom_with_expected_result(self, expected_result):
         """compare expected result with actual result"""
-        pandas_result = self.dicom.metadata.download()["metadata"]
+        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
         for expected, actual in zip(expected_result, pandas_result):
             actual_ascii = actual.encode("ascii", "ignore")
             self.assertEqual(actual_ascii, expected)

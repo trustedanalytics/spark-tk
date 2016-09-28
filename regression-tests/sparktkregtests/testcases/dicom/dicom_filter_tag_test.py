@@ -23,7 +23,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
     def test_filter_one_column_one_result_basic(self):
         """test filter with one unique tag"""
         # get pandas frame for ease of access
-        metadata = self.dicom.metadata.download()
+        metadata = self.dicom.metadata.to_pandas()
 
         # get a random row and extract its sopinstanceuid for our use
         random_row_index = random.randint(0, self.dicom.metadata.count() - 1)
@@ -46,7 +46,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
 
     def test_filter_one_col_multi_result_basic(self):
         """test filter by tag with one tag mult record result"""
-        metadata = self.dicom.metadata.download()
+        metadata = self.dicom.metadata.to_pandas()
 
         # get the first row and extract the patient id element from the metadata xml
         first_row = metadata["metadata"][0]
@@ -64,7 +64,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         self.dicom.filter_by_tags({ tag_number  : first_row_patient_id })
 
         # compare our result to dicom's
-        pandas_result = self.dicom.metadata.download()["metadata"]
+        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
         self.assertEqual(len(expected_result), self.dicom.metadata.count())
         for record, filtered_record in zip(records, pandas_result):
             self.assertEqual(record, filtered_record.encode("ascii", "ignore"))
@@ -76,7 +76,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         keyword_filter = {}
 
         # we will get the first row and extract the patient id and institution name
-        metadata = self.dicom.metadata.download()["metadata"]
+        metadata = self.dicom.metadata.to_pandas()["metadata"]
         first_row = metadata[0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
@@ -94,7 +94,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
 
         # we ask dicom to filter by tag with the tag-value pairs we extracted
         self.dicom.filter_by_tags({ patient_id_tag : patient_id_value, institution_tag : institution_value })
-        pandas_result = self.dicom.metadata.download()["metadata"]
+        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         # finally we ensure dicom's result matches ours
         self.assertEqual(len(matching_records), self.dicom.metadata.count())
@@ -115,7 +115,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
     def test_filter_invalid_valid_col_mix(self):
         """test filter tags with a mix of valid and invalid tags"""
         # first we will extract a valid tag number and value from the xml
-        first_row = self.dicom.metadata.download()["metadata"][0]
+        first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
         patient_id_tag = patient_id.get("tag")
@@ -139,7 +139,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         # key-value filter
         matching_records = []
 
-        pandas_metadata = self.dicom.metadata.download()["metadata"]
+        pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
 
         # iterate through the records and return any records which
         # match our key value pair criteria

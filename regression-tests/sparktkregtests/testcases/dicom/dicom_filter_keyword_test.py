@@ -23,7 +23,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
     def test_filter_one_column_one_result_basic(self):
         """test filter with one unique key"""
         # get the pandas frame for ease of access
-        metadata = self.dicom.metadata.download()
+        metadata = self.dicom.metadata.to_pandas()
         
         # grab a random row and extract the SOPInstanceUID from that record
         random_row_index = random.randint(0, self.dicom.metadata.count() - 1)
@@ -46,7 +46,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
     def test_filter_one_col_multi_result_basic(self):
         """test filter by keyword with one keyword mult record result"""
         # get pandas frame for ease of access
-        metadata = self.dicom.metadata.download()
+        metadata = self.dicom.metadata.to_pandas()
 
         # grab a random row and extract the patient id
         first_row = metadata["metadata"][0]
@@ -60,7 +60,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         self.dicom.filter_by_keywords({"PatientID" : first_row_patient_id })
 
         # get the pandas frame for ease of access
-        pandas_result = self.dicom.metadata.download()["metadata"]
+        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         # ensure that our expected result matches what dicom returned
         self.assertEqual(len(expected_result), self.dicom.metadata.count())
@@ -73,7 +73,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         # first we will generate a filter randomly by
         # randomly selecting a row and extracting values that we want to use
         keyword_filter = {}
-        metadata = self.dicom.metadata.download()["metadata"]
+        metadata = self.dicom.metadata.to_pandas()["metadata"]
         first_row = metadata[0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
@@ -86,7 +86,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
 
         # get the records which match our filter
         self.dicom.filter_by_keywords(keyword_filter)
-        pandas_result = self.dicom.metadata.download()["metadata"]
+        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         # finally we check to ensure that dicom's result matches our expected result
         self.assertEqual(len(matching_records), self.dicom.metadata.count())
@@ -108,7 +108,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         """test filter with mix of valid and invalid keys"""
         # first we get a valid patient id by selecting the first row
         # and extracting its patient id
-        first_row = self.dicom.metadata.download()["metadata"][0]
+        first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
@@ -130,7 +130,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         # the logic is the same as test_filter_one_column above
         # the only difference is here we are giving the keys as unicode
         # strings instead of standard python strings
-        metadata = self.dicom.metadata.download()
+        metadata = self.dicom.metadata.to_pandas()
         first_row = metadata["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
@@ -138,7 +138,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         expected_result = self._filter({ "PatientID" : first_row_patient_id })
 
         self.dicom.filter_by_keywords({ u'PatientID' : first_row_patient_id })
-        pandas_result = self.dicom.metadata.download()["metadata"]
+        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         self.assertEqual(len(expected_result), self.dicom.metadata.count())
         for record, filtered_record in zip(records, pandas_result):
@@ -152,7 +152,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         # records which match our key-value criteria
         matching_records = []
 
-        pandas_metadata = self.dicom.metadata.download()["metadata"]
+        pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
         for row in pandas_metadata:
             ascii_xml = row.encode("ascii", "ignore")
             xml = etree.fromstring(row.encode("ascii", "ignore"))
