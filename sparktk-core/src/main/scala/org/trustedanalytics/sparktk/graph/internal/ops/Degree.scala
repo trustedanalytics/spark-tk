@@ -13,7 +13,7 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait DegreeSummarization extends BaseGraph {
   /**
-   * Returns a frame with annotations concerning the degree of each node,
+   * Returns a frame with annotations concerning the degree of each vertex,
    * weighted by a given edge weight
    *
    * @param degreeOption One of "in", "out" or "undirected". Determines the edge direction for the degree
