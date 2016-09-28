@@ -30,7 +30,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
             self.binomial_frame,
             ["vec0", "vec1", "vec2", "vec3", "vec4"])
         frame = self.binomial_frame.copy(["actual", "predicted_label"])
-        labels = frame.download(frame.count())
+        labels = frame.to_pandas(frame.count())
         for _, row in labels.iterrows():
             self.assertEqual(row["actual"], row["predicted_label"])
 
@@ -414,7 +414,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
 
             #covariance matrix as in log_model summary
             summ_cov = summary.covariance_matrix.take(
-                summary.covariance_matrix.count()).data
+                summary.covariance_matrix.count())
 
             #compare all corresponding values in both matrices
             for (r_list, summ_list) in zip(r_cov, summ_cov):
