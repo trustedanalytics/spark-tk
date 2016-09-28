@@ -68,7 +68,7 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
         graph_frame = graph.graphframe.degrees
         degree_frame = self.context.frame.create(graph_frame)
 
-        baseline = [[1, 2], [2, 2], [3, 2], [4, 4], [5, 2], [6, 2]]
+        baseline = [[1, 3], [2, 2], [3, 2], [4, 4], [5, 3], [6, 2]]
         self.assertItemsEqual(
             baseline, degree_frame.take(degree_frame.count()).data)
 
