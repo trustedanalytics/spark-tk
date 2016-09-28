@@ -26,7 +26,7 @@ class LbpGraphx(sparktk_test.SparkTKTestCase):
 
         community = graph.label_propagation(10)
 
-        communities = community.take(5).data
+        communities = community.take(5)
         self.assertItemsEqual([["vertex1", 0],
                                ["vertex2", 1],
                                ["vertex3", 0],
@@ -35,7 +35,7 @@ class LbpGraphx(sparktk_test.SparkTKTestCase):
 
         community = graph.label_propagation(11)
 
-        communities = community.take(5).data
+        communities = community.take(5)
         self.assertItemsEqual([["vertex1", 1],
                                ["vertex2", 0],
                                ["vertex3", 1],

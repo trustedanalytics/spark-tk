@@ -46,7 +46,7 @@ class Svm2DSlope1(sparktk_test.SparkTKTestCase):
                                                              "Class", ["Dim_1", "Dim_2"])
         model.predict(self.frame)
 
-        outcome = self.frame.download()
+        outcome = self.frame.to_pandas()
         # Verify that values in 'predict' and 'Class' columns match.
         for index, row in outcome.iterrows():
             self.assertEqual(row["Class"], row["predicted_label"])

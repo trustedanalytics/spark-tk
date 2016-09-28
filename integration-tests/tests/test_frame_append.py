@@ -24,7 +24,7 @@ def test_append_new_columns(tc):
     frame.append(tc.frame.create([[i,str(i),float(i)] for i in range(21,31)],three_columns))
     assert(frame.count() == 30)
     assert(frame.column_names == ["number", "string", "float"])
-    values = frame.take(frame.count()).data
+    values = frame.take(frame.count())
     # The first 20 rows should have the int and string, but None in the float column
     for i in range(0,20):
         assert(values[i][0] == i+1)

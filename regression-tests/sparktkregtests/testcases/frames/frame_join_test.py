@@ -49,8 +49,8 @@ class JoinTest(sparktk_test.SparkTKTestCase):
     def test_type_int32(self):
         """Test join on int32"""
         joined_frame = self.frame.join_inner(self.frame, "idnum")
-        pd_joined_sparktk = joined_frame.download(joined_frame.count())
-        pd_df = self.frame.download(self.frame.count())
+        pd_joined_sparktk = joined_frame.to_pandas(joined_frame.count())
+        pd_df = self.frame.to_pandas(self.frame.count())
         joined_pd = pd_df.merge(
             pd_df, on='idnum', suffixes=('_L', '_R'), how='inner')
         del pd_joined_sparktk['idnum']
