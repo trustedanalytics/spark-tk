@@ -10,7 +10,7 @@ MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
 
 echo "Install dependencies"
-sudo pip2.7 install --upgrade teamcity-messages pandas numpy scipy
+sudo pip2.7 install --upgrade teamcity-messages pandas numpy scipy statsmodels
 
 echo "Uninstalling spark_tk"
 sudo pip2.7 uninstall -y sparktk
