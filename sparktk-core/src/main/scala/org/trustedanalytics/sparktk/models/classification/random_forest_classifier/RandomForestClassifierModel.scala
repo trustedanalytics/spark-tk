@@ -260,6 +260,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
   }
 
   override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data array should not be null nor empty")
     val x: Array[Double] = new Array[Double](data.length)
     data.zipWithIndex.foreach {
       case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
@@ -282,7 +283,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
 
   override def output(): Array[Field] = {
     var output = input()
-    output :+ Field("Prediction", "Double")
+    output :+ Field("PredictedClass", "Double")
   }
 
   def exportToMar(path: String): Unit = {

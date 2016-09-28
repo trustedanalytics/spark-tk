@@ -211,11 +211,8 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
   }
 
   override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
     val xColumnsLength = xColumns.length
-
-    if (data.length == 0)
-      throw new IllegalArgumentException("Unable to score using ARIMAX model, because the array of data passed in is empty.")
-
     var predictedValues = Array[Any]()
 
     // We should have an array of y values, and an array of x values
@@ -224,21 +221,14 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
         data.length.toString + " items.")
 
     val yValues = data(0) match {
-      case yList: List[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)).toArray)
-      case _ => throw new IllegalArgumentException("Expected first element in data array to be an List[Double] of y values.")
+      case yList: Array[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)))
+      case _ => throw new IllegalArgumentException("Expected first element in data array to be an Array[Double] of y values.")
     }
-    //    if (!data(0).isInstanceOf[List[Double]])
-    //      throw new IllegalArgumentException("Expected first element in data array to be an List[Double] of y values.")
 
     val xArray = data(1) match {
-      case xList: List[_] => xList.map(ScoringModelUtils.asDouble(_)).toArray
-      case _ => throw new IllegalArgumentException("Expected second element in data array to be an List[Double] of x values.")
+      case xList: Array[_] => xList.map(ScoringModelUtils.asDouble(_))
+      case _ => throw new IllegalArgumentException("Expected second element in data array to be an Array[Double] of x values.")
     }
-
-    //    if (!data(1).isInstanceOf[List[Double]])
-    //      throw new IllegalArgumentException("Expected second element in data array to be an List[Double] of x values.")
-    //
-    //
 
     if (xArray.length != (yValues.length * xColumnsLength))
       throw new IllegalArgumentException("Expected " + (yValues.length * xColumnsLength) + " x values, but received " +

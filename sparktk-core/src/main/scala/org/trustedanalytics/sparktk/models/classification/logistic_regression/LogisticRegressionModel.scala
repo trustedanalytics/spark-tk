@@ -13,6 +13,7 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapp
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import scala.language.implicitConversions
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.apache.spark.mllib.linalg.DenseVector
 import org.trustedanalytics.sparktk.models.ScoringModelUtils
 
 object LogisticRegressionModel extends TkSaveableObject {
@@ -92,6 +93,8 @@ object LogisticRegressionModel extends TkSaveableObject {
     require(numCorrections > 0, "number of corrections for LBFGS must be a positive value")
     require(miniBatchFraction > 0, "mini-batch fraction for SGD must be a positive value")
     require(stepSize > 0, "step size for SGD must be a positive value")
+
+    frame.schema.validateColumnsExist(observationColumns :+ labelColumn)
 
     val arguments = LogisticRegressionTrainArgs(frame,
       observationColumns.toList,
@@ -271,6 +274,11 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
                                                                  hessianMatrix: Option[DenseMatrix[Double]],
                                                                  sparkModel: LogisticRegressionModelWithFrequency) extends Serializable with Model {
 
+  /**
+   * Name of scoring model reader
+   */
+  private val modelReader: String = "SparkTkModelReader"
+
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
@@ -390,13 +398,30 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
     }
   }
 
-  override def score(row: Array[Any]): Array[Any] = ???
+  override def score(row: Array[Any]): Array[Any] = {
+    require(row != null && row.length > 0, "scoring input row must not be null nor empty")
+    val doubleArray = row.map(i => ScoringModelUtils.asDouble(i))
+    val predictedLabel = sparkModel.predict(new DenseVector(doubleArray)).toInt
+    row :+ predictedLabel
+  }
 
-  override def modelMetadata(): ModelMetaDataArgs = ???
+  override def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Logistic Regression", classOf[LogisticRegressionModelWithFrequency].getName, modelReader, Map())
+  }
 
-  override def input(): Array[Field] = ???
+  override def input(): Array[Field] = {
+    val obsCols = observationColumns
+    var input = Array[Field]()
+    obsCols.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
 
-  override def output(): Array[Field] = ???
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("PredictedLabel", "Int")
+  }
 
   def exportToMar(path: String): Unit = {
     // TODO: Implement exportToMar

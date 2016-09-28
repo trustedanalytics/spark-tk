@@ -22,7 +22,7 @@ trait LabelPropagationSummarization extends BaseGraph {
    * community).
    *
    * @param maxIterations the number of iterations to run label propagation for
-   * @returns dataFrame with the vertices associated with their respective communities
+   * @return dataFrame with the vertices associated with their respective communities
    */
   def labelPropagation(maxIterations: Int): Frame = {
     execute[Frame](LabelPropagation(maxIterations))

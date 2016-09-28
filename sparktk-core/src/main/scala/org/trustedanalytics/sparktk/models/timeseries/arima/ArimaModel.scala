@@ -32,6 +32,7 @@ import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 import java.io.{ BufferedOutputStream, FileOutputStream, File }
 import org.apache.commons.io.{ FileUtils, IOUtils }
 import spray.json._
+import DefaultJsonProtocol._
 
 object ArimaModel extends TkSaveableObject {
 
@@ -120,6 +121,60 @@ object ArimaModel extends TkSaveableObject {
   }
 }
 
+object ARIMAModelFormat extends JsonFormat[(SparkTsArimaModel, DenseVector)] {
+
+  /**
+   * Converts from an ARIMAModel to a JsValue
+   * @param obj ARIMAModel where the format is
+   *            p : scala.Int
+   *            d : scala.Int
+   *            q : scala.Int
+   *            coefficients : scala:Array[scala.Double]
+   *            hasIntercept : scala.Boolean
+   * @return JsValue
+   */
+  override def write(obj: (SparkTsArimaModel, DenseVector)): JsValue = {
+    val model = obj._1
+    val ts = obj._2
+    JsObject(
+      "p" -> model.p.toJson,
+      "d" -> model.d.toJson,
+      "q" -> model.q.toJson,
+      "coefficients" -> model.coefficients.toJson,
+      "hasIntercept" -> model.hasIntercept.toJson,
+      "ts" -> ts.toArray.toJson
+    )
+  }
+
+  /**
+   * Reads a JsValue and returns an ARIMAModel.
+   * @param json JsValue
+   * @return ARIMAModel where the format is
+   *            p : scala.Int
+   *            d : scala.Int
+   *            q : scala.Int
+   *            coefficients : scala:Array[scala.Double]
+   *            hasIntercept : scala.Boolean
+   *         And DenseVector with the time series values
+   */
+  override def read(json: JsValue): (SparkTsArimaModel, DenseVector) = {
+    val fields = json.asJsObject.fields
+    val p = getOrInvalid(fields, "p").convertTo[Int]
+    val d = getOrInvalid(fields, "d").convertTo[Int]
+    val q = getOrInvalid(fields, "q").convertTo[Int]
+    val coefficients = getOrInvalid(fields, "coefficients").convertTo[Array[Double]]
+    val hasIntercept = getOrInvalid(fields, "hasIntercept").convertTo[Boolean]
+    val ts = getOrInvalid(fields, "ts").convertTo[Array[Double]]
+    val model = new SparkTsArimaModel(p, d, q, coefficients, hasIntercept)
+    (model, new DenseVector(ts))
+  }
+
+  def getOrInvalid[T](map: Map[String, T], key: String): T = {
+    // throw exception if a programmer made a mistake
+    map.getOrElse(key, deserializationError(s"expected key $key was not found in JSON $map"))
+  }
+}
+
 case class ArimaModel private[arima] (ts: DenseVector,
                                       p: Int,
                                       d: Int,
@@ -180,6 +235,8 @@ case class ArimaModel private[arima] (ts: DenseVector,
   }
 
   override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
+
     // Scoring expects the data array to contain:
     //  (1) an integer for the number of future values to forecast
     //  (2) optional list of time series values
@@ -195,9 +252,9 @@ case class ArimaModel private[arima] (ts: DenseVector,
     // If there is a second item in the data array, it should be a list of doubles (to use as the timeseries vector)
     val timeseries: Option[Seq[Double]] = if (data.length == 2) {
       data(1) match {
-        case tsList: List[_] => Some(tsList.map(ScoringModelUtils.asDouble(_)).toArray)
+        case tsList: Array[_] => Some(tsList.map(ScoringModelUtils.asDouble(_)).toArray)
         case _ => throw new IllegalArgumentException(s"The ARIMA score model expectes the second item in the data array to be a " +
-          s"List[Double].  Instead received ${data(1).getClass.getSimpleName} ")
+          s"Array[Double].  Instead received ${data(1).getClass.getSimpleName} ")
       }
     }
     else None
@@ -210,7 +267,7 @@ case class ArimaModel private[arima] (ts: DenseVector,
   }
 
   override def input(): Array[Field] = {
-    Array[Field](Field("future", "Int"))
+    Array[Field](Field("future", "Int"), Field("timeseries", "Array[Double]"))
   }
 
   override def output(): Array[Field] = {
@@ -218,25 +275,28 @@ case class ArimaModel private[arima] (ts: DenseVector,
     output :+ Field("predicted_values", "Array[Double]")
   }
 
-  def exportToMar(path: String): Unit = {
+  def exportToMar(sc: SparkContext, path: String): Unit = {
     val marFile: File = new File(path)
-    //    val jsonData = this.toJson
-    //    val marArchive = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(marFile)))
-    //
-    //    try {
-    //      ModelArchiveFormat.addFileToZip(marArchive, marFile)
-    //      val bytes = jsonData.toString.getBytes(Charsets.UTF_8)
-    //      ModelArchiveFormat.addByteArrayToZip(marArchive, "model-data", bytes.length, bytes)
-    //
-    //    }
-    //    finally {
-    //      marArchive.finish()
-    //      IOUtils.closeQuietly(marArchive)
-    //    }
+    val directory = marFile.getParentFile
+    val tempModelSavePath = directory.getAbsolutePath + "/model-save"
+    save(sc, tempModelSavePath)
+    val savedModelFile = new File(tempModelSavePath)
+    val marFileOutputStream = new FileOutputStream(marFile)
+    //val marArchive = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(marFile)))
+
+    try {
+
+      ModelArchiveFormat.write(List(savedModelFile), modelReader, classOf[SparkTsArimaModel].getName, marFileOutputStream)
+
+    }
+    finally {
+      IOUtils.closeQuietly(marFileOutputStream)
+      FileUtils.deleteQuietly(savedModelFile)
+    }
     //    val dir = sys.env("SPARKTK_HOME")
     //    val f = new File(dir)
     // TODO: Implement exportToMar
-    throw new NotImplementedError("exportToMar is not implemented yet")
+    //throw new NotImplementedError("exportToMar is not implemented yet")
 
     //    val testZipFile = File.createTempFile("TestZip", ".mar")
     //    val testJarFile = File.createTempFile("test", ".jar")
@@ -290,3 +350,9 @@ case class ArimaModelTkMetaData(ts: DenseVector,
                                 initParams: Option[Seq[Double]],
                                 hasIntercept: Boolean,
                                 coefficients: Array[Double]) extends Serializable
+
+case class ARIMAData(arimaModel: SparkTsArimaModel, tsValues: List[Double]) {
+  require(arimaModel != null, "arimaModel must not be null.")
+  require(tsValues != null && tsValues.nonEmpty, "tsValues must not be null or empty.")
+}
+

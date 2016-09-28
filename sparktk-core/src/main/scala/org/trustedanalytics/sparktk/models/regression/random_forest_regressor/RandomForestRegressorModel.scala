@@ -219,6 +219,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
   }
 
   override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null or empty.")
     val x: Array[Double] = new Array[Double](data.length)
     data.zipWithIndex.foreach {
       case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)

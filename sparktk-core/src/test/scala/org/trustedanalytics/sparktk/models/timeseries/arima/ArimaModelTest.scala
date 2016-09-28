@@ -101,4 +101,78 @@ class ArimaModelTest extends TestingSparkContextWordSpec with Matchers {
     }
   }
 
+  "score" should {
+    "return predictions when calling the ARIMA model score" in {
+      // train model
+      val model = ArimaModel.train(ts, 1, 0, 1)
+
+      // call score with 0 extra forecasted values and the original time series
+      val num_future = 0
+      val inputArray = Array[Any](num_future, ts.toArray)
+      assert(model.input().length == inputArray.length)
+      val scoreResult = model.score(inputArray)
+
+      // check results
+      assert(scoreResult.length == model.output().length)
+      assert(scoreResult(0) == num_future)
+      assert(ts.toArray.sameElements(scoreResult(1).asInstanceOf[Array[Double]]))
+      val expectedPredictions = Array(12.674342627141744,
+        13.638048984791693,
+        13.682219498657313,
+        13.883970022400577,
+        12.49564914570843,
+        13.66340392811346,
+        14.201275185574925)
+      scoreResult(2) match {
+        case result: Array[Double] => {
+          assert(result.length == expectedPredictions.length)
+          (expectedPredictions, result).zipped.map { (expected, prediction) => assert(expected == prediction) }
+        }
+        case _ => throw new RuntimeException("Expected Array[Double] from ARX scoring")
+      }
+
+      // call with only number of future periods
+      val oneFuturePeriodResult = model.score(Array[Any](1))
+
+      // check results
+      assert(oneFuturePeriodResult(0) == 1)
+      oneFuturePeriodResult(1) match {
+        case result: Array[Double] => {
+          assert(result.length == (expectedPredictions.length + 1))
+        }
+        case _ => throw new RuntimeException("Expected Array[Double] from ARIMA scoring")
+      }
+    }
+
+    "throw an IllegalArgumentException for invalid score parameters" in {
+      // train model
+      val model = ArimaModel.train(ts, 1, 0, 1)
+
+      // Null or empty input data
+      intercept[IllegalArgumentException] {
+        model.score(null)
+      }
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any]())
+      }
+
+      // Wrong number of values in the input array
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](5, 2.5, 13.6))
+      }
+
+      // Wrong data type for number of future periods (must be an int)
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array(0)))
+      }
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any]("bogus"))
+      }
+
+      // Wrong data type for the timeseries (should be Array[Double])
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](0, Array(12.88969427, 13.54964408, "bogus", 13.8432745, 12.13843611)))
+      }
+    }
+  }
 }

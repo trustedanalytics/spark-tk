@@ -305,6 +305,6 @@ class ArimaModel(PropertiesObject):
         if not isinstance(path, basestring):
             raise TypeError("path parameter must be a str, but received %s" % type(path))
 
-        self._scala.exportToMar(path)
+        self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

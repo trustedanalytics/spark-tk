@@ -172,4 +172,67 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
       assert(predictResult.schema.hasColumn("predicted_y"))
     }
   }
+
+  "score" should {
+    "return predictions when calling the ARIMAX model score" in {
+      val rdd = sparkContext.parallelize(rows)
+      val frame = new Frame(rdd, schema)
+      val model = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+
+      val y = Array(13.6, 13.3)
+      val x = Array(2.6, 2, 1360, 1292, 150, 112, 11.9, 9.4, 1046, 955, 166, 103, 1056, 1174, 113, 92, 1692, 1559, 1268, 972)
+      val inputArray = Array[Any](y, x)
+      assert(model.input().length == inputArray.length)
+      val scoreResult = model.score(inputArray)
+      assert(scoreResult.length == model.output().length)
+      assert(scoreResult(0) == y)
+      assert(scoreResult(1) == x)
+      scoreResult(2) match {
+        case result: Array[Double] => {
+          assert(result.length == y.length)
+          (y, result).zipped.map { (actual, prediction) => assertAlmostEqual(actual, prediction, 2) }
+        }
+        case _ => throw new RuntimeException("Expected Array[Double] from ARIMAX scoring")
+      }
+    }
+
+    "throw an IllegalArgumentException for invalid score parameters" in {
+      val rdd = sparkContext.parallelize(rows)
+      val frame = new Frame(rdd, schema)
+      val model = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
+
+      // Null or empty input data
+      intercept[IllegalArgumentException] {
+        model.score(null)
+      }
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any]())
+      }
+
+      // Wrong number of values in the input array
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](13.6, 2.6, 1360, 150, 11.9, 1046, 166, 1056, 113, 1692, 1268))
+      }
+
+      // Wrong data type for the y values (Array[str])
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array("a"), Array(2.6, 1360, 150, 11.9, 1046, 166, 1056, 113, 1692, 1268)))
+      }
+
+      // Wrong data type for the y values (double)
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](13.6, Array(2.6, 1360, 150, 11.9, 1046, 166, 1056, 113, 1692, 1268)))
+      }
+
+      // Less x columns than we trained with
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array(13.6), Array(2.6, 1360, 150, 11.9)))
+      }
+
+      // Wrong data type for x columns
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array(13.6), Array(2.6, "bogus", 150, 11.9, 1046, 166, 1056, 113, 1692, 1268)))
+      }
+    }
+  }
 }

@@ -20,7 +20,6 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
-import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class MaxModelTest extends TestingSparkContextWordSpec with Matchers {
@@ -170,6 +169,89 @@ class MaxModelTest extends TestingSparkContextWordSpec with Matchers {
       // Check for predicted_y column
       assert(predictResult.schema.columnNames.length == (frame.schema.columnNames.length + 1))
       assert(predictResult.schema.hasColumn("predicted_y"))
+    }
+  }
+
+  "score" should {
+
+    val trainData: Array[Row] = Array(new GenericRow(Array[Any](2.6, 11.9, 1046.0, 13.6)),
+      new GenericRow(Array[Any](2.0, 9.4, 955.0, 13.3)),
+      new GenericRow(Array[Any](2.2, 9.0, 939.0, 11.9)),
+      new GenericRow(Array[Any](2.2, 9.2, 948.0, 11.0)),
+      new GenericRow(Array[Any](1.6, 6.5, 836.0, 11.2)),
+      new GenericRow(Array[Any](1.2, 4.7, 750.0, 11.2)),
+      new GenericRow(Array[Any](1.2, 3.6, 690.0, 11.3)),
+      new GenericRow(Array[Any](1.0, 3.3, 672.0, 10.7)),
+      new GenericRow(Array[Any](2.9, 2.3, 609.0, 10.7)),
+      new GenericRow(Array[Any](2.6, 1.7, 561.0, 10.3)),
+      new GenericRow(Array[Any](2.0, 1.3, 527.0, 10.1)),
+      new GenericRow(Array[Any](2.7, 1.1, 512.0, 11.0)),
+      new GenericRow(Array[Any](2.7, 1.6, 553.0, 10.5)))
+    val trainSchema = FrameSchema(Vector(Column("CO_GT", DataTypes.float64),
+      Column("C6H6_GT", DataTypes.float32),
+      Column("PT08_S2_NMHC", DataTypes.int32),
+      Column("T", DataTypes.float32)))
+
+    "return predictions when calling the MAX model score" in {
+      val rdd = sparkContext.parallelize(trainData)
+      val frame = new Frame(rdd, trainSchema)
+      val model = MaxModel.train(frame, "CO_GT", List("C6H6_GT", "PT08_S2_NMHC", "T"), 2, 1)
+
+      val y = Array(2.6, 2.0)
+      val x = Array(11.9, 9.4, 1046.0, 955.0, 13.6, 13.3)
+      val inputArray = Array[Any](y, x)
+      assert(model.input().length == inputArray.length)
+      val scoreResult = model.score(inputArray)
+      assert(scoreResult.length == model.output().length)
+      assert(scoreResult(0) == y)
+      assert(scoreResult(1) == x)
+      scoreResult(2) match {
+        case result: Array[Double] => {
+          result.foreach(r => println(r.toString))
+          assert(result.length == y.length)
+          (y, result).zipped.map { (actual, prediction) => assertAlmostEqual(actual, prediction, 0.5) }
+        }
+        case _ => throw new RuntimeException("Expected Array[Double] from MAX scoring")
+      }
+    }
+
+    "throw an IllegalArgumentException for invalid score parameters" in {
+      val rdd = sparkContext.parallelize(trainData)
+      val frame = new Frame(rdd, trainSchema)
+      val model = MaxModel.train(frame, "CO_GT", List("C6H6_GT", "PT08_S2_NMHC", "T"), 2, 1)
+
+      // Null or empty input data
+      intercept[IllegalArgumentException] {
+        model.score(null)
+      }
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any]())
+      }
+
+      // Wrong number of values in the input array
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](13.6, 2.6, 2.7, 1.6, 553.0, 10.5))
+      }
+
+      // Wrong data type for the y values (Array[str])
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array("a"), Array(11.9, 9.4, 1046.0, 955.0, 13.6, 13.3)))
+      }
+
+      // Wrong data type for the y values (double)
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](2.6, Array(11.9, 9.4, 1046.0, 955.0, 13.6, 13.3)))
+      }
+
+      // Less x columns than we trained with
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array(2.6, 2.0), Array(11.9, 9.4, 1046.0, 955.0)))
+      }
+
+      // Wrong data type for x columns
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](Array(2.6, 2.0), Array(11.9, 9.4, "bogus", 955.0, 13.6, 13.3)))
+      }
     }
   }
 }

@@ -191,11 +191,8 @@ case class ArxModel private[arx] (timeseriesColumn: String,
   }
 
   override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
     val xColumnsLength = xColumns.length
-
-    if (data.length == 0)
-      throw new IllegalArgumentException("Unable to score using ARX model, because the array of data passed in is empty.")
-
     var predictedValues = Array[Any]()
 
     // We should have an array of y values, and an array of x values
@@ -203,19 +200,13 @@ case class ArxModel private[arx] (timeseriesColumn: String,
       throw new IllegalArgumentException("Expected 2 arrays of data (for y values and x values), but received " +
         data.length.toString + " items.")
 
-    //    if (!data(0).isInstanceOf[List[Double]])
-    //      throw new IllegalArgumentException("Expected first element in data array to be an List[Double] of y values.")
-    //
-    //    if (!data(1).isInstanceOf[List[Double]])
-    //      throw new IllegalArgumentException("Expected second element in data array to be an List[Double] of x values.")
-
     val yValues = data(0) match {
-      case yList: List[_] => new DenseVector(yList.map(ScoringModelUtils.asDouble(_)).toArray)
-      case _ => throw new IllegalArgumentException("Expected first element in data array to be an List[Double] of y values.")
+      case a: Array[_] => new DenseVector(a.map(ScoringModelUtils.asDouble(_)))
+      case _ => throw new IllegalArgumentException("Expected first element in data array to be an Array[Double] of y values.")
     }
     val xArray = data(1) match {
-      case xList: List[_] => xList.map(ScoringModelUtils.asDouble(_)).toArray
-      case _ => throw new IllegalArgumentException("Expected second element in data array to be an List[Double] of x values.")
+      case a: Array[_] => a.map(ScoringModelUtils.asDouble(_))
+      case _ => throw new IllegalArgumentException("Expected second element in data array to be an Array[Double] of x values.")
     }
 
     if (xArray.length != (yValues.length * xColumnsLength))

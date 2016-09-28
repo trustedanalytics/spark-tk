@@ -251,6 +251,7 @@ case class LinearRegressionModel(valueColumn: String,
   }
 
   override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
     val x: Array[Double] = new Array[Double](data.length)
     data.zipWithIndex.foreach {
       case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
