@@ -4,6 +4,7 @@ import java.io.File
 import java.net.URI
 
 import org.apache.commons.io.FileUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.permission.{ FsAction, FsPermission }
 import org.apache.hadoop.fs.{ Path, FileSystem }
@@ -68,7 +69,7 @@ object ExportToDcm {
         dcmAttributes.writeTo(dos)
 
         //copy to given path from /tmp
-        val dcmTargetFileName = path + "/" + exportFile.getName
+        val dcmTargetFileName = StringUtils.join(path,  "/", exportFile.getName)
         val hdfsPath = new Path(dcmTargetFileName)
         val hdfsFileSystem = FileSystem.get(new URI(dcmTargetFileName), new Configuration())
         val localTmpPath = new Path(exportFile.getAbsolutePath)
