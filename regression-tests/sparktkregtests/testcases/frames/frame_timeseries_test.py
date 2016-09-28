@@ -39,7 +39,7 @@ class FrameInspectTest(sparktk_test.SparkTKTestCase):
         """Test Durbin Watson"""
         result = self.frame.timeseries_durbin_watson_test("logM")
         #pandaframe = pandas.DataFrame(new_data, columns=["year", "logM", "logYp", "Rs", "Rl", "Rm", "logSpp"])
-        pandaframe = self.frame.download()
+        pandaframe = self.frame.to_pandas()
         pandaframe.logM = pandaframe.logM.astype(np.float64)
         pandaframe.Rs = pandaframe.Rs.astype(np.float64)
         pandaframe.Rl = pandaframe.Rl.astype(np.float64)
