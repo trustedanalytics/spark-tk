@@ -84,28 +84,28 @@ class ColumnStatisticsITest extends TestingSparkContextWordSpec with Matchers {
     "support unweighted float median" in new ColumnStatisticsTest() {
       val median = ColumnStatistics.columnMedian(2, DataTypes.float32, None, rowRDD)
 
-      median shouldBe 2.0
+      median shouldBe Some(2.0)
     }
 
     "support weighted float median" in new ColumnStatisticsTest() {
       val median =
         ColumnStatistics.columnMedian(5, DataTypes.float32, Some(6, DataTypes.int32), rowRDD)
 
-      median shouldBe 0.0
+      median shouldBe Some(0.0)
     }
 
     "support unweighted integer median" in new ColumnStatisticsTest() {
       val median =
         ColumnStatistics.columnMedian(4, DataTypes.int32, None, rowRDD)
 
-      median shouldBe 2
+      median shouldBe Some(2)
     }
 
     "support weighted integer median" in new ColumnStatisticsTest() {
       val median =
         ColumnStatistics.columnMedian(4, DataTypes.int32, Some(1, DataTypes.int32), rowRDD)
 
-      median shouldBe 2
+      median shouldBe Some(2)
     }
 
     "with no net weights should return none" in new ColumnStatisticsTest() {
