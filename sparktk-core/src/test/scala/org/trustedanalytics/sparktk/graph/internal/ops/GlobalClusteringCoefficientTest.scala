@@ -7,7 +7,7 @@ import org.trustedanalytics.sparktk.graph.{ Graph }
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
-class ClusteringCoefficientTest extends TestingSparkContextWordSpec with Matchers {
+class GlobalClusteringCoefficientTest extends TestingSparkContextWordSpec with Matchers {
 
   private def buildGraph(): Graph = {
     val vertices = FrameSchema(List(Column("id", DataTypes.int32)))
