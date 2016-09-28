@@ -121,7 +121,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         <hide>
         >>> expected =[[1, 4, 0.04834617],[1, 3, 0.040288474],[2, 5, 0.003955772],[1, 5, 0.029929327]]
 
-        >>> actual = predict_result.take(4).data
+        >>> actual = predict_result.take(4)
 
         >>> if len(expected) != len(actual):
         ...     raise RuntimeError("Mismatched lengths for predicted frame, expected %s != got %s" % (len(expected), len(actual)))

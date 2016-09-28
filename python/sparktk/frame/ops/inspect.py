@@ -583,9 +583,8 @@ def inspect(self,
         with_types    False
 
     """
+    from sparktk.frame.ops.take import take_rich
     format_settings = inspect_settings.copy(wrap, truncate, round, width, margin, with_types)
-    result = self.take(n, offset, columns)
-    data = result.data
-    schema = result.schema
-    return RowsInspection(data, schema, offset=offset, format_settings=format_settings)
+    result = take_rich(self, n, offset, columns)
+    return RowsInspection(result.data, result.schema, offset=offset, format_settings=format_settings)
 
