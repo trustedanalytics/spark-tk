@@ -16,7 +16,7 @@ echo "Uninstalling spark_tk"
 sudo pip2.7 uninstall -y sparktk
 
 echo "installing spark_tk"
-sudo pip2.7 install $MAINDIR/python/dist/*.gz
+sudo pip2.7 install $MAINDIR/*.gz
 
 # Do this before we download the graphframes
 echo "inflating jars"

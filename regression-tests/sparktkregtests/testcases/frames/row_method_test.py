@@ -181,7 +181,7 @@ class RowMethodTest(sparktk_test.SparkTKTestCase):
 
         self.assertEqual(8, my_frame.count())
 
-        append_take = my_frame.take(my_frame.count()).data
+        append_take = my_frame.take(my_frame.count())
         frame_col1_list = [x[0] for x in append_take]
         dog_row = frame_col1_list.index("dog")
 

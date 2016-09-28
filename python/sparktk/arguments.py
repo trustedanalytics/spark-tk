@@ -1,3 +1,10 @@
+"""
+Type checking for arguments, including the implicit argument
+"""
+
+__all__ = ['implicit', 'affirm_type', 'require_type']
+
+
 class implicit(object):
     """
     Type which acts a singleton value indicating that an argument should be implicitly filled
@@ -16,25 +23,88 @@ class implicit(object):
         raise ValueError("Missing value for arg '%s'.  This value is normally filled implicitly, however, if this method is called standalone, it must be set explicitly" % arg_name)
 
 
+def type_error(expected_type, x_type, x_name, extra_msg=None):
+    """returns a commonly formatted type error which can then be raised by individual methods"""
+    extra_msg = '' if extra_msg is None else '  ' + extra_msg
+    return TypeError("Value for %s is of type %s.  Expected type %s.%s" % (x_name, x_type, expected_type, extra_msg))
 
 
-def require_type(x, x_name, x_type, extra_msg=None):
+def value_error(expected_value_description, x_value, x_name, extra_msg=None):
+    """returns a commonly formatted value error which can then be raised by individual methods"""
+    extra_msg = '' if extra_msg is None else '  ' + extra_msg
+    return ValueError("Found %s = %s.  Expected %s.%s" % (x_name, x_value, expected_value_description, extra_msg))
+
+
+class _AffirmType(object):
     """
-    raises a TypeError if the given x is not of type x_type, and accounts for implicits
+    Holds methods which affirm the value is of a particular type, returning it as that type after possible conversion
 
-    :param x:  the value
-    :param x_name:  the name of the variable x for the error message
-    :param x_type:  what type x is supposed to be
+    Raises ValueError otherwise
+    """
+
+    def list_of_str(self, value, name, extra_msg=None, length=None):
+        """Note: converts str to list of str"""
+        if isinstance(value, basestring):
+            return [value]
+        if length is not None and len(value) != length:
+            raise value_error("list of str of length %s" % length, value, name, extra_msg)
+        if not isinstance(value, list):
+            raise type_error("str or list of str", type(value), name, extra_msg)
+        if not all(isinstance(c, basestring) for c in value):
+            raise value_error("str or list of str", value, name, extra_msg)
+        return value
+
+    def list_of_float(self, value, name, extra_msg=None, length=None):
+        values = value if isinstance(value, list) else [value]
+        if length is not None and len(values) != length:
+            raise value_error("list of float of length %s" % length, value, name, extra_msg)
+        try:
+            x = [float(f) for f in values]
+        except ValueError:
+            raise value_error("list of float", value, name, extra_msg)
+        return x
+
+
+affirm_type = _AffirmType()  # singleton instance of the _AffirmType class
+
+
+class _RequireType(object):
+    """
+    raises a TypeError or ValueError if the given x_value not does meet the requirements (accounts for implicit)
+
+    :param required_type:  (type) what type x is supposed to be
+    :param value:  the value in question
+    :param name:  (str) the name of the variable for the possible error message
+    :param extra_msg:  (Optional) extra message text for the possible error
 
     Example
     -------
 
-    >>> require_type(tc, 'tc', TkContext)
+    >>> a = 1
+    >>> require_type(int, a, 'a')
 
     """
-    if x is implicit:
-        implicit.error(x_name)
-    if (x_type is not None and not isinstance(x, x_type)) or (x_type is None and x is not None):
-        if extra_msg:
-            extra_msg = '  ' + extra_msg
-        raise TypeError("%s is of type %s.  Expected type %s.%s" % (x_name, type(x), x_type, extra_msg))
+    def __call__(self, required_type, value, name, extra_msg=None):
+        if value is implicit:
+            implicit.error(name)
+        if (required_type is not None and not isinstance(value, required_type))\
+                or (required_type is None and value is not None):
+            raise type_error(required_type, type(value), name, extra_msg)
+
+    # **please update unit tests (test_arguments.py) if you add methods to this class
+
+    def non_empty_str(self, value, name, extra_msg=None):
+        if not isinstance(value, basestring):
+            raise type_error(str, value, name, extra_msg)
+        if not value:
+            raise value_error("non-empty string", value, name, extra_msg)
+
+    def non_negative_int(self, value, name, extra_msg=None):
+        if not isinstance(value, int):
+            raise type_error(int, value, name, extra_msg)
+        if value < 0:
+            raise value_error("non-negative integer", value, name, extra_msg)
+
+
+
+require_type = _RequireType()  #singleton instance of the _RequireType class

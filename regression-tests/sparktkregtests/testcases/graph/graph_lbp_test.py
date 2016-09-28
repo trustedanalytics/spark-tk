@@ -34,7 +34,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       3: (1.0, 0.0, 0.0),
                       4: (0.0, 1.0, 0.0),
                       5: (0.0, 0.0, 1.0)}
-        potts_vals = potts.download(potts.count())
+        potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
             values = map(float, row["Posterior"][1:-1].split(","))
@@ -70,7 +70,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       3: (1.0, 0.0),
                       4: (0.0, 1.0),
                       5: (0.0, 1.0)}
-        potts_vals = potts.download(potts.count())
+        potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
             values = map(float, row["Posterior"][1:-1].split(","))
@@ -107,7 +107,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       4: (0.0, 1.0),
                       5: (1.0, 0.0)}
 
-        potts_vals = potts.download(potts.count())
+        potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
             values = map(float, row["Posterior"][1:-1].split(","))
@@ -142,7 +142,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       "4": (1.0, 0.0),
                       "5": (1.0, 0.0)}
 
-        potts_vals = potts.download(potts.count())
+        potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
             values = map(float, row["Posterior"][1:-1].split(","))
@@ -189,7 +189,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                       "6": (0.0, 1.0),
                       "7": (0.0, 1.0),
                       "8": (1.0, 0.0)}
-        potts_vals = potts.download(potts.count())
+        potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
             values = map(float, row["Posterior"][1:-1].split(","))
