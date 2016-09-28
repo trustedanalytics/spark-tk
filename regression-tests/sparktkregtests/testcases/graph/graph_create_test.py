@@ -7,7 +7,7 @@ from sparktkregtests.lib import sparktk_test
 
 class GraphCreate(sparktk_test.SparkTKTestCase):
 
-    edge_baseline = [[1, 2, 1], [2, 3, 1], [1, 4, 1],
+    edge_baseline = [[1, 2, 1], [2, 3, 1], [1, 4, 1], [5, 1, 1],
                      [3, 4, 1], [4, 5, 1], [4, 6, 1], [5, 6, 1]]
 
     vertex_baseline = [[1, 0.0, ".333"], [2, 0.0, "0"], [3, 0.0, "0"],
