@@ -8,6 +8,7 @@ class DropRowsByKeywordsTest extends TestingSparkContextWordSpec with Matchers {
 
   "DropRowsByKeywords" should {
     "Drop the rows based on Map(keyword, value) from column holding xml string" in {
+
       val dicom = importDcm(sparkContext, "../integration-tests/datasets/dicom_uncompressed")
       val metadaRowsCount = dicom.metadata.rowCount()
       val pixeldataRowsCount = dicom.pixeldata.rowCount()
@@ -15,6 +16,7 @@ class DropRowsByKeywordsTest extends TestingSparkContextWordSpec with Matchers {
       metadaRowsCount shouldBe 3
       pixeldataRowsCount shouldBe 3
 
+      //Map of key value pairs
       val keywordsValuesMap = Map(("SOPInstanceUID", "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"), ("Manufacturer", "SIEMENS"), ("StudyDate", "20040305"))
 
       dicom.dropRowsByKeywords(keywordsValuesMap)
