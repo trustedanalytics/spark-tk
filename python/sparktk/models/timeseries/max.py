@@ -158,7 +158,7 @@ class MaxModel(PropertiesObject):
     </skip>
 
     <hide>
-        >>> results = predicted_frame.take(5, columns=["predicted_y"]).data
+        >>> results = predicted_frame.take(5, columns=["predicted_y"])
 
         >>> guess = [2.73574878613, 2.32499522807, 2.37166693834, 2.37166693834, 2.37450890393]
 

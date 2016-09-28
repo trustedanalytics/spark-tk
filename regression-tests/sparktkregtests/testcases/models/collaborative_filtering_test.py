@@ -20,7 +20,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(
             lambda x: [x["user"][5:], x['product'][5:]],
             [("user_int", int), ("item_int", int)])
-        self.base_frame = self.frame.download(self.frame.count())
+        self.base_frame = self.frame.to_pandas(self.frame.count())
 
         self.old_frame = self.frame.copy()
         # Remove some baseline values, collaborative filtering has
@@ -97,7 +97,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         scores = model.create_predict_frame(
             self.old_frame, "user_int", "item_int")
 
-        pd_scores = scores.download(scores.count())
+        pd_scores = scores.to_pandas(scores.count())
         for _, i in pd_scores.iterrows():
             item_val = "item-"+str(int(i['product']))
             user_val = "user-"+str(int(i['user']))

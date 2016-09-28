@@ -183,8 +183,8 @@ class GroupByTest(sparktk_test.SparkTKTestCase):
     def _validate_single_group(self, stats, groupby_cols, aggregator):
         # Validate the result of atk groupby and pandas groupby are the same
         # when there is  single group (none)
-        pd_stats = stats.download(stats.count())
-        new_frame = self.frame.download(self.frame.count())
+        pd_stats = stats.to_pandas(stats.count())
+        new_frame = self.frame.to_pandas(self.frame.count())
         gb = new_frame.groupby(lambda x: 0)[aggregator].agg(self.numpy_aggs)
         int_cols = map(lambda x: aggregator+x, self.atk_cols)
         for k, l in zip(int_cols, self.pd_cols):
@@ -209,8 +209,8 @@ class GroupByTest(sparktk_test.SparkTKTestCase):
     def _validate_helper(self, stats, aggregator, groupby_cols,
                          aggs, pd_cols, atk_cols, mapper):
         # Get and compare results of atk and pandas, cast as appropriate
-        pd_stats = stats.download(stats.count())
-        new_frame = self.frame.download(self.frame.count())
+        pd_stats = stats.to_pandas(stats.count())
+        new_frame = self.frame.to_pandas(self.frame.count())
         gb = new_frame.groupby(groupby_cols)[aggregator].agg(aggs)
         int_cols = map(lambda x: aggregator+x, atk_cols)
         for _, i in pd_stats.iterrows():

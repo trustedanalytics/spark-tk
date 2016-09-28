@@ -16,7 +16,7 @@ def test_jconvert_option(tc):
 def test_smoke_take(tc):
     f = tc.frame.create([[1, "one"], [2, "two"], [3, "three"]])
     t = f.take(2)
-    assert t.data == [[1, 'one'], [2, 'two']]
+    assert t == [[1, 'one'], [2, 'two']]
     #print "take=%s" % str(t)
 
 

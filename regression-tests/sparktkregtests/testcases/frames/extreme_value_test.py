@@ -41,7 +41,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(len(proj_1col.column_names), 1)
 
         #check if NaN/inf values are present
-        test_extreme = master.download()
+        test_extreme = master.to_pandas()
         for index, row in test_extreme.iterrows():
             if(row['col_A'] == 123456 or row['col_A'] == 777):
                 self.assertTrue(math.isinf(row['col_D']))
@@ -75,7 +75,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(extreme32.count(), 16)
         extreme32.add_columns(lambda row: [np.sqrt(-9)],
                               [('neg_root', dtypes.float32)])
-        extake = extreme32.download(extreme32.count())
+        extake = extreme32.to_pandas(extreme32.count())
         for index, row in extake.iterrows():
             self.assertTrue(math.isnan(row['neg_root']))
 
@@ -92,7 +92,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
                               [row.col_A*2, np.sqrt(-9)],
                               [("twice", dtypes.float64),
                                ('neg_root', dtypes.float64)])
-        extake = extreme64.download(extreme64.count())
+        extake = extreme64.to_pandas(extreme64.count())
 
         #check for inf when values exceed 64-bit range;
         #double the value if outside the range [0,1)
