@@ -63,8 +63,12 @@ class SchemaReader(graph: OrientGraphNoTx) {
     while (propKeysIterator.hasNext) {
       val prop = propKeysIterator.next()
       val columnType: DataType = DataTypesConverter.orientdbToSpark(prop.getType)
-      if (prop.getName == graphParameters.orientVertexId) propertiesBuffer += new StructField(GraphFrame.ID, columnType)
-      else propertiesBuffer += new StructField(prop.getName, columnType)
+      if (prop.getName == graphParameters.orientVertexId) {
+        propertiesBuffer += new StructField(GraphFrame.ID, columnType)
+      }
+      else {
+        propertiesBuffer += new StructField(prop.getName, columnType)
+      }
     }
     propertiesBuffer
   }
