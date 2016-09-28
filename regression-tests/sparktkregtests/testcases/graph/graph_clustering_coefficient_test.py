@@ -27,7 +27,7 @@ class GraphClusteringCoefficient(sparktk_test.SparkTKTestCase):
 
         result = graph.clustering_coefficient()
 
-        results = result.download(result.count())
+        results = result.to_pandas(result.count())
 
         # The local coefficient was calculated by hand and added as an
         # attribute to the nodes.
