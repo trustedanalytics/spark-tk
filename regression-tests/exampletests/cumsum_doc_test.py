@@ -42,10 +42,10 @@ class CumSumTest(unittest.TestCase):
         # Fetch the results, and validate they are what you would expect
         result = frame.take(frame.count())
         self.assertItemsEqual(
-            result.data, [[0, 100, 100],
-                          [3, 20, 235],
-                          [1, 25, 125],
-                          [2, 90, 215]])
+            result, [[0, 100, 100],
+                     [3, 20, 235],
+                     [1, 25, 125],
+                     [2, 90, 215]])
 
 if __name__ == '__main__':
     unittest.main()

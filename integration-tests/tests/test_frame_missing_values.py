@@ -14,7 +14,7 @@ def test_load_csv_with_missing_values_infer_schema(tc):
                       ['2',   1,    3,    4,    5,    None],
                       ['dog', 20,   30,   40,   50,   60.5],
                       ['',    None, 13,   14,   15,   16.5]]
-    assert(expected_value == frame.take(frame.count()).data)
+    assert(expected_value == frame.take(frame.count()))
     assert(frame.schema == [('C0', str),('C1', int),('C2', int),('C3', int),('C4', int),('C5', float)])
 
 def test_load_csv_with_missing_values_custom_schema(tc):
@@ -32,7 +32,7 @@ def test_load_csv_with_missing_values_custom_schema(tc):
                       ['2',   1,    3.0,  4,    5,    None],
                       ['dog', 20,   30.0, 40,   50,   60.5],
                       ['',    None, 13.0, 14,   15,   16.5]]
-    assert(expected_value == frame.take(frame.count()).data)
+    assert(expected_value == frame.take(frame.count()))
     assert(frame.schema == schema)
 
 def test_missing_values_add_column(tc):
@@ -43,7 +43,7 @@ def test_missing_values_add_column(tc):
 
     # Check that frame was correctly created
     assert(6, frame.count())
-    assert(data, frame.take(frame.count()).data)
+    assert(data, frame.take(frame.count()))
 
     # Define function that replaces missing values with zero
     def noneToZero(x):
@@ -66,7 +66,7 @@ def test_missing_values_drop_rows(tc):
 
     # Check that frame was correctly created
     assert(6 == frame.count())
-    assert(data == frame.take(frame.count()).data)
+    assert(data == frame.take(frame.count()))
 
     # Check that we can drop rows with missing values
     frame.drop_rows(lambda row: row['a'] == None)

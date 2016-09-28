@@ -125,8 +125,8 @@ class GaussianMixtureModel(PropertiesObject):
 
         <hide>
         >>> x = frame.take(9)
-        >>> val = set(map(lambda y : y[2], x[0]))
-        >>> newlist = [[z[1] for z in x[0] if z[2]==a]for a in val]
+        >>> val = set(map(lambda y : y[2], x))
+        >>> newlist = [[z[1] for z in x if z[2]==a]for a in val]
         >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
         >>> act_out.sort(key=lambda x: x[0])
         >>> act_out

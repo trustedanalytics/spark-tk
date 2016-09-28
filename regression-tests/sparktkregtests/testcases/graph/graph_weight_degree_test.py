@@ -33,7 +33,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
     def test_annotate_weight_degree_out(self):
         """Test degree count weighted on out edges"""
         degree_weighted = self.graph.weighted_degrees("value", "out")
-        res = degree_weighted.download(degree_weighted.count())
+        res = degree_weighted.to_pandas(degree_weighted.count())
         for _, row in res.iterrows():
             row_val = row['Vertex'].split('_')
             self.assertEqual(2*(int(row_val[2])-1), row['Degree'])
@@ -41,7 +41,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
     def test_weight_degree_in(self):
         """Test degree count weighted on in edges"""
         degree_weighted = self.graph.weighted_degrees("value", "in")
-        res = degree_weighted.download(degree_weighted.count())
+        res = degree_weighted.to_pandas(degree_weighted.count())
         for _, row in res.iterrows():
             row_val = row['Vertex'].split('_')
             self.assertEqual(
@@ -50,7 +50,7 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
     def test_weight_degree_undirected(self):
         """Test degree count weighted on undirected edges"""
         degree_weighted = self.graph.weighted_degrees("value", "undirected")
-        res = degree_weighted.download(degree_weighted.count())
+        res = degree_weighted.to_pandas(degree_weighted.count())
         for _, row in res.iterrows():
             row_val = row['Vertex'].split('_')
             self.assertEqual(2*(int(row_val[1])-1), row['Degree'])

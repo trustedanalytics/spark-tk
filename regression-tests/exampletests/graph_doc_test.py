@@ -46,7 +46,7 @@ class GraphDocTest(unittest.TestCase):
         # get the degrees, which have known values
         degrees = graph.degrees()
 
-        degree_list = degrees.take(5).data
+        degree_list = degrees.take(5)
         known_list = [[u'vertex4', 1],
                       [u'vertex1', 1],
                       [u'vertex5', 1],

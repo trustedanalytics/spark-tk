@@ -120,7 +120,7 @@ class ArimaModel(PropertiesObject):
 
     Use the frame take function to get one row of data with just the "value" column
 
-        >>> ts_frame_data = ts.take(n=1,offset=0,columns=["value"]).data
+        >>> ts_frame_data = ts.take(n=1,offset=0,columns=["value"])
 
     From the ts_frame_data, get the first row and first column to extract out just the time series values.
 

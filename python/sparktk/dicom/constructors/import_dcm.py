@@ -38,15 +38,15 @@ def import_dcm(dicom_dir_path, tc=TkContext.implicit):
         >>> pixeldata = dicom.pixeldata.take(1)
 
         <skip>
-        #dispaly
+
         >>> pixeldata
-        TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
         [ 0.,  7.,  6., ...,  5.,  6.,  7.],
         ...,
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
         </skip>
 
     """
@@ -57,4 +57,4 @@ def import_dcm(dicom_dir_path, tc=TkContext.implicit):
 
     scala_dicom = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDcm(tc.jutils.get_scala_sc(), dicom_dir_path)
     from sparktk.dicom.dicom import Dicom
-    return Dicom(tc, scala_dicom)
+    return Dicom._from_scala(tc, scala_dicom)

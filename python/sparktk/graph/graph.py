@@ -150,15 +150,15 @@ class Graph(object):
 
         # compare the data to be sure...
 
-        >>> rv = sorted(restored.create_vertices_frame().take(20).data)
+        >>> rv = sorted(restored.create_vertices_frame().take(20))
 
-        >>> gv = sorted(graph.create_vertices_frame().take(20).data)
+        >>> gv = sorted(graph.create_vertices_frame().take(20))
 
         >>> assert rv == gv
 
-        >>> re = sorted(restored.create_edges_frame().take(20).data)
+        >>> re = sorted(restored.create_edges_frame().take(20))
 
-        >>> ge = sorted(graph.create_edges_frame().take(20).data)
+        >>> ge = sorted(graph.create_edges_frame().take(20))
 
         >>> assert re == ge
 
@@ -174,18 +174,18 @@ class Graph(object):
         if isinstance(source_or_vertices_frame, Frame):
             # Python Vertices and Edges Frames
             vertices_frame = source_or_vertices_frame
-            require_type(edges_frame,
+            require_type(Frame,
+                         edges_frame,
                          'edges_frame',
-                         Frame,
                          "Providing a vertices frame requires also providing an edges frame")
             self._scala = self.create_scala_graph_from_scala_frames(self._tc,
                                                                     vertices_frame._scala,
                                                                     edges_frame._scala)
         else:
             source = source_or_vertices_frame
-            require_type(edges_frame,
+            require_type(None,
+                         edges_frame,
                          'edges_frame',
-                         None,
                          'If edges_frames is provided, then a valid vertex frame must be provided as the first arg, instead of type %s' % type(source))
             if self._is_scala_graph(source):
                 # Scala Graph
@@ -199,7 +199,6 @@ class Graph(object):
                 self._scala = self.create_scala_graph_from_scala_graphframe(self._tc, source)
             else:
                 raise TypeError("Cannot create from source type %s" % type(source))
-
 
     def __repr__(self):
         return self._scala.toString()
@@ -261,8 +260,12 @@ class Graph(object):
 
     # Graph Operations
     from sparktk.graph.ops.connected_components import connected_components
+    from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
     from sparktk.graph.ops.degrees import degrees
     from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
+    from sparktk.graph.ops.label_propagation import label_propagation
+    from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
     from sparktk.graph.ops.page_rank import page_rank
     from sparktk.graph.ops.save import save
     from sparktk.graph.ops.triangle_count import triangle_count

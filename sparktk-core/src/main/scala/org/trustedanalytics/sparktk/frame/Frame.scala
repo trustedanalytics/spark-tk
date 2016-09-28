@@ -35,6 +35,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with BinColumnTransformWithResult
     with BinaryClassificationMetricsSummarization
     with CategoricalSummarySummarization
+    with CollectSummarization
     with ColumnMedianSummarization
     with ColumnModeSummarization
     with ColumnSummaryStatisticsSummarization
@@ -49,6 +50,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with DotProductTransform
     with DropColumnsTransform
     with DropDuplicatesTransform
+    with DropRowsTransform
     with EcdfSummarization
     with EntropySummarization
     with ExportToCsvSummarization
@@ -56,6 +58,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToHiveSummarization
     with ExportToJdbcSummarization
     with ExportToJsonSummarization
+    with FilterTransform
     with FlattenColumnsTransform
     with GroupBySummarization
     with HistogramSummarization
@@ -83,8 +86,6 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with TimeSeriesSliceSummarization
     with TopKSummarization
     with UnflattenColumnsTransform {
-
-  init(frameRdd, frameSchema)
 
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 

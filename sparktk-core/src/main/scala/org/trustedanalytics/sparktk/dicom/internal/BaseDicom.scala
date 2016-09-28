@@ -29,6 +29,11 @@ trait BaseDicom {
     dicomState = DicomState(metadata, pixeldata)
   }
 
+  protected def execute(transform: DicomTransform): Unit = {
+    logger.info("Dicom transform {}", transform.getClass.getName)
+    dicomState = transform.work(dicomState)
+  }
+
   protected def execute[T](summarization: DicomSummarization[T]): T = {
     logger.info("Dicom frame summarization {}", summarization.getClass.getName)
     summarization.work(dicomState)
@@ -43,3 +48,6 @@ trait DicomSummarization[T] extends DicomOperation {
   def work(state: DicomState): T
 }
 
+trait DicomTransform extends DicomOperation {
+  def work(state: DicomState): DicomState
+}
