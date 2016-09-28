@@ -173,6 +173,7 @@ _data_type_to_pyspark_type_table = {
     long: types.LongType(),
     float: types.DoubleType(),
     str: types.StringType(),
+    unicode: types.StringType(),
     datetime: types.TimestampType()
 }
 

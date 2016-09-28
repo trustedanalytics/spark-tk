@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from setup import tc, rm, get_sandbox_path
 from sparktk import dtypes
 
@@ -158,3 +160,10 @@ def test_import_csv_with_duplicate_coluns(tc):
         tc.frame.import_csv(path, schema=schema, header=True, infer_schema=False)
     except Exception as e:
         assert("duplicate entry: 'numeric'" in str(e))
+
+def test_import_csv_with_unicode_columns(tc):
+    path = "../datasets/unicode.csv"
+    schema = [("a", unicode),("b", unicode),("c",unicode)]
+    frame = tc.frame.import_csv(path, schema=schema, header=False, infer_schema=False)
+    expected_data = [[u'à',u'ë',u'ñ'],[u'ã',u'ê',u'ü']]
+    assert(frame.take(frame.count()) == expected_data)

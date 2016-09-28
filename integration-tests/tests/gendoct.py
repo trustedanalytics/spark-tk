@@ -55,6 +55,7 @@ this_script_name = os.path.basename(__file__)
 this_script_as_module_name = os.path.splitext(__file__)[0]
 here = os.path.dirname(os.path.abspath(__file__))
 path_to_at_root = os.path.dirname(os.path.dirname(here))
+path_to_framecon = os.path.join(path_to_at_root, "python/sparktk/frame/constructors")
 path_to_frameops = os.path.join(path_to_at_root, "python/sparktk/frame/ops")
 path_to_frame = os.path.join(path_to_at_root, "python/sparktk/frame/frame.py")
 path_to_graphops = os.path.join(path_to_at_root, "python/sparktk/graph/ops")
@@ -211,7 +212,8 @@ def main():
         print "[%s] Removed pre-existing .pyc file %s" % (this_script_name, pyc)
 
     # Python flatmap --> [item for list in listoflists for item in list]
-    test_paths = [test_path for folder_path in [path_to_frameops,
+    test_paths = [test_path for folder_path in [path_to_framecon,
+                                                path_to_frameops,
                                                 path_to_graphops,
                                                 path_to_dicomops,
                                                 path_to_models] for test_path in get_all_example_file_paths(folder_path)]
