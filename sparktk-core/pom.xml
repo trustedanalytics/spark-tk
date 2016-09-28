@@ -135,7 +135,7 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_${scala.short.version}</artifactId>
+            <artifactId>spark-mllib_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>graphframes</groupId>
@@ -163,7 +163,7 @@
         </dependency>
         <dependency>
             <groupId>io.spray</groupId>
-            <artifactId>spray-json_${scala.short.version}</artifactId>
+            <artifactId>spray-json_${tap.scala.short.version}</artifactId>
         </dependency>
         <!--log4j-->
         <dependency>
@@ -190,15 +190,15 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_${scala.short.version}</artifactId>
+            <artifactId>spark-core_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-yarn_${scala.short.version}</artifactId>
+            <artifactId>spark-yarn_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.short.version}</artifactId>
+            <artifactId>spark-sql_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -226,7 +226,7 @@
         </dependency>
         <dependency>
             <groupId>org.parboiled</groupId>
-            <artifactId>parboiled-scala_${scala.short.version}</artifactId>
+            <artifactId>parboiled-scala_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.parboiled</groupId>
@@ -248,7 +248,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_${scala.short.version}</artifactId>
+            <artifactId>spark-hive_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.mahout</groupId>
