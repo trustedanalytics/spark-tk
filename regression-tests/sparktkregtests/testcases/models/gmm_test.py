@@ -61,7 +61,7 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
                 [7.4614512336514185, -10.738871347760295],
                 [6.6257026868771769, -10.356463238690889]]
         self.frame = self.context.frame.create(
-            data, schema=[("x1", float), ("x2", float)])
+            self.data, schema=[("x1", float), ("x2", float)])
         
     @unittest.skip("")
     def test_train(self):
