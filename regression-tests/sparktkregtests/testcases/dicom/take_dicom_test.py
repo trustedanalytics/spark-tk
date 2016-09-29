@@ -32,7 +32,7 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
 
         take = self.dicom.metadata.take(self.count)
 
-        for (dcm_file, xml_file) in zip(take.data, files):
+        for (dcm_file, xml_file) in zip(take, files):
             dcm_file = dcm_file[1].encode("ascii", "ignore")
             bulk_data_index = xml_file.index("<BulkData")
             xml_bulk_data = xml_file[bulk_data_index:bulk_data_index + xml_file[bulk_data_index:].index(">") + 1]
@@ -50,7 +50,7 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
             files.append(pixel_data)
 
         take = self.dicom.pixeldata.take(self.count)
-        for (dcm_image, pixel_image) in zip(take.data, files):
+        for (dcm_image, pixel_image) in zip(take, files):
             numpy.testing.assert_equal(pixel_image, dcm_image[1])
 
 
