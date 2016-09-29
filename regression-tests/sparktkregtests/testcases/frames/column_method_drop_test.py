@@ -72,7 +72,6 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.assertNotIn('product', self.frame.column_names)
         self.assertEqual(col_count-2, len(self.frame.take(1)[0]))
 
-    @unittest.skip("dropping no columns should not error")
     def test_drop_zero_columns(self):
         """Test dropping no columns"""
         self.frame.drop_columns([])
@@ -83,6 +82,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         """Test drop non-existent column"""
         with self.assertRaisesRegexp(ValueError, 'Invalid column name'):
             self.frame.drop_columns(['no-such-name'])
+
 
 if __name__ == "__main__":
     unittest.main()
