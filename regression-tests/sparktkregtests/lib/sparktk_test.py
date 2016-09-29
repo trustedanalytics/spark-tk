@@ -2,6 +2,7 @@
 import unittest
 import uuid
 import datetime
+import os
 
 import sparktk as stk
 
@@ -39,11 +40,11 @@ class SparkTKTestCase(unittest.TestCase):
 
     def get_file(self, filename):
         """Return the hdfs path to the given file"""
-
+        return "bla"
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
-        placed_path = "/user/" + config.user + "/qa_data/" + filename
-        return placed_path
+        #placed_path = "/user/" + config.user + "/qa_data/" + filename
+        #return placed_path
 
     def get_name(self, prefix):
         """build a guid hardened unique name """
