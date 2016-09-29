@@ -37,7 +37,7 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
     this example, the column is treated as a float.
 
         >>> frame.schema
-        [('C0', str), ('C1', int), ('C2', float)]
+        [('C0', <type 'str'>), ('C1', <type 'int'>), ('C2', <type 'float'>)]
 
         >>> frame.inspect()
         [#]  C0        C1  C2
@@ -70,7 +70,7 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
         >>> frame = tc.frame.create(data, schema=["name", "age", "shoe_size"], validate_schema=True)
 
         >>> frame.schema
-        [('name', str), ('age', int), ('shoe_size', float)]
+        [('name', <type 'str'>), ('age', <type 'int'>), ('shoe_size', <type 'float'>)]
 
         >>> frame.inspect()
         [#]  name      age  shoe_size
