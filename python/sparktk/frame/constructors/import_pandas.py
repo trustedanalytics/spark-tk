@@ -27,6 +27,7 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
 
     Create a pandas data frame:
 
+    <skip>
         >>> import pandas
         >>> ratings_data = [[0, "invalid"], [1, "Very Poor"], [2, "Poor"], [3, "Average"], [4, "Good"], [5, "Very Good"]]
         >>> df = pandas.DataFrame(ratings_data, columns=['rating_id', 'rating_text'])
@@ -88,6 +89,8 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
 
         >>> frame.schema
         [('rating_float', float), ('rating_str', unicode)]
+
+    </skip>
 
     """
     try:
