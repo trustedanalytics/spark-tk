@@ -22,11 +22,16 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.trustedanalytics</groupId>
+    <parent>
+        <groupId>org.trustedanalytics</groupId>
+        <artifactId>tap-root</artifactId>
+        <version>0.1.1</version>
+    </parent>
+
   <artifactId>spark-tk</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <inceptionYear>2016</inceptionYear>
+
   <!--<project xmlns="http://maven.apache.org/POM/4.0.0"-->
            <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
            <!--xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">-->
@@ -97,9 +102,6 @@
           <enabled>true</enabled>
         </snapshots>
       </repository>
-
-
-
       <repository>
         <id>apache</id>
         <url>https://repository.apache.org/content/groups/public/</url>
@@ -131,74 +133,13 @@
       </repository>
     </repositories>
 
-    <pluginRepositories>
-      <pluginRepository>
-        <id>atk</id>
-        <url>http://maven.trustedanalytics.org/content/repositories/public/</url>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </pluginRepository>
-    </pluginRepositories>
-
-    <distributionManagement>
-      <repository>
-        <id>atk</id>
-        <url>https://maven.trustedanalytics.org/content/repositories/releases</url>
-      </repository>
-      <snapshotRepository>
-        <id>atk-snapshots</id>
-        <url>https://maven.trustedanalytics.org/content/repositories/snapshots</url>
-      </snapshotRepository>
-    </distributionManagement>
-
-    <prerequisites>
-      <maven>3.0</maven>
-    </prerequisites>
     <properties>
-     <downloadSources>true</downloadSources>
-      <project.version>master-SNAPSHOT</project.version>
-      <top.dir>${project.basedir}</top.dir>
-      <buildtype>test</buildtype>
-
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <dep.cdh.version>cdh5.7.1</dep.cdh.version>
-      <dep.spark.version>1.6.0-${dep.cdh.version}</dep.spark.version>
-      <dep.spark.yarn.version>1.6.0-${dep.cdh.version}</dep.spark.yarn.version>
-      <dep.mahout.version>0.9-${dep.cdh.version}</dep.mahout.version>
-      <dep.parquet.version>1.5.0-${dep.cdh.version}</dep.parquet.version>
-      <dep.hbase.version>1.2.0-${dep.cdh.version}</dep.hbase.version>
-      <dep.hadoop2.version>2.6.0-${dep.cdh.version}</dep.hadoop2.version>
-      <dep.zookeeper.version>3.4.5-${dep.cdh.version}</dep.zookeeper.version>
-      <dep.typesafe-config.version>1.2.1</dep.typesafe-config.version>
-      <dep.hive.version>1.1.0-${dep.cdh.version}</dep.hive.version>
-      <dev.spark.hive.version>1.6.0-${dep.cdh.version}</dev.spark.hive.version>
-      <dep.daal.version>2016.0.109</dep.daal.version>
-      <dep.graphframes.version>0.1.0-spark1.6</dep.graphframes.version>
-      <dep.orientdb.version>2.2.6</dep.orientdb.version>
-      <dep.dicom.version>3.3.7</dep.dicom.version>
-      <!--START GAO MAVEN -->
-
-      <scala.long.version>2.10.5</scala.long.version>
-      <scala.short.version>2.10</scala.short.version>
-      <scalatest.version>2.1.6</scalatest.version>
-
-      <akka.version>2.3.11</akka.version>
-
-      <scoverage-plugin.version>1.0.4</scoverage-plugin.version>
-
-      <event.version>0.4.2</event.version>
-      <spark.broadcast.version>1.3</spark.broadcast.version>
       <commons-lang3.version>3.3.2</commons-lang3.version>
-      <mavenVersion>3.1.1</mavenVersion>
-      <javaVersion>1.8</javaVersion>
+      <dicom.version>3.3.7</dicom.version>
       <artifactIdExcludesHive>hive-exec,hive-metastore</artifactIdExcludesHive>
       <artifactIdExcludesHadoop>hadoop-aws,hadoop-annotations,hadoop-mapreduce-client-common,hadoop-mapreduce-client-core,hadoop-mapreduce-client-jobclient,hadoop-mapreduce-client-shuffle,hadoop-yarn-api,hadoop-yarn-client,hadoop-yarn-common,hadoop-yarn-server-common,hadoop-yarn-server-web-proxy</artifactIdExcludesHadoop>
-      <artifactIdExcludesSpark>spark-hive_${scala.short.version},spark-yarn_${scala.short.version},spark-core_${scala.short.version},spark-mllib_${scala.short.version},spark-sql_${scala.short.version},spark-graphx_${scala.short.version},spark-catalyst_${scala.short.version},spark-launcher_${scala.short.version},spark-network-common_${scala.short.version},spark-network-shuffle_${scala.short.version},spark-streaming_${scala.short.version},spark-unsafe_${scala.short.version}</artifactIdExcludesSpark>
-      <artifactIdExcludesScala>spire_${scala.short.version},breeze_${scala.short.version},scala-library,scala-reflect,scalatest_${scala.short.version}</artifactIdExcludesScala>
+      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-core_${tap.scala.short.version},spark-mllib_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-launcher_${tap.scala.short.version},spark-network-common_${tap.scala.short.version},spark-network-shuffle_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
+      <artifactIdExcludesScala>spire_${tap.scala.short.version},breeze_${tap.scala.short.version},scala-library,scala-reflect,scalatest_${tap.scala.short.version}</artifactIdExcludesScala>
       <artifactIdExcludesMisc>jdk.tools,mesos,scala-compiler,joda-time</artifactIdExcludesMisc>
       <artifactIdExcludes>${artifactIdExcludesMisc},${artifactIdExcludesScala},${artifactIdExcludesSpark},${artifactIdExcludesHadoop},${artifactIdExcludesHive}</artifactIdExcludes>
         <!--org.apache.hadoop,org.apache.hbase,org.apache.hive-->
@@ -326,7 +267,7 @@
                 <configuration>
                   <recompileMode>incremental</recompileMode>
                   <useZincServer>true</useZincServer>
-                  <scalaVersion>${scala.long.version}</scalaVersion>
+                  <scalaVersion>${tap.scala.long.version}</scalaVersion>
                   <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
                 </configuration>
               </plugin>
@@ -440,8 +381,8 @@
           <dependencies>
             <dependency>
               <groupId>org.scalatest</groupId>
-              <artifactId>scalatest_${scala.short.version}</artifactId>
-              <version>${scalatest.version}</version>
+              <artifactId>scalatest_${tap.scala.short.version}</artifactId>
+              <version>${tap.scalatest.version}</version>
               <scope>test</scope>
             </dependency>
           </dependencies>
@@ -450,7 +391,7 @@
         <dependencies>
           <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.short.version}</artifactId>
+            <artifactId>scalatest_${tap.scala.short.version}</artifactId>
               <scope>test</scope>
           </dependency>
         </dependencies>
@@ -528,12 +469,6 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <version>1.3.2</version>
-          </plugin>
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.scoverage</groupId>
-            <artifactId>maven-scoverage-plugin</artifactId>
-            <version>${scoverage-plugin.version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -683,29 +618,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4.1</version>
-          <executions>
-            <execution>
-              <id>enforce-maven</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireMavenVersion>
-                    <version>${mavenVersion}</version>
-                  </requireMavenVersion>
-                  <requireJavaVersion>
-                    <version>${javaVersion}</version>
-                  </requireJavaVersion>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
           <configuration>
@@ -775,7 +687,7 @@
                 <excludeScope>provided</excludeScope>
               </configuration>
             </execution>
-            
+
           </executions>
         </plugin>
 
@@ -800,22 +712,22 @@
         <dependency>
           <groupId>org.dcm4che</groupId>
           <artifactId>dcm4che-core</artifactId>
-          <version>${dep.dicom.version}</version>
+          <version>${dicom.version}</version>
         </dependency>
         <dependency>
           <groupId>org.dcm4che</groupId>
           <artifactId>dcm4che-imageio</artifactId>
-          <version>${dep.dicom.version}</version>
+          <version>${dicom.version}</version>
         </dependency>
         <dependency>
           <groupId>org.dcm4che.tool</groupId>
           <artifactId>dcm4che-tool-dcm2xml</artifactId>
-          <version>${dep.dicom.version}</version>
+          <version>${dicom.version}</version>
         </dependency>
         <dependency>
           <groupId>org.dcm4che</groupId>
           <artifactId>dcm4che-image</artifactId>
-          <version>${dep.dicom.version}</version>
+          <version>${dicom.version}</version>
         </dependency>
         <!-- END dicom dependencies -->
 
@@ -828,23 +740,23 @@
         <dependency>
           <groupId>graphframes</groupId>
           <artifactId>graphframes</artifactId>
-          <version>${dep.graphframes.version}</version>
+          <version>${tap.graphframes.version}</version>
         </dependency>
         <dependency>
           <groupId>com.orientechnologies</groupId>
           <artifactId>orientdb-graphdb</artifactId>
-          <version>${dep.orientdb.version}</version>
+          <version>${tap.orientdb.version}</version>
         </dependency>
         <dependency>
           <groupId>com.orientechnologies</groupId>
           <artifactId>orientdb-core</artifactId>
-          <version>${dep.orientdb.version}</version>
+          <version>${tap.orientdb.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.orientechnologies/orientdb-client -->
         <dependency>
           <groupId>com.orientechnologies</groupId>
           <artifactId>orientdb-client</artifactId>
-          <version>${dep.orientdb.version}</version>
+          <version>${tap.orientdb.version}</version>
         </dependency>
         <dependency>
           <groupId>com.tinkerpop.blueprints</groupId>
@@ -857,7 +769,7 @@
           <version>0.3.4</version>
           <exclusions>
             <exclusion>
-              <artifactId>breeze_${scala.short.version}</artifactId>
+              <artifactId>breeze_${tap.scala.short.version}</artifactId>
               <groupId>org.scalanlp</groupId>
             </exclusion>
           </exclusions>
@@ -865,19 +777,19 @@
         <dependency>
           <groupId>org.scala-lang</groupId>
           <artifactId>scala-library</artifactId>
-          <version>${scala.long.version}</version>
+          <version>${tap.scala.long.version}</version>
         </dependency>
         <dependency>
           <groupId>org.scala-lang</groupId>
           <artifactId>scala-reflect</artifactId>
-          <version>${scala.long.version}</version>
+          <version>${tap.scala.long.version}</version>
         </dependency>
 
         <!--org.apache.hive-->
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-hive_${scala.short.version}</artifactId>
-          <version>${dev.spark.hive.version}</version>
+          <artifactId>spark-hive_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.hive.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.hive</groupId>
@@ -889,7 +801,7 @@
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-common</artifactId>
-          <version>${dep.hadoop2.version}</version>
+          <version>${tap.hadoop2.version}</version>
           <scope>provided</scope>
            <exclusions>
                 <exclusion>
@@ -913,7 +825,7 @@
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-hdfs</artifactId>
-          <version>${dep.hadoop2.version}</version>
+          <version>${tap.hadoop2.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -929,7 +841,7 @@
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-mapreduce-client-app</artifactId>
-          <version>${dep.hadoop2.version}</version>
+          <version>${tap.hadoop2.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -940,8 +852,8 @@
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-core_${scala.short.version}</artifactId>
-          <version>${dep.spark.version}</version>
+          <artifactId>spark-core_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.version}</version>
              <exclusions>
               <exclusion>
                 <groupId>org.objenesis</groupId>
@@ -984,13 +896,13 @@
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-yarn_${scala.short.version}</artifactId>
-          <version>${dep.spark.yarn.version}</version>
+          <artifactId>spark-yarn_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.yarn.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-mllib_${scala.short.version}</artifactId>
-          <version>${dep.spark.version}</version>
+          <artifactId>spark-mllib_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.version}</version>
           <!--not sure if this is going to work for imllib but the parent version is 0.9.1 and this was 0.9-incubating-->
             <exclusions>
                 <exclusion>
@@ -1013,13 +925,13 @@
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-graphx_${scala.short.version}</artifactId>
-          <version>${dep.spark.version}</version>
+          <artifactId>spark-graphx_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.short.version}</artifactId>
-            <version>${dep.spark.version}</version>
+            <artifactId>spark-sql_${tap.scala.short.version}</artifactId>
+            <version>${tap.spark.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.typesafe</groupId>
@@ -1027,7 +939,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.spark</groupId>
-                    <artifactId>spark-core_${scala.short.version}</artifactId>
+                    <artifactId>spark-core_${tap.scala.short.version}</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
@@ -1035,11 +947,11 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.scalacheck</groupId>
-                    <artifactId>scala_check_${scala.short.version}</artifactId>
+                    <artifactId>scala_check_${tap.scala.short.version}</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.scalatest</groupId>
-                    <artifactId>scalatest_${scala.short.version}</artifactId>
+                    <artifactId>scalatest_${tap.scala.short.version}</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1047,7 +959,7 @@
         <dependency>
           <groupId>org.apache.mahout</groupId>
           <artifactId>mahout-core</artifactId>
-          <version>${dep.mahout.version}</version>
+          <version>${tap.mahout.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.hadoop</groupId>
@@ -1078,7 +990,7 @@
         <dependency>
           <groupId>org.apache.mahout</groupId>
           <artifactId>mahout-math</artifactId>
-          <version>${dep.mahout.version}</version>
+          <version>${tap.mahout.version}</version>
           <exclusions>
             <exclusion>
               <groupId>org.apache.commons</groupId>
@@ -1090,7 +1002,7 @@
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-protocol</artifactId>
-          <version>${dep.hbase.version}</version>
+          <version>${tap.hbase.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -1102,7 +1014,7 @@
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-common</artifactId>
-          <version>${dep.hbase.version}</version>
+          <version>${tap.hbase.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -1118,7 +1030,7 @@
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-server</artifactId>
-          <version>${dep.hbase.version}</version>
+          <version>${tap.hbase.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -1166,7 +1078,7 @@
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-client</artifactId>
-          <version>${dep.hbase.version}</version>
+          <version>${tap.hbase.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -1182,7 +1094,7 @@
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-testing-util</artifactId>
-          <version>${dep.hbase.version}</version>
+          <version>${tap.hbase.version}</version>
           <type>test-jar</type>
           <scope>provided</scope>
           <exclusions>
@@ -1285,7 +1197,7 @@
         <!--IO spray-->
         <dependency>
           <groupId>io.spray</groupId>
-          <artifactId>spray-json_${scala.short.version}</artifactId>
+          <artifactId>spray-json_${tap.scala.short.version}</artifactId>
           <version>1.2.6</version>
         </dependency>
 
@@ -1303,7 +1215,7 @@
           </dependency>
           <dependency>
               <groupId>org.parboiled</groupId>
-              <artifactId>parboiled-scala_${scala.short.version}</artifactId>
+              <artifactId>parboiled-scala_${tap.scala.short.version}</artifactId>
               <version>1.1.6</version>
           </dependency>
           <dependency>
@@ -1352,7 +1264,7 @@
         </dependency>
           <dependency>
               <groupId>com.fasterxml.jackson.module</groupId>
-              <artifactId>jackson-module-scala_${scala.short.version}</artifactId>
+              <artifactId>jackson-module-scala_${tap.scala.short.version}</artifactId>
               <version>2.2.3</version>
           </dependency>
           <dependency>
@@ -1563,7 +1475,7 @@
           <dependency>
               <groupId>org.apache.zookeeper</groupId>
               <artifactId>zookeeper</artifactId>
-              <version>3.4.5-${dep.cdh.version}</version>
+              <version>3.4.5-${tap.cdh.version}</version>
               <scope>provided</scope>
           </dependency>
           <dependency>

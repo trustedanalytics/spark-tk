@@ -21,7 +21,7 @@ class TkContext(jsc: JavaSparkContext) extends Serializable {
     val propertiesFile = this.getClass.getResourceAsStream("/maven.properties")
     val properties = new Properties()
     properties.load(propertiesFile)
-    new DefaultArtifactVersion(properties.getProperty("dep.spark.version")) // From Maven
+    new DefaultArtifactVersion(properties.getProperty("tap.spark.version")) // From Maven
   }
   private val sparkRuntimeVersion = new DefaultArtifactVersion(sc.version) // From environment
   private val logger = LoggerFactory.getLogger(this.getClass)

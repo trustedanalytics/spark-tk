@@ -260,8 +260,10 @@ class Graph(object):
 
     # Graph Operations
     from sparktk.graph.ops.connected_components import connected_components
+    from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
     from sparktk.graph.ops.degrees import degrees
     from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
     from sparktk.graph.ops.label_propagation import label_propagation
     from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
     from sparktk.graph.ops.page_rank import page_rank
