@@ -1,13 +1,17 @@
 package org.trustedanalytics.sparktk.models.clustering.lda
 
+import java.io.{ FileOutputStream, File }
+import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk.{ TkLdaModel, LdaModelPredictionResult }
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
 import org.trustedanalytics.sparktk.frame.{ DataTypes, Frame }
+import org.trustedanalytics.sparktk.models.{ TkSearchPath, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
-
+import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
@@ -184,7 +188,7 @@ case class LdaModel private[lda] (documentColumnName: String,
                                   randomSeed: Option[Long],
                                   checkPointInterval: Int,
                                   trainingDataRowCount: Long,
-                                  sparkModel: TkLdaModel) extends Serializable {
+                                  sparkModel: TkLdaModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -226,6 +230,72 @@ case class LdaModel private[lda] (documentColumnName: String,
       checkPointInterval,
       trainingDataRowCount)
     TkSaveLoad.saveTk(sc, path, LdaModel.formatId, formatVersion, tkMetadata)
+  }
+
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val inputDocument = row.flatMap {
+      case list: List[_] => list.map(_.toString)
+      case _ => throw new IllegalArgumentException("Scoring input must be a list of words")
+    }
+    val predictReturn = predict(inputDocument.toList)
+    row :+ predictReturn.topicsGivenDoc :+ predictReturn.newWordsCount :+ predictReturn.newWordsPercentage
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    val input = Array[Field](Field(documentColumnName, "Array[String]"))
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    var output = input()
+    output = output :+ Field("topics_given_doc", "Vector[Double]")
+    output = output :+ Field("new_words_count", "Int")
+    output :+ Field("new_words_percentage", "Double")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Lda Model", classOf[LdaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  def exportToMar(marSavePath: String): String = {
+    val zipFile: File = File.createTempFile("model", ".mar")
+    val zipOutStream = new FileOutputStream(zipFile)
+
+    try {
+      val absolutePath = new File(".").getAbsolutePath
+      val x = new TkSearchPath(absolutePath)
+
+      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[LdaModel].getName, zipOutStream)
+      //SaveLoad.saveMar()
+      "test"
+
+    }
+    finally {
+      FileUtils.deleteQuietly(zipFile)
+      IOUtils.closeQuietly(zipOutStream)
+    }
   }
 }
 

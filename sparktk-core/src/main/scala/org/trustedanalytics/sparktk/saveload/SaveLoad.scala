@@ -1,5 +1,11 @@
 package org.trustedanalytics.sparktk.saveload
 
+import java.io.File
+import org.apache.commons.io.FileUtils
+import org.apache.hadoop.fs.Path
+import java.net.URI
+import org.apache.hadoop.fs.permission.{ FsPermission, FsAction }
+import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 import org.json4s.JsonAST.JValue
@@ -27,6 +33,20 @@ object SaveLoad {
       ("id" -> formatId) ~ ("version" -> formatVersion) ~ ("data" -> Extraction.decompose(data))))
     val sqlContext = SQLContext.getOrCreate(sc)
     sc.parallelize(Seq(contents), 1).saveAsTextFile(path)
+  }
+
+  def saveMar(storagePath: String, zipFile: File): Unit = {
+    if (storagePath.startsWith("hdfs")) {
+      val hdfsPath = new Path(storagePath)
+      val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(storagePath), new Configuration())
+      val localPath = new Path(zipFile.getAbsolutePath)
+      hdfsFileSystem.copyFromLocalFile(false, true, localPath, hdfsPath)
+      hdfsFileSystem.setPermission(hdfsPath, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.NONE))
+    }
+    else {
+      FileUtils.copyFile(zipFile, new File(storagePath))
+    }
+
   }
 
   /**

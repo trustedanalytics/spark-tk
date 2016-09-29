@@ -44,10 +44,10 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.trustedanalytics</groupId>
-                <artifactId>atk-maven-plugin</artifactId>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.trustedanalytics</groupId>-->
+                <!--<artifactId>atk-maven-plugin</artifactId>-->
+            <!--</plugin>-->
             
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -120,6 +120,14 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>model-archive-format</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>scoring-interfaces</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
@@ -257,6 +265,10 @@
         <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-network-shuffle_2.10</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.mahout</groupId>

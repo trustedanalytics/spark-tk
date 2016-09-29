@@ -2,6 +2,7 @@ package org.trustedanalytics.sparktk.models.classification.naive_bayes
 
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.{ NaiveBayesModel => SparkNaiveBayesModel, NaiveBayes }
+import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -12,6 +13,10 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, ScoreAndLabel, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
+import java.io.{ FileOutputStream, File }
+import org.apache.commons.io.{ IOUtils, FileUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
 
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -73,7 +78,7 @@ object NaiveBayesModel extends TkSaveableObject {
 case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesModel,
                                                  labelColumn: String,
                                                  observationColumns: Seq[String],
-                                                 lambdaParameter: Double) extends Serializable {
+                                                 lambdaParameter: Double) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -140,6 +145,73 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
     val tkMetadata = NaiveBayesModelTkMetaData(labelColumn, observationColumns, lambdaParameter)
     TkSaveLoad.saveTk(sc, path, NaiveBayesModel.formatId, formatVersion, tkMetadata)
   }
+
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = new Array[Double](row.length)
+    row.zipWithIndex.foreach {
+      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
+    }
+    row :+ sparkModel.predict(Vectors.dense(x))
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    observationColumns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("Score", "Double")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Principal Components Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  //  def exportToMar(marSavePath: String): String = {
+  //    val zipFile: File = File.createTempFile("model", ".mar")
+  //    val zipOutStream = new FileOutputStream(zipFile)
+  //
+  //    try {
+  //      val absolutePath = new File(".").getAbsolutePath
+  //      val x = new TkSearchPath(absolutePath)
+  //
+  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[NaiveBayesModel].getName ,zipOutStream)
+  //      SaveLoad.saveMar()
+  //
+  //
+  //    }
+  //    finally {
+  //      FileUtils.deleteQuietly(zipFile)
+  //      IOUtils.closeQuietly(zipOutStream)
+  //    }
+  //  }
+
 }
 
 /**

@@ -1,17 +1,21 @@
 package org.trustedanalytics.sparktk.models.dimreduction.pca
 
+import java.io.{ FileOutputStream, File }
+import breeze.linalg
+import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.json4s.JsonAST.JValue
-
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseVector }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseMatrix, DenseVector }
 import org.apache.spark.mllib.linalg.distributed.{ RowMatrix, IndexedRow, IndexedRowMatrix }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
 import org.trustedanalytics.sparktk.TkContext
-
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, TkSearchPath, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ TkSaveLoad, SaveLoad, TkSaveableObject }
+import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 
 object PcaModel extends TkSaveableObject {
 
@@ -84,7 +88,7 @@ case class PcaModel private[pca] (columns: Seq[String],
                                   k: Int,
                                   columnMeans: MllibVector,
                                   singularValues: MllibVector,
-                                  rightSingularVectors: MllibMatrix) extends Serializable {
+                                  rightSingularVectors: MllibMatrix) extends Serializable with Model {
   /**
    * Saves this model to a file
    *
@@ -102,6 +106,102 @@ case class PcaModel private[pca] (columns: Seq[String],
       rightSingularVectors.numCols,
       rightSingularVectors.toArray)
     TkSaveLoad.saveTk(sc, path, PcaModel.formatId, formatVersion, jsonable)
+  }
+
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = row.map(value => ScoringModelUtils.asDouble(value))
+    val y: DenseMatrix = computePrincipalComponents(x)
+    val t_squared_index = computeTSquaredIndex(y.values, singularValues, k)
+    row ++ Array(y.values.toList, t_squared_index)
+  }
+
+  /**
+   * Compute the principal components for the observation
+   * @param x Each observation stored as an Array[Double]
+   * @return (org.apache.spark.mllib)DenseMatrix
+   */
+  def computePrincipalComponents(x: Array[Double]): DenseMatrix = {
+    var inputVector = new org.apache.spark.mllib.linalg.DenseVector(x)
+    if (meanCentered) {
+      val meanCenteredVector: Array[Double] = (new linalg.DenseVector(x) - new linalg.DenseVector(columnMeans.toArray)).toArray
+      inputVector = new org.apache.spark.mllib.linalg.DenseVector(meanCenteredVector)
+    }
+    new DenseMatrix(1, inputVector.size, inputVector.toArray).multiply(rightSingularVectors.asInstanceOf[DenseMatrix])
+  }
+
+  /**
+   * Compute the t-squared index for the observation
+   * @param y Projection of singular vectors on the input
+   * @param singularValues Right singular values of the input
+   * @param k Number of principal components
+   * @return t-squared index for the observation
+   */
+  def computeTSquaredIndex(y: Array[Double], singularValues: MllibVector, k: Int): Double = {
+    val yArray: Array[Double] = y
+    var t: Double = 0.0
+    for (i <- 0 until k) {
+      if (singularValues(i) > 0)
+        t += ((yArray(i) * yArray(i)) / (singularValues(i) * singularValues(i)))
+    }
+    t
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    columns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    var output = input()
+    output = output :+ Field("principal_components", "List[Double]")
+    output :+ Field("t_squared_index", "Double")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Principal Components Model", classOf[PcaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  def exportToMar(marSavePath: String): String = {
+    val zipFile: File = File.createTempFile("model", ".mar")
+    val zipOutStream = new FileOutputStream(zipFile)
+
+    try {
+      val absolutePath = new File(".").getAbsolutePath
+      val x = new TkSearchPath(absolutePath)
+
+      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[PcaModel].getName, zipOutStream)
+      //SaveLoad.saveMar()
+      "test"
+    }
+    finally {
+      FileUtils.deleteQuietly(zipFile)
+      IOUtils.closeQuietly(zipOutStream)
+    }
   }
 
   def columnMeansAsArray: Array[Double] = columnMeans.toArray

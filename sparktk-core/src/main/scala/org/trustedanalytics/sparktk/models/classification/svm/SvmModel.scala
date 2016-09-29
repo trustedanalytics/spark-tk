@@ -6,6 +6,11 @@ import org.apache.spark.mllib.optimization.{ SquaredL2Updater, L1Updater }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.apache.spark.mllib.linalg.Vectors
+import java.io.{ FileOutputStream, File }
+import org.apache.commons.io.{ IOUtils, FileUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
@@ -130,7 +135,7 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
                                   stepSize: Double,
                                   regType: Option[String],
                                   regParam: Double,
-                                  miniBatchFraction: Double) extends Serializable {
+                                  miniBatchFraction: Double) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -204,6 +209,70 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
       miniBatchFraction)
     TkSaveLoad.saveTk(sc, path, SvmModel.formatId, formatVersion, tkMetadata)
   }
+
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = row.map(y => ScoringModelUtils.asDouble(y))
+    row :+ sparkModel.predict(Vectors.dense(x))
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    observationColumns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("Prediction", "Double")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("SVM with SGD Model", classOf[SvmModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  //  def exportToMar(marSavePath: String): String = {
+  //    val zipFile: File = File.createTempFile("model", ".mar")
+  //    val zipOutStream = new FileOutputStream(zipFile)
+  //
+  //    try {
+  //      val absolutePath = new File(".").getAbsolutePath
+  //      val x = new TkSearchPath(absolutePath)
+  //
+  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[SvmModel].getName ,zipOutStream)
+  //      SaveLoad.saveMar()
+  //
+  //
+  //    }
+  //    finally {
+  //      FileUtils.deleteQuietly(zipFile)
+  //      IOUtils.closeQuietly(zipOutStream)
+  //    }
+  //  }
+
 }
 
 /**
