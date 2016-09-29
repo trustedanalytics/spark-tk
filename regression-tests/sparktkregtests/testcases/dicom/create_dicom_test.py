@@ -20,9 +20,9 @@
 import unittest
 from sparktkregtests.lib import sparktk_test
 import os
-import dicom
 import numpy
-reload(sparktk_test)
+import dicom
+
 
 class CreateDicomTest(sparktk_test.SparkTKTestCase):
 
