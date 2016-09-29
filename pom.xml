@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.trustedanalytics</groupId>
         <artifactId>tap-root</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
     </parent>
 
   <artifactId>spark-tk</artifactId>
@@ -508,26 +508,46 @@
           <plugin>
             <groupId>com.mycila</groupId>
             <artifactId>license-maven-plugin</artifactId>
-            <version>2.3</version>
             <configuration>
-              <header>package/license-header.txt</header>
-              <properties>
-                <currentYear>2015</currentYear>
-              </properties>
-              <excludes>
+              <header>license-header.txt</header>
+               <headerDefinitions>
+                   <headerDefinition>python.xml</headerDefinition>
+               </headerDefinitions>
+                <mapping>
+                    <py>PYTHON_STYLE</py>
+                </mapping>
+              <excludes combine.children="append">
+                <exclude>python.xml</exclude>
+                <exclude>integration-tests/tests/sandbox</exclude>
                 <exclude>findbugs-exclude.xml</exclude>
+                <exclude>regression-tests/dist/</exclude>
                 <exclude>scalastyle-config.xml</exclude>
                 <exclude>checkstyle.xml</exclude>
+                <exclude>**/*.html</exclude>
+                <exclude>**/*.js</exclude>
+                <exclude>**/*.css</exclude>
+                <exclude>**/nosetests.xml</exclude>
                 <exclude>**/pom.xml</exclude>
                 <exclude>doc/**/*.*</exclude>
                 <exclude>conf/**/*.*</exclude>
                 <exclude>**/*.txt</exclude>
                 <exclude>**/*.csv</exclude>
+                <exclude>**/*.tsv</exclude>
                 <exclude>**/*.rst</exclude>
                 <exclude>**/*.tpl</exclude>
                 <exclude>**/*.inc</exclude>
                 <exclude>**/*.conf</exclude>
+                  <exclude>**/*.dcm</exclude>
+                  <exclude>**/*.log</exclude>
+                  <exclude>**/*.mako</exclude>
+                  <exclude>**/LICENSE</exclude>
+                  <exclude>**/NOTICE</exclude>
+                  <exclude>**/Dockerfile</exclude>
+                  <exclude>**/.coverage</exclude>
+                  <exclude>**/MANIFEST.in</exclude>
+                  <exclude>**/PKG-INFO</exclude>
                 <exclude>**/*.sql</exclude>
+                <exclude>**/*pytest-report</exclude>
               </excludes>
             </configuration>
             <executions>
