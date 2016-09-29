@@ -36,7 +36,7 @@ class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
         self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
         self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
         # generate a unique name to save the dicom object under
-        self.location = "save_load_test" + str(datetime.datetime.now()).replace(":", "-")
+        self.location = "save_load_test" + str(str(datetime.datetime.now()).replace(":", "")).replace(" ", "")
 
     def test_basic_save_load_content_test(self):
         """basic save load content test"""
@@ -71,8 +71,8 @@ class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
     def test_save_invalid_long_unicode_name(self):
         """save under a long unicode name, should fail"""
         # we will pass the dicom metadata itself as the name
-        metadata_unicode = self.dicom.metadata.to_pandas()["metadata"][0]
-        with self.assertRaisesRegexp(Exception, "IllegalArgumentException"):
+        metadata_unicode = self.dicom.metadata.to_pandas()["metadata"]
+        with self.assertRaisesRegexp(Exception, "does not exist"):
             self.dicom.save(metadata_unicode)
 
     def test_load_does_not_exist(self):
