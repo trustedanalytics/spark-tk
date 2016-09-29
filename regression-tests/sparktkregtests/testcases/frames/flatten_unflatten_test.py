@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests that flatten and unflatten work in multi-column mode """
 import unittest
 import sys
@@ -64,7 +81,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
 
         # Validate flatten against hand crafted results
         frame.flatten_columns("day", "gift")
-        frame_take = frame.take(frame.count()).data
+        frame_take = frame.take(frame.count())
         self.assertItemsEqual(frame_take, expected_take)
 
     def test_flatten_vary_len(self):
@@ -76,7 +93,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
 
         # Validate flatten on known results
         frame.flatten_columns('col1', 'col2')
-        frame_take = frame.take(frame.count()).data
+        frame_take = frame.take(frame.count())
         self.assertItemsEqual(frame_take, expected_take)
 
     def test_flatten_delim_variety(self):
@@ -109,7 +126,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                          ["o", "p", "7"]]
         frame = self.context.frame.create(block_data, schema=block_schema)
         frame.flatten_columns(('col1', '='), ('col2', '='), ('col3', '='))
-        actual_flat = frame.take(frame.count()).data
+        actual_flat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_flat)
 
     def test_flatten_mult_example(self):
@@ -135,12 +152,12 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         self.assertEqual(9, frame1.count())
 
         frame.flatten_columns("col1", "col2", "col3")
-        actual_flat = frame.take(frame.count()).data
+        actual_flat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_flat)
 
         # Unflatten should do nothing: there are no common elements.
         frame.unflatten_columns(["col1", "col2", "col3"])
-        actual_unflat = frame.take(frame.count()).data
+        actual_unflat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_unflat)
 
     def test_flatten_int_column(self):

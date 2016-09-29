@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame.internal.rdd
 
 import breeze.linalg.{ DenseVector => BDV }
@@ -10,6 +25,7 @@ import org.trustedanalytics.sparktk.frame.DataTypes
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 
 import scala.beans.BeanInfo
+import scala.xml.NodeSeq
 
 class RowWrapperFunctions(self: RowWrapper) {
 
@@ -22,11 +38,22 @@ class RowWrapperFunctions(self: RowWrapper) {
   }
 
   /**
-   * Convert Row into MLlib Dense Vector
+   * Convert Row into Breeze Dense Vector
    */
   def valuesAsBreezeDenseVector(columnNames: Seq[String]): BDV[Double] = {
     val array = self.valuesAsDoubleArray(columnNames)
     new BDV[Double](array)
+  }
+
+  /**
+   *  Convert Row into NodeSeq (i.e., Seq[Node])
+   *
+   * @param columnName Column name in frame holding xml string
+   * @param nodeName Name of the node to extract from column holding xml string
+   * @return NodeSeq (i.e Seq[Node])
+   */
+  def valueAsXmlNodeSeq(columnName: String, nodeName: String): NodeSeq = {
+    self.xmlNodeSeqValue(columnName, nodeName)
   }
 
   /**
