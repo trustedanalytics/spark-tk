@@ -14,16 +14,19 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
         super(TakeDicomTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
+        self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
+        self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
         self.count = self.dicom.metadata.count()
 
     def test_metadata_imagedata_row_count_same(self):
+        """test metadata pixeldata row count"""
         metadata_result = self.dicom.metadata.inspect(self.dicom.metadata.count())
         image_result = self.dicom.pixeldata.inspect(self.dicom.pixeldata.count())
         self.assertEqual(len(metadata_result.rows), len(image_result.rows))
 
     def test_metadata_content(self):
+        """tests dicom metadata content"""
+        # get the files that make up our dicom so we can compare content
         files = []
         for filename in os.listdir(self.xml_directory):
             with open(self.xml_directory + str(filename)) as xmlfile:
@@ -32,8 +35,12 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
 
         take = self.dicom.metadata.take(self.count)
 
+        # iterate through the dicom metadata and compare it with the data from the file
         for (dcm_file, xml_file) in zip(take, files):
             dcm_file = dcm_file[1].encode("ascii", "ignore")
+            # the bulkdata tag will differ between the files and dicom metadata
+            # because it records where the file was loaded from
+            # so we will remove it before comparing
             bulk_data_index = xml_file.index("<BulkData")
             xml_bulk_data = xml_file[bulk_data_index:bulk_data_index + xml_file[bulk_data_index:].index(">") + 1]
             dcm_bulk_data = dcm_file[bulk_data_index:bulk_data_index + dcm_file[bulk_data_index:].index(">") + 1]
@@ -43,12 +50,15 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
 
             self.assertEqual(dcm_file, xml_file)
 
-    def test_image_content_import_dcm_basic(self):
+    def test_image_content_take_dcm_basic(self):
+        """content test for dicom take"""
+        # load the files to compare
         files = []
         for filename in os.listdir(self.image_directory):
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
+        # ensure dicom pixeldata matches the original data
         take = self.dicom.pixeldata.take(self.count)
         for (dcm_image, pixel_image) in zip(take, files):
             numpy.testing.assert_equal(pixel_image, dcm_image[1])

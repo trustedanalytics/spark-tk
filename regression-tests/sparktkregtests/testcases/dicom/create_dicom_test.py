@@ -5,7 +5,7 @@ from sparktkregtests.lib import sparktk_test
 import os
 import dicom
 import numpy
-
+reload(sparktk_test)
 
 class CreateDicomTest(sparktk_test.SparkTKTestCase):
 
@@ -14,44 +14,61 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         super(CreateDicomTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
+        self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
+        self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
 
     def test_metadata_content_import_dcm_basic(self):
+        """content test of dicom metadata import"""
+        # here we will get the files so we can generate the expected result
         files = []
         for filename in os.listdir(self.xml_directory):
             with open(self.xml_directory + str(filename)) as xmlfile:
                 contents = xmlfile.read()
                 files.append(contents)
+
+        # the BulkData location element of the metadata xml will be different
+        # since the dicom may load the data from a differnet location then
+        # where we loaded our files. We will remove this element from the metadata
+        # before we compare
         metadata_pandas = self.dicom.metadata.to_pandas()
         for (dcm_file, xml_file) in zip(metadata_pandas["metadata"], files):
             dcm_file = dcm_file.encode("ascii", "ignore")
             bulk_data_index = xml_file.index("<BulkData")
+            # extract the bulk data tag from each so we can remove it
+            # note that we could do this with lxml etree instead of string
+            # ops but since we only care about one tag we don't need to
             xml_bulk_data = xml_file[bulk_data_index:bulk_data_index + xml_file[bulk_data_index:].index(">") + 1]
             dcm_bulk_data = dcm_file[bulk_data_index:bulk_data_index + dcm_file[bulk_data_index:].index(">") + 1]
-
             xml_file = xml_file.replace(xml_bulk_data, "")
             dcm_file = dcm_file.replace(dcm_bulk_data, "")
 
+            # finally we check that the metadata in dicom
+            # matches the dcm file metadata
             self.assertEqual(dcm_file, xml_file)
             
     def test_image_content_import_dcm_basic(self):
+        """content test of image data for dicom"""
+        # load the files so we can compare with the dicom result
         files = []
         for filename in os.listdir(self.image_directory):
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
+        # iterate through the data in the files and in the dicom frame
+        # and ensure that they match
         image_pandas = self.dicom.pixeldata.to_pandas()
         for (dcm_image, pixel_image) in zip(image_pandas["imagematrix"], files):
             numpy.testing.assert_equal(pixel_image, dcm_image)
 
     def test_import_dicom_invalid_files(self):
+        """tests import dicom with invalid data"""
         dataset = self.get_file("int_str_int.csv")
         with self.assertRaisesRegexp(Exception, "Not a DICOM Stream"):
             dicom = self.context.dicom.import_dcm(dataset)
             dicom.metadata.count()
 
     def test_import_dicom_mixed_file_types(self):
+        """tests import dicom with mixed file types"""
         dataset = self.get_file("dicom/baddicom/")
         dicom = self.context.dicom.import_dcm(dataset)
         with self.assertRaisesRegexp(Exception, "Not a DICOM Stream"):
