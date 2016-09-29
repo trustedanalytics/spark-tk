@@ -82,10 +82,28 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_max_bins_0(self):
         """Negative test for max_bins = 0"""
          model = self.context.models.classification.random_forest_classifier.train(
-            self.frame, "class", ["feat1", "feat2"], mac_bins=0)
+            self.frame, "class", ["feat1", "feat2"], max_bins=0)
 
     def test_negative_max_depth(self):
-        
+        """Negative test for max_depth < 0"""
+        model = self.context.models.classification.random_forest_classifier.train(
+            self.frame, "class", ["feat1", "feat2"], max_depth=-2)
+
+    def test_max_depth_0(self):
+        """Negative test for max_depth=0"""
+        model = self.context.models.classification.random_forest_classifier.train(
+            self.frame, "class", ["feat1", "feat2"], max_depth=0)
+
+    def test_negative_num_trees(self):
+        """Negative test for num_trees<0"""
+        model = self.context.models.classification.random_forest_classifier.train(
+            self.frame, "class", ["feat1", "feat2"], num_trees=-10)
+
+    def test_num_trees_0(self):
+        """Negative trst for num_trees=0"""
+        model = self.context.models.classification.random_forest_classifier.train(
+            self.frame, "class", ["feat1", "feat2"], num_trees=0)
+
     @unittest.skip("not implemented")
     def test_rand_forest_publish(self):
         """Test binomial classification of random forest model"""
