@@ -1,3 +1,4 @@
+# coding=utf-8
 from sparktk.tkcontext import TkContext
 from pyspark.rdd import RDD
 from pyspark.sql.types import *
@@ -31,6 +32,7 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
     Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
     there is a header and to infer the schema based on the data.
 
+
         >>> file_path = "../datasets/cities.csv"
 
         >>> frame = tc.frame.import_csv(file_path, "|", header=True, infer_schema=True)
@@ -53,7 +55,21 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         >>> frame.schema
         [('rank', <type 'int'>), ('city', <type 'str'>), ('population_2013', <type 'int'>), ('population_2010', <type 'int'>), ('change', <type 'str'>), ('county', <type 'str'>)]
 
-    """
+        <hide>
+        >>> file_path = "../datasets/unicode.csv"
+        >>> schema = [("a", unicode),("b", unicode),("c",unicode)]
+        >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False, infer_schema=False)
+        -etc-
+
+        >>> frame.inspect()
+        [#]  a  b  c
+        ============
+        [0]  à  ë  ñ
+        [1]  ã  ê  ü
+
+        </hide>
+
+  """
 
 
     if schema is not None:

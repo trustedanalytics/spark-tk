@@ -295,7 +295,7 @@ class RowsInspection(object):
 
     @staticmethod
     def _get_wrap_entry(data, size, formatter, relative_column_index, extra_tuples):
-        entry = unicode(formatter(data))
+        entry = unicode(formatter(data)).encode('utf-8')
         if isinstance(data, basestring):
             lines = entry.splitlines()
             if len(lines) > 1:

@@ -27,7 +27,6 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
 
     Create a pandas data frame:
 
-    <skip>
         >>> import pandas
         >>> ratings_data = [[0, "invalid"], [1, "Very Poor"], [2, "Poor"], [3, "Average"], [4, "Good"], [5, "Very Good"]]
         >>> df = pandas.DataFrame(ratings_data, columns=['rating_id', 'rating_text'])
@@ -65,7 +64,7 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
         [5]          5  Very Good
 
         >>> frame.schema
-        [('rating_id', long), ('rating_text', str)]
+        [('rating_id', <type 'long'>), ('rating_text', <type 'str'>)]
 
     Alternatively, you can specify a schema when importing the pandas data frame.  There is also the option to validate
     the data against the schema.  If this option is enabled, we will attempt to cast the data to the column's data type,
@@ -74,7 +73,7 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
     For example, here we will specify a schema where the rating_id column will instead be called 'rating_float' and it's
     data type will be a float.  We will also enable the validate_schema option so that the rating_id value will get
     casted to a float:
-
+        >>> schema = [("rating_float", float), ("rating_str", unicode)]
         >>> frame = tc.frame.import_pandas(df, schema, validate_schema=True)
 
         >>> frame.inspect()
@@ -88,9 +87,7 @@ def import_pandas(pandas_frame, schema=None, row_index=True, validate_schema=Fal
         [5]           5.0  Very Good
 
         >>> frame.schema
-        [('rating_float', float), ('rating_str', unicode)]
-
-    </skip>
+        [('rating_float', <type 'float'>), ('rating_str', <type 'unicode'>)]
 
     """
     try:
