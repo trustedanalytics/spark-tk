@@ -26,6 +26,11 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, RowWrapperFun
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.models.MatrixImplicits._
+import java.io.{ FileOutputStream, File }
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.commons.io.{ IOUtils, FileUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
 
 object GaussianMixtureModel extends TkSaveableObject {
 
@@ -117,7 +122,7 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
                                               convergenceTol: Double = 0.01,
                                               seed: Long = scala.util.Random.nextLong(),
                                               gaussians: List[List[String]],
-                                              sparkModel: SparkGaussianMixtureModel) extends Serializable {
+                                              sparkModel: SparkGaussianMixtureModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -176,6 +181,80 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
     val tkMetadata = GaussianMixtureModelTkMetaData(observationColumns, columnScalings, k, maxIterations, convergenceTol, seed, gaussians)
     TkSaveLoad.saveTk(sc, path, GaussianMixtureModel.formatId, formatVersion, tkMetadata)
   }
+
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    //    val x: Array[Double] = new Array[Double](row.length)
+    //    row.zipWithIndex.foreach {
+    //      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
+    //    }
+    //    row :+ sparkModel.predict(Vectors.dense(x))
+    throw new NotImplementedError()
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    observationColumns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("Score", "Int")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(map: Map[String, String]): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Gaussian Mixture Model", classOf[GaussianMixtureModel].getName, classOf[SparkTkModelAdapter].getName, map)
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Gaussian Mixture Model", classOf[GaussianMixtureModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  //  def exportToMar(marSavePath: String): String = {
+  //    val zipFile: File = File.createTempFile("model", ".mar")
+  //    val zipOutStream = new FileOutputStream(zipFile)
+  //
+  //    try {
+  //      val absolutePath = new File(".").getAbsolutePath
+  //      val x = new TkSearchPath(absolutePath)
+  //
+  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[GaussianMixtureModel].getName ,zipOutStream)
+  //      SaveLoad.saveMar()
+  //
+  //
+  //    }
+  //    finally {
+  //      FileUtils.deleteQuietly(zipFile)
+  //      IOUtils.closeQuietly(zipOutStream)
+  //    }
+  //  }
 
 }
 

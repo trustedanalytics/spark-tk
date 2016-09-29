@@ -221,6 +221,10 @@ class KMeansModel(PropertiesObject):
         return self._tc.jutils.convert.to_scala_option(columns)
 
     def save(self, path):
-        self._scala.save(self._tc._scala_sc, path)
+        if isinstance(path, basestring):
+            self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

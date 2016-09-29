@@ -203,3 +203,6 @@ class PcaModel(PropertiesObject):
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        self._scala.exportToMar(self._tc._scala_sc, path)

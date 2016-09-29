@@ -64,17 +64,6 @@
             </releases>
         </repository>
       <repository>
-        <id>atk</id>
-        <url>https://maven.trustedanalytics.org/content/repositories/public/</url>
-        <snapshots>
-          <enabled>true</enabled>
-            <updatePolicy>daily</updatePolicy>
-        </snapshots>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </repository>
-      <repository>
         <id>cloudera cdh</id>
         <!--<url>https://repository.cloudera.com/artifactory/cloudera-repos</url>-->
         <url>https://repository.cloudera.com/cloudera/cloudera-repos/</url>
@@ -121,7 +110,7 @@
       <dicom.version>3.3.7</dicom.version>
       <artifactIdExcludesHive>hive-exec,hive-metastore</artifactIdExcludesHive>
       <artifactIdExcludesHadoop>hadoop-aws,hadoop-annotations,hadoop-mapreduce-client-common,hadoop-mapreduce-client-core,hadoop-mapreduce-client-jobclient,hadoop-mapreduce-client-shuffle,hadoop-yarn-api,hadoop-yarn-client,hadoop-yarn-common,hadoop-yarn-server-common,hadoop-yarn-server-web-proxy</artifactIdExcludesHadoop>
-      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-core_${tap.scala.short.version},spark-mllib_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-launcher_${tap.scala.short.version},spark-network-common_${tap.scala.short.version},spark-network-shuffle_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
+      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-launcher_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
       <artifactIdExcludesScala>spire_${tap.scala.short.version},breeze_${tap.scala.short.version},scala-library,scala-reflect,scalatest_${tap.scala.short.version}</artifactIdExcludesScala>
       <artifactIdExcludesMisc>jdk.tools,mesos,scala-compiler,joda-time</artifactIdExcludesMisc>
       <artifactIdExcludes>${artifactIdExcludesMisc},${artifactIdExcludesScala},${artifactIdExcludesSpark},${artifactIdExcludesHadoop},${artifactIdExcludesHive}</artifactIdExcludes>
@@ -713,7 +702,16 @@
 
     <dependencyManagement>
       <dependencies>
-
+          <dependency>
+              <groupId>org.trustedanalytics</groupId>
+              <artifactId>model-archive-format</artifactId>
+              <version>1.0-SNAPSHOT</version>
+          </dependency>
+          <dependency>
+              <groupId>org.trustedanalytics</groupId>
+              <artifactId>scoring-interfaces</artifactId>
+              <version>1.0-SNAPSHOT</version>
+          </dependency>
         <!-- START dicom dependencies -->
         <dependency>
           <groupId>org.dcm4che</groupId>
@@ -1262,6 +1260,11 @@
           <artifactId>json-simple</artifactId>
           <version>1.1.1</version>
         </dependency>
+          <dependency>
+              <groupId>org.apache.spark</groupId>
+              <artifactId>spark-network-shuffle_2.10</artifactId>
+              <version>1.2.0-cdh5.3.3</version>
+          </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.concurrentlinkedhashmap/concurrentlinkedhashmap-lru -->
         <dependency>
           <groupId>com.googlecode.concurrentlinkedhashmap</groupId>

@@ -15,6 +15,9 @@
  */
 package org.trustedanalytics.sparktk.models.collaborativefiltering
 
+import java.io.{ FileOutputStream, File }
+
+import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
@@ -22,10 +25,12 @@ import org.apache.spark.mllib.recommendation.{ MatrixFactorizationModel, ALS, Ra
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
+import org.trustedanalytics.sparktk.models.{ TkSearchPath, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 
 object CollaborativeFilteringModel extends TkSaveableObject {
@@ -176,7 +181,7 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
                                        checkpointIterations: Int,
                                        targetRMSE: Double,
                                        rank: Int,
-                                       sparkModel: MatrixFactorizationModel) extends Serializable {
+                                       sparkModel: MatrixFactorizationModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -267,6 +272,66 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
       rank)
     TkSaveLoad.saveTk(sc, path, CollaborativeFilteringModel.formatId, formatVersion, tkMetadata)
   }
+
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    throw new NotImplementedError()
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    input = input :+ Field(sourceColumnName, "Double")
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("Score", "Double")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("Collaborative Filtering Model", classOf[CollaborativeFilteringModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  //  def exportToMar(marSavePath: String): String = {
+  //    val zipFile: File = File.createTempFile("model", ".mar")
+  //    val zipOutStream = new FileOutputStream(zipFile)
+  //
+  //    try {
+  //      val absolutePath = new File(".").getAbsolutePath
+  //      val x = new TkSearchPath(absolutePath)
+  //
+  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[CollaborativeFilteringModel].getName ,zipOutStream)
+  //      SaveLoad.saveMar()
+  //
+  //
+  //    }
+  //    finally {
+  //      FileUtils.deleteQuietly(zipFile)
+  //      IOUtils.closeQuietly(zipOutStream)
+  //    }
+  //  }
 
   /**
    * Collaborative Filtering recommend (ALS).

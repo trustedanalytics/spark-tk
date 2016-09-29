@@ -348,4 +348,7 @@ class LdaModel(PropertiesObject):
         """Save the trained model"""
         self._scala.save(self._tc._scala_sc, path)
 
+    def export_to_mar(self, path):
+        self._scala.exportToMar(self._tc._scala_sc, path)
+
 del PropertiesObject

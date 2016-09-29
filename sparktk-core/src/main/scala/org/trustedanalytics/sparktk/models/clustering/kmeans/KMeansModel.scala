@@ -15,16 +15,21 @@
  */
 package org.trustedanalytics.sparktk.models.clustering.kmeans
 
+import java.io.{ FileOutputStream, File }
+import java.nio.file.{ Path, Files }
+import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
-import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors }
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
-
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
@@ -146,7 +151,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
                                         epsilon: Double,
                                         initializationMode: String,
                                         seed: Option[Long] = None,
-                                        sparkModel: SparkKMeansModel) extends Serializable {
+                                        sparkModel: SparkKMeansModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -255,6 +260,81 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
     val formatVersion: Int = 1
     val tkMetadata = KMeansModelTkMetaData(columns, k, scalings, maxIterations, epsilon, initializationMode, seed)
     TkSaveLoad.saveTk(sc, path, KMeansModel.formatId, formatVersion, tkMetadata)
+  }
+
+  def loadTest(): Unit = {
+    println("test passed")
+  }
+  /**
+   *
+   * @param row
+   * @return
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = row.map(y => ScoringModelUtils.asDouble(y))
+    row :+ (sparkModel.predict(Vectors.dense(x)) + 1)
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    columns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   *
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("score", "Int")
+  }
+
+  /**
+   *
+   * @return
+   */
+  def modelMetadata(): ModelMetaDataArgs = {
+    new ModelMetaDataArgs("KMeans Model", classOf[KMeansModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   *
+   * @param marSavePath
+   * @return
+   */
+  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+    val zipFile: File = File.createTempFile("model", ".mar")
+    val zipOutStream = new FileOutputStream(zipFile)
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      val codeSource = this.getClass.getProtectionDomain.getCodeSource
+
+      if (codeSource != null) {
+        val absolutePath = codeSource.getLocation.toString
+        val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
+        var jarFileList = x.jarsInSearchPath.values.toList
+        jarFileList = jarFileList ::: List(tmpDir.toFile)
+        //        //Add the spark assembly jar to the MAR file
+        //        val y = new TkSearchPath("/opt/cloudera/parcels/CDH/lib/spark/assembly/lib/")
+        //        jarFileList = jarFileList ::: y.jarsInSearchPath.values.toList
+        ModelArchiveFormat.write(jarFileList, classOf[SparkTkModelAdapter].getName, classOf[KMeansModel].getName, zipOutStream)
+      }
+      SaveLoad.saveMar(marSavePath, zipFile)
+    }
+    finally {
+      FileUtils.deleteQuietly(zipFile)
+      IOUtils.closeQuietly(zipOutStream)
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 
