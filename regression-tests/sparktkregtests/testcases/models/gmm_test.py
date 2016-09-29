@@ -9,7 +9,7 @@ from sparktkregtests.lib import sparktk_test
 class GMMModelTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
-        #data_file = self.get_file("gmm_data.csv")
+        data_file = self.get_file("gmm_data.csv")
         self.data = [[-4.621530567642421, 8.6406983965969193],
                 [6.4267172354491446, -12.277610775308155],
                 [0.098530164125373215, 6.0836012949611131],
@@ -96,11 +96,6 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
         actual_cluster_sizes = Counter(results_df["predicted_cluster"].tolist())
         expected_cluster_sizes = {2: 27, 0: 17, 1: 6}
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
-        
-        expected_assgn = [2, 0, 2, 2, 2, 2, 2, 0, 1, 2, 2, 0, 2, 1,
-                        2, 2, 0, 0, 0, 2, 2, 2, 0, 0, 2, 2, 0, 2,
-                        2, 2, 0, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0,
-                        1, 0, 1, 0, 1, 1, 0, 0]
 
     def test_gmm_1_class(self):
         """Test gmm doesn't error on 1 class only"""
