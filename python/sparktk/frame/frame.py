@@ -258,6 +258,21 @@ class Frame(object):
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
         if self._is_python:
+
+            def _dec(schema):
+                def dec(row):
+                    result = []
+                    for i in range(len(schema)):
+                        if type(schema[i][1]) == dtypes._Matrix:
+                            from pyspark.mllib.linalg import Matrices
+                            shape = row[i].shape
+                            result.append(Matrices.dense(shape[0], shape[1], row[i].flatten()))
+                        else:
+                            result.append(row[i])
+                return dec
+
+            self._frame.rdd = self._frame.rdd.map(_dec(self._frame.schema))
+
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)

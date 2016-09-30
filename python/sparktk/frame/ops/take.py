@@ -98,6 +98,10 @@ def take(self, n, offset=0, columns=None):
             data = self._python.rdd.map(select_columns).take(n)
         else:
             data = self._python.rdd.take(n)
+        if columns:
+            data = TakeCollectHelper.pythonDecorator(data, get_schema_for_columns(self.schema, columns))
+        else:
+            data = TakeCollectHelper.pythonDecorator(data, self.schema)
     return data
 
 
@@ -176,3 +180,32 @@ class TakeCollectHelper(object):
         python_data = map(scala_row_to_python, list(scala_data))
 
         return python_data
+
+
+    @staticmethod
+    def pythonDecorator(python_data, schema):
+        row_schema = schema
+
+        # def to_dtype(value, dtype):
+        #     try:
+        #         if type(dtype) == sparktk.dtypes._Matrix:
+        #             return dtypes.cast(value, dtype)
+        #         else:
+        #             return dtypes.cast(value, dtype)
+        #     except:
+        #         return None
+
+        def decorate(python_row):
+            decorated_row = []
+            num_cols = len(python_row)
+            for i in xrange(num_cols):
+                decorated_row.append(dtypes.cast(python_row[i], row_schema[i][1]))
+            return decorated_row
+
+
+        print type(python_data)
+        result = map(decorate, python_data)
+
+        return result
+
+
