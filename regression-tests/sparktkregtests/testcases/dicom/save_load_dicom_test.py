@@ -33,8 +33,6 @@ class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
         super(SaveLoadDicomTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
-        self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
         # generate a unique name to save the dicom object under
         self.location = "save_load_test" + str(str(datetime.datetime.now()).replace(":", "")).replace(" ", "")
 
