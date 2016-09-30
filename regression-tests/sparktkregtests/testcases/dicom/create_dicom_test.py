@@ -31,15 +31,15 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         super(CreateDicomTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
-        self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
+        self.xml_directory = self.get_local_dataset("dicom_xml/")
+        self.image_directory = self.get_local_dataset("dicom_uncompressed/")
         print "image directory: " + str(self.image_directory)
 
     def test_metadata_content_import_dcm_basic(self):
         """content test of dicom metadata import"""
         # here we will get the files so we can generate the expected result
         files = []
-        for filename in os.listdir(self.xml_directory):
+        for filename in sorted([f for f in os.listdir(self.xml_directory)]):
             with open(self.xml_directory + str(filename)) as xmlfile:
                 contents = xmlfile.read()
                 files.append(contents)
@@ -68,7 +68,10 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result
         files = []
-        for filename in os.listdir(self.image_directory):
+        print "hdfs dataset path: " + str(self.dataset)
+        print "image directory: " + str(self.image_directory)
+        for filename in sorted([f for f in os.listdir(self.image_directory)]):
+            print "file path: " + str(self.image_directory + filename)
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
 

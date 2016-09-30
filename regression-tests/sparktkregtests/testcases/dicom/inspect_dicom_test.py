@@ -31,8 +31,8 @@ class InspectDicomTest(sparktk_test.SparkTKTestCase):
         super(InspectDicomTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
-        self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
+        self.xml_directory = self.get_local_dataset("dicom_xml/")
+        self.image_directory = self.get_local_dataset("dicom_uncompressed/")
 
     def test_metadata_imagedata_row_count_same(self):
         """test that the row count are the same for inspect pixeldate/metadata"""
