@@ -33,6 +33,7 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         self.dicom = self.context.dicom.import_dcm(self.dataset)
         self.xml_directory = self.get_local_dataset("dicom/dicom_uncompressed/xml/")
         self.image_directory = self.get_local_dataset("dicom/dicom_uncompressed/imagedata/")
+        print "image directory: " + str(self.image_directory)
 
     def test_metadata_content_import_dcm_basic(self):
         """content test of dicom metadata import"""
