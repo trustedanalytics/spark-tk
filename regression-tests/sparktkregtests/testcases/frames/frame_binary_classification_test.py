@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ tests multiclass classification metrics"""
 
 import unittest
@@ -57,7 +74,7 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         # total number of predictions
         accuracy = float(true_pos + true_neg) / float(total)
         pos_count = 0
-        pandas_frame = self.frame.download()
+        pandas_frame = self.frame.to_pandas()
         # calculate the number of pos results and neg results in the data
         for index, row in pandas_frame.iterrows():
             if row["labels"] is 1:
@@ -154,7 +171,7 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         f_measure = (recall * precision) / (recall + precision)
         accuracy = float(true_pos + true_neg) / float(total)
         pos_count = 0
-        pandas_frame = self.frame.download()
+        pandas_frame = self.frame.to_pandas()
         # calculate the number of pos results and neg results in the data
         for index, row in pandas_frame.iterrows():
             if row["labels"] is 1:

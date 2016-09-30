@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """
 ARIMAX (Autoregressive Integrated Moving Average with Exogeneous Variables) Model
 """
@@ -7,6 +24,33 @@ from sparktk.lazyloader import implicit
 from sparktk.propobj import PropertiesObject
 
 def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=True, include_intercept=True, init_params=None):
+    """
+    Creates Autoregressive Integrated Moving Average with Explanatory Variables (ARIMAX) Model from the specified
+    time series values.
+
+    Given a time series, fits an non-seasonal Autoregressive Integrated Moving Average with Explanatory Variables
+    (ARIMAX) model of order (p, d, q) where p represents the autoregression terms, d represents the order of differencing
+    and q represents the moving average error terms. X_max_lag represents the maximum lag order for exogenous variables.
+    If include_original_x is true, the model is fitted with an original exogenous variables. If includeIntercept is true,
+    the model is fitted with an intercept.
+
+    :param frame: (Frame) Frame used for training.
+    :param ts_column: (str) Name of the column that contains the time series values.
+    :param x_columns: (List(str)) Names of the column(s) that contain the values of exogenous regressors.
+    :param p: (int) Autoregressive order
+    :param d: (int) Differencing order
+    :param q: (int) Moving average order
+    :param x_max_lag: (int) The maximum lag order for exogenous variables.
+    :param include_original_x: (Optional(boolean)) If True, the model is fit with an original exogenous variables
+                               (intercept for exogenous variables). Default is True.
+    :param include_intercept: (Optional(boolean)) If True, the model is fit with an intercept.  Default is True.
+    :param init_params: (Optional(List[float]) A set of user provided initial parameters for optimization. If the
+                        list is empty (default), initialized using Hannan-Rissanen algorithm. If provided, order
+                        of parameter should be: intercept term, AR parameters (in increasing order of lag), MA
+                        parameters (in increasing order of lag) and paramteres for exogenous variables (in
+                        increasing order of lag).
+    :return: (ArimaxModel) Trained ARIMAX model
+    """
 
     if not isinstance(ts_column, basestring):
         raise TypeError("'ts_column' should be a string (name of the column that has the timeseries value).")
@@ -189,8 +233,8 @@ class ArimaxModel(PropertiesObject):
         Load an ARIMAX model
 
         :param tc: (TkContext) Active TkContext
-        :param scala_model: (scala ARIMAXModel) Scala model to load.
-        :return: (ARIMAXModel) ARIMAXModel object
+        :param scala_model: (scala ArimaxModel) Scala model to load.
+        :return: (ArimaxModel) ArimaxModel object
         """
         return ArimaxModel(tc, scala_model)
 

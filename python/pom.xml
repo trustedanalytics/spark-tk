@@ -81,22 +81,7 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>pyhon-sparktk-exec-docs</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>chmod</executable>
-                                    <workingDirectory>${basedir}/sparktk/doc/</workingDirectory>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>builddoc.sh</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>pyhon-sparktk-docs</id>
+                                <id>python-sparktk-docs</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -114,4 +99,20 @@
         </profile>
 
     </profiles>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <excludes combine.children="append">
+
+                        <exclude>cover/status.dat</exclude>
+
+
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.trustedanalytics.sparktk.models.timeseries.arimax
 
 import org.apache.spark.sql.Row
@@ -23,35 +22,64 @@ import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchem
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
+  /**
+   * Air quality data from:
+   *
+   * https://archive.ics.uci.edu/ml/datasets/Air+Quality.
+   *
+   * Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml].
+   * Irvine, CA: University of California, School of Information and Computer Science.
+   */
   val rows: Array[Row] = Array(
-    new GenericRow(Array[Any](68, 278, 0, 28, 0.015132758079119)),
-    new GenericRow(Array[Any](89, 324, 0, 28, 0.0115112433251418)),
-    new GenericRow(Array[Any](96, 318, 0, 28, 0.0190129524583803)),
-    new GenericRow(Array[Any](98, 347, 0, 28, 0.0292307976571017)),
-    new GenericRow(Array[Any](70, 345, 1, 28, 0.0232811662755677)),
-    new GenericRow(Array[Any](88, 335, 1, 29, 0.0306535355961641)),
-    new GenericRow(Array[Any](76, 309, 0, 29, 0.0278080597180392)),
-    new GenericRow(Array[Any](104, 318, 0, 29, 0.0305241957835221)),
-    new GenericRow(Array[Any](64, 308, 0, 29, 0.0247039042146302)),
-    new GenericRow(Array[Any](89, 320, 0, 29, 0.0269026810295449)),
-    new GenericRow(Array[Any](76, 292, 0, 29, 0.0283254189686074)),
-    new GenericRow(Array[Any](66, 295, 1, 29, 0.0230224866502836)),
-    new GenericRow(Array[Any](84, 383, 1, 21, 0.0279373995306813)),
-    new GenericRow(Array[Any](49, 237, 0, 21, 0.0263853217789767)),
-    new GenericRow(Array[Any](47, 210, 0, 21, 0.0230224866502836))
-  )
+    new GenericRow(Array[Any]("10/03/2004", "18.00.00", 2.6, 1360, 150, 11.9, 1046, 166, 1056, 113, 1692, 1268, 13.6, 48.9, 0.7578)),
+    new GenericRow(Array[Any]("10/03/2004", "19.00.00", 2, 1292, 112, 9.4, 955, 103, 1174, 92, 1559, 972, 13.3, 47.7, 0.7255)),
+    new GenericRow(Array[Any]("10/03/2004", "20.00.00", 2.2, 1402, 88, 9.0, 939, 131, 1140, 114, 1555, 1074, 11.9, 54.0, 0.7502)),
+    new GenericRow(Array[Any]("10/03/2004", "21.00.00", 2.2, 1376, 80, 9.2, 948, 172, 1092, 122, 1584, 1203, 11.0, 60.0, 0.7867)),
+    new GenericRow(Array[Any]("10/03/2004", "22.00.00", 1.6, 1272, 51, 6.5, 836, 131, 1205, 116, 1490, 1110, 11.2, 59.6, 0.7888)),
+    new GenericRow(Array[Any]("10/03/2004", "23.00.00", 1.2, 1197, 38, 4.7, 750, 89, 1337, 96, 1393, 949, 11.2, 59.2, 0.7848)),
+    new GenericRow(Array[Any]("11/03/2004", "00.00.00", 1.2, 1185, 31, 3.6, 690, 62, 1462, 77, 1333, 733, 11.3, 56.8, 0.7603)),
+    new GenericRow(Array[Any]("11/03/2004", "01.00.00", 1, 1136, 31, 3.3, 672, 62, 1453, 76, 1333, 730, 10.7, 60.0, 0.7702)),
+    new GenericRow(Array[Any]("11/03/2004", "02.00.00", 0.9, 1094, 24, 2.3, 609, 45, 1579, 60, 1276, 620, 10.7, 59.7, 0.7648)),
+    new GenericRow(Array[Any]("11/03/2004", "03.00.00", 0.6, 1010, 19, 1.7, 561, -200, 1705, -200, 1235, 501, 10.3, 60.2, 0.7517)),
+    new GenericRow(Array[Any]("11/03/2004", "04.00.00", -200, 1011, 14, 1.3, 527, 21, 1818, 34, 1197, 445, 10.1, 60.5, 0.7465)),
+    new GenericRow(Array[Any]("11/03/2004", "05.00.00", 0.7, 1066, 8, 1.1, 512, 16, 1918, 28, 1182, 422, 11.0, 56.2, 0.7366)),
+    new GenericRow(Array[Any]("11/03/2004", "06.00.00", 0.7, 1052, 16, 1.6, 553, 34, 1738, 48, 1221, 472, 10.5, 58.1, 0.7353)),
+    new GenericRow(Array[Any]("11/03/2004", "07.00.00", 1.1, 1144, 29, 3.2, 667, 98, 1490, 82, 1339, 730, 10.2, 59.6, 0.7417)),
+    new GenericRow(Array[Any]("11/03/2004", "08.00.00", 2, 1333, 64, 8.0, 900, 174, 1136, 112, 1517, 1102, 10.8, 57.4, 0.7408)),
+    new GenericRow(Array[Any]("11/03/2004", "09.00.00", 2.2, 1351, 87, 9.5, 960, 129, 1079, 101, 1583, 1028, 10.5, 60.6, 0.7691)),
+    new GenericRow(Array[Any]("11/03/2004", "10.00.00", 1.7, 1233, 77, 6.3, 827, 112, 1218, 98, 1446, 860, 10.8, 58.4, 0.7552)),
+    new GenericRow(Array[Any]("11/03/2004", "11.00.00", 1.5, 1179, 43, 5.0, 762, 95, 1328, 92, 1362, 671, 10.5, 57.9, 0.7352)),
+    new GenericRow(Array[Any]("11/03/2004", "12.00.00", 1.6, 1236, 61, 5.2, 774, 104, 1301, 95, 1401, 664, 9.5, 66.8, 0.7951)),
+    new GenericRow(Array[Any]("11/03/2004", "13.00.00", 1.9, 1286, 63, 7.3, 869, 146, 1162, 112, 1537, 799, 8.3, 76.4, 0.8393)),
+    new GenericRow(Array[Any]("11/03/2004", "14.00.00", 2.9, 1371, 164, 11.5, 1034, 207, 983, 128, 1730, 1037, 8.0, 81.1, 0.8736)),
+    new GenericRow(Array[Any]("11/03/2004", "15.00.00", 2.2, 1310, 79, 8.8, 933, 184, 1082, 126, 1647, 946, 8.3, 79.8, 0.8778)),
+    new GenericRow(Array[Any]("11/03/2004", "16.00.00", 2.2, 1292, 95, 8.3, 912, 193, 1103, 131, 1591, 957, 9.7, 71.2, 0.8569)),
+    new GenericRow(Array[Any]("11/03/2004", "17.00.00", 2.9, 1383, 150, 11.2, 1020, 243, 1008, 135, 1719, 1104, 9.8, 67.6, 0.8185)))
 
-  val schema = FrameSchema(Vector(Column("y", DataTypes.float64),
-    Column("visitors", DataTypes.float64),
-    Column("wkends", DataTypes.float64),
-    Column("incidentRate", DataTypes.float64),
-    Column("seasonality", DataTypes.float64)))
+  val schema = FrameSchema(Vector(Column("Date", DataTypes.str),
+    Column("Time", DataTypes.str),
+    Column("CO_GT", DataTypes.float64),
+    Column("PT08_S1_CO", DataTypes.int32),
+    Column("NMHC_GT", DataTypes.int32),
+    Column("C6H6_GT", DataTypes.float32),
+    Column("PT08_S2_NMHC", DataTypes.int32),
+    Column("NOx_GT", DataTypes.int32),
+    Column("PT08_S3_NOx", DataTypes.int32),
+    Column("NO2_GT", DataTypes.int32),
+    Column("PT08_S4_NO2", DataTypes.int32),
+    Column("PT08_S5_O3_", DataTypes.int32),
+    Column("T", DataTypes.float32),
+    Column("RH", DataTypes.float32),
+    Column("AH", DataTypes.float32)))
+
+  val y_column = "T"
+  val x_columns = List("CO_GT", "PT08_S1_CO", "NMHC_GT", "C6H6_GT", "PT08_S2_NMHC", "NOx_GT", "PT08_S3_NOx", "NO2_GT", "PT08_S4_NO2", "PT08_S5_O3_")
 
   "train" should {
     "throw an exception for a null frame" in {
       intercept[IllegalArgumentException] {
         // Frame is null, so this should fail
-        ArimaxModel.train(null, "ts", List("x1", "x2"), 1, 1, 1, 0)
+        ArimaxModel.train(null, y_column, x_columns, 1, 1, 1, 0)
       }
     }
 
@@ -61,7 +89,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
 
       intercept[IllegalArgumentException] {
         // There is no column named "ts" so this should fail
-        ArimaxModel.train(frame, "ts", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+        ArimaxModel.train(frame, "ts", x_columns, 1, 1, 1, 0)
       }
     }
 
@@ -71,7 +99,7 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
 
       intercept[IllegalArgumentException] {
         // There is no column named "bogus" so this should fail
-        ArimaxModel.train(frame, "y", List("visitors", "bogus", "incidentRate", "seasonality"), 1, 1, 1, 0)
+        ArimaxModel.train(frame, y_column, List("CO_GT", "bogus", "NMHC_GT", "C6H6_GT"), 1, 1, 1, 0)
       }
     }
 
@@ -80,65 +108,67 @@ class ArimaxModelTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
 
       // Train
-      val trainResult = ArimaxModel.train(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
     }
   }
+
   "predict" should {
 
     "throw an exception for a null frame" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
 
       intercept[IllegalArgumentException] {
         // This should throw an excpetion since frame is null
-        trainResult.predict(null, "y", List("visitors", "wkends", "incidentRate", "seasonality"))
+        trainResult.predict(null, y_column, x_columns)
       }
     }
 
     "throw an exception for a bad ts column name" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
 
       intercept[IllegalArgumentException] {
         // This should throw an excpetion since there is no "ts" column
-        trainResult.predict(frame, "ts", List("visitors", "wkends", "incidentRate", "seasonality"))
+        trainResult.predict(frame, "ts", x_columns)
       }
     }
 
     "throw an exception for a bad x column name" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
 
       intercept[IllegalArgumentException] {
         // This should throw an excpetion since there is no "bogus" column
-        trainResult.predict(frame, "ts", List("visitors", "bogus", "incidentRate", "seasonality"))
+        trainResult.predict(frame, y_column, List("CO_GT", "bogus", "NMHC_GT", "C6H6_GT"))
       }
     }
 
     "throw an exception for a different number of x columns, compared to training" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
 
       intercept[IllegalArgumentException] {
-        // This should throw an excpetion since there is no "bogus" column
-        trainResult.predict(frame, "ts", List("visitors", "wkends", "incidentRate"))
+        // This should throw an excpetion since we are predicting with a different number of columns
+        trainResult.predict(frame, y_column, List("CO_GT", "NMHC_GT", "C6H6_GT"))
       }
     }
 
     "add a predicted_y column when passed valid parameters" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val trainResult = ArimaxModel.train(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"), 1, 1, 1, 0)
+      val trainResult = ArimaxModel.train(frame, y_column, x_columns, 1, 1, 1, 0)
 
       // Predict
-      val predictResult = trainResult.predict(frame, "y", List("visitors", "wkends", "incidentRate", "seasonality"))
+      val predictResult = trainResult.predict(frame, y_column, x_columns)
 
       // Check for predicted_y column
-      assert(predictResult.schema.columnNames.sameElements(Vector("y", "visitors", "wkends", "incidentRate", "seasonality", "predicted_y")))
+      assert(predictResult.schema.columnNames.length == (frame.schema.columnNames.length + 1))
+      assert(predictResult.schema.hasColumn("predicted_y"))
     }
   }
 }
