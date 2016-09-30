@@ -91,7 +91,6 @@
                                 </goals>
                                 <configuration>
                                     <executable>bash</executable>
-                                    <!--<workingDirectory>${basedir}</workingDirectory>-->
                                     <arguments>
                                       <argument>package.sh</argument>
                                     </arguments>

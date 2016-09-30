@@ -16,9 +16,6 @@
             <id>python-package-regression-test</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
-                <property>
-                    <name>!NEVERSETME</name>
-                </property>
             </activation>
             <build>
                 <plugins>
