@@ -100,9 +100,15 @@ class RandomForest(sparktk_test.SparkTKTestCase):
             self.frame, "class", ["feat1", "feat2"], num_trees=-10)
 
     def test_num_trees_0(self):
-        """Negative trst for num_trees=0"""
+        """Negative test for num_trees=0"""
         model = self.context.models.classification.random_forest_classifier.train(
             self.frame, "class", ["feat1", "feat2"], num_trees=0)
+
+    def test_invalid_feature_subset_category(self):
+        """Negative test for feature subset category"""
+        model = self.context.models.classification.random_forest_classifier.train(
+            self.frame, "class", ["feat1", "feat2"]
+            feature_subset_category="any")
 
     @unittest.skip("not implemented")
     def test_rand_forest_publish(self):
