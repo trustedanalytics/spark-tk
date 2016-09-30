@@ -500,6 +500,8 @@
                     <py>PYTHON_STYLE</py>
                 </mapping>
               <excludes combine.children="append">
+                <exclude>zinc-0.3.7/</exclude>  
+                <exclude>regression-tests/datasets/</exclude>  
                 <exclude>python.xml</exclude>
                 <exclude>integration-tests/tests/sandbox</exclude>
                 <exclude>findbugs-exclude.xml</exclude>
