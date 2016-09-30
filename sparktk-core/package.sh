@@ -20,10 +20,21 @@ WD=target/
 
 MODULE=sparktk-core
 
+PYTHON_PKG=$(find `pwd`/../python/dist/ -name "sparktk-*.tar.gz")
+
 pushd $WD
 
 	mkdir -p $MODULE/dependencies
-	
+    mkdir -p $MODULE/python
+
+    cp ../install.sh $MODULE/
+
+    cp ../version.scala $MODULE/
+
+    cp ../setup.py $MODULE/python/
+
+	cp $PYTHON_PKG $MODULE/python/
+
 	cp sparktk-core*.jar $MODULE/
 
     for source in `find \`pwd\` -iname "*sources.jar"`
