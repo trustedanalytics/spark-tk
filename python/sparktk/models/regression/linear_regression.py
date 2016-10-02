@@ -51,6 +51,8 @@ def train(frame,
     :param tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
     :return: (LinearRegressionModel) A trained linear regression model
     """
+    if frame is None:
+        raise ValueError("frame can not be None")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)

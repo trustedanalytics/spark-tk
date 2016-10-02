@@ -35,6 +35,9 @@ def train(frame, columns, mean_centered=True, k=None):
     :param k: (int) Principal component count. Default is the number of observation columns.
     :return: (PcaModel) The trained PCA model
     """
+    if frame is None:
+        raise ValueError("frame can not be None")
+
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_columns = tc.jutils.convert.to_scala_vector_string(columns)

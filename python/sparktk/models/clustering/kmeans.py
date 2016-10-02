@@ -40,6 +40,8 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     :return: (KMeansModel) trained KMeans model
 
     """
+    if frame is None:
+        raise ValueError("frame can not be None")
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     if isinstance(columns, basestring):

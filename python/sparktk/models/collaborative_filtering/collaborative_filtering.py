@@ -58,6 +58,8 @@ def train(frame,
     :param target_rmse: (double) target RMSE
     :return: (CollaborativeFilteringModel) A trained collaborative filtering model
     """
+    if frame is None:
+        raise ValueError("frame can not be None")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)

@@ -72,6 +72,9 @@ def train(frame,
 
 
     """
+    if frame is None:
+        raise ValueError("frame can not be None")
+
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     seed = int(os.urandom(2).encode('hex'), 16) if seed is None else seed
