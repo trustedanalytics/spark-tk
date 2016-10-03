@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.dtypes import dtypes
 
 
@@ -80,6 +97,15 @@ class JConvert(object):
     def from_scala_vector(self, vector):
         return list(self.scala.scalaVectorToPython(vector))
 
+    def from_scala_matrix(self, matrix):
+        result = self.scala.scalaMatrixToPython(matrix)
+        python_list = list(result)
+        return [list(py_list) for py_list in python_list]
+
     def to_scala_group_by_aggregation_args(self, python_map):
         scala_map = self.to_scala_map(python_map)
         return self.sc._jvm.org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupByAggregationArgs(scala_map)
+
+    def combine_scala_maps(self, python_list_of_scala_maps):
+        scala_list = self.to_scala_list(python_list_of_scala_maps)
+        return self.scala.combineScalaMap(scala_list)
