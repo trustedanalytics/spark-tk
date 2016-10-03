@@ -68,6 +68,7 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result
         files = []
+        count = 0
         print "hdfs dataset path: " + str(self.dataset)
         print "image directory: " + str(self.image_directory)
         for filename in sorted([f for f in os.listdir(self.image_directory)]):
@@ -79,6 +80,8 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         # and ensure that they match
         image_pandas = self.dicom.pixeldata.to_pandas()
         for (dcm_image, pixel_image) in zip(image_pandas["imagematrix"], files):
+            print "count: " + str(count)
+            count = count + 1
             numpy.testing.assert_equal(pixel_image, dcm_image)
 
     def test_import_dicom_invalid_files(self):
