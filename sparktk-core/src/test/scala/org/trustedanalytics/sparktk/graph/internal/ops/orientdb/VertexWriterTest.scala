@@ -46,12 +46,12 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
       GraphFrame(v, e)
     }
     "create OrientDB vertex" in {
-      val schemaWriter = new SchemaWriter(orientMemoryGraph)
-      schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
+      val schemaWriter = new SchemaWriter
+      schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
       val vertexWriter = new VertexWriter(orientMemoryGraph)
       friends.vertices.collect().foreach(row => {
         //method under test
-        vertexWriter.create(verticesClassName, row)
+        vertexWriter.create(row)
       })
       //validate the results
       val namePropValue: Any = orientMemoryGraph.getVertices("id_", "a").iterator().next().getProperty("name")
@@ -61,17 +61,16 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
     }
 
     "find a vertex" in {
-      val schemaWriter = new SchemaWriter(orientMemoryGraph)
-      schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
+      val schemaWriter = new SchemaWriter
+      schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
       val vertexWriter = new VertexWriter(orientMemoryGraph)
       friends.vertices.collect().foreach(row => {
-        vertexWriter.create(verticesClassName, row)
+        vertexWriter.create(row)
       })
       //method under test
-      val vertex = vertexWriter.find("a", verticesClassName)
+      val vertex = vertexWriter.find("a")
       //validate the results
-      val agePropValue: Any = orientMemoryGraph.getVertices("id_", "a").iterator().next().getProperty("age")
-      assert(agePropValue == 34)
+      assert(vertex.get.getProperty[Int]("age") == 34)
     }
   }
 
