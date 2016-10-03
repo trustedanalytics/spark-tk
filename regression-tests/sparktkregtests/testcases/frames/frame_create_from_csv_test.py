@@ -58,7 +58,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
     def test_given_schema_is_honored(self):
         schema = [("num1", float), ("letter", str), ("num2", int)]
         frame = self.context.frame.import_csv(self.dataset, schema=schema)
-        for row in frame.take(frame.count()).data:
+        for row in frame.take(frame.count()):
             self.assertEqual(type(row[0]), float)
 
     @unittest.skip("import_csv invalid schema error message not helpful")
@@ -95,7 +95,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
                          ("shell", str)]
 
         # here we are getting the lines from the csv file from hdfs
-        data_file = open("../../../datasets/passwd.csv")
+        data_file = open(self.get_local_dataset("passwd.csv"))
         lines = data_file.readlines()
 
         # now we put the csv file into an array for comparison
@@ -111,7 +111,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         # the csv file, we check for length and content
         self.assertEqual(len(passwd_frame.take(1)[0]),
                          len(passwd_schema))
-        passwd_frame_rows = passwd_frame.take(passwd_frame.count()).data
+        passwd_frame_rows = passwd_frame.take(passwd_frame.count())
 
         for frame_row, csv_row in zip(passwd_frame_rows, csv_list):
             for frame_item, csv_item in zip(frame_row, csv_row):
@@ -135,11 +135,11 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         tab_delim_frame = self.context.frame.import_csv(dataset_delimT,
                                                         schema=white_schema,
                                                         delimiter='\t')
-        self.assertEqual(len(tab_delim_frame.take(1).data[0]),
+        self.assertEqual(len(tab_delim_frame.take(1)[0]),
                          len(white_schema))
 
         # now we get the lines of data from the csv file for comparison
-        data_file = open("../../../datasets/delimTest1.tsv")
+        data_file = open(self.get_local_dataset("delimTest1.tsv"))
         lines = data_file.readlines()
 
         # we store the lines in an array
@@ -148,7 +148,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # finally we extract the data from the frame and compare it to
         # what we got from reading the csv file directly
-        delim_frame_data = tab_delim_frame.take(tab_delim_frame.count()).data
+        delim_frame_data = tab_delim_frame.take(tab_delim_frame.count())
 
         for (frame_row, csv_line) in zip(delim_frame_data, numpy.array(csv_list)):
             for (frame_item, csv_item) in zip(frame_row, csv_line):

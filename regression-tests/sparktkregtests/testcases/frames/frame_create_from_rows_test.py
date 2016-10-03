@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests import_csv functionality with varying parameters"""
 
 import unittest
@@ -24,10 +41,10 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.create(self.dataset,
                                           schema=self.schema)
         self.assertEqual(frame.count(), len(self.dataset))
-        self.assertEqual(len(frame.take(3).data), 3)
+        self.assertEqual(len(frame.take(3)), 3)
         # test to see if taking more rows than exist still
         # returns only the right number of rows
-        self.assertEqual(len(frame.take(10).data), len(self.dataset))
+        self.assertEqual(len(frame.take(10)), len(self.dataset))
 
     @unittest.skip("frame.create does not throw an error with duplicate schema col names")
     def test_schema_duplicate_names_diff_type(self):
@@ -84,7 +101,7 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         schema = [("C0", float), ("C1", float), ("C2", float)]
         dataset = [(0, 3, 5), (5, 9, 9)]
         frame = self.context.frame.create(dataset, schema=schema)
-        for row in frame.take(frame.count()).data:
+        for row in frame.take(frame.count()):
             for item in row:
                 self.assertEqual(str(type(item)), "float")
 
@@ -129,7 +146,7 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         # since ints and floats can be cast to string
         # it should not error but should cast all of the data to strings
         frame = self.context.frame.create(self.dataset, schema=schema, validate_schema=True)
-        for row in frame.take(frame.count()).data:
+        for row in frame.take(frame.count()):
             # the data should all be cast to str by validate_schema=True
             for item in row:
                 self.assertEqual(type(item), str)
