@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame
 
 import java.util.{ ArrayList => JArrayList }
@@ -388,7 +403,7 @@ object SchemaHelper {
    * @param schema List of schema to be merged
    * @return true if schemas can be merged, false otherwise
    */
-  def isMergeable(schema: Schema*): Boolean = {
+  def validateIsMergeable(schema: Schema*): Boolean = {
     def merge(schema_l: Schema, schema_r: Schema): Schema = {
       require(schema_l.columnNames.intersect(schema_r.columnNames).isEmpty, "Schemas have conflicting column names." +
         s" Please rename before merging. Left Schema: ${schema_l.columnNamesAsString} Right Schema: ${schema_r.columnNamesAsString}")

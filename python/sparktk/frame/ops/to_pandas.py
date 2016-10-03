@@ -1,18 +1,35 @@
+# vim: set encoding=utf-8
 
-def download(self, n=100, offset = 0, columns=None):
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+
+def to_pandas(self, n=None, offset=0, columns=None):
     """
-    Download frame data from the server into client workspace as a pandas dataframe.
+    Brings data into a local pandas dataframe.
 
     Similar to the 'take' function, but puts the data into a pandas dataframe.
 
     Parameters
     ----------
 
-    :param n: (Optional(int)) The number of rows to download to the client from the frame (warning: do not overwhelm]
-              this client by downloading too much).  Defaults to 100.
+    :param n: (Optional(int)) The number of rows to get from the frame (warning: do not overwhelm the python session
+                    by taking too much)
     :param offset: (Optional(int)) The number of rows to skip before copying.  Defaults to 0.
     :param columns: (Optional(List[str])) Column filter.  The list of names to be included.  Default is all columns.
-    :return: (pandas.DataFrame) A new pandas dataframe object containing the downloaded frame data.
+    :return: (pandas.DataFrame) A new pandas dataframe object containing the taken frame data.
 
     Examples
     --------
@@ -36,11 +53,11 @@ def download(self, n=100, offset = 0, columns=None):
         >>> frame.schema
         [('name', <type 'str'>), ('phone', <type 'str'>)]
 
-    The frame download() method is used to get a pandas DataFrame that contains the data from the spark-tk frame.  Note
-    that since no parameters are provided when download() is called, the default values are used for the number of rows
-    downloaded, the row offset, and the columns that were downloaded.
+    The frame to_pandas() method is used to get a pandas DataFrame that contains the data from the spark-tk frame.  Note
+    that since no parameters are provided when to_pandas() is called, the default values are used for the number of
+    rows, the row offset, and the columns.
 
-        >>> pandas_frame = frame.download()
+        >>> pandas_frame = frame.to_pandas()
         >>> pandas_frame
                name     phone
         0      Fred  555-1234
@@ -53,7 +70,9 @@ def download(self, n=100, offset = 0, columns=None):
         import pandas
     except:
         raise RuntimeError("pandas module not found, unable to download.  Install pandas or try the take command.")
-    result = self.take(n, offset, columns)
+    from sparktk.frame.ops.take import take_rich
+
+    result = take_rich(self, n, offset, columns)
     headers, data_types = zip(*result.schema)
     frame_data = result.data
 

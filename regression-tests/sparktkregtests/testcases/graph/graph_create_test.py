@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Construct a non-bipartite graph. Tests the graph creation"""
 
 import unittest
@@ -7,7 +24,7 @@ from sparktkregtests.lib import sparktk_test
 
 class GraphCreate(sparktk_test.SparkTKTestCase):
 
-    edge_baseline = [[1, 2, 1], [2, 3, 1], [1, 4, 1],
+    edge_baseline = [[1, 2, 1], [2, 3, 1], [1, 4, 1], [5, 1, 1],
                      [3, 4, 1], [4, 5, 1], [4, 6, 1], [5, 6, 1]]
 
     vertex_baseline = [[1, 0.0, ".333"], [2, 0.0, "0"], [3, 0.0, "0"],
@@ -35,8 +52,8 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
         vertices = graph.create_vertices_frame()
         edges = graph.create_edges_frame()
 
-        vertex_take = vertices.take(vertices.count()).data
-        edge_take = edges.take(edges.count()).data
+        vertex_take = vertices.take(vertices.count())
+        edge_take = edges.take(edges.count())
 
         self.assertEqual(6, graph.vertex_count())
 
@@ -53,8 +70,8 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
 
         vertices = new_graph.create_vertices_frame()
         edges = new_graph.create_edges_frame()
-        vertex_take = vertices.take(vertices.count()).data
-        edge_take = edges.take(edges.count()).data
+        vertex_take = vertices.take(vertices.count())
+        edge_take = edges.take(edges.count())
 
         self.assertEqual(6, new_graph.vertex_count())
 
@@ -68,9 +85,9 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
         graph_frame = graph.graphframe.degrees
         degree_frame = self.context.frame.create(graph_frame)
 
-        baseline = [[1, 2], [2, 2], [3, 2], [4, 4], [5, 2], [6, 2]]
+        baseline = [[1, 3], [2, 2], [3, 2], [4, 4], [5, 3], [6, 2]]
         self.assertItemsEqual(
-            baseline, degree_frame.take(degree_frame.count()).data)
+            baseline, degree_frame.take(degree_frame.count()))
 
     def test_graph_bad_src(self):
         """Test the underlying graphframe fails to build if missing src"""

@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb
 
 import org.apache.spark.sql.SQLContext
@@ -15,15 +30,15 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
       val sqlContext: SQLContext = new SQLContext(sparkContext)
       // Vertex DataFrame
       val v = sqlContext.createDataFrame(List(
-        ("g", "Gabby", 60))).toDF("id", "name", "age")
+        ("g", "Gabby", 60), ("c", "Roby", 60), ("b", "Bob", 30))).toDF("id", "name", "age")
       // Edge DataFrame
       val e = sqlContext.createDataFrame(List(
         ("a", "e", "friend"))).toDF("src", "dst", "relationship")
       GraphFrame(v, e)
     }
-    val schemaWriter = new SchemaWriter(orientMemoryGraph)
-    schemaWriter.vertexSchema(friends.vertices.schema, verticesClassName)
-    schemaWriter.edgeSchema(friends.edges.schema)
+    val schemaWriter = new SchemaWriter
+    schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
+    schemaWriter.edgeSchema(friends.edges, orientMemoryGraph)
   }
 
   override def afterEach() {

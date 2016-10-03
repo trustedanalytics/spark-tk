@@ -1,19 +1,18 @@
 /**
- * Copyright (c) 2015 Intel Corporation 
+ *  Copyright (c) 2016 Intel Corporation 
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.trustedanalytics.sparktk.models.timeseries.arima
 
 import org.apache.commons.lang.StringUtils
@@ -141,15 +140,19 @@ case class ArimaModel private[arima] (ts: DenseVector,
    *
    * @param futurePeriods Periods in the future to forecast (beyond length of time series that the model was
    *                      trained with)
+   * @param tsValues Optional list of time series values to use as the gold standard.  If time series values are not
+   *                 provided, the values used for training will be used for forecasting.
    * @return a series consisting of fitted 1-step ahead forecasts for historicals and then
    *         the number of future periods of forecasts. Note that in the future values error terms become
    *         zero and prior predictions are used for any AR terms.
    */
-  def predict(futurePeriods: Int): Seq[Double] = {
+  def predict(futurePeriods: Int, tsValues: Option[Seq[Double]] = None): Seq[Double] = {
     require(futurePeriods >= 0, "number of futurePeriods should be a positive value.")
 
+    val tsPredictValues = if (tsValues.isDefined) new DenseVector(tsValues.get.toArray) else ts
+
     // Call the ARIMA model to forecast values using the specified golden value
-    arimaModel.forecast(ts, futurePeriods).toArray
+    arimaModel.forecast(tsPredictValues, futurePeriods).toArray
   }
 
   /**

@@ -1,18 +1,24 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.frame.row import Row
+import sparktk.frame.schema as schema_helper
 
-from sparktk.frame.schema import is_mergeable
-
-    # @api
-    # @has_udf_arg
-    # @arg('func', 'UDF', "User-Defined Function (|UDF|) which takes the values in the row and produces a value, or "
-    #      "collection of values, for the new cell(s).")
-    # @arg('schema', 'tuple | list of tuples', "The schema for the results of the |UDF|, indicating the new column(s) to "
-    #      "add.  Each tuple provides the column name and data type, and is of the form (str, type).")
-    # @arg('columns_accessed', list, "List of columns which the |UDF| will access.  This adds significant performance "
-    #      "benefit if we know which column(s) will be needed to execute the |UDF|, especially when the frame has "
-    #      "significantly more columns than those being used to evaluate the |UDF|.")
-
-def add_columns(self, func, schema, columns_accessed=None):
+def add_columns(self, func, schema):
     """
     Add columns to current frame.
 
@@ -23,19 +29,12 @@ def add_columns(self, func, schema, columns_accessed=None):
 
     1.  The row |UDF| ('func') must return a value in the same format as
         specified by the schema.
-        See :doc:`/ds_apir`.
-    +   Unicode in column names is not supported and will likely cause the
-        drop_frames() method (and others) to fail!
 
     Parameters
     ----------
 
     :param func: (UDF) Function which takes the values in the row and produces a value, or collection of values, for the new cell(s).
     :param schema: (List[(str,type)]) Schema for the column(s) being added.
-    :param columns_accessed: (Optional[List[str]]) List of columns which the UDF will access. This adds significant
-            performance benefit if we know which column(s) will be needed to execute the UDF, especially when the
-            frame has significantly more columns than those being used to evaluate the UDF.
-
 
     Examples
     --------
@@ -107,16 +106,11 @@ def add_columns(self, func, schema, columns_accessed=None):
         [3]  Judy          0.54  Ju
 
 
-    **Optimization** - If we know up front which columns our row function will access, we
-    can tell add_columns to speed up the execution by working on only the limited feature
-    set rather than the entire row.
-
     Let's add a name based on tenure percentage of age.  We know we're only going to use
     columns 'name' and 'of_age'.
 
         >>> frame.add_columns(lambda row: percentage_of_string(row.name, row.of_age),
-        ...                   ('tenured_name_age', unicode),
-        ...                   columns_accessed=['name', 'of_age'])
+        ...                   ('tenured_name_age', unicode))
 
         >>> frame.inspect(round=2)
         [#]  name      age  tenure  phone     adult_years  of_age  of_adult
@@ -133,12 +127,11 @@ def add_columns(self, func, schema, columns_accessed=None):
         [2]  Thur          Thu
         [3]  Ju            J
 
-    More information on a row |UDF| can be found at :doc:`/ds_apir`
 
     """
-    # For further examples, see :ref:`example_frame.add_columns`.
 
-    is_mergeable(self._tc, self.schema, schema)
+    schema_helper.validate(schema)
+    schema_helper.validate_is_mergeable(self._tc, self.schema, schema)
 
     row = Row(self.schema)
 
