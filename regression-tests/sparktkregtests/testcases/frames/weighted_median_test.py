@@ -29,10 +29,10 @@ class WeightedMedians(sparktk_test.SparkTKTestCase):
         dataset1 = self.get_file("weight_median.csv")
         dataset2 = self.get_file("weighted_median_negative.csv")
 
-        self.frame_median = self.context.frame.import_csv(dataset1,
-                schema=[("x0", int), ("x1", int)])
-        self.frame_median2 = self.context.frame.import_csv(dataset2,
-                schema=[("x0", int), ("x1", int), ("x2", int)])
+        self.frame_median = self.context.frame.import_csv(
+            dataset1, schema=[("x0", int), ("x1", int)])
+        self.frame_median2 = self.context.frame.import_csv(
+            dataset2, schema=[("x0", int), ("x1", int), ("x2", int)])
 
     def test_non_weighted_median(self):
         """Non weighted median calculation on smaller dataset"""
@@ -54,7 +54,6 @@ class WeightedMedians(sparktk_test.SparkTKTestCase):
         weighted_median = self.frame_median2.column_median('x0', 'x1')
         self.assertEqual(weighted_median, 29289)
 
-    @unittest.skip("Weighted Median with Negative Weights does not error")
     def test_weighted_median_negative_weights(self):
         """Weighted median calculation where weights are negative integers"""
         weighted_median = self.frame_median2.column_median('x0', 'x2')
