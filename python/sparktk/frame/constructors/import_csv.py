@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.tkcontext import TkContext
 from pyspark.rdd import RDD
 from pyspark.sql.types import *
@@ -20,7 +37,10 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
     :param infer_schema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
                        It requires one extra pass over the data and is false by default.
     :param: schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
-                    columns specified in the schema must match the number of columns in the csv file provided.
+                    columns specified in the schema must match the number of columns in the csv file provided.  If the
+                    value from the csv file cannot be converted to the data type specified by the schema (for example,
+                    if the csv file has a string, and the schema specifies an int), the value will show up as missing
+                    (None) in the frame.
     :return: (Frame) Frame that contains the data from the csv file
 
     Examples
@@ -28,9 +48,9 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
     Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
     there is a header and to infer the schema based on the data.
 
-        >>> file_path = "../integration-tests/datasets/cities.csv"
+        >>> file_path = "../datasets/cities.csv"
 
-        >>> frame = tc.load_frame_from_csv(file_path, "|", header=True, infer_schema=True)
+        >>> frame = tc.frame.import_csv(file_path, "|", header=True, infer_schema=True)
         -etc-
 
         >>> frame.inspect()
@@ -48,12 +68,8 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         [9]    18  Redmond                27427            26215  4.62%   Deschutes
 
         >>> frame.schema
-        [('rank', int),
-         ('city', str),
-         ('population_2013', int),
-         ('population_2010', int),
-         ('change', str),
-         ('county', str)]
+        [('rank', <type 'int'>), ('city', <type 'str'>), ('population_2013', <type 'int'>), ('population_2010', <type 'int'>), ('change', <type 'str'>), ('county', <type 'str'>)]
+
     """
 
 

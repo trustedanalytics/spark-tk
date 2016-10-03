@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from setup import tc, rm, get_sandbox_path
 from sparktk import dtypes
 
@@ -35,6 +52,18 @@ def invalid_schema_type(tc):
         raise RuntimeError("Expected TypeError when passing a schema has incorrect tuple type.")
     except TypeError:
         pass
+
+    try:
+        tc.frame.create([[1,2,3]], schema=[("col0", int), ("col1", int), ("col0", int)])
+        raise RuntimeError("Expected ValueError due to invalid schema")
+    except ValueError as e:
+        assert("Invalid schema, column names cannot be duplicated: col0" in e.message)
+
+    try:
+        tc.frame.create([[1,2,3]], schema=["col0", "col1", "col0"])
+        raise RuntimeError("Expected ValueError due to invalid schema")
+    except ValueError as e:
+        assert("Invalid schema, column names cannot be duplicated: col0" in e.message)
 
 def test_create_frame_with_column_names(tc):
     """
@@ -99,20 +128,20 @@ def test_create_with_schema_validation(tc):
     row_count = frame.count()
     assert(row_count == 110)
     assert(frame.schema == [("C0", int)])
-    assert(len(frame.take(row_count).data) == frame.count())
+    assert(len(frame.take(row_count)) == frame.count())
     # Test use case where we have more than 100 rows, with a mix of integers and floats
     data = [[i] for i in xrange(0,55)] + [[i + .5] for i in xrange(0,55)]
     frame = tc.frame.create(data, validate_schema=True)
     row_count = frame.count()
     assert(row_count == 110)
     assert(frame.schema == [("C0", float)])
-    data = frame.take(row_count).data
+    data = frame.take(row_count)
     assert(len(data) == frame.count())
     assert(all(isinstance(row[0], float) for row in data))
     # Test use case where we have more than 100 rows of integers and then strings
     data = [[i] for i in xrange(0,100)] + [["xyz" + str(i)] for i in xrange(0,20)]
     frame = tc.frame.create(data, validate_schema=True)
-    values = frame.take(frame.count()).data
+    values = frame.take(frame.count())
     # The last 20 rows of "xyz" should be None since they can't be parsed to integers
     for item in values[100:len(values)]:
         assert(item == [None])
@@ -145,7 +174,7 @@ def test_frame_upload_raw_list_data(tc):
         data = [[1, 'one', [1.0, 1.1]], [2, 'two', [2.0, 2.2]], [3, 'three', [3.0, 3.3]]]
         schema = [('n', int), ('s', str), ('v', dtypes.vector(2))]
         frame = tc.frame.create(data, schema)
-        taken = frame.take(5).data
+        taken = frame.take(5)
         assert(len(data) == len(taken))
         for r, row in enumerate(taken):
             assert(len(data[r]) == len(row))

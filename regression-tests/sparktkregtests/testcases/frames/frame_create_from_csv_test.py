@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests import_csv functionality with varying parameters"""
 
 import csv
@@ -26,10 +43,10 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.import_csv(self.dataset,
                 schema=self.schema)
         self.assertEqual(frame.count(), 3)
-        self.assertEqual(len(frame.take(3).data), 3)
+        self.assertEqual(len(frame.take(3)), 3)
         # test to see if taking more rows than exist still
         # returns only the right number of rows
-        self.assertEqual(len(frame.take(10).data), 3)
+        self.assertEqual(len(frame.take(10)), 3)
 
     def test_schema_duplicate_names_diff_type(self):
         """CsvFile creation fails with duplicate names, different type."""
@@ -85,9 +102,9 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # finally we compare the frame data with what we got from reading
         # the csv file, we check for length and content
-        self.assertEqual(len(passwd_frame.take(1).data[0]),
+        self.assertEqual(len(passwd_frame.take(1)[0]),
                          len(passwd_schema))
-        passwd_frame_rows = passwd_frame.take(passwd_frame.count()).data
+        passwd_frame_rows = passwd_frame.take(passwd_frame.count())
         for (frame_row, array_row) in zip(passwd_frame_rows, csv_list):
             self.assertEqual(str(map(str, frame_row)), str(array_row))
 
@@ -103,7 +120,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         # create our frame and test that it has the right number of columns
         tab_delim_frame = self.context.frame.import_csv(dataset_delimT,
                 schema=white_schema, delimiter='\t')
-        self.assertEqual(len(tab_delim_frame.take(1).data[0]),
+        self.assertEqual(len(tab_delim_frame.take(1)[0]),
                          len(white_schema))
 
         # now we get the lines of data from the csv file for comparison
@@ -119,7 +136,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # finally we extract the data from the frame and compare it to
         # what we got from reading the csv file directly
-        delim_frame_rows = tab_delim_frame.take(tab_delim_frame.count()).data
+        delim_frame_rows = tab_delim_frame.take(tab_delim_frame.count())
         for (frame_row, array_row) in zip(delim_frame_rows, csv_list):
             # we must iterate through the items in each line
             # because they are of different data types
@@ -161,14 +178,14 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
         # the frame with the header should have one less row
         # because it should have skipped the first line
-        self.assertEqual(len(frame_with_header.take(frame_with_header.count()).data),
-                         len(frame_without_header.take(frame_without_header.count()).data) - 1)
+        self.assertEqual(len(frame_with_header.take(frame_with_header.count())),
+                         len(frame_without_header.take(frame_without_header.count())) - 1)
         # comparing the content of the frame with header and without
         # they should have the same rows with the only differnce being the
         # frame with the header should not have the first row
         for index in xrange(0, frame_with_header.count()):
-            self.assertEqual(str(frame_with_header.take(frame_with_header.count()).data[index]),
-                             str(frame_without_header.take(frame_without_header.count()).data[index + 1]))
+            self.assertEqual(str(frame_with_header.take(frame_with_header.count())[index]),
+                             str(frame_without_header.take(frame_without_header.count())[index + 1]))
 
     def test_without_schema(self):
         """Test import_csv without a specified schema"""

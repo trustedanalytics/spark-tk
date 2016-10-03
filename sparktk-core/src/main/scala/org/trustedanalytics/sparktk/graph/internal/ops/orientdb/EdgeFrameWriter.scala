@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
 import org.apache.spark.sql.DataFrame
@@ -13,10 +28,12 @@ class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf) extends Serial
 
   /**
    * exports edges data frame to OrientDB edges class
+   *
    * @param batchSize batch size
-   * @return the number of edges
+   * @param edgeTypeColumnName the given column name for edge type
+   * @return the number of exported edges
    */
-  def exportEdgeFrame(batchSize: Int): Long = {
+  def exportEdgeFrame(batchSize: Int, edgeTypeColumnName: Option[String] = None): Long = {
 
     val edgesCountRdd = edgeFrame.mapPartitions(iter => {
       var batchCounter = 0L
@@ -25,7 +42,7 @@ class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf) extends Serial
         val edgeWriter = new EdgeWriter(orientGraph)
         while (iter.hasNext) {
           val row = iter.next()
-          edgeWriter.create(row, GraphSchema.vertexTypeColumnName)
+          edgeWriter.create(row, edgeTypeColumnName)
           batchCounter += 1
           if (batchCounter % batchSize == 0 && batchCounter != 0) {
             orientGraph.commit()
