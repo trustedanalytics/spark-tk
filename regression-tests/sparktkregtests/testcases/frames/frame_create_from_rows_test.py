@@ -120,7 +120,6 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(Exception, "NoneType"):
             frame.inspect()
 
-    @unittest.skip("frame.create validate_schema does not cast data")
     def test_validate_schema_of_strs(self):
         """Test validate schema true with schema of strs"""
         schema = [("C0", str), ("C1", str), ("C2", str)]
@@ -129,7 +128,7 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         # datatype validate schema should just cast it
         # since ints and floats can be cast to string
         # it should not error but should cast all of the data to strings
-        frame = self.context.frame.create(self.dataset, schema=schema)
+        frame = self.context.frame.create(self.dataset, schema=schema, validate_schema=True)
         for row in frame.take(frame.count()).data:
             # the data should all be cast to str by validate_schema=True
             for item in row:

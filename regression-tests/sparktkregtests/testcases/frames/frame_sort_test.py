@@ -84,7 +84,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(
                 up_take.iloc[i]['hair_type'], sorted_vals.iloc[i]['hair_type'])
 
-    @unittest.skip("frame.sort does not allow tuples")
+    #@unittest.skip("frame.sort does not allow tuples")
     def test_frame_sort_multiple_column_tuple_descending(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort([("weight", False), ("hair_type", False)])
