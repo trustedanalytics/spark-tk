@@ -117,7 +117,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         for (i, j) in zip([0.5, -0.7, -0.24, 0.4], res.weights):
             self.assertAlmostEqual(i, j, places=4)
 
-        pd_res = predict.download(predict.count())
+        pd_res = predict.to_pandas(predict.count())
         for index, row in pd_res.iterrows():
             self.assertAlmostEqual(row["label"], row["predicted_value"], places=4)
 
