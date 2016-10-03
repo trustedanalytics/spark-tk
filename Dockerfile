@@ -56,7 +56,7 @@ WORKDIR /usr/src/app/spark-tk
 RUN pip install -r python/requirements.txt
 
 # BUILD SPARK-TK [ RUNS UNIT TESTS AND INTEGRATION TESTS ]
-RUN mvn clean install 
+RUN mvn clean install -q 
 
 # ADD SPARK-TK TO PYTHONPATH
 ENV PYTHONPATH /usr/src/app/spark-tk/python
