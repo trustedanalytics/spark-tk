@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives
 
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
@@ -24,15 +39,15 @@ trait ColumnMedianSummarization extends BaseFrame {
    *         so a column of longs will result in a ''long'' median and a column of floats will result in a
    *         ''float'' median.
    */
-  def columnMedian(dataColumn: String, weightsColumn: Option[String]): ColumnMedianReturn = {
+  def columnMedian(dataColumn: String, weightsColumn: Option[String]): Option[ColumnMedianReturn] = {
     execute(ColumnMedian(dataColumn, weightsColumn))
   }
 }
 
-case class ColumnMedian(dataColumn: String, weightsColumn: Option[String]) extends FrameSummarization[ColumnMedianReturn] {
+case class ColumnMedian(dataColumn: String, weightsColumn: Option[String]) extends FrameSummarization[Option[ColumnMedianReturn]] {
   require(dataColumn != null, "data column is required")
 
-  override def work(state: FrameState): ColumnMedianReturn = {
+  override def work(state: FrameState): Option[ColumnMedianReturn] = {
     val columnIndex = state.schema.columnIndex(dataColumn)
     val valueDataType = state.schema.columnDataType(dataColumn)
 
@@ -44,9 +59,15 @@ case class ColumnMedian(dataColumn: String, weightsColumn: Option[String]) exten
         Some((state.schema.columnIndex(weightsColumn.get), state.schema.columnDataType(weightsColumn.get)))
     }
 
-    ColumnStatistics.columnMedian(columnIndex, valueDataType, weightsColumnIndexAndType, state.rdd)
+    val ret = ColumnStatistics.columnMedian(columnIndex, valueDataType, weightsColumnIndexAndType, state.rdd)
+    ret match {
+      case None => None
+      case Some(value) => Some(ColumnMedianReturn(value))
+    }
   }
 }
+
+// This case class is because py4j can't serialize Any.
 
 /**
  * The median value of the (possibly weighted) column. None when the sum of the weights is 0.
@@ -58,3 +79,4 @@ case class ColumnMedian(dataColumn: String, weightsColumn: Option[String]) exten
  * @param value The median. None if the net weight of the column is 0.
  */
 case class ColumnMedianReturn(value: Any)
+
