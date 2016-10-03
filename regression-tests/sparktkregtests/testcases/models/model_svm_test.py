@@ -403,15 +403,6 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                          "model_class",
                                                          ["x", "y"])
 
-        # Degenerate training set
-        train_lattice = ["0"]
-
-        training_frame = self.lattice2frame(train_lattice)
-
-        self.context.models.classification.svm.train(training_frame,
-                                                     "model_class",
-                                                     ["x", "y"])
-
 
 if __name__ == "__main__":
     unittest.main()
