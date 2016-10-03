@@ -47,17 +47,17 @@ class Dicom(object):
         #dispaly
         <skip>
         >>> pixeldata
-        TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
         [ 0.,  7.,  6., ...,  5.,  6.,  7.],
         ...,
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
         </skip>
 
         #Access ndarray
-        >>> image_ndarray= pixeldata.data[0][1]
+        >>> image_ndarray= pixeldata[0][1]
 
         >>> type(image_ndarray)
         <type 'numpy.ndarray'>
@@ -88,15 +88,15 @@ class Dicom(object):
         #Order may differ when you load back dicom object
 
         >>> load_pixeldata
-        TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
         [ 0.,  7.,  6., ...,  5.,  6.,  7.],
         ...,
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
 
-        >>> load_image_ndarray= load_pixeldata.data[0][1]
+        >>> load_image_ndarray= load_pixeldata[0][1]
 
         >>> type(load_image_ndarray)
         <type 'numpy.ndarray'>

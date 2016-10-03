@@ -19,7 +19,7 @@ package org.trustedanalytics.sparktk.models
 import java.io._
 import java.net.URLClassLoader
 import java.nio.file.{ Path, Files }
-import java.util
+import java.util.Scanner
 import java.util.zip.ZipInputStream
 
 import org.apache.commons.io.FileUtils
@@ -51,10 +51,6 @@ class SparkTkModelAdapter() extends ModelReader {
    */
   override def read(modelZipStreamInput: ZipInputStream, classLoader: URLClassLoader, jsonMap: Map[String, String]): Model = {
     logger.info("Sparktk model Adapter called")
-    println("***************************************************")
-    val ur = classLoader.getURLs
-    ur.foreach { u => println(u) }
-    println("***************************************************")
     val sparktkObject = classLoader.loadClass(jsonMap(MODEL_NAME) + "$").getField("MODULE$").get(null).asInstanceOf[TkSaveableObject]
 
     val sc = createSimpleContext()
@@ -73,6 +69,7 @@ class SparkTkModelAdapter() extends ModelReader {
     val conf = new SparkConf()
       .setAppName("simple")
       .setMaster("local[1]")
+      .set("spark.ui.enabled", "false")
       .set("spark.hadoop.fs.default.name", "file:///")
     val sc = new SparkContext(conf)
     new TkContext(new JavaSparkContext(sc))
@@ -85,43 +82,73 @@ class SparkTkModelAdapter() extends ModelReader {
    */
   private def getModelPath(modelZipStreamInput: ZipInputStream): String = {
     var tmpDir: Path = null
-    val readBuffer = new Array[Byte](4096)
+    val bytesIn = new Array[Byte](4096)
+    var fileStr: String = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring")
+      println(tmpDir)
       var entry = modelZipStreamInput.getNextEntry
       while (entry != null) {
         val individualFile = entry.getName
         //only unzip the dir containing the model
-        if (!individualFile.contains(".jar") || !individualFile.contains(".json")) {
-          val file = new File(tmpDir.toString, individualFile)
-          file.createNewFile()
-
-          if (individualFile.endsWith("/")) {
-            file.mkdirs()
-            println("making dir")
+        if (!individualFile.contains(".jar") && !individualFile.contains(".json")) {
+          if (individualFile.contains("metadata")) {
+            fileStr = tmpDir + "/metadata"
+          }
+          else if (individualFile.contains("data")) {
+            fileStr = tmpDir + "/data"
+          }
+          else if (individualFile.contains("tk")) {
+            fileStr = tmpDir + "/tk"
           }
           else {
-            val parent = file.getParentFile
-            if (parent != null) {
-              parent.mkdirs()
-              println("making parent dir")
-            }
-            val fileoutStream = new FileOutputStream(file)
-            var read = modelZipStreamInput.read(readBuffer)
-            while (read != -1) {
-              fileoutStream.write(readBuffer, 0, read)
-              read = modelZipStreamInput.read(readBuffer)
-            }
-            fileoutStream.close
+            //log error
           }
+          println(fileStr)
+          Files.createDirectories(new File(fileStr).toPath)
+          val file = individualFile.toString.substring(individualFile.toString.lastIndexOf("/") + 1, individualFile.toString.length)
+          println(file)
+          val bufferedOutStream = new BufferedOutputStream(new FileOutputStream(fileStr + "/" + file))
+          var read = modelZipStreamInput.read(bytesIn)
+          while (read != -1) {
+            bufferedOutStream.write(bytesIn, 0, read)
+            read = modelZipStreamInput.read(bytesIn)
+          }
+          bufferedOutStream.flush()
+          bufferedOutStream.close()
         }
+        val s = new Scanner(System.in)
+        val i = s.nextInt()
         entry = modelZipStreamInput.getNextEntry
       }
-
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
     }
-    ""
+    return tmpDir.toString
+  }
+
+  private def extractFile(zipIn: ZipInputStream, tempDir: String, filePath: String): Unit = {
+    var file: File = null
+    //val fileName = filePath.substring(filePath.lastIndexOf("/") + 1)
+    var bufferedOutStream: BufferedOutputStream = null
+    val bytesIn = new Array[Byte](4096)
+
+    try {
+      file = new File(tempDir, filePath)
+      file.createNewFile()
+
+      bufferedOutStream = new BufferedOutputStream(new FileOutputStream(file))
+      var read = zipIn.read(bytesIn)
+      while (read != -1) {
+        bufferedOutStream.write(bytesIn, 0, read)
+        read = zipIn.read(bytesIn)
+      }
+    }
+    finally {
+      val s = new Scanner(System.in)
+      val i = s.nextInt()
+      bufferedOutStream.close()
+    }
   }
 }

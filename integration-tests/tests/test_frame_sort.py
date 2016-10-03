@@ -19,14 +19,14 @@ def test_frame_sort_mixed_directions(tc):
     frame._scala
     assert(frame._is_scala)
     frame.sort(sort_directions)
-    assert(frame.take(frame.count()).data == expected_sort)
+    assert(frame.take(frame.count()) == expected_sort)
 
     # Create frame, and sort when backend rdd is python
     frame = tc.frame.create(data)
     frame._python
     assert(frame._is_python)
     frame.sort(sort_directions)
-    assert(frame.take(frame.count()).data == expected_sort)
+    assert(frame.take(frame.count()) == expected_sort)
 
 def test_frame_sort_same_direction(tc):
     """
@@ -44,25 +44,25 @@ def test_frame_sort_same_direction(tc):
     frame._scala
     assert(frame._is_scala)
     frame.sort(sort_directions)
-    assert(frame.take(frame.count()).data == expected_sort)
+    assert(frame.take(frame.count()) == expected_sort)
 
     # Do the same as above, except specify column names as a list instead of list of tuples
     frame = tc.frame.create(data)
     frame._scala
     assert(frame._is_scala)
     frame.sort(["C0", "C2"], True)
-    assert(frame.take(frame.count()).data == expected_sort)
+    assert(frame.take(frame.count()) == expected_sort)
 
     # Create frame, and sort when backend rdd is python
     frame = tc.frame.create(data)
     frame._python
     assert(frame._is_python)
     frame.sort(sort_directions)
-    assert(frame.take(frame.count()).data == expected_sort)
+    assert(frame.take(frame.count()) == expected_sort)
 
     # Do the same as above, except specify column names as a list instead of list of tuples
     frame = tc.frame.create(data)
     frame._python
     assert(frame._is_python)
     frame.sort(["C0", "C2"], True)
-    assert(frame.take(frame.count()).data == expected_sort)
+    assert(frame.take(frame.count()) == expected_sort)

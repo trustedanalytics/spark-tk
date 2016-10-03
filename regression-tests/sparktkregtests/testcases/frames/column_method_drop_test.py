@@ -56,21 +56,21 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(
             lambda row: dummy_int_val, ('product', int))
 
-        col_count = len(self.frame.take(1).data[0])
+        col_count = len(self.frame.take(1)[0])
         self.frame.drop_columns(['int'])
         self.assertNotIn('int', self.frame.column_names)
-        self.assertEqual(col_count-1, len(self.frame.take(1).data[0]))
+        self.assertEqual(col_count-1, len(self.frame.take(1)[0]))
 
     def test_drop_columns_multiple(self):
         """Test drop columns multiple, repeated"""
         self.frame.add_columns(
             lambda row: dummy_int_val, ('product', int))
 
-        col_count = len(self.frame.take(1).data[0])
+        col_count = len(self.frame.take(1)[0])
         self.frame.drop_columns(['str', 'product', 'str'])
         self.assertNotIn('str', self.frame.column_names)
         self.assertNotIn('product', self.frame.column_names)
-        self.assertEqual(col_count-2, len(self.frame.take(1).data[0]))
+        self.assertEqual(col_count-2, len(self.frame.take(1)[0]))
 
     @unittest.skip("dropping no columns should not error")
     def test_drop_zero_columns(self):

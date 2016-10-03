@@ -32,7 +32,7 @@ class ConnectedComponents(sparktk_test.SparkTKTestCase):
         components = self.graph.connected_components()
         components.add_columns(
             lambda x: x['Vertex'].split('_')[1], ("element", str))
-        frame = components.download(components.count())
+        frame = components.to_pandas(components.count())
         group = frame.groupby('Component').agg(lambda x: x.nunique())
 
         # Each component should only have 1 element value, the name of the

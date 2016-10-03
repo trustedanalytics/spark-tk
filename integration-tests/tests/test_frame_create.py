@@ -111,20 +111,20 @@ def test_create_with_schema_validation(tc):
     row_count = frame.count()
     assert(row_count == 110)
     assert(frame.schema == [("C0", int)])
-    assert(len(frame.take(row_count).data) == frame.count())
+    assert(len(frame.take(row_count)) == frame.count())
     # Test use case where we have more than 100 rows, with a mix of integers and floats
     data = [[i] for i in xrange(0,55)] + [[i + .5] for i in xrange(0,55)]
     frame = tc.frame.create(data, validate_schema=True)
     row_count = frame.count()
     assert(row_count == 110)
     assert(frame.schema == [("C0", float)])
-    data = frame.take(row_count).data
+    data = frame.take(row_count)
     assert(len(data) == frame.count())
     assert(all(isinstance(row[0], float) for row in data))
     # Test use case where we have more than 100 rows of integers and then strings
     data = [[i] for i in xrange(0,100)] + [["xyz" + str(i)] for i in xrange(0,20)]
     frame = tc.frame.create(data, validate_schema=True)
-    values = frame.take(frame.count()).data
+    values = frame.take(frame.count())
     # The last 20 rows of "xyz" should be None since they can't be parsed to integers
     for item in values[100:len(values)]:
         assert(item == [None])
@@ -157,7 +157,7 @@ def test_frame_upload_raw_list_data(tc):
         data = [[1, 'one', [1.0, 1.1]], [2, 'two', [2.0, 2.2]], [3, 'three', [3.0, 3.3]]]
         schema = [('n', int), ('s', str), ('v', dtypes.vector(2))]
         frame = tc.frame.create(data, schema)
-        taken = frame.take(5).data
+        taken = frame.take(5)
         assert(len(data) == len(taken))
         for r, row in enumerate(taken):
             assert(len(data[r]) == len(row))

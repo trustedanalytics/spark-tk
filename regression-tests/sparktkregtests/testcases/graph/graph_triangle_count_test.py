@@ -32,13 +32,13 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
 
         result = self.graph.triangle_count()
 
-        triangles = result.download(result.count())
-        # Create a dictionary of triangle count per node:
+        triangles = result.to_pandas(result.count())
+        # Create a dictionary of triangle count per triangle:
         dictionary_of_triangle_count = {i['Vertex']: (i['Triangles'])
                                         for (_, i) in triangles.iterrows()}
 
         edge_list = self.frame.take(
-            n=self.frame.count(), columns=['src', 'dst']).data
+            n=self.frame.count(), columns=['src', 'dst'])
 
         # build the network x result
         g = nx.Graph()

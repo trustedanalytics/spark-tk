@@ -19,11 +19,11 @@ class ecdfTest(sparktk_test.SparkTKTestCase):
                                                schema=schema)
 
     def validate_ecdf(self):
-        # call sparktk ecdf function on the data and download result
+        # call sparktk ecdf function on the data and get as pandas df
         ecdf_sparktk_result = self.frame.ecdf("C0")
-        pd_ecdf = ecdf_sparktk_result.download(ecdf_sparktk_result.row_count)
-        # download the original frame so we can calculate our own result
-        pd_original_frame = self.frame.download(self.frame.row_count)
+        pd_ecdf = ecdf_sparktk_result.to_pandas(ecdf_sparktk_result.row_count)
+        # get the original frame as pandas df so we can calculate our own result
+        pd_original_frame = self.frame.to_pandas(self.frame.row_count)
 
         # the formula for calculating ecdf is
         # F(x) = 1/n * sum from 1 to n of I(x_i)
