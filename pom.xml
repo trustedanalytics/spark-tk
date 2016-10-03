@@ -503,6 +503,7 @@
                 <exclude>zinc-0.3.7/</exclude>  
                 <exclude>regression-tests/datasets/</exclude>  
                 <exclude>python.xml</exclude>
+                <exclude>integration-tests/tests/test_docs_generated.py</exclude>
                 <exclude>integration-tests/tests/sandbox</exclude>
                 <exclude>findbugs-exclude.xml</exclude>
                 <exclude>regression-tests/dist/</exclude>
