@@ -70,7 +70,7 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
                                                                      ['f1', 'f2', 'f3'])
 
         model.predict(self.frame, ['f1', 'f2', 'f3'])
-        analysis = self.frame.download()
+        analysis = self.frame.to_pandas()
         for index, row in analysis.iterrows():
             self.assertEqual(row["predicted_class"], row["label"])
 
