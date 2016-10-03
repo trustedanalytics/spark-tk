@@ -169,7 +169,6 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                          k=5, max_iter=[])
             kmodel.predict(self.frame_test, columns=["Vec1", "Vec2"])
 
-    @unittest.skip("Model training with null frame should give a useful exception message")
     def test_null_frame(self):
         """Check error on null frame."""
         with self.assertRaisesRegexp(Exception, "foo"):
