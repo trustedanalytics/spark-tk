@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Sets up Spark Context"""
 
 import os
@@ -44,7 +61,19 @@ def get_jars_and_classpaths(dirs):
     :return: (jars, classpath)
     """
     classpath = ':'.join(["%s/*" % d for d in dirs])
-    jar_files = [os.path.join(d, f) for d in dirs for f in os.listdir(d) if f.endswith('.jar')]
+
+    # list of tuples with the directory and jar file
+    dir_jar = [(d, f) for d in dirs for f in os.listdir(d) if f.endswith('.jar')]
+
+    # Get jar file list without any duplicate jars (use the one from the first directory it's found in).  If
+    # we don't remove duplicates, we get warnings about the jar already having been registered.
+    distinct_jars = set()
+    jar_files = []
+    for dir, jar in dir_jar:
+        if jar not in distinct_jars:
+            jar_files.append(os.path.join(dir, jar))
+            distinct_jars.add(jar)
+
     jars = ','.join(jar_files)
     return jars, classpath
 
@@ -170,13 +199,13 @@ def set_env_for_sparktk(spark_home=None,
         set_env('SPARK_JAVA_OPTS', details)
 
 
-def create_sc(other_libs=None,
-              master=None,
+def create_sc(master=None,
               py_files=None,
               spark_home=None,
               sparktk_home=None,
               pyspark_submit_args=None,
               app_name="sparktk",
+              other_libs=None,
               extra_conf=None,
               use_local_fs=False,
               debug=None):
@@ -185,16 +214,19 @@ def create_sc(other_libs=None,
 
     Many parameters can be overwritten
 
-    :param other_libs: other libraries that will be used along with spark-tk, which need to be added to the class path
-    :param master: spark master setting
-    :param py_files: list of str of paths to python dependencies; Note the the current python
+    :param master: (str) spark master setting; for ex. 'local[4]' or 'yarn-client'
+    :param py_files: (list) list of str of paths to python dependencies; Note the the current python
     package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
-    :param spark_home: override $SPARK_HOME
-    :param sparktk_home: override $SPARKTK_HOME
-    :param app_name: name of spark app
-    :param extra_conf: dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
-    :param use_local_fs: simpler way to specify using local file system, rather than hdfs or other
-    :param debug: provide an port address to attach a debugger to the JVM that gets started
+    :param spark_home: (str) override $SPARK_HOME, the location of spark
+    :param sparktk_home: (str) override $SPARKTK_HOME, the location of spark-tk
+    :param pyspark_submit_args: (str) extra args passed to the pyspark submit
+    :param app_name: (str) name of spark app that will be created
+    :param other_libs: (list) other libraries (actual packages/modules) that are compatible with spark-tk,
+                       which need to be added to the spark context.  These libraries must be developed for usage with
+                       spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+    :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
+    :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
     :return: pyspark SparkContext
     """
 
@@ -251,6 +283,7 @@ def _validate_other_libs(other_libs):
         if not isinstance(other_libs, list):
             other_libs = [other_libs]
         import types
+        # todo: formalize and document the 'other_libs' for integration with spark-tk
         required_functions = ["get_loaders","get_main_object","get_library_dirs"]
         for lib in other_libs:
             if not isinstance(lib, types.ModuleType):

@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Test column naming and quantity of joins"""
 import unittest
 import sys
@@ -49,8 +66,8 @@ class JoinTest(sparktk_test.SparkTKTestCase):
     def test_type_int32(self):
         """Test join on int32"""
         joined_frame = self.frame.join_inner(self.frame, "idnum")
-        pd_joined_sparktk = joined_frame.download(joined_frame.count())
-        pd_df = self.frame.download(self.frame.count())
+        pd_joined_sparktk = joined_frame.to_pandas(joined_frame.count())
+        pd_df = self.frame.to_pandas(self.frame.count())
         joined_pd = pd_df.merge(
             pd_df, on='idnum', suffixes=('_L', '_R'), how='inner')
         del pd_joined_sparktk['idnum']
