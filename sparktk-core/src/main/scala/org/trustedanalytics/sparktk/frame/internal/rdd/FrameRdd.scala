@@ -1,11 +1,27 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame.internal.rdd
 
 import breeze.linalg.DenseVector
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.MllibAliases.MatrixUDT
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.regression.org.trustedanalytics.sparktk.{ LabeledPointWithFrequency => SparktkLabeledPointWithFrequency }
 
 //import FrameOrderingUtils
-import org.trustedanalytics.sparktk.frame.DataTypes.{ float32, float64, int32, int64 }
+import org.trustedanalytics.sparktk.frame.DataTypes._
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
 
@@ -20,7 +36,7 @@ import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics 
 //import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
 //import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
-import org.apache.spark.mllib.linalg.{ Vector, Vectors, VectorUDT, DenseVector => MllibDenseVector }
+import org.apache.spark.mllib.linalg.{ DenseVector => MllibDenseVector, DenseMatrix, Vector, Vectors, VectorUDT }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
@@ -679,6 +695,8 @@ object FrameRdd {
    */
   val VectorType = ArrayType(DoubleType, containsNull = false)
 
+  val MatrixType = new MatrixUDT
+
   /**
    * Converts the schema object to a StructType for use in creating a SchemaRDD
    *
@@ -702,6 +720,7 @@ object FrameRdd {
       case x if x.equals(DataTypes.datetime) => LongType
       case x if x.isVector => VectorType
       case x if x.equals(DataTypes.ignore) => StringType
+      case x if x.equalsDataType(DataTypes.matrix) => MatrixType
     }
   }
 
@@ -723,6 +742,8 @@ object FrameRdd {
     val decimalType = classOf[DecimalType] // DecimalType.getClass return value (DecimalType$) differs from expected DecimalType
     val shortType = ShortType.getClass
 
+    val matrixType = classOf[MatrixUDT]
+
     val a = dataType.getClass
     a match {
       case `intType` => int32
@@ -736,6 +757,7 @@ object FrameRdd {
       case `byteType` => int32
       //case `booleanType` => int32
       case `timeStampType` => DataTypes.datetime
+      case `matrixType` => matrix
       case _ => throw new IllegalArgumentException(s"unsupported column data type $a")
     }
   }

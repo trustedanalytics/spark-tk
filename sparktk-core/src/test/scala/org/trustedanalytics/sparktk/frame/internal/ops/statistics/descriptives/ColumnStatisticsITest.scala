@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015 Intel Corporation 
+ *  Copyright (c) 2016 Intel Corporation 
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives
 
 import org.trustedanalytics.sparktk.frame.DataTypes
@@ -82,36 +81,36 @@ class ColumnStatisticsITest extends TestingSparkContextWordSpec with Matchers {
 
   "ColumnStatistics.columnMedian" should {
     "support unweighted float median" in new ColumnStatisticsTest() {
-      val median: ColumnMedianReturn = ColumnStatistics.columnMedian(2, DataTypes.float32, None, rowRDD)
+      val median = ColumnStatistics.columnMedian(2, DataTypes.float32, None, rowRDD)
 
-      median.value shouldBe 2.0
+      median shouldBe Some(2.0)
     }
 
     "support weighted float median" in new ColumnStatisticsTest() {
-      val median: ColumnMedianReturn =
+      val median =
         ColumnStatistics.columnMedian(5, DataTypes.float32, Some(6, DataTypes.int32), rowRDD)
 
-      median.value shouldBe 0.0
+      median shouldBe Some(0.0)
     }
 
     "support unweighted integer median" in new ColumnStatisticsTest() {
-      val median: ColumnMedianReturn =
+      val median =
         ColumnStatistics.columnMedian(4, DataTypes.int32, None, rowRDD)
 
-      median.value shouldBe 2
+      median shouldBe Some(2)
     }
 
     "support weighted integer median" in new ColumnStatisticsTest() {
-      val median: ColumnMedianReturn =
+      val median =
         ColumnStatistics.columnMedian(4, DataTypes.int32, Some(1, DataTypes.int32), rowRDD)
 
-      median.value shouldBe 2
+      median shouldBe Some(2)
     }
 
     "with no net weights should return none" in new ColumnStatisticsTest() {
       val median = ColumnStatistics.columnMedian(0, DataTypes.string, Some(7, DataTypes.int32), rowRDD)
 
-      median.value shouldBe None
+      median shouldBe None
     }
   }
 }

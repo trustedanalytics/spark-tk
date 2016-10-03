@@ -1,0 +1,152 @@
+no space|no space,Place-holder text.,Place-holder text.
+no space|space ,Place-holder text.,Place-holder text.
+no space|tab    ,Place-holder text.,Place-holder text.
+no space|space tab      ,Place-holder text.,Place-holder text.
+no space|tab space       ,Place-holder text.,Place-holder text.
+ space|no space,Place-holder text.,Place-holder text.
+ space|space ,Place-holder text.,Place-holder text.
+ space|tab      ,Place-holder text.,Place-holder text.
+ space|space tab        ,Place-holder text.,Place-holder text.
+ space|tab space         ,Place-holder text.,Place-holder text.
+        tab|no space,Place-holder text.,Place-holder text.
+        tab|space ,Place-holder text.,Place-holder text.
+        tab|tab ,Place-holder text.,Place-holder text.
+        tab|space tab   ,Place-holder text.,Place-holder text.
+        tab|tab space    ,Place-holder text.,Place-holder text.
+        space tab|no space,Place-holder text.,Place-holder text.
+        space tab|space ,Place-holder text.,Place-holder text.
+        space tab|tab   ,Place-holder text.,Place-holder text.
+        space tab|space tab     ,Place-holder text.,Place-holder text.
+        space tab|tab space      ,Place-holder text.,Place-holder text.
+         tab space|no space,Place-holder text.,Place-holder text.
+         tab space|space ,Place-holder text.,Place-holder text.
+         tab space|tab  ,Place-holder text.,Place-holder text.
+         tab space|space tab    ,Place-holder text.,Place-holder text.
+         tab space|tab space     ,Place-holder text.,Place-holder text.
+"no space|no closing quote,Place-holder text.,Place-holder text.
+"no space|no space",Place-holder text.,Place-holder text.
+"no space|space" ,Place-holder text.,Place-holder text.
+"no space|tab"  ,Place-holder text.,Place-holder text.
+"no space|space tab"    ,Place-holder text.,Place-holder text.
+"no space|tab space"     ,Place-holder text.,Place-holder text.
+ "space|no space",Place-holder text.,Place-holder text.
+ "space|space" ,Place-holder text.,Place-holder text.
+ "space|tab"    ,Place-holder text.,Place-holder text.
+ "space|space tab"      ,Place-holder text.,Place-holder text.
+ "space|tab space"       ,Place-holder text.,Place-holder text.
+        "tab|no space",Place-holder text.,Place-holder text.
+        "tab|space" ,Place-holder text.,Place-holder text.
+        "tab|tab"       ,Place-holder text.,Place-holder text.
+        "tab|space tab"         ,Place-holder text.,Place-holder text.
+        "tab|tab space"  ,Place-holder text.,Place-holder text.
+        "space tab|no space",Place-holder text.,Place-holder text.
+        "space tab|space" ,Place-holder text.,Place-holder text.
+        "space tab|tab" ,Place-holder text.,Place-holder text.
+        "space tab|space tab"   ,Place-holder text.,Place-holder text.
+        "space tab|tab space"    ,Place-holder text.,Place-holder text.
+         "tab space|no space",Place-holder text.,Place-holder text.
+         "tab space|space" ,Place-holder text.,Place-holder text.
+         "tab space|tab"        ,Place-holder text.,Place-holder text.
+         "tab space|space tab"  ,Place-holder text.,Place-holder text.
+         "tab space|tab space"   ,Place-holder text.,Place-holder text.
+Place-holder text.,no space|no space,Place-holder text.
+Place-holder text.,no space|space ,Place-holder text.
+Place-holder text.,no space|tab ,Place-holder text.
+Place-holder text.,no space|space tab   ,Place-holder text.
+Place-holder text.,no space|tab space    ,Place-holder text.
+Place-holder text., space|no space,Place-holder text.
+Place-holder text., space|space ,Place-holder text.
+Place-holder text., space|tab   ,Place-holder text.
+Place-holder text., space|space tab     ,Place-holder text.
+Place-holder text., space|tab space      ,Place-holder text.
+Place-holder text.,     tab|no space,Place-holder text.
+Place-holder text.,     tab|space ,Place-holder text.
+Place-holder text.,     tab|tab ,Place-holder text.
+Place-holder text.,     tab|space tab   ,Place-holder text.
+Place-holder text.,     tab|tab space    ,Place-holder text.
+Place-holder text.,     space tab|no space,Place-holder text.
+Place-holder text.,     space tab|space ,Place-holder text.
+Place-holder text.,     space tab|tab   ,Place-holder text.
+Place-holder text.,     space tab|space tab     ,Place-holder text.
+Place-holder text.,     space tab|tab space      ,Place-holder text.
+Place-holder text.,      tab space|no space,Place-holder text.
+Place-holder text.,      tab space|space ,Place-holder text.
+Place-holder text.,      tab space|tab  ,Place-holder text.
+Place-holder text.,      tab space|space tab    ,Place-holder text.
+Place-holder text.,      tab space|tab space     ,Place-holder text.
+Place-holder text.,"no space|no space",Place-holder text.
+Place-holder text.,"no space|space" ,Place-holder text.
+Place-holder text.,"no space|tab"       ,Place-holder text.
+Place-holder text.,"no space|space tab"         ,Place-holder text.
+Place-holder text.,"no space|tab space"  ,Place-holder text.
+Place-holder text., "space|no space",Place-holder text.
+Place-holder text., "space|space" ,Place-holder text.
+Place-holder text., "space|tab" ,Place-holder text.
+Place-holder text., "space|space tab"   ,Place-holder text.
+Place-holder text., "space|tab space"    ,Place-holder text.
+Place-holder text.,     "tab|no space",Place-holder text.
+Place-holder text.,     "tab|space" ,Place-holder text.
+Place-holder text.,     "tab|tab"       ,Place-holder text.
+Place-holder text.,     "tab|space tab"         ,Place-holder text.
+Place-holder text.,     "tab|tab space"  ,Place-holder text.
+Place-holder text.,     "space tab|no space",Place-holder text.
+Place-holder text.,     "space tab|space" ,Place-holder text.
+Place-holder text.,     "space tab|tab" ,Place-holder text.
+Place-holder text.,     "space tab|space tab"   ,Place-holder text.
+Place-holder text.,     "space tab|tab space"    ,Place-holder text.
+Place-holder text.,      "tab space|no space",Place-holder text.
+Place-holder text.,      "tab space|space" ,Place-holder text.
+Place-holder text.,      "tab space|tab"        ,Place-holder text.
+Place-holder text.,      "tab space|space tab"  ,Place-holder text.
+Place-holder text.,      "tab space|tab space"   ,Place-holder text.
+Place-holder text.,Place-holder text.,no space|no space
+Place-holder text.,Place-holder text.,no space|space
+Place-holder text.,Place-holder text.,no space|tab
+Place-holder text.,Place-holder text.,no space|space tab
+Place-holder text.,Place-holder text.,no space|tab space
+Place-holder text.,Place-holder text., space|no space
+Place-holder text.,Place-holder text., space|space
+Place-holder text.,Place-holder text., space|tab
+Place-holder text.,Place-holder text., space|space tab
+Place-holder text.,Place-holder text., space|tab space
+Place-holder text.,Place-holder text.,  tab|no space
+Place-holder text.,Place-holder text.,  tab|space
+Place-holder text.,Place-holder text.,  tab|tab
+Place-holder text.,Place-holder text.,  tab|space tab
+Place-holder text.,Place-holder text.,  tab|tab space
+Place-holder text.,Place-holder text.,  space tab|no space
+Place-holder text.,Place-holder text.,  space tab|space
+Place-holder text.,Place-holder text.,  space tab|tab
+Place-holder text.,Place-holder text.,  space tab|space tab
+Place-holder text.,Place-holder text.,  space tab|tab space
+Place-holder text.,Place-holder text.,   tab space|no space
+Place-holder text.,Place-holder text.,   tab space|space
+Place-holder text.,Place-holder text.,   tab space|tab
+Place-holder text.,Place-holder text.,   tab space|space tab
+Place-holder text.,Place-holder text.,   tab space|tab space
+Place-holder text.,Place-holder text.,"no space|no closing quote
+Place-holder text.,Place-holder text.,"no space|no space"
+Place-holder text.,Place-holder text.,"no space|space"
+Place-holder text.,Place-holder text.,"no space|tab"
+Place-holder text.,Place-holder text.,"no space|space tab"
+Place-holder text.,Place-holder text.,"no space|tab space"
+Place-holder text.,Place-holder text., "space|no space"
+Place-holder text.,Place-holder text., "space|space"
+Place-holder text.,Place-holder text., "space|tab"
+Place-holder text.,Place-holder text., "space|space tab"
+Place-holder text.,Place-holder text., "space|tab space"
+Place-holder text.,Place-holder text.,  "tab|no space"
+Place-holder text.,Place-holder text.,  "tab|space"
+Place-holder text.,Place-holder text.,  "tab|tab"
+Place-holder text.,Place-holder text.,  "tab|space tab"
+Place-holder text.,Place-holder text.,  "tab|tab space"
+Place-holder text.,Place-holder text.,  "space tab|no space"
+Place-holder text.,Place-holder text.,  "space tab|space"
+Place-holder text.,Place-holder text.,  "space tab|tab"
+Place-holder text.,Place-holder text.,  "space tab|space tab"
+Place-holder text.,Place-holder text.,  "space tab|tab space"
+Place-holder text.,Place-holder text.,   "tab space|no space"
+Place-holder text.,Place-holder text.,   "tab space|space"
+Place-holder text.,Place-holder text.,   "tab space|tab"
+Place-holder text.,Place-holder text.,   "tab space|space tab"
+Place-holder text.,Place-holder text.,   "tab space|tab space"

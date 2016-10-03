@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Test assign sample functionality """
 
 import unittest
@@ -46,9 +63,9 @@ class AssignSample(sparktk_test.SparkTKTestCase):
         # Check expected results
         self._test_frame_assign("default", baseline)
         frame_take = self.frame.take(self.frame.count())
-        seed_d = [i[2] for i in frame_take.data]
-        seed_0 = [i[3] for i in frame_take.data]
-        seed_5 = [i[4] for i in frame_take.data]
+        seed_d = [i[2] for i in frame_take]
+        seed_0 = [i[3] for i in frame_take]
+        seed_5 = [i[4] for i in frame_take]
 
         # seed=0 and default give the same results.
         self.assertEqual(seed_0, seed_d)
@@ -58,7 +75,7 @@ class AssignSample(sparktk_test.SparkTKTestCase):
 
     def _test_frame_assign(self, column_name, sample):
         """Tests the assign method on the given column and sample"""
-        pd = self.frame.download(self.frame.count())
+        pd = self.frame.to_pandas(self.frame.count())
         groupby_rows = pd.groupby(column_name).size()
         count = float(groupby_rows.sum())
         normalized = groupby_rows.map(lambda x: x/count)
