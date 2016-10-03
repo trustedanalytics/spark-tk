@@ -27,7 +27,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Build the required frame"""
         super(RandomForest, self).setUp()
 
-        schema = [("feat1", int), ("feat2", int), ("class", str)]
+        schema = [("feat1", int), ("feat2", int), ("class", float)]
         filename = self.get_file("rand_forest_class.csv")
 
         self.frame = self.context.frame.import_csv(filename, schema=schema)
@@ -39,7 +39,6 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         
         self.assertEqual(model.max_bins, 100)
         self.assertEqual(model.max_depth, 4)
-        self.assertEqual(model.num_classes, 2)
         self.assertEqual(model.num_trees, 1)
         self.assertEqual(model.impurity, 'variance')
 
@@ -51,7 +50,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         model.predict(self.frame)
         preddf = self.frame.to_pandas(self.frame.count())
         for index, row in preddf.iterrows():
-            self.assertAlmostEqual(float(row['class']), row['predicted_value'])
+            self.assertAlmostEqual(row['class'], row['predicted_value'])
 
     @unittest.skip("not implemented")
     def test_publish(self):
