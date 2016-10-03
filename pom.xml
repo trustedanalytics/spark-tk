@@ -522,6 +522,8 @@
                   <exclude>**/PKG-INFO</exclude>
                 <exclude>**/*.sql</exclude>
                 <exclude>**/*pytest-report</exclude>
+                <exclude>**/dist/**/setup.cfg</exclude>
+
               </excludes>
             </configuration>
             <executions>
