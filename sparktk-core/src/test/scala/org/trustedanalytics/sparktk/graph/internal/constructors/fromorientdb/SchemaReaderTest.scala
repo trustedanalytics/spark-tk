@@ -47,6 +47,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
 
   "schema reader" should {
     "import vertex schema" in {
+      orientMemoryGraph.makeActive()
       val schemaReader = new SchemaReader(orientMemoryGraph)
       // call method under test
       val vertexSchema = schemaReader.importVertexSchema
@@ -58,6 +59,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     }
 
     "validate vertex schema should throw exception on schemas missing required column names" in {
+      orientMemoryGraph.makeActive()
       val badVertexSchema = StructType(Array(StructField("id_", StringType)))
       val schemaReader = new SchemaReader(orientMemoryGraph)
       intercept[IllegalArgumentException] {
@@ -67,6 +69,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     }
 
     "import edge schema" in {
+      orientMemoryGraph.makeActive()
       val schemaReader = new SchemaReader(orientMemoryGraph)
       //call method under test
       val edgeSchema = schemaReader.importEdgeSchema
@@ -78,6 +81,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     }
 
     "validate edge schema should throw exception on schemas missing required column names" in {
+      orientMemoryGraph.makeActive()
       val badEdgeSchema = StructType(Array(StructField("src_vertex", StringType), StructField("dst_vertex", StringType)))
       val schemaReader = new SchemaReader(orientMemoryGraph)
       intercept[IllegalArgumentException] {

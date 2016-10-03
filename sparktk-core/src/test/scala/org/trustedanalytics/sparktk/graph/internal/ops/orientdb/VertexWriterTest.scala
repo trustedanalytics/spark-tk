@@ -46,6 +46,7 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
       GraphFrame(v, e)
     }
     "create OrientDB vertex" in {
+      orientMemoryGraph.makeActive()
       val schemaWriter = new SchemaWriter
       schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
       val vertexWriter = new VertexWriter(orientMemoryGraph)
@@ -61,6 +62,7 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
     }
 
     "find a vertex" in {
+      orientMemoryGraph.makeActive()
       val schemaWriter = new SchemaWriter
       schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
       val vertexWriter = new VertexWriter(orientMemoryGraph)

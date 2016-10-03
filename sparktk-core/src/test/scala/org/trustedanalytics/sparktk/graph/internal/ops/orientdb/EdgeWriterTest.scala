@@ -47,6 +47,7 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
     }
 
     "create edge" in {
+      orientFileGraph.makeActive()
       val schemaWriter = new SchemaWriter
       schemaWriter.vertexSchema(friends.vertices, orientFileGraph)
       schemaWriter.edgeSchema(friends.edges, orientFileGraph)
