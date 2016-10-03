@@ -856,6 +856,86 @@
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
+          <artifactId>spark-network-shuffle_2.11</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-network-common_2.10</artifactId>
+          <version>${tap.spark.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-launcher_2.10</artifactId>
+          <version>${tap.spark.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.4.4</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+          <version>2.4.4</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-json</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
+          <version>3.6.6.Final</version>
+        </dependency>
+        <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+          <version>4.0.29.Final</version>
+        </dependency>
+        <dependency>
+          <groupId>com.typesafe.akka</groupId>
+          <artifactId>akka-remote_2.10</artifactId>
+          <version>2.3.11</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-unsafe_2.10</artifactId>
+          <version>1.6.0</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-core</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-core_2.10</artifactId>
+          <version>3.2.10</version>
+        </dependency>
+        <dependency>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-ast_2.10</artifactId>
+          <version>3.2.10</version>
+        </dependency>
+        <dependency>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-jackson_2.10</artifactId>
+          <version>3.2.10</version>
+        </dependency>
+        <dependency>
+          <groupId>com.thoughtworks.paranamer</groupId>
+          <artifactId>paranamer</artifactId>
+          <version>2.6</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
           <artifactId>spark-core_${tap.scala.short.version}</artifactId>
           <version>${tap.spark.version}</version>
              <exclusions>
@@ -1260,11 +1340,6 @@
           <artifactId>json-simple</artifactId>
           <version>1.1.1</version>
         </dependency>
-          <dependency>
-              <groupId>org.apache.spark</groupId>
-              <artifactId>spark-network-shuffle_2.10</artifactId>
-              <version>1.2.0-cdh5.3.3</version>
-          </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.concurrentlinkedhashmap/concurrentlinkedhashmap-lru -->
         <dependency>
           <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
@@ -1356,19 +1431,12 @@
               <version>2.10.4</version>
               <scope>provided</scope>
           </dependency>
-          <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty-all</artifactId>
-              <version>4.0.29.Final</version>
-              <scope>provided</scope>
-          </dependency>
-
-          <dependency>
-              <groupId>com.fasterxml.jackson.core</groupId>
-              <artifactId>jackson-databind</artifactId>
-              <version>2.2.3</version>
-              <scope>provided</scope>
-          </dependency>
+          <!--<dependency>-->
+              <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+              <!--<artifactId>jackson-databind</artifactId>-->
+              <!--<version>2.2.3</version>-->
+              <!--<scope>provided</scope>-->
+          <!--</dependency>-->
           <dependency>
               <groupId>org.fusesource.leveldbjni</groupId>
               <artifactId>leveldbjni-all</artifactId>
@@ -1491,12 +1559,6 @@
               <groupId>org.apache.ivy</groupId>
               <artifactId>ivy</artifactId>
               <version>2.4.0</version>
-              <scope>provided</scope>
-          </dependency>
-          <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty</artifactId>
-              <version>3.6.6.Final</version>
               <scope>provided</scope>
           </dependency>
 
