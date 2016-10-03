@@ -18,8 +18,6 @@
 ''' test cases for Pricipal Components Analysis'''
 import unittest
 import numpy as np
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
 
