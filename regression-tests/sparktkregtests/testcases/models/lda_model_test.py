@@ -25,29 +25,17 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         self.lda_frame = self.context.frame.import_csv(
             self.get_file("lda8.csv"), schema=schema)
 
-    def test_lda_model_int64_count(self):
-        """Standard test for the LDA Model code using int64 count."""
+    def test_lda_model_count(self):
+        """Test train method for the LDA Model"""
         lda_model = self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count', num_topics=5,
             max_iterations=20, alpha=[-1.0], check_point_interval=1)
         self._confirm_model_valid(lda_model)
 
-    def test_lda_model_int32_count(self):
-        """Standard test for the LDA Model code using int32 count."""
-        # Add a new column to change column type from int64 to int32.
-        self.lda_frame.add_columns(lambda row: row.count,
-                                   ('count32', int))
-
-        lda_model = self.context.models.clustering.lda.train(
-            self.lda_frame, 'paper', 'word', 'count32',
-            num_topics=5, max_iterations=50, random_seed=5,
-            alpha=[-1.0], check_point_interval=1)
-
-        self._confirm_model_valid(lda_model)
 
     def test_lda_predict(self):
         """Standard test for the LDA Model predict."""
-        # Add a new column to change column type from int64 to int32.
+        # Add a new column
         self.lda_frame.add_columns(lambda row: row.count,
                                    ('count32', int))
 
