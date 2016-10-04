@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Test covariance and correlation on 2 columns, matrices on 400x1024 matric"""
 import unittest
 import numpy
@@ -16,7 +33,7 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
         """Test correlation between 2 columns"""
         correl_0_2 = self.base_frame.correlation('C0', 'C2')
         C0_C2_columns_data = self.base_frame.take(self.base_frame.count(),
-                                                  columns=["C0", "C2"]).data
+                                                  columns=["C0", "C2"])
         numpy_result = numpy.ma.corrcoef(list(C0_C2_columns_data),
                                          rowvar=False)
 
@@ -26,11 +43,11 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
     def test_correl_matrix(self):
         """Verify correlation matrix on all columns"""
         correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names)
-        numpy_correl = list(numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count()).data),
+        numpy_correl = list(numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count())),
                                               rowvar=False))
 
         # convert to lists for ease of comparison
-        correl_flat = list(numpy.array(correl_matrix.take(correl_matrix.count()).data).flat)
+        correl_flat = list(numpy.array(correl_matrix.take(correl_matrix.count())).flat)
         numpy_correl = list(numpy.array(numpy_correl).flat)
 
         # compare the correl matrix values with the expected results

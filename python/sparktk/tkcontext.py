@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from lazyloader import get_lazy_loader
 from sparktk.jvm.jutils import JUtils
 from sparktk.sparkconf import create_sc
@@ -10,13 +27,57 @@ logger = logging.getLogger('sparktk')
 
 class TkContext(object):
     """TK Context - grounding object for the sparktk library"""
+    _other_libs = None
 
-    def __init__(self, sc=None, **create_sc_kwargs):
+    def __init__(self,
+                 sc=None,
+                 master=None,
+                 py_files=None,
+                 spark_home=None,
+                 sparktk_home=None,
+                 pyspark_submit_args=None,
+                 app_name="sparktk",
+                 other_libs=None,
+                 extra_conf=None,
+                 use_local_fs=False,
+                 debug=None):
+        """
+        Creates a TkContext.
+
+        If SparkContext sc is not provided, a new spark context will be created using the
+        given settings and otherwise default values
+
+        :param sc: (SparkContext) Active Spark Context, if not provided a new Spark Context is created with the
+                   rest of the args
+        :param master: (str) override spark master setting; for ex. 'local[4]' or 'yarn-client'
+        :param py_files: (list) list of str of paths to python dependencies; Note the the current python
+        package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
+        :param spark_home: (str) override $SPARK_HOME, the location of spark
+        :param sparktk_home: (str) override $SPARKTK_HOME, the location of spark-tk
+        :param pyspark_submit_args: (str) extra args passed to the pyspark submit
+        :param app_name: (str) name of spark app that will be created
+        :param other_libs: (list) other libraries (actual python packages or modules) that are compatible with spark-tk,
+                           which need to be added to the spark context.  These libraries must be developed for use with
+                           spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+        :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+        :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
+        :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
+        :return: TkContext
+        """
         if not sc:
             if SparkContext._active_spark_context:
                 sc = SparkContext._active_spark_context
             else:
-                sc = create_sc(**create_sc_kwargs)
+                sc = create_sc(master=master,
+                               py_files=py_files,
+                               spark_home=spark_home,
+                               sparktk_home=sparktk_home,
+                               pyspark_submit_args=pyspark_submit_args,
+                               app_name=app_name,
+                               other_libs=other_libs,
+                               extra_conf=extra_conf,
+                               use_local_fs=use_local_fs,
+                               debug=debug)
         if type(sc) is not SparkContext:
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc
@@ -24,6 +85,11 @@ class TkContext(object):
         self._jtc = self._sc._jvm.org.trustedanalytics.sparktk.TkContext(self._sc._jsc)
         self._jutils = JUtils(self._sc)
         self._scala_sc = self._jutils.get_scala_sc()
+        self._other_libs = other_libs if other_libs is None or isinstance(other_libs, list) else [other_libs]
+        if self._other_libs is not None:
+            for lib in self._other_libs:
+                lib_obj = lib.get_main_object(self)
+                setattr(self, lib.__name__, lib_obj)
         loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     from sparktk.arguments import implicit
@@ -36,7 +102,7 @@ class TkContext(object):
         Since tc is so commonly used as an implicit variable, it's worth the special code here to save a lot of imports otherwise
 
         """
-        require_type(tc, arg_name, TkContext)
+        require_type(TkContext, tc, arg_name)
 
     @property
     def sc(self):
@@ -77,7 +143,13 @@ class TkContext(object):
 
     def load(self, path, validate_type=None):
         """loads object from the given path (if validate_type is provided, error raised if loaded obj does not match"""
-        scala_obj = self._jtc.load(path)
+        loaders_map = None
+        if self._other_libs is not None:
+            other_loaders = []
+            for other_lib in self._other_libs:
+                other_loaders.append(other_lib.get_loaders(self))
+            loaders_map =  self.jutils.convert.combine_scala_maps(other_loaders)
+        scala_obj = self._jtc.load(path, self.jutils.convert.to_scala_option(loaders_map))
         python_obj = self._create_python_proxy(scala_obj)
         if validate_type and not isinstance(python_obj, validate_type):
           raise RuntimeError("load expected to get type %s but got type %s" % (validate_type, type(python_obj)))
@@ -103,7 +175,16 @@ class TkContext(object):
         try:
             relevant_path = ".".join(name_parts[name_parts.index('sparktk')+1:])
         except ValueError as e:
-            raise ValueError("Trouble with class name %s, %s" % ('.'.join(name_parts), str(e)))
+            # check if it's from another library
+            relevant_path = ""
+            for other_lib in self._other_libs:
+                other_lib_name = other_lib.__name__
+                if other_lib_name in name_parts:
+                    relevant_path = ".".join(name_parts[name_parts.index(other_lib_name):])
+                    break
+            # if it's not from of the other libraries, then raise an error
+            if relevant_path == "":
+                raise ValueError("Trouble with class name %s, %s" % ('.'.join(name_parts), str(e)))
         cmd = "tc.%s._from_scala(tc, scala_obj)" % relevant_path
         logger.debug("tkcontext._create_python_proxy cmd=%s", cmd)
         proxy = eval(cmd, {"tc": self, "scala_obj": scala_obj})

@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from pyspark.rdd import RDD
 from pyspark.sql import DataFrame
 
@@ -54,6 +71,11 @@ class Frame(object):
                                   len(item) == 2 and
                                   isinstance(item[0], basestring) for item in schema):
                         raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type, but received type %s." % type(schema))
+                    # check for duplicate column names
+                    column_names = [col[0] for col in schema]
+                    duplicate_column_names = set([col for col in column_names if column_names.count(col) > 1])
+                    if len(duplicate_column_names) > 0:
+                        raise ValueError("Invalid schema, column names cannot be duplicated: %s" % ", ".join(duplicate_column_names))
                 elif schema is None:
                     schema = self._infer_schema(source)
                     inferred_schema = True
@@ -308,6 +330,7 @@ class Frame(object):
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
     from sparktk.frame.ops.categorical_summary import categorical_summary
+    from sparktk.frame.ops.collect import collect
     from sparktk.frame.ops.column_median import column_median
     from sparktk.frame.ops.column_mode import column_mode
     from sparktk.frame.ops.column_summary_statistics import column_summary_statistics
@@ -320,7 +343,6 @@ class Frame(object):
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.dot_product import dot_product
-    from sparktk.frame.ops.download import download
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
@@ -354,6 +376,7 @@ class Frame(object):
     from sparktk.frame.ops.timeseries_durbin_watson_test import timeseries_durbin_watson_test
     from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
     from sparktk.frame.ops.timeseries_slice import timeseries_slice
+    from sparktk.frame.ops.to_pandas import to_pandas
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
 

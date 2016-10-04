@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.saveload
 
 import org.apache.spark.SparkContext
@@ -16,15 +31,25 @@ import org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
 import org.trustedanalytics.sparktk.models.timeseries.arima.ArimaModel
 import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
+import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
 import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
 
 object Loaders {
 
-  def load(sc: SparkContext, path: String): Any = {
+  def load(sc: SparkContext, path: String, otherLoaders: Option[Map[String, LoaderType]] = None): Any = {
     val result = TkSaveLoad.loadTk(sc, path)
-    val loader = loaders.getOrElse(result.formatId, throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}"))
+    val loaderOption = loaders.get(result.formatId)
+
+    // Find a loader that matches the specified formatId
+    val loader = loaders.getOrElse(result.formatId, {
+      otherLoaders.flatMap(_.get(result.formatId)).getOrElse({
+        val otherLoaderStr: String = if (otherLoaders.isDefined) otherLoaders.get.keys.mkString("\n") else ""
+        throw new RuntimeException(s"Could not find a registered loader for '${result.formatId}' stored at $path.\nRegistered loaders include: ${loaders.keys.mkString("\n")}\n${otherLoaderStr}")
+      })
+    })
+
     loader(sc, path, result.formatVersion, result.data)
   }
 
@@ -50,6 +75,7 @@ object Loaders {
     val entries: Seq[TkSaveableObject] = List(ArimaModel,
       ArxModel,
       ArimaxModel,
+      MaxModel,
       CollaborativeFilteringModel,
       Dicom,
       Frame,
