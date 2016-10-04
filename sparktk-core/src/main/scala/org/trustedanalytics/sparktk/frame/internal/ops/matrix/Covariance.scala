@@ -1,13 +1,13 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.matrix
 
 import org.apache.spark.sql.Row
-import org.trustedanalytics.sparktk.frame.{DataTypes, Frame, Column}
-import org.trustedanalytics.sparktk.frame.internal.{RowWrapper, FrameState, FrameTransform, BaseFrame}
+import org.trustedanalytics.sparktk.frame.{ DataTypes, Frame, Column }
+import org.trustedanalytics.sparktk.frame.internal.{ RowWrapper, FrameState, FrameTransform, BaseFrame }
 import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrix, Matrices }
 import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM }
 
 trait CovarianceMatrixTransform extends BaseFrame {
-  
+
   def covarianceMatrix(matrixColumnName: String): Unit = {
     execute(CovarianceMatrix(matrixColumnName))
   }
