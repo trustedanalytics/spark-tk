@@ -15,7 +15,8 @@
  */
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.{ Row, SQLContext }
+import org.apache.spark.sql.types.{ IntegerType, StringType, StructField, StructType }
 import org.graphframes.GraphFrame
 import org.scalatest.{ WordSpec, Matchers, BeforeAndAfterEach }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
@@ -35,18 +36,24 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
     def friends: GraphFrame = {
       val sqlContext: SQLContext = new SQLContext(sparkContext)
       // Vertex DataFrame
-      val v = sqlContext.createDataFrame(List(
-        ("a", "Alice", 34),
-        ("b", "Bob", 36))).toDF("id", "name", "age")
-      // Edge DataFrame
-      val e = sqlContext.createDataFrame(List(
-        ("a", "b", "friend"),
-        ("b", "c", "follow"))).toDF("src", "dst", "relationship")
+      val schema = StructType(List(StructField("id", StringType),
+        StructField("name", StringType),
+        StructField("age", IntegerType)))
+      val rowRdd = sparkContext.parallelize(List(Row.fromTuple(("a", "Alice", 34)),
+        Row.fromTuple(("b", "Bob", 36))))
+      val v = sqlContext.createDataFrame(rowRdd, schema)
+      // Edge Dataframe
+      val edgeSchema = StructType(List(StructField("src", StringType),
+        StructField("dst", StringType),
+        StructField("relationship", StringType)))
+      val edgeRowRdd = sparkContext.parallelize(List(Row.fromTuple(("a", "b", "friend")),
+        Row.fromTuple(("b", "c", "follow"))))
+      val e = sqlContext.createDataFrame(edgeRowRdd, edgeSchema)
       // Create a org.graphframes.GraphFrame
       GraphFrame(v, e)
     }
+
     "create OrientDB vertex" in {
-      orientMemoryGraph.makeActive()
       val schemaWriter = new SchemaWriter
       schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
       val vertexWriter = new VertexWriter(orientMemoryGraph)
@@ -62,7 +69,6 @@ class VertexWriterTest extends WordSpec with Matchers with TestingOrientDb with 
     }
 
     "find a vertex" in {
-      orientMemoryGraph.makeActive()
       val schemaWriter = new SchemaWriter
       schemaWriter.vertexSchema(friends.vertices, orientMemoryGraph)
       val vertexWriter = new VertexWriter(orientMemoryGraph)

@@ -72,11 +72,12 @@ private[testutils] object TestingSparkContext {
     serializer: String = "org.apache.spark.serializer.KryoSerializer",
     registrator: String = "org.trustedanalytics.atk.graphbuilder.GraphBuilderKryoRegistrator"): SparkContext = {
     // LogUtils.silenceSpark()
-    System.setProperty("spark.driver.allowMultipleContexts", "true")
+    //System.setProperty("spark.driver.allowMultipleContexts", "true")
     val conf = new SparkConf()
       .setMaster("local")
       .setAppName(this.getClass.getSimpleName + " " + new Date())
     conf.set("spark.serializer", serializer)
+    conf.set("spark.driver.allowMultipleContexts", "true")
     //conf.set("spark.kryo.registrator", registrator)
     conf.set("spark.sql.shuffle.partitions", "2")
 

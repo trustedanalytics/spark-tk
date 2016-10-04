@@ -15,7 +15,7 @@
  */
 package org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.{ Row, SQLContext }
 import org.apache.spark.sql.types._
 import org.graphframes.GraphFrame
 import org.scalatest.{ BeforeAndAfterEach, WordSpec }
@@ -29,11 +29,19 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     def friends: GraphFrame = {
       val sqlContext: SQLContext = new SQLContext(sparkContext)
       // Vertex DataFrame
-      val v = sqlContext.createDataFrame(List(
-        ("g", "Gabby", 60), ("c", "Roby", 60), ("b", "Bob", 30))).toDF("id", "name", "age")
-      // Edge DataFrame
-      val e = sqlContext.createDataFrame(List(
-        ("a", "e", "friend"))).toDF("src", "dst", "relationship")
+      val schema = StructType(List(StructField("id", StringType),
+        StructField("name", StringType),
+        StructField("age", IntegerType)))
+      val rowRdd = sparkContext.parallelize(List(Row.fromTuple(("g", "Gabby", 60)),
+        Row.fromTuple(("c", "Roby", 60)),
+        Row.fromTuple(("b", "Bob", 30))))
+      val v = sqlContext.createDataFrame(rowRdd, schema)
+      // Edge Dataframe
+      val edgeSchema = StructType(List(StructField("src", StringType),
+        StructField("dst", StringType),
+        StructField("relationship", StringType)))
+      val edgeRowRdd = sparkContext.parallelize(List(Row.fromTuple(("a", "e", "friend"))))
+      val e = sqlContext.createDataFrame(edgeRowRdd, edgeSchema)
       GraphFrame(v, e)
     }
     val schemaWriter = new SchemaWriter
@@ -47,7 +55,6 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
 
   "schema reader" should {
     "import vertex schema" in {
-      orientMemoryGraph.makeActive()
       val schemaReader = new SchemaReader(orientMemoryGraph)
       // call method under test
       val vertexSchema = schemaReader.importVertexSchema
@@ -59,7 +66,7 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     }
 
     "validate vertex schema should throw exception on schemas missing required column names" in {
-      orientMemoryGraph.makeActive()
+      // orientMemoryGraph.makeActive()
       val badVertexSchema = StructType(Array(StructField("id_", StringType)))
       val schemaReader = new SchemaReader(orientMemoryGraph)
       intercept[IllegalArgumentException] {
@@ -69,7 +76,6 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     }
 
     "import edge schema" in {
-      orientMemoryGraph.makeActive()
       val schemaReader = new SchemaReader(orientMemoryGraph)
       //call method under test
       val edgeSchema = schemaReader.importEdgeSchema
@@ -81,8 +87,8 @@ class SchemaReaderTest extends WordSpec with TestingOrientDb with TestingSparkCo
     }
 
     "validate edge schema should throw exception on schemas missing required column names" in {
-      orientMemoryGraph.makeActive()
-      val badEdgeSchema = StructType(Array(StructField("src_vertex", StringType), StructField("dst_vertex", StringType)))
+      val badEdgeSchema = StructType(Array(StructField("src_vertex", StringType),
+        StructField("dst_vertex", StringType)))
       val schemaReader = new SchemaReader(orientMemoryGraph)
       intercept[IllegalArgumentException] {
         //call method under test

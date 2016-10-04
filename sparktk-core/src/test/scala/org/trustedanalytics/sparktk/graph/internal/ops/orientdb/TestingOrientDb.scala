@@ -43,7 +43,7 @@ trait TestingOrientDb {
    */
   def setupOrientDbInMemory(): Unit = {
     val uuid = java.util.UUID.randomUUID.toString
-    val factory = new OrientGraphFactory("memory:OrientTestDb" + uuid).setupPool(10, 20)
+    val factory = new OrientGraphFactory("memory:OrientTestDb" + uuid)
     orientMemoryGraph = factory.getNoTx
     orientMemoryGraph.declareIntent(new OIntentMassiveInsert())
   }
@@ -53,10 +53,10 @@ trait TestingOrientDb {
    */
   def setupOrientDb(): Unit = {
     val uuid = java.util.UUID.randomUUID.toString
-    tmpDir = DirectoryUtils.createTempDirectory("orientgraphtests")
+    tmpDir = DirectoryUtils.createTempDirectory("orientgraphtests" + uuid)
     dbUri = "plocal:" + tmpDir.getAbsolutePath + "/" + dbName + uuid
     dbConfig = new OrientConf(dbUri, dbUserName, dbUserName, rootPassword, batchSize, Some(dbProperties))
-    val factory = new OrientGraphFactory(dbUri, dbUserName, dbPassword).setupPool(10, 20)
+    val factory = new OrientGraphFactory(dbUri, dbUserName, dbPassword)
     orientFileGraph = factory.getNoTx
     orientFileGraph.declareIntent(new OIntentMassiveInsert())
   }
