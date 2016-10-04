@@ -49,6 +49,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with AssignSampleTransform
     with BinColumnTransformWithResult
     with BinaryClassificationMetricsSummarization
+    with BoxCoxTransform
     with CategoricalSummarySummarization
     with CollectSummarization
     with ColumnMedianSummarization
@@ -86,6 +87,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
+    with ReverseBoxCoxTransform
     with RowCountSummarization
     with SaveSummarization
     with SortTransform
