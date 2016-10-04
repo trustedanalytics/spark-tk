@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Test functionality of group_by, including aggregation_arguments """
 import unittest
 import pandas as pd
@@ -183,8 +200,8 @@ class GroupByTest(sparktk_test.SparkTKTestCase):
     def _validate_single_group(self, stats, groupby_cols, aggregator):
         # Validate the result of atk groupby and pandas groupby are the same
         # when there is  single group (none)
-        pd_stats = stats.download(stats.count())
-        new_frame = self.frame.download(self.frame.count())
+        pd_stats = stats.to_pandas(stats.count())
+        new_frame = self.frame.to_pandas(self.frame.count())
         gb = new_frame.groupby(lambda x: 0)[aggregator].agg(self.numpy_aggs)
         int_cols = map(lambda x: aggregator+x, self.atk_cols)
         for k, l in zip(int_cols, self.pd_cols):
@@ -209,8 +226,8 @@ class GroupByTest(sparktk_test.SparkTKTestCase):
     def _validate_helper(self, stats, aggregator, groupby_cols,
                          aggs, pd_cols, atk_cols, mapper):
         # Get and compare results of atk and pandas, cast as appropriate
-        pd_stats = stats.download(stats.count())
-        new_frame = self.frame.download(self.frame.count())
+        pd_stats = stats.to_pandas(stats.count())
+        new_frame = self.frame.to_pandas(self.frame.count())
         gb = new_frame.groupby(groupby_cols)[aggregator].agg(aggs)
         int_cols = map(lambda x: aggregator+x, atk_cols)
         for _, i in pd_stats.iterrows():
