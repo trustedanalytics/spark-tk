@@ -43,6 +43,6 @@ trait ConnectedComponentsSummarization extends BaseGraph {
 case class ConnectedComponents() extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(state.graphFrame.connectedComponents.run.toDF("Vertex", "Component"))
+    new Frame(state.graphFrame.connectedComponents.run.toDF())
   }
 }
