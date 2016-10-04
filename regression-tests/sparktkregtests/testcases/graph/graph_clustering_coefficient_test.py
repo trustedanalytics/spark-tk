@@ -49,7 +49,7 @@ class GraphClusteringCoefficient(sparktk_test.SparkTKTestCase):
         # The local coefficient was calculated by hand and added as an
         # attribute to the nodes.
         for _, node in results.iterrows():
-            self.assertAlmostEqual(node['unlabeled_coeff'], node['Clustering_Coefficient'], delta=.01)
+            self.assertAlmostEqual(node['unlabeled_coeff'], node['clustering_coefficient'], delta=.01)
 
 
 if __name__ == "__main__":
