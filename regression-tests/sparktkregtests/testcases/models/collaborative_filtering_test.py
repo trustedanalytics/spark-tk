@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests collaborative filtering against a generated data set"""
 import unittest
 
@@ -20,7 +37,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         self.frame.add_columns(
             lambda x: [x["user"][5:], x['product'][5:]],
             [("user_int", int), ("item_int", int)])
-        self.base_frame = self.frame.download(self.frame.count())
+        self.base_frame = self.frame.to_pandas(self.frame.count())
 
         self.old_frame = self.frame.copy()
         # Remove some baseline values, collaborative filtering has
@@ -97,7 +114,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         scores = model.create_predict_frame(
             self.old_frame, "user_int", "item_int")
 
-        pd_scores = scores.download(scores.count())
+        pd_scores = scores.to_pandas(scores.count())
         for _, i in pd_scores.iterrows():
             item_val = "item-"+str(int(i['product']))
             user_val = "user-"+str(int(i['user']))

@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Test Binning against a separate implemenation """
 
 import unittest
@@ -34,7 +51,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         self.frame_5ratings.bin_column("rating", 5, bin_column_name="binned0")
         groupby_frame = self.frame_5ratings.group_by(
             "binned0", self.context.agg.count)
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equalwidth_2bins_5ratings(self):
         """Equal width  binning on 5 ratings into 2 bins"""
@@ -43,7 +60,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned1", self.context.agg.count)
 
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equalwidth_10bins_5ratings(self):
         """Equal Width binning on 5 ratings and 10 bins"""
@@ -52,7 +69,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned2", self.context.agg.count)
 
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equaldepth_5bins_5ratings(self):
         """Equal depth binning on 5 ratings into 5 bins"""
@@ -62,7 +79,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned3", self.context.agg.count)
 
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equaldepth_2bins_5ratings(self):
         """Equal depth binning on 5 ratings into 2 bins"""
@@ -72,7 +89,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned4", self.context.agg.count)
 
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equaldepth_10bins_5ratings(self):
         """Equal depth binning on 5 ratings into 10 bins """
@@ -82,7 +99,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned5", self.context.agg.count)
 
-        self.assertItemsEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertItemsEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equalwidth_5bins_1rating(self):
         """Equal width binning on 1 rating and 5 bins"""
@@ -91,7 +108,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_1ratings.group_by(
             "binned6", self.context.agg.count)
 
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equaldepth_5bins_1rating(self):
         """Equal depth binning on 1 rating and 5 bins"""
@@ -101,7 +118,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_1ratings.group_by(
             "binned7", self.context.agg.count)
 
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_equaldepth_2bins_1_2_5_rating(self):
         """Equal depth binning on ratings 1, 2 and 5 into 2 bins"""
@@ -116,7 +133,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = frame_1_2_5_ratings.group_by(
             "binned8", self.context.agg.count)
 
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_bin_cutoffs_strict_binning_true_4bins_5ratings(self):
         """Binning using cutoffs on 5 ratings and 2 bins"""
@@ -129,7 +146,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned9", self.context.agg.count)
 
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_bin_cutoff_strict_binning_false_3bins_5ratings(self):
         """Binning using cutoff with strict binning false"""
@@ -142,7 +159,7 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         groupby_frame = self.frame_5ratings.group_by(
             "binned10", self.context.agg.count)
 
-        self.assertEqual(sorted(groupby_frame.take(10).data), baseline)
+        self.assertEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_negative_bin_number(self):
         with self.assertRaisesRegexp(Exception, "number of bins must be 1 or greater"):

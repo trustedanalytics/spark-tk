@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<additionalHeaders>
+    <python_style>
+        <firstLine># vim: set encoding=utf-8EOL</firstLine>
+        <beforeEachLine># </beforeEachLine>
+        <endLine>#EOL</endLine>
+        <afterEachLine> </afterEachLine>
+        <skipLinePattern>^#!.*$</skipLinePattern>
+        <firstLineDetectionPattern>#.*$</firstLineDetectionPattern>
+        <lastLineDetectionPattern>#.*$</lastLineDetectionPattern>
+        <allowBlankLines>false</allowBlankLines>
+        <isMultiline>false</isMultiline>
+        <padLines>false</padLines>
+    </python_style>
+</additionalHeaders>

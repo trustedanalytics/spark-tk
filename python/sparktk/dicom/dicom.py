@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 import logging
 logger = logging.getLogger('sparktk')
 
@@ -64,17 +81,17 @@ class Dicom(object):
         #dispaly
         <skip>
         >>> pixeldata
-        TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
         [ 0.,  7.,  6., ...,  5.,  6.,  7.],
         ...,
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
         </skip>
 
         #Access ndarray
-        >>> image_ndarray= pixeldata.data[0][1]
+        >>> image_ndarray= pixeldata[0][1]
 
         >>> type(image_ndarray)
         <type 'numpy.ndarray'>
@@ -105,15 +122,15 @@ class Dicom(object):
         #Order may differ when you load back dicom object
 
         >>> load_pixeldata
-        TakeResult(data=[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
         [ 0.,  7.,  5., ...,  5.,  7.,  8.],
         [ 0.,  7.,  6., ...,  5.,  6.,  7.],
         ...,
         [ 0.,  6.,  7., ...,  5.,  5.,  6.],
         [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]], schema=[(u'id', <type 'long'>), (u'imagematrix', matrix)])
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
 
-        >>> load_image_ndarray= load_pixeldata.data[0][1]
+        >>> load_image_ndarray= load_pixeldata[0][1]
 
         >>> type(load_image_ndarray)
         <type 'numpy.ndarray'>
