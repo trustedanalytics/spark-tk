@@ -357,7 +357,6 @@ class _DataTypes(object):
                 return _primitive_alias_str_to_type_table[data_type_str]
             except KeyError:
                 try:
-                    print(data_type_str)
                     if data_type_str == 'matrix':
                         return matrix.get_from_string(data_type_str)
                     else:

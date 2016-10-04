@@ -46,6 +46,7 @@ object PythonJavaRdd {
   }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], scalaSchema: Schema): RDD[Row] = {
+    SparkAliases.getSparkMLLibSerDe
     val raa: JavaRDD[Array[Any]] = pythonToJava(jrdd)
     toRowRdd(raa.rdd, scalaSchema)
   }
