@@ -173,7 +173,7 @@ class Dicom(object):
     def __repr__(self):
         #TODO Python friendly repr
         #Write a string summary
-        return self._scala.toString()
+        return self._get_new_scala().toString()
 
     @property
     def metadata(self):
