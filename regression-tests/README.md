@@ -1,4 +1,4 @@
-# spark-tk regression tests
+# spark-tk library regression tests
 
 # Setup and run regression tests out of source code
 
@@ -17,8 +17,8 @@ Note: the following assumes development is being performed on a controller node 
    mvn install -DskipTests -Dlicense.skip=true
    ```
    
-2. Set the environment variables necessary for sparktk to execute. These environment variables tell sparktk where to find
-   pyspark, and the relevant jar files. The python path must be set to find the sparktk python library, the sparktk regression suite library, CDH's python installation
+2. Set the environment variables necessary for the spark-tk to be used. These environment variables tell the spark-tk library where to find
+   pyspark, and the relevant jar files. The python path must be set to find the spark-tk python library, the spark-tk regression suite library, CDH's python installation
    and CDH's pyspark installation. It is suggested you add these to your .bashrc file. To set the variables run 
    
    ```
