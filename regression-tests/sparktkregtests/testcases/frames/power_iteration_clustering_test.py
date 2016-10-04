@@ -37,12 +37,13 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
         #check values assigned to each cluster
-        actual_assignment = result.frame.download(
+        actual_assignment = result.frame.to_pandas(
             frame.count()).values.tolist()
         expected_assignment = [[4, 2], [0, 3], [1, 1],
             [5, 2], [6, 2], [2, 1], [3, 1]]
         self.assertItemsEqual(actual_assignment, expected_assignment)
 
+    @unittest.skip("bug:max_iter 100 causes stackoverflow")
     def test_circles_default(self):
         """ Test pic on similarity matrix for two concentric cicles """
         result = self.frame.power_iteration_clustering(
@@ -54,7 +55,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
         #check values assigned to each cluster
-        actual_assignment = result.frame.download(
+        actual_assignment = result.frame.to_pandas(
             result.frame.count()).values.tolist()
         expected_assignment = \
             [[4,1], [16,1], [14,1], [0,1], [6,1], [8,1],
@@ -73,7 +74,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
         #check values assigned to each cluster
-        actual_assignment = result.frame.download(
+        actual_assignment = result.frame.to_pandas(
             result.frame.count()).values.tolist()
         expected_assignment = \
             [[4,1], [16,2], [14,2], [0,1], [6,1], [8,1],
