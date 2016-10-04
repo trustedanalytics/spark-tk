@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015 Intel Corporation 
+ *  Copyright (c) 2016 Intel Corporation 
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import org.apache.spark.sql.Row
@@ -148,6 +147,18 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
         new GenericRow(Array[Any]("2", 1, 3, 4, 5, null)),
         new GenericRow(Array[Any]("dog", 20, 30, 40, 50, 60.5)),
         new GenericRow(Array[Any]("", null, 13, 14, 15, 16.5))
+      )
+      assert(data.sameElements(expectedData))
+    }
+
+    "Import csv with unicode data type" in {
+      val path = TEST_DATA + "/unicode.csv"
+      val schema = FrameSchema(Vector(Column("a", DataTypes.unicode), Column("b", DataTypes.unicode), Column("c", DataTypes.unicode)))
+      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false, schema = Some(schema))
+      val data = frame.take(frame.rowCount().toInt)
+      val expectedData: Array[Row] = Array(
+        new GenericRow(Array[Any]("à", "ë", "ñ")),
+        new GenericRow(Array[Any]("ã", "ê", "ü"))
       )
       assert(data.sameElements(expectedData))
     }
