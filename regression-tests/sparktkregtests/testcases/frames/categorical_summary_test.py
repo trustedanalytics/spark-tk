@@ -60,7 +60,6 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         self.assertTrue(self._compare_equal("age", stats,
                                             11, threshold=0.02))
 
-    @unittest.skip("Percentage is inaccurate for Nones in categorical summary")
     def test_cat_summary_single_column_with_None(self):
         """Categorical summary with Nones"""
         # adding random Nones wherever age is
@@ -125,12 +124,11 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
     def _compare_equal(self, column, catsum_result, k, threshold=None):
         # Group and count the values, drop any ignored values, validate
         pf = self.frame.to_pandas(self.frame.count())
-        print str(pf)
         # here we do our own analysis to compare
         # with the results of the categorical summary
-        pandas_frame_sorted = pf.groupby(column).size().sort_values(ascending=False)
+        pandas_frame_sorted = pf.fillna("").groupby(column).size().sort_values(ascending=False)
 
-        sum = float(pandas_frame_sorted.sum())
+        sum = float(self.frame.count())
         nones = pandas_frame_sorted.get("", 0)
         pandas_frame_sorted = pandas_frame_sorted.drop("", errors="ignore")
 
@@ -161,7 +159,7 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
                 self.assertAlmostEqual(i.percentage, nones/sum)
             elif str(i.level) == "<Other>":
                 self.assertEqual(i.frequency, pandas_frame_sorted[num_levels:].sum())
-                self.assertEqual(i.percentage, (pandas_frame_sorted[num_levels:].sum()/sum))
+                self.assertEqual(i.percentage, pandas_frame_sorted[num_levels:].sum()/sum)
             else:
                 self.assertEqual(i.frequency, pandas_frame_sorted[int(i.level)])
                 self.assertEqual(i.percentage, pandas_frame_sorted[int(i.level)]/sum)

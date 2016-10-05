@@ -21,6 +21,7 @@ package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
  * @param dbUserName the database user name
  * @param dbPassword the database password
  * @param rootPassword the root password
+ * @param batchSize batch size
  * @param dbProperties additional database properties
  */
 case class OrientConf(dbUri: String, dbUserName: String, dbPassword: String, rootPassword: String, batchSize: Int = 1000, dbProperties: Option[Map[String, Any]] = None) extends Serializable {

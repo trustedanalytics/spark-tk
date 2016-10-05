@@ -150,6 +150,18 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       )
       assert(data.sameElements(expectedData))
     }
+
+    "Import csv with unicode data type" in {
+      val path = TEST_DATA + "/unicode.csv"
+      val schema = FrameSchema(Vector(Column("a", DataTypes.unicode), Column("b", DataTypes.unicode), Column("c", DataTypes.unicode)))
+      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false, schema = Some(schema))
+      val data = frame.take(frame.rowCount().toInt)
+      val expectedData: Array[Row] = Array(
+        new GenericRow(Array[Any]("à", "ë", "ñ")),
+        new GenericRow(Array[Any]("ã", "ê", "ü"))
+      )
+      assert(data.sameElements(expectedData))
+    }
   }
 
 }

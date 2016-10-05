@@ -19,6 +19,7 @@
 import unittest
 import uuid
 import datetime
+import os
 
 import sparktk as stk
 
@@ -56,7 +57,6 @@ class SparkTKTestCase(unittest.TestCase):
 
     def get_file(self, filename):
         """Return the hdfs path to the given file"""
-
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
         placed_path = "/user/" + config.user + "/qa_data/" + filename
@@ -68,6 +68,12 @@ class SparkTKTestCase(unittest.TestCase):
         name = prefix + datestamp + uuid.uuid1().hex
 
         return name
+
+    def get_local_dataset(self, dataset):
+        """gets the dataset from the dataset folder"""
+        this_directory = os.path.dirname(os.path.abspath(__file__))
+        dataset_directory = os.path.dirname(os.path.dirname(this_directory)) + "/datasets/"
+        return dataset_directory + dataset
 
     def assertFramesEqual(self, frame1, frame2):
         frame1_take = frame1.take(frame1.count())

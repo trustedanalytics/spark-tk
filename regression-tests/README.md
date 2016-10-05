@@ -8,7 +8,12 @@
 2. Run `./run_regression_tests.sh` in this folder
 NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
 
+There are two environment variables that need to be set; `SPARKTK_HOME` and
+`PYTHONPATH`. I would recommend setting them in your shell rc file (.bashrc for
+most users).
 
+`SPARKTK_HOME` needs to be set to `$PWD/../core/target` from this directory
+`PYTHONPATH` needs to be set to `$PWD/sparktkregtests` from this directory
 # Developers
 NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
 
