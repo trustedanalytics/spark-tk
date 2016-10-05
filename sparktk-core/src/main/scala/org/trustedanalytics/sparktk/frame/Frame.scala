@@ -20,7 +20,7 @@ import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ DataFrame, Row }
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.sparktk.frame.internal.ops.matrix.{ PCATransform, SVDTransform }
+import org.trustedanalytics.sparktk.frame.internal.ops.matrix.{ DicomCovarianceMatrixTransform, PCATransform, SVDTransform }
 import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, ValidationReport }
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
@@ -63,6 +63,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with CovarianceSummarization
     with CumulativePercentTransform
     with CumulativeSumTransform
+    with DicomCovarianceMatrixTransform
     with DotProductTransform
     with DropColumnsTransform
     with DropDuplicatesTransform

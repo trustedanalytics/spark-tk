@@ -15,13 +15,13 @@
 #  limitations under the License.
 #
 
-def pca(self, matrix_column_name, u_matrix_column_name):
+def dicom_covariance_matrix(self, matrix_column_name):
 
     """
-    Compute the Singular Value Decomposition of a matrix
+    Compute the Covariance Matrix of a matrix
 
-    :param: m*n dimensional Breeze DenseMatrix
-    :return: m*m dimensional U matrix, Vector of singular values, n*n dimensional V' matrix
+    :param: m*n dimensional DenseMatrix
+    :return: m*m dimensional covariance matrix
     """
 
-    self._scala.pca(matrix_column_name, u_matrix_column_name)
+    self._scala.dicomCovarianceMatrix(matrix_column_name)

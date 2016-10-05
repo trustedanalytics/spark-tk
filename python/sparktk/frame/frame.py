@@ -383,6 +383,7 @@ class Frame(object):
     from sparktk.frame.ops.covariance_matrix import covariance_matrix
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
+    from sparktk.frame.ops.dicom_covariance_matrix import dicom_covariance_matrix
     from sparktk.frame.ops.dot_product import dot_product
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
