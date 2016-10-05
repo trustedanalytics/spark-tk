@@ -114,10 +114,8 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <excludes combine.children="append">
-
                         <exclude>tests/sandbox/</exclude>
                         <exclude>tests/test_docs_generated.py</exclude>
-
                     </excludes>
                 </configuration>
             </plugin>
