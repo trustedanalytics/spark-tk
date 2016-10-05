@@ -34,9 +34,7 @@ def get_context():
     global global_tc
     with lock:
         if global_tc is None:
-            global_tc = stk.TkContext(extra_conf=
-                {"spark.driver.memory" : "2g", "spark.executor.memory": "2g"}
-                ,master="yarn-client")
+            global_tc = stk.TkContext()
     return global_tc
 
 
