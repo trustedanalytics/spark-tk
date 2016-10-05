@@ -89,34 +89,28 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         self.assertEqual(total_pos, pos_count)
         self.assertEqual(total_neg, neg_count)
 
-    @unittest.skip("binary_classification_metrics does not allow beta param")
     def test_binary_classification_metrics_bad_beta(self):
         """Test binary classification metrics with negative beta"""
         # should throw an error because beta must be >0
-        with self.assertRaisesRegexp(Exception, "greater than zero"):
+        with self.assertRaisesRegexp(Exception, "greater than or equal to 0"):
             class_metrics = self.frame.binary_classification_metrics("labels",
                                                                      "predictions",
                                                                      1,
-                                                                     1,
                                                                      beta=-1)
 
-    @unittest.skip("binary classification metrics does not allow beta param")
     def test_binary_classification_metrics_valid_beta(self):
         """test binary class metrics with a valid value for beta"""
         # this is a valid value for beta so this should not throw an error
         class_metrics = self.frame.binary_classification_metrics("labels",
                                                                  "predictions",
                                                                  1,
-                                                                 1,
                                                                  beta=2)
 
-    @unittest.skip("binary classification metrics does not allow beta param")
     def test_binary_classification_matrics_with_invalid_beta_type(self):
         """Test binary class metrics with a beta of invalid type"""
-        with self.assertRaisesRegexp(Exception, "does not exist"):
+        with self.assertRaisesRegexp(Exception, "could not convert string to float"):
             class_metrics = self.frame.binary_classification_metrics("labels",
                                                                      "predictions",
-                                                                     1,
                                                                      1,
                                                                      beta="bla")
 
