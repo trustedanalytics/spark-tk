@@ -19,6 +19,9 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
+from pyspark import SparkContext
+from pyspark.mllib import classification
+from pyspark.mllib.regression import LabeledPoint
 
 
 class NaiveBayes(sparktk_test.SparkTKTestCase):
@@ -82,16 +85,49 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
 
     def test_model_test_paramater_initiation(self):
         """Test training intializes theta, pi and labels"""
+        # we will compare pyspark's result with sparktks for predict
+        # points will be an array of pyspark LabelPoints
+        points = []
+        # the location of the dataset
+        location = self.get_local_dataset("naive_bayes.csv")
+        
+        # we have to build a dataset for pyspark
+        # pyspark expects an rdd of LabelPoints for
+        # its NaiveBayes model
+        with open(location, 'r') as datafile:
+            lines = datafile.read().split('\n')
+            dataset = []
+            # for each line, split into columns and
+            # create a label point object out of each line
+            for line in lines:
+                if line is not "":
+                    line = map(int, line.split(","))
+                    label = line[0]
+                    features = line[1:4]
+                    lp = LabeledPoint(label, features)
+                    points.append(lp)
+        # use pyspark context to parallelize
+        dataframe = self.context.sc.parallelize(points)
+        
+        # create a pyspark model from the data and a sparktk model
+        pyspark_model = classification.NaiveBayes.train(dataframe, 1.0)
         model = self.context.models.classification.naive_bayes.train(self.frame,
                                                                      "label",
                                                                      ['f1', 'f2', 'f3'])
 
+        # use our sparktk model to predict, download to pandas for 
+        # ease of comparison
         model.predict(self.frame, ['f1', 'f2', 'f3'])
         analysis = self.frame.to_pandas()
+        
+        # iterate through the sparktk result and compare the prediction
+        # with pyspark's prediction
         for index, row in analysis.iterrows():
-            print "row: " + str(row)
-            self.assertEqual(row["predicted_class"], row["label"])
-            
+            # extract the features
+            features = [row["f1"], row["f2"], row["f3"]]
+            # use the features to get pyspark's result
+            pyspark_result = pyspark_model.predict(features)
+            self.assertEqual(row["predicted_class"], pyspark_result)
 
 
 if __name__ == '__main__':
