@@ -1,14 +1,14 @@
-# spark-tk regression tests
+# spark-tk library regression tests
 
 # Setup and run regression tests out of source code
 
 Prerequisites:
 - The maven build tool must be installed and configured - https://maven.apache.org/install.html
 - Python 2.7 must be installed - https://www.python.org/downloads/
-- The Python packages numpy, pytest, scipy, pandas and statsmodels must be installed - `pip2.7 install numpy scipy pandas statsmodels pytest`
+- The Python packages numpy, pytest, scipy, pandas, and statsmodels must be installed - `pip2.7 install numpy scipy pandas statsmodels pytest`
 - A Cloudera Distribution of Hadoop (CDH) installation must be set up - http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/CDH5-Installation-Guide.html
 
-Note: the following assumes development is being performed on a controller node of the CDH cluster (i.e. access to YARN and HDFS is available)
+Note: the following assumes development is being performed on a controller node of the CDH cluster (i.e., access to YARN and HDFS is available)
 
 
 1. First build and install the source code at the top level of this git repository.
@@ -17,8 +17,8 @@ Note: the following assumes development is being performed on a controller node 
    mvn install -DskipTests -Dlicense.skip=true
    ```
    
-2. Set the environment variables necessary for sparktk to execute. These environment variables tell sparktk where to find
-   pyspark, and the relevant jar files. The python path must be set to find the sparktk python library, the sparktk regression suite library, CDH's python installation
+2. Set the environment variables necessary for the spark-tk library to be used. These environment variables tell the spark-tk library where to find
+   pyspark, and the spark-tk library jar files. The python path must be set to find the spark-tk python library, the spark-tk regression suite library, CDH's python installation
    and CDH's pyspark installation. It is suggested you add these to your .bashrc file. To set the variables run 
    
    ```
@@ -34,7 +34,7 @@ Note: the following assumes development is being performed on a controller node 
    ```
    
     NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS FOLDER
-4. (Optional) Install the GraphFrames library to use the graph functionality. This is only necessary if you want to run the graph regressions, or leverage the graph functionality.
+4. (Optional) Install the GraphFrames library to use the graph functionality. This is only necessary if you want to run the graph regressions or leverage the graph functionality.
    To do this you download the GraphFrames library and add the python library to your python path (again, we suggest you extend the python path in your bashrc). To do this
    
    ```
@@ -42,7 +42,7 @@ Note: the following assumes development is being performed on a controller node 
     unzip graphframes.zip
     export PYTHONPATH=$PWD/graphframes/:$PYTHONPATH
     ```
-5. To run the regression tests you can either enter find the tests under the `sparktkregtests/testcases` folders, or you can run the following command to run all regression tests.
+5. To run the regression tests, you can either enter find the tests under the `sparktkregtests/testcases` folders, or you can run the following command to run all regression tests.
 
    ```
    py.test .
