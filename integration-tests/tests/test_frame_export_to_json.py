@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from setup import tc, rm, get_sandbox_path
 from sparktk.dtypes import float32
 import os.path
@@ -14,7 +31,7 @@ def test_export_to_json_file_path(tc):
     schema = [('a', int), ('b', float),('c', int) ,('d', int)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['a', 'b', 'c', 'd'])
 
     logger.info("compute dot product")
@@ -37,7 +54,7 @@ def test_strange_strings(tc):
     schema = [("name", str), ("message", str)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 6, "frame should have 6 rows")
+    assert(frame.count(), 6, "frame should have 6 rows")
     assert(frame.column_names, ['name', 'message'])
     dir_name = "sandbox/json_strange_string"
     logger.info("export frame in json format to local file system")
@@ -48,15 +65,15 @@ def test_strange_strings(tc):
 
     data = subprocess.Popen("cat %s/* | grep 'DD'" % dir_name, stdout=subprocess.PIPE, shell=True).communicate()[0]
     json_data = json.loads(str(data))
-    assert(json_data['message'] == frame.take(6).data[3][1], "the value for DD should be #$this is something, amazing''s")
+    assert(json_data['message'] == frame.take(6)[3][1], "the value for DD should be #$this is something, amazing''s")
 
     data1 = subprocess.Popen("cat %s/* | grep 'EE'" % dir_name, stdout=subprocess.PIPE, shell=True).communicate()[0]
     json_data1 = json.loads(str(data1))
-    assert(json_data1['message'] == frame.take(6).data[4][1], "the value for EE should be He said, \\\"Hello!\\\"")
+    assert(json_data1['message'] == frame.take(6)[4][1], "the value for EE should be He said, \\\"Hello!\\\"")
 
     data2 = subprocess.Popen("cat %s/* | grep 'FF'" % dir_name, stdout=subprocess.PIPE, shell=True).communicate()[0]
     json_data2 = json.loads(str(data2))
-    assert(json_data2['message'] == frame.take(6).data[5][1], "the value for FF should be u'It is 15 \u00f8c outside'")
+    assert(json_data2['message'] == frame.take(6)[5][1], "the value for FF should be u'It is 15 \u00f8c outside'")
 
     logger.info("Removing created file")
     shutil.rmtree(dir_name)

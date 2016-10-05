@@ -1,10 +1,27 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """
 definitions for Data Types
 """
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime']
+__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -33,6 +50,40 @@ import pytz
 #   http://mail.scipy.org/pipermail/numpy-discussion/2013-April/066038.html
 # If need be, UDFs can create numpy objects from x using: numpy.datatime64(x.isoformat())
 
+
+class _Matrix(object):
+    base_type = np.ndarray
+    re_pattern = "matrix"
+
+    def __init__(self):
+        self.constructor = self._get_constructor()
+
+    def _get_constructor(self):
+
+        def constructor(value):
+            """
+            Creates a numpy ndarray from a value, which can be one of many types
+            """
+            if value is None:
+                return None
+            else:
+                return np.array(value, dtype=np.float64)
+        return constructor
+
+    @property
+    def is_complex_type(self):
+        return True
+
+    @staticmethod
+    def get_from_string(data_type_str):
+        if _Matrix.re_pattern != data_type_str:
+            raise "Invalid data type"
+        return _Matrix()
+
+    def __repr__(self):
+        return "matrix"
+
+matrix = _Matrix()
 
 class _Vector(object):
 
@@ -79,10 +130,6 @@ class _Vector(object):
     @staticmethod
     def get_from_string(data_type_str):
         return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
-
-    @property
-    def is_complex_type(self):
-        return True
 
     def __repr__(self):
         return "vector(%d)" % self.length
@@ -143,6 +190,7 @@ _data_type_to_pyspark_type_table = {
     long: types.LongType(),
     float: types.DoubleType(),
     str: types.StringType(),
+    unicode: types.StringType(),
     datetime: types.TimestampType()
 }
 
@@ -155,6 +203,7 @@ _primitive_alias_type_to_type_table = {
     long: int64,
     str: unicode,
     list: vector,
+    np.ndarray: matrix,
 }
 
 _primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _primitive_alias_type_to_type_table.iteritems()])
@@ -240,7 +289,7 @@ class _DataTypes(object):
 
     def __repr__(self):
         aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
-        return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"])) + aliases
+        return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
 
     @staticmethod
     def value_is_string(value):
@@ -309,7 +358,10 @@ class _DataTypes(object):
                 return _primitive_alias_str_to_type_table[data_type_str]
             except KeyError:
                 try:
-                    return vector.get_from_string(data_type_str)
+                    if data_type_str == 'matrix':
+                        return matrix.get_from_string(data_type_str)
+                    else:
+                        return vector.get_from_string(data_type_str)
                 except:
                     raise ValueError("Unsupported type string '%s' " % data_type_str)
 
@@ -370,6 +422,7 @@ class _DataTypes(object):
 
     @staticmethod
     def get_constructor(to_type):
+
         """gets the constructor for the to_type"""
         try:
             return to_type.constructor

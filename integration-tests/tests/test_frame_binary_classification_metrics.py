@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from setup import tc, rm, get_sandbox_path
 from sparktk.dtypes import float32
 
@@ -12,7 +29,7 @@ def test_binary_classification_metrics_001(tc):
     schema = [('labels', str),('predictions', str)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute binary_classification_metrics()")
@@ -33,7 +50,7 @@ def test_binary_classification_metrics_002(tc):
     schema = [('labels', float32),('predictions', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute binary_classification_metrics()")
@@ -54,7 +71,7 @@ def test_binary_classification_metrics_003(tc):
     schema = [('labels', float32),('predictions', float32)]
     frame = tc.frame.create(rows, schema)
 
-    assert(frame.row_count, 4, "frame should have 4 rows")
+    assert(frame.count(), 4, "frame should have 4 rows")
     assert(frame.column_names, ['labels', 'predictions'])
 
     logger.info("compute binary_classification_metrics()")

@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.propobj import PropertiesObject
 
 class Histogram(PropertiesObject):
@@ -32,7 +49,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
     :param column_name: (str) Name of column to be evaluated.
     :param num_bins: (Optional[int]) Number of bins in histogram.
                      Default is Square-root choice will be used
-                     (in other words math.floor(math.sqrt(frame.row_count)).
+                     (in other words math.floor(math.sqrt(frame.count())).
     :param weight_column_name: (Optional[str]) Name of column containing weights.
                                Default is all observations are weighted equally.
     :param bin_type: (str["equalwidth"|"equaldepth"]) The type of binning algorithm to use:

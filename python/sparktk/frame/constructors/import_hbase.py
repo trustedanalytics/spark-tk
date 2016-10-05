@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.tkcontext import TkContext
 from sparktk.dtypes import dtypes
 
@@ -57,9 +74,9 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=TkContext.
 
         >>> frame = tc.frame.import_hbase("test_startendtag", [["startendtag", "number", int]], start_tag="20", end_tag="50")
         -etc-
-        >>> frame.row_count
+        >>> frame.count()
         33
-        >>> frame.inspect(frame.row_count)
+        >>> frame.inspect(33)
         [##]  startendtag_number
         ========================
         [0]                    6

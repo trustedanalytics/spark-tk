@@ -1,10 +1,27 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.tkcontext import TkContext
 from pyspark.rdd import RDD
 from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
 
-def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None, tc=TkContext.implicit):
+def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, tc=TkContext.implicit):
     """
     Creates a frame with data from a csv file.
 
@@ -17,10 +34,13 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
                       is a comma (,).
     :param header: (Optional[bool]) Boolean value indicating if the first line of the file will be used to name columns,
                    and not be included in the data.  The default value is false.
-    :param inferschema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
+    :param infer_schema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
                        It requires one extra pass over the data and is false by default.
     :param: schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
-                    columns specified in the schema must match the number of columns in the csv file provided.
+                    columns specified in the schema must match the number of columns in the csv file provided.  If the
+                    value from the csv file cannot be converted to the data type specified by the schema (for example,
+                    if the csv file has a string, and the schema specifies an int), the value will show up as missing
+                    (None) in the frame.
     :return: (Frame) Frame that contains the data from the csv file
 
     Examples
@@ -28,9 +48,10 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
     Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
     there is a header and to infer the schema based on the data.
 
-        >>> file_path = "../integration-tests/datasets/cities.csv"
 
-        >>> frame = tc.load_frame_from_csv(file_path, "|", header=True, inferschema=True)
+        >>> file_path = "../datasets/cities.csv"
+
+        >>> frame = tc.frame.import_csv(file_path, "|", header=True, infer_schema=True)
         -etc-
 
         >>> frame.inspect()
@@ -48,28 +69,38 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
         [9]    18  Redmond                27427            26215  4.62%   Deschutes
 
         >>> frame.schema
-        [('rank', int),
-         ('city', str),
-         ('population_2013', int),
-         ('population_2010', int),
-         ('change', str),
-         ('county', str)]
+        [('rank', <type 'int'>), ('city', <type 'str'>), ('population_2013', <type 'int'>), ('population_2010', <type 'int'>), ('change', <type 'str'>), ('county', <type 'str'>)]
+
+        <hide>
+        >>> file_path = "../datasets/unicode.csv"
+        >>> schema = [("a", unicode),("b", unicode),("c",unicode)]
+        >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False, infer_schema=False)
+        -etc-
+
+        >>> frame.inspect()
+        [#]  a  b  c
+        ============
+        [0]  à  ë  ñ
+        [1]  ã  ê  ü
+
+        </hide>
+
     """
 
 
     if schema is not None:
-        inferschema = False   # if a custom schema is provided, don't waste time inferring the schema during load
+        infer_schema = False   # if a custom schema is provided, don't waste time inferring the schema during load
     if not isinstance(header, bool):
         raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
-    if not isinstance(inferschema, bool):
-        raise ValueError("inferschema parameter must be a boolean, but is {0}.".format(type(inferschema)))
+    if not isinstance(infer_schema, bool):
+        raise ValueError("infer_schema parameter must be a boolean, but is {0}.".format(type(infer_schema)))
     TkContext.validate(tc)
 
     header_str = str(header).lower()
-    inferschema_str = str(inferschema).lower()
+    infer_schema_str = str(infer_schema).lower()
     pyspark_schema = None
 
-    if (not inferschema) and (schema is not None):
+    if (not infer_schema) and (schema is not None):
         fields = []
         for column in schema:
             if dtypes._data_type_to_pyspark_type_table.has_key(column[1]):
@@ -83,7 +114,7 @@ def import_csv(path, delimiter=",", header=False, inferschema=True, schema=None,
             delimiter=delimiter,
             header=header_str,
             dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
-            inferschema=inferschema_str).load(path, schema=pyspark_schema)
+            inferschema=infer_schema_str).load(path, schema=pyspark_schema)
 
     df_schema = []
 
