@@ -71,7 +71,7 @@ object SVD extends Serializable {
   Creates Mllib DenseMatrix from a breeze DenseMatrix
    */
   def fromBreeze(breezeDM: BDM[Double]): Matrix = {
-    new DM(breezeDM.rows, breezeDM.cols, breezeDM.data, isTransposed = false)
+    new DM(breezeDM.rows, breezeDM.cols, breezeDM.data)
 
   }
 
@@ -80,11 +80,11 @@ object SVD extends Serializable {
    */
   def asBreeze(mllibDM: DM): BDM[Double] = {
     //if (!mllibDM.isTransposed) {
-    new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values)
+    //new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values)
     //}
     //    else {
-    //      val breezeMatrix = new BDM[Double](mllibDM.numCols, mllibDM.numRows, mllibDM.values)
-    //      breezeMatrix.t
+        val breezeMatrix = new BDM[Double](mllibDM.numCols, mllibDM.numRows, mllibDM.values)
+        breezeMatrix.t
     //    }
   }
 
