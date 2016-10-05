@@ -131,11 +131,11 @@ class Frame(object):
     def row_decorator_pymllib(schema):
         def decorator(row):
             result = []
-            from pyspark.mllib.linalg import Matrices
+            from pyspark.mllib.linalg import DenseMatrix
             for i in xrange(len(schema)):
                 if type(schema[i][1]) == dtypes._Matrix:
                     shape = row[i].shape
-                    result.append(Matrices.dense(shape[0], shape[1], row[i].flatten()))
+                    result.append(DenseMatrix(shape[0], shape[1], row[i].flatten(), isTransposed=True))
                 else:
                     result.append(row[i])
             return result
