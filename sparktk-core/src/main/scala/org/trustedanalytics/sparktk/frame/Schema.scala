@@ -27,26 +27,6 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import scala.reflect.runtime.universe._
 
 /**
- * String Utility methods
- */
-object StringUtils {
-
-  /**
-   * Check if the supplied string is alpha numeric with underscores (used for column names, etc)
-   */
-  def isAlphanumericUnderscore(str: String): Boolean = {
-    for (c <- str.iterator) {
-      // Not sure if this is great but it is probably faster than regex
-      // http://stackoverflow.com/questions/12831719/fastest-way-to-check-a-string-is-alphanumeric-in-java
-      if (c < 0x30 || (c >= 0x3a && c <= 0x40) || (c > 0x5a && c < 0x5f) || (c > 0x5f && c <= 0x60) || c > 0x7a) {
-        return false
-      }
-    }
-    true
-  }
-}
-
-/**
  * Column - this is a nicer wrapper for columns than just tuples
  *
  * @param name the column name
@@ -56,7 +36,7 @@ case class Column(name: String, dataType: DataType) {
   require(name != null, "column name is required")
   require(dataType != null, "column data type is required")
   require(name != "", "column name can't be empty")
-  require(StringUtils.isAlphanumericUnderscore(name), "column name must be alpha-numeric with underscores")
+  require(Column.isValidColumnName(name), "column name must be alpha-numeric with valid symbols")
 }
 
 object Column {
@@ -71,7 +51,7 @@ object Column {
     require(name != null, "column name is required")
     require(dtype != null, "column data type is required")
     require(name != "", "column name can't be empty")
-    require(StringUtils.isAlphanumericUnderscore(name), "column name must be alpha-numeric with underscores")
+    require(Column.isValidColumnName(name), "column name must be alpha-numeric with valid symbols")
 
     Column(name,
       dtype match {
@@ -81,6 +61,20 @@ object Column {
         case t if t <:< definitions.DoubleTpe => DataTypes.float64
         case _ => DataTypes.string
       })
+  }
+
+  /**
+   * Check if the column name is valid
+   *
+   * @param str Column name
+   * @return Boolean indicating if the column name was valid
+   */
+  def isValidColumnName(str: String): Boolean = {
+    for (c <- str.iterator) {
+      if (c <= 0x20)
+        return false
+    }
+    true
   }
 }
 
