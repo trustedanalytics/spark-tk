@@ -40,8 +40,9 @@ trait DegreeSummarization extends BaseGraph {
 }
 
 case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
-  val grouper = "degree_groupby"
   require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
+
+  val outputName = "degree"
 
   override def work(state: GraphState): Frame = {
     val (dstMsg, srcMsg) = degreeOption match {
@@ -49,8 +50,7 @@ case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
       case "out" => (lit(0), lit(1))
       case "undirected" => (lit(1), lit(1))
     }
-    val degrees = state.graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg))
-    val degreesFrame = degrees.toDF("Vertex", "Degree")
-    new Frame(degreesFrame)
+    val degrees = state.graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
+    new Frame(degrees)
   }
 }
