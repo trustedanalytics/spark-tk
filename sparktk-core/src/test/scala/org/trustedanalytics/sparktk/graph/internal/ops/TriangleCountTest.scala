@@ -45,7 +45,7 @@ class TriangleCountTest extends TestingSparkContextWordSpec with Matchers {
   "triangle count" in {
     val graph = buildGraph()
     val weightedDegree = graph.triangleCount()
-    weightedDegree.schema.columns should equal(List(Column("Triangles", DataTypes.int64), Column("Vertex", DataTypes.int32)))
+    weightedDegree.schema.columns should equal(List(Column("count", DataTypes.int64), Column("id", DataTypes.int32)))
     weightedDegree.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 1)), new GenericRow(Array[Any](2, 3)), new GenericRow(Array[Any](1, 5)), new GenericRow(Array[Any](2, 4))))
 
   }
