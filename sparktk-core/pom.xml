@@ -282,7 +282,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-network-shuffle_2.10</artifactId>
+            <artifactId>spark-network-shuffle_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.mahout</groupId>
@@ -290,7 +290,15 @@
         </dependency>
         <dependency>
             <groupId>com.databricks</groupId>
-            <artifactId>spark-csv_2.10</artifactId>
+            <artifactId>spark-csv_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cloudera.sparkts</groupId>

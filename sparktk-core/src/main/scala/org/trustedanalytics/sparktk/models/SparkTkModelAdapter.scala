@@ -19,9 +19,8 @@ package org.trustedanalytics.sparktk.models
 import java.io._
 import java.net.URLClassLoader
 import java.nio.file.{ Path, Files }
-import java.util
+import java.util.Scanner
 import java.util.zip.ZipInputStream
-
 import org.apache.commons.io.FileUtils
 import org.apache.spark.api.java.JavaSparkContext
 import org.slf4j.LoggerFactory
@@ -30,6 +29,7 @@ import org.trustedanalytics.scoring.interfaces.Model
 import org.apache.spark.{ SparkConf, SparkContext }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
+import java.util.Scanner
 
 /**
  * Wrapper that is able to read a MAR file containing sparktk model and related jars; and then loads and returns the Model for scoring
@@ -57,11 +57,10 @@ class SparkTkModelAdapter() extends ModelReader {
     println("***************************************************")
     val sparktkObject = classLoader.loadClass(jsonMap(MODEL_NAME) + "$").getField("MODULE$").get(null).asInstanceOf[TkSaveableObject]
 
-    val sc = createSimpleContext()
-    println("sc obtained")
-    val sparktkModel = sparktkObject.load(sc, getModelPath(modelZipStreamInput))
-    logger.info("Reading model succeeded")
-    sparktkModel.asInstanceOf[Model]
+    val tc = createSimpleContext()
+    println("tc obtained")
+    //val sparktkModel = tc.load(getModelPath(modelZipStreamInput))
+    sparktkObject.load(tc, getModelPath(modelZipStreamInput)).asInstanceOf[Model]
   }
 
   /**
@@ -84,6 +83,7 @@ class SparkTkModelAdapter() extends ModelReader {
    * @return
    */
   private def getModelPath(modelZipStreamInput: ZipInputStream): String = {
+    val in = new Scanner(System.in)
     var tmpDir: Path = null
     val readBuffer = new Array[Byte](4096)
     try {
@@ -92,13 +92,37 @@ class SparkTkModelAdapter() extends ModelReader {
       while (entry != null) {
         val individualFile = entry.getName
         //only unzip the dir containing the model
-        if (!individualFile.contains(".jar") || !individualFile.contains(".json")) {
-          val file = new File(tmpDir.toString, individualFile)
-          file.createNewFile()
+        if (!individualFile.contains(".jar") && !individualFile.contains(".json")) {
 
-          if (individualFile.endsWith("/")) {
-            file.mkdirs()
-            println("making dir")
+          if (individualFile.contains("topicsGivenDocFrame")) {
+            fileStr = tmpDir + "/topicsGivenDocFrame"
+          }
+          else if (individualFile.contains("distLdaModel/data/globalTopicTotals")) {
+            fileStr = tmpDir + "/distLdaModel/data/globalTopicTotals"
+          }
+          else if (individualFile.contains("distLdaModel/data/tokenCounts")) {
+            fileStr = tmpDir + "/distLdaModel/data/tokenCounts"
+          }
+          else if (individualFile.contains("distLdaModel/data/topicCounts")) {
+            fileStr = tmpDir + "/distLdaModel/data/topicCounts"
+          }
+          else if (individualFile.contains("distLdaModel/metadata")) {
+            fileStr = tmpDir + "/distLdaModel/metadata"
+          }
+          else if (individualFile.contains("topicsGivenWordFrame")) {
+            fileStr = tmpDir + "/topicsGivenWordFrame"
+          }
+          else if (individualFile.contains("wordGivenTopicsFrame")) {
+            fileStr = tmpDir + "/wordGivenTopicsFrame"
+          }
+          else if (individualFile.contains("wordGivenTopicsFrame")) {
+            fileStr = tmpDir + "/wordGivenTopicsFrame"
+          }
+          else if (individualFile.contains("wordGivenTopicsFrame")) {
+            fileStr = tmpDir + "/wordGivenTopicsFrame"
+          }
+          else if (individualFile.contains("metadata")) {
+            fileStr = tmpDir + "/metadata"
           }
           else {
             val parent = file.getParentFile
@@ -115,6 +139,7 @@ class SparkTkModelAdapter() extends ModelReader {
             fileoutStream.close
           }
         }
+
         entry = modelZipStreamInput.getNextEntry
       }
 
@@ -122,6 +147,28 @@ class SparkTkModelAdapter() extends ModelReader {
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
     }
-    ""
+    val i = in.nextInt()
+    tmpDir.toString
+  }
+
+  private def extractFile(zipIn: ZipInputStream, tempDir: String, filePath: String): Unit = {
+    var file: File = null
+    var bufferedOutStream: BufferedOutputStream = null
+    val bytesIn = new Array[Byte](4096)
+
+    try {
+      file = new File(tempDir, filePath)
+      file.createNewFile()
+
+      bufferedOutStream = new BufferedOutputStream(new FileOutputStream(file))
+      var read = zipIn.read(bytesIn)
+      while (read != -1) {
+        bufferedOutStream.write(bytesIn, 0, read)
+        read = zipIn.read(bytesIn)
+      }
+    }
+    finally {
+      bufferedOutStream.close()
+    }
   }
 }

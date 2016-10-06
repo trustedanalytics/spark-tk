@@ -15,9 +15,8 @@
  */
 package org.trustedanalytics.sparktk.models.clustering.kmeans
 
-import java.io.{ FileOutputStream, File }
 import java.nio.file.{ Path, Files }
-import org.apache.commons.io.{ IOUtils, FileUtils }
+import org.apache.commons.io.{ FileUtils }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors }
@@ -26,10 +25,9 @@ import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
-import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
-import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
@@ -94,7 +92,9 @@ object KMeansModel extends TkSaveableObject {
    * @return
    */
   def load(tc: TkContext, path: String): KMeansModel = {
-    tc.load(path).asInstanceOf[KMeansModel]
+    val m = tc.load(path).asInstanceOf[KMeansModel]
+    println(s"model loaded is : $m")
+    m
   }
 
   def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
@@ -310,29 +310,13 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    * @return
    */
   def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
-    val zipFile: File = File.createTempFile("model", ".mar")
-    val zipOutStream = new FileOutputStream(zipFile)
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, "file://" + tmpDir.toString)
-      val codeSource = this.getClass.getProtectionDomain.getCodeSource
-
-      if (codeSource != null) {
-        val absolutePath = codeSource.getLocation.toString
-        val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
-        var jarFileList = x.jarsInSearchPath.values.toList
-        jarFileList = jarFileList ::: List(tmpDir.toFile)
-        //        //Add the spark assembly jar to the MAR file
-        //        val y = new TkSearchPath("/opt/cloudera/parcels/CDH/lib/spark/assembly/lib/")
-        //        jarFileList = jarFileList ::: y.jarsInSearchPath.values.toList
-        ModelArchiveFormat.write(jarFileList, classOf[SparkTkModelAdapter].getName, classOf[KMeansModel].getName, zipOutStream)
-      }
-      SaveLoad.saveMar(marSavePath, zipFile)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[KMeansModel].getName, tmpDir)
     }
     finally {
-      FileUtils.deleteQuietly(zipFile)
-      IOUtils.closeQuietly(zipOutStream)
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
     }
   }
