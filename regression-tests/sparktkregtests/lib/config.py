@@ -19,7 +19,7 @@
 import os
 
 
-qa_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+qa_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 dataset_directory = os.path.join(qa_root, "datasets")
 hdfs_namenode = os.getenv("CDH_MASTER", "localhost")
 user = os.getenv("USER", "hadoop")
