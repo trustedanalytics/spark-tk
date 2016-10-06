@@ -16,12 +16,12 @@
 package org.trustedanalytics.sparktk.dicom.internal.constructors
 
 import java.awt.image.Raster
-import java.io.{ PrintStream, ByteArrayOutputStream, File }
+import java.io._
 import java.util.Iterator
 import javax.imageio.stream.ImageInputStream
 import javax.imageio.{ ImageIO, ImageReader }
 
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
@@ -32,7 +32,7 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
-import org.dcm4che3.tool.dcm2xml.Dcm2Xml
+import org.dcm4che3.tool.dcm2xml.org.trustedanalytics.sparktk.Dcm2Xml
 
 import scala.util.Random
 
@@ -51,16 +51,18 @@ object Import {
 
       case (filePath, fileData) =>
 
-        //TODO: create .dcm files in /tmp and create file Obj. Currently dicom library does not support byte arrays (Temporary)
-        val tmpFile: File = File.createTempFile(s"dicom-temp-${Random.nextInt()}", ".dcm")
-        FileUtils.writeByteArrayToFile(tmpFile, fileData.toArray())
-        tmpFile.deleteOnExit()
+        // Open PortableDataStream to retrieve the bytes
+        val fileInputStream = fileData.open()
+        val byteArray = IOUtils.toByteArray(fileInputStream)
+
+        val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+        val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
 
         //create matrix
         val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
         val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
         val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
-        val iis: ImageInputStream = ImageIO.createImageInputStream(tmpFile)
+        val iis: ImageInputStream = ImageIO.createImageInputStream(pixeldicomInputStream)
         readers.setInput(iis, true)
 
         //pixels data raster
@@ -80,22 +82,14 @@ object Import {
         val dm1 = new DenseMatrix(h, w, data.flatten)
 
         //Metadata
-        val dis: DicomInputStream = new DicomInputStream(tmpFile)
-        val dcm2xml: Dcm2Xml = new Dcm2Xml()
+        val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+        val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
 
-        //TODO: Fix the redirecting output stream (Temporary)
-        //redirecting output stream
+        val dcm2xml = new Dcm2Xml()
         val myOutputStream = new ByteArrayOutputStream()
-        val myStream: PrintStream = new PrintStream(myOutputStream)
-        // Listen to system out
-        System.setOut(myStream)
-        dcm2xml.parse(dis)
-        // Restore (or stop listening)
-        System.out.flush()
-        System.setOut(System.out)
+        dcm2xml.convert(metadataDicomInputStream, myOutputStream)
+        val xml = myOutputStream.flush().toString()
 
-        // myStream.toString
-        val xml: String = myOutputStream.toString()
         (xml, dm1)
     }.zipWithIndex()
 
