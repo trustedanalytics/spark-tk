@@ -48,7 +48,7 @@ class LoopyBeliefPropagationTest extends TestingSparkContextWordSpec with Matche
       "optimize over the priors" in {
         val graph = buildGraph()
         val posteriorBelief = graph.loopyBeliefPropagation("priors", "weights")
-        posteriorBelief.schema.columns should equal(List(Column("id", DataTypes.int32), Column("priors", DataTypes.string), Column("Posterior", DataTypes.string)))
+        posteriorBelief.schema.columns should equal(List(Column("id", DataTypes.int32), Column("priors", DataTypes.string), Column("posterior", DataTypes.string)))
         posteriorBelief.rdd.toArray.toList should equal(List(
           new GenericRow(Array[Any](1, "1.0 0", "[1.0,0.0]")),
           new GenericRow(Array[Any](3, "1.0 0", "[1.0,0.0]")),

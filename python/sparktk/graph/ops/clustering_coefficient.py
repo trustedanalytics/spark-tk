@@ -54,13 +54,13 @@ def clustering_coefficient(self):
 
         >>> result = graph.clustering_coefficient()
         >>> result.inspect()
-        [#]  Vertex  Clustering_Coefficient
-        ===================================
-        [0]       1          0.333333333333
-        [1]       2                     1.0
-        [2]       3                     1.0
-        [3]       4                     0.0
-        [4]       5                     0.0
+        [#]  id  clustering_coefficient
+        ===============================
+        [0]   1          0.333333333333
+        [1]   2                     1.0
+        [2]   3                     1.0
+        [3]   4                     0.0
+        [4]   5                     0.0
 
     """
     from sparktk.frame.frame import Frame
