@@ -36,7 +36,7 @@ def train(frame, columns, mean_centered=True, k=None):
     :return: (PcaModel) The trained PCA model
     """
     if frame is None:
-        raise ValueError("frame can not be None")
+        raise ValueError("frame cannot be None")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)

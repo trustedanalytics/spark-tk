@@ -73,7 +73,7 @@ def train(frame,
 
     """
     if frame is None:
-        raise ValueError("frame can not be None")
+        raise ValueError("frame cannot be None")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
