@@ -63,7 +63,6 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
-    @unittest.skip("Spark global udf doesn't autoamtically add script")
     def test_add_col_names(self):
         """Tests adding a column name with a global method"""
         self.frame.add_columns(global_udf, self.new_col_schema)
@@ -111,30 +110,28 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
             self.frame.inspect()
         self.assertEqual(schema_before, self.frame.schema)
 
-    @unittest.skip("column names not validated")
     def test_add_columns_add_existing_name(self):
         """Test adding columns with existing names errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+                Exception, "Schemas have conflicting column names"):
             self.frame.add_columns(lambda row: udf_int_val, ('str', int))
             self.frame.inspect()
 
-    @unittest.skip("column names not validated")
     def test_add_column_with_empty_name(self):
         """Test adding a column with an empty name errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(Exception, "column name can't be empty"):
             self.frame.add_columns(lambda row: udf_int_val, ('', int))
             self.frame.inspect()
 
-    @unittest.skip("column names not validated")
     def test_add_column_null_schema_no_force(self):
         """Test adding a column with a null schema errors, don't force eval"""
-        with self.assertRaises(TypeError):
+        with self.assertRaisesRegexp(
+                Exception, "schema expected to contain tuples"):
             self.frame.add_columns(lambda row: udf_int_val, None)
 
-    @unittest.skip("column names not validated")
     def test_add_column_empty_schema_no_force(self):
         """Test adding a column with empty schema errors, don't force eval"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(IndexError, "tuple index out of range"):
             self.frame.add_columns(lambda row: udf_int_val, ())
 
     def test_add_column_null_schema(self):
