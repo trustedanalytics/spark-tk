@@ -40,6 +40,6 @@ trait TriangleCountSummarization extends BaseGraph {
 case class TriangleCount() extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(state.graphFrame.triangleCount.run().toDF("Triangles", "Vertex"))
+    new Frame(state.graphFrame.triangleCount.run())
   }
 }
