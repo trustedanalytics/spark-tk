@@ -15,12 +15,81 @@
 #  limitations under the License.
 #
 
-def drop_rows_by_keywords(self, dict_keywords_values):
+def drop_rows_by_keywords(self, keywords_values_dict):
     """
-    filter metadata which does not match with given dictionary of keywords and values
+    Drop the rows based on dictionary of {"keyword":"value"} from column holding xml string
 
-    Ex: dict_keywords_values -> {"PatientID":"12344", "SOPInstanceUID","1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"}
+    Ex: keywords_values_dict -> {"SOPInstanceUID":"1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336", "Manufacturer":"SIEMENS", "StudyDate":"20040305"}
 
-    :param dict_keywords_values: (dict(str, str)) dictionary of keywords and values from xml string in metadata
+    Parameters
+    ----------
+
+    :param keywords_values_dict: (dict(str, str)) dictionary of keywords and values from xml string in metadata
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        <skip>
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+        </skip>
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                ...
+
+        >>> keywords_values_dict = {"SOPInstanceUID":"1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336", "Manufacturer":"SIEMENS", "StudyDate":"20040305"}
+        >>> dicom.drop_rows_by_keywords(keywords_values_dict)
+        >>> dicom.metadata.count()
+        2
+
+        <skip>
+        #After drop_rows
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   1  <?xml version="1.0" encodin...
+        [1]   2  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        =========================================
+        [1]   1  [[  0.   1.   0. ...,   0.   0.   1.]
+        [  1.   9.  10. ...,   2.   4.   6.]
+        [  0.  12.  11. ...,   4.   4.   7.]
+        ...,
+        [  0.   4.   2. ...,   3.   5.   5.]
+        [  0.   8.   5. ...,   7.   8.   8.]
+        [  0.  10.  10. ...,   8.   8.   8.]]
+        [2]   2  [[ 0.  0.  0. ...,  0.  0.  0.]
+        [ 0.  2.  2. ...,  6.  5.  5.]
+        [ 0.  7.  8. ...,  4.  4.  5.]
+        ...,
+        [ 0.  4.  1. ...,  4.  5.  6.]
+        [ 0.  4.  5. ...,  6.  6.  5.]
+        [ 1.  6.  8. ...,  4.  5.  4.]]
+        </skip>
 
     """
+
+    if not isinstance(keywords_values_dict, dict):
+        raise TypeError("keywords_values_dict should be a type of dict, but found type as %" % type(keywords_values_dict))
+
+    #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
+    def f(scala_dicom):
+        scala_dicom.dropRowsByKeywords(self._tc.jutils.convert.to_scala_map(keywords_values_dict))
+
+    self._call_scala(f)

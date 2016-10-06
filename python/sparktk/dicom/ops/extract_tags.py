@@ -31,17 +31,18 @@ def extract_tags(self, tags):
     Examples
     --------
 
-        <skip>
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
 
+        <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
+        </skip>
 
         #Part of xml string looks as below
         <?xml version="1.0" encoding="UTF-8"?>
@@ -54,6 +55,10 @@ def extract_tags(self, tags):
         #Extract value for each tag from column holding xml string
         >>> dicom.extract_tags(["00080018", "00080070", "00080030"])
 
+        >>> dicom.metadata.column_names
+        [u'id', u'metadata', u'00080018', u'00080070', u'00080030']
+
+        <skip>
         >>> dicom.metadata.inspect(truncate=20)
         [#]  id  metadata              00080018              00080070  00080030
         ============================================================================
@@ -73,8 +78,8 @@ def extract_tags(self, tags):
     if self._metadata._is_scala:
         def f(scala_dicom):
             scala_dicom.extractTags(self._tc.jutils.convert.to_scala_vector_string(tags))
-        results = self._call_scala(f)
-        return results
+        self._call_scala(f)
+        return
 
     #If metadata is python frame, run below udf
     import xml.etree.ElementTree as ET
