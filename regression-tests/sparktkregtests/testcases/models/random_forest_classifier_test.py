@@ -105,7 +105,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
                 self.frame, "class", ["feat1", "feat2"], max_bins=-1)
 
     def test_max_bins_0(self):
-        """Test for max_bins = 0; should not throw exception"""
+        """Test for max_bins = 0; should throw exception"""
         with self.assertRaisesRegexp(
                 Exception,
                 "DecisionTree Strategy given invalid maxBins parameter"):

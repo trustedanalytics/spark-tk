@@ -65,7 +65,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
                 self.frame, "ERR", ["feat1", "feat2"])
 
     def test_bad_feature_col_name(self):
-        """Negative test to check behavior for feature class column"""
+        """Negative test to check behavior for feature column"""
         with self.assertRaisesRegexp(
                 Exception, ".*Invalid column name ERR provided"):
             model = self.context.models.regression.random_forest_regressor.train(

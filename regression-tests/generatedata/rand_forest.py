@@ -19,6 +19,7 @@ import random
 import operator as o
 
 def rand_forest_class(lines, ptcnt):
+    """Generates data random forest dataset with 2 features"""
     feat = len(lines[0])
     for i in range(ptcnt):
        r = [random.randint(0,10) for i in range(feat-1)]
