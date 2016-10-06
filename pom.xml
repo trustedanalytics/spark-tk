@@ -138,12 +138,14 @@
       <dicom.version>3.3.7</dicom.version>
       <artifactIdExcludesHive>hive-exec,hive-metastore</artifactIdExcludesHive>
       <artifactIdExcludesHadoop>hadoop-aws,hadoop-annotations,hadoop-mapreduce-client-common,hadoop-mapreduce-client-core,hadoop-mapreduce-client-jobclient,hadoop-mapreduce-client-shuffle,hadoop-yarn-api,hadoop-yarn-client,hadoop-yarn-common,hadoop-yarn-server-common,hadoop-yarn-server-web-proxy</artifactIdExcludesHadoop>
-      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-launcher_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
+      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
       <artifactIdExcludesScala>spire_${tap.scala.short.version},breeze_${tap.scala.short.version},scala-library,scala-reflect,scalatest_${tap.scala.short.version}</artifactIdExcludesScala>
       <artifactIdExcludesMisc>jdk.tools,mesos,scala-compiler,joda-time</artifactIdExcludesMisc>
       <artifactIdExcludes>${artifactIdExcludesMisc},${artifactIdExcludesScala},${artifactIdExcludesSpark},${artifactIdExcludesHadoop},${artifactIdExcludesHive}</artifactIdExcludes>
         <!--org.apache.hadoop,org.apache.hbase,org.apache.hive-->
       <groupIdExcludes></groupIdExcludes>
+      <akka.version>2.2.3-shaded-protobuf</akka.version>
+      <akka.group>org.spark-project.akka</akka.group>
     </properties>
     <profiles>
       <!--doc generation-->
@@ -861,17 +863,17 @@
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-network-shuffle_2.11</artifactId>
+          <artifactId>spark-network-shuffle_${tap.scala.short.version}</artifactId>
           <version>1.2.0</version>
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-network-common_2.10</artifactId>
+          <artifactId>spark-network-common_${tap.scala.short.version}</artifactId>
           <version>${tap.spark.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
-          <artifactId>spark-launcher_2.10</artifactId>
+          <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
           <version>${tap.spark.version}</version>
         </dependency>
         <dependency>
@@ -904,10 +906,21 @@
           <artifactId>netty-all</artifactId>
           <version>4.0.29.Final</version>
         </dependency>
+        <!--<dependency>-->
+          <!--<groupId>com.typesafe.akka</groupId>-->
+          <!--<artifactId>akka-remote_2.10</artifactId>-->
+          <!--<version>2.3.11</version>-->
+        <!--</dependency>-->
         <dependency>
-          <groupId>com.typesafe.akka</groupId>
+          <groupId>${akka.group}</groupId>
           <artifactId>akka-remote_2.10</artifactId>
-          <version>2.3.11</version>
+          <version>${akka.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.google.protobuf</groupId>
+              <artifactId>protobuf-java</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
@@ -1164,6 +1177,16 @@
                 </exclusion>
           </exclusions>
         </dependency>
+        <!--<groupId>org.apache.spark</groupId>-->
+        <!--<artifactId>spark-assembly_2.10</artifactId>-->
+        <!--<version>1.6.0-cdh5.7.1</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+          <version>2.5.0</version>
+        </dependency>
+
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-client</artifactId>

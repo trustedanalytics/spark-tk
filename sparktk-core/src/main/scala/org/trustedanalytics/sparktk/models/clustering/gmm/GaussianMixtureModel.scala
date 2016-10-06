@@ -1,5 +1,7 @@
 package org.trustedanalytics.sparktk.models.clustering.gmm
 
+import java.nio.file.{ Files, Path }
+
 import org.apache.spark.sql.Row
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ GaussianMixture => SparkGaussianMixture, GaussianMixtureModel => SparkGaussianMixtureModel }
@@ -222,24 +224,17 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
    * @param marSavePath
    * @return
    */
-  //  def exportToMar(marSavePath: String): String = {
-  //    val zipFile: File = File.createTempFile("model", ".mar")
-  //    val zipOutStream = new FileOutputStream(zipFile)
-  //
-  //    try {
-  //      val absolutePath = new File(".").getAbsolutePath
-  //      val x = new TkSearchPath(absolutePath)
-  //
-  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[GaussianMixtureModel].getName ,zipOutStream)
-  //      SaveLoad.saveMar()
-  //
-  //
-  //    }
-  //    finally {
-  //      FileUtils.deleteQuietly(zipFile)
-  //      IOUtils.closeQuietly(zipOutStream)
-  //    }
-  //  }
+  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[GaussianMixtureModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
 
 }
 

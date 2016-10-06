@@ -16,7 +16,13 @@
 
 package org.trustedanalytics.sparktk.models
 
+import java.io.{ FileOutputStream, File }
 import java.nio.DoubleBuffer
+import java.nio.file.{ Files, Path }
+
+import org.apache.commons.io.{ IOUtils, FileUtils }
+import org.trustedanalytics.model.archive.format.ModelArchiveFormat
+import org.trustedanalytics.sparktk.saveload.SaveLoad
 
 object ScoringModelUtils {
   /**
@@ -72,6 +78,27 @@ object ScoringModelUtils {
       }
       case s: String => s.trim().toInt
       case _ => throw new IllegalArgumentException(s"The following value is not a numeric data type: $value")
+    }
+  }
+
+  def saveToMar(marSavePath: String, modelClass: String, tmpDir: Path): Unit = {
+    val zipFile: File = File.createTempFile("model", ".mar")
+    val zipOutStream = new FileOutputStream(zipFile)
+    try {
+      val codeSource = this.getClass.getProtectionDomain.getCodeSource
+
+      if (codeSource != null) {
+        val absolutePath = codeSource.getLocation.toString
+        val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
+        var jarFileList = x.jarsInSearchPath.values.toList
+        jarFileList = jarFileList ::: List(tmpDir.toFile)
+        ModelArchiveFormat.write(jarFileList, classOf[SparkTkModelAdapter].getName, modelClass, zipOutStream)
+      }
+      SaveLoad.saveMar(marSavePath, zipFile)
+    }
+    finally {
+      FileUtils.deleteQuietly(zipFile)
+      IOUtils.closeQuietly(zipOutStream)
     }
   }
 }

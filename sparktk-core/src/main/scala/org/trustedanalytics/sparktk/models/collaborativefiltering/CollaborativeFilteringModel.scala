@@ -1,6 +1,7 @@
 package org.trustedanalytics.sparktk.models.collaborativefiltering
 
 import java.io.{ FileOutputStream, File }
+import java.nio.file.{ Files, Path }
 
 import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.apache.commons.lang3.StringUtils
@@ -15,7 +16,7 @@ import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
-import org.trustedanalytics.sparktk.models.{ TkSearchPath, SparkTkModelAdapter }
+import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, TkSearchPath, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 
 object CollaborativeFilteringModel extends TkSaveableObject {
@@ -299,24 +300,17 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
    * @param marSavePath
    * @return
    */
-  //  def exportToMar(marSavePath: String): String = {
-  //    val zipFile: File = File.createTempFile("model", ".mar")
-  //    val zipOutStream = new FileOutputStream(zipFile)
-  //
-  //    try {
-  //      val absolutePath = new File(".").getAbsolutePath
-  //      val x = new TkSearchPath(absolutePath)
-  //
-  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[CollaborativeFilteringModel].getName ,zipOutStream)
-  //      SaveLoad.saveMar()
-  //
-  //
-  //    }
-  //    finally {
-  //      FileUtils.deleteQuietly(zipFile)
-  //      IOUtils.closeQuietly(zipOutStream)
-  //    }
-  //  }
+  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[CollaborativeFilteringModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
 
   /**
    * Collaborative Filtering recommend (ALS).

@@ -1,5 +1,6 @@
 package org.trustedanalytics.sparktk.models.classification.naive_bayes
 
+import java.nio.file.{ Files, Path }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.{ NaiveBayesModel => SparkNaiveBayesModel, NaiveBayes }
 import org.apache.spark.mllib.linalg.Vectors
@@ -13,9 +14,8 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, ScoreAndLabel, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
-import java.io.{ FileOutputStream, File }
-import org.apache.commons.io.{ IOUtils, FileUtils }
-import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
+import org.apache.commons.io.{ FileUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
 
 import scala.language.implicitConversions
@@ -185,7 +185,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    * @return
    */
   def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Principal Components Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaDataArgs("Naive Bayes Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**
@@ -193,24 +193,17 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    * @param marSavePath
    * @return
    */
-  //  def exportToMar(marSavePath: String): String = {
-  //    val zipFile: File = File.createTempFile("model", ".mar")
-  //    val zipOutStream = new FileOutputStream(zipFile)
-  //
-  //    try {
-  //      val absolutePath = new File(".").getAbsolutePath
-  //      val x = new TkSearchPath(absolutePath)
-  //
-  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[NaiveBayesModel].getName ,zipOutStream)
-  //      SaveLoad.saveMar()
-  //
-  //
-  //    }
-  //    finally {
-  //      FileUtils.deleteQuietly(zipFile)
-  //      IOUtils.closeQuietly(zipOutStream)
-  //    }
-  //  }
+  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[NaiveBayesModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
 
 }
 

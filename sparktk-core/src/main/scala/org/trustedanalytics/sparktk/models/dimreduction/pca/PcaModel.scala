@@ -1,8 +1,8 @@
 package org.trustedanalytics.sparktk.models.dimreduction.pca
 
-import java.io.{ FileOutputStream, File }
+import java.nio.file.{ Files, Path }
 import breeze.linalg
-import org.apache.commons.io.{ IOUtils, FileUtils }
+import org.apache.commons.io.{ FileUtils }
 import org.json4s.JsonAST.JValue
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseMatrix, DenseVector }
@@ -13,9 +13,8 @@ import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, TkSearchPath, SparkTkModelAdapter }
+import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ TkSaveLoad, SaveLoad, TkSaveableObject }
-import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 
 object PcaModel extends TkSaveableObject {
 
@@ -186,21 +185,15 @@ case class PcaModel private[pca] (columns: Seq[String],
    * @param marSavePath
    * @return
    */
-  def exportToMar(marSavePath: String): String = {
-    val zipFile: File = File.createTempFile("model", ".mar")
-    val zipOutStream = new FileOutputStream(zipFile)
-
+  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+    var tmpDir: Path = null
     try {
-      val absolutePath = new File(".").getAbsolutePath
-      val x = new TkSearchPath(absolutePath)
-
-      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[PcaModel].getName, zipOutStream)
-      //SaveLoad.saveMar()
-      "test"
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[PcaModel].getName, tmpDir)
     }
     finally {
-      FileUtils.deleteQuietly(zipFile)
-      IOUtils.closeQuietly(zipOutStream)
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
     }
   }
 

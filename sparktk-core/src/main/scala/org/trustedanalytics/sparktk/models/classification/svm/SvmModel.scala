@@ -1,5 +1,7 @@
 package org.trustedanalytics.sparktk.models.classification.svm
 
+import java.nio.file.{ Files, Path }
+
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.{ SVMModel => SparkSvmModel, SVMWithSGD }
 import org.apache.spark.mllib.optimization.{ SquaredL2Updater, L1Updater }
@@ -7,9 +9,8 @@ import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.mllib.linalg.Vectors
-import java.io.{ FileOutputStream, File }
-import org.apache.commons.io.{ IOUtils, FileUtils }
-import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
+import org.apache.commons.io.{ FileUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
@@ -254,24 +255,17 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
    * @param marSavePath
    * @return
    */
-  //  def exportToMar(marSavePath: String): String = {
-  //    val zipFile: File = File.createTempFile("model", ".mar")
-  //    val zipOutStream = new FileOutputStream(zipFile)
-  //
-  //    try {
-  //      val absolutePath = new File(".").getAbsolutePath
-  //      val x = new TkSearchPath(absolutePath)
-  //
-  //      ModelArchiveFormat.write(x.jarsInSearchPath.values.toList, classOf[SparkTkModelAdapter].getName, classOf[SvmModel].getName ,zipOutStream)
-  //      SaveLoad.saveMar()
-  //
-  //
-  //    }
-  //    finally {
-  //      FileUtils.deleteQuietly(zipFile)
-  //      IOUtils.closeQuietly(zipOutStream)
-  //    }
-  //  }
+  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[SvmModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
 
 }
 
