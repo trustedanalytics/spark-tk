@@ -54,7 +54,6 @@ case class GlobalClusteringCoefficient() extends GraphSummarization[Double] {
 
   val degree = "Degree"
   val degreeChoose2 = "DegreeChoose2"
-  val vertex = "Vertex"
 
   override def work(state: GraphState): Double = {
     val triangleCount = state.graphFrame.triangleCount.run().agg(sum(col(triangles))).first.getLong(0)

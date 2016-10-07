@@ -22,8 +22,8 @@ trait QuantilesSummarization extends BaseFrame {
   /**
    * Calculate quantiles on the given column.
    *
-   * @param column the name of the column to calculate quantiles.
-   * @param quantiles What is being requested
+   * @param column The name of the column to calculate quantiles off of.
+   * @param quantiles The quantile cutoffs being requested
    * @return A new frame with two columns (''float64''): requested quantiles and their respective values.
    */
   def quantiles(column: String,
@@ -33,8 +33,9 @@ trait QuantilesSummarization extends BaseFrame {
   }
 }
 
-case class Quantiles(column: String,
-                     quantiles: List[Double]) extends FrameSummarization[Frame] {
+case class Quantiles(column: String, quantiles: List[Double]) extends FrameSummarization[Frame] {
+  require(quantiles.forall(x => x > 0.0d), "Quantile cutoffs must be positive")
+  require(quantiles.forall(x => x <= 100.0d), "Quantile cutoffs must be less than equal to 100")
 
   override def work(state: FrameState): Frame = {
     val columnIndex = state.schema.columnIndex(column)

@@ -27,12 +27,15 @@ import random
 import pandas
 import numpy as np
 import statsmodels.stats.stattools as smst
+import statsmodels.tsa.stattools as smtsa
+from scipy import stats
+import statsmodels.api as sm
+import statsmodels.stats.diagnostic as smd
+import statsmodels.formula.api as smf
+import statsmodels.regression.linear_model as smrl
 
 #Change filename to the location of the csv file used for the test
 filename = "../datasets/timeseriesstats.csv"
-
-
-#from other file
 
 class FrameInspectTest(sparktk_test.SparkTKTestCase):
 
@@ -51,19 +54,49 @@ class FrameInspectTest(sparktk_test.SparkTKTestCase):
 
         self.frame = self.context.frame.import_csv(
             dataset, delimiter= ' ', header=True, schema=schema)
+        self.pandaframe = self.frame.to_pandas()
+        self.pandaframe.logM = self.pandaframe.logM.astype(np.float64)
+        self.pandaframe.Rs = self.pandaframe.Rs.astype(np.float64)
+        self.pandaframe.Rl = self.pandaframe.Rl.astype(np.float64)
 
     def test_frame_timeseries_durbin_watson(self):
         """Test Durbin Watson"""
         result = self.frame.timeseries_durbin_watson_test("logM")
-        #pandaframe = pandas.DataFrame(new_data, columns=["year", "logM", "logYp", "Rs", "Rl", "Rm", "logSpp"])
-        pandaframe = self.frame.to_pandas()
-        pandaframe.logM = pandaframe.logM.astype(np.float64)
-        pandaframe.Rs = pandaframe.Rs.astype(np.float64)
-        pandaframe.Rl = pandaframe.Rl.astype(np.float64)
-        #Durbin Watson
-        db_result = smst.durbin_watson(pandaframe["logM"])
+        db_result = smst.durbin_watson(self.pandaframe["logM"])
 
         self.assertAlmostEqual(result, db_result, delta=0.0000000001)
+
+    def test_frame_timeseries_dickey_fuller_constant(self):
+        """Test Augmented Dickey Fuller with constant regression"""
+        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=0, regression="c")
+        df_c_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=0, regression="c")
+
+        self.assertAlmostEqual(result.p_value, df_c_result[1], delta=0.0001)
+        self.assertAlmostEqual(result.test_stat, df_c_result[0], delta=0.01)
+
+    def test_frame_timeseries_dickey_fuller_no_constant(self):
+        """Test Augmented Dickey Fuller with no constant regression"""
+        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=1, regression="nc")
+        df_nc_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=1, regression="nc")
+
+        self.assertAlmostEqual(result.p_value, df_nc_result[1], delta=0.0001)
+        self.assertAlmostEqual(result.test_stat, df_nc_result[0], delta=0.01)
+
+    def test_frame_timeseries_dickey_fuller_constant_and_trend(self):
+        """Test Augmented Dickey Fuller with constant and trend regression"""
+        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=1, regression="ct")
+        df_ct_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=1, regression="ct")
+
+        self.assertAlmostEqual(result.p_value, df_ct_result[1], delta=0.0001)
+        self.assertAlmostEqual(result.test_stat, df_ct_result[0], delta=0.01)
+
+    def test_frame_timeseries_dickey_fuller_constant_trend_squared(self):
+        """Test Augmented Dickey Fuller with constant, trend, and trend squared regression"""
+        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=1, regression="ctt")
+        df_ctt_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=1, regression="ctt")
+
+        self.assertAlmostEqual(result.p_value, df_ctt_result[1], delta=0.0001)
+        self.assertAlmostEqual(result.test_stat, df_ctt_result[0], delta=0.01)
 
 if __name__ == "__main__":
     unittest.main()

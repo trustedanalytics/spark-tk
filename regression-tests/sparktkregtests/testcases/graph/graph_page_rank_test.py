@@ -89,8 +89,8 @@ class PageRank(sparktk_test.SparkTKTestCase):
         G.add_edges_from(edge_list)
         nx_pagerank = nx.pagerank(G, max_iter=self.MAX_ITERATIONS, tol=self.CONVERGENCE_TOLERANCE)
 
-        vals = {ix['Vertex']: ix['PageRank']
-                for _, ix in pandas_vertices.iterrows()}
+        vals = {vertex['id']: vertex['pagerank']
+                for index, vertex in pandas_vertices.iterrows()}
 
         self.assertItemsEqual(vals, nx_pagerank)
 

@@ -58,24 +58,24 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
 
         >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="out")
         >>> result.inspect() 
-        [#]  Vertex  Degree
-        ===================
-        [0]       1       4
-        [1]       2       1
-        [2]       3       0
-        [3]       4       1
-        [4]       5       0
+        [#]  id  degree
+        ===============
+        [0]   1       4
+        [1]   2       1
+        [2]   3       0
+        [3]   4       1
+        [4]   5       0
 
 
         >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="in")
         >>> result.inspect()
-        [#]  Vertex  Degree
-        ===================
-        [0]       1       0
-        [1]       2       2
-        [2]       3       2
-        [3]       4       1
-        [4]       5       1
+        [#]  id  degree
+        ===============
+        [0]   1       0
+        [1]   2       2
+        [2]   3       2
+        [3]   4       1
+        [4]   5       1
 
     """
     from sparktk.frame.frame import Frame
