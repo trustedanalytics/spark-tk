@@ -293,4 +293,5 @@ class CollaborativeFilteringModel(PropertiesObject):
 
     def export_to_mar(self, path):
         """ export the trained model to MAR format for Scoring Engine """
-        return self._scala.exportToMar(self._tc._scala_sc, path)
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
