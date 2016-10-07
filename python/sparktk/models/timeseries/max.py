@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """
 MAx (Moving Average with Exogeneous Variables) Model
 """
@@ -158,7 +175,7 @@ class MaxModel(PropertiesObject):
     </skip>
 
     <hide>
-        >>> results = predicted_frame.take(5, columns=["predicted_y"]).data
+        >>> results = predicted_frame.take(5, columns=["predicted_y"])
 
         >>> guess = [2.73574878613, 2.32499522807, 2.37166693834, 2.37166693834, 2.37450890393]
 

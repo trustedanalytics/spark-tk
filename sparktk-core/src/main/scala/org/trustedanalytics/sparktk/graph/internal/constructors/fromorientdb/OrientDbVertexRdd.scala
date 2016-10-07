@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb
 
 import com.orientechnologies.orient.core.sql.OCommandSQL
@@ -44,17 +59,16 @@ class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf) extends 
   override protected def getPartitions: Array[Partition] = {
     val partitionBuffer = new ArrayBuffer[OrientDbPartition]()
     val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations)
-    val classBaseNames = graph.getVertexBaseType.getName
-    val classIterator = graph.getVertexType(classBaseNames).getAllSubclasses.iterator()
+    val schemaReader = new SchemaReader(graph)
+    val vertexTypes = schemaReader.getVertexClasses.getOrElse(Set(graph.getVertexBaseType.getName))
     var partitionIdx = 0
-    while (classIterator.hasNext) {
-      val classLabel = classIterator.next().getName
-      val clusterIds = graph.getVertexType(classLabel).getClusterIds
+    vertexTypes.foreach(vertexType => {
+      val clusterIds = graph.getVertexType(vertexType).getClusterIds
       clusterIds.foreach(id => {
-        partitionBuffer += new OrientDbPartition(id, classLabel, partitionIdx)
+        partitionBuffer += new OrientDbPartition(id, vertexType, partitionIdx)
         partitionIdx += 1
       })
-    }
+    })
     partitionBuffer.toArray
   }
 }
