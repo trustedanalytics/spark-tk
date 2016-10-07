@@ -15,7 +15,14 @@
 #  limitations under the License.
 #
 
-source common.sh
+NAME="[`basename $BASH_SOURCE[0]`]"
+DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
+echo "$NAME DIR=$DIR"
+
+MAINDIR="$(dirname $DIR)"
+MAINDIR="$(dirname $MAINDIR)"
+
+sparktkpackage=$MAINDIR/sparktkinstall
 
 # Remove the sparktk package so it doesn't shadow ours
 sudo pip2.7 uninstall -y sparktk
