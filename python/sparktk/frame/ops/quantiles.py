@@ -23,8 +23,8 @@ def quantiles(self, column_name, quantiles):
     Parameters
     ----------
 
-    :param column_name: (str) The column to calculate quantiles
-    :param quantiles: (List[float]) What is being requested.
+    :param column_name: (str) The column to calculate quantiles on
+    :param quantiles: (List[float]) The quantiles being requested
     :return: (Frame) A new frame with two columns (float64): requested Quantiles and their respective values.
 
     Calculates quantiles on the given column.

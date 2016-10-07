@@ -45,7 +45,7 @@ class ClusteringCoefficientTest extends TestingSparkContextWordSpec with Matcher
   "clustering coefficient" in {
     val graph = buildGraph()
     val clusteringCoefficient = graph.clusteringCoefficient()
-    clusteringCoefficient.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Clustering_Coefficient", DataTypes.float64)))
+    clusteringCoefficient.schema.columns should equal(List(Column("id", DataTypes.int32), Column("clustering_coefficient", DataTypes.float64)))
     clusteringCoefficient.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 1.0d)), new GenericRow(Array[Any](3, 2.0d / 3.0d)), new GenericRow(Array[Any](5, 1.0d)), new GenericRow(Array[Any](4, 2.0d / 3.0d))))
 
   }

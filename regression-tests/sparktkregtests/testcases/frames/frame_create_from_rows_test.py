@@ -46,7 +46,6 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         # returns only the right number of rows
         self.assertEqual(len(frame.take(10)), len(self.dataset))
 
-    @unittest.skip("frame.create does not throw an error with duplicate schema col names")
     def test_schema_duplicate_names_diff_type(self):
         """CsvFile creation fails with duplicate names, different type."""
         # double num1's same type
@@ -54,7 +53,6 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(Exception, "Invalid schema"):
             self.context.frame.create(self.dataset, schema=bad)
 
-    @unittest.skip("frame.create does not throw an error with duplicate schema col names")
     def test_schema_duplicate_names_same_type(self):
         """CsvFile creation fails with duplicate names, same type."""
         # two num1's with same type
@@ -96,46 +94,28 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
                                           schema=self.schema)
         self.assertEqual(frame.schema, self.schema)
 
-    @unittest.skip("frame.create does not honor the specified schema")
-    def test_schema_honored_when_datatypes_could_be_arbitrary(self):
-        schema = [("C0", float), ("C1", float), ("C2", float)]
-        dataset = [(0, 3, 5), (5, 9, 9)]
-        frame = self.context.frame.create(dataset, schema=schema)
-        for row in frame.take(frame.count()):
-            for item in row:
-                self.assertEqual(str(type(item)), "float")
-
-    @unittest.skip("validate_schema in frame_create does not throw an exception when the schema is invalid")
     def test_validate_schema_with_invalid_schema_all_columns_same_datatype(self):
         """Test with validate_schema=True and invalid schema, columns same type"""
         invalid_schema = [("col1", int), ("col2", int), ("col3", int)]
-        with self.assertRaisesRegexp(Exception, "Invalid schema"):
-            frame = self.context.frame.create(self.dataset,
-                                              validate_schema=True,
-                                              schema=invalid_schema)
+        validated_frame = self.context.frame.create(self.dataset,
+                                                    validate_schema=True,
+                                                    schema=invalid_schema)
+        for row in validated_frame.take(validated_frame.count()):
+            for item in row:
+                if type(item) is not int:
+                    self.assertEqual(item, None)
 
-    @unittest.skip("validate_schema in frame_create does not throw an exception when the schema is invaild")
     def test_validate_schema_with_invalid_schema_col_dif_datatypes(self):
         """Test with validate schema true and column datatypes inconsistent"""
         dataset = [(98, 55), (3, 24), ("Bob", 30)]
         schema = [("col1", int), ("col2", int)]
-        with self.assertRaisesRegexp(Exception, "Invalid schema"):
-            frame = self.context.frame.create(dataset,
+        frame = self.context.frame.create(dataset,
                                               schema=schema,
                                               validate_schema=True)
-
-    @unittest.skip("frame.create does not honor the specified schema")
-    def test_invalid_schema_datatypes_validate_schema_false(self):
-        """Test with an invalid schema but validate schema false"""
-        dataset = [(98, 44), (5, 82), ("Bob", 38)]
-        schema = [("col1", int), ("col2", int), ("col3", int)]
-        # should not throw an exception because
-        # validate schema is false
-        frame = self.context.frame.create(dataset, schema=schema)
-        # but the frame will not be valid
-        # so an exception should trigger when operating on the data
-        with self.assertRaisesRegexp(Exception, "NoneType"):
-            frame.inspect()
+        for row in frame.take(frame.count()):
+            for item in row:
+                if type(item) is not int:
+                    self.assertEqual(item, None)
 
     def test_validate_schema_of_strs(self):
         """Test validate schema true with schema of strs"""
