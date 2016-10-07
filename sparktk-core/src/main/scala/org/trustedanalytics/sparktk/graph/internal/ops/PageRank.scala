@@ -84,6 +84,6 @@ case class PageRank(maxIterations: Option[Int], resetProbability: Option[Double]
 
     val setReset = resetProbability.fold(pageRank)(pageRank.resetProbability)
 
-    new Frame(pageRank.run().vertices.toDF("Vertex", "PageRank"))
+    new Frame(pageRank.run().vertices)
   }
 }
