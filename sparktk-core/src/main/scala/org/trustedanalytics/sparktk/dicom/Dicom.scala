@@ -33,6 +33,7 @@ class Dicom(metadata: Frame, pixeldata: Frame) extends BaseDicom with Serializab
     with DropRowsByTagsTransform
     with DropRowsByKeywordsTransform
     with ExtractKeywordsTransform
+    with ExportToDcmSummarization
     with ExtractTagsTransform
     with FilterByKeywordsTransform
     with FilterByTagsTransform
