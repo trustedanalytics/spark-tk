@@ -18,7 +18,6 @@
 """tests dicom.save and dicom.load functionality"""
 
 import unittest
-from unittest import TestCase
 from sparktkregtests.lib import sparktk_test
 import dicom
 import numpy
