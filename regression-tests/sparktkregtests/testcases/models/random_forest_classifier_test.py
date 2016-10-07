@@ -155,12 +155,13 @@ class RandomForest(sparktk_test.SparkTKTestCase):
                 self.frame, "class", ["feat1", "feat2"],
                 feature_subset_category="any")
 
-    def test_rand_forest_publish(self):
-        """Test binomial classification of random forest model"""
+    def test_rand_forest_save(self):
+        """Tests save plugin"""
         model = self.context.models.classification.random_forest_classifier.train(
             self.frame, "class", ["feat1", "feat2"], seed=0)
-        model.save("test/randomforestclassifier")
-        restored = self.context.load("test/randomforestclassifier")
+        path = self.get_name("test")
+        model.save(path + "/randomforestclassifier")
+        restored = self.context.load(path +"/randomforestclassifier")
         self.assertEqual(restored.max_bins, 100)
         self.assertEqual(restored.max_depth, 4)
         self.assertEqual(restored.num_classes, 2)
