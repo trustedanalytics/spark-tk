@@ -59,6 +59,8 @@ case class LoopyBeliefPropagation(prior: String, edgeWeight: String, maxIteratio
   def newMargin(name: String) = name + "_unnormed_margins"
   def weightedMargin(name: String) = name + "_weighted_margins"
 
+  val outputName = "posterior"
+
   override def work(state: GraphState): Frame = {
     require(state.graphFrame.edges.columns.contains(edgeWeight), s"Property $edgeWeight not found for edge weight")
     require(state.graphFrame.vertices.columns.contains(prior), s"Property $prior not found for prior")
@@ -111,7 +113,7 @@ case class LoopyBeliefPropagation(prior: String, edgeWeight: String, maxIteratio
     // clean up intermediate values
     new Frame(graphDoubles
       .vertices
-      .withColumn("Posterior", stringifier(col(margin(prior)), col(ID)))
+      .withColumn(outputName, stringifier(col(margin(prior)), col(ID)))
       .drop(post(prior))
       .drop(margin(prior)))
   }

@@ -56,8 +56,8 @@ trait ClusteringCoefficientSummarization extends BaseGraph {
 case class ClusteringCoefficient() extends GraphSummarization[Frame] {
 
   val triangles = "count"
-  val degree = "Degree"
-  val vertex = "Vertex"
+  val degree = "degree"
+  val outputName = "clustering_coefficient"
 
   override def work(state: GraphState): Frame = {
     val triangleCount = state.graphFrame.triangleCount.run()
@@ -76,10 +76,9 @@ case class ClusteringCoefficient() extends GraphSummarization[Frame] {
     val msg = udf { (triangles: Int, degree: Int) => if (degree <= 1) 0.0d else (triangles * 2).toDouble / (degree * (degree - 1)).toDouble }
 
     val clusteringVertices = joinedFrame
-      .withColumn("Clustering_Coefficient", msg(col(triangles), col(degree)))
+      .withColumn(outputName, msg(col(triangles), col(degree)))
       .drop(col(triangles))
       .drop(col(degree))
-      .withColumnRenamed(ID, vertex)
 
     new Frame(clusteringVertices)
 
