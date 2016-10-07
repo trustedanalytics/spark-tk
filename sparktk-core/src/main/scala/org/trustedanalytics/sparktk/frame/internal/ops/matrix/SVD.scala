@@ -41,9 +41,9 @@ case class SVD(matrixColumnName: String) extends FrameTransform {
 
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
-    frame.addColumns(SVD.svd(matrixColumnName), Seq(Column("U", DataTypes.matrix),
-      Column("V", DataTypes.matrix),
-      Column("SingularVectors", DataTypes.matrix)))
+    frame.addColumns(SVD.svd(matrixColumnName), Seq(Column("U_" + matrixColumnName, DataTypes.matrix),
+      Column("V_" + matrixColumnName, DataTypes.matrix),
+      Column("SingularVectors_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
 
   }

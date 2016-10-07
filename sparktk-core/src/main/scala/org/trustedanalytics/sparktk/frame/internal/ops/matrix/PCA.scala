@@ -40,7 +40,7 @@ case class PCA(matrixColumnName: String, vMatrixColumnName: String) extends Fram
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     frame.schema.requireColumnIsType(vMatrixColumnName, DataTypes.matrix)
 
-    frame.addColumns(PCA.pca(matrixColumnName, vMatrixColumnName), Seq(Column("PrincipalComponents", DataTypes.matrix)))
+    frame.addColumns(PCA.pca(matrixColumnName, vMatrixColumnName), Seq(Column("PrincipalComponents_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
   }
 
@@ -48,7 +48,7 @@ case class PCA(matrixColumnName: String, vMatrixColumnName: String) extends Fram
 
 object PCA extends Serializable {
   /*
-  Computes the pca for each matrix of the frame using the U matrix
+  Computes the pca for each matrix of the frame using the V matrix
    */
 
   def pca(matrixColumn: String, vMatrixColumnName: String)(rowWrapper: RowWrapper): Row = {

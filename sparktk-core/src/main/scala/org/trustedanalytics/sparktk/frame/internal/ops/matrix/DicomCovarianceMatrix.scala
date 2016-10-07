@@ -38,7 +38,7 @@ case class DicomCovarianceMatrix(matrixColumnName: String) extends FrameTransfor
 
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
-    frame.addColumns(DicomCovarianceMatrix.dicomCovarianceMatrix(matrixColumnName), Seq(Column("CovarianceMatrix", DataTypes.matrix)))
+    frame.addColumns(DicomCovarianceMatrix.dicomCovarianceMatrix(matrixColumnName), Seq(Column("CovarianceMatrix_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
   }
 }

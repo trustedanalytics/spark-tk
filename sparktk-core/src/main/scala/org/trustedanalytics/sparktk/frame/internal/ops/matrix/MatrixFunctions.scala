@@ -16,7 +16,7 @@
 package org.trustedanalytics.sparktk.frame.internal.ops.matrix
 
 import breeze.linalg.DenseMatrix
-import org.apache.spark.mllib.linalg.{DenseMatrix, Matrix}
+import org.apache.spark.mllib.linalg.{ DenseMatrix, Matrix }
 import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrix, Matrices }
 import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM }
 
