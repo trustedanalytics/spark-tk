@@ -81,7 +81,14 @@ object ScoringModelUtils {
     }
   }
 
-  def saveToMar(marSavePath: String, modelClass: String, tmpDir: Path): Unit = {
+  /**
+   * Creates a MAR zipfile for the saved model and its dependencies and stores it at the given location
+   * @param marSavePath location where the MAR file should be stored
+   * @param modelClass name of the model class to be loaded during scoring
+   * @param tmpDir location where the model has been saved
+   * @return full path to the location of the MAR file for Scoring Engine
+   */
+  def saveToMar(marSavePath: String, modelClass: String, tmpDir: Path): String = {
     val zipFile: File = File.createTempFile("model", ".mar")
     val zipOutStream = new FileOutputStream(zipFile)
     try {

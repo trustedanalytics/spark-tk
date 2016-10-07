@@ -1,7 +1,7 @@
 package org.trustedanalytics.sparktk.models.clustering.lda
 
 import java.nio.file.{ Files, Path }
-import org.apache.commons.io.{FileUtils}
+import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk.{ TkLdaModel, LdaModelPredictionResult }
 import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
@@ -232,9 +232,9 @@ case class LdaModel private[lda] (documentColumnName: String,
   }
 
   /**
-   *
-   * @param row
-   * @return
+   * gets the prediction on the provided record
+   * @param row a record that needs to be predicted on
+   * @return the row along with its prediction
    */
   def score(row: Array[Any]): Array[Any] = {
     val inputDocument = row.flatMap {
@@ -246,7 +246,6 @@ case class LdaModel private[lda] (documentColumnName: String,
   }
 
   /**
-   *
    * @return fields containing the input names and their datatypes
    */
   def input(): Array[Field] = {
@@ -255,7 +254,6 @@ case class LdaModel private[lda] (documentColumnName: String,
   }
 
   /**
-   *
    * @return fields containing the input names and their datatypes along with the output and its datatype
    */
   def output(): Array[Field] = {
@@ -266,19 +264,19 @@ case class LdaModel private[lda] (documentColumnName: String,
   }
 
   /**
-   *
-   * @return
+   * @return metadata about the model
    */
   def modelMetadata(): ModelMetaDataArgs = {
+    //todo provide a for the user to populate the custom metadata fields
     new ModelMetaDataArgs("Lda Model", classOf[LdaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**
-   *
-   * @param marSavePath
-   * @return
+   * @param sc active SparkContext
+   * @param marSavePath location where the MAR file needs to be saved
+   * @return full path to the location of the MAR file
    */
-  def exportToMar(sc: SparkContext, marSavePath: String): Unit = {
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")

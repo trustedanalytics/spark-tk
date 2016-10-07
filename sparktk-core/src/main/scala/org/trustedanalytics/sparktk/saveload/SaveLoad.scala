@@ -35,16 +35,25 @@ object SaveLoad {
     sc.parallelize(Seq(contents), 1).saveAsTextFile(path)
   }
 
-  def saveMar(storagePath: String, zipFile: File): Unit = {
+  /**
+   * Stores the given zipfile (MAR) to either the HDFS or local file system
+   * @param storagePath location to where the MAR file needs to be stored
+   * @param zipFile the MAR file to be stored
+   * @return full path to the location of the MAR file
+   */
+  def saveMar(storagePath: String, zipFile: File): String = {
     if (storagePath.startsWith("hdfs")) {
       val hdfsPath = new Path(storagePath)
       val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(storagePath), new Configuration())
       val localPath = new Path(zipFile.getAbsolutePath)
       hdfsFileSystem.copyFromLocalFile(false, true, localPath, hdfsPath)
       hdfsFileSystem.setPermission(hdfsPath, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.NONE))
+      storagePath
     }
     else {
-      FileUtils.copyFile(zipFile, new File(storagePath))
+      val file = new File(storagePath)
+      FileUtils.copyFile(zipFile, file)
+      file.getCanonicalPath
     }
 
   }

@@ -227,6 +227,7 @@ class GaussianMixtureModel(PropertiesObject):
         self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):
-        self._scala.exportToMar(self._tc._scala_sc, path)
+        """ export the trained model to MAR format for Scoring Engine """
+        return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject
