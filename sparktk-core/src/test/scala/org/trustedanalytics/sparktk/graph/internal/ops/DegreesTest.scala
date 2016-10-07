@@ -46,7 +46,7 @@ class DegreeTest extends TestingSparkContextWordSpec with Matchers {
       "give the indegree" in {
         val graph = buildGraph()
         val degree = graph.degree("in")
-        degree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64)))
+        degree.schema.columns should equal(List(Column("id", DataTypes.int32), Column("degree", DataTypes.int64)))
         degree.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 0)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 2)), new GenericRow(Array[Any](4, 1)))
 
       }
@@ -56,7 +56,7 @@ class DegreeTest extends TestingSparkContextWordSpec with Matchers {
       "give the outdegree" in {
         val graph = buildGraph()
         val degree = graph.degree("out")
-        degree.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64)))
+        degree.schema.columns should equal(List(Column("id", DataTypes.int32), Column("degree", DataTypes.int64)))
         degree.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 2)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 0)), new GenericRow(Array[Any](4, 1)))
 
       }
@@ -66,7 +66,7 @@ class DegreeTest extends TestingSparkContextWordSpec with Matchers {
       "sum the properties going in or out" in {
         val graph = buildGraph()
         val degree = graph.degree("undirected")
-        degree.schema.columns should contain theSameElementsInOrderAs List(Column("Vertex", DataTypes.int32), Column("Degree", DataTypes.int64))
+        degree.schema.columns should contain theSameElementsInOrderAs List(Column("id", DataTypes.int32), Column("degree", DataTypes.int64))
         degree.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 2)), new GenericRow(Array[Any](3, 2)), new GenericRow(Array[Any](5, 2)), new GenericRow(Array[Any](4, 2)))
 
       }

@@ -40,13 +40,13 @@ def triangle_count(self):
 
         >>> result = graph.triangle_count()
         >>> result.inspect()
-        [#]  Triangles  Vertex
-        ======================
-        [0]          1       1
-        [1]          1       2
-        [2]          1       3
-        [3]          0       4
-        [4]          0       5
+        [#]  count  id 
+        ==============
+        [0]      1   1
+        [1]      1   2
+        [2]      1   3
+        [3]      0   4
+        [4]      0   5
 
 
     """
