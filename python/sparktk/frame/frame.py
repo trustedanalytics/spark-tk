@@ -106,8 +106,10 @@ class Frame(object):
             map_source = source.map(Frame.row_decorator(list(schema)))
             self._frame = PythonFrame(map_source, schema)
 
-    #When creating a new frame or converting scala frame with python frame
-    #the function scans a row and if it finds list[list](which represents matrix) as column valye converts it to numpy ndarray
+    #When creating a new frame(python frame created) or converting frame from scala to python frame,the function scans a row and performs below
+    # - when creating a new frame(python frame created) - if it finds list[list](which represents matrix) as column value,  converts it to numpy ndarray
+    # - when Converting frame from scala to python frame - (scala converts DenseMatrix--> JList[JList[Double]](in JConvert.scala),
+    # jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
     @staticmethod
     def row_decorator(schema):
         def decorator(row):
@@ -124,8 +126,8 @@ class Frame(object):
             return result
         return decorator
 
-    #When converting python frame to scala frame, function scans the row and converts the ndarray
-    #to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Java
+    #When converting from python to scala, function scans the row and converts the ndarray
+    #to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
     #For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
     @staticmethod
     def row_decorator_pymllib(schema):
@@ -313,7 +315,7 @@ class Frame(object):
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
             python_rdd = RDD(java_rdd, self._tc.sc)
-            map_python_rdd = python_rdd.map(Frame.row_decorator(python_schema))
+            map_python_rdd = python_rdd.map(Frame.row_decorator(list(python_schema)))
             self._frame = PythonFrame(map_python_rdd, python_schema)
         return self._frame
 

@@ -36,6 +36,9 @@ def extract_keywords(self, keywords):
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
 
+        >>> dicom.metadata.count()
+        3
+
         <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
@@ -50,11 +53,14 @@ def extract_keywords(self, keywords):
             <NativeDicomModel xml:space="preserve">
                 <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
                 <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
-                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
                 ...
 
         #Extract values for given keywords and add as new columns in metadata frame
         >>> dicom.extract_keywords(["SOPInstanceUID", "Manufacturer", "StudyDate"])
+
+        >>> dicom.metadata.count()
+        3
 
         >>> dicom.metadata.column_names
         [u'id', u'metadata', u'SOPInstanceUID', u'Manufacturer', u'StudyDate']
@@ -63,9 +69,9 @@ def extract_keywords(self, keywords):
         >>> dicom.metadata.inspect(truncate=20)
         [#]  id  metadata              SOPInstanceUID        Manufacturer  StudyDate
         ============================================================================
-        [0]   0  <?xml version="1....  1.3.12.2.1107.5.2...  SIEMENS       20040305
-        [1]   1  <?xml version="1....  1.3.12.2.1107.5.2...  SIEMENS       20040305
-        [2]   2  <?xml version="1....  1.3.12.2.1107.5.2...  SIEMENS       20040305
+        [0]   0  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [1]   1  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [2]   2  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
         </skip>
 
     """

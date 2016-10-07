@@ -16,13 +16,11 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
 import java.io.{ ByteArrayOutputStream, ByteArrayInputStream }
-import java.net.URI
 import javax.xml.parsers.{ SAXParser, SAXParserFactory }
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.permission.{ FsAction, FsPermission }
-import org.apache.hadoop.fs.{ FSDataOutputStream, Path, FileSystem }
+import org.apache.hadoop.fs.{ Path, FileSystem }
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -32,11 +30,9 @@ import org.trustedanalytics.sparktk.dicom.internal.{ DicomState, DicomSummarizat
 
 trait ExportToDcmSummarization extends BaseDicom {
   /**
-   * Export .dcm files to given hdfs path.
+   * Export .dcm files to given Local/HDFS path.
    *
-   * Export the dicom images to hadoop path
-   *
-   * @param path The HDFS folder path where the files will be created.
+   * @param path Local/HDFS path to export dicom files
    */
   def exportToDcm(path: String) = {
     execute(ExportToDcm(path))
@@ -52,23 +48,38 @@ case class ExportToDcm(path: String) extends DicomSummarization[Unit] {
 
 object ExportToDcm extends Serializable {
 
-  def getAttrFromMetadata(metadata: String): org.dcm4che3.data.Attributes = {
+  /**
+   * Method to generate DicomAttributes from given metadata xml string
+   *
+   * @param metadata metadata xml string
+   * @return Attributes
+   */
+  def getAttributesFromMetadata(metadata: String): Attributes = {
     val attrs: Attributes = new Attributes
     val ch: ContentHandlerAdapter = new ContentHandlerAdapter(attrs)
-    val f: SAXParserFactory = SAXParserFactory.newInstance
-    val p: SAXParser = f.newSAXParser
+    val saxFactory: SAXParserFactory = SAXParserFactory.newInstance
+    val saxParser: SAXParser = saxFactory.newSAXParser
 
+    //Create ByteArrayInputStream from metadata string
     val metadataByteStream = new ByteArrayInputStream(metadata.getBytes)
-    p.parse(metadataByteStream, ch)
-    return attrs
+    saxParser.parse(metadataByteStream, ch)
+    attrs
   }
 
-  def writeToHdfs(dcmAttributes: Attributes, path: String): Unit = {
-    val b = new ByteArrayOutputStream()
-    val d = new DicomOutputStream(b, UID.ExplicitVRLittleEndian)
-    dcmAttributes.writeTo(d)
+  /**
+   * Method to write DicomAttributes to given path as .dcm files
+   *
+   * @param dcmAttributes DicomAttributes
+   * @param path Local/HDFS path
+   */
+  def writeToHDFS(dcmAttributes: Attributes, path: String): Unit = {
+    val byteOutputStream = new ByteArrayOutputStream()
+    //UID.ExplicitVRLittleEndian will enforce to include datatypes(also known as VR-Value Representation) for Attributes in Dicom File
+    val dicomOutputStream = new DicomOutputStream(byteOutputStream, UID.ExplicitVRLittleEndian)
+    dcmAttributes.writeTo(dicomOutputStream)
 
-    val bytes = b.toByteArray
+    //bytes to write to hdfs
+    val bytes = byteOutputStream.toByteArray
 
     val fileName = s"${java.lang.System.currentTimeMillis()}.dcm"
     val filePath = StringUtils.join(path, "/", fileName)
@@ -78,29 +89,30 @@ object ExportToDcm extends Serializable {
     val hdfsOutputStream = fs.create(hdfsPath)
     hdfsOutputStream.write(bytes)
     hdfsOutputStream.close()
-
   }
 
   def exportToDcmFile(metadataRdd: RDD[Row], pixeldataRdd: RDD[Row], path: String) = {
 
-    val zipMetadataPixelData = metadataRdd.zip(pixeldataRdd)
+    //zip to join back (metadata, pixeldata into one)
+    val zipMetadataPixeldata = metadataRdd.zip(pixeldataRdd)
+    zipMetadataPixeldata.cache()
 
-    zipMetadataPixelData.cache()
-
-    val attrs = zipMetadataPixelData.foreach {
+    zipMetadataPixeldata.foreach {
       case (metadata, pixeldata) => {
 
-        val oneMetadata = metadata(1).toString
-        val onePixeldata: DenseMatrix = pixeldata(1).asInstanceOf[DenseMatrix]
+        val metadataStr = metadata(1).toString
+        val pixeldataDM: DenseMatrix = pixeldata(1).asInstanceOf[DenseMatrix]
 
-        val dcmAttributes = getAttrFromMetadata(oneMetadata)
+        val dcmAttributes = getAttributesFromMetadata(metadataStr)
+        val pixel = pixeldataDM.toArray.map(x => x.toInt)
 
-        val pixel = onePixeldata.toArray.map(x => x.toInt)
+        //Set modified pixeldata to DicomAttributes
         dcmAttributes.setInt(Tag.PixelData, VR.OW, pixel: _*)
-        dcmAttributes.setInt(Tag.Rows, VR.US, onePixeldata.numRows)
-        dcmAttributes.setInt(Tag.Columns, VR.US, onePixeldata.numCols)
+        dcmAttributes.setInt(Tag.Rows, VR.US, pixeldataDM.numRows)
+        dcmAttributes.setInt(Tag.Columns, VR.US, pixeldataDM.numCols)
 
-        writeToHdfs(dcmAttributes, path)
+        //write updated DicomAttributes to Local/HDFS as .dcm files
+        writeToHDFS(dcmAttributes, path)
       }
     }
 

@@ -32,7 +32,7 @@ class DropRowsByKeywordsTest extends TestingSparkContextWordSpec with Matchers {
       pixeldataRowsCount shouldBe 3
 
       //Map of key value pairs
-      val keywordsValuesMap = Map(("SOPInstanceUID", "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"), ("Manufacturer", "SIEMENS"), ("StudyDate", "20040305"))
+      val keywordsValuesMap = Map(("SOPInstanceUID", "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"), ("Manufacturer", "SIEMENS"), ("StudyDate", "20030315"))
 
       dicom.dropRowsByKeywords(keywordsValuesMap)
 

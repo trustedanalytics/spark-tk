@@ -58,6 +58,12 @@ class Dicom(object):
         >>> type(dicom)
         <class 'sparktk.dicom.dicom.Dicom'>
 
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.pixeldata.count()
+        3
+
         <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
@@ -72,7 +78,7 @@ class Dicom(object):
             <NativeDicomModel xml:space="preserve">
                 <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
                 <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
-                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
                 ...
 
         #pixeldata property is sparktk frame
@@ -81,13 +87,13 @@ class Dicom(object):
         #dispaly
         <skip>
         >>> pixeldata
-        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
-        [ 0.,  7.,  5., ...,  5.,  7.,  8.],
-        [ 0.,  7.,  6., ...,  5.,  6.,  7.],
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
         ...,
-        [ 0.,  6.,  7., ...,  5.,  5.,  6.],
-        [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
         </skip>
 
         #Access ndarray
@@ -97,11 +103,11 @@ class Dicom(object):
         <type 'numpy.ndarray'>
 
         #Dimesions of the image matrix stored
+        <skip>
         >>> image_ndarray.shape
         (512, 512)
 
         #Use python matplot lib package to verify image visually
-        <skip>
         >>> import pylab
         >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
         >>> pylab.show()
@@ -122,13 +128,14 @@ class Dicom(object):
         #Order may differ when you load back dicom object
 
         >>> load_pixeldata
-        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
-        [ 0.,  7.,  5., ...,  5.,  7.,  8.],
-        [ 0.,  7.,  6., ...,  5.,  6.,  7.],
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
         ...,
-        [ 0.,  6.,  7., ...,  5.,  5.,  6.],
-        [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
 
         >>> load_image_ndarray= load_pixeldata[0][1]
 
@@ -146,6 +153,7 @@ class Dicom(object):
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
+        </skip>
 
         #Using to built-in xml libraries to run xquery on metadata
         >>> import xml.etree.ElementTree as ET
@@ -171,12 +179,16 @@ class Dicom(object):
 
         >>> dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
 
+        >>> dicom.metadata.count()
+        3
+
+        <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata                        SOPInstanceUID
         =======================================================================
-        [0]   0  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
-        [1]   1  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
-        [2]   2  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
+        [0]   0  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [1]   1  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [2]   2  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
         </skip>
 
     """

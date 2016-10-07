@@ -41,7 +41,7 @@ object Import extends Serializable {
    * @param byteArray Dicom Input Stream represented as Array of Bytes
    * @return DenseMatrix Pixel Data
    */
-  def getPixelData(byteArray: Array[Byte]): DenseMatrix = {
+  def getPixeldata(byteArray: Array[Byte]): DenseMatrix = {
 
     val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
     val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
@@ -74,7 +74,7 @@ object Import extends Serializable {
    * @param byteArray Dicom Input Stream represented as byte array
    * @return String Xml Metadata
    */
-  def getXml(byteArray: Array[Byte]): String = {
+  def getMetadataXml(byteArray: Array[Byte]): String = {
     val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
     val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
 
@@ -105,10 +105,9 @@ object Import extends Serializable {
         byteArray = IOUtils.toByteArray(fileInputStream)
 
         //Create the metadata xml
-        xml = getXml(byteArray)
+        xml = getMetadataXml(byteArray)
         //Create a dense matrix for pixel array
-        dm = getPixelData(byteArray)
-
+        dm = getPixeldata(byteArray)
         //Metadata
       } yield (xml, dm)
     }.zipWithIndex()

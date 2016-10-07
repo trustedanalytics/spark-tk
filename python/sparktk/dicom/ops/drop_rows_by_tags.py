@@ -20,7 +20,7 @@ def drop_rows_by_tags(self, tags_values_dict):
     """
     Drop the rows based on dictionary of {"tag":"value"} from column holding xml string
 
-    Ex: tags_values_dict -> {"00080018":"1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336", "00080070":"SIEMENS", "00080020":"20040305"}
+    Ex: tags_values_dict -> {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
 
     Parameters
     ----------
@@ -34,6 +34,9 @@ def drop_rows_by_tags(self, tags_values_dict):
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
 
         <skip>
         >>> dicom.metadata.inspect(truncate=30)
@@ -49,10 +52,10 @@ def drop_rows_by_tags(self, tags_values_dict):
             <NativeDicomModel xml:space="preserve">
                 <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
                 <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
-                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
                 ...
 
-        >>> tags_values_dict = {"00080018":"1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336", "00080070":"SIEMENS", "00080020":"20040305"}
+        >>> tags_values_dict = {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
         >>> dicom.drop_rows_by_tags(tags_values_dict)
         >>> dicom.metadata.count()
         2
@@ -68,21 +71,21 @@ def drop_rows_by_tags(self, tags_values_dict):
 
         >>> dicom.pixeldata.inspect(truncate=30)
         [#]  id  imagematrix
-        =========================================
-        [1]   1  [[  0.   1.   0. ...,   0.   0.   1.]
-        [  1.   9.  10. ...,   2.   4.   6.]
-        [  0.  12.  11. ...,   4.   4.   7.]
+        ===========================================================
+        [0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.   70.   85. ...,  215.  288.  337.]
+        [   0.   63.   72. ...,  228.  269.  317.]
         ...,
-        [  0.   4.   2. ...,   3.   5.   5.]
-        [  0.   8.   5. ...,   7.   8.   8.]
-        [  0.  10.  10. ...,   8.   8.   8.]]
-        [2]   2  [[ 0.  0.  0. ...,  0.  0.  0.]
-        [ 0.  2.  2. ...,  6.  5.  5.]
-        [ 0.  7.  8. ...,  4.  4.  5.]
+        [   0.   42.   40. ...,  966.  919.  871.]
+        [   0.   42.   33. ...,  988.  887.  860.]
+        [   0.   46.   38. ...,  983.  876.  885.]]
+        [1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+        [    0.   111.   117. ...,   159.   148.   135.]
+        [    0.   116.   111. ...,   152.   138.   139.]
         ...,
-        [ 0.  4.  1. ...,  4.  5.  6.]
-        [ 0.  4.  5. ...,  6.  6.  5.]
-        [ 1.  6.  8. ...,  4.  5.  4.]]
+        [    0.    49.    18. ...,  1057.   965.   853.]
+        [    0.    42.    20. ...,  1046.   973.   891.]
+        [    0.    48.    26. ...,  1041.   969.   930.]]
         </skip>
 
     """

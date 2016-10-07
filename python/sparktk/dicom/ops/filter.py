@@ -34,6 +34,9 @@ def filter(self, predicate):
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
 
+        >>> dicom.metadata.count()
+        3
+
         <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
@@ -48,7 +51,7 @@ def filter(self, predicate):
             <NativeDicomModel xml:space="preserve">
                 <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
                 <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
-                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
                 ...
 
         >>> import xml.etree.ElementTree as ET
@@ -68,7 +71,7 @@ def filter(self, predicate):
 
         >>> tag_name = "SOPInstanceUID"
 
-        >>> tag_value = "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"
+        >>> tag_value = "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"
 
         >>> dicom.filter(filter_meta(tag_name, tag_value))
         >>> dicom.metadata.count()
@@ -83,14 +86,14 @@ def filter(self, predicate):
 
         >>> dicom.pixeldata.inspect(truncate=30)
         [#]  id  imagematrix
-        =========================================
-        [0]   0  [[ 0.  0.  0. ...,  0.  0.  0.]
-        [ 0.  7.  5. ...,  5.  7.  8.]
-        [ 0.  7.  6. ...,  5.  6.  7.]
+        =====================================================
+        [0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.  125.  103. ...,  120.  213.  319.]
+        [   0.  117.   94. ...,  135.  223.  325.]
         ...,
-        [ 0.  6.  7. ...,  5.  5.  6.]
-        [ 0.  2.  5. ...,  5.  5.  4.]
-        [ 1.  1.  3. ...,  1.  1.  0.]]
+        [   0.   62.   21. ...,  896.  886.  854.]
+        [   0.   63.   23. ...,  941.  872.  897.]
+        [   0.   60.   30. ...,  951.  822.  906.]]
         </skip>
 
     """
