@@ -20,6 +20,7 @@ import unittest
 import random
 from collections import Counter
 from numpy import array
+from numpy.testing import assert_almost_equal
 from sparktkregtests.lib import sparktk_test
 from sklearn.datasets.samples_generator import make_blobs
 
@@ -31,7 +32,6 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
         self.frame = self.context.frame.import_csv(
             data_file, schema=[("x1", float), ("x2", float)])
 
-    @unittest.skip("bug:waiting for datastructure change")
     def test_train(self):
         """ Verify that model operates as expected in straightforward case"""
         model = self.context.models.clustering.gmm.train(
@@ -41,15 +41,28 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
                     max_iterations=500,
                     seed=20,
                     convergence_tol=0.0001)
-        print model.gaussians
-        #Have manually verified these: check mu and sigma when bug is fixed
-        """
-        [MultivariateGaussian(mu=DenseVector([6.99, -10.4285]), sigma=DenseMatrix(2, 2, [0.1817, -0.0555, -0.0555, 0.3378], 0)),
-         MultivariateGaussian(mu=DenseVector([1.0314, -1.3319]), sigma=DenseMatrix(2, 2, [1.1462, -5.2027, -5.2027, 24.0738], 0)),
-         MultivariateGaussian(mu=DenseVector([8.9029, -9.7618]), sigma=DenseMatrix(2, 2, [0.0226, 0.0162, 0.0162, 1.0214], 0)),
-         MultivariateGaussian(mu=DenseVector([-2.1822, 7.5628]), sigma=DenseMatrix(2, 2, [5.7653, -2.427, -2.427, 2.3096], 0)),
-         MultivariateGaussian(mu=DenseVector([0.156, -5.174]), sigma=DenseMatrix(2, 2, [0.3253, -0.4275, -0.4275, 2.2137], 0))]
-        """
+
+        actual_mu = [g.mu for g in model.gaussians]
+        actual_sigma = [g.sigma for g in model.gaussians]
+        expected_mu = \
+            [[7.0206, -10.1706],
+            [7.8322, -10.2383],
+            [-1.3816, 6.7215],
+            [-0.04184, 5.8039],
+            [-4.1743, 8.5564]]
+        expected_sigma = \
+            [[[0.2471, -0.3325],
+            [-0.3325, 0.5828]],
+            [[2.3005, 0.6906],
+            [0.6906, 2.1103]],
+            [[1.5941, -3.5325],
+            [-3.5325, 7.8424]],
+            [[0.9849, 0.04328],
+            [0.04328, 0.3736]],
+            [[0.1168, 0.1489],
+            [0.1489, 0.9757]]]
+        assert_almost_equal(actual_mu, expected_mu, decimal=3)
+        assert_almost_equal(actual_sigma, expected_sigma, decimal=3)
 
     def test_predict(self):
         """ Tests output of predict """
