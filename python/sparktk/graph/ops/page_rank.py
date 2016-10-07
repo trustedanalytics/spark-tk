@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 
 def page_rank(self, convergence_tolerance=None, reset_probability=None, max_iterations=None):
     """
@@ -32,13 +49,13 @@ def page_rank(self, convergence_tolerance=None, reset_probability=None, max_iter
 
         >>> result = graph.page_rank(max_iterations=20)
         >>> result.inspect()
-        [#]  Vertex  PageRank
-        =====================
-        [0]       1      0.15
-        [1]       2    0.1925
-        [2]       3  0.356125
-        [3]       4    0.1925
-        [4]       5  0.313625
+        [#]  id  pagerank
+        =================
+        [0]   1      0.15
+        [1]   2    0.1925
+        [2]   3  0.356125
+        [3]   4    0.1925
+        [4]   5  0.313625
 
     """
     from sparktk.frame.frame import Frame
