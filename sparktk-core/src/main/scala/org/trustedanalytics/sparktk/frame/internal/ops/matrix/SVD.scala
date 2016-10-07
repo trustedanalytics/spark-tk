@@ -42,7 +42,7 @@ case class SVD(matrixColumnName: String) extends FrameTransform {
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
     frame.addColumns(SVD.svd(matrixColumnName), Seq(Column("U", DataTypes.matrix),
-      Column("Vt", DataTypes.matrix),
+      Column("V", DataTypes.matrix),
       Column("SingularVectors", DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
 
@@ -56,36 +56,15 @@ object SVD extends Serializable {
   def svd(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
 
     val matrix = rowWrapper.value(matrixColumnName).asInstanceOf[DM]
-    val breezeMatrix = asBreeze(matrix)
+    val breezeMatrix = MatrixFunctions.asBreeze(matrix)
 
     val svdResult = breeze.linalg.svd(breezeMatrix)
 
-    val uMatrix = fromBreeze(svdResult.U).asInstanceOf[DM]
-    val vMatrix = fromBreeze(svdResult.Vt).asInstanceOf[DM]
+    val uMatrix = MatrixFunctions.fromBreeze(svdResult.U).asInstanceOf[DM]
+    val vMatrix = MatrixFunctions.fromBreeze(svdResult.Vt).asInstanceOf[DM].transpose
     val singularVectors = new DM(1, svdResult.singularValues.length, svdResult.singularValues.toArray, false)
 
     Row.apply(uMatrix, vMatrix, singularVectors)
-  }
-
-  /*
-  Creates Mllib DenseMatrix from a breeze DenseMatrix
-   */
-  def fromBreeze(breezeDM: BDM[Double]): Matrix = {
-    new DM(breezeDM.rows, breezeDM.cols, breezeDM.data)
-
-  }
-
-  /*
-  Creates Mllib DenseMatrix from a breeze DenseMatrix
-   */
-  def asBreeze(mllibDM: DM): BDM[Double] = {
-    //if (!mllibDM.isTransposed) {
-    //new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values)
-    //}
-    //    else {
-        val breezeMatrix = new BDM[Double](mllibDM.numCols, mllibDM.numRows, mllibDM.values)
-        breezeMatrix.t
-    //    }
   }
 
 }

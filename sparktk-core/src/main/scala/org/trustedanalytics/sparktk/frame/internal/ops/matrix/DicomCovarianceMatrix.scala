@@ -51,8 +51,8 @@ object DicomCovarianceMatrix extends Serializable {
   def dicomCovarianceMatrix(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
 
     val matrix = rowWrapper.value(matrixColumnName).asInstanceOf[DM]
-    val covarianceMatrix = computeCovarianceMatrix(SVD.asBreeze(matrix))
-    Row.apply(SVD.fromBreeze(covarianceMatrix).asInstanceOf[DM])
+    val covarianceMatrix = computeCovarianceMatrix(MatrixFunctions.asBreeze(matrix))
+    Row.apply(MatrixFunctions.fromBreeze(covarianceMatrix).asInstanceOf[DM])
   }
 
   private def computeCovarianceMatrix(matrix: BDM[Double]): BDM[Double] = {

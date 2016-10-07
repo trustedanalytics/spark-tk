@@ -54,13 +54,13 @@ object PCA extends Serializable {
   def pca(matrixColumn: String, vMatrixColumnName: String)(rowWrapper: RowWrapper): Row = {
 
     val matrix = rowWrapper.value(matrixColumn).asInstanceOf[DM]
-    val breezeMatrix = SVD.asBreeze(matrix)
+    val breezeMatrix = MatrixFunctions.asBreeze(matrix)
 
     val vMatrix = rowWrapper.value(vMatrixColumnName).asInstanceOf[DM]
-    val breezeVMatrix = SVD.asBreeze(vMatrix)
+    val breezeVMatrix = MatrixFunctions.asBreeze(vMatrix)
 
-    val pca = breezeMatrix :* breezeVMatrix.t
-    val pcaMatrix = SVD.fromBreeze(pca).asInstanceOf[DM]
+    val pca = breezeMatrix :* breezeVMatrix
+    val pcaMatrix = MatrixFunctions.fromBreeze(pca).asInstanceOf[DM]
 
     Row.apply(pcaMatrix)
   }
