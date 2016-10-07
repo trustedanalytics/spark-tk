@@ -113,20 +113,19 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
     def test_add_columns_add_existing_name(self):
         """Test adding columns with existing names errors"""
         with self.assertRaisesRegexp(
-                Exception, "Schemas have conflicting column names"):
+                Exception, "requirement failed: Schemas have conflicting column names. Please rename before merging. Left Schema: int, str, float Right Schema: str"):
             self.frame.add_columns(lambda row: udf_int_val, ('str', int))
             self.frame.inspect()
 
     def test_add_column_with_empty_name(self):
         """Test adding a column with an empty name errors"""
-        with self.assertRaisesRegexp(Exception, "column name can't be empty"):
+        with self.assertRaisesRegexp(Exception, "requirement failed: column name can't be empty"):
             self.frame.add_columns(lambda row: udf_int_val, ('', int))
             self.frame.inspect()
 
     def test_add_column_null_schema_no_force(self):
         """Test adding a column with a null schema errors, don't force eval"""
-        with self.assertRaisesRegexp(
-                Exception, "schema expected to contain tuples"):
+        with self.assertRaisesRegexp(ValueError, "schema expected to contain tuples, encountered type <type 'NoneType'>"):
             self.frame.add_columns(lambda row: udf_int_val, None)
 
     def test_add_column_empty_schema_no_force(self):
