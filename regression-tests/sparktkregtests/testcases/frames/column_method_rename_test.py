@@ -15,6 +15,22 @@
 #  limitations under the License.
 #
 
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
 """Tests methods that access or alter columns"""
 import unittest
 
@@ -75,33 +91,33 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(u'str', self.frame.column_names[0])
         self.assertEqual(u'int', self.frame.column_names[1])
 
-    @unittest.skip("column name collisions not honored")
     def test_multi_column_names_collision_no_force(self):
         """Test a multiple column rename with collisions fails"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+                Exception, "Invalid new column names are not unique"):
             self.frame.rename_columns({'str': 'alpha',
                                        'int': 'times',
                                        'float': 'alpha'})
 
-    @unittest.skip("column name collisions not honored")
     def test_rename_existing_name_no_force(self):
         """Test renaming to an existing name errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+                Exception, "Invalid new column name 'str' collides"):
             self.frame.rename_columns({'int': 'str'})
 
-    @unittest.skip("column name collisions not honored")
     def test_multi_column_names_collision(self):
         """Test a multiple column rename with collisions fails"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+                Exception, "Invalid new column names are not unique"):
             self.frame.rename_columns({'str': 'alpha',
                                        'int': 'times',
                                        'float': 'alpha'})
             self.frame.inspect()
 
-    @unittest.skip("column name collisions not honored")
     def test_rename_existing_name(self):
         """Test renaming to an existing name errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+                Exception, "Invalid new column name 'str' collides"):
             self.frame.rename_columns({'int': 'str'})
             self.frame.inspect()
 
