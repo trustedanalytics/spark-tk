@@ -26,7 +26,6 @@ import org.json4s.DefaultFormats
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.SaveLoad
-import scala.collection.JavaConverters._
 import scala.collection.immutable.Map
 import scala.util.Try
 
