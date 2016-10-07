@@ -26,7 +26,7 @@ import org.json4s.DefaultFormats
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.SaveLoad
-
+import scala.collection.JavaConverters._
 import scala.collection.immutable.Map
 import scala.util.Try
 
@@ -242,7 +242,8 @@ case class TkLdaModel(numTopics: Int, documentColumnName: String, wordColumnName
     for (word <- wordOccurrences.keys) {
       val wordGivenDoc = wordProbabilityGivenDocument(word, wordOccurrences, docLength)
       if (topicWordMap.contains(word)) {
-        val topicGivenWord = topicWordMap(word)
+        val topicGivenWord: Vector[Double] = DataTypes.toVector(numTopics)(topicWordMap(word))
+
         for (i <- topicGivenDoc.indices) {
           topicGivenDoc(i) += topicGivenWord(i) * wordGivenDoc
         }

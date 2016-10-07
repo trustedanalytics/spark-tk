@@ -158,6 +158,20 @@ class KMeansModel(PropertiesObject):
     >>> restored.centroids == centroids
     True
 
+    >>> restored.predict(frame)
+    [#]  data  name  cluster  cluster_0
+    ===================================
+    [0]   2.0  ab          1          1
+    [1]   1.0  cd          1          1
+    [2]   7.0  ef          0          0
+    [3]   1.0  gh          1          1
+    [4]   9.0  ij          0          0
+    [5]   2.0  kl          1          1
+    [6]   0.0  mn          1          1
+    [7]   6.0  op          2          2
+    [8]   5.0  qr          2          2
+
+
     </hide>
     """
 
@@ -225,6 +239,7 @@ class KMeansModel(PropertiesObject):
             self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):
-        self._scala.exportToMar(self._tc._scala_sc, path)
+        """ export the trained model to MAR format for Scoring Engine """
+        return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject
