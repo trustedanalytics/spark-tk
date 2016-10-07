@@ -32,17 +32,18 @@ def extract_keywords(self, keywords):
     Examples
     --------
 
-        <skip>
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
 
+        <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
+        </skip>
 
         #Part of xml string looks as below
         <?xml version="1.0" encoding="UTF-8"?>
@@ -55,6 +56,10 @@ def extract_keywords(self, keywords):
         #Extract values for given keywords and add as new columns in metadata frame
         >>> dicom.extract_keywords(["SOPInstanceUID", "Manufacturer", "StudyDate"])
 
+        >>> dicom.metadata.column_names
+        [u'id', u'metadata', u'SOPInstanceUID', u'Manufacturer', u'StudyDate']
+
+        <skip>
         >>> dicom.metadata.inspect(truncate=20)
         [#]  id  metadata              SOPInstanceUID        Manufacturer  StudyDate
         ============================================================================
@@ -74,8 +79,8 @@ def extract_keywords(self, keywords):
     if self._metadata._is_scala:
         def f(scala_dicom):
             scala_dicom.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))
-        results = self._call_scala(f)
-        return results
+        self._call_scala(f)
+        return
 
     # If metadata is python frame, run below udf
     import xml.etree.ElementTree as ET

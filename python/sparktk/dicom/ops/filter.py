@@ -15,10 +15,11 @@
 #  limitations under the License.
 #
 
+
 def filter(self, predicate):
 
     """
-    Filter dicom using  given predicate
+    Filter the rows of dicom metadata and prixeldata based on given predicate
 
     Parameters
     ----------
@@ -42,6 +43,14 @@ def filter(self, predicate):
         [2]   2  <?xml version="1.0" encodin...
         </skip>
 
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                ...
+
         >>> import xml.etree.ElementTree as ET
 
         #sample custom filter function
@@ -62,6 +71,8 @@ def filter(self, predicate):
         >>> tag_value = "1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336"
 
         >>> dicom.filter(filter_meta(tag_name, tag_value))
+        >>> dicom.metadata.count()
+        1
 
         <skip>
         #After filter

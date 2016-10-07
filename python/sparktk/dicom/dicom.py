@@ -58,6 +58,23 @@ class Dicom(object):
         >>> type(dicom)
         <class 'sparktk.dicom.dicom.Dicom'>
 
+        <skip>
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+        </skip>
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                ...
+
         #pixeldata property is sparktk frame
         >>> pixeldata = dicom.pixeldata.take(1)
 
@@ -195,6 +212,7 @@ class Dicom(object):
     def _get_new_scala(self):
         return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
 
+    #method to call passed function with new scala dicom
     def _call_scala(self, func):
         from sparktk.frame.frame import Frame
         scala_dicom = self._get_new_scala()
