@@ -46,6 +46,8 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
   )
 
   val columnMeans = Vectors.dense(Array(3.0, 1.56999, 0.3))
+  val columnMeans2 = Vectors.dense(Array(3.0, 0.3))
+
   val singularValues = Vectors.dense(Array(1.95285, 1.25895, 0.34988))
   val vFactor = Matrices.dense(3, 3, Array(-0.98806, -0.14751, 0.04444, 0.152455, -0.9777, 0.14391, 0.02222, 0.14896, 0.98859))
 
@@ -91,8 +93,8 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
       }).collect()
 
       resultArray.length should equal(2)
-      resultArray(0).toArray should equalWithTolerance(Array(-0.4, 0.13001, 0.0, 2.036505, 0.170642, -0.622152))
-      resultArray(1).toArray should equalWithTolerance(Array(3.6, 1.25, 1.0, -2.036505, -0.170642, 0.622152))
+      resultArray(0).toArray should equalWithTolerance(Array(-0.4, 0.13001, 0.0, 3.5584834497999998, 0.8463484460000001, -0.5866244208))
+      resultArray(1).toArray should equalWithTolerance(Array(3.6, 1.25, 1.0, -0.5145262751000002, 0.505064223, 0.6576792896))
     }
 
     "compute the principal components" in {
@@ -100,7 +102,7 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
       val frameRdd = new FrameRdd(predictSchema, rows)
       val columns = List("col_0", "col_1", "col_2")
 
-      val matrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd, columns, false)
+      val matrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd.zipWithIndex().map { case (row, index) => (index, row) }, predictSchema, columns, false, columnMeans.toArray)
       val modelData = PcaModel(columns, true, 3, columnMeans, singularValues, vFactor)
       val principalComponents = PrincipalComponentsFunctions.computePrincipalComponents(modelData.rightSingularVectors, 3, matrix)
 
@@ -123,7 +125,7 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
       val frameRdd = new FrameRdd(predictSchema, rows)
       val columns = List("col_0", "col_1", "col_2")
 
-      val matrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd, columns, false)
+      val matrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd.zipWithIndex().map { case (row, index) => (index, row) }, predictSchema, columns, false, columnMeans.toArray)
       val tSquaredIndexMeanCentered = PrincipalComponentsFunctions.computeTSquaredIndex(matrix, singularValues, 3)
 
       tSquaredIndexMeanCentered.numCols() should equal(4)
@@ -135,57 +137,11 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
       vectors(2).vector.toArray should equalWithTolerance(Array(-2.806404, -1.222661, 0.607612, 6.024266))
     }
 
-    "convert frame to vector RDD" in {
-      val rows = sparkContext.parallelize(data)
-      val frameRdd = new FrameRdd(schema, rows)
-      val vectors = PrincipalComponentsFunctions.toVectorRdd(frameRdd, List("col_0", "col_3"), false).collect()
-      vectors.length should equal(3)
-      vectors(0).toArray should equalWithTolerance(Array(0.0, 7.0))
-      vectors(1).toArray should equalWithTolerance(Array(2.0, 4.0))
-      vectors(2).toArray should equalWithTolerance(Array(4.0, 6.0))
-    }
-
-    "convert frame to mean-centered vector RDD" in {
-      val rows = sparkContext.parallelize(data)
-      val frameRdd = new FrameRdd(schema, rows)
-      val vectors = PrincipalComponentsFunctions.toVectorRdd(frameRdd, List("col_0", "col_3"), true).collect()
-      vectors.length should equal(3)
-      vectors(0).toArray should equalWithTolerance(Array(-2.0, 1.3333333))
-      vectors(1).toArray should equalWithTolerance(Array(0, -1.6666667))
-      vectors(2).toArray should equalWithTolerance(Array(2.0, 0.3333333))
-    }
-
-    "convert frame to row matrix" in {
-      val rows = sparkContext.parallelize(data)
-      val frameRdd = new FrameRdd(schema, rows)
-      val matrix = PrincipalComponentsFunctions.toRowMatrix(frameRdd, List("col_0", "col_3"), false)
-      matrix.numCols() should equal(2)
-      matrix.numRows() should equal(3)
-
-      val vectors = matrix.rows.collect()
-      vectors(0).toArray should equalWithTolerance(Array(0.0, 7.0))
-      vectors(1).toArray should equalWithTolerance(Array(2.0, 4.0))
-      vectors(2).toArray should equalWithTolerance(Array(4.0, 6.0))
-    }
-
-    "convert frame to indexed row matrix" in {
-      val rows = sparkContext.parallelize(data)
-      val frameRdd = new FrameRdd(schema, rows)
-      val matrix = PrincipalComponentsFunctions.toRowMatrix(frameRdd, List("col_0", "col_3"), false)
-      matrix.numCols() should equal(2)
-      matrix.numRows() should equal(3)
-
-      val vectors = matrix.rows.collect()
-      vectors(0).toArray should equalWithTolerance(Array(0.0, 7.0))
-      vectors(1).toArray should equalWithTolerance(Array(2.0, 4.0))
-      vectors(2).toArray should equalWithTolerance(Array(4.0, 6.0))
-    }
-
     "convert frame to mean-centered indexed row matrix" in {
       val rows = sparkContext.parallelize(data)
       val frameRdd = new FrameRdd(schema, rows)
 
-      val matrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd, List("col_0", "col_3"), true)
+      val matrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd.zipWithIndex().map { case (row, index) => (index, row) }, schema, List("col_0", "col_3"), true, columnMeans2.toArray)
       matrix.numCols() should equal(2)
       matrix.numRows() should equal(3)
 
@@ -193,9 +149,9 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
       vectors(0).index should equal(0)
       vectors(1).index should equal(1)
       vectors(2).index should equal(2)
-      vectors(0).vector.toArray should equalWithTolerance(Array(-2.0, 1.3333333))
-      vectors(1).vector.toArray should equalWithTolerance(Array(0, -1.6666667))
-      vectors(2).vector.toArray should equalWithTolerance(Array(2.0, 0.3333333))
+      vectors(0).vector.toArray should equalWithTolerance(Array(-3.0, 6.7))
+      vectors(1).vector.toArray should equalWithTolerance(Array(-1.0, 3.7))
+      vectors(2).vector.toArray should equalWithTolerance(Array(1.0, 5.7))
     }
   }
 
