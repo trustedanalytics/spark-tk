@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Tests PageRank exposed from graphx. Validated against networkx"""
 import unittest
 
@@ -63,17 +80,17 @@ class PageRank(sparktk_test.SparkTKTestCase):
         result = self.graph.page_rank(
             convergence_tolerance=self.CONVERGENCE_TOLERANCE)
 
-        pandas_vertices = result.download(result.count())
+        pandas_vertices = result.to_pandas(result.count())
         edges_frame = self.graph.create_edges_frame()
 
-        edge_list = map(tuple, edges_frame.take(edges_frame.count()).data)
+        edge_list = map(tuple, edges_frame.take(edges_frame.count()))
 
         G = nx.Graph()
         G.add_edges_from(edge_list)
         nx_pagerank = nx.pagerank(G, max_iter=self.MAX_ITERATIONS, tol=self.CONVERGENCE_TOLERANCE)
 
-        vals = {ix['Vertex']: ix['PageRank']
-                for _, ix in pandas_vertices.iterrows()}
+        vals = {vertex['id']: vertex['pagerank']
+                for index, vertex in pandas_vertices.iterrows()}
 
         self.assertItemsEqual(vals, nx_pagerank)
 

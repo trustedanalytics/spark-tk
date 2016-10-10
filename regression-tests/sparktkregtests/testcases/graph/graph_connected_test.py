@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Test connected_components graphx, Valuesare checked against networkx"""
 import unittest
 
@@ -31,9 +48,9 @@ class ConnectedComponents(sparktk_test.SparkTKTestCase):
 
         components = self.graph.connected_components()
         components.add_columns(
-            lambda x: x['Vertex'].split('_')[1], ("element", str))
-        frame = components.download(components.count())
-        group = frame.groupby('Component').agg(lambda x: x.nunique())
+            lambda x: x['id'].split('_')[1], ("element", str))
+        frame = components.to_pandas(components.count())
+        group = frame.groupby('component').agg(lambda x: x.nunique())
 
         # Each component should only have 1 element value, the name of the
         # component

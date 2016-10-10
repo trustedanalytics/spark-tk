@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Test cumulative tally functions, hand calculated baselines"""
 import unittest
 from sparktkregtests.lib import sparktk_test
@@ -25,7 +42,7 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
         self.tally_frame.tally("rating", '5')
         self.tally_frame.tally_percent("rating", '5')
 
-        pd_frame = self.tally_frame.download(self.tally_frame.count())
+        pd_frame = self.tally_frame.to_pandas(self.tally_frame.count())
         for index, row in pd_frame.iterrows():
             self.assertAlmostEqual(
                 row['percent_count'], row['rating_tally_percent'], delta=.0001)
@@ -103,7 +120,7 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
     def test_tally_no_element(self):
         """Test tallying on non-present element is correct"""
         self.tally_frame.tally_percent("rating", "12")
-        local_frame = self.tally_frame.download(self.tally_frame.count())
+        local_frame = self.tally_frame.to_pandas(self.tally_frame.count())
 
         for index, row in local_frame.iterrows():
             self.assertEqual(row["rating_tally_percent"], 1.0)
