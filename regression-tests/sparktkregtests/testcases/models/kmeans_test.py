@@ -165,7 +165,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         epsilon=[])
 
     def test_invalid_columns_predict(self):
-        """Check error on a floating point number of iterations."""
+        """Check error with invalid columns"""
         with self.assertRaisesRegexp(Exception, "Invalid column name"):
             kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
                                                                  self.vectors,
@@ -179,7 +179,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
             self.frame_test.count()
 
     def test_too_few_columns(self):
-        """Check error on a floating point number of iterations."""
+        """Check error on invalid num of columns"""
         with self.assertRaisesRegexp(Exception, "Number of columns for train and predict should be same"):
             kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
                                                                  self.vectors,
