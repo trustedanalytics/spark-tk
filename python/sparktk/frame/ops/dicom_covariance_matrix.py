@@ -18,10 +18,11 @@
 def dicom_covariance_matrix(self, matrix_column_name):
 
     """
-    Compute the Covariance Matrix of a matrix
 
-    :param: m*n dimensional DenseMatrix
-    :return: m*m dimensional covariance matrix
+    Compute the Covariance Matrix of matrices stored in a frame
+
+    :param matrix_column_name: Name of the column to compute the covariance matrix on
+    :return: (Frame) returns the farme with a new
     """
 
     self._scala.dicomCovarianceMatrix(matrix_column_name)

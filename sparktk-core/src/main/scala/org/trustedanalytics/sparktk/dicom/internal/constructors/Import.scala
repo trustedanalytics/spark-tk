@@ -77,7 +77,7 @@ object Import {
         } data(i)(j) = raster.getSample(i, j, 0)
 
         //Create a dense matrix for pixel array
-        val dm1 = new DenseMatrix(h, w, data.flatten)
+        val dm1 = new DenseMatrix(h, w, data.flatten, isTransposed = true)
 
         //Metadata
         val dis: DicomInputStream = new DicomInputStream(tmpFile)
