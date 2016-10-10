@@ -122,7 +122,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         max_iter=-3)
 
     def test_max_iterations_bad_type(self):
-        """Check error on a floating point number of iterations."""
+        """Check error on invalid number of iterations."""
         with self.assertRaisesRegexp(Exception, "does not exist"):
             self.context.models.clustering.kmeans.train(self.frame_train,
                                                         self.vectors,
@@ -139,7 +139,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         k=-5)
 
     def test_k_bad_type(self):
-        """Check error on float number of clusters."""
+        """Check error on invalid number of clusters."""
         with self.assertRaisesRegexp(Exception, "does not exist"):
             self.context.models.clustering.kmeans.train(self.frame_train,
                                                         self.vectors,
