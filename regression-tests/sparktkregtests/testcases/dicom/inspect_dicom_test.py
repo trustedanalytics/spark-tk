@@ -44,7 +44,7 @@ class InspectDicomTest(sparktk_test.SparkTKTestCase):
         """tests metadata inspect content"""
         # first we will get the files we created the dicom from
         files = []
-        for filename in os.listdir(self.xml_directory):
+        for filename in sorted([f for f in os.listdir(self.xml_directory)]):
             with open(self.xml_directory + str(filename)) as xmlfile:
                 contents = xmlfile.read()
                 files.append(contents)
@@ -53,32 +53,32 @@ class InspectDicomTest(sparktk_test.SparkTKTestCase):
 
         # we ensure the metadata in dicom matches the generated
         # xmls from the files we created the dicom from
-        for (dcm_file, xml_file) in zip(inspect.rows, files):
+        for (inspect_file, xml_file) in zip(inspect.rows, files):
             # we need to remove the bulkdata tag before we compare since
             # it records the location where the files were loaded from
             # and therefore will differ between the content
-            dcm_file = dcm_file[1].encode("ascii", "ignore")
+            inspect_file = inspect_file[1].encode("ascii", "ignore")
             bulk_data_index = xml_file.index("<BulkData")
             xml_bulk_data = xml_file[bulk_data_index:bulk_data_index + xml_file[bulk_data_index:].index(">") + 1]
-            dcm_bulk_data = dcm_file[bulk_data_index:bulk_data_index + dcm_file[bulk_data_index:].index(">") + 1]
+            inspect_bulk_data = inspect_file[bulk_data_index:bulk_data_index + inspect_file[bulk_data_index:].index(">") + 1]
 
             xml_file = xml_file.replace(xml_bulk_data, "")
-            dcm_file = dcm_file.replace(dcm_bulk_data, "")
+            inspect_file = inspect_file.replace(inspect_bulk_data, "")
 
-            self.assertEqual(dcm_file, xml_file)
+            self.assertEqual(xml_file, inspect_file)
 
-    @unittest.skip("image content compare fails for dicom on some images")
     def test_image_content_inspect_dcm_basic(self):
-        """image content test for dicom inspect"""
-        # first we get the files from the dataset directory
+        """content test of image data for dicom"""
+        # load the files so we can compare with the dicom result
         files = []
-        for filename in os.listdir(self.image_directory):
+        for filename in sorted([f for f in os.listdir(self.image_directory)]):
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
-        # then we compare the image data with dicom's inspect result
-        inspect = self.dicom.pixeldata.inspect()
-        for (dcm_image, pixel_image) in zip(inspect.rows, files):
+        # iterate through the data in the files and in the dicom frame
+        # and ensure that they match
+        image_inspect = self.dicom.pixeldata.inspect()
+        for (dcm_image, pixel_image) in zip(image_inspect.rows, files):
             numpy.testing.assert_equal(pixel_image, dcm_image[1])
 
 

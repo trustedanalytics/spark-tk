@@ -45,7 +45,7 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
         """tests dicom metadata content"""
         # get the files that make up our dicom so we can compare content
         files = []
-        for filename in os.listdir(self.xml_directory):
+        for filename in sorted([f for f in os.listdir(self.xml_directory)]):
             with open(self.xml_directory + str(filename)) as xmlfile:
                 contents = xmlfile.read()
                 files.append(contents)
@@ -67,19 +67,20 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
 
             self.assertEqual(dcm_file, xml_file)
 
-    @unittest.skip("compare image content fails for dicom for some images")
     def test_image_content_take_dcm_basic(self):
-        """content test for dicom take"""
-        # load the files to compare
+        """content test of image data for dicom"""
+        # load the files so we can compare with the dicom result
         files = []
-        for filename in os.listdir(self.image_directory):
+        for filename in sorted([f for f in os.listdir(self.image_directory)]):
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
-        # ensure dicom pixeldata matches the original data
-        take = self.dicom.pixeldata.take(self.count)
-        for (dcm_image, pixel_image) in zip(take, files):
+        # iterate through the data in the files and in the dicom frame
+        # and ensure that they match
+        image_inspect = self.dicom.pixeldata.take(self.count)
+        for (dcm_image, pixel_image) in zip(image_inspect, files):
             numpy.testing.assert_equal(pixel_image, dcm_image[1])
+
 
 
 if __name__ == "__main__":

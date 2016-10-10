@@ -63,12 +63,10 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
             # matches the dcm file metadata
             self.assertEqual(dcm_file, xml_file)
 
-    @unittest.skip("image content compare fails for some dicom images")
     def test_image_content_import_dcm_basic(self):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result
         files = []
-        count = 0
         for filename in sorted([f for f in os.listdir(self.image_directory)]):
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
@@ -76,8 +74,11 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_pandas = self.dicom.pixeldata.to_pandas()
+        for image in files:
+            print "image: " + str(image)
+        for image in image_pandas["imagematrix"]:
+            print "dicom img: " + str(image)
         for (dcm_image, pixel_image) in zip(image_pandas["imagematrix"], files):
-            count = count + 1
             numpy.testing.assert_equal(pixel_image, dcm_image)
 
     def test_import_dicom_invalid_files(self):
