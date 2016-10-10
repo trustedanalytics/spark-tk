@@ -17,12 +17,8 @@
 
 """Test guassian mixture models against known values"""
 import unittest
-import random
-from collections import Counter
-from numpy import array
 from numpy.testing import assert_almost_equal
 from sparktkregtests.lib import sparktk_test
-from sklearn.datasets.samples_generator import make_blobs
 
 
 class GMMModelTest(sparktk_test.SparkTKTestCase):
