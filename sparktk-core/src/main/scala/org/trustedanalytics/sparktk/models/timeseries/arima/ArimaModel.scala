@@ -15,9 +15,6 @@
  */
 package org.trustedanalytics.sparktk.models.timeseries.arima
 
-import java.util.zip.ZipOutputStream
-
-import com.google.common.base.Charsets
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.SparkContext
@@ -26,12 +23,11 @@ import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import com.cloudera.sparkts.models.{ ARIMA => SparkTsArima, ARIMAModel => SparkTsArimaModel }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
-import org.trustedanalytics.sparktk.models.ScoringModelUtils
-import org.trustedanalytics.model.archive.format.ModelArchiveFormat
-import java.io.{ BufferedOutputStream, FileOutputStream, File }
-import org.apache.commons.io.{ FileUtils, IOUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import org.apache.commons.io.FileUtils
 import spray.json._
 import DefaultJsonProtocol._
+import java.nio.file.{ Files, Path }
 
 object ArimaModel extends TkSaveableObject {
 
@@ -182,12 +178,6 @@ case class ArimaModel private[arima] (ts: DenseVector,
                                       method: String,
                                       initParams: Option[Seq[Double]],
                                       arimaModel: SparkTsArimaModel) extends Serializable with Model {
-
-  /**
-   * Name of scoring model reader
-   */
-  private val modelReader: String = "SparkTkModelReader"
-
   /**
    * Coefficient values: intercept, AR, MA, with increasing degrees
    */
@@ -262,7 +252,7 @@ case class ArimaModel private[arima] (ts: DenseVector,
   }
 
   override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("ARIMA Model", classOf[SparkTsArimaModel].getName, modelReader, Map())
+    new ModelMetaDataArgs("ARIMA Model", classOf[ArimaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {
@@ -274,56 +264,16 @@ case class ArimaModel private[arima] (ts: DenseVector,
     output :+ Field("predicted_values", "Array[Double]")
   }
 
-  def exportToMar(sc: SparkContext, path: String): Unit = {
-    val marFile: File = new File(path)
-    val directory = marFile.getParentFile
-    val tempModelSavePath = directory.getAbsolutePath + "/model-save"
-    save(sc, tempModelSavePath)
-    val savedModelFile = new File(tempModelSavePath)
-    val marFileOutputStream = new FileOutputStream(marFile)
-    //val marArchive = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(marFile)))
-
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
     try {
-
-      ModelArchiveFormat.write(List(savedModelFile), modelReader, classOf[SparkTsArimaModel].getName, marFileOutputStream)
-
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaModel].getName, tmpDir)
     }
     finally {
-      IOUtils.closeQuietly(marFileOutputStream)
-      FileUtils.deleteQuietly(savedModelFile)
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
     }
-    //    val dir = sys.env("SPARKTK_HOME")
-    //    val f = new File(dir)
-    // TODO: Implement exportToMar
-    //throw new NotImplementedError("exportToMar is not implemented yet")
-
-    //    val testZipFile = File.createTempFile("TestZip", ".mar")
-    //    val testJarFile = File.createTempFile("test", ".jar")
-    //    val testZipArchive = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(testZipFile)))
-    //    val modelLoaderFile = File.createTempFile("descriptor", ".json")
-    //
-    //    try {
-    //      ModelArchiveFormat.addFileToZip(testZipArchive, testJarFile)
-    //      ModelArchiveFormat.addByteArrayToZip(testZipArchive, "descriptor.json", 256, "{\"modelLoaderClassName\": \"org.trustedanalytics.model.archive.format.TestModelReader\"}".getBytes("utf-8"))
-    //
-    //      testZipArchive.finish()
-    //      IOUtils.closeQuietly(testZipArchive)
-    //
-    //      val testModel = ModelArchiveFormat.read(testZipFile, this.getClass.getClassLoader, None)
-    //
-    //      assert(testModel.isInstanceOf[Model])
-    //      assert(testModel != null)
-    //    }
-    //    catch {
-    //      case e: Exception =>
-    //        throw e
-    //    }
-    //    finally {
-    //      FileUtils.deleteQuietly(modelLoaderFile)
-    //      FileUtils.deleteQuietly(testZipFile)
-    //      FileUtils.deleteQuietly(testJarFile)
-    //    }
-    //  }
   }
 }
 

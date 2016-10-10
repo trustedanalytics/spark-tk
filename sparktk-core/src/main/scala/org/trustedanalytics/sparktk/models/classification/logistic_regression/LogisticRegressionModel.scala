@@ -29,7 +29,9 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import scala.language.implicitConversions
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
 import org.apache.spark.mllib.linalg.DenseVector
-import org.trustedanalytics.sparktk.models.ScoringModelUtils
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object LogisticRegressionModel extends TkSaveableObject {
 
@@ -289,11 +291,6 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
                                                                  hessianMatrix: Option[DenseMatrix[Double]],
                                                                  sparkModel: LogisticRegressionModelWithFrequency) extends Serializable with Model {
 
-  /**
-   * Name of scoring model reader
-   */
-  private val modelReader: String = "SparkTkModelReader"
-
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
@@ -421,7 +418,7 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
   }
 
   override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Logistic Regression", classOf[LogisticRegressionModelWithFrequency].getName, modelReader, Map())
+    new ModelMetaDataArgs("Logistic Regression", classOf[LogisticRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {
@@ -438,9 +435,16 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
     output :+ Field("PredictedLabel", "Int")
   }
 
-  def exportToMar(path: String): Unit = {
-    // TODO: Implement exportToMar
-    throw new NotImplementedError("exportToMar is not implemented yet")
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[LogisticRegressionModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 

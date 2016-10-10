@@ -166,6 +166,15 @@ class RandomForestClassifierModel(PropertiesObject):
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
 
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/rfClassifier.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
@@ -301,11 +310,13 @@ class RandomForestClassifierModel(PropertiesObject):
         ----------
 
         :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+
         """
 
         if not isinstance(path, basestring):
             raise TypeError("path parameter must be a str, but received %s" % type(path))
 
-        self._scala.exportToMar(path)
+        return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

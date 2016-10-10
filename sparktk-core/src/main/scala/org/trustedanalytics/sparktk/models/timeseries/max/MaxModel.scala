@@ -28,7 +28,9 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
-import org.trustedanalytics.sparktk.models.ScoringModelUtils
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object MaxModel extends TkSaveableObject {
 
@@ -137,11 +139,6 @@ case class MaxModel private[max] (timeseriesColumn: String,
                                   initParams: Option[Seq[Double]],
                                   maxModel: SparkTsMaxModel) extends Serializable with Model {
 
-  /**
-   * Name of scoring model reader
-   */
-  private val modelReader: String = "SparkTkModelReader"
-
   lazy val p: Int = 0
 
   lazy val d: Int = 0
@@ -234,7 +231,7 @@ case class MaxModel private[max] (timeseriesColumn: String,
   }
 
   override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("MAX Model", classOf[SparkTsMaxModel].getName, modelReader, Map())
+    new ModelMetaDataArgs("MAX Model", classOf[MaxModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {
@@ -246,9 +243,16 @@ case class MaxModel private[max] (timeseriesColumn: String,
     output :+ Field("score", "Array[Double]")
   }
 
-  def exportToMar(path: String): Unit = {
-    // TODO: Implement exportToMar
-    throw new NotImplementedError("exportToMar is not implemented yet")
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[MaxModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 

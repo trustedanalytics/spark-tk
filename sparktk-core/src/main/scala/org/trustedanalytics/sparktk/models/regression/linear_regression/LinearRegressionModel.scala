@@ -31,10 +31,12 @@ import scala.collection.mutable.ListBuffer
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
-import org.trustedanalytics.sparktk.models.ScoringModelUtils
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 import org.apache.spark.mllib.linalg.Vectors
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object LinearRegressionModel extends TkSaveableObject {
 
@@ -159,11 +161,6 @@ case class LinearRegressionModel(valueColumn: String,
                                  iterations: Int,
                                  sparkModel: SparkLinearRegressionModel) extends Serializable with Model {
 
-  /**
-   * Name of scoring model reader
-   */
-  private val modelReader: String = "SparkTkModelReader"
-
   // TkLinearRegressionModel, used to accessing protected methods in the Spark LinearRegressionModel
   lazy val tkLinearRegModel = new TkLinearRegressionModel(LinearRegressionData(sparkModel, observationColumnsTrain, valueColumn))
 
@@ -246,9 +243,14 @@ case class LinearRegressionModel(valueColumn: String,
    *
    * @param sc active SparkContext
    * @param path save to path
+   * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
    */
-  def save(sc: SparkContext, path: String): Unit = {
-    sparkModel.write.save(path)
+  def save(sc: SparkContext, path: String, overwrite: Boolean = false): Unit = {
+
+    if (overwrite)
+      sparkModel.write.overwrite().save(path)
+    else
+      sparkModel.write.save(path)
     val formatVersion: Int = 1
     val tkMetadata = LinearRegressionModelMetaData(valueColumn,
       observationColumnsTrain,
@@ -277,7 +279,7 @@ case class LinearRegressionModel(valueColumn: String,
   }
 
   override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Linear Regression Model", classOf[LinearRegressionModel].getName, modelReader, Map())
+    new ModelMetaDataArgs("Linear Regression Model", classOf[LinearRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {
@@ -294,9 +296,18 @@ case class LinearRegressionModel(valueColumn: String,
     output :+ Field("Prediction", "Double")
   }
 
-  def exportToMar(path: String): Unit = {
-    // TODO: Implement exportToMar
-    throw new NotImplementedError("exportToMar is not implemented yet")
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      // The spark linear regression model save will fail, if we don't specify the "overwrite", since the temp
+      // directory has already been created.
+      save(sc, "file://" + tmpDir.toString, overwrite = true)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[LinearRegressionModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 

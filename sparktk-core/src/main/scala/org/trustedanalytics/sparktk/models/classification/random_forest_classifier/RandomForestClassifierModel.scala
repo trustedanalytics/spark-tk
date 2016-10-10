@@ -29,10 +29,12 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapp
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
-import org.trustedanalytics.sparktk.models.ScoringModelUtils
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 import org.apache.spark.mllib.linalg.Vectors
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object RandomForestClassifierModel extends TkSaveableObject {
 
@@ -181,11 +183,6 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
                                                                           categoricalFeaturesInfo: Option[Map[Int, Int]],
                                                                           featureSubsetCategory: Option[String]) extends Serializable with Model {
 
-  /**
-   * Name of scoring model reader
-   */
-  private val modelReader: String = "SparkTkModelReader"
-
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
@@ -284,7 +281,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
   }
 
   override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Random Forest Classifier Model", classOf[SparkRandomForestModel].getName, modelReader, Map())
+    new ModelMetaDataArgs("Random Forest Classifier Model", classOf[RandomForestClassifierModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {
@@ -301,9 +298,16 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     output :+ Field("PredictedClass", "Double")
   }
 
-  def exportToMar(path: String): Unit = {
-    // TODO: Implement exportToMar
-    throw new NotImplementedError("exportToMar is not implemented yet")
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestClassifierModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 
