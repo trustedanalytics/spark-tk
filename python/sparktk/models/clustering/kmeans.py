@@ -153,12 +153,17 @@ class KMeansModel(PropertiesObject):
         True
 
     <hide>
-    >>> restored2 = tc.models.clustering.kmeans.load("sandbox/kmeans1")
+
+    >>> restored2 = tc.models.clustering.kmeans.load(%)
 
     >>> restored.centroids == centroids
     True
 
+    </hide>
+
     >>> restored.predict(frame)
+
+    >>> frame.inspect()
     [#]  data  name  cluster  cluster_0
     ===================================
     [0]   2.0  ab          1          1
@@ -171,8 +176,6 @@ class KMeansModel(PropertiesObject):
     [7]   6.0  op          2          2
     [8]   5.0  qr          2          2
 
-
-    </hide>
     """
 
     def __init__(self, tc, scala_model):
