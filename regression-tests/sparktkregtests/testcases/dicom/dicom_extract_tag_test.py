@@ -29,7 +29,7 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
             if tag not in columns:
                 raise Exception("tag was not added to columns")
 
-        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags).data
+        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_multiple_columns_basic(self):
@@ -46,7 +46,7 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
             if tag not in columns:
                 raise Exception("tag was not added to columns")
 
-        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags).data
+        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_invalid_column(self):
@@ -57,7 +57,7 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         if u'invalid' not in columns:
             raise Exception("Invalid column not added")
 
-        invalid_column = self.dicom.metadata.take(self.count, columns=[u'invalid']).data
+        invalid_column = self.dicom.metadata.take(self.count, columns=['invalid'])
         expected_result = [[None] for x in range(0, self.count)]
         self.assertEqual(invalid_column, expected_result)
 
@@ -71,7 +71,7 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         if u'another_invalid_col' not in columns:
             raise Exception("another_invalid_col not added to columns")
 
-        invalid_columns = self.dicom.metadata.take(self.count, columns=[u'invalid', u'another_invalid_col']).data
+        invalid_columns = self.dicom.metadata.take(self.count, columns=['invalid', 'another_invalid_col'])
         expected_result = [[None, None] for x in range(0, self.count)]
         self.assertEqual(invalid_columns, expected_result)
 
@@ -88,7 +88,7 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         if u'invalid' not in columns:
             raise Exception("invalid column not added to columns")
 
-        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags).data
+        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_invalid_type(self):
@@ -106,7 +106,7 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         equivalent_tags = []
 
         # download the frame to pandas for ease of accesss
-        metadata_pandas = self.dicom.metadata.download()
+        metadata_pandas = self.dicom.metadata.to_pandas()
 
         # iterate through the metadata rows
         for index, row in metadata_pandas.iterrows():
