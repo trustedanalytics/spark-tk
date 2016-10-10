@@ -79,12 +79,12 @@ class Dicom(object):
         >>> type(image_ndarray)
         <type 'numpy.ndarray'>
 
+        <skip>
         #Dimesions of the image matrix stored
         >>> image_ndarray.shape
         (512, 512)
 
         #Use python matplot lib package to verify image visually
-        <skip>
         >>> import pylab
         >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
         >>> pylab.show()
