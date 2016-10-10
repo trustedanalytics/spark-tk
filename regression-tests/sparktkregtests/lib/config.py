@@ -22,3 +22,5 @@ import os
 qa_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 hdfs_namenode = os.getenv("CDH_MASTER", "localhost")
 user = os.getenv("USER", "hadoop")
+run_mode = True if os.getenv("RUN_MODE","1") == "1" else False # (0=local, 1=Yarnclient)
+#run_mode = False if os.getenv("RUN_MODE","0") == "0" else True
