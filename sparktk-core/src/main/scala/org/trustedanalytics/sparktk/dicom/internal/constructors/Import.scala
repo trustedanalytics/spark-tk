@@ -86,7 +86,11 @@ object Import extends Serializable {
 
   /**
    * Creates a dicom object with metadata and pixeldata frames
-   *
+   *                                                                            |---> DataInputStream --> DicomInputStream --> Dcm2Xml --> Metadata XML (String)
+   *                                                                            |
+   * Spark foreach DCM Image (FilePath, PortableDataStream) ---> ByteArray --->
+   *                                                                            |
+   *                                                                            |---> DataInputStream --> DicomInputStream --> ImageInputStream --> Raster --> Pixel Data (Dense Matrix)
    * @param path Full path to the DICOM files directory
    * @return Dicom object with MetadataFrame and PixeldataFrame
    */
@@ -105,11 +109,11 @@ object Import extends Serializable {
         byteArray = IOUtils.toByteArray(fileInputStream)
 
         //Create the metadata xml
-        xml = getMetadataXml(byteArray)
+        metadata = getMetadataXml(byteArray)
         //Create a dense matrix for pixel array
-        dm = getPixeldata(byteArray)
+        pixeldata = getPixeldata(byteArray)
         //Metadata
-      } yield (xml, dm)
+      } yield (metadata, pixeldata)
     }.zipWithIndex()
 
     dcmMetadataPixelArrayRDD.cache()

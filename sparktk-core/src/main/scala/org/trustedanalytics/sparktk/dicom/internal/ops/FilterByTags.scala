@@ -58,6 +58,9 @@ object FilterByTags extends Serializable {
     //Creates NodeSeq of DicomAttribute
     val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, Dicom.nodeNameInMetadata)
 
+    // Loop through each DicomAttribute and check for the given tag.
+    // If tag is found returns True else False. Apply 'and' operation on Booleans and return final Boolean value,
+    // filter uses Boolean value to decide whether to keep the record or drop
     tagsValuesMap.map {
       case (tag, value) => nodeSeqOfDicomAttribute.filter {
         dicomAttribute => (dicomAttribute \ "@tag").text == tag

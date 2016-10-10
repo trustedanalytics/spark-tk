@@ -86,7 +86,7 @@ object ExportToDcm extends Serializable {
 
     val hdfsPath = new Path(filePath)
     val fs = FileSystem.get(new Configuration())
-    val hdfsOutputStream = fs.create(hdfsPath)
+    val hdfsOutputStream = fs.create(hdfsPath, false)
     hdfsOutputStream.write(bytes)
     hdfsOutputStream.close()
   }
@@ -95,16 +95,18 @@ object ExportToDcm extends Serializable {
 
     //zip to join back (metadata, pixeldata into one)
     val zipMetadataPixeldata = metadataRdd.zip(pixeldataRdd)
-    zipMetadataPixeldata.cache()
 
+    //zips metadataRDD [(id, metadata_columns)] and pixeldataRDD[(id, pixeldata)]
     zipMetadataPixeldata.foreach {
       case (metadata, pixeldata) => {
 
+        //Access the metadata column from metadatardd row
         val metadataStr = metadata(1).toString
+        //Access the pixeldata column from pixeldataRdd row
         val pixeldataDM: DenseMatrix = pixeldata(1).asInstanceOf[DenseMatrix]
 
         val dcmAttributes = getAttributesFromMetadata(metadataStr)
-        val pixel = pixeldataDM.toArray.map(x => x.toInt)
+        val pixel = pixeldataDM.toArray.map(_.toInt)
 
         //Set modified pixeldata to DicomAttributes
         dcmAttributes.setInt(Tag.PixelData, VR.OW, pixel: _*)

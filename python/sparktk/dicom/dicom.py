@@ -103,10 +103,10 @@ class Dicom(object):
         <type 'numpy.ndarray'>
 
         #Dimesions of the image matrix stored
-        <skip>
         >>> image_ndarray.shape
-        (512, 512)
+        (320, 320)
 
+        <skip>
         #Use python matplot lib package to verify image visually
         >>> import pylab
         >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
@@ -143,7 +143,7 @@ class Dicom(object):
         <type 'numpy.ndarray'>
 
         >>> load_image_ndarray.shape
-        (512, 512)
+        (320, 320)
 
         #Inspect metadata property to see dicom metadata xml content
 

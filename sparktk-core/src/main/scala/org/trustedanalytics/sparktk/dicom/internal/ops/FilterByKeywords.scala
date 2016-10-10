@@ -58,6 +58,9 @@ object FilterByKeywords extends Serializable {
     //Creates NodeSeq of DicomAttribute
     val nodeSeqOfDicomAttribute = row.valueAsXmlNodeSeq(Dicom.metadataColumnName, Dicom.nodeNameInMetadata)
 
+    // Loop through each DicomAttribute and check for the given keyword.
+    // If keyword is found returns True else False. Apply 'and' operation on Booleans and return final Boolean value,
+    // filter uses Boolean value to decide whether to keep the record or drop
     keywordsValuesMap.map {
       case (keyword, value) => nodeSeqOfDicomAttribute.filter {
         dicomAttribute => (dicomAttribute \ "@keyword").text == keyword

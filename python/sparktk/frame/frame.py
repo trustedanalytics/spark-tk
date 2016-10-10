@@ -19,7 +19,7 @@ from pyspark.rdd import RDD
 from pyspark.sql import DataFrame
 
 from sparktk.frame.pyframe import PythonFrame
-from sparktk.frame.schema import schema_to_python, schema_to_scala
+from sparktk.frame.schema import schema_to_python, schema_to_scala, schema_is_coercible
 from sparktk import dtypes
 import logging
 logger = logging.getLogger('sparktk')
@@ -101,9 +101,11 @@ class Frame(object):
                 source = validate_schema_result.validated_rdd
                 logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
 
-
-            #check if row contains list of lists convert it to ndarray
-            map_source = source.map(Frame.row_decorator(list(schema)))
+            # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+            if schema_is_coercible(python_schema=list(schema)):
+                map_source = source.map(Frame.type_coercer(list(schema)))
+            else:
+                map_source = source
             self._frame = PythonFrame(map_source, schema)
 
     #When creating a new frame(python frame created) or converting frame from scala to python frame,the function scans a row and performs below
@@ -111,7 +113,7 @@ class Frame(object):
     # - when Converting frame from scala to python frame - (scala converts DenseMatrix--> JList[JList[Double]](in JConvert.scala),
     # jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
     @staticmethod
-    def row_decorator(schema):
+    def type_coercer(schema):
         def decorator(row):
             result = []
             import numpy as np
@@ -130,7 +132,7 @@ class Frame(object):
     #to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
     #For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
     @staticmethod
-    def row_decorator_pymllib(schema):
+    def type_coercer_pymllib(schema):
         def decorator(row):
             result = []
             from pyspark.mllib.linalg import DenseMatrix
@@ -298,12 +300,14 @@ class Frame(object):
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
         if self._is_python:
-            self._frame.rdd = self._frame.rdd.map(Frame.row_decorator_pymllib(self._frame.schema))
+            # If schema contains matrix dataype,
+            # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
+            if schema_is_coercible(self._frame.schema):
+                self._frame.rdd = self._frame.rdd.map(Frame.type_coercer_pymllib(self._frame.schema))
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
             self._frame = self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
-
         return self._frame
 
     @property
@@ -315,7 +319,12 @@ class Frame(object):
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
             python_rdd = RDD(java_rdd, self._tc.sc)
-            map_python_rdd = python_rdd.map(Frame.row_decorator(list(python_schema)))
+
+            # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+            if schema_is_coercible(list(python_schema)):
+                map_python_rdd = python_rdd.map(Frame.type_coercer(list(python_schema)))
+            else:
+                map_python_rdd = python_rdd
             self._frame = PythonFrame(map_python_rdd, python_schema)
         return self._frame
 
