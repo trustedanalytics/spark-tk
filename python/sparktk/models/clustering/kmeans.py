@@ -154,7 +154,7 @@ class KMeansModel(PropertiesObject):
 
     <hide>
 
-    >>> restored2 = tc.models.clustering.kmeans.load(%)
+    >>> restored2 = tc.models.clustering.kmeans.load("sandbox/kmeans1")
 
     >>> restored.centroids == centroids
     True
