@@ -74,10 +74,6 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_pandas = self.dicom.pixeldata.to_pandas()
-        for image in files:
-            print "image: " + str(image)
-        for image in image_pandas["imagematrix"]:
-            print "dicom img: " + str(image)
         for (dcm_image, pixel_image) in zip(image_pandas["imagematrix"], files):
             numpy.testing.assert_equal(pixel_image, dcm_image)
 
