@@ -88,13 +88,6 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
             dicom = self.context.dicom.import_dcm(dataset)
             dicom.metadata.count()
 
-    def test_import_dicom_mixed_file_types(self):
-        """tests import dicom with mixed file types"""
-        dataset = self.get_file("dicom/baddicom/")
-        dicom = self.context.dicom.import_dcm(dataset)
-        with self.assertRaisesRegexp(Exception, "Not a DICOM Stream"):
-            dicom.metadata.count()
-
 
 if __name__ == "__main__":
     unittest.main()
