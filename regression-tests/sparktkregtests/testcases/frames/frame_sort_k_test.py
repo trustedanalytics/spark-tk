@@ -19,6 +19,9 @@
 import unittest
 from sparktkregtests.lib import sparktk_test
 
+# Related bugs:
+# @DPNG-9405 - multiple params with different ascending/descending values
+# @DPNG-9407 - tuples
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
 
@@ -30,8 +33,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                   ("owner", str),
                   ("weight", int),
                   ("hair_type", str)]
-        self.frame = self.context.frame.import_csv(dataset,
-                schema=schema, header=True)
+        self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True)
 
     def test_frame_sortedk_col_single_descending(self):
         """ Test single-column sorting descending"""
@@ -81,7 +83,6 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                 self.assertGreaterEqual(
                     down_take[i][3], down_take[i + 1][3])
 
-    @unittest.skip("frame.sort does not allow tuples")
     def test_frame_sortedk_col_multiple_mixed(self):
         """ Test multiple-column sorting, mixed ascending/descending"""
         topk_frame = self.frame.sorted_k(
@@ -92,14 +93,14 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
             # If 1st sort key is equal, compare the 2nd
             if mixed_take[i][0] == mixed_take[i + 1][0]:
                 # If 2nd sort key is also equal, compare the 3rd
-                if mixed_take[i][3] == mixed_take[i + 1][3]:
-                    self.assertGreaterEqual(
-                        mixed_take[i][4], mixed_take[i + 1][4])
-                else:
-                    self.assertGreaterEqual(
+                if mixed_take[i][4] == mixed_take[i + 1][4]:
+                    self.assertLessEqual(
                         mixed_take[i][3], mixed_take[i + 1][3])
+                else:
+                    self.assertLessEqual(
+                        mixed_take[i][4], mixed_take[i + 1][4])
             else:
-                self.assertLessEqual(
+                self.assertGreaterEqual(
                     mixed_take[i][0], mixed_take[i + 1][0])
 
     def test_frame_sortedk_bad_k(self):

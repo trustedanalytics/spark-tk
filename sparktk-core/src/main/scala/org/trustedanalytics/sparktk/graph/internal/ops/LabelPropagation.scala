@@ -37,7 +37,7 @@ trait LabelPropagationSummarization extends BaseGraph {
    * community).
    *
    * @param maxIterations the number of iterations to run label propagation for
-   * @returns dataFrame with the vertices associated with their respective communities
+   * @return dataFrame with the vertices associated with their respective communities
    */
   def labelPropagation(maxIterations: Int): Frame = {
     execute[Frame](LabelPropagation(maxIterations))
@@ -45,6 +45,7 @@ trait LabelPropagationSummarization extends BaseGraph {
 }
 
 case class LabelPropagation(maxIterations: Int) extends GraphSummarization[Frame] {
+  require(maxIterations > 0, "maxIterations must be a positive value")
 
   override def work(state: GraphState): Frame = {
     new Frame(state.graphFrame.labelPropagation.maxIter(maxIterations).run())

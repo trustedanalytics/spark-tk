@@ -46,7 +46,7 @@ class PageRankTest extends TestingSparkContextWordSpec with Matchers {
       "calculate the page rank" in {
         val graph = buildGraph()
         val pageRank = graph.pageRank(Some(20), None, None)
-        pageRank.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("PageRank", DataTypes.float64)))
+        pageRank.schema.columns should equal(List(Column("id", DataTypes.int32), Column("pagerank", DataTypes.float64)))
         pageRank.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 0.15)), new GenericRow(Array[Any](3, 0.21375)), new GenericRow(Array[Any](5, 0.513375)), new GenericRow(Array[Any](4, 0.21375)))
 
       }
@@ -56,7 +56,7 @@ class PageRankTest extends TestingSparkContextWordSpec with Matchers {
       "calculate the page rank" in {
         val graph = buildGraph()
         val pageRank = graph.pageRank(None, None, Some(0.001))
-        pageRank.schema.columns should equal(List(Column("Vertex", DataTypes.int32), Column("PageRank", DataTypes.float64)))
+        pageRank.schema.columns should equal(List(Column("id", DataTypes.int32), Column("pagerank", DataTypes.float64)))
         pageRank.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 0.15)), new GenericRow(Array[Any](3, 0.21375)), new GenericRow(Array[Any](5, 0.513375)), new GenericRow(Array[Any](4, 0.21375)))
 
       }

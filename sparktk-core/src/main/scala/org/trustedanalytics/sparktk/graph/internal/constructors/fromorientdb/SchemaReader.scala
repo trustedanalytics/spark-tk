@@ -20,24 +20,24 @@ import org.apache.spark.sql.types.{ DataType, StructField, StructType }
 import org.graphframes.GraphFrame
 import org.trustedanalytics.sparktk.graph.internal.GraphSchema
 import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.DataTypesConverter
-
-import scala.collection.mutable.ListBuffer
-
 /**
  * converts OrientDB graph schema to Spark graph frame schema
+ *
  * @param graph OrientDB graph database
  */
 class SchemaReader(graph: OrientGraphNoTx) {
 
   /**
-   * imports vertex schema from OrientDB to vertex data frame schema
+   * imports OrientDB vertex schema to vertex dataframe schema. If OrientDB graph has vertex classes other than
+   * the base vertex class "V", it will read each class schema and merge them to get unique schema fields.
    *
    * @return  vertex schema for spark data frame
    */
   def importVertexSchema: StructType = {
 
     try {
-      val vertexSchema = createVertexSchema
+      val vertexTypesList = getVertexClasses.getOrElse(Set(graph.getVertexBaseType.getName))
+      val vertexSchema = mergeSchema(vertexTypesList)
       validateVertexSchema(vertexSchema)
       vertexSchema
     }
@@ -48,43 +48,70 @@ class SchemaReader(graph: OrientGraphNoTx) {
   }
 
   /**
-   * imports and validates OrientDB graph schema for vertices and converts it to vertex data frame schema
+   * Get OrientDB vertex classes names if exists
    *
-   * @return vertex schema for spark data frame
+   * @return vertex class names
    */
-  def createVertexSchema: StructType = {
-
-    // validate that OrientDB graph has the proper edge type name to be imported as a graph frame
+  def getVertexClasses: Option[Set[String]] = {
     val classBaseNames = graph.getVertexBaseType.getName
-    val className = graph.getVertexType(classBaseNames).getAllSubclasses.iterator().next().getName
-    require(className == GraphSchema.vertexTypeColumnName, s"OrientDB graph must have single vertex type named ${GraphSchema.vertexTypeColumnName} to be imported as Graph Frame")
-    // import properties
-    val vertexSchemaFields = new ListBuffer[StructField]
-    val propKeysIterator = graph.getRawGraph.getMetadata.getSchema.getClass(className).properties().iterator()
-    while (propKeysIterator.hasNext) {
-      val prop = propKeysIterator.next()
-      val propKey = prop.getName
-      val propType = prop.getType
-      val columnType: DataType = DataTypesConverter.orientdbToSpark(propType)
-      val field = if (propKey == graphParameters.orientVertexId) {
-        new StructField(GraphFrame.ID, columnType)
-      }
-      else {
-        new StructField(propKey, columnType)
-      }
-      vertexSchemaFields += field
+    val vertexClassesIterator = graph.getVertexType(classBaseNames).getAllSubclasses.iterator()
+    var vertexTypesBuffer = Set[String]()
+    while (vertexClassesIterator.hasNext) {
+      vertexTypesBuffer += vertexClassesIterator.next().getName
     }
-    new StructType(vertexSchemaFields.toArray)
+    if (vertexTypesBuffer.nonEmpty) {
+      return Some(vertexTypesBuffer)
+    }
+    None
   }
 
   /**
-   * converts OrientDB edge schema to spark dataframe edge schema
+   * Get OrientDB vertex properties based on vertex class name and write each property schema in a StructField
+   *
+   * @param className OrientDB vertex class name
+   * @param orientGraph OrientDB graph instance
+   * @return vertex class schema
+   */
+  def getSchemaPerClass(className: String, orientGraph: OrientGraphNoTx): Set[StructField] = {
+    var propertiesBuffer = Set[StructField]()
+    val propKeysIterator = graph.getRawGraph.getMetadata.getSchema.getClass(className).properties().iterator()
+    while (propKeysIterator.hasNext) {
+      val prop = propKeysIterator.next()
+      val columnType: DataType = DataTypesConverter.orientdbToSpark(prop.getType)
+      if (prop.getName == graphParameters.orientVertexId) {
+        propertiesBuffer += new StructField(GraphFrame.ID, columnType)
+      }
+      else {
+        propertiesBuffer += new StructField(prop.getName, columnType)
+      }
+    }
+    propertiesBuffer
+  }
+
+  /**
+   * Merge different types schemas and returns schema with unique column fields
+   *
+   * @param classNames OrientDB class names
+   * @return dataframe schema
+   */
+  def mergeSchema(classNames: Set[String]): StructType = {
+    var schemaFields = Set[StructField]()
+    classNames.foreach(className => {
+      schemaFields ++= getSchemaPerClass(className, graph)
+    })
+    new StructType(schemaFields.toArray)
+  }
+
+  /**
+   * imports OrientDB edge schema to edge dataframe schema. If OrientDB graph has edge classes other than
+   * the base edge class "E", it will read each class schema and merge them to get unique schema fields.
    *
    * @return edge schema for spark data frame
    */
   def importEdgeSchema: StructType = {
     try {
-      val edgeSchema = createEdgeSchema
+      val edgeTypesList = getEdgeClasses.getOrElse(Set(graph.getEdgeBaseType.getName))
+      val edgeSchema = mergeSchema(edgeTypesList)
       validateEdgeSchema(edgeSchema)
       edgeSchema
     }
@@ -95,32 +122,21 @@ class SchemaReader(graph: OrientGraphNoTx) {
   }
 
   /**
-   * imports and validates OrientDB graph schema for edges and converts it to edge data frame schema
+   * Get OrientDB edge class names if exists
    *
-   * @return edge schema for spark data frame
+   * @return edge classes names
    */
-  def createEdgeSchema: StructType = {
-
-    // validate that OrientDB graph has the proper edge type name to be imported as a graph frame
+  def getEdgeClasses: Option[Set[String]] = {
     val classBaseNames = graph.getEdgeBaseType.getName
-    require(graph.getEdgeType(classBaseNames).getAllSubclasses.iterator().next().getName == GraphSchema.edgeTypeColumnName, s"OrientDB graph must have single edge type named ${GraphSchema.edgeTypeColumnName} to be imported as Graph Frame")
-
-    val schemaFields = new ListBuffer[StructField]
-    val propKeysIterator = graph.getRawGraph.getMetadata.getSchema.getClass(GraphSchema.edgeTypeColumnName).properties().iterator()
-    while (propKeysIterator.hasNext) {
-      val prop = propKeysIterator.next()
-      val propKey = prop.getName
-      val propType = prop.getType
-      val columnType = DataTypesConverter.orientdbToSpark(propType)
-      val field = if (propKey == GraphSchema.edgeTypeColumnName) {
-        new StructField(GraphFrame.EDGE, columnType)
-      }
-      else {
-        new StructField(propKey, columnType)
-      }
-      schemaFields += field
+    val edgeClassesIterator = graph.getEdgeType(classBaseNames).getAllSubclasses.iterator()
+    var edgeTypesBuffer = Set[String]()
+    while (edgeClassesIterator.hasNext) {
+      edgeTypesBuffer += edgeClassesIterator.next().getName
     }
-    new StructType(schemaFields.toArray)
+    if (edgeTypesBuffer.nonEmpty) {
+      return Some(edgeTypesBuffer)
+    }
+    None
   }
 
   /**

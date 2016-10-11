@@ -54,7 +54,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
             self.assertAlmostEqual(known_vals[row["id"]][2], values[2])
@@ -90,7 +90,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
@@ -127,7 +127,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
@@ -162,7 +162,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
@@ -209,7 +209,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 

@@ -42,11 +42,13 @@ trait WeightedDegreeSummarization extends BaseGraph {
 }
 
 case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float) extends GraphSummarization[Frame] {
-  val grouper = "weighted_degree_groupby"
   require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
+
+  val outputName = "degree"
 
   override def work(state: GraphState): Frame = {
     require(state.graphFrame.edges.columns.contains(edgeWeight), s"Property $edgeWeight not found")
+
     val graphFrame = GraphFrame(state.graphFrame.vertices, state.graphFrame.edges.na.fill(defaultWeight, List(edgeWeight)))
     // If you are counting the in Degrees you are looking at the destination of
     // the edges, if you are looking at the out degrees you are looking at the
@@ -56,8 +58,7 @@ case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeigh
       case "out" => (lit(0), AggregateMessages.edge(edgeWeight))
       case "undirected" => (AggregateMessages.edge(edgeWeight), AggregateMessages.edge(edgeWeight))
     }
-    val weightedDegrees = graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg))
-    val degreesFrame = weightedDegrees.toDF("Vertex", "Degree")
-    new Frame(degreesFrame)
+    val weightedDegrees = graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
+    new Frame(weightedDegrees)
   }
 }
