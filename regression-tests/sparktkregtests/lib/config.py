@@ -19,8 +19,15 @@
 import os
 
 
-qa_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+qa_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+dataset_directory = os.path.join(qa_root, "datasets")
 hdfs_namenode = os.getenv("CDH_MASTER", "localhost")
 user = os.getenv("USER", "hadoop")
 run_mode = True if os.getenv("RUN_MODE","1") == "1" else False # (0=local, 1=Yarnclient)
 #run_mode = False if os.getenv("RUN_MODE","0") == "0" else True
+
+# HDFS paths, need to be set NOT using os.join since HDFS doesn't use the system
+# path seperator, it uses HDFS path seperator ('/')
+hdfs_user_root = "/user/" + user
+hdfs_data_dir = hdfs_user_root + "/qa_data"
+checkpoint_dir = hdfs_user_root + "/sparktk_checkpoint"
