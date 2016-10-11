@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles
 
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarization, BaseFrame }
@@ -7,8 +22,8 @@ trait QuantilesSummarization extends BaseFrame {
   /**
    * Calculate quantiles on the given column.
    *
-   * @param column the name of the column to calculate quantiles.
-   * @param quantiles What is being requested
+   * @param column The name of the column to calculate quantiles off of.
+   * @param quantiles The quantile cutoffs being requested
    * @return A new frame with two columns (''float64''): requested quantiles and their respective values.
    */
   def quantiles(column: String,
@@ -18,8 +33,9 @@ trait QuantilesSummarization extends BaseFrame {
   }
 }
 
-case class Quantiles(column: String,
-                     quantiles: List[Double]) extends FrameSummarization[Frame] {
+case class Quantiles(column: String, quantiles: List[Double]) extends FrameSummarization[Frame] {
+  require(quantiles.forall(x => x > 0.0d), "Quantile cutoffs must be positive")
+  require(quantiles.forall(x => x <= 100.0d), "Quantile cutoffs must be less than equal to 100")
 
   override def work(state: FrameState): Frame = {
     val columnIndex = state.schema.columnIndex(column)

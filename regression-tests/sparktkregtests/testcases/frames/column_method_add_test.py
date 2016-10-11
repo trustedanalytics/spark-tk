@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Tests methods that access or alter columns"""
 import unittest
 
@@ -46,7 +63,6 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
-    @unittest.skip("Spark global udf doesn't autoamtically add script")
     def test_add_col_names(self):
         """Tests adding a column name with a global method"""
         self.frame.add_columns(global_udf, self.new_col_schema)
@@ -94,30 +110,27 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
             self.frame.inspect()
         self.assertEqual(schema_before, self.frame.schema)
 
-    @unittest.skip("column names not validated")
     def test_add_columns_add_existing_name(self):
         """Test adding columns with existing names errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(
+                Exception, "requirement failed: Schemas have conflicting column names. Please rename before merging. Left Schema: int, str, float Right Schema: str"):
             self.frame.add_columns(lambda row: udf_int_val, ('str', int))
             self.frame.inspect()
 
-    @unittest.skip("column names not validated")
     def test_add_column_with_empty_name(self):
         """Test adding a column with an empty name errors"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(Exception, "requirement failed: column name can't be empty"):
             self.frame.add_columns(lambda row: udf_int_val, ('', int))
             self.frame.inspect()
 
-    @unittest.skip("column names not validated")
     def test_add_column_null_schema_no_force(self):
         """Test adding a column with a null schema errors, don't force eval"""
-        with self.assertRaises(TypeError):
+        with self.assertRaisesRegexp(ValueError, "schema expected to contain tuples, encountered type <type 'NoneType'>"):
             self.frame.add_columns(lambda row: udf_int_val, None)
 
-    @unittest.skip("column names not validated")
     def test_add_column_empty_schema_no_force(self):
         """Test adding a column with empty schema errors, don't force eval"""
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegexp(IndexError, "tuple index out of range"):
             self.frame.add_columns(lambda row: udf_int_val, ())
 
     def test_add_column_null_schema(self):

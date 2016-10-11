@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests LBP Graphx implementation by comparing results agains graphlab """
 import unittest
 
@@ -37,7 +54,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
             self.assertAlmostEqual(known_vals[row["id"]][2], values[2])
@@ -73,7 +90,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
@@ -110,7 +127,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
@@ -145,7 +162,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
@@ -192,7 +209,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
         potts_vals = potts.to_pandas(potts.count())
 
         for _, row in potts_vals.iterrows():
-            values = map(float, row["Posterior"][1:-1].split(","))
+            values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 

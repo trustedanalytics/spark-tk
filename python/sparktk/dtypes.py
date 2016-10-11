@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """
 definitions for Data Types
 """
@@ -173,6 +190,7 @@ _data_type_to_pyspark_type_table = {
     long: types.LongType(),
     float: types.DoubleType(),
     str: types.StringType(),
+    unicode: types.StringType(),
     datetime: types.TimestampType()
 }
 
@@ -191,17 +209,6 @@ _primitive_alias_type_to_type_table = {
 _primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _primitive_alias_type_to_type_table.iteritems()])
 _primitive_alias_str_to_type_table["string"] = unicode
 
-
-def get_float_constructor(float_type):
-    """Creates special constructor for floating point types which handles nan, inf, -inf"""
-    ft = float_type
-
-    def float_constructor(value):
-        result = ft(value)
-        if np.isnan(result) or result == np.inf or result == -np.inf:  # this is 5x faster than calling np.isfinite()
-            return None
-        return ft(value)
-    return float_constructor
 
 def datetime_to_ms(date_time):
     """
@@ -280,7 +287,7 @@ class _DataTypes(object):
 
     @staticmethod
     def value_is_missing_value(value):
-        return value is None or (type(value) in [float32, float64, float] and (np.isnan(value) or value in [np.inf, -np.inf]))
+        return value is None
 
     @staticmethod
     def get_primitive_data_types():
@@ -404,13 +411,10 @@ class _DataTypes(object):
 
     @staticmethod
     def get_constructor(to_type):
-
         """gets the constructor for the to_type"""
         try:
             return to_type.constructor
         except AttributeError:
-            if to_type == float64 or to_type == float32:
-                return get_float_constructor(to_type)
             if to_type == datetime:
                 return datetime_constructor
 

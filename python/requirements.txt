@@ -10,3 +10,4 @@ pdoc
 importlib
 pytz
 pandas
+pydicom
