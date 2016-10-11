@@ -64,6 +64,8 @@ def train(frame, ts_column, x_columns, q, x_max_lag, include_original_x=True, in
     if init_params is not None:
         if not isinstance(init_params, list):
             raise TypeError("'init_params' parameter must be a list")
+    if frame is None:
+        raise ValueError("'frame' must not be None")
 
     tc = frame._tc
     _scala_obj = _get_scala_obj(tc)
