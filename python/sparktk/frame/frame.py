@@ -482,7 +482,7 @@ class MatrixCoercion(object):
 
                     print "a=%s" % a
 
-                    m = DenseMatrix(shape[0], shape[1], a)
+                    m = DenseMatrix(shape[0], shape[1], a, isTransposed=True)
                     print "m=%s" % m
                     result.append(m)
                 else:
