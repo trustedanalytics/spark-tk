@@ -18,7 +18,7 @@
 
 def filter_by_keywords(self, keywords_values_dict):
     """
-    Filter the rows based on dictionary of {"keyword":"value"} from column holding xml string
+    Filter the rows based on dictionary of {"keyword":"value"}(applying 'and' operation on dictionary) from column holding xml string
 
     Ex: keywords_values_dict -> {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
 

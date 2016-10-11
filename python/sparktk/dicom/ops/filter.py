@@ -19,7 +19,7 @@
 def filter(self, predicate):
 
     """
-    Filter the rows of dicom metadata and prixeldata based on given predicate
+    Filter the rows of dicom metadata and pixeldata based on given predicate
 
     Parameters
     ----------

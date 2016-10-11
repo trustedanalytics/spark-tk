@@ -84,7 +84,7 @@ class Dicom(object):
         #pixeldata property is sparktk frame
         >>> pixeldata = dicom.pixeldata.take(1)
 
-        #dispaly
+        #Display
         <skip>
         >>> pixeldata
         [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],

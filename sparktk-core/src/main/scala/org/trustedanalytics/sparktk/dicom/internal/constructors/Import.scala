@@ -34,10 +34,12 @@ import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader 
 import org.dcm4che3.io.DicomInputStream
 import org.dcm4che3.tool.dcm2xml.org.trustedanalytics.sparktk.Dcm2Xml
 
+
 object Import extends Serializable {
 
   /**
    * Get Pixel Data from Dicom Input Stream represented as Array of Bytes
+ *
    * @param byteArray Dicom Input Stream represented as Array of Bytes
    * @return DenseMatrix Pixel Data
    */
@@ -71,6 +73,7 @@ object Import extends Serializable {
 
   /**
    * Get Metadata Xml from Dicom Input Stream represented as byte array
+ *
    * @param byteArray Dicom Input Stream represented as byte array
    * @return String Xml Metadata
    */
@@ -91,6 +94,7 @@ object Import extends Serializable {
    * Spark foreach DCM Image (FilePath, PortableDataStream) ---> ByteArray --->
    *                                                                            |
    *                                                                            |---> DataInputStream --> DicomInputStream --> ImageInputStream --> Raster --> Pixel Data (Dense Matrix)
+ *
    * @param path Full path to the DICOM files directory
    * @return Dicom object with MetadataFrame and PixeldataFrame
    */

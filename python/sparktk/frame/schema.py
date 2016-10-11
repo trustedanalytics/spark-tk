@@ -79,16 +79,3 @@ def validate_is_mergeable(tc, *python_schema):
         scala_schema_list.append(schema_to_scala(tc.sc, schema))
 
     jvm_scala_schema(tc.sc).validateIsMergeable(tc.jutils.convert.to_scala_list(scala_schema_list))
-
-
-def schema_is_coercible(python_schema):
-    """
-    check whether python schema is coercible or not.
-    Like if schema contains matrix datatype, convert list[list] to numpy ndarray
-    """
-    flag = False
-    for schema in python_schema:
-        if type(schema[1]) == matrix:
-            flag = True
-            break
-    return flag
