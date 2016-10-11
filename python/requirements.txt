@@ -11,3 +11,4 @@ importlib
 pytz
 pandas
 pydicom
+lxml
