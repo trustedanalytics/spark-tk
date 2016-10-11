@@ -135,7 +135,6 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
             np.absolute(np.array(expected_R_singular_vec)),
             atol=1e-04), True)
 
-    @unittest.skip("bug:predicted values differ")
     def test_pca_predict(self):
         """Test the train functionality"""
         pca_model = self.context.models.dimreduction.pca.train(
@@ -180,17 +179,17 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
             np.absolute(np.array(self.expected_R_singular_vec)),
             atol=1e-04), True)
 
-    @unittest.skip("")
-    def test_pca_publish(self):
-        """Test the publish functionality"""
+    def test_pca_save_load(self):
+        """Test the save and load functionalities"""
         pca_model = self.context.models.dimreduction.pca.train(
             self.frame,
             ["X1", "X2", "X3", "X4", "X5",
              "X6", "X7", "X8", "X9", "X10"],
             False, 10)
-        path = pca_model.publish()
-        self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        path = self.get_name("pca_model_")
+        pca_model.save(path)
+        restored_model = self.context.load(path)
+        self.assertEqual(restored_model.k, 10)
 
     def test_pca_default(self):
         """Test default no. of k"""
