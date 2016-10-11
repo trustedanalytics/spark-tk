@@ -44,6 +44,7 @@ class SparkTKTestCase(unittest.TestCase):
     def setUpClass(cls):
         """Build the context for use"""
         cls.context = get_context()
+        cls.context.sc.setCheckpointDir(config.checkpoint_dir)
 
     def setUp(self):
         pass
@@ -59,7 +60,7 @@ class SparkTKTestCase(unittest.TestCase):
         """Return the hdfs path to the given file"""
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
-        placed_path = "/user/" + config.user + "/qa_data/" + filename
+        placed_path = config.hdfs_data_dir + "/" + filename
         return placed_path
 
     def get_name(self, prefix):
@@ -71,9 +72,8 @@ class SparkTKTestCase(unittest.TestCase):
 
     def get_local_dataset(self, dataset):
         """gets the dataset from the dataset folder"""
-        this_directory = os.path.dirname(os.path.abspath(__file__))
-        dataset_directory = os.path.dirname(os.path.dirname(this_directory)) + "/datasets/"
-        return dataset_directory + dataset
+        dataset_directory = config.dataset_directory
+        return os.path.join(dataset_directory, dataset)
 
     def assertFramesEqual(self, frame1, frame2):
         frame1_take = frame1.take(frame1.count())
