@@ -19,6 +19,7 @@
 import unittest
 import pandas as pd
 import numpy as np
+import math
 
 from sparktkregtests.lib import sparktk_test
 
@@ -75,7 +76,6 @@ class BinColTest(sparktk_test.SparkTKTestCase):
             else:
                 self.assertEqual(i[2], 4)
 
-    @unittest.skip("tupled cutoffs not accepted")
     def test_bin_column_tuple_params(self):
         """Validate mutliple cutoffs with tupled parameters"""
         cutoff_tuple = tuple(self.cutoff_list)
@@ -138,25 +138,32 @@ class BinColTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(TypeError, "must be a string"):
             self.frame.bin_column("index", None)
 
-    @unittest.skip("empty list of cutoffs is accepted")
     def test_bin_column_cutoff_empty(self):
         """Test reject empty cutoff list"""
-        with self.assertRaises(Exception):
-            self.frame.bin_column("index", [])
+        result = self.frame.bin_column("index", [])
+        diff = [j-i for i, j in zip(result[:-1], result[1:])]
 
-    @unittest.skip("descending cutoffs are allowed")
+        # number of columns is sqrt(1000)
+        self.assertEqual(
+            math.floor(math.sqrt(self.frame.count())), len(diff))
+        
+        # difference between each bin should be (nearly) the same
+        diff_diffs = [j-i for i, j in zip(diff[:-1], diff[1:])]
+        for i in diff_diffs:
+            self.assertAlmostEqual(i, 0)
+
     def test_bin_column_cutoff_mixed(self):
         """Test error cutoffs are not monotonic """
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(Exception, "the cutoff points of the bins must be monotonically increasing"):
             self.frame.bin_column(
                 "index", self.cutoff_list+[-5511], bin_column_name="no_bin")
 
-    @unittest.skip("descending cutoffs are allowed")
     def test_bin_column_cutoff_desc(self):
         """ API doc allows monotonic in either direction """
         cutoff_desc = self.cutoff_list[::-1]
 
-        with self.assertRaises(Exception):
+        with self.assertRaisesRegexp(
+                Exception, "the cutoff points of the bins must be monotonically increasing"):
             self.frame.bin_column("index", cutoff_desc)
             self.frame.inspect()
 
