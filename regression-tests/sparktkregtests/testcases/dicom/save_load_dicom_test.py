@@ -18,9 +18,7 @@
 """tests dicom.save and dicom.load functionality"""
 
 import unittest
-from unittest import TestCase
 from sparktkregtests.lib import sparktk_test
-import os
 import dicom
 import numpy
 import datetime
@@ -34,7 +32,7 @@ class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
         # generate a unique name to save the dicom object under
-        self.location = "save_load_test" + str(str(datetime.datetime.now()).replace(":", "")).replace(" ", "")
+        self.location = self.get_file(self.get_name("save_load_test"))
 
     def test_basic_save_load_content_test(self):
         """basic save load content test"""
