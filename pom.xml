@@ -500,7 +500,10 @@
                     <py>PYTHON_STYLE</py>
                 </mapping>
               <excludes combine.children="append">
+                <exclude>zinc-0.3.7/</exclude>  
+                <exclude>regression-tests/datasets/</exclude>  
                 <exclude>python.xml</exclude>
+                <exclude>integration-tests/tests/test_docs_generated.py</exclude>
                 <exclude>integration-tests/tests/sandbox</exclude>
                 <exclude>findbugs-exclude.xml</exclude>
                 <exclude>regression-tests/dist/</exclude>
@@ -769,7 +772,7 @@
         <dependency>
           <groupId>com.cloudera.sparkts</groupId>
           <artifactId>sparkts</artifactId>
-          <version>0.3.4</version>
+          <version>0.3.5</version>
           <exclusions>
             <exclusion>
               <artifactId>breeze_${tap.scala.short.version}</artifactId>

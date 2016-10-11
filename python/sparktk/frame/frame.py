@@ -332,6 +332,7 @@ class Frame(object):
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
+    from sparktk.frame.ops.box_cox import box_cox
     from sparktk.frame.ops.categorical_summary import categorical_summary
     from sparktk.frame.ops.collect import collect
     from sparktk.frame.ops.column_median import column_median
@@ -367,6 +368,7 @@ class Frame(object):
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
     from sparktk.frame.ops.rename_columns import rename_columns
+    from sparktk.frame.ops.reverse_box_cox import reverse_box_cox
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.sort import sort
     from sparktk.frame.ops.sortedk import sorted_k

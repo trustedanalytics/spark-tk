@@ -43,13 +43,13 @@ def connected_components(self):
 
         >>> result = graph.connected_components()
         >>> result.inspect() 
-        [#]  Vertex  Component
-        ======================
-        [0]       1          1
-        [1]       2          1
-        [2]       3          1
-        [3]       4          4
-        [4]       5          4
+        [#]  id  component
+        ==================
+        [0]   1          1
+        [1]   2          1
+        [2]   3          1
+        [3]   4          4
+        [4]   5          4
 
     """
     from sparktk.frame.frame import Frame
