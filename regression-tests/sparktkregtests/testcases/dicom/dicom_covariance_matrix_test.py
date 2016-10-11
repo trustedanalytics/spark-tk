@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-"""tests dicom.save and dicom.load functionality"""
+"""tests covariance of dicom images"""
 
 import unittest
 from sparktk import dtypes
@@ -35,7 +35,7 @@ class DicomCovarianceMatrixTest(sparktk_test.SparkTKTestCase):
         self.frame = dicom.pixeldata
        
     def test_covariance_matrix(self):
-        """Test the output of svd"""
+        """Test the output of dicom_covariance_matrix"""
         self.frame.dicom_covariance_matrix("imagematrix")
 
         results = self.frame.to_pandas(self.frame.count())
