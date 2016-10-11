@@ -47,7 +47,7 @@ object CovarianceFunctions extends Serializable {
 
     val dblVal: Double = covariance.toArray(1)
 
-    if (dblVal.isNaN || abs(dblVal) < .000001) 0 else dblVal
+    dblVal
   }
 
   /**
@@ -74,7 +74,7 @@ object CovarianceFunctions extends Serializable {
     }
 
     val arrGenericRow = vecArray.map(row => {
-      val formattedRow: Array[Any] = formatter(row.map(x => if (x.isNaN || abs(x) < .000001) 0 else x))
+      val formattedRow: Array[Any] = formatter(row.map(x => x))
       new GenericRow(formattedRow)
     })
 

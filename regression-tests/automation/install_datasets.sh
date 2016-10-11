@@ -23,9 +23,14 @@ NAME="[`basename $BASH_SOURCE[0]`]"
 DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
-target=/user/$USER/qa_data/
+target=/user/$USER
 
 sudo -u hdfs hdfs dfs -mkdir -p $target
-sudo -u hdfs hdfs dfs -chown $USER:$USER $target
+sudo -u hdfs hdfs dfs -mkdir -p $target/sparktk_checkpoint
+sudo -u hdfs hdfs dfs -mkdir -p $target/qa_data
 
-hdfs dfs -put -f $DIR/../datasets/* $target
+sudo -u hdfs hdfs dfs -chown $USER:$USER $target
+sudo -u hdfs hdfs dfs -chown $USER:$USER $target/sparktk_checkpoint
+sudo -u hdfs hdfs dfs -chown $USER:$USER $target/qa_data
+
+hdfs dfs -put -f $DIR/../datasets/* $target/qa_data
