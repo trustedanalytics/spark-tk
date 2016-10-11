@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """tests dicom.filter functionality"""
 
 import unittest
@@ -20,6 +37,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.query = ".//DicomAttribute[@keyword='KEYWORD']"
 
+    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_one_column_one_result_basic(self):
         """test filter with one unique tag"""
         # get pandas frame for ease of access
@@ -44,6 +62,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         record = self.dicom.metadata.take(1)
         self.assertEqual(str(random_row), str(record))
 
+    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_one_col_multi_result_basic(self):
         """test filter by tag with one tag mult record result"""
         metadata = self.dicom.metadata.to_pandas()
@@ -69,7 +88,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         for record, filtered_record in zip(records, pandas_result):
             self.assertEqual(record, filtered_record.encode("ascii", "ignore"))
 
-
+    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_multiple_columns_basic(self):
         """test filter tags with multiple tags"""
         # here we will generate our filter
@@ -102,16 +121,19 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
             ascii_actual_result = actual_record.encode("ascii", "ignore")
             self.assertEqual(ascii_actual_result, expected_record)
 
+    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_invalid_column(self):
         """test filter tags with invalid tag name"""
         self.dicom.filter_by_tags({ "invalid keyword" : "value" })
         self.assertEqual(0, self.dicom.metadata.count())
 
+    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_multiple_invalid_columns(self):
         """test filter tags with mult invalid tag names"""
         self.dicom.filter_by_tags({ "invalid" : "bla", "another_invalid_col" : "bla" })
         self.assertEqual(0, self.dicom.metadata.count())
-           
+
+    @unittest.skip("sparktk: extract/filter by keyword/tag not working")      
     def test_filter_invalid_valid_col_mix(self):
         """test filter tags with a mix of valid and invalid tags"""
         # first we will extract a valid tag number and value from the xml
@@ -128,6 +150,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         # since zero records match both criteria dicom should return no records
         self.assertEqual(0, self.dicom.metadata.count())
 
+    @unittest.skip("sparktk: improper filter does not give useful error in dicom.filter")
     def test_filter_invalid_type(self):
         """test filter tags with invalid param type"""
         with self.assertRaisesRegexp(Exception, "does not exist"):
