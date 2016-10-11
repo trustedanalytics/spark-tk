@@ -55,7 +55,7 @@ popd > /dev/null
 
 # Post-processing:  Patch the "Up" links
 echo $NAME post-processing the HTML
-python2.7 -m docutils -html=$HTML_DIR
+python2.7 -m docutils -html=$HTML_DIR -user
 
 echo $NAME cleaning up...
 echo $NAME rm $tmp_dir

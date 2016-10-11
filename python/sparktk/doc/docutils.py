@@ -46,6 +46,15 @@ def post_process_html(path):
     walk_path(path, '.html', go)
 
 
+def post_process_for_user(path):
+
+    def go(full_name, reader, writer):
+        for line in reader.readlines():
+            processed_line = process_html_line_for_user(line, full_name)
+            writer.write(processed_line)
+    walk_path(path, '.html', go)
+
+
 def walk_path(path, suffixes, processor):
     """walks the path_to_examples and creates paths to all the .rst files found"""
     logger.debug("walk_path(path='%s', suffixes=%s)", path, suffixes)
@@ -75,6 +84,16 @@ def process_html_line(line, full_name):
     # clean doctest flags
     return line
 
+def process_html_line_for_user(line, full_name):
+
+    # Repair the "Up" link for certain files (this needs to match the doc/templates/css.mako)
+    if full_name.endswith("/index.html") and '<a href="index.html" id="fixed_top_left">Up</a>' in line:
+        if full_name.endswith("/sparktk/index.html"):
+            return '  <!-- No Up for root level index.html -->\n'
+        return '<a href="../index.html" id="fixed_top_left">Up</a>\n'
+
+    # clean doctest flags
+    return line
 
 def parse_for_doc(text, file_name=None):
     return str(DocExamplesPreprocessor(text, mode='doc', file_name=file_name))
@@ -230,6 +249,33 @@ class DocExamplesPreprocessor(object):
 
 ##########################################################
 
+def rework_for_user(full_package_dir):
+    from distutils.dir_util import copy_tree
+    #from shutil import copy
+    import shutil
+    # mkdir for full_package
+    # mv everything in their
+    # copy stuff out
+    # process as needed
+
+    # move full_package_dir down a level
+    doc_root_dir = full_package_dir
+    doc_root_parent_dir = os.path.abspath(os.path.join(doc_root_dir, os.pardir))
+    tmp_full_package_dir = os.path.join(doc_root_parent_dir, "tmp_full_package")
+    full_package_dir = os.path.join(doc_root_dir, "full_package")
+    os.rename(doc_root_dir, tmp_full_package_dir)
+    os.mkdir(doc_root_dir)
+    os.rename(tmp_full_package_dir, full_package_dir)
+
+    # cp up interesting files
+
+    shutil.copy(os.path.join(full_package_dir, "sparktk/frame/frame.m.html"), doc_root_dir)
+    shutil.copy(os.path.join(full_package_dir, "sparktk/graph/graph.m.html"), doc_root_dir)
+    shutil.copy(os.path.join(full_package_dir, "sparktk/dicom/dicom.m.html"), doc_root_dir)
+    copy_tree(os.path.join(full_package_dir, "sparktk/models"), os.path.join(doc_root_dir, "models"))
+    shutil.copy(os.path.join(full_package_dir, "sparktk/tkcontext.m.html"), doc_root_dir)
+##########################################################
+
 def main():
     script_name = os.path.basename(__file__)
     usage = "Usage: %s <-html=HTML_DIR|-py=PY_DIR>" % script_name
@@ -246,6 +292,12 @@ def main():
         html_dir = os.path.abspath(value)
         print "[%s] processing HTML at %s" % (script_name, html_dir)
         post_process_html(html_dir)
+        if len(sys.argv) >= 3:
+            user_option = sys.argv[2]
+            if user_option != '-user':
+                RuntimeError(usage)
+            rework_for_user(html_dir)
+
     elif option.startswith(py_flag):
         value = option[len(py_flag):]
         py_dir = os.path.abspath(value)

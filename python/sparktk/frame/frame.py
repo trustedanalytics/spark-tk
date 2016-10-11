@@ -24,6 +24,7 @@ from sparktk import dtypes
 import logging
 logger = logging.getLogger('sparktk')
 from sparktk.propobj import PropertiesObject
+from sparktk import TkContext
 
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
@@ -39,7 +40,9 @@ __all__ = ["create",
            "import_hbase",
            "import_hive",
            "import_jdbc",
-           "import_pandas"]
+           "import_pandas",
+           "load"]
+
 
 class Frame(object):
 
@@ -379,6 +382,12 @@ class Frame(object):
     from sparktk.frame.ops.to_pandas import to_pandas
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
+
+
+def load(path, tc=TkContext.implicit):
+    """load Frame from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Frame)
 
 
 class SchemaValidationReturn(PropertiesObject):
