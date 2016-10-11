@@ -31,7 +31,7 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.io.{ FileUtils }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -196,9 +196,9 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("Naive Bayes Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("Naive Bayes Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**

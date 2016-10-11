@@ -26,7 +26,7 @@ import org.apache.spark.sql.Row
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.commons.io.{ FileUtils }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
@@ -258,9 +258,9 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("SVM with SGD Model", classOf[SvmModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("SVM with SGD Model", classOf[SvmModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**

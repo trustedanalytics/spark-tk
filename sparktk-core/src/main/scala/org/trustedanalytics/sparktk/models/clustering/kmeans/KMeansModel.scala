@@ -27,7 +27,7 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, 
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
@@ -298,9 +298,9 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("KMeans Model", classOf[KMeansModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("KMeans Model", classOf[KMeansModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**

@@ -19,7 +19,7 @@ import java.nio.file.{ Files, Path }
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.org.trustedanalytics.sparktk.{ TkLdaModel, LdaModelPredictionResult }
-import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaData, Field }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
@@ -281,9 +281,9 @@ case class LdaModel private[lda] (documentColumnName: String,
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("Lda Model", classOf[LdaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("Lda Model", classOf[LdaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**

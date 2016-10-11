@@ -26,7 +26,7 @@ import org.apache.spark.mllib.recommendation.{ MatrixFactorizationModel, ALS, Ra
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaData, Field }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
@@ -303,9 +303,9 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("Collaborative Filtering Model", classOf[CollaborativeFilteringModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("Collaborative Filtering Model", classOf[CollaborativeFilteringModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**

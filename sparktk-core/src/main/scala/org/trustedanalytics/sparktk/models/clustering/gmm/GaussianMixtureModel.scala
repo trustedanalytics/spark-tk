@@ -32,7 +32,7 @@ import java.io.{ FileOutputStream, File }
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 
 object GaussianMixtureModel extends TkSaveableObject {
 
@@ -220,9 +220,9 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("Gaussian Mixture Model", classOf[GaussianMixtureModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("Gaussian Mixture Model", classOf[GaussianMixtureModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**

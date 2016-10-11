@@ -24,7 +24,7 @@ import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVe
 import org.apache.spark.mllib.linalg.distributed.{ RowMatrix, IndexedRow, IndexedRowMatrix }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaDataArgs, Field }
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaData, Field }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
@@ -188,9 +188,9 @@ case class PcaModel private[pca] (columns: Seq[String],
   /**
    * @return metadata about the model
    */
-  def modelMetadata(): ModelMetaDataArgs = {
+  def modelMetadata(): ModelMetaData = {
     //todo provide a for the user to populate the custom metadata fields
-    new ModelMetaDataArgs("Principal Components Model", classOf[PcaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("Principal Components Model", classOf[PcaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   /**
