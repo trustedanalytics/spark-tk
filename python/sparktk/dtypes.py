@@ -210,17 +210,6 @@ _primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _
 _primitive_alias_str_to_type_table["string"] = unicode
 
 
-def get_float_constructor(float_type):
-    """Creates special constructor for floating point types which handles nan, inf, -inf"""
-    ft = float_type
-
-    def float_constructor(value):
-        result = ft(value)
-        if np.isnan(result) or result == np.inf or result == -np.inf:  # this is 5x faster than calling np.isfinite()
-            return None
-        return ft(value)
-    return float_constructor
-
 def datetime_to_ms(date_time):
     """
     Returns the number of milliseconds since epoch (1970-01-01).
@@ -298,7 +287,7 @@ class _DataTypes(object):
 
     @staticmethod
     def value_is_missing_value(value):
-        return value is None or (type(value) in [float32, float64, float] and (np.isnan(value) or value in [np.inf, -np.inf]))
+        return value is None
 
     @staticmethod
     def get_primitive_data_types():
@@ -422,13 +411,10 @@ class _DataTypes(object):
 
     @staticmethod
     def get_constructor(to_type):
-
         """gets the constructor for the to_type"""
         try:
             return to_type.constructor
         except AttributeError:
-            if to_type == float64 or to_type == float32:
-                return get_float_constructor(to_type)
             if to_type == datetime:
                 return datetime_constructor
 
