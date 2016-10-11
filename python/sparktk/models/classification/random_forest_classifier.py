@@ -51,8 +51,8 @@ def train(frame,
     :param max_depth: (int) Maximum depth of the tree. Default is 4
     :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100
     :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
-    :param categorical_features_info: (Optional(Dict(Int -> Int)) Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
-                                   with 'k' categories indexed from 0:{0,1,...,k-1}
+    :param categorical_features_info: (Optional(Dict(Int:Int))) Arity of categorical features. Entry (n-> k) indicates
+                                      that feature 'n' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
     :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.
                                  Supported values "auto","all","sqrt","log2","onethird".
                                  If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
@@ -243,7 +243,7 @@ class RandomForestClassifierModel(PropertiesObject):
     def predict(self, frame, columns=None):
         """
         Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame
-        revision with existing columns and a new predicted label’s column.
+        revision with existing columns and a new predicted label's column.
 
         Parameters
         ----------
@@ -268,19 +268,18 @@ class RandomForestClassifierModel(PropertiesObject):
 
         :param frame: (Frame) The frame whose labels are to be predicted
         :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
-                        By default, we predict the labels over columns the RandomForest was trained on.
+                       By default, we predict the labels over columns the RandomForest was trained on.
         :return: (ClassificationMetricsValue) Binary classification metrics comprised of:
-
-                 'accuracy' : double
-                 The proportion of predictions that are correctly identified
-                 'confusion_matrix' : dictionary
-                 A table used to describe the performance of a classification model
-                 'f_measure' : double
-                 The harmonic mean of precision and recall
-                 'precision' : double
-                 The proportion of predicted positive instances that are correctly identified
-                 'recall' : double
-                 The proportion of positive instances that are correctly identified.
+                accuracy (double)
+                The proportion of predictions that are correctly identified
+                confusion_matrix (dictionary)
+                A table used to describe the performance of a classification model
+                f_measure (double)
+                The harmonic mean of precision and recall
+                precision (double)
+                The proportion of predicted positive instances that are correctly identified
+                recall (double)
+                The proportion of positive instances that are correctly identified.
         """
         c = self.__columns_to_option(columns)
         return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
@@ -299,7 +298,7 @@ class RandomForestClassifierModel(PropertiesObject):
 
         :param path: (str) Path to save
         """
-        """"""
+
         self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):

@@ -76,7 +76,7 @@ def train(frame,
                            large values will result in excessive computing time.
     :param mini_batch_fraction: (double) Fraction of data to be used for each SGD iteration
     :param step_size: (double) Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
-    :return A LogisticRegressionModel with a summary of the trained model.
+    :return: (LogisticRegressionModel) A LogisticRegressionModel with a summary of the trained model.
                      The data returned is composed of multiple components\:
                      **int** : *numFeatures*
                          Number of features in the training data
@@ -88,6 +88,7 @@ def train(frame,
                          Covariance matrix of the trained model.
                      The covariance matrix is the inverse of the Hessian matrix for the trained model.
                      The Hessian matrix is the second-order partial derivatives of the model's log-likelihood function.
+
     """
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)

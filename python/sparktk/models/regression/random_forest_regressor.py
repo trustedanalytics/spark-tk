@@ -227,7 +227,7 @@ class RandomForestRegressorModel(PropertiesObject):
         Predict the values for the data points.
 
         Predict the values for a test frame using trained Random Forest Classifier model, and create a new frame revision
-        with existing columns and a new predicted value’s column.
+        with existing columns and a new predicted value's column.
 
         Parameters
         ----------
