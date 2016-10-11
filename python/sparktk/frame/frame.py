@@ -102,10 +102,11 @@ class Frame(object):
                 logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
 
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
-            if schema_is_coercible(python_schema=list(schema)):
-                map_source = source.map(Frame.type_coercer(list(schema)))
-            else:
-                map_source = source
+            # if schema_is_coercible(python_schema=list(schema)):
+            #     map_source = source.map(Frame.type_coercer(list(schema)))
+            # else:
+            #     map_source = source
+            map_source = source.map(Frame.type_coercer(list(schema)))
             self._frame = PythonFrame(map_source, schema)
 
     #When creating a new frame(python frame created) or converting frame from scala to python frame,the function scans a row and performs below
@@ -302,8 +303,9 @@ class Frame(object):
         if self._is_python:
             # If schema contains matrix dataype,
             # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
-            if schema_is_coercible(self._frame.schema):
-                self._frame.rdd = self._frame.rdd.map(Frame.type_coercer_pymllib(self._frame.schema))
+            # if schema_is_coercible(self._frame.schema):
+            #     self._frame.rdd = self._frame.rdd.map(Frame.type_coercer_pymllib(self._frame.schema))
+            self._frame.rdd = self._frame.rdd.map(Frame.type_coercer_pymllib(self._frame.schema))
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
@@ -321,10 +323,11 @@ class Frame(object):
             python_rdd = RDD(java_rdd, self._tc.sc)
 
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
-            if schema_is_coercible(list(python_schema)):
-                map_python_rdd = python_rdd.map(Frame.type_coercer(list(python_schema)))
-            else:
-                map_python_rdd = python_rdd
+            # if schema_is_coercible(list(python_schema)):
+            #     map_python_rdd = python_rdd.map(Frame.type_coercer(list(python_schema)))
+            # else:
+            #     map_python_rdd = python_rdd
+            map_python_rdd = python_rdd.map(Frame.type_coercer(list(python_schema)))
             self._frame = PythonFrame(map_python_rdd, python_schema)
         return self._frame
 
