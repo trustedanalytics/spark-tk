@@ -60,7 +60,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
             [5, 2], [6, 2], [2, 1], [3, 1]]
         self.assertItemsEqual(actual_assignment, expected_assignment)
 
-    @unittest.skip("bug:max_iter 100 causes stackoverflow")
+    #@unittest.skip("bug:max_iter 100 causes stackoverflow")
     def test_circles_default(self):
         """ Test pic on similarity matrix for two concentric cicles """
         result = self.frame.power_iteration_clustering(
