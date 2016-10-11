@@ -65,7 +65,7 @@ def correlation(self, column_a, column_b):
         -0.9999999999999998
 
         >>> my_frame.correlation("x1", "x4")
-         0.0
+        nan
 
         >>> my_frame.correlation("x2", "x3")
         -0.9486832980505138
