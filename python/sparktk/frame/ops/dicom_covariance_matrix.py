@@ -21,8 +21,50 @@ def dicom_covariance_matrix(self, matrix_column_name):
 
     Compute the Covariance Matrix of matrices stored in a frame
 
+    Parameters
+    ----------
+
     :param matrix_column_name: Name of the column to compute the covariance matrix on
-    :return: (Frame) returns the farme with a new
+    :return: (Frame) returns the frame with a new column storing the covariance matrix for the corresponding matrix
+
+    Calculate the covariance matrix for each matrix in column 'matrix_column_name' of a frame using the following:
+
+    Element (i,j) of the covariance matrix for a given matrix X is computed as: ((Xi - Mi)(Xj - Mj))
+    where Mi is the mean
+
+    Examples
+    --------
+
+        >>> data = [[1, [[1,2,3,5],[2,3,5,6],[4,6,7,3],[8,9,2,4]]]]
+        >>> schema = [('id', int),('pixeldata', dtypes.matrix)]
+        >>> my_frame = tc.frame.create(data, schema)
+        >>> my_frame.inspect()
+        [#]  id  pixeldata
+        ================================
+        [0]   1  [[ 1.  2.  3.  5.]
+        [ 2.  3.  5.  6.]
+        [ 4.  6.  7.  3.]
+        [ 8.  9.  2.  4.]]
+
+        Compute the covariance matrix for the matrices in 'pixeldata' column of the frame
+        >>> my_frame.dicom_covariance_matrix('pixeldata')
+
+        A new column gets added to
+        >>> my_frame.inspect()
+        [#]  id  pixeldata
+        ================================
+        [0]   1  [[ 1.  2.  3.  5.]
+        [ 2.  3.  5.  6.]
+        [ 4.  6.  7.  3.]
+        [ 8.  9.  2.  4.]]
+
+        [#]  CovarianceMatrix
+        ============================================================
+        [0]  [[  2.91666667   3.          -1.          -3.75      ]
+        [  3.           3.33333333  -0.33333333  -5.        ]
+        [ -1.          -0.33333333   3.33333333  -1.        ]
+        [ -3.75        -5.          -1.          10.91666667]]
+
     """
 
     self._scala.dicomCovarianceMatrix(matrix_column_name)
