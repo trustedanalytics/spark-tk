@@ -66,7 +66,7 @@ object Import extends Serializable {
         data(i)(j) = raster.getSample(i, j, 0)
       }
     }
-    new DenseMatrix(h, w, data.flatten, isTransposed = true)
+    new DenseMatrix(h, w, data.flatten)
   }
 
   /**

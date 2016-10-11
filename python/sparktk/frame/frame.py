@@ -140,7 +140,7 @@ class Frame(object):
             for i in xrange(len(schema)):
                 if type(schema[i][1]) == dtypes._Matrix:
                     shape = row[i].shape
-                    result.append(DenseMatrix(shape[0], shape[1], row[i].flatten(), isTransposed=True))
+                    result.append(DenseMatrix(shape[0], shape[1], row[i].flatten()))
                 else:
                     result.append(row[i])
             return result
