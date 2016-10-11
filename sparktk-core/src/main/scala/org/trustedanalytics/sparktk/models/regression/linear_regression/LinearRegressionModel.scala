@@ -21,6 +21,7 @@ import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.mllib.evaluation.RegressionMetrics
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.GenericRow
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.functions._
 
@@ -71,10 +72,11 @@ object LinearRegressionModel extends TkSaveableObject {
     require(maxIterations > 0, "numIterations must be a positive value")
     require(regParam >= 0, "regParam should be greater than or equal to 0")
 
-    val trainFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
+    // Use DataFrames to run the linear regression
+    val trainFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
     val trainVectors = new VectorAssembler().setInputCols(observationColumns.toArray).setOutputCol(featuresName)
 
-    val dataFrame = trainVectors.transform(trainFrame)
+    val trainDataFrame: DataFrame = trainVectors.transform(trainFrame)
 
     val linReg = new LinearRegression()
     linReg.setElasticNetParam(elasticNetParameter)
@@ -86,7 +88,7 @@ object LinearRegressionModel extends TkSaveableObject {
       .setLabelCol(valueColumn)
       .setFeaturesCol(featuresName)
 
-    val linRegModel = linReg.fit(dataFrame)
+    val linRegModel = linReg.fit(trainDataFrame)
 
     linRegModel.setPredictionCol(predictionColumn)
 
@@ -189,17 +191,17 @@ case class LinearRegressionModel(valueColumn: String,
       require(observationColumnsTrain.length == observationColumnsTest.get.length, "Number of columns for train and test should be same")
     }
 
-    val testFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
+    val testFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
     val observationColumns = observationColumnsTest.getOrElse(observationColumnsTrain)
 
     val trainVectors = new VectorAssembler().setInputCols(observationColumns.toArray).setOutputCol(featuresName)
 
-    val dataFrame = trainVectors.transform(testFrame)
+    val testDataFrame: DataFrame = trainVectors.transform(testFrame)
 
     sparkModel.setFeaturesCol(featuresName)
     sparkModel.setPredictionCol(predictionColumn)
 
-    val fullPrediction = sparkModel.transform(dataFrame)
+    val fullPrediction: DataFrame = sparkModel.transform(testDataFrame)
     val predictionLabelRdd = fullPrediction.select(predictionColumn, valueColumn).map(row => (row.getDouble(0), row.getDouble(1)))
     val metrics = new RegressionMetrics(predictionLabelRdd)
 
@@ -217,12 +219,12 @@ case class LinearRegressionModel(valueColumn: String,
 
     require(frame != null, "require frame to predict")
 
-    val predictFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
+    val predictFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
     val trainVectors = new VectorAssembler().setInputCols(observationColumns.getOrElse(observationColumnsTrain.toList).toArray).setOutputCol(featuresName)
 
-    val dataFrame = trainVectors.transform(predictFrame)
+    val predictDataFrame: DataFrame = trainVectors.transform(predictFrame)
 
-    val fullPrediction = sparkModel.transform(dataFrame)
+    val fullPrediction: DataFrame = sparkModel.transform(predictDataFrame)
 
     new Frame(fullPrediction.drop(col(featuresName)))
   }
