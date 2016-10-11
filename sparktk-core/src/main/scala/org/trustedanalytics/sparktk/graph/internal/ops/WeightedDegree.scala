@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.trustedanalytics.sparktk.frame.Frame
@@ -27,11 +42,13 @@ trait WeightedDegreeSummarization extends BaseGraph {
 }
 
 case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeight: Float) extends GraphSummarization[Frame] {
-  val grouper = "weighted_degree_groupby"
   require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
+
+  val outputName = "degree"
 
   override def work(state: GraphState): Frame = {
     require(state.graphFrame.edges.columns.contains(edgeWeight), s"Property $edgeWeight not found")
+
     val graphFrame = GraphFrame(state.graphFrame.vertices, state.graphFrame.edges.na.fill(defaultWeight, List(edgeWeight)))
     // If you are counting the in Degrees you are looking at the destination of
     // the edges, if you are looking at the out degrees you are looking at the
@@ -41,8 +58,7 @@ case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeigh
       case "out" => (lit(0), AggregateMessages.edge(edgeWeight))
       case "undirected" => (AggregateMessages.edge(edgeWeight), AggregateMessages.edge(edgeWeight))
     }
-    val weightedDegrees = graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg))
-    val degreesFrame = weightedDegrees.toDF("Vertex", "Degree")
-    new Frame(degreesFrame)
+    val weightedDegrees = graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
+    new Frame(weightedDegrees)
   }
 }

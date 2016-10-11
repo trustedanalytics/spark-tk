@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests the weighted_degree on a graph"""
 
 import unittest
@@ -33,27 +50,27 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
     def test_annotate_weight_degree_out(self):
         """Test degree count weighted on out edges"""
         degree_weighted = self.graph.weighted_degrees("value", "out")
-        res = degree_weighted.download(degree_weighted.count())
+        res = degree_weighted.to_pandas(degree_weighted.count())
         for _, row in res.iterrows():
-            row_val = row['Vertex'].split('_')
-            self.assertEqual(2*(int(row_val[2])-1), row['Degree'])
+            row_val = row['id'].split('_')
+            self.assertEqual(2*(int(row_val[2])-1), row['degree'])
 
     def test_weight_degree_in(self):
         """Test degree count weighted on in edges"""
         degree_weighted = self.graph.weighted_degrees("value", "in")
-        res = degree_weighted.download(degree_weighted.count())
+        res = degree_weighted.to_pandas(degree_weighted.count())
         for _, row in res.iterrows():
-            row_val = row['Vertex'].split('_')
+            row_val = row['id'].split('_')
             self.assertEqual(
-                2*(int(row_val[1])-int(row_val[2])), row['Degree'])
+                2*(int(row_val[1])-int(row_val[2])), row['degree'])
 
     def test_weight_degree_undirected(self):
         """Test degree count weighted on undirected edges"""
         degree_weighted = self.graph.weighted_degrees("value", "undirected")
-        res = degree_weighted.download(degree_weighted.count())
+        res = degree_weighted.to_pandas(degree_weighted.count())
         for _, row in res.iterrows():
-            row_val = row['Vertex'].split('_')
-            self.assertEqual(2*(int(row_val[1])-1), row['Degree'])
+            row_val = row['id'].split('_')
+            self.assertEqual(2*(int(row_val[1])-1), row['degree'])
 
     def test_weight_type_error(self):
         """Test degree count weighted with type error."""

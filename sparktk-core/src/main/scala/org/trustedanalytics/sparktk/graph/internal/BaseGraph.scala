@@ -1,7 +1,21 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.graph.internal
 
 import org.apache.spark.sql.DataFrame
-import org.graphframes
 import org.slf4j.LoggerFactory
 import org.graphframes.GraphFrame
 import org.trustedanalytics.sparktk.frame.{ Frame, Schema }
@@ -16,14 +30,9 @@ object GraphSchema {
   val edgeSourceColumnName = GraphFrame.SRC
   val edgeDestinationColumnName = GraphFrame.DST
 
-  // These column names are used by sparktk's convention
-  val vertexTypeColumnName = "vertex_"
-  val edgeTypeColumnName = GraphFrame.EDGE + "_"
-
   implicit def frameToSchema(frame: Frame): Schema = frame.schema
 
   /**
-   * s
    * Validates the frame has the proper schema to represent a Vertices Frame
    */
   def validateSchemaForVerticesFrame(frameSchema: Schema) = {

@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from setup import tc, rm, get_sandbox_path
 from sparktk import dtypes
 
@@ -35,12 +52,13 @@ def test_import_csv_with_custom_schema(tc):
     assert(f.schema == schema)
 
 def test_import_csv_with_custom_schema_parse_error(tc):
-    # Test with good schema, but bad value in file --bad value should render as None
+    # Test with good schema, but bad values in file --bad values should render as None
     path = "../datasets/parse_error.csv"
     f = tc.frame.import_csv(path, schema=[("a", str),("b", int), ("c", float)], header=True)
-    rows = f.take(f.count()).data
+    rows = f.take(f.count())
     assert(len(rows) == 4)
-    assert(rows[2] == ["blue",100, None])
+    assert(rows[2] == ["blue",100, None])         # bad float
+    assert(rows[3] == ["purple",None, 3.33333])   # bad integer
 
 
 def test_import_csv_with_no_header(tc):
@@ -126,7 +144,7 @@ def test_frame_loading_multiple_files_with_wildcard(tc):
                                 ('movie', int),
                                 ('weight', int),
                                 ('edge_type', str)])
-        assert(frame.take(frame.count()).data == [[1, 'L', -131, 0, 'tr'],
+        assert(frame.take(frame.count()) == [[1, 'L', -131, 0, 'tr'],
                                                     [-131, 'R', 1, 0, 'tr'],
                                                     [1, 'L', -300, 2, 'tr'],
                                                     [-300, 'R', 1, 2, 'tr'],
@@ -146,3 +164,14 @@ def test_frame_loading_multiple_files_with_wildcard(tc):
                                                     [-1648, 'R', 1, 3, 'tr'],
                                                     [3, 'L', -2347, 3, 'tr'],
                                                     [-2347, 'R', 1, 3, 'tr']])
+def test_import_csv_with_duplicate_coluns(tc):
+    path = "../datasets/importcsvtest.csv"
+    schema = [("string", str),
+              ("numeric", int),
+              ("numeric", float),
+              ("datetime", dtypes.datetime)]
+    try:
+        # Try to create a frame from csv, using a schema that has duplicate column names
+        tc.frame.import_csv(path, schema=schema, header=True, infer_schema=False)
+    except Exception as e:
+        assert("duplicate entry: 'numeric'" in str(e))

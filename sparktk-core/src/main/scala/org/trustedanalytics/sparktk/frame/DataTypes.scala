@@ -1,7 +1,23 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame
 
 import java.util
 
+import org.apache.spark.mllib.linalg.DenseMatrix
 import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{ DateTimeZone, DateTime }
 import org.slf4j.LoggerFactory
@@ -49,6 +65,8 @@ object DataTypes {
     def isInteger: Boolean
 
     def isVector: Boolean = false
+
+    def isMatrix: Boolean = false
 
     /**
      * Looser type equality than strict object equals, to enable things like vector.equalsDataType(vector(4)) returns true
@@ -440,6 +458,39 @@ object DataTypes {
   }
 
   /**
+   * DenseMatrix
+   */
+  case object matrix extends DataType {
+    override type ScalaType = DenseMatrix
+
+    override def parse(raw: Any) = Try {
+      raw.asInstanceOf[DenseMatrix]
+    }
+
+    override def isType(raw: Any): Boolean = {
+      // TODO: nulls aren't allowed for now but we will need to support nulls or Nones later
+      raw != null && raw.isInstanceOf[DenseMatrix]
+    }
+
+    override def scalaType = classOf[DenseMatrix]
+
+    override def typedJson(raw: Any) = {
+      throw new Exception("Cannot convert matrix to json value")
+    }
+
+    override def asDouble(raw: Any): Double = {
+      throw new Exception("Cannot convert matrix to double value")
+    }
+
+    override def isNumerical = false
+
+    override def isInteger = false
+
+    override def isMatrix = true
+
+  }
+
+  /**
    * An alias for string
    */
   val str = string
@@ -501,6 +552,7 @@ object DataTypes {
     s match {
       case vectorPattern(length) => vector(length.toLong)
       case "vector" => DataTypes.string
+      case "matrix" => DataTypes.matrix
       case _ => throw new IllegalArgumentException(s"Invalid datatype: '$s'")
     }
   }
@@ -579,7 +631,10 @@ object DataTypes {
    */
   def convertToType(value: Any, dataType: DataType): Any = {
     dataType match {
+      case `int32` => toInt(value)
       case `int64` => toLong(value)
+
+      case `float32` => toFloat(value)
       case `float64` => toDouble(value)
       // TODO: finish implementation (sorry, I only implemented the minimal I needed)
       // TODO: throw exceptions when needed

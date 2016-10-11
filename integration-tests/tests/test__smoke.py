@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 
 """
 Some very basic tests to see if things are generally working
@@ -16,7 +33,7 @@ def test_jconvert_option(tc):
 def test_smoke_take(tc):
     f = tc.frame.create([[1, "one"], [2, "two"], [3, "three"]])
     t = f.take(2)
-    assert t.data == [[1, 'one'], [2, 'two']]
+    assert t == [[1, 'one'], [2, 'two']]
     #print "take=%s" % str(t)
 
 
