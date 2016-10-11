@@ -20,7 +20,7 @@ import org.json4s.JsonAST.JValue
 import breeze.linalg._
 import breeze.numerics._
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseVector => MLlibDenseVector }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseVector => MllibDenseVector }
 import org.apache.spark.mllib.linalg.distributed.{ RowMatrix, IndexedRow, IndexedRowMatrix }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -67,7 +67,7 @@ object PcaModel extends TkSaveableObject {
     var singularValues = svd.s
     while (singularValues.size < train_k) {
       // todo: add logging for this case, where the value count is less than k (could happen for toy data --i.e. it did)
-      singularValues = new MLlibDenseVector(singularValues.toArray :+ 0.0)
+      singularValues = new MllibDenseVector(singularValues.toArray :+ 0.0)
     }
 
     PcaModel(columns, meanCentered, train_k, columnStatistics.mean, singularValues, svd.V)
