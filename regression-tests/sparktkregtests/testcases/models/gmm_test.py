@@ -17,6 +17,7 @@
 
 """Test guassian mixture models against known values"""
 import unittest
+from collections import Counter
 from numpy.testing import assert_almost_equal
 from sparktkregtests.lib import sparktk_test
 
@@ -28,6 +29,7 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
         self.frame = self.context.frame.import_csv(
             data_file, schema=[("x1", float), ("x2", float)])
 
+    @unittest.skip("Waiting of pr#207")
     def test_train(self):
         """ Verify that model operates as expected in straightforward case"""
         model = self.context.models.clustering.gmm.train(
