@@ -28,7 +28,7 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
 
         # compare expected results with extract_keywords result
         expected_result = self._get_expected_column_data_from_xml(["PatientID"])
-        take_result = self.dicom.metadata.take(self.count, columns=[u'PatientID'])
+        take_result = self.dicom.metadata.take(self.count, columns=['PatientID'])
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_multiple_columns_basic(self):
@@ -141,7 +141,7 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
                 result = query_result[0].decode("ascii", "ignore") if query_result else None
                 expected_row.append(result)
 
-                expected_row.append(query_result)
+                #expected_row.append(query_result)
             expected_column_data.append(expected_row)
         return expected_column_data
 
