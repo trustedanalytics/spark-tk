@@ -42,7 +42,7 @@ __all__ = ["create",
            "import_pandas"]
 
 class Frame(object):
-
+    
     def __init__(self, tc, source, schema=None, validate_schema=False):
         self._tc = tc
         if self._is_scala_frame(source):
@@ -101,45 +101,9 @@ class Frame(object):
                 source = validate_schema_result.validated_rdd
                 logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
 
-
-            #check if row contains list of lists convert it to ndarray
-            map_source = source.map(Frame.row_decorator(list(schema)))
+            # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+            map_source = MatrixCoercion.schema_is_coercible(source, list(schema))
             self._frame = PythonFrame(map_source, schema)
-
-    #When creating a new frame or converting scala frame with python frame
-    #the function scans a row and if it finds list[list](which represents matrix) as column valye converts it to numpy ndarray
-    @staticmethod
-    def row_decorator(schema):
-        def decorator(row):
-            result = []
-            import numpy as np
-            for i in xrange(len(schema)):
-                if type(schema[i][1]) == dtypes._Matrix:
-                    if isinstance(row[i], list):
-                        result.append(np.array(row[i], dtype=np.float64))
-                    else:
-                        result.append(row[i])
-                else:
-                    result.append(row[i])
-            return result
-        return decorator
-
-    #When converting python frame to scala frame, function scans the row and converts the ndarray
-    #to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Java
-    #For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
-    @staticmethod
-    def row_decorator_pymllib(schema):
-        def decorator(row):
-            result = []
-            from pyspark.mllib.linalg import DenseMatrix
-            for i in xrange(len(schema)):
-                if type(schema[i][1]) == dtypes._Matrix:
-                    shape = row[i].shape
-                    result.append(DenseMatrix(shape[0], shape[1], row[i].flatten(), isTransposed=True))
-                else:
-                    result.append(row[i])
-            return result
-        return decorator
 
     def _merge_types(self, type_list_a, type_list_b):
         """
@@ -296,12 +260,13 @@ class Frame(object):
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
         if self._is_python:
-            self._frame.rdd = self._frame.rdd.map(Frame.row_decorator_pymllib(self._frame.schema))
+            # If schema contains matrix dataype,
+            # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
+            self._frame.rdd = MatrixCoercion.schema_is_coercible(self._frame.rdd, list(self._frame.schema), True)
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
             self._frame = self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
-
         return self._frame
 
     @property
@@ -313,7 +278,8 @@ class Frame(object):
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
             python_rdd = RDD(java_rdd, self._tc.sc)
-            map_python_rdd = python_rdd.map(Frame.row_decorator(python_schema))
+            # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+            map_python_rdd = MatrixCoercion.schema_is_coercible(python_rdd, list(python_schema))
             self._frame = PythonFrame(map_python_rdd, python_schema)
         return self._frame
 
@@ -450,3 +416,78 @@ class SchemaValidationReturn(PropertiesObject):
         Number of values that were unable to be parsed to the data type specified by the schema.
         """
         return self._bad_value_count
+
+
+class MatrixCoercion(object):
+    @staticmethod
+    def schema_is_coercible(source, python_schema, in_scala=False):
+        """
+        check whether python schema is coercible or not.
+        Like if schema contains matrix datatype, convert list[list] to numpy ndarray
+        """
+        flag = False
+        for schema in python_schema:
+            if type(schema[1]) == dtypes._Matrix:
+                flag = True
+                break
+
+        if flag:
+            if in_scala:
+                map_source = source.map(MatrixCoercion.type_coercer_pymllib(python_schema))
+            else:
+                map_source = source.map(MatrixCoercion.type_coercer(python_schema))
+        else:
+            map_source = source
+
+        return map_source
+
+    @staticmethod
+    def type_coercer(schema):
+        """
+        When creating a new frame(python frame created) or converting frame from scala to python frame,
+        the function scans a row and performs below
+            * when creating a new frame(python frame created) - if it finds list[list](which represents matrix) as column value,
+              converts it to numpy ndarray
+            * when Converting frame from scala to python frame - (scala converts DenseMatrix--> JList[JList[Double]](in JConvert.scala),
+              jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
+
+        """
+        def decorator(row):
+            result = []
+            import numpy as np
+            for i in xrange(len(schema)):
+                if type(schema[i][1]) == dtypes._Matrix:
+                    if isinstance(row[i], list):
+                        result.append(np.array(row[i], dtype=np.float64))
+                    else:
+                        result.append(row[i])
+                else:
+                    result.append(row[i])
+            return result
+        return decorator
+
+    @staticmethod
+    def type_coercer_pymllib(schema):
+        """
+        When converting from python to scala, function scans the row and converts the ndarray
+        to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
+        For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
+
+        ndarray stores data as row-major where as mllib densematrix stores data as column-major.
+        To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
+        """
+        def decorator(row):
+            result = []
+            from pyspark.mllib.linalg import DenseMatrix
+            for i in xrange(len(schema)):
+                if type(schema[i][1]) == dtypes._Matrix:
+                    shape = row[i].shape
+                    arr=row[i].flatten()
+                    # By default Mllib DenseMatrix constructs column-major matrix.
+                    # Setting isTranposed=True, will construct row-major DenseMatrix
+                    dm = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
+                    result.append(dm)
+                else:
+                    result.append(row[i])
+            return result
+        return decorator

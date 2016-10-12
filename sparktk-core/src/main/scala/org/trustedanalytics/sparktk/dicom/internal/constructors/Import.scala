@@ -15,13 +15,13 @@
  */
 package org.trustedanalytics.sparktk.dicom.internal.constructors
 
-import java.awt.image.Raster
-import java.io.{ PrintStream, ByteArrayOutputStream, File }
+import java.awt.image.{ DataBufferUShort, Raster }
+import java.io._
 import java.util.Iterator
 import javax.imageio.stream.ImageInputStream
 import javax.imageio.{ ImageIO, ImageReader }
 
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
@@ -32,13 +32,78 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
-import org.dcm4che3.tool.dcm2xml.Dcm2Xml
+import org.dcm4che3.tool.dcm2xml.org.trustedanalytics.sparktk.Dcm2Xml
 
-import scala.util.Random
+object Import extends Serializable {
 
-object Import {
+  /**
+   * Get Pixel Data from Dicom Input Stream represented as Array of Bytes
+   *
+   * @param byteArray Dicom Input Stream represented as Array of Bytes
+   * @return DenseMatrix Pixel Data
+   */
+  def getPixeldata(byteArray: Array[Byte]): DenseMatrix = {
+
+    val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+    val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
+
+    //create matrix
+    val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
+    val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
+    val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
+    val iis: ImageInputStream = ImageIO.createImageInputStream(pixeldicomInputStream)
+    readers.setInput(iis, true)
+
+    //pixels data raster
+    val raster: Raster = readers.readRaster(0, param)
+
+    val w = raster.getWidth
+    val h = raster.getHeight
+
+    //val data = raster.getDataBuffer.asInstanceOf[DataBufferUShort].getData.map(_.toDouble)
+    //    new DenseMatrix(h, w, data)
+    val data = Array.ofDim[Double](h, w)
+
+    //Filling data in column-wise order because MLLib DenseMatrix constructs matrix as column major.
+    /*Ex:Column-major dense matrix. The entry values are stored in a single array of doubles with columns listed in sequence. For example, the following matrix
+
+    1.0 2.0
+    3.0 4.0
+    5.0 6.0
+
+    is stored as [1.0, 3.0, 5.0, 2.0, 4.0, 6.0]*/
+
+    for (i <- 0 until w) {
+      for (j <- 0 until h) {
+        data(j)(i) = raster.getSample(j, i, 0)
+      }
+    }
+    new DenseMatrix(h, w, data.flatten)
+  }
+
+  /**
+   * Get Metadata Xml from Dicom Input Stream represented as byte array
+   *
+   * @param byteArray Dicom Input Stream represented as byte array
+   * @return String Xml Metadata
+   */
+  def getMetadataXml(byteArray: Array[Byte]): String = {
+    val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+    val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
+
+    val dcm2xml = new Dcm2Xml()
+    val myOutputStream = new ByteArrayOutputStream()
+    dcm2xml.convert(metadataDicomInputStream, myOutputStream)
+    myOutputStream.toString()
+  }
+
   /**
    * Creates a dicom object with metadata and pixeldata frames
+   *                                                                            |---> DataInputStream --> DicomInputStream --> Dcm2Xml --> Metadata XML (String)
+   *                                                                            |
+   * Spark foreach DCM Image (FilePath, PortableDataStream) ---> ByteArray --->
+   *                                                                            |
+   *                                                                            |---> DataInputStream --> DicomInputStream --> ImageInputStream --> Raster --> Pixel Data (Dense Matrix)
    *
    * @param path Full path to the DICOM files directory
    * @return Dicom object with MetadataFrame and PixeldataFrame
@@ -47,56 +112,22 @@ object Import {
 
     val dicomFilesRdd = sc.binaryFiles(path)
 
-    val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {
+    val dcmMetadataPixelArrayRDD = dicomFilesRdd.mapPartitions {
 
-      case (filePath, fileData) =>
+      case iter => for {
 
-        //TODO: create .dcm files in /tmp and create file Obj. Currently dicom library does not support byte arrays (Temporary)
-        val tmpFile: File = File.createTempFile(s"dicom-temp-${Random.nextInt()}", ".dcm")
-        FileUtils.writeByteArrayToFile(tmpFile, fileData.toArray())
-        tmpFile.deleteOnExit()
+        (filePath, fileData) <- iter
 
-        //create matrix
-        val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
-        val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
-        val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
-        val iis: ImageInputStream = ImageIO.createImageInputStream(tmpFile)
-        readers.setInput(iis, true)
+        // Open PortableDataStream to retrieve the bytes
+        fileInputStream = fileData.open()
+        byteArray = IOUtils.toByteArray(fileInputStream)
 
-        //pixels data raster
-        val raster: Raster = readers.readRaster(0, param)
-
-        val w = raster.getWidth
-        val h = raster.getHeight
-
-        val data = Array.ofDim[Double](h, w)
-
-        for {
-          i <- 0 until h
-          j <- 0 until w
-        } data(i)(j) = raster.getSample(i, j, 0)
-
+        //Create the metadata xml
+        metadata = getMetadataXml(byteArray)
         //Create a dense matrix for pixel array
-        val dm1 = new DenseMatrix(h, w, data.flatten, isTransposed = true)
-
+        pixeldata = getPixeldata(byteArray)
         //Metadata
-        val dis: DicomInputStream = new DicomInputStream(tmpFile)
-        val dcm2xml: Dcm2Xml = new Dcm2Xml()
-
-        //TODO: Fix the redirecting output stream (Temporary)
-        //redirecting output stream
-        val myOutputStream = new ByteArrayOutputStream()
-        val myStream: PrintStream = new PrintStream(myOutputStream)
-        // Listen to system out
-        System.setOut(myStream)
-        dcm2xml.parse(dis)
-        // Restore (or stop listening)
-        System.out.flush()
-        System.setOut(System.out)
-
-        // myStream.toString
-        val xml: String = myOutputStream.toString()
-        (xml, dm1)
+      } yield (metadata, pixeldata)
     }.zipWithIndex()
 
     dcmMetadataPixelArrayRDD.cache()
