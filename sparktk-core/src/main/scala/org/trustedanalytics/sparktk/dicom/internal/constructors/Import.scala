@@ -64,8 +64,8 @@ object Import extends Serializable {
     //    new DenseMatrix(h, w, data)
     val data = Array.ofDim[Double](h, w)
 
-    for (i <- 0 until h) {
-      for (j <- 0 until w) {
+    for (i <- 0 until w) {
+      for (j <- 0 until h) {
         data(j)(i) = raster.getSample(j, i, 0)
       }
     }

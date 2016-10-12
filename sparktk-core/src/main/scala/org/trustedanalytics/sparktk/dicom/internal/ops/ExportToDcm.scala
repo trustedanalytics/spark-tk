@@ -103,7 +103,7 @@ object ExportToDcm extends Serializable {
         //Access the metadata column from metadatardd row
         val metadataStr = metadata(1).toString
         //Access the pixeldata column from pixeldataRdd row
-        val pixeldataDM: DenseMatrix = pixeldata(1).asInstanceOf[DenseMatrix]
+        val pixeldataDM: DenseMatrix = pixeldata(1).asInstanceOf[DenseMatrix].transpose
 
         val dcmAttributes = getAttributesFromMetadata(metadataStr)
         val pixel = pixeldataDM.toArray.map(_.toInt)
