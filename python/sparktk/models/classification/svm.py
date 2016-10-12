@@ -59,6 +59,9 @@ def train(frame,
     observations are predicted and tested against the true labels using built-in binary Classification Metrics.
 
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
+
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_model = _scala_obj.train(frame._scala,
