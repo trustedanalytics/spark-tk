@@ -174,4 +174,4 @@ def test_import_csv_with_duplicate_coluns(tc):
         # Try to create a frame from csv, using a schema that has duplicate column names
         tc.frame.import_csv(path, schema=schema, header=True, infer_schema=False)
     except Exception as e:
-        assert("duplicate entry: 'numeric'" in str(e))
+        assert("schema has duplicate column names: ['numeric']" in str(e))
