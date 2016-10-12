@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-from sparktk.dtypes import dtypes
+from sparktk.dtypes import dtypes, matrix
 
 def jvm_scala_schema(sc):
     return sc._jvm.org.trustedanalytics.sparktk.frame.SchemaHelper
