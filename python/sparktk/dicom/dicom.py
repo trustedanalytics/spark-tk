@@ -102,7 +102,6 @@ class Dicom(object):
         >>> type(image_ndarray)
         <type 'numpy.ndarray'>
 
-        <skip>
         #Dimesions of the image matrix stored
         >>> image_ndarray.shape
         (320, 320)
