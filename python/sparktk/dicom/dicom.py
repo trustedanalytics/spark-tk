@@ -58,19 +58,42 @@ class Dicom(object):
         >>> type(dicom)
         <class 'sparktk.dicom.dicom.Dicom'>
 
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.pixeldata.count()
+        3
+
+        <skip>
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+        </skip>
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
         #pixeldata property is sparktk frame
         >>> pixeldata = dicom.pixeldata.take(1)
 
-        #dispaly
+        #Display
         <skip>
         >>> pixeldata
-        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
-        [ 0.,  7.,  5., ...,  5.,  7.,  8.],
-        [ 0.,  7.,  6., ...,  5.,  6.,  7.],
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
         ...,
-        [ 0.,  6.,  7., ...,  5.,  5.,  6.],
-        [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
         </skip>
 
         #Access ndarray
@@ -82,8 +105,9 @@ class Dicom(object):
         <skip>
         #Dimesions of the image matrix stored
         >>> image_ndarray.shape
-        (512, 512)
+        (320, 320)
 
+        <skip>
         #Use python matplot lib package to verify image visually
         >>> import pylab
         >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
@@ -105,13 +129,14 @@ class Dicom(object):
         #Order may differ when you load back dicom object
 
         >>> load_pixeldata
-        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
-        [ 0.,  7.,  5., ...,  5.,  7.,  8.],
-        [ 0.,  7.,  6., ...,  5.,  6.,  7.],
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
         ...,
-        [ 0.,  6.,  7., ...,  5.,  5.,  6.],
-        [ 0.,  2.,  5., ...,  5.,  5.,  4.],
-        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
 
         >>> load_image_ndarray= load_pixeldata[0][1]
 
@@ -119,7 +144,7 @@ class Dicom(object):
         <type 'numpy.ndarray'>
 
         >>> load_image_ndarray.shape
-        (512, 512)
+        (320, 320)
 
         #Inspect metadata property to see dicom metadata xml content
 
@@ -129,6 +154,7 @@ class Dicom(object):
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
+        </skip>
 
         #Using to built-in xml libraries to run xquery on metadata
         >>> import xml.etree.ElementTree as ET
@@ -154,12 +180,16 @@ class Dicom(object):
 
         >>> dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
 
+        >>> dicom.metadata.count()
+        3
+
+        <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata                        SOPInstanceUID
         =======================================================================
-        [0]   0  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
-        [1]   1  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
-        [2]   2  <?xml version="1.0" encodin...  1.3.12.2.1107.5.2.5.11090.5...
+        [0]   0  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [1]   1  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [2]   2  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
         </skip>
 
     """
@@ -173,7 +203,7 @@ class Dicom(object):
     def __repr__(self):
         #TODO Python friendly repr
         #Write a string summary
-        return self._scala.toString()
+        return self._get_new_scala().toString()
 
     @property
     def metadata(self):
@@ -195,6 +225,7 @@ class Dicom(object):
     def _get_new_scala(self):
         return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
 
+    #method to call passed function with new scala dicom
     def _call_scala(self, func):
         from sparktk.frame.frame import Frame
         scala_dicom = self._get_new_scala()

@@ -89,6 +89,8 @@ def train(frame,
                      The covariance matrix is the inverse of the Hessian matrix for the trained model.
                      The Hessian matrix is the second-order partial derivatives of the model's log-likelihood function.
     """
+    if frame is None:
+        raise ValueError("Frame cannot be None")
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
 
