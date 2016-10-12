@@ -189,11 +189,13 @@ object PrincipalComponentsFunctions extends Serializable {
   def computePrincipalComponents(eigenVectors: MllibMatrix,
                                  c: Int,
                                  indexedRowMatrix: IndexedRowMatrix): IndexedRowMatrix = {
+    val breezeEigenVectors = new DenseMatrix(eigenVectors.numRows, eigenVectors.numCols, eigenVectors.toArray)
     val y: RDD[IndexedRow] = indexedRowMatrix.rows.map({
       r =>
+        val rVector = r.vector.toArray
         IndexedRow(
           r.index, MllibVectors
-            .dense((new DenseMatrix(1, r.vector.toArray.length, r.vector.toArray) * (new DenseMatrix(eigenVectors.numRows, eigenVectors.numCols, eigenVectors.toArray)))
+            .dense((new DenseMatrix(1, rVector.length, rVector) * breezeEigenVectors)
               .toArray.take(c)))
     })
     //val cComponentsOfY = new IndexedRowMatrix(y.rows.map(r => r.copy(vector = MllibVectors.dense(r.vector.toArray.take(c)))))
@@ -231,12 +233,13 @@ object PrincipalComponentsFunctions extends Serializable {
   def toIndexedRowMatrix(frameRdd: RDD[(Long, Row)], frameSchema: Schema, columns: Seq[String], meanCentered: Boolean, columnMeans: Array[Double]): IndexedRowMatrix = {
     val rowWrapper = new RowWrapper(frameSchema)
     val vectorRdd: RDD[IndexedRow] = if (meanCentered) {
+      val breezeColumnMeans = new DenseVector(columnMeans)
       frameRdd.map {
         case (index, row) => {
           val array = rowWrapper(row).valuesAsArray(columns, flattenInputs = true)
 
           val b = array.map(i => DataTypes.toDouble(i))
-          IndexedRow(index, MllibVectors.dense((new DenseVector(b) - new DenseVector(columnMeans)).toArray))
+          IndexedRow(index, MllibVectors.dense((new DenseVector(b) - breezeColumnMeans).toArray))
         }
       }
     }
