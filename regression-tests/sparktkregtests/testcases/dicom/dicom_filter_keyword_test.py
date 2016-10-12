@@ -37,7 +37,6 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.query = ".//DicomAttribute[@keyword='KEYWORD']/Value/text()"
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_one_column_one_result_basic(self):
         """test filter with one unique key"""
         # get the pandas frame for ease of access
@@ -65,7 +64,6 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         record = self.dicom.metadata.take(1)
         self.assertEqual(str(random_row), str(record))
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_one_col_multi_result_basic(self):
         """test filter by keyword with one keyword mult record result"""
         # get pandas frame for ease of access
@@ -90,7 +88,6 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         for record, filtered_record in zip(records, pandas_result):
             self.assertEqual(record, filtered_record.encode("ascii", "ignore"))
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_multiple_columns_basic(self):
         """test filter with multiple key vals"""
         # first we will generate a filter randomly by
@@ -117,25 +114,21 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
             ascii_actual_result = actual_record.encode("ascii", "ignore")
             self.assertEqual(ascii_actual_result, expected_record)
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_invalid_column(self):
         """test filter invalid key"""
         self.dicom.filter_by_keywords({ "invalid keyword" : "value" })
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_multiple_invalid_columns(self):
         """test filter mult invalid keys"""
         self.dicom.filter_by_keywords({ "invalid" : "bla", "another_invalid_col" : "bla" })
         self.assertEqual(0, self.dicom.metadata.count())
- 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
+
     def test_valid_keyword_zero_results(self):
         """test filter with key-value pair, key exists but no matches"""
         self.dicom.filter_by_keywords({ "SOPInstanceUID" : 2 })
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_invalid_valid_col_mix(self):
         """test filter with mix of valid and invalid keys"""
         # first we get a valid patient id by selecting the first row
@@ -151,15 +144,13 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         # since there are no records which meet BOTH key value criterias
         # we assert that 0 records were returned
         self.assertEqual(0, self.dicom.metadata.count())
- 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
+
     def test_filter_invalid_type(self):
         """test filter invalid param type"""
         with self.assertRaisesRegexp(Exception, "does not exist"):
             self.dicom.filter_by_keywords(1)
             self.dicom.metadata.count()
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_unicode_columns(self):
         """test filter by keyword with unicode keys"""
         # the logic is the same as test_filter_one_column above
