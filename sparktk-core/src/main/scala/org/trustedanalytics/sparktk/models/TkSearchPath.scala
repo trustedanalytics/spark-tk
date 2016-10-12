@@ -16,6 +16,7 @@
 package org.trustedanalytics.sparktk.models
 
 import java.io.File
+import org.slf4j.LoggerFactory
 
 import scala.collection.mutable
 
@@ -27,9 +28,9 @@ import scala.collection.mutable
  * @param path list of directories delimited by colons
  */
 class TkSearchPath(path: String) {
-
+  private val logger = LoggerFactory.getLogger(this.getClass)
   lazy val searchPath: List[File] = path.split(":").toList.map(file => new File(file))
-  println("searchPath: " + searchPath.mkString(":"))
+  logger.info("searchPath: " + searchPath.mkString(":"))
 
   lazy val jarsInSearchPath: Map[String, File] = {
     val startTime = System.currentTimeMillis()
@@ -42,7 +43,7 @@ class TkSearchPath(path: String) {
       }
     }
     // debug to make sure we're not taking forever when someone adds some huge Maven repo to search path
-    println(s"searchPath found ${files.size} jars (${results.size} of them unique) in ${System.currentTimeMillis() - startTime} milliseconds")
+    logger.info(s"searchPath found ${files.size} jars (${results.size} of them unique) in ${System.currentTimeMillis() - startTime} milliseconds")
     results.toMap
   }
 

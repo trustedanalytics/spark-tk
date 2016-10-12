@@ -84,10 +84,10 @@ object ScoringModelUtils {
    * Creates a MAR zipfile for the saved model and its dependencies and stores it at the given location
    * @param marSavePath location where the MAR file should be stored
    * @param modelClass name of the model class to be loaded during scoring
-   * @param tmpDir location where the model has been saved
+   * @param modelSrcDir location where the model has been saved
    * @return full path to the location of the MAR file for Scoring Engine
    */
-  def saveToMar(marSavePath: String, modelClass: String, tmpDir: Path): String = {
+  def saveToMar(marSavePath: String, modelClass: String, modelSrcDir: Path): String = {
     val zipFile: File = File.createTempFile("model", ".mar")
     val zipOutStream = new FileOutputStream(zipFile)
     try {
@@ -97,7 +97,7 @@ object ScoringModelUtils {
         val absolutePath = codeSource.getLocation.toString
         val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
         var jarFileList = x.jarsInSearchPath.values.toList
-        jarFileList = jarFileList ::: List(tmpDir.toFile)
+        jarFileList = jarFileList ::: List(modelSrcDir.toFile)
         ModelArchiveFormat.write(jarFileList, classOf[SparkTkModelAdapter].getName, modelClass, zipOutStream)
       }
       SaveLoad.saveMar(marSavePath, zipFile)

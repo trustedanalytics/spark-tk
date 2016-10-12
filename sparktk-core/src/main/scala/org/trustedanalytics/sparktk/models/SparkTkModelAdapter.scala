@@ -121,13 +121,10 @@ class SparkTkModelAdapter() extends ModelReader {
           else if (individualFile.contains("tk")) {
             fileStr = tmpDir + "/tk"
           }
-          else {
-            //log error
-          }
           logger.info(fileStr)
           Files.createDirectories(new File(fileStr).toPath)
           val file = individualFile.toString.substring(individualFile.toString.lastIndexOf("/") + 1, individualFile.toString.length)
-          println(file)
+          logger.info(file)
           val bufferedOutStream = new BufferedOutputStream(new FileOutputStream(fileStr + "/" + file))
           var read = modelZipStreamInput.read(bytesIn)
           while (read != -1) {

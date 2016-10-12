@@ -93,7 +93,6 @@ object KMeansModel extends TkSaveableObject {
    */
   def load(tc: TkContext, path: String): KMeansModel = {
     val m = tc.load(path).asInstanceOf[KMeansModel]
-    println(s"model loaded is : $m")
     m
   }
 
@@ -260,10 +259,6 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
     val formatVersion: Int = 1
     val tkMetadata = KMeansModelTkMetaData(columns, k, scalings, maxIterations, epsilon, initializationMode, seed)
     TkSaveLoad.saveTk(sc, path, KMeansModel.formatId, formatVersion, tkMetadata)
-  }
-
-  def loadTest(): Unit = {
-    println("test passed")
   }
 
   /**

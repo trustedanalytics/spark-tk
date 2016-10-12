@@ -131,7 +131,7 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
                                               convergenceTol: Double = 0.01,
                                               seed: Long = scala.util.Random.nextLong(),
                                               gaussians: Seq[Gaussian],
-                                              sparkModel: SparkGaussianMixtureModel) extends Serializable with Model{
+                                              sparkModel: SparkGaussianMixtureModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
