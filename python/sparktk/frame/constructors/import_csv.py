@@ -20,6 +20,7 @@ from pyspark.rdd import RDD
 from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
+from sparktk.frame import schema as sparktk_schema
 
 def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, tc=TkContext.implicit):
     """
@@ -90,6 +91,7 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
 
     if schema is not None:
         infer_schema = False   # if a custom schema is provided, don't waste time inferring the schema during load
+        sparktk_schema.validate(schema)
     if not isinstance(header, bool):
         raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
     if not isinstance(infer_schema, bool):

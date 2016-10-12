@@ -35,6 +35,8 @@ def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     :return: (NaiveBayesModel) Trained Naive Bayes model
 
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_model = _scala_obj.train(frame._scala,

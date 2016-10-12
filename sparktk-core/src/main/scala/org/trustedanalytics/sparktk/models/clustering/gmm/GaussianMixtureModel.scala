@@ -75,7 +75,7 @@ object GaussianMixtureModel extends TkSaveableObject {
     val model = sparkGaussianMixture.run(vectorRDD)
     trainFrameRdd.unpersist()
 
-    val gaussians = model.gaussians.map(i => List("mu:" + i.mu.toString, "sigma:" + i.sigma.toListOfList())).toList
+    val gaussians = model.gaussians.map(g => Gaussian(g.mu.toArray, g.sigma.toListOfList()))
 
     GaussianMixtureModel(observationColumns,
       columnScalings,
@@ -117,14 +117,21 @@ object GaussianMixtureModel extends TkSaveableObject {
 
 }
 
+/**
+ * Holds mu and sigma values in the trained GMM model
+ * @param mu The mean vector of the distribution
+ * @param sigma The covariance matrix of the distribution
+ */
+case class Gaussian(mu: Seq[Double], sigma: Seq[Seq[Double]])
+
 case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
                                               columnScalings: Seq[Double],
                                               k: Int = 2,
                                               maxIterations: Int = 100,
                                               convergenceTol: Double = 0.01,
                                               seed: Long = scala.util.Random.nextLong(),
-                                              gaussians: List[List[String]],
-                                              sparkModel: SparkGaussianMixtureModel) extends Serializable with Model {
+                                              gaussians: Seq[Gaussian],
+                                              sparkModel: SparkGaussianMixtureModel) extends Serializable with Model{
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -250,4 +257,4 @@ case class GaussianMixtureModelTkMetaData(observationColumns: Seq[String],
                                           maxIterations: Int,
                                           convergenceTol: Double,
                                           seed: Long,
-                                          gaussians: List[List[String]]) extends Serializable
+                                          gaussians: Seq[Gaussian]) extends Serializable
