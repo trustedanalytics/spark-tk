@@ -586,7 +586,7 @@
 
       </plugins>
     </pluginManagement>
-    
+
     <plugins>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>

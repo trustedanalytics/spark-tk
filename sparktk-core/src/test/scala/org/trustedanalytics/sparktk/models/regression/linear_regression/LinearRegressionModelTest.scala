@@ -23,17 +23,17 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class LinearRegressionModelTest extends TestingSparkContextWordSpec with Matchers {
 
-  val rows: Array[Row] = Array(new GenericRow(Array[Any](0, 0)),
-    new GenericRow(Array[Any](1, 2.5)),
-    new GenericRow(Array[Any](2, 5.0)),
-    new GenericRow(Array[Any](3, 7.5)),
-    new GenericRow(Array[Any](4, 10)),
-    new GenericRow(Array[Any](5, 12.5)),
-    new GenericRow(Array[Any](6, 13.0)),
-    new GenericRow(Array[Any](7, 17.15)),
-    new GenericRow(Array[Any](8, 18.5)),
-    new GenericRow(Array[Any](9, 23.5)))
-  val schema = new FrameSchema(List(Column("x1", DataTypes.float32), Column("y", DataTypes.float32)))
+  val rows: Array[Row] = Array(new GenericRow(Array[Any](0.0, 0.0)),
+    new GenericRow(Array[Any](1.0, 2.5)),
+    new GenericRow(Array[Any](2.0, 5.0)),
+    new GenericRow(Array[Any](3.0, 7.5)),
+    new GenericRow(Array[Any](4.0, 10.0)),
+    new GenericRow(Array[Any](5.0, 12.5)),
+    new GenericRow(Array[Any](6.0, 13.0)),
+    new GenericRow(Array[Any](7.0, 17.15)),
+    new GenericRow(Array[Any](8.0, 18.5)),
+    new GenericRow(Array[Any](9.0, 23.5)))
+  val schema = new FrameSchema(List(Column("x1", DataTypes.float64), Column("y", DataTypes.float64)))
 
   "LinearRegressionModel train" should {
     "create a LinearRegressionModel from training" in {
