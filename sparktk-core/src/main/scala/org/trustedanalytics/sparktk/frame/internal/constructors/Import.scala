@@ -35,6 +35,8 @@ object Import {
    *               and not be included in the data.  The default value is false.
    * @param inferSchema Boolean value indicating if the column types will be automatically inferred.  It
    *                    requires one extra pass over the data and is false by default.
+   * @param dateFormat String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat
+                       specified at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
    * @return Frame with data from the csv file
    */
   def importCsv(sc: SparkContext,
@@ -42,7 +44,8 @@ object Import {
                 delimiter: String = ",",
                 header: Boolean = false,
                 inferSchema: Boolean = false,
-                schema: Option[Schema] = None): Frame = {
+                schema: Option[Schema] = None,
+                dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSX"): Frame = {
 
     // If a custom schema is provided there's no reason to infer the schema during the load
     val loadWithInferSchema = if (schema.isDefined) false else inferSchema
@@ -57,7 +60,7 @@ object Import {
       .option("header", headerStr)
       .option("inferSchema", inferSchemaStr)
       .option("delimiter", delimiter)
-      .option("dateFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+      .option("dateFormat", dateFormat)
 
     if (!inferSchema && schema.isDefined) {
       dfr = dfr.schema(StructType(schema.get.columns.map(column =>

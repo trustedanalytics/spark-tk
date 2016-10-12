@@ -175,3 +175,20 @@ def test_import_csv_with_duplicate_coluns(tc):
         tc.frame.import_csv(path, schema=schema, header=True, infer_schema=False)
     except Exception as e:
         assert("duplicate entry: 'numeric'" in str(e))
+
+def test_import_csv_datetime_format(tc):
+    path = "../datasets/datetimes.csv"
+
+    # Load with the date format that matches column a
+    f = tc.frame.import_csv(path, schema=[("a",dtypes.datetime),("b",str)], date_format="yyyy-MM-ddX")
+
+    for row in f.take(f.count()):
+        assert(isinstance(row[0], long))    # 'a' datetime column should be a long (number of ms since epoch)
+        assert(isinstance(row[1], basestring))     # column 'b' should be a str
+
+    # Load with the date format that matches column b
+    f = tc.frame.import_csv(path, schema=[("a",str),("b",dtypes.datetime)], date_format="MM-dd-yyyy kk:mm X")
+
+    for row in f.take(f.count()):
+        assert(isinstance(row[0], basestring))     # column 'a' should be a str
+        assert(isinstance(row[1], long))    # column 'b' should be a long (number of ms since epoch)

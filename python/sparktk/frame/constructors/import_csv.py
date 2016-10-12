@@ -21,7 +21,7 @@ from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
 
-def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, tc=TkContext.implicit):
+def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, date_format="yyyy-MM-dd'T'HH:mm:ss.SSSX", tc=TkContext.implicit):
     """
     Creates a frame with data from a csv file.
 
@@ -36,11 +36,13 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
                    and not be included in the data.  The default value is false.
     :param infer_schema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
                        It requires one extra pass over the data and is false by default.
-    :param: schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
+    :param schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
                     columns specified in the schema must match the number of columns in the csv file provided.  If the
                     value from the csv file cannot be converted to the data type specified by the schema (for example,
                     if the csv file has a string, and the schema specifies an int), the value will show up as missing
                     (None) in the frame.
+    :param date_format: (str) String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat
+                        specified at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
     :return: (Frame) Frame that contains the data from the csv file
 
     Examples
@@ -113,7 +115,7 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         "com.databricks.spark.csv.org.trustedanalytics.sparktk").options(
             delimiter=delimiter,
             header=header_str,
-            dateformat="yyyy-MM-dd'T'HH:mm:ss.SSSX",
+            dateformat=date_format,
             inferschema=infer_schema_str).load(path, schema=pyspark_schema)
 
     df_schema = []
