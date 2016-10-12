@@ -159,7 +159,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
     def test_lda_frame_none(self):
         """Test training on a None frame errors."""
         with(self.assertRaisesRegexp(
-                Exception, ".*NoneType.*")):
+                Exception, "frame cannot be None")):
             lda_model = self.context.models.clustering.lda.train(
                 None, 'paper', 'word', 'count', num_topics=5)
 
