@@ -16,32 +16,30 @@
 package org.trustedanalytics.sparktk.dicom.internal.ops
 
 import org.scalatest.Matchers
+import org.trustedanalytics.sparktk.dicom.internal.constructors.Import._
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
-import org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDcm
 
-class ExtractTagsTest extends TestingSparkContextWordSpec with Matchers {
+class FilterByTagsTest extends TestingSparkContextWordSpec with Matchers {
 
-  "Extract Tags" should {
-    "extract value for each tag and add column for each tag to assign value. For missing tag, value is null" in {
+  "FilterByTags" should {
+    "Filter the rows based on Map(tag, value) from column holding xml string" in {
       val dicom = importDcm(sparkContext, "../integration-tests/datasets/dicom_uncompressed")
+      val metadaRowsCount = dicom.metadata.rowCount()
+      val pixeldataRowsCount = dicom.pixeldata.rowCount()
 
-      val columnCount = dicom.metadata.schema.columnNames.length
+      metadaRowsCount shouldBe 3
+      pixeldataRowsCount shouldBe 3
 
-      columnCount shouldBe 2
+      val tagsValuesMap = Map(("00080018", "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"), ("00080070", "SIEMENS"), ("00080020", "20030315"))
 
-      val tags = Seq("00080018", "00080070", "00080020")
+      dicom.filterByTags(tagsValuesMap)
 
-      dicom.extractTags(tags)
+      val newMetadaRowsCount = dicom.metadata.rowCount()
+      val newPixeldataRowsCount = dicom.pixeldata.rowCount()
 
-      val newColumnCount = dicom.metadata.schema.columnNames.length
+      newMetadaRowsCount shouldBe 1
+      newPixeldataRowsCount shouldBe 1
 
-      newColumnCount shouldBe 5
-
-      val expectedColNames = Seq("id", "metadata", "00080018", "00080070", "00080020")
-
-      val actualColNames = dicom.metadata.schema.columnNames
-
-      actualColNames should contain theSameElementsAs (expectedColNames)
     }
   }
 }
