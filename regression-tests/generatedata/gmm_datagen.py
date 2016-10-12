@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +15,16 @@
 #  limitations under the License.
 #
 
+""" Generates data for gmm model
+    params: n_samples: number of rows
+            centers: number of centroids
+            n_features: number of columns"""
+from sklearn.datasets.samples_generator import make_blobs
 
-# Create a directory for the datasets as the current user
-# Install the datasets as the current user
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
+def gen_data(n_rows, k, features):
+    x,y = make_blobs(n_samples=n_rows, centers=k, n_features=features, random_state=14)
+    for row in x.tolist():
+        print ",".join(map(str,row))
 
-target=/user/$USER
-
-sudo -u hdfs hdfs dfs -mkdir -p $target
-sudo -u hdfs hdfs dfs -mkdir -p $target/sparktk_checkpoint
-sudo -u hdfs hdfs dfs -mkdir -p $target/qa_data
-
-sudo -u hdfs hdfs dfs -chown $USER:$USER $target
-sudo -u hdfs hdfs dfs -chown $USER:$USER $target/sparktk_checkpoint
-sudo -u hdfs hdfs dfs -chown $USER:$USER $target/qa_data
-
-hdfs dfs -put -f $DIR/../datasets/* $target/qa_data
+gen_data(50, 5, 2)
