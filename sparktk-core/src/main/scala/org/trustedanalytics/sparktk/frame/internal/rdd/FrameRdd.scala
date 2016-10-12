@@ -527,29 +527,6 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     })
   }
 
-  /**
-   * Convert FrameRdd into labeled DataFrame with label of type double, and features of type vector
-   */
-  def toLabeledDataFrame(labelColumnName: String, featureColumnNames: List[String]): DataFrame = {
-    val labeledPointRdd = toLabeledPointRDD(labelColumnName, featureColumnNames)
-    val rowRdd: RDD[Row] = labeledPointRdd.map(labeledPoint => new GenericRow(Array[Any](labeledPoint.label, labeledPoint.features)))
-    val schema = StructType(Seq(StructField("label", DoubleType, true), StructField("features", new VectorUDT, true)))
-    new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
-  }
-
-  /**
-   * Convert FrameRdd to DataFrame with features of type vector
-   */
-  def toLabeledDataFrame(featureColumnNames: List[String]): DataFrame = {
-    val vectorRdd: RDD[org.apache.spark.mllib.linalg.Vector] = this.mapRows(row => {
-      val features = row.values(featureColumnNames).map(value => DataTypes.toDouble(value))
-      new MllibDenseVector(features.toArray)
-    })
-    val rowRdd: RDD[Row] = vectorRdd.map(vector => new GenericRow(Array[Any](vector)))
-    val schema = StructType(Seq(StructField("features", new VectorUDT, true)))
-    new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
-  }
-
 }
 
 /**

@@ -15,6 +15,7 @@
 #  limitations under the License.
 #
 
+
 def extract_tags(self, tags):
     """
     Extracts value for each tag from column holding xml string and adds column for each tag to assign value.
@@ -31,35 +32,46 @@ def extract_tags(self, tags):
     Examples
     --------
 
-        <skip>
         >>> dicom_path = "../datasets/dicom_uncompressed"
 
         >>> dicom = tc.dicom.import_dcm(dicom_path)
 
+        >>> dicom.metadata.count()
+        3
+
+        <skip>
         >>> dicom.metadata.inspect(truncate=30)
         [#]  id  metadata
         =======================================
         [0]   0  <?xml version="1.0" encodin...
         [1]   1  <?xml version="1.0" encodin...
         [2]   2  <?xml version="1.0" encodin...
+        </skip>
 
         #Part of xml string looks as below
         <?xml version="1.0" encoding="UTF-8"?>
             <NativeDicomModel xml:space="preserve">
                 <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
                 <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
-                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.12.2.1107.5.2.5.11090.5.0.5823667428974336</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
                 ...
 
         #Extract value for each tag from column holding xml string
         >>> dicom.extract_tags(["00080018", "00080070", "00080030"])
 
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.column_names
+        [u'id', u'metadata', u'00080018', u'00080070', u'00080030']
+
+        <skip>
         >>> dicom.metadata.inspect(truncate=20)
         [#]  id  metadata              00080018              00080070  00080030
         ============================================================================
-        [0]   0  <?xml version="1....  1.3.12.2.1107.5.2...  SIEMENS   085922.859000
-        [1]   1  <?xml version="1....  1.3.12.2.1107.5.2...  SIEMENS   085922.859000
-        [2]   2  <?xml version="1....  1.3.12.2.1107.5.2...  SIEMENS   085922.859000
+        [0]   0  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [1]   1  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [2]   2  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
         </skip>
 
     """
@@ -73,8 +85,8 @@ def extract_tags(self, tags):
     if self._metadata._is_scala:
         def f(scala_dicom):
             scala_dicom.extractTags(self._tc.jutils.convert.to_scala_vector_string(tags))
-        results = self._call_scala(f)
-        return results
+        self._call_scala(f)
+        return
 
     #If metadata is python frame, run below udf
     import xml.etree.ElementTree as ET
