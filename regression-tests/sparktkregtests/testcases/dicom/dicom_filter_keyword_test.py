@@ -121,7 +121,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         self.dicom.filter_by_keywords({ "invalid" : "bla", "another_invalid_col" : "bla" })
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: zero matching records for dicom.filter_by_keyword fails")
+    @unittest.skip("sparktk: filter by keyword not working")
     def test_valid_keyword_zero_results(self):
         """test filter with key-value pair, key exists but no matches"""
         self.dicom.filter_by_keywords({ "SOPInstanceUID" : 2 })
