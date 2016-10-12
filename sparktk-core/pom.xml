@@ -155,6 +155,10 @@
             <artifactId>dcm4che-tool-dcm2xml</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-xml2dcm</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-image</artifactId>
         </dependency>

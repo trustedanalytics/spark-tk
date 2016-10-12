@@ -734,7 +734,12 @@
         <dependency>
           <groupId>org.dcm4che.tool</groupId>
           <artifactId>dcm4che-tool-dcm2xml</artifactId>
-          <version>${dicom.version}</version>
+                <version>${dicom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dcm4che.tool</groupId>
+                <artifactId>dcm4che-tool-xml2dcm</artifactId>
+                <version>${dicom.version}</version>
         </dependency>
         <dependency>
           <groupId>org.dcm4che</groupId>
