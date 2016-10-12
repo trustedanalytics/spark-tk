@@ -103,6 +103,8 @@ object ExportToDcm extends Serializable {
         //Access the metadata column from metadatardd row
         val metadataStr = metadata(1).toString
         //Access the pixeldata column from pixeldataRdd row
+        //Mllib DenseMatrix is column-major, it fills the values column-wise, so matrix looks transposed.
+        //To revert back to original we are transposing it when casting.
         val pixeldataDM: DenseMatrix = pixeldata(1).asInstanceOf[DenseMatrix].transpose
 
         val dcmAttributes = getAttributesFromMetadata(metadataStr)

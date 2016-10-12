@@ -469,6 +469,9 @@ class MatrixCoercion(object):
         When converting from python to scala, function scans the row and converts the ndarray
         to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
         For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
+
+        ndarray stores data as row-major where as mllib densematrix stores data as column-major.
+        To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
         """
         def decorator(row):
             result = []
@@ -476,15 +479,11 @@ class MatrixCoercion(object):
             for i in xrange(len(schema)):
                 if type(schema[i][1]) == dtypes._Matrix:
                     shape = row[i].shape
-                    print "shape=%s" % str(shape)
-                    print "row[i]=%s" % row[i]
-                    a= row[i].flatten()
-
-                    print "a=%s" % a
-
-                    m = DenseMatrix(shape[0], shape[1], a, isTransposed=True)
-                    print "m=%s" % m
-                    result.append(m)
+                    arr=row[i].flatten()
+                    # By default Mllib DenseMatrix constructs column-major matrix.
+                    # Setting isTranposed=True, will construct row-major DenseMatrix
+                    dm = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
+                    result.append(dm)
                 else:
                     result.append(row[i])
             return result
