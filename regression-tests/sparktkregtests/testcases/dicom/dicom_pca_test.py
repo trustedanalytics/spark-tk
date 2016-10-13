@@ -29,27 +29,27 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
     def setUp(self):
         """import dicom data for testing"""
         super(DicomPCATest, self).setUp()
-        dataset = self.get_file("dcm_images")
+        dataset = self.get_file("dicom_uncompressed")
         dicom = self.context.dicom.import_dcm(dataset)
         frame = dicom.pixeldata
         #rename to self.frame after bug fix
-        frame = dicom.pixeldata
+        self.frame = dicom.pixeldata
 
         #temporary fix until the bug is fixed
         #Will be removed after the bug fix
-        pixeldata_df = frame.to_pandas(frame.count())
-        self.frame = self.context.frame.create(
-            [[pixeldata_df['imagematrix'][0]],
-            [pixeldata_df['imagematrix'][1]],
-            [pixeldata_df['imagematrix'][2]]],
-            schema=[("imagematrix", dtypes.matrix)])
+        #pixeldata_df = frame.to_pandas(frame.count())
+        #self.frame = self.context.frame.create(
+        #    [[pixeldata_df['imagematrix'][0]],
+        #    [pixeldata_df['imagematrix'][1]],
+        #    [pixeldata_df['imagematrix'][2]]],
+        #    schema=[("imagematrix", dtypes.matrix)])
 
         #perform svd on the frame to get V matrix
-        self.frame.svd("imagematrix")
+        self.frame.matrix_svd("imagematrix")
 
     def test_PCA(self):
         """Test the output of pca"""
-        self.frame.pca("imagematrix", "V_imagematrix")
+        self.frame.matrix_pca("imagematrix", "V_imagematrix")
 
         results = self.frame.to_pandas(self.frame.count())
 
@@ -68,19 +68,19 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
         """Test behavior for invalid column name"""
         with self.assertRaisesRegexp(
                 Exception, "column ERR was not found"):
-            self.frame.pca("ERR", "V_imagematrix")
+            self.frame.matrix_pca("ERR", "V_imagematrix")
 
     def test_missing_V(self):
         """Test behavior for missing V matrix column name"""
         with self.assertRaisesRegexp(
                 Exception, "takes exactly 3 arguments"):
-            self.frame.pca("imagematrix")
+            self.frame.matrix_pca("imagematrix")
 
     def test_invalid_V_name(self):
         """Test behavior for invalid column name"""
         with self.assertRaisesRegexp(
                 Exception, "column V was not found"):
-            self.frame.pca("imagematrix", "V")
+            self.frame.matrix_pca("imagematrix", "V")
 
 if __name__ == "__main__":
     unittest.main()

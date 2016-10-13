@@ -30,13 +30,13 @@ class DicomCovarianceMatrixTest(sparktk_test.SparkTKTestCase):
     def setUp(self):
         """import dicom data for testing"""
         super(DicomCovarianceMatrixTest, self).setUp()
-        dataset = self.get_file("dcm_images")
+        dataset = self.get_file("dicom_uncompressed")
         dicom = self.context.dicom.import_dcm(dataset)
         self.frame = dicom.pixeldata
        
     def test_covariance_matrix(self):
         """Test the output of dicom_covariance_matrix"""
-        self.frame.dicom_covariance_matrix("imagematrix")
+        self.frame.matrix_covariance_matrix("imagematrix")
 
         results = self.frame.to_pandas(self.frame.count())
 
@@ -54,13 +54,13 @@ class DicomCovarianceMatrixTest(sparktk_test.SparkTKTestCase):
         """Test behavior for invalid column name"""
         with self.assertRaisesRegexp(
                 Exception, "column ERR was not found"):
-            self.frame.dicom_covariance_matrix("ERR")
+            self.frame.matrix_covariance_matrix("ERR")
 
     def test_invalid_param(self):
         """Test behavior for invalid parameter"""
         with self.assertRaisesRegexp(
                 Exception, "takes exactly 2 arguments"):
-            self.frame.svd("imagematrix", True)
+            self.frame.matrix_covariance_matrix("imagematrix", True)
 
 if __name__ == "__main__":
     unittest.main()
