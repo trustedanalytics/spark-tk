@@ -24,21 +24,21 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait BoxCoxTransform extends BaseFrame {
 
-  def boxCox(columnName: String, lambdaValue: Double = 0d): Unit = {
-    execute(BoxCox(columnName, lambdaValue))
+  def boxCox(columnName: String, lambdaValue: Double = 0d, boxCoxColumnName: Option[String] = None): Unit = {
+    execute(BoxCox(columnName, lambdaValue, boxCoxColumnName))
   }
 }
 
-case class BoxCox(columnName: String, lambdaValue: Double) extends FrameTransform {
+case class BoxCox(columnName: String, lambdaValue: Double, boxCoxColumnName: Option[String] = None) extends FrameTransform {
 
   require(columnName != null, "Column name cannot be null")
 
   override def work(state: FrameState): FrameState = {
     // run the operation
-    val boxCoxRdd = BoxCox.boxCox(state, columnName, lambdaValue)
+    val boxCoxRdd = BoxCox.boxCox(state, columnName, lambdaValue, boxCoxColumnName)
 
     // save results
-    val updatedSchema = state.schema.addColumn(columnName + "_lambda_" + lambdaValue.toString, DataTypes.float64)
+    val updatedSchema = state.schema.addColumn(boxCoxColumnName.getOrElse(columnName + "_lambda_" + lambdaValue.toString), DataTypes.float64)
 
     FrameState(boxCoxRdd, updatedSchema)
   }
@@ -49,7 +49,7 @@ object BoxCox extends Serializable {
    * Computes the boxcox transform for each row of the frame
    *
    */
-  def boxCox(frameRdd: FrameRdd, columnName: String, lambdaValue: Double): RDD[Row] = {
+  def boxCox(frameRdd: FrameRdd, columnName: String, lambdaValue: Double, boxCoxColumnName: Option[String] = None): RDD[Row] = {
     frameRdd.mapRows(row => {
       val y = row.doubleValue(columnName)
       val boxCox = computeBoxCoxTransformation(y, lambdaValue)

@@ -16,7 +16,7 @@
 #
 
 
-def box_cox(self, column_name, lambda_value=0.0):
+def box_cox(self, column_name, lambda_value=0.0, box_cox_column_name=None ):
 
     """
 
@@ -67,4 +67,4 @@ def box_cox(self, column_name, lambda_value=0.0):
 
     """
     
-    self._scala.boxCox(column_name, lambda_value)
+    self._scala.boxCox(column_name, lambda_value, self._tc.jutils.convert.to_scala_option(box_cox_column_name))
