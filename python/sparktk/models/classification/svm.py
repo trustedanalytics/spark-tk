@@ -162,6 +162,33 @@ class SvmModel(PropertiesObject):
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
 
+        >>> frame.rename_columns({"predicted_label" : "predicted0_label"})
+
+        >>> restored.predict(frame)
+
+        >>> frame.inspect()
+        [#]  data   label  predicted0_label  predicted_label
+        ====================================================
+        [0]  -48.0  1                     1                1
+        [1]  -75.0  1                     1                1
+        [2]  -63.0  1                     1                1
+        [3]  -57.0  1                     1                1
+        [4]   73.0  0                     0                0
+        [5]  -33.0  1                     1                1
+        [6]  100.0  0                     0                0
+        [7]  -54.0  1                     1                1
+        [8]   78.0  0                     0                0
+        [9]   48.0  0                     0                0
+
+        >>> canonical_path = model.export_to_mar("sandbox/SVM.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
+
+
     """
 
     def __init__(self, tc, scala_model):
@@ -231,5 +258,11 @@ class SvmModel(PropertiesObject):
     def save(self, path):
         """save the trained model to path"""
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """ export the trained model to MAR format for Scoring Engine """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
+
 
 del PropertiesObject

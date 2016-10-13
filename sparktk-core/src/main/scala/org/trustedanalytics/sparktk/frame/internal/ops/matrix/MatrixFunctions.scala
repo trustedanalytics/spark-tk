@@ -13,28 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models
+package org.trustedanalytics.sparktk.frame.internal.ops.matrix
 
-//import scala.concurrent.Future
+import breeze.linalg.DenseMatrix
+import org.apache.spark.mllib.linalg.{ DenseMatrix, Matrix }
+import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrix, Matrices }
+import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM }
 
-trait Model {
-  var data: Array[String]
-}
+object MatrixFunctions {
 
-/**
- * Base interface for a Model loader.
+  /*
+Creates Mllib DenseMatrix from a breeze DenseMatrix
  */
-//trait ModelLoader {
-//
-//  /**
-//   * Called for scoring
-//   */
-//  def score(row: Array[Any]): Array[Any]
-//
-//  def input(): Array[Field]
-//
-//  def output(): Array[Field]
-//
-//  def modelMetadata(): ModelMetaDataArgs
-//}
+  def fromBreeze(breezeDM: BDM[Double]): Matrix = {
+    new DM(breezeDM.rows, breezeDM.cols, breezeDM.data)
+  }
 
+  /*
+  Creates Breeze DenseMatrix from an Mllib DenseMatrix
+   */
+  def asBreeze(mllibDM: DM): BDM[Double] = {
+    new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values, 0, mllibDM.numCols, true)
+  }
+}
