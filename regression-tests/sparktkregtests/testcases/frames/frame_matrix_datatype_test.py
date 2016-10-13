@@ -19,7 +19,7 @@
 
 import unittest
 import numpy
-from itertools import ifilter
+from itertools import ifilter, imap
 from sparktkregtests.lib import sparktk_test
 from sparktk.dtypes import matrix, vector
 
@@ -106,10 +106,15 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         # Get number of rows in each matrix from shape of the underlying ndarray
         frame.filter(lambda row: row["C1"].shape[0] == 2)
         obtained_result = frame.count()
+        obtained_result_matrix = frame.take(10, columns='C1')
 
         # Get expected result by converting the actual dataset to ndarray and testing the same condition
-        expected_result = len(list(ifilter(lambda i: numpy.array(i[1]).shape[0] == 2, self.dataset)))
+        filtered_result_matrix = list(ifilter(lambda i: numpy.array(i[1]).shape[0] == 2, self.dataset))
+        expected_result_matrix = list(imap(lambda row: [numpy.array(row[1])], filtered_result_matrix))
+        expected_result = len(expected_result_matrix)
+
         self.assertEqual(obtained_result, expected_result)
+        numpy.testing.assert_array_equal(obtained_result_matrix, expected_result_matrix)
 
     def test_convert_matrix_col_to_vector(self):
         """ Convert a matrix column to vector using add_columns"""
