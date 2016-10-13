@@ -43,7 +43,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
-                                                             max_iter=300)
+                                                             max_iterations=300)
  
         # change the column names
         self.frame_test.rename_columns(
@@ -86,17 +86,17 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
-                                                             max_iter=35)
+                                                             max_iterations=35)
         kmodel.predict(self.frame_test)
         self._validate(kmodel, self.frame_test)
 
-    def test_epsilon_assign(self):
-        """Tests kmeans cluster algorithm with an arbitrary epsilon. """
+    def test_convergence_tolerance_assign(self):
+        """Tests kmeans cluster with an arbitrary convergence tol. """
         kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
-                                                             epsilon=.000000000001)
+                                                             convergence_tol=.000000000001)
         kmodel.predict(self.frame_test)
         self._validate(kmodel, self.frame_test)
 
@@ -119,7 +119,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=5,
-                                                        max_iter=-3)
+                                                        max_iterations=-3)
 
     def test_max_iterations_bad_type(self):
         """Check error on invalid number of iterations."""
@@ -128,7 +128,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=5,
-                                                        max_iter=[])
+                                                        max_iterations=[])
 
     def test_k_negative(self):
         """Check error on negative number of clusters."""
@@ -146,23 +146,23 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=[])
 
-    def test_epsilon_negative(self):
-        """Check error on negative epsilon value."""
-        with self.assertRaisesRegexp(Exception, "epsilon must be a positive value"):
+    def test_convergence_tol_negative(self):
+        """Check error on negative convergence_tol value."""
+        with self.assertRaisesRegexp(Exception, "convergence tolerance must be a positive value"):
             self.context.models.clustering.kmeans.train(self.frame_train,
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=5,
-                                                        epsilon=-0.05)
+                                                        convergence_tol=-0.05)
 
-    def test_epsilon_bad_type(self):
-        """Check error on bad epsilon type."""
+    def test_convergence_tol_bad_type(self):
+        """Check error on bad convergence_tol type."""
         with self.assertRaisesRegexp(Exception, "does not exist"):
             self.context.models.clustering.kmeans.train(self.frame_train,
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=5,
-                                                        epsilon=[])
+                                                        convergence_tol=[])
 
     def test_invalid_columns_predict(self):
         """Check error with invalid columns"""
