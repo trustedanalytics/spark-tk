@@ -111,7 +111,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         model = self.context.models.collaborative_filtering \
             .collaborative_filtering \
             .train(self.frame, "user_int", "item_int", "rating", max_steps=15)
-        scores = model.create_predict_frame(
+        scores = model.predict(
             self.old_frame, "user_int", "item_int")
 
         pd_scores = scores.to_pandas(scores.count())
@@ -264,7 +264,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
             model = self.context.models.collaborative_filtering \
                 .collaborative_filtering.train(
                     self.frame, "user_int", "item_int", "rating")
-            model.create_predict_frame(
+            model.predict(
                 self.old_frame, "invalid_source", "item_int")
 
     def test_collaborative_filtering_predict_frame_invalid_item(self):
@@ -275,7 +275,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
             model = self.context.models.collaborative_filtering \
                 .collaborative_filtering.train(
                     self.frame, "user_int", "item_int", "rating")
-            model.create_predict_frame(
+            model.predict(
                 self.old_frame, "user_int", "invalid_item")
 
     def test_collaborative_filtering_predict_frame_invalid_output_user(self):
@@ -285,7 +285,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
             model = self.context.models.collaborative_filtering \
                 .collaborative_filtering.train(
                     self.frame, "user_int", "item_int", "rating")
-            model.create_predict_frame(
+            model.predict(
                 self.old_frame, "user_int",
                 "item_int", output_user_column_name="")
 
@@ -296,7 +296,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
             model = self.context.models.collaborative_filtering \
                 .collaborative_filtering.train(
                     self.frame, "user_int", "item_int", "rating")
-            model.create_predict_frame(
+            model.predict(
                 self.old_frame, "user_int",
                 "item_int", output_product_column_name="")
 
@@ -307,7 +307,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
             model = self.context.models.collaborative_filtering \
                 .collaborative_filtering.train(
                     self.frame, "user_int", "item_int", "rating")
-            model.create_predict_frame(
+            model.predict(
                 self.old_frame, "user_int",
                 "item_int", output_rating_column_name="")
 
