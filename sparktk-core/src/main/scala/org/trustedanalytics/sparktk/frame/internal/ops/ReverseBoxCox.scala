@@ -23,13 +23,26 @@ import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, Fram
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
 trait ReverseBoxCoxTransform extends BaseFrame {
-
-  def reverseBoxCox(columnName: String, lambdaValue: Double = 0d): Unit = {
-    execute(ReverseBoxCox(columnName, lambdaValue))
+  /**
+   * Computes the reverse box-cox transformation for a column in the frame
+   * @param columnName Name of the column to perform the reverse box-cox transformation on
+   * @param lambdaValue Lambda power parameter
+   * @param reverseBoxCoxColumnName Optional parameter specifying the name of column storing reverse box-cox computed value
+   * @return A new column added to existing frame storing Reverse Box-cox value
+   * Calculate the reverse box-cox transformation for each row in a frame using the given lambda value or default 0.
+   *
+   * The reverse box-cox transformation is computed by the following formula, where wt is a single entry box-cox value(row):
+   *
+   * yt = exp(wt); if lambda=0,
+   * yt = (lambda * wt + 1)^(1/lambda) ; else
+   *
+   */
+  def reverseBoxCox(columnName: String, lambdaValue: Double = 0d, reverseBoxCoxColumnName: Option[String] = None): Unit = {
+    execute(ReverseBoxCox(columnName, lambdaValue, reverseBoxCoxColumnName))
   }
 }
 
-case class ReverseBoxCox(columnName: String, lambdaValue: Double) extends FrameTransform {
+case class ReverseBoxCox(columnName: String, lambdaValue: Double, reverseBoxCoxColumnName: Option[String] = None) extends FrameTransform {
 
   require(columnName != null, "Column name cannot be null")
 
@@ -38,7 +51,7 @@ case class ReverseBoxCox(columnName: String, lambdaValue: Double) extends FrameT
     val reverseBoxCoxRdd = ReverseBoxCox.reverseBoxCox(state, columnName, lambdaValue)
 
     // save results
-    val updatedSchema = state.schema.addColumn(columnName + "_reverse_lambda_" + lambdaValue.toString, DataTypes.float64)
+    val updatedSchema = state.schema.addColumn(reverseBoxCoxColumnName.getOrElse(columnName + "_reverse_lambda_" + lambdaValue.toString), DataTypes.float64)
 
     FrameState(reverseBoxCoxRdd, updatedSchema)
   }
@@ -46,8 +59,11 @@ case class ReverseBoxCox(columnName: String, lambdaValue: Double) extends FrameT
 
 object ReverseBoxCox extends Serializable {
   /**
-   * Computes the reverse boxcox transform for each row of the frame
-   *
+   * Computes the reverse Box-cox for a column in the frame
+   * @param frameRdd Frame storing the data
+   * @param columnName Name of the column to perform reverse Box-cox transform on
+   * @param lambdaValue Lambda power parameter
+   * @return Return a RDD[Row] with a reverse box-cox transform added to existing data
    */
   def reverseBoxCox(frameRdd: FrameRdd, columnName: String, lambdaValue: Double): RDD[Row] = {
     frameRdd.mapRows(row => {
@@ -57,6 +73,12 @@ object ReverseBoxCox extends Serializable {
     })
   }
 
+  /**
+   * Compute the reverse box-cox transformation
+   * @param boxCox The value whose reverse box-cox transformation is to be computed
+   * @param lambdaValue Lambda power parameter
+   * @return Reverse box-cox value
+   */
   def computeReverseBoxCoxTransformation(boxCox: Double, lambdaValue: Double): Double = {
     val reverseBoxCox: Double = if (lambdaValue == 0d) math.exp(boxCox) else math.pow(lambdaValue * boxCox + 1, 1 / lambdaValue)
     reverseBoxCox
