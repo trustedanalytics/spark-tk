@@ -57,6 +57,11 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.trustedanalytics</groupId>-->
+                <!--<artifactId>atk-maven-plugin</artifactId>-->
+            <!--</plugin>-->
+            
                       
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -130,6 +135,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>model-archive-format</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>model-archive-interfaces</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
         </dependency>
@@ -140,6 +153,10 @@
         <dependency>
             <groupId>org.dcm4che.tool</groupId>
             <artifactId>dcm4che-tool-dcm2xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-xml2dcm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>
@@ -268,12 +285,24 @@
             <artifactId>mahout-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-network-shuffle_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-math</artifactId>
         </dependency>
         <dependency>
             <groupId>com.databricks</groupId>
-            <artifactId>spark-csv_2.10</artifactId>
+            <artifactId>spark-csv_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cloudera.sparkts</groupId>
