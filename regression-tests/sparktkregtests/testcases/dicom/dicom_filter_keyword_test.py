@@ -121,11 +121,15 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         self.dicom.filter_by_keywords({ "invalid" : "bla", "another_invalid_col" : "bla" })
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: filter by keyword not working")
     def test_valid_keyword_zero_results(self):
         """test filter with key-value pair, key exists but no matches"""
-        self.dicom.filter_by_keywords({ "SOPInstanceUID" : 2 })
+        self.dicom.filter_by_keywords({ "SOPInstanceUID" : "2" })
         self.assertEqual(0, self.dicom.metadata.count())
+
+    def test_invalid_value_type(self):
+        """test filter with key-value pair, key exists but value is not type of str"""
+        with self.assertRaisesRegexp(TypeError, "both keyword and value should be of <type 'str'>"):
+            self.dicom.filter_by_keywords({"SOPInstanceUID" : 2})
 
     def test_filter_invalid_valid_col_mix(self):
         """test filter with mix of valid and invalid keys"""
