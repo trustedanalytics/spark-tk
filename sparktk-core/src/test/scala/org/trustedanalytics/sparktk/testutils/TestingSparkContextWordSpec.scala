@@ -34,4 +34,8 @@ trait TestingSparkContextWordSpec extends WordSpec with BeforeAndAfterAll {
     sparkContext = null
   }
 
+  /** assertion that two doubles are almost equal */
+  def assertAlmostEqual(x: Double, y: Double, tolerance: Double = 1e-6): Unit = {
+    assert(Math.abs(x - y) < tolerance, s"${x} should equal ${y}+-${tolerance}")
+  }
 }
