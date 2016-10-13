@@ -41,7 +41,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
         """test filter with one unique key"""
         # get the pandas frame for ease of access
         metadata = self.dicom.metadata.to_pandas()
-        
+
         # grab a random row and extract the SOPInstanceUID from that record
         random_row_index = random.randint(0, self.dicom.metadata.count() - 1)
         random_row = metadata["metadata"][random_row_index]
@@ -186,8 +186,7 @@ class DicomFilterKeywordsTest(sparktk_test.SparkTKTestCase):
                     if ascii_xml not in matching_records:
                         matching_records.append(ascii_xml)
 
-        return matching_records
-                
+        return matching_records            
 
 
 if __name__ == "__main__":
