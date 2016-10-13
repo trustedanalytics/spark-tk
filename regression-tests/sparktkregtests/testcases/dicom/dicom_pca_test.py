@@ -33,16 +33,16 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
         dicom = self.context.dicom.import_dcm(dataset)
         frame = dicom.pixeldata
         #rename to self.frame after bug fix
-        self.frame = dicom.pixeldata
+        frame = dicom.pixeldata
 
         #temporary fix until the bug is fixed
         #Will be removed after the bug fix
-        #pixeldata_df = frame.to_pandas(frame.count())
-        #self.frame = self.context.frame.create(
-        #    [[pixeldata_df['imagematrix'][0]],
-        #    [pixeldata_df['imagematrix'][1]],
-        #    [pixeldata_df['imagematrix'][2]]],
-        #    schema=[("imagematrix", dtypes.matrix)])
+        pixeldata_df = frame.to_pandas(frame.count())
+        self.frame = self.context.frame.create(
+            [[pixeldata_df['imagematrix'][0]],
+            [pixeldata_df['imagematrix'][1]],
+            [pixeldata_df['imagematrix'][2]]],
+            schema=[("imagematrix", dtypes.matrix)])
 
         #perform svd on the frame to get V matrix
         self.frame.matrix_svd("imagematrix")

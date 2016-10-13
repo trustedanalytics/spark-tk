@@ -32,16 +32,16 @@ class SVDDicomTest(sparktk_test.SparkTKTestCase):
         dataset = self.get_file("dicom_uncompressed")
         dicom = self.context.dicom.import_dcm(dataset)
         #rename to self.frame after bug fix
-        self.frame = dicom.pixeldata
+        frame = dicom.pixeldata
 
         #temporary fix until the bug is fixed
         #Will be removed after the bug fix
-        #pixeldata_df = frame.to_pandas(frame.count())
-        #self.frame = self.context.frame.create(
-        #    [[pixeldata_df['imagematrix'][0]],
-        #    [pixeldata_df['imagematrix'][1]],
-        #    [pixeldata_df['imagematrix'][2]]],
-        #    schema=[("imagematrix", dtypes.matrix)])
+        pixeldata_df = frame.to_pandas(frame.count())
+        self.frame = self.context.frame.create(
+            [[pixeldata_df['imagematrix'][0]],
+            [pixeldata_df['imagematrix'][1]],
+            [pixeldata_df['imagematrix'][2]]],
+            schema=[("imagematrix", dtypes.matrix)])
        
     def test_svd(self):
         """Test the output of svd"""
