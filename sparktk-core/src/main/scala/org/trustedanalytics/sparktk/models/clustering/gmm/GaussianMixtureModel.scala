@@ -155,7 +155,7 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
    *                           we predict the clusters over columns the GMMModel was trained on. The columns are
    *                           scaled using the same values used when training the model
    */
-  def predict(frame: Frame, observationColumns: Option[Seq[String]] = None): Unit = {
+  def predict(frame: Frame, observationColumns: Option[Seq[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
       require(observationColumns.get.length == observationColumns.get.length, "Number of columns for train and predict should be same")
@@ -175,7 +175,8 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
       val cluster = value._2._1
       Row.merge(row, cluster)
     }
-    frame.init(resultRdd, frame.schema.copy(columns = frame.schema.columns ++ Seq(Column("predicted_cluster", DataTypes.int32))))
+    val predictSchema = frame.schema.addColumn(Column("predicted_cluster", DataTypes.int32))
+    new Frame(resultRdd, predictSchema)
   }
 
   /**

@@ -233,7 +233,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    *                           Default is to predict the clusters over columns the KMeans model was trained on.
    *                           The columns are scaled using the same values used when training the model
    */
-  def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
+  def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
       require(columns.length == observationColumns.get.length, s"Number of columns for train and predict should be same (train columns=$columns, observation columns=$observationColumns)")
@@ -245,8 +245,11 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
       val prediction = sparkModel.predict(point)
       Row.apply(prediction)
     }
+    val predictSchema = frame.schema.addColumn(Column(frame.schema.getNewColumnName("cluster"), DataTypes.int32))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
 
-    frame.addColumns(predictMapper, Seq(Column(frame.schema.getNewColumnName("cluster"), DataTypes.int32)))
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -294,7 +297,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    * @return metadata about the model
    */
   def modelMetadata(): ModelMetaData = {
-    //todo provide a for the user to populate the custom metadata fields
+    //todo provide an API for the user to populate the custom metadata fields
     new ModelMetaData("KMeans Model", classOf[KMeansModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 

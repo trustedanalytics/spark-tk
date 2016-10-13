@@ -230,7 +230,7 @@ case class PcaModel private[pca] (columns: Seq[String],
               columns: Option[List[String]] = None,
               meanCentered: Boolean = true,
               k: Option[Int] = None,
-              tSquaredIndex: Boolean = false): Unit = {
+              tSquaredIndex: Boolean = false): Frame = {
 
     if (meanCentered) {
       require(this.meanCentered, "Cannot mean center the predict frame if the train frame was not mean centered.")
@@ -256,7 +256,7 @@ case class PcaModel private[pca] (columns: Seq[String],
     val componentRows = components.rows.map(row => Row.fromSeq(row.vector.toArray.toSeq))
     val componentFrame = new FrameRdd(FrameSchema(componentColumns), componentRows)
     val resultFrameRdd = frameRdd.zipFrameRdd(componentFrame)
-    frame.init(resultFrameRdd.rdd, resultFrameRdd.schema)
+    new Frame(resultFrameRdd.rdd, resultFrameRdd.schema)
   }
 }
 

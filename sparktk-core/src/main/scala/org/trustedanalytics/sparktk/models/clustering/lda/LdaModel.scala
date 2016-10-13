@@ -282,7 +282,7 @@ case class LdaModel private[lda] (documentColumnName: String,
    * @return metadata about the model
    */
   def modelMetadata(): ModelMetaData = {
-    //todo provide a for the user to populate the custom metadata fields
+    //todo provide an API for the user to populate the custom metadata fields
     new ModelMetaData("Lda Model", classOf[LdaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
