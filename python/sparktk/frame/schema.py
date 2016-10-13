@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-from sparktk.dtypes import dtypes
+from sparktk.dtypes import dtypes, matrix
 
 def jvm_scala_schema(sc):
     return sc._jvm.org.trustedanalytics.sparktk.frame.SchemaHelper
@@ -59,6 +59,9 @@ def validate(python_schema):
         if not isinstance(item[0], basestring):
             raise ValueError("first entry in schema tuple should be a string, received type %s: %s" %
                              (type(item[0]), str(item[0])))
+        if len(item) != 2:
+            raise ValueError("schema tuples should have 2 items (column name and type), but found tuple with length: %s" %
+                             len(item))
         unique_names.add(item[0])
     if len(unique_names) != len(python_schema):
         names = map(lambda x: x[0], python_schema)
