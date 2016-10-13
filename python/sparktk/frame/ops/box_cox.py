@@ -16,7 +16,7 @@
 #
 
 
-def box_cox(self, column_name, lambda_value=0.0):
+def box_cox(self, column_name, lambda_value=0.0, box_cox_column_name=None):
 
     """
 
@@ -27,6 +27,7 @@ def box_cox(self, column_name, lambda_value=0.0):
 
     :param column_name: Name of the column to perform the transformation on
     :param lambda_value: Lambda power parameter. Default is 0.0
+    :param box_cox_column_name: Optional column name for the box_cox value
     :return: (Frame) returns a frame with a new column storing the box-cox transformed value
 
     Calculate the box-cox transformation for each row in column 'column_name' of a frame using the lambda_value.
@@ -67,4 +68,4 @@ def box_cox(self, column_name, lambda_value=0.0):
 
     """
     
-    self._scala.boxCox(column_name, lambda_value)
+    self._scala.boxCox(column_name, lambda_value, self._tc.jutils.convert.to_scala_option(box_cox_column_name))
