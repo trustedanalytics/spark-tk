@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame.internal.ops.join
 
 import org.trustedanalytics.sparktk.frame.{ SchemaHelper, DataTypes, Frame }
@@ -7,7 +22,7 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 trait JoinInnerSummarization extends BaseFrame {
 
   /**
-   * JoinInner performs left join operation on one or two frames, creating a new frame.
+   * JoinInner performs inner join operation on one or two frames, creating a new frame.
    *
    * @param right        Another frame to join with.
    * @param leftOn       Names of the columns in the left frame used to match up the two frames.

@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.models.clustering.gmm
 
 import org.apache.spark.sql.Row
@@ -53,7 +68,7 @@ object GaussianMixtureModel extends TkSaveableObject {
     val model = sparkGaussianMixture.run(vectorRDD)
     trainFrameRdd.unpersist()
 
-    val gaussians = model.gaussians.map(i => List("mu:" + i.mu.toString, "sigma:" + i.sigma.toListOfList())).toList
+    val gaussians = model.gaussians.map(g => Gaussian(g.mu.toArray, g.sigma.toListOfList()))
 
     GaussianMixtureModel(observationColumns,
       columnScalings,
@@ -95,13 +110,20 @@ object GaussianMixtureModel extends TkSaveableObject {
 
 }
 
+/**
+ * Holds mu and sigma values in the trained GMM model
+ * @param mu The mean vector of the distribution
+ * @param sigma The covariance matrix of the distribution
+ */
+case class Gaussian(mu: Seq[Double], sigma: Seq[Seq[Double]])
+
 case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
                                               columnScalings: Seq[Double],
                                               k: Int = 2,
                                               maxIterations: Int = 100,
                                               convergenceTol: Double = 0.01,
                                               seed: Long = scala.util.Random.nextLong(),
-                                              gaussians: List[List[String]],
+                                              gaussians: Seq[Gaussian],
                                               sparkModel: SparkGaussianMixtureModel) extends Serializable {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
@@ -170,4 +192,4 @@ case class GaussianMixtureModelTkMetaData(observationColumns: Seq[String],
                                           maxIterations: Int,
                                           convergenceTol: Double,
                                           seed: Long,
-                                          gaussians: List[List[String]]) extends Serializable
+                                          gaussians: Seq[Gaussian]) extends Serializable

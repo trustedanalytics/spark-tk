@@ -1,27 +1,50 @@
-# spark-tk regression tests
-
+# spark-tk library regression tests
 
 # Setup and run regression tests out of source code
 
-1. First build the source code, this requires maven to be installed. Run
-   `mvn install` at the top level of this repo.
-2. Run `./run_tests.sh` in this folder
-NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS
+Prerequisites:
+- The maven build tool must be installed and configured - https://maven.apache.org/install.html
+- Python 2.7 must be installed - https://www.python.org/downloads/
+- The Python packages numpy, pytest, scipy, pandas, and statsmodels must be installed - `pip2.7 install numpy scipy pandas statsmodels pytest`
+- A Cloudera Distribution of Hadoop (CDH) installation must be set up - http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/CDH5-Installation-Guide.html
+
+Note: the following assumes development is being performed on a controller node of the CDH cluster (i.e., access to YARN and HDFS is available)
 
 
-# Developers
+1. First build and install the source code at the top level of this git repository.
 
-There are two environment variables that need to be set; `SPARKTK_HOME` and
-`PYTHONPATH`. It is recommended to set them in your shell rc file (.bashrc for
-most users).
+   ```shell
+   mvn install -DskipTests -Dlicense.skip=true
+   ```
+   
+2. Set the environment variables necessary for the spark-tk library to be used. These environment variables tell the spark-tk library where to find
+   pyspark, and the spark-tk library jar files. The python path must be set to find the spark-tk python library, the spark-tk regression suite library, CDH's python installation
+   and CDH's pyspark installation. It is suggested you add these to your .bashrc file. To set the variables run 
+   
+   ```
+    export SPARKTK_HOME=<PATH TO GIT REPOSITORY>/sparktk-core/target
+    export PYTHONPATH=<PATH TO GIT REPOSITORY>/regression-tests:<PATH TO GIT REPOSITORY>/python:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark/:/opt/cloudera/parcels/CDH/lib/spark/python/:$PYTHONPATH
+    ```
+    
+3. Install the datasets into HDFS by running the `install_datasets.sh` script in the `regression-tests/automation folder`. This cleans and creates a folder for regression tests
+   to place data, and then puts the datasets the regression suite uses into HDFS at this location. This command requires sudo permissions to HDFS. To run this use the following command in this folder
+   
+   ```
+   ./automation/install_datasets.sh
+   ```
+   
+    NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS FOLDER
+4. (Optional) Install the GraphFrames library to use the graph functionality. This is only necessary if you want to run the graph regressions or leverage the graph functionality.
+   To do this you download the GraphFrames library and add the python library to your python path (again, we suggest you extend the python path in your bashrc). To do this
+   
+   ```
+   wget -nv --no-check-certificate http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.6/graphframes-0.1.0-spark1.6.jar -O graphframes.zip
+    unzip graphframes.zip
+    export PYTHONPATH=$PWD/graphframes/:$PYTHONPATH
+    ```
+5. To run the regression tests, you can either enter find the tests under the `sparktkregtests/testcases` folders, or you can run the following command to run all regression tests.
 
-You also need to download the latest graphframes library, and add it to your `PYTHONPATH`
+   ```
+   py.test .
+   ```
 
-`SPARKTK_HOME` needs to be set to `<PATH TO SPARK-TK>/sparktk-core/target`
-
-`PYTHONPATH` needs to be set with both pyspark and the spark-tk regression suite libraries
-to `<PATH TO SPARK-TK>/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/:<path to graphframes>:PYTHONPATH`
-
-In addition you need to make sure your datasets are up to date, to do this you
-run the `install_datasets.sh` file out of the automation folder.
-NOTE: THIS WILL DELETE ALL EXISTING DATASETS AND RE-ADD THE CONTENTS OF DATASETS

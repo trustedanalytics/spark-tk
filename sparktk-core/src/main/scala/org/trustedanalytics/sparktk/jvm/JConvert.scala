@@ -1,8 +1,25 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.jvm
 
-import java.util.{ List => JList, Map => JMap }
+import java.util
+import java.util.{ List => JList, Map => JMap, ArrayList => JArrayList }
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
+import org.apache.spark.mllib.linalg.DenseMatrix
 import org.joda.time.{ DateTimeZone, DateTime }
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
 import scala.collection.JavaConverters._
@@ -49,9 +66,24 @@ object JConvert extends Serializable {
 
   def scalaVectorToPython[T](vector: Vector[T]): JList[T] = vector.asJava
 
+  def scalaMatrixToPython(matrix: DenseMatrix): JList[JList[Double]] = {
+    val (numRows, numCols) = (matrix.numRows, matrix.numCols)
+    val result = new JArrayList[JArrayList[Double]]()
+    for (i <- 0 until numRows) {
+      val r = new JArrayList[Double]()
+      for (j <- 0 until numCols) r.add(matrix(i, j))
+      result.add(r)
+    }
+    result.asInstanceOf[JList[JList[Double]]]
+  }
+
   def toScalaTuple2[T](a: T, b: T): (T, T) = (a, b)
 
   def toScalaMap[K, V](jm: java.util.Map[K, V]): Map[K, V] = SparkAliases.PythonUtils.toScalaMap(jm)
+
+  def combineScalaMap[K, V](seq: Seq[Map[K, V]]): Map[K, V] = {
+    seq.reduce(_ ++ _)
+  }
 
   //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
   //    val columns = pythonSchema.asScala.map { item =>

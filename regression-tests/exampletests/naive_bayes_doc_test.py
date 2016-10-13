@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ test cases for the naive bayes algorithm documentation script
     usage: python2.7 naive_bayes_doc_test.py
 """
@@ -11,9 +28,9 @@ from sparktk import TkContext
 class ClassifierTest(unittest.TestCase):
 
     def test_model_class_doc(self):
-        """Generate a naive bayes dataset, use sparktk to train and verify"""
+        """Generate a naive bayes dataset, use sparktk to train a model and verify"""
         # Naive bayes is a machine learning algorithm
-        # We can use it to classify some item into a group probabilistically
+        # We can use it to classify some item with properties into a group probabilistically
         # The general work flow is to generate a dataset
         # then we calculate the coefficient table and probabilities
         # Finally we build a frame of the data and create a naive bayes model

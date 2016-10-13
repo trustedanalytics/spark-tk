@@ -1,7 +1,29 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
+from sparktk.models.regression.linear_regression_test_metrics import LinearRegressionTestMetrics
+from sparktk import TkContext
 
+
+
+__all__ = ["train", "load", "LinearRegressionModel"]
 
 def train(frame,
           value_column,
@@ -13,7 +35,7 @@ def train(frame,
           standardization=True,
           tolerance=1E-6):
     """
-    Creates a PcaModel by training on the given frame
+    Creates a LinearRegressionModel by training on the given frame
 
     Parameters
     ----------
@@ -29,6 +51,8 @@ def train(frame,
     :param tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
     :return: (LinearRegressionModel) A trained linear regression model
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
@@ -48,6 +72,11 @@ def train(frame,
                                    tolerance)
     return LinearRegressionModel(tc, scala_model)
 
+
+def load(path, tc=TkContext.implicit):
+    """load LinearRegressionModel from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, LinearRegressionModel)
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
@@ -80,7 +109,7 @@ class LinearRegressionModel(PropertiesObject):
         [8]   8   18.5
         [9]   9   23.5
 
-        >>> model = tc.models.regression.linear_regression_model.train(frame,'y',['x1'])
+        >>> model = tc.models.regression.linear_regression.train(frame,'y',['x1'])
         <progress>
 
         >>> model
@@ -94,7 +123,17 @@ class LinearRegressionModel(PropertiesObject):
         r2                      = 0.987374330661
         root_mean_squared_error = 0.793786476136
         value_column            = y
-        weights                 = WrappedArray(2.4439393939393925)
+        weights                 = [2.4439393939393925]
+
+        >>> linear_regression_test_return = model.test(frame, 'y')
+        <progress>
+
+        >>> linear_regression_test_return
+        explained_variance      = 49.2759280303
+        mean_absolute_error     = 0.529939393939
+        mean_squared_error      = 0.630096969697
+        r2                      = 0.987374330661
+        root_mean_squared_error = 0.793786476136
 
         >>> predicted_frame = model.predict(frame, ["x1"])
         <progress>
@@ -112,6 +151,22 @@ class LinearRegressionModel(PropertiesObject):
         [7]  7.0  17.15     17.0748484848
         [8]  8.0   18.5     19.5187878788
         [9]  9.0   23.5     21.9627272727
+
+        >>> model.save("sandbox/linear_regression_model")
+
+        >>> restored = tc.load("sandbox/linear_regression_model")
+
+        >>> restored.value_column == model.value_column
+        True
+
+        >>> restored.intercept == model.intercept
+        True
+
+        >>> set(restored.observation_columns) == set(model.observation_columns)
+        True
+
+        >>> restored.test(frame, 'y').r2
+        0.987374330660537
 
         """
 
@@ -132,7 +187,7 @@ class LinearRegressionModel(PropertiesObject):
     @property
     def observation_columns(self):
         """List of column(s) containing the observations."""
-        return self._tc.jutils.convert.from_scala_vector(self._scala.observationColumnsTrain())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnsTrain())
 
     @property
     def intercept(self):
@@ -142,7 +197,7 @@ class LinearRegressionModel(PropertiesObject):
     @property
     def weights(self):
         """Weights of the trained model"""
-        return self._scala.weights()
+        return self._tc.jutils.convert.from_scala_seq(self._scala.weights())
 
     @property
     def explained_variance(self):
@@ -189,6 +244,18 @@ class LinearRegressionModel(PropertiesObject):
         """
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
+
+    def test(self, frame, value_column, observation_columns=None):
+        """
+        Test the frame given the trained model
+
+        :param frame: (Frame) The frame to predict on
+        :param value_column: (String) Column name containing the value for each observation
+        :param observation_columns: Optional(List[str]) List of column(s) containing the observations
+        :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test
+        """
+        obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
+        return LinearRegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
 
     def save(self, path):
         """

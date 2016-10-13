@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame
 
 import java.util.{ ArrayList => JArrayList }
@@ -12,26 +27,6 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import scala.reflect.runtime.universe._
 
 /**
- * String Utility methods
- */
-object StringUtils {
-
-  /**
-   * Check if the supplied string is alpha numeric with underscores (used for column names, etc)
-   */
-  def isAlphanumericUnderscore(str: String): Boolean = {
-    for (c <- str.iterator) {
-      // Not sure if this is great but it is probably faster than regex
-      // http://stackoverflow.com/questions/12831719/fastest-way-to-check-a-string-is-alphanumeric-in-java
-      if (c < 0x30 || (c >= 0x3a && c <= 0x40) || (c > 0x5a && c < 0x5f) || (c > 0x5f && c <= 0x60) || c > 0x7a) {
-        return false
-      }
-    }
-    true
-  }
-}
-
-/**
  * Column - this is a nicer wrapper for columns than just tuples
  *
  * @param name the column name
@@ -41,7 +36,7 @@ case class Column(name: String, dataType: DataType) {
   require(name != null, "column name is required")
   require(dataType != null, "column data type is required")
   require(name != "", "column name can't be empty")
-  require(StringUtils.isAlphanumericUnderscore(name), "column name must be alpha-numeric with underscores")
+  require(Column.isValidColumnName(name), "column name must be alpha-numeric with valid symbols")
 }
 
 object Column {
@@ -56,7 +51,7 @@ object Column {
     require(name != null, "column name is required")
     require(dtype != null, "column data type is required")
     require(name != "", "column name can't be empty")
-    require(StringUtils.isAlphanumericUnderscore(name), "column name must be alpha-numeric with underscores")
+    require(Column.isValidColumnName(name), "column name must be alpha-numeric with valid symbols")
 
     Column(name,
       dtype match {
@@ -66,6 +61,20 @@ object Column {
         case t if t <:< definitions.DoubleTpe => DataTypes.float64
         case _ => DataTypes.string
       })
+  }
+
+  /**
+   * Check if the column name is valid
+   *
+   * @param str Column name
+   * @return Boolean indicating if the column name was valid
+   */
+  def isValidColumnName(str: String): Boolean = {
+    for (c <- str.iterator) {
+      if (c <= 0x20)
+        return false
+    }
+    true
   }
 }
 
@@ -388,7 +397,7 @@ object SchemaHelper {
    * @param schema List of schema to be merged
    * @return true if schemas can be merged, false otherwise
    */
-  def isMergeable(schema: Schema*): Boolean = {
+  def validateIsMergeable(schema: Schema*): Boolean = {
     def merge(schema_l: Schema, schema_r: Schema): Schema = {
       require(schema_l.columnNames.intersect(schema_r.columnNames).isEmpty, "Schemas have conflicting column names." +
         s" Please rename before merging. Left Schema: ${schema_l.columnNamesAsString} Right Schema: ${schema_r.columnNamesAsString}")

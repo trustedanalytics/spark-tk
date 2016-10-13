@@ -25,6 +25,22 @@
         <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <excludes combine.children="append">
+
+                        <exclude>metastore_db/</exclude>
+                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientDescentWithFrequency.scala</exclude>
+                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientWithFrequency.scala</exclude>
+                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/LBFGSWithFrequency.scala</exclude>
+                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/OptimizerWithFrequency.scala</exclude>
+                        <exclude>src/main/scala/org/apache/spark/mllib/regression/org/trustedanalytics/sparktk/GeneralizedLinearAlgorithmWithFrequency.scala</exclude>
+                        <exclude>src/main/scala/org/apache/spark/mllib/utils/org/trustedanalytics/sparktk/DataValidatorsWithFrequency.scala</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
             </plugin>
@@ -32,10 +48,7 @@
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.scoverage</groupId>
-                <artifactId>maven-scoverage-plugin</artifactId>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -44,11 +57,7 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.trustedanalytics</groupId>
-                <artifactId>atk-maven-plugin</artifactId>
-            </plugin>
-            
+                      
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -85,17 +94,85 @@
                             </execution>
                         </executions>
                     </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.outputDirectory}/maven.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <!-- Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)",osgi.extender;filter:="(osgi.extender=osgi.serviceloader.processor)",osgi.serviceloader;filter:="(osgi.serviceloader=*)";cardinality:=multiple</Require-Capability>
+                        <Provide-Capability>osgi.serviceloader;osgi.serviceloader=javax.imageio.spi.ImageReaderSpi</Provide-Capability-->
+                        <SPI-Consumer>*</SPI-Consumer>
+                        <SPI-Provider>javax.imageio.spi.ImageReaderSpi</SPI-Provider>
+                    </instructions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-imageio</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-dcm2xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-xml2dcm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-image</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_${scala.short.version}</artifactId>
+            <artifactId>spark-mllib_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>graphframes</groupId>
             <artifactId>graphframes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-graphdb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tinkerpop.blueprints</groupId>
+            <artifactId>blueprints-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -103,7 +180,7 @@
         </dependency>
         <dependency>
             <groupId>io.spray</groupId>
-            <artifactId>spray-json_${scala.short.version}</artifactId>
+            <artifactId>spray-json_${tap.scala.short.version}</artifactId>
         </dependency>
         <!--log4j-->
         <dependency>
@@ -123,17 +200,22 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.concurrentlinkedhashmap/concurrentlinkedhashmap-lru -->
         <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_${scala.short.version}</artifactId>
+            <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+            <artifactId>concurrentlinkedhashmap-lru</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-yarn_${scala.short.version}</artifactId>
+            <artifactId>spark-core_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.short.version}</artifactId>
+            <artifactId>spark-yarn_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -161,7 +243,7 @@
         </dependency>
         <dependency>
             <groupId>org.parboiled</groupId>
-            <artifactId>parboiled-scala_${scala.short.version}</artifactId>
+            <artifactId>parboiled-scala_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.parboiled</groupId>
@@ -183,7 +265,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_${scala.short.version}</artifactId>
+            <artifactId>spark-hive_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.mahout</groupId>
@@ -208,6 +290,10 @@
         <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
         </dependency>
     </dependencies>
 </project>

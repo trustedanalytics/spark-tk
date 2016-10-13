@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 import sparktk.frame.schema
 
 def sort(self, columns, ascending=True):
@@ -127,6 +144,8 @@ def sort(self, columns, ascending=True):
             if not are_all_proper_tuples:
                 raise ValueError("If the columns paramter is a list of tuples, each tuple must have a string (column name)"
                                  "and a bool (True for ascending).")
+
+            column_names = [c[0] for c in columns]  # Grab just the column names from the list of tuples
 
             # Check ascending booleans in the tuples to see if they're all the same
             are_all_same_ascending = all(c[1] == columns[0][1] for c in columns)
