@@ -16,7 +16,7 @@
 #
 
 
-def reverse_box_cox(self, column_name, lambda_value=0.0):
+def reverse_box_cox(self, column_name, lambda_value=0.0, reverse_box_cox_column_name= None):
     """
     Calculate the reverse box-cox transformation for each row on a given column_name of the current frame
 
@@ -25,6 +25,7 @@ def reverse_box_cox(self, column_name, lambda_value=0.0):
 
     :param column_name: Name of the column to perform the reverse transformation on
     :param lambda_value: Lambda power parameter. Default is 0.0
+    :param reverse_box_cox_column_name: Optional column name for the reverse box cox value
     :return: (Frame) returns a frame with a new column storing the reverse box-cox transformed value
 
     Calculate the reverse box-cox transformation for each row in column 'column_name' of a frame using the lambda_value.
@@ -66,4 +67,4 @@ def reverse_box_cox(self, column_name, lambda_value=0.0):
 
     """
 
-    self._scala.reverseBoxCox(column_name, lambda_value)
+    self._scala.reverseBoxCox(column_name, lambda_value, self._tc.jutils.convert.to_scala_option(reverse_box_cox_column_name))
