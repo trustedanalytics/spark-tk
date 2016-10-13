@@ -34,7 +34,7 @@ import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegr
 import scala.collection.mutable.ListBuffer
 import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.apache.commons.lang.StringUtils
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -278,8 +278,8 @@ case class LinearRegressionModel(valueColumn: String,
     data :+ tkLinearRegModel.vectorPredict(Vectors.dense(x))
   }
 
-  override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Linear Regression Model", classOf[LinearRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Linear Regression Model", classOf[LinearRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

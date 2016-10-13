@@ -140,7 +140,7 @@
         </dependency>
         <dependency>
             <groupId>org.trustedanalytics</groupId>
-            <artifactId>scoring-interfaces</artifactId>
+            <artifactId>model-archive-interfaces</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>

@@ -27,7 +27,7 @@ import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -239,8 +239,8 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     data :+ sparkModel.predict(Vectors.dense(x))
   }
 
-  override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Random Forest Regressor Model", classOf[RandomForestRegressorModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Random Forest Regressor Model", classOf[RandomForestRegressorModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

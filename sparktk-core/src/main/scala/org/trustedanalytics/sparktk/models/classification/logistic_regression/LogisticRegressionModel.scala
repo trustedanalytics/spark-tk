@@ -27,7 +27,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import scala.language.implicitConversions
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.apache.spark.mllib.linalg.DenseVector
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import java.nio.file.{ Files, Path }
@@ -417,8 +417,8 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
     row :+ predictedLabel
   }
 
-  override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Logistic Regression", classOf[LogisticRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Logistic Regression", classOf[LogisticRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

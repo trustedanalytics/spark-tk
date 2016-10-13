@@ -28,7 +28,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -280,8 +280,8 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     data :+ sparkModel.predict(Vectors.dense(x))
   }
 
-  override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("Random Forest Classifier Model", classOf[RandomForestClassifierModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Random Forest Classifier Model", classOf[RandomForestClassifierModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

@@ -22,7 +22,7 @@ import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import com.cloudera.sparkts.models.{ ARIMA => SparkTsArima, ARIMAModel => SparkTsArimaModel }
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import org.apache.commons.io.FileUtils
 import spray.json._
@@ -251,8 +251,8 @@ case class ArimaModel private[arima] (ts: DenseVector,
     data :+ predict(futurePeriods, timeseries).toArray
   }
 
-  override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("ARIMA Model", classOf[ArimaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("ARIMA Model", classOf[ArimaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

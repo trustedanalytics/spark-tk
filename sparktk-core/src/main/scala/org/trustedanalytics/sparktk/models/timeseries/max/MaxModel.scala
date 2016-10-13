@@ -27,7 +27,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunc
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
-import org.trustedanalytics.scoring.interfaces.{ ModelMetaDataArgs, Field, Model }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import java.nio.file.{ Files, Path }
 import org.apache.commons.io.FileUtils
@@ -230,8 +230,8 @@ case class MaxModel private[max] (timeseriesColumn: String,
     data :+ maxModel.predict(yValues, xValues).toArray
   }
 
-  override def modelMetadata(): ModelMetaDataArgs = {
-    new ModelMetaDataArgs("MAX Model", classOf[MaxModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("MAX Model", classOf[MaxModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

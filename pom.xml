@@ -33,8 +33,8 @@
 
   <repositories>
     <repository>
-      <id>central</id>
-      <url>http://repo1.maven.org/maven2</url>
+      <id>central1</id>
+      <url>http://central1.maven.org/maven2</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -587,6 +587,7 @@
       </plugins>
     </pluginManagement>
 
+
     <plugins>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -689,6 +690,7 @@
               <excludeScope>provided</excludeScope>
             </configuration>
           </execution>
+
         </executions>
       </plugin>
 
@@ -711,12 +713,12 @@
       <dependency>
         <groupId>org.trustedanalytics</groupId>
         <artifactId>model-archive-format</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.trustedanalytics</groupId>
-        <artifactId>scoring-interfaces</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>model-archive-interfaces</artifactId>
+        <version>0.1.1</version>
       </dependency>
       <!-- START dicom dependencies -->
       <dependency>
