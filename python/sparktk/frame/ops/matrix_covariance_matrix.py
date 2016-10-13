@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-def dicom_covariance_matrix(self, matrix_column_name):
+def matrix_covariance_matrix(self, matrix_column_name):
 
     """
 
@@ -34,31 +34,33 @@ def dicom_covariance_matrix(self, matrix_column_name):
 
     Examples
     --------
-
+        >>> from sparktk import dtypes
         >>> data = [[1, [[1,2,3,5],[2,3,5,6],[4,6,7,3],[8,9,2,4]]]]
         >>> schema = [('id', int),('pixeldata', dtypes.matrix)]
         >>> my_frame = tc.frame.create(data, schema)
+
         >>> my_frame.inspect()
         [#]  id  pixeldata
-        ================================
+        ============================
         [0]   1  [[ 1.  2.  3.  5.]
         [ 2.  3.  5.  6.]
         [ 4.  6.  7.  3.]
         [ 8.  9.  2.  4.]]
+
 
         Compute the covariance matrix for the matrices in 'pixeldata' column of the frame
-        >>> my_frame.dicom_covariance_matrix('pixeldata')
+        >>> my_frame.matrix_covariance_matrix('pixeldata')
 
-        A new column gets added to
+        A new column gets added to the existing frame storing the covariance matrix
         >>> my_frame.inspect()
         [#]  id  pixeldata
-        ================================
+        ============================
         [0]   1  [[ 1.  2.  3.  5.]
         [ 2.  3.  5.  6.]
         [ 4.  6.  7.  3.]
         [ 8.  9.  2.  4.]]
-
-        [#]  CovarianceMatrix
+        <BLANKLINE>
+        [#]  CovarianceMatrix_pixeldata
         ============================================================
         [0]  [[  2.91666667   3.          -1.          -3.75      ]
         [  3.           3.33333333  -0.33333333  -5.        ]
@@ -67,4 +69,4 @@ def dicom_covariance_matrix(self, matrix_column_name):
 
     """
 
-    self._scala.dicomCovarianceMatrix(matrix_column_name)
+    self._scala.matrixCovarianceMatrix(matrix_column_name)

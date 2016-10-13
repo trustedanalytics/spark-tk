@@ -21,14 +21,14 @@ import org.trustedanalytics.sparktk.frame.internal.{ RowWrapper, FrameState, Fra
 import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrix, Matrices }
 import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM, Axis, sum, DenseVector }
 
-trait DicomCovarianceMatrixTransform extends BaseFrame {
+trait MatrixCovarianceMatrixTransform extends BaseFrame {
 
-  def dicomCovarianceMatrix(matrixColumnName: String): Unit = {
-    execute(DicomCovarianceMatrix(matrixColumnName))
+  def matrixCovarianceMatrix(matrixColumnName: String): Unit = {
+    execute(MatrixCovarianceMatrix(matrixColumnName))
   }
 }
 
-case class DicomCovarianceMatrix(matrixColumnName: String) extends FrameTransform {
+case class MatrixCovarianceMatrix(matrixColumnName: String) extends FrameTransform {
 
   require(matrixColumnName != null, "Matrix column name cannot be null")
 
@@ -38,23 +38,28 @@ case class DicomCovarianceMatrix(matrixColumnName: String) extends FrameTransfor
 
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
-    frame.addColumns(DicomCovarianceMatrix.dicomCovarianceMatrix(matrixColumnName), Seq(Column("CovarianceMatrix_" + matrixColumnName, DataTypes.matrix)))
+    frame.addColumns(MatrixCovarianceMatrix.matrixCovarianceMatrix(matrixColumnName), Seq(Column("CovarianceMatrix_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
   }
 }
 
-object DicomCovarianceMatrix extends Serializable {
+object MatrixCovarianceMatrix extends Serializable {
   /**
    * Computes the covariance matrix for each matrix of the frame
    */
 
-  def dicomCovarianceMatrix(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
+  def matrixCovarianceMatrix(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
 
     val matrix = rowWrapper.value(matrixColumnName).asInstanceOf[DM]
     val covarianceMatrix = computeCovarianceMatrix(MatrixFunctions.asBreeze(matrix))
     Row.apply(MatrixFunctions.fromBreeze(covarianceMatrix).asInstanceOf[DM])
   }
 
+  /**
+   * Computing the Covariance Matrix for a Breeze DenseMatrix
+   * @param matrix Matrix whose Covariance Matrix is to be computed
+   * @return Breeze DenseMatrix storing the covariance matrix
+   */
   private def computeCovarianceMatrix(matrix: BDM[Double]): BDM[Double] = {
     val n = matrix.cols
     val denseMatrix: BDM[Double] = matrix.copy

@@ -350,7 +350,6 @@ class Frame(object):
     from sparktk.frame.ops.covariance_matrix import covariance_matrix
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
-    from sparktk.frame.ops.dicom_covariance_matrix import dicom_covariance_matrix
     from sparktk.frame.ops.dot_product import dot_product
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
@@ -368,8 +367,10 @@ class Frame(object):
     from sparktk.frame.ops.join_right import join_right
     from sparktk.frame.ops.join_outer import join_outer
     from sparktk.frame.ops.map_columns import map_columns
+    from sparktk.frame.ops.matrix_covariance_matrix import matrix_covariance_matrix
+    from sparktk.frame.ops.matrix_pca import matrix_pca
+    from sparktk.frame.ops.matrix_svd import matrix_svd
     from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
-    from sparktk.frame.ops.pca import pca
     from sparktk.frame.ops.power_iteration_clustering import power_iteration_clustering
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
@@ -378,7 +379,6 @@ class Frame(object):
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.sort import sort
     from sparktk.frame.ops.sortedk import sorted_k
-    from sparktk.frame.ops.svd import svd
     from sparktk.frame.ops.take import take
     from sparktk.frame.ops.tally import tally
     from sparktk.frame.ops.tally_percent import tally_percent

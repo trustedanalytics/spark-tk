@@ -24,14 +24,14 @@ import org.trustedanalytics.sparktk.frame.{ Frame, Column, DataTypes }
 import org.trustedanalytics.sparktk.frame.internal._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
-trait SVDTransform extends BaseFrame {
+trait MatrixSVDTransform extends BaseFrame {
 
-  def svd(matrixColumnName: String): Unit = {
-    execute(SVD(matrixColumnName))
+  def matrixSvd(matrixColumnName: String): Unit = {
+    execute(MatrixSVD(matrixColumnName))
   }
 }
 
-case class SVD(matrixColumnName: String) extends FrameTransform {
+case class MatrixSVD(matrixColumnName: String) extends FrameTransform {
 
   require(matrixColumnName != null, "Matrix column name cannot be null")
 
@@ -41,7 +41,7 @@ case class SVD(matrixColumnName: String) extends FrameTransform {
 
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
-    frame.addColumns(SVD.svd(matrixColumnName), Seq(Column("U_" + matrixColumnName, DataTypes.matrix),
+    frame.addColumns(MatrixSVD.matrixSvd(matrixColumnName), Seq(Column("U_" + matrixColumnName, DataTypes.matrix),
       Column("V_" + matrixColumnName, DataTypes.matrix),
       Column("SingularVectors_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
@@ -49,20 +49,20 @@ case class SVD(matrixColumnName: String) extends FrameTransform {
   }
 }
 
-object SVD extends Serializable {
+object MatrixSVD extends Serializable {
   /**
-   * Computes the svd for each matrix of the frame
+   * Computes the singular value decomposition for each matrix of the frame
    */
-  def svd(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
+  def matrixSvd(matrixColumnName: String)(rowWrapper: RowWrapper): Row = {
 
     val matrix = rowWrapper.value(matrixColumnName).asInstanceOf[DM]
     val breezeMatrix = MatrixFunctions.asBreeze(matrix)
 
-    val svdResult = breeze.linalg.svd(breezeMatrix)
+    val matrixSvdResult = breeze.linalg.svd(breezeMatrix)
 
-    val uMatrix = MatrixFunctions.fromBreeze(svdResult.U).asInstanceOf[DM]
-    val vMatrix = MatrixFunctions.fromBreeze(svdResult.Vt).asInstanceOf[DM].transpose
-    val singularVectors = new DM(1, svdResult.singularValues.length, svdResult.singularValues.toArray, false)
+    val uMatrix = MatrixFunctions.fromBreeze(matrixSvdResult.U).asInstanceOf[DM]
+    val vMatrix = MatrixFunctions.fromBreeze(matrixSvdResult.Vt).asInstanceOf[DM].transpose
+    val singularVectors = new DM(1, matrixSvdResult.singularValues.length, matrixSvdResult.singularValues.toArray, false)
 
     Row.apply(uMatrix, vMatrix, singularVectors)
   }
