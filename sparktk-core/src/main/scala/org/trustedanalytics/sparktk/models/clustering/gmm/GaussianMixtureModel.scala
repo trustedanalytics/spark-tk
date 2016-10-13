@@ -29,7 +29,7 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.models.MatrixImplicits._
 import java.io.{ FileOutputStream, File }
-import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.{ DenseVector, Vectors }
 import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
@@ -197,12 +197,11 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
    * @return the row along with its prediction
    */
   def score(row: Array[Any]): Array[Any] = {
-    //    val x: Array[Double] = new Array[Double](row.length)
-    //    row.zipWithIndex.foreach {
-    //      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
-    //    }
-    //    row :+ sparkModel.predict(Vectors.dense(x))
-    throw new NotImplementedError()
+    require(row != null)
+    require(row.length == observationColumns.length,
+      s"The number of scoring inputs (${row.length}) should be equal to the number of observation columns (${observationColumns.length}).")
+
+    row :+ sparkModel.predict(new DenseVector(row.map(i => ScoringModelUtils.asDouble(i))))
   }
 
   /**
