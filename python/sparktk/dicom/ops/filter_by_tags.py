@@ -85,7 +85,7 @@ def filter_by_tags(self, tags_values_dict):
         raise TypeError("tags_values_dict should be a type of dict, but found type as %" % type(tags_values_dict))
 
     for tag, value in tags_values_dict.iteritems():
-        if not isinstance(tag, str) or not isinstance(value, str):
+        if not isinstance(tag, basestring) or not isinstance(value, basestring):
             raise TypeError("both tag and value should be of <type 'str'>")
 
     #Always scala dicom is invoked, as python joins are expensive compared to serailizations.

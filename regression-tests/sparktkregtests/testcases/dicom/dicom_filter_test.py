@@ -126,15 +126,13 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
 
     def test_return_type_str(self):
         """test filter with function that returns strings"""
-        with self.assertRaisesRegexp(Exception, "'NoneType' object is not callable"):
-            self.dicom.filter(self._filter_return_string())
-            self.dicom.metadata.count()
+        self.dicom.filter(self._filter_return_string())
+        self.assertEqual(3, self.dicom.metadata.count())
 
     def test_return_type_int(self):
         """test filter wtih function that returns ints"""
-        with self.assertRaisesRegexp(Exception, "'NoneType' object is not callable"):
-            self.dicom.filter(self._filter_return_int())
-            self.dicom.metadata.count()
+        self.dicom.filter(self._filter_return_int())
+        self.assertEqual(3, self.dicom.metadata.count())
 
     def test_filter_has_bugs(self):
         """test filter with a broken filter function"""

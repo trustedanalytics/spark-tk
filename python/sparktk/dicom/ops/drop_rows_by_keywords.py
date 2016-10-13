@@ -93,7 +93,7 @@ def drop_rows_by_keywords(self, keywords_values_dict):
         raise TypeError("keywords_values_dict should be a type of dict, but found type as %" % type(keywords_values_dict))
 
     for key, value in keywords_values_dict.iteritems():
-        if not isinstance(key, str) or not isinstance(value, str):
+        if not isinstance(key, basestring) or not isinstance(value, basestring):
             raise TypeError("both keyword and value should be of <type 'str'>")
 
     #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
