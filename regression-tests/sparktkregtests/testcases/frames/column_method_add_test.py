@@ -63,6 +63,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)
 
+    @unittest.skip("DPNG-11909")
     def test_add_col_names(self):
         """Tests adding a column name with a global method"""
         self.frame.add_columns(global_udf, self.new_col_schema)
