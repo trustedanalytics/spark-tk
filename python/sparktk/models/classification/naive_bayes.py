@@ -113,6 +113,29 @@ class NaiveBayesModel(PropertiesObject):
         >>> metrics.precision
         1.0
 
+        >>> frame.rename_columns({"predicted_class" : "predicted0_class"})
+
+        >>> restored.predict(frame)
+
+        >>> frame.inspect()
+        [#]  Class  Dim_1          Dim_2         predicted0_class  predicted_class
+        ==========================================================================
+        [0]      1  19.8446136104  2.2985856384               0.0              0.0
+        [1]      1  16.8973559126  2.6933495054               1.0              1.0
+        [2]      1   5.5548729596  2.7777687995               1.0              1.0
+        [3]      0  46.1810010826  3.1611961917               0.0              0.0
+        [4]      0  44.3117586448  3.3458963222               0.0              0.0
+        [5]      0  34.6334526911  3.6429838715               0.0              0.0
+
+
+        >>> canonical_path = model.export_to_mar("sandbox/naivebayes.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
@@ -151,5 +174,10 @@ class NaiveBayesModel(PropertiesObject):
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """ export the trained model to MAR format for Scoring Engine """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject
