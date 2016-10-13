@@ -46,8 +46,6 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
         correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names).take(self.count)
         numpy_correl = numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count())),
                                               rowvar=False)
-        print "our result: " + str(correl_matrix)
-        print "numpy result: " + str(numpy_correl)
 
         # compare the correl matrix values with the expected results
         for i in range(0, len(correl_matrix)):
