@@ -93,6 +93,10 @@ def drop_rows_by_tags(self, tags_values_dict):
     if not isinstance(tags_values_dict, dict):
         raise TypeError("tags_values_dict should be a type of dict, but found type as %" % type(tags_values_dict))
 
+    for tag, value in tags_values_dict.iteritems():
+        if not isinstance(tag, str) or not isinstance(value, str):
+            raise TypeError("both tag and value should be of <type 'str'>")
+        
     #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
     def f(scala_dicom):
         scala_dicom.dropRowsByTags(self._tc.jutils.convert.to_scala_map(tags_values_dict))

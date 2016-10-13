@@ -84,6 +84,10 @@ def filter_by_keywords(self, keywords_values_dict):
     if not isinstance(keywords_values_dict, dict):
         raise TypeError("keywords_values_dict should be a type of dict, but found type as %" % type(keywords_values_dict))
 
+    for key, value in keywords_values_dict.iteritems():
+        if not isinstance(key, str) or not isinstance(value, str):
+            raise TypeError("both keyword and value should be of <type 'str'>")
+
     #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
     def f(scala_dicom):
         scala_dicom.filterByKeywords(self._tc.jutils.convert.to_scala_map(keywords_values_dict))
