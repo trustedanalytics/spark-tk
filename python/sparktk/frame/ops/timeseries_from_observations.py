@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 def timeseries_from_observations(self, date_time_index, timestamp_column, key_column, value_column):
     """
     Returns a frame that has the observations formatted as a time series.
@@ -11,6 +28,7 @@ def timeseries_from_observations(self, date_time_index, timestamp_column, key_co
     Uses the specified timestamp, key, and value columns and the date/time index provided to format the observations
     as a time series.  The time series frame will have columns for the key and a vector of the observed values that
     correspond to the date/time index.
+
 
     Examples
     --------

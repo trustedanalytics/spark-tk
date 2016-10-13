@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.frame
 
 import org.apache.spark.SparkContext
@@ -5,6 +20,7 @@ import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{ DataFrame, Row }
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.sparktk.frame.internal.ops.matrix._
 import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, ValidationReport }
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
@@ -34,7 +50,9 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with AssignSampleTransform
     with BinColumnTransformWithResult
     with BinaryClassificationMetricsSummarization
+    with BoxCoxTransform
     with CategoricalSummarySummarization
+    with CollectSummarization
     with ColumnMedianSummarization
     with ColumnModeSummarization
     with ColumnSummaryStatisticsSummarization
@@ -49,6 +67,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with DotProductTransform
     with DropColumnsTransform
     with DropDuplicatesTransform
+    with DropRowsTransform
     with EcdfSummarization
     with EntropySummarization
     with ExportToCsvSummarization
@@ -56,6 +75,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToHiveSummarization
     with ExportToJdbcSummarization
     with ExportToJsonSummarization
+    with FilterTransform
     with FlattenColumnsTransform
     with GroupBySummarization
     with HistogramSummarization
@@ -63,11 +83,15 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with JoinLeftSummarization
     with JoinOuterSummarization
     with JoinRightSummarization
+    with MatrixCovarianceMatrixTransform
+    with MatrixPcaTransform
+    with MatrixSvdTransform
     with MultiClassClassificationMetricsSummarization
     with PowerIterationClusteringSummarization
     with QuantilesSummarization
     with QuantileBinColumnTransformWithResult
     with RenameColumnsTransform
+    with ReverseBoxCoxTransform
     with RowCountSummarization
     with SaveSummarization
     with SortTransform
@@ -83,8 +107,6 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with TimeSeriesSliceSummarization
     with TopKSummarization
     with UnflattenColumnsTransform {
-
-  init(frameRdd, frameSchema)
 
   val validationReport = init(frameRdd, frameSchema, validateSchema)
 

@@ -10,3 +10,5 @@ pdoc
 importlib
 pytz
 pandas
+pydicom
+lxml

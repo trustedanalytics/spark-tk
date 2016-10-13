@@ -51,3 +51,4 @@ target
 testgraphs
 virtpy
 *.zip
+/zinc-0.3.7

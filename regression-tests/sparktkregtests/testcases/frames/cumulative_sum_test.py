@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """Test cumulative sum against known values"""
 import unittest
 from sparktkregtests.lib import sparktk_test
@@ -22,7 +39,7 @@ class TestCumulativeSum(sparktk_test.SparkTKTestCase):
         self.sum_frame.cumulative_sum("col1")
         self.sum_frame.cumulative_percent("col1")
 
-        pd_frame = self.sum_frame.download(self.sum_frame.count())
+        pd_frame = self.sum_frame.to_pandas(self.sum_frame.count())
         for _, i in pd_frame.iterrows():
             self.assertAlmostEqual(
                 i['cumulative_sum'], i['col1_cumulative_sum'], delta=.0001)

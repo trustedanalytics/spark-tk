@@ -1,7 +1,26 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.lazyloader import implicit
+
+__all__ = ["train", "load", "LdaModel"]
 
 def train(frame,
           document_column_name,
@@ -55,6 +74,9 @@ def train(frame,
 
 
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
+
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
 
@@ -224,6 +246,32 @@ class LdaModel(PropertiesObject):
         [2]  nytimes      [0.855316939742769, 0.14468306025723088]
         </skip>
 
+        >>> prediction2 = restored.predict(['harry', 'secrets', 'magic', 'harry', 'chamber' 'test'])
+
+        <skip>
+        >>> prediction2
+        {u'topics_given_doc': [0.3149285399451628, 0.48507146005483726], u'new_words_percentage': 20.0, u'new_words_count': 1}
+        >>> prediction2['topics_given_doc']
+        [0.3149285399451628, 0.48507146005483726]
+        </skip>
+        >>> prediction2['new_words_percentage']
+        20.0
+        >>> prediction2['new_words_count']
+        1
+        >>> prediction2.has_key('topics_given_doc')
+        True
+        >>> prediction2.has_key('new_words_percentage')
+        True
+        >>> prediction2.has_key('new_words_count')
+        True
+        
+        >>> canonical_path = model.export_to_mar("sandbox/Kmeans.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
 
     """
 
@@ -328,5 +376,10 @@ class LdaModel(PropertiesObject):
     def save(self, path):
         """Save the trained model"""
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """ export the trained model to MAR format for Scoring Engine """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

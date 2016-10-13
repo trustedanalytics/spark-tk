@@ -1,3 +1,18 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.graph
 
 import org.apache.spark.SparkContext
@@ -5,14 +20,24 @@ import org.apache.spark.sql.DataFrame
 import org.graphframes.GraphFrame
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.frame.Frame
+import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization
 import org.trustedanalytics.sparktk.graph.internal.{ GraphSchema, GraphState, BaseGraph }
-import org.trustedanalytics.sparktk.graph.internal.ops.{ SaveSummarization, VertexCountSummarization, WeightedDegreeSummarization }
+import org.trustedanalytics.sparktk.graph.internal.ops._
 import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
+    with ConnectedComponentsSummarization
+    with ClusteringCoefficientSummarization
+    with DegreeSummarization
+    with ExportToOrientdbSummarization
+    with GlobalClusteringCoefficientSummarization
+    with LabelPropagationSummarization
+    with LoopyBeliefPropagationSummarization
+    with PageRankSummarization
     with SaveSummarization
-    with WeightedDegreeSummarization
-    with VertexCountSummarization {
+    with TriangleCountSummarization
+    with VertexCountSummarization
+    with WeightedDegreeSummarization {
 
   def this(verticesFrame: DataFrame, edgesFrame: DataFrame) = {
     this(GraphFrame(verticesFrame, edgesFrame))

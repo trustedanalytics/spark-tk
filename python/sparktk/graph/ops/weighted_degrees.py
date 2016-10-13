@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 
 def weighted_degrees(self, edge_weight, degree_option='undirected', default_weight=0.0):
     """
@@ -20,7 +37,7 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
     Parameters
     ----------
 
-    :param edge_weight: (String) Name of the property that contains an edge weight
+    :param edge_weight: (String) Name of the property that contains and edge weight
     :param degree_option: (String) Either in, out or undirected. String describing the direction of edges
     :param default_weight: (Numeric) Default weight value if a vertex has no value for the edge weight property
 
@@ -41,24 +58,24 @@ def weighted_degrees(self, edge_weight, degree_option='undirected', default_weig
 
         >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="out")
         >>> result.inspect() 
-        [#]  Vertex  Degree
-        ===================
-        [0]       1       4
-        [1]       2       1
-        [2]       3       0
-        [3]       4       1
-        [4]       5       0
+        [#]  id  degree
+        ===============
+        [0]   1       4
+        [1]   2       1
+        [2]   3       0
+        [3]   4       1
+        [4]   5       0
 
 
         >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="in")
         >>> result.inspect()
-        [#]  Vertex  Degree
-        ===================
-        [0]       1       0
-        [1]       2       2
-        [2]       3       2
-        [3]       4       1
-        [4]       5       1
+        [#]  id  degree
+        ===============
+        [0]   1       0
+        [1]   2       2
+        [2]   3       2
+        [3]   4       1
+        [4]   5       1
 
     """
     from sparktk.frame.frame import Frame

@@ -1,8 +1,26 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 
+__all__ = ["train", "load", "KMeansModel"]
 
 def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=None, init_mode="k-means||"):
     """
@@ -22,8 +40,12 @@ def train(frame, columns, k=2, scalings=None, max_iter=20, epsilon=1e-4, seed=No
     :return: (KMeansModel) trained KMeans model
 
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
+    if isinstance(columns, basestring):
+        columns = [columns]
     scala_columns = tc.jutils.convert.to_scala_vector_string(columns)
     if scalings:
         scala_scalings = tc.jutils.convert.to_scala_vector_double(scalings)
@@ -133,12 +155,37 @@ class KMeansModel(PropertiesObject):
         True
 
     <hide>
+
     >>> restored2 = tc.models.clustering.kmeans.load("sandbox/kmeans1")
 
     >>> restored.centroids == centroids
     True
 
     </hide>
+
+        >>> restored.predict(frame)
+
+        >>> frame.inspect()
+        [#]  data  name  cluster  distance0  distance1  distance2  cluster_0
+        ====================================================================
+        [0]   2.0  ab          1       36.0       0.64      12.25          1
+        [1]   1.0  cd          1       49.0       0.04      20.25          1
+        [2]   7.0  ef          0        1.0      33.64       2.25          0
+        [3]   1.0  gh          1       49.0       0.04      20.25          1
+        [4]   9.0  ij          0        1.0      60.84      12.25          0
+        [5]   2.0  kl          1       36.0       0.64      12.25          1
+        [6]   0.0  mn          1       64.0       1.44      30.25          1
+        [7]   6.0  op          2        4.0      23.04       0.25          2
+        [8]   5.0  qr          2        9.0      14.44       0.25          2
+
+        >>> canonical_path = model.export_to_mar("sandbox/Kmeans.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
@@ -201,6 +248,12 @@ class KMeansModel(PropertiesObject):
         return self._tc.jutils.convert.to_scala_option(columns)
 
     def save(self, path):
-        self._scala.save(self._tc._scala_sc, path)
+        if isinstance(path, basestring):
+            self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """ export the trained model to MAR format for Scoring Engine """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Tests unflatten functionality"""
 
 import unittest
@@ -18,8 +35,8 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         """ test for unflatten comma-separated rows """
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)
-        # download as a pandas frame to access data
-        pandas_frame = frame.download()
+        # get as a pandas frame to access data
+        pandas_frame = frame.to_pandas()
         pandas_data = []
         # use this dictionary to store expected results by name
         name_lookup = {}
@@ -45,16 +62,17 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         # finally we iterate through what we got
         # from sparktk unflatten and compare
         # it to the expected results we created
-        unflatten_pandas = frame.download()
+        unflatten_pandas = frame.to_pandas()
         for index, row in unflatten_pandas.iterrows():
             self.assertTrue(row.equals(name_lookup[row['user']]))
         self.assertEqual(frame.count(), 5)
 
+    @unittest.skip("DPNG-11910")
     def test_unflatten_multiple_cols(self):
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)
-        # download a pandas frame of the data
-        pandas_frame = frame.download()
+        # get a pandas frame of the data
+        pandas_frame = frame.to_pandas()
         name_lookup = {}
 
         # same logic as for unflatten_one_column,
@@ -78,8 +96,8 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         frame.unflatten_columns(['user', 'day'])
 
         # and compare our expected data with sparktk results
-        # which we have downloaded as a pandas frame
-        unflatten_pandas = frame.download()
+        # which we have taken as a pandas frame
+        unflatten_pandas = frame.to_pandas()
         for index, row in unflatten_pandas.iterrows():
             self.assertTrue(row.equals(name_lookup[row['user']]))
 
@@ -98,7 +116,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
             datafile_unflatten_sparse, schema=schema_unflatten_sparse)
 
         frame_sparse.unflatten_columns(['user'])
-        pandas_frame_sparse = frame_sparse.download()
+        pandas_frame_sparse = frame_sparse.to_pandas()
 
         # since this data set is huge we will just iterate once
         # to make sure the data has been appended for time and

@@ -1,5 +1,26 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.trustedanalytics.sparktk.saveload
 
+import java.io.File
+import org.apache.commons.io.FileUtils
+import org.apache.hadoop.fs.Path
+import java.net.URI
+import org.apache.hadoop.fs.permission.{ FsPermission, FsAction }
+import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 import org.json4s.JsonAST.JValue
@@ -27,6 +48,29 @@ object SaveLoad {
       ("id" -> formatId) ~ ("version" -> formatVersion) ~ ("data" -> Extraction.decompose(data))))
     val sqlContext = SQLContext.getOrCreate(sc)
     sc.parallelize(Seq(contents), 1).saveAsTextFile(path)
+  }
+
+  /**
+   * Stores the given zipfile (MAR) to either the HDFS or local file system
+   * @param storagePath location to where the MAR file needs to be stored
+   * @param zipFile the MAR file to be stored
+   * @return full path to the location of the MAR file
+   */
+  def saveMar(storagePath: String, zipFile: File): String = {
+    if (storagePath.startsWith("hdfs")) {
+      val hdfsPath = new Path(storagePath)
+      val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(storagePath), new Configuration())
+      val localPath = new Path(zipFile.getAbsolutePath)
+      hdfsFileSystem.copyFromLocalFile(false, true, localPath, hdfsPath)
+      hdfsFileSystem.setPermission(hdfsPath, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.NONE))
+      storagePath
+    }
+    else {
+      val file = new File(storagePath)
+      FileUtils.copyFile(zipFile, file)
+      file.getCanonicalPath
+    }
+
   }
 
   /**

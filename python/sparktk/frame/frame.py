@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from pyspark.rdd import RDD
 from pyspark.sql import DataFrame
 
@@ -12,12 +29,20 @@ from sparktk.propobj import PropertiesObject
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
 from sparktk.frame.constructors.import_hbase import import_hbase
-from sparktk.frame.constructors.import_jdbc import import_jdbc
 from sparktk.frame.constructors.import_hive import import_hive
+from sparktk.frame.constructors.import_jdbc import import_jdbc
 from sparktk.frame.constructors.import_pandas import import_pandas
 
-class Frame(object):
+__all__ = ["create",
+           "Frame",
+           "import_csv",
+           "import_hbase",
+           "import_hive",
+           "import_jdbc",
+           "import_pandas"]
 
+class Frame(object):
+    
     def __init__(self, tc, source, schema=None, validate_schema=False):
         self._tc = tc
         if self._is_scala_frame(source):
@@ -29,6 +54,8 @@ class Frame(object):
             self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source)
         elif isinstance(source, DataFrame):
             self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
+        elif isinstance(source, PythonFrame):
+            self._frame = source
         else:
             if not isinstance(source, RDD):
                 if not isinstance(source, list) or (len(source) > 0 and any(not isinstance(row, (list, tuple)) for row in source)):
@@ -44,6 +71,11 @@ class Frame(object):
                                   len(item) == 2 and
                                   isinstance(item[0], basestring) for item in schema):
                         raise TypeError("Invalid schema.  Expected a list of tuples (str, type) with the column name and data type, but received type %s." % type(schema))
+                    # check for duplicate column names
+                    column_names = [col[0] for col in schema]
+                    duplicate_column_names = set([col for col in column_names if column_names.count(col) > 1])
+                    if len(duplicate_column_names) > 0:
+                        raise ValueError("Invalid schema, column names cannot be duplicated: %s" % ", ".join(duplicate_column_names))
                 elif schema is None:
                     schema = self._infer_schema(source)
                     inferred_schema = True
@@ -69,7 +101,9 @@ class Frame(object):
                 source = validate_schema_result.validated_rdd
                 logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
 
-            self._frame = PythonFrame(source, schema)
+            # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+            map_source = MatrixCoercion.schema_is_coercible(source, list(schema))
+            self._frame = PythonFrame(map_source, schema)
 
     def _merge_types(self, type_list_a, type_list_b):
         """
@@ -145,6 +179,8 @@ class Frame(object):
         elif data_type is dtypes.datetime:
             return True
         elif type(data_type) is dtypes.vector:
+            return True
+        elif data_type is dtypes.matrix:
             return True
         else:
             return False
@@ -224,6 +260,9 @@ class Frame(object):
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
         if self._is_python:
+            # If schema contains matrix dataype,
+            # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
+            self._frame.rdd = MatrixCoercion.schema_is_coercible(self._frame.rdd, list(self._frame.schema), True)
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
@@ -239,7 +278,9 @@ class Frame(object):
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
             python_rdd = RDD(java_rdd, self._tc.sc)
-            self._frame = PythonFrame(python_rdd, python_schema)
+            # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+            map_python_rdd = MatrixCoercion.schema_is_coercible(python_rdd, list(python_schema))
+            self._frame = PythonFrame(map_python_rdd, python_schema)
         return self._frame
 
     ##########################################################################
@@ -295,7 +336,9 @@ class Frame(object):
     from sparktk.frame.ops.assign_sample import assign_sample
     from sparktk.frame.ops.bin_column import bin_column
     from sparktk.frame.ops.binary_classification_metrics import binary_classification_metrics
+    from sparktk.frame.ops.box_cox import box_cox
     from sparktk.frame.ops.categorical_summary import categorical_summary
+    from sparktk.frame.ops.collect import collect
     from sparktk.frame.ops.column_median import column_median
     from sparktk.frame.ops.column_mode import column_mode
     from sparktk.frame.ops.column_summary_statistics import column_summary_statistics
@@ -308,7 +351,6 @@ class Frame(object):
     from sparktk.frame.ops.cumulative_percent import cumulative_percent
     from sparktk.frame.ops.cumulative_sum import cumulative_sum
     from sparktk.frame.ops.dot_product import dot_product
-    from sparktk.frame.ops.download import download
     from sparktk.frame.ops.drop_columns import drop_columns
     from sparktk.frame.ops.drop_duplicates import drop_duplicates
     from sparktk.frame.ops.drop_rows import drop_rows
@@ -324,11 +366,16 @@ class Frame(object):
     from sparktk.frame.ops.join_left import join_left
     from sparktk.frame.ops.join_right import join_right
     from sparktk.frame.ops.join_outer import join_outer
+    from sparktk.frame.ops.map_columns import map_columns
+    from sparktk.frame.ops.matrix_covariance_matrix import matrix_covariance_matrix
+    from sparktk.frame.ops.matrix_pca import matrix_pca
+    from sparktk.frame.ops.matrix_svd import matrix_svd
     from sparktk.frame.ops.multiclass_classification_metrics import multiclass_classification_metrics
     from sparktk.frame.ops.power_iteration_clustering import power_iteration_clustering
     from sparktk.frame.ops.quantile_bin_column import quantile_bin_column
     from sparktk.frame.ops.quantiles import quantiles
     from sparktk.frame.ops.rename_columns import rename_columns
+    from sparktk.frame.ops.reverse_box_cox import reverse_box_cox
     from sparktk.frame.ops.save import save
     from sparktk.frame.ops.sort import sort
     from sparktk.frame.ops.sortedk import sorted_k
@@ -341,6 +388,7 @@ class Frame(object):
     from sparktk.frame.ops.timeseries_durbin_watson_test import timeseries_durbin_watson_test
     from sparktk.frame.ops.timeseries_from_observations import timeseries_from_observations
     from sparktk.frame.ops.timeseries_slice import timeseries_slice
+    from sparktk.frame.ops.to_pandas import to_pandas
     from sparktk.frame.ops.topk import top_k
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
 
@@ -368,3 +416,78 @@ class SchemaValidationReturn(PropertiesObject):
         Number of values that were unable to be parsed to the data type specified by the schema.
         """
         return self._bad_value_count
+
+
+class MatrixCoercion(object):
+    @staticmethod
+    def schema_is_coercible(source, python_schema, in_scala=False):
+        """
+        check whether python schema is coercible or not.
+        Like if schema contains matrix datatype, convert list[list] to numpy ndarray
+        """
+        flag = False
+        for schema in python_schema:
+            if type(schema[1]) == dtypes._Matrix:
+                flag = True
+                break
+
+        if flag:
+            if in_scala:
+                map_source = source.map(MatrixCoercion.type_coercer_pymllib(python_schema))
+            else:
+                map_source = source.map(MatrixCoercion.type_coercer(python_schema))
+        else:
+            map_source = source
+
+        return map_source
+
+    @staticmethod
+    def type_coercer(schema):
+        """
+        When creating a new frame(python frame created) or converting frame from scala to python frame,
+        the function scans a row and performs below
+            * when creating a new frame(python frame created) - if it finds list[list](which represents matrix) as column value,
+              converts it to numpy ndarray
+            * when Converting frame from scala to python frame - (scala converts DenseMatrix--> JList[JList[Double]](in JConvert.scala),
+              jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
+
+        """
+        def decorator(row):
+            result = []
+            import numpy as np
+            for i in xrange(len(schema)):
+                if type(schema[i][1]) == dtypes._Matrix:
+                    if isinstance(row[i], list):
+                        result.append(np.array(row[i], dtype=np.float64))
+                    else:
+                        result.append(row[i])
+                else:
+                    result.append(row[i])
+            return result
+        return decorator
+
+    @staticmethod
+    def type_coercer_pymllib(schema):
+        """
+        When converting from python to scala, function scans the row and converts the ndarray
+        to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
+        For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
+
+        ndarray stores data as row-major where as mllib densematrix stores data as column-major.
+        To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
+        """
+        def decorator(row):
+            result = []
+            from pyspark.mllib.linalg import DenseMatrix
+            for i in xrange(len(schema)):
+                if type(schema[i][1]) == dtypes._Matrix:
+                    shape = row[i].shape
+                    arr=row[i].flatten()
+                    # By default Mllib DenseMatrix constructs column-major matrix.
+                    # Setting isTranposed=True, will construct row-major DenseMatrix
+                    dm = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
+                    result.append(dm)
+                else:
+                    result.append(row[i])
+            return result
+        return decorator

@@ -1,7 +1,26 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
+
+__all__ = ["train", "load", "PcaModel"]
 
 def train(frame, columns, mean_centered=True, k=None):
     """
@@ -16,6 +35,9 @@ def train(frame, columns, mean_centered=True, k=None):
     :param k: (int) Principal component count. Default is the number of observation columns.
     :return: (PcaModel) The trained PCA model
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
+
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_columns = tc.jutils.convert.to_scala_vector_string(columns)
@@ -136,6 +158,43 @@ class PcaModel(PropertiesObject):
         >>> model2.k
         4
 
+        >>> frame.rename_columns({"p_1" : "p0_1", "p_2" : "p0_2", "p_3" : "p0_3", "t_squared_index" : "t0_squared_index"})
+
+        >>> model2.predict(frame, mean_centered=True, t_squared_index=True, columns=['1','2','3','4','5','6'], k=3)
+
+        >>> frame.inspect()
+        [#]  1    2    3    4    5    6    p0_1             p0_2
+        ===================================================================
+        [0]  2.6  1.7  0.3  1.5  0.8  0.7   0.314738695012  -0.183753549226
+        [1]  3.3  1.8  0.4  0.7  0.9  0.8  -0.471198363594  -0.670419608227
+        [2]  3.5  1.7  0.3  1.7  0.6  0.4  -0.549024749481   0.235254068619
+        [3]  3.7  1.0  0.5  1.2  0.6  0.3  -0.739501762517   0.468409769639
+        [4]  1.5  1.2  0.5  1.4  0.6  0.4    1.44498618058   0.150509319195
+        <BLANKLINE>
+        [#]  p0_3             t0_squared_index  p_1              p_2
+        ========================================================================
+        [0]   0.312561560113    0.253649649849   0.314738695012  -0.183753549226
+        [1]  -0.228746130528    0.740327252782  -0.471198363594  -0.670419608227
+        [2]   0.465756549839    0.563086507007  -0.549024749481   0.235254068619
+        [3]  -0.386212142456    0.723748467549  -0.739501762517   0.468409769639
+        [4]  -0.163359836968    0.719188122813    1.44498618058   0.150509319195
+        <BLANKLINE>
+        [#]  p_3              t_squared_index
+        =====================================
+        [0]   0.312561560113   0.253649649849
+        [1]  -0.228746130528   0.740327252782
+        [2]   0.465756549839   0.563086507007
+        [3]  -0.386212142456   0.723748467549
+        [4]  -0.163359836968   0.719188122813
+
+        >>> canonical_path = model.export_to_mar("sandbox/Kmeans.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
@@ -184,3 +243,8 @@ class PcaModel(PropertiesObject):
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """ export the trained model to MAR format for Scoring Engine """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)

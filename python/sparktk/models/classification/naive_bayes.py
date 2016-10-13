@@ -1,9 +1,27 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
 
+__all__ = ["train", "load", "NaiveBayesModel"]
 
 def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     """
@@ -17,6 +35,8 @@ def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     :return: (NaiveBayesModel) Trained Naive Bayes model
 
     """
+    if frame is None:
+        raise ValueError("frame cannot be None")
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_model = _scala_obj.train(frame._scala,
@@ -93,6 +113,29 @@ class NaiveBayesModel(PropertiesObject):
         >>> metrics.precision
         1.0
 
+        >>> frame.rename_columns({"predicted_class" : "predicted0_class"})
+
+        >>> restored.predict(frame)
+
+        >>> frame.inspect()
+        [#]  Class  Dim_1          Dim_2         predicted0_class  predicted_class
+        ==========================================================================
+        [0]      1  19.8446136104  2.2985856384               0.0              0.0
+        [1]      1  16.8973559126  2.6933495054               1.0              1.0
+        [2]      1   5.5548729596  2.7777687995               1.0              1.0
+        [3]      0  46.1810010826  3.1611961917               0.0              0.0
+        [4]      0  44.3117586448  3.3458963222               0.0              0.0
+        [5]      0  34.6334526911  3.6429838715               0.0              0.0
+
+
+        >>> canonical_path = model.export_to_mar("sandbox/naivebayes.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
@@ -131,5 +174,10 @@ class NaiveBayesModel(PropertiesObject):
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """ export the trained model to MAR format for Scoring Engine """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

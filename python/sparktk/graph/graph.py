@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 import logging
 logger = logging.getLogger('sparktk')
 from graphframes.graphframe import GraphFrame, _from_java_gf
@@ -9,8 +26,11 @@ from sparktk.arguments import require_type
 
 # import constructors for the API's sake (not actually dependencies of the Graph)
 from sparktk.graph.constructors.create import create
-# from sparktk.graph.constructors.import_orientdb import import_orientdb  (Wafaa, you get to uncomment this line)
+from sparktk.graph.constructors.import_orientdb_graph import import_orientdb_graph
 
+__all__ = ["create",
+           "Graph",
+           "import_orientdb_graph"]
 
 class Graph(object):
     """
@@ -147,22 +167,21 @@ class Graph(object):
 
         # compare the data to be sure...
 
-        >>> rv = sorted(restored.create_vertices_frame().take(20).data)
+        >>> rv = sorted(restored.create_vertices_frame().take(20))
 
-        >>> gv = sorted(graph.create_vertices_frame().take(20).data)
+        >>> gv = sorted(graph.create_vertices_frame().take(20))
 
         >>> assert rv == gv
 
-        >>> re = sorted(restored.create_edges_frame().take(20).data)
+        >>> re = sorted(restored.create_edges_frame().take(20))
 
-        >>> ge = sorted(graph.create_edges_frame().take(20).data)
+        >>> ge = sorted(graph.create_edges_frame().take(20))
 
         >>> assert re == ge
 
         </hide>
 
     """
-
     def __init__(self, tc, source_or_vertices_frame, edges_frame=None):
         self._tc = tc
         self._scala = None
@@ -172,18 +191,18 @@ class Graph(object):
         if isinstance(source_or_vertices_frame, Frame):
             # Python Vertices and Edges Frames
             vertices_frame = source_or_vertices_frame
-            require_type(edges_frame,
+            require_type(Frame,
+                         edges_frame,
                          'edges_frame',
-                         Frame,
                          "Providing a vertices frame requires also providing an edges frame")
-            self._scala = self.create_scala_graph_from_scala_frames(self._tc,
-                                                                    vertices_frame._scala,
-                                                                    edges_frame._scala)
+            self._scala = self._create_scala_graph_from_scala_frames(self._tc,
+                                                                     vertices_frame._scala,
+                                                                     edges_frame._scala)
         else:
             source = source_or_vertices_frame
-            require_type(edges_frame,
+            require_type(None,
+                         edges_frame,
                          'edges_frame',
-                         None,
                          'If edges_frames is provided, then a valid vertex frame must be provided as the first arg, instead of type %s' % type(source))
             if self._is_scala_graph(source):
                 # Scala Graph
@@ -191,10 +210,10 @@ class Graph(object):
             elif isinstance(source, GraphFrame):
                 # python GraphFrame
                 scala_graphframe =  source._jvm_graph
-                self._scala = self.create_scala_graph_from_scala_graphframe(self._tc, scala_graphframe)
+                self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, scala_graphframe)
             elif self._is_scala_graphframe(source):
                 # scala GraphFrame
-                self._scala = self.create_scala_graph_from_scala_graphframe(self._tc, source)
+                self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, source)
             else:
                 raise TypeError("Cannot create from source type %s" % type(source))
 
@@ -202,24 +221,24 @@ class Graph(object):
         return self._scala.toString()
 
     @staticmethod
-    def get_scala_graph_class(tc):
+    def _get_scala_graph_class(tc):
         """Gets reference to the sparktk scala Graph class"""
         return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph
 
     @staticmethod
-    def get_scala_graphframe_class(tc):
+    def _get_scala_graphframe_class(tc):
         """Gets reference to the scala GraphFrame class"""
         return tc.sc._jvm.org.graphframes.GraphFrame
 
     @staticmethod
-    def create_scala_graph_from_scala_graphframe(tc, scala_graphframe):
+    def _create_scala_graph_from_scala_graphframe(tc, scala_graphframe):
         try:
             return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph(scala_graphframe)
         except (Py4JJavaError, IllegalArgumentException) as e:
             raise ValueError(str(e))
 
     @staticmethod
-    def create_scala_graph_from_scala_frames(tc, scala_vertices_frame, scala_edges_frame):
+    def _create_scala_graph_from_scala_frames(tc, scala_vertices_frame, scala_edges_frame):
         try:
             return tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.FromFrames.create(scala_vertices_frame, scala_edges_frame)
         except (Py4JJavaError, IllegalArgumentException) as e:
@@ -232,10 +251,10 @@ class Graph(object):
         return Graph(tc, scala_graph)
 
     def _is_scala_graph(self, item):
-        return self._tc._jutils.is_jvm_instance_of(item, self.get_scala_graph_class(self._tc))
+        return self._tc._jutils.is_jvm_instance_of(item, self._get_scala_graph_class(self._tc))
 
     def _is_scala_graphframe(self, item):
-        return self._tc._jutils.is_jvm_instance_of(item, self.get_scala_graphframe_class(self._tc))
+        return self._tc._jutils.is_jvm_instance_of(item, self._get_scala_graphframe_class(self._tc))
 
     ##########################################################################
     # API
@@ -257,6 +276,15 @@ class Graph(object):
         return Frame(self._tc, self._scala.graphFrame().edges())
 
     # Graph Operations
+    from sparktk.graph.ops.connected_components import connected_components
+    from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
+    from sparktk.graph.ops.degrees import degrees
+    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
+    from sparktk.graph.ops.label_propagation import label_propagation
+    from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
+    from sparktk.graph.ops.page_rank import page_rank
     from sparktk.graph.ops.save import save
+    from sparktk.graph.ops.triangle_count import triangle_count
     from sparktk.graph.ops.vertex_count import vertex_count
     from sparktk.graph.ops.weighted_degrees import weighted_degrees
