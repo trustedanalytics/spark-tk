@@ -24,14 +24,14 @@ import org.trustedanalytics.sparktk.frame.{ Frame, Column, DataTypes }
 import org.trustedanalytics.sparktk.frame.internal._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 
-trait MatrixSVDTransform extends BaseFrame {
+trait MatrixSvdTransform extends BaseFrame {
 
   def matrixSvd(matrixColumnName: String): Unit = {
-    execute(MatrixSVD(matrixColumnName))
+    execute(MatrixSvd(matrixColumnName))
   }
 }
 
-case class MatrixSVD(matrixColumnName: String) extends FrameTransform {
+case class MatrixSvd(matrixColumnName: String) extends FrameTransform {
 
   require(matrixColumnName != null, "Matrix column name cannot be null")
 
@@ -41,7 +41,7 @@ case class MatrixSVD(matrixColumnName: String) extends FrameTransform {
 
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
-    frame.addColumns(MatrixSVD.matrixSvd(matrixColumnName), Seq(Column("U_" + matrixColumnName, DataTypes.matrix),
+    frame.addColumns(MatrixSvd.matrixSvd(matrixColumnName), Seq(Column("U_" + matrixColumnName, DataTypes.matrix),
       Column("V_" + matrixColumnName, DataTypes.matrix),
       Column("SingularVectors_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
@@ -49,7 +49,7 @@ case class MatrixSVD(matrixColumnName: String) extends FrameTransform {
   }
 }
 
-object MatrixSVD extends Serializable {
+object MatrixSvd extends Serializable {
   /**
    * Computes the singular value decomposition for each matrix of the frame
    */

@@ -21,14 +21,14 @@ import org.trustedanalytics.sparktk.frame.internal.{ RowWrapper, FrameState, Fra
 import org.apache.spark.mllib.linalg.{ DenseMatrix => DM, Matrix, Matrices }
 import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM }
 
-trait MatrixPCATransform extends BaseFrame {
+trait MatrixPcaTransform extends BaseFrame {
 
   def matrixPca(matrixColumnName: String, vMatrixColumnName: String): Unit = {
-    execute(MatrixPCA(matrixColumnName, vMatrixColumnName))
+    execute(MatrixPca(matrixColumnName, vMatrixColumnName))
   }
 }
 
-case class MatrixPCA(matrixColumnName: String, vMatrixColumnName: String) extends FrameTransform {
+case class MatrixPca(matrixColumnName: String, vMatrixColumnName: String) extends FrameTransform {
 
   require(matrixColumnName != null, "Matrix column mame cannot be null")
   require(vMatrixColumnName != null, "VMatrix column name cannot be null")
@@ -40,13 +40,13 @@ case class MatrixPCA(matrixColumnName: String, vMatrixColumnName: String) extend
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     frame.schema.requireColumnIsType(vMatrixColumnName, DataTypes.matrix)
 
-    frame.addColumns(MatrixPCA.matrixPca(matrixColumnName, vMatrixColumnName), Seq(Column("PrincipalComponents_" + matrixColumnName, DataTypes.matrix)))
+    frame.addColumns(MatrixPca.matrixPca(matrixColumnName, vMatrixColumnName), Seq(Column("PrincipalComponents_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
   }
 
 }
 
-object MatrixPCA extends Serializable {
+object MatrixPca extends Serializable {
   /**
    * Computes the principal components for each row of the frame
    *
