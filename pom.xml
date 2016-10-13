@@ -628,26 +628,6 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.6</version>
-          <extensions>true</extensions>
-          <executions>
-            <execution>
-              <id>default-deploy</id>
-              <phase>deploy</phase>
-              <goals>
-                <goal>deploy</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <skipLocalStaging>true</skipLocalStaging>
-            <serverId>atk</serverId>
-            <nexusUrl>https://maven.trustedanalytics.org</nexusUrl>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>2.9</version>
