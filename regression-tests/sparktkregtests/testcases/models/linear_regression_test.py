@@ -41,7 +41,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(
             model.explained_variance, output.explained_variance)
 
-    @unittest.skip("bug:validation fails")
     def test_model_predict_output(self):
         """Test output format of predict"""
         model = self.context.models.regression.linear_regression.train(
@@ -49,7 +48,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
-    @unittest.skip("bug:validation fails")
     def test_model_elastic_net(self):
         """Test elastic net argument"""
         model = self.context.models.regression.linear_regression.train(
@@ -58,7 +56,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
-    @unittest.skip("bug:validation fails")
     def test_model_fix_intercept(self):
         """Test fix intercept argument"""
         model = self.context.models.regression.linear_regression.train(
@@ -67,7 +64,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
-    @unittest.skip("bug:validation fails")
     def test_model_max_iterations(self):
         """Test max iterations argument"""
         model = self.context.models.regression.linear_regression.train(
@@ -76,7 +72,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
-    @unittest.skip("bug:validation fails")
     def test_model_reg_param(self):
         """Test regularization parameter argument"""
         model = self.context.models.regression.linear_regression.train(
@@ -85,7 +80,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
-    @unittest.skip("bug:validation fails")
     def test_model_standardization(self):
         """Test test non-standardized data"""
         model = self.context.models.regression.linear_regression.train(
@@ -94,7 +88,6 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
-    @unittest.skip("bug:validation fails")
     def test_model_tolerance(self):
         """Test test a different model tolerance"""
         model = self.context.models.regression.linear_regression.train(
