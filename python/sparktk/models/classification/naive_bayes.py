@@ -83,9 +83,9 @@ class NaiveBayesModel(PropertiesObject):
         >>> model.lambda_parameter
         0.9
 
-        >>> model.predict(frame, ['Dim_1', 'Dim_2'])
+        >>> predicted_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
-        >>> frame.inspect()
+        >>> predicted_frame.inspect()
         [#]  Class  Dim_1          Dim_2         predicted_class
         ========================================================
         [0]      1  19.8446136104  2.2985856384              0.0
@@ -113,19 +113,17 @@ class NaiveBayesModel(PropertiesObject):
         >>> metrics.precision
         1.0
 
-        >>> frame.rename_columns({"predicted_class" : "predicted0_class"})
+        >>> predicted_frame2 = restored.predict(frame, ['Dim_1', 'Dim_2'])
 
-        >>> restored.predict(frame)
-
-        >>> frame.inspect()
-        [#]  Class  Dim_1          Dim_2         predicted0_class  predicted_class
-        ==========================================================================
-        [0]      1  19.8446136104  2.2985856384               0.0              0.0
-        [1]      1  16.8973559126  2.6933495054               1.0              1.0
-        [2]      1   5.5548729596  2.7777687995               1.0              1.0
-        [3]      0  46.1810010826  3.1611961917               0.0              0.0
-        [4]      0  44.3117586448  3.3458963222               0.0              0.0
-        [5]      0  34.6334526911  3.6429838715               0.0              0.0
+        >>> predicted_frame2.inspect()
+        [#]  Class  Dim_1          Dim_2         predicted_class
+        ========================================================
+        [0]      1  19.8446136104  2.2985856384              0.0
+        [1]      1  16.8973559126  2.6933495054              1.0
+        [2]      1   5.5548729596  2.7777687995              1.0
+        [3]      0  46.1810010826  3.1611961917              0.0
+        [4]      0  44.3117586448  3.3458963222              0.0
+        [5]      0  34.6334526911  3.6429838715              0.0
 
 
         >>> canonical_path = model.export_to_mar("sandbox/naivebayes.mar")
@@ -161,7 +159,8 @@ class NaiveBayesModel(PropertiesObject):
 
     def predict(self, frame, columns=None):
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def test(self, frame, columns=None):
         c = self.__columns_to_option(columns)

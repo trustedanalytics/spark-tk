@@ -103,9 +103,9 @@ class KMeansModel(PropertiesObject):
         >>> wsse
         5.3
 
-        >>> model.predict(frame)
+        >>> predicted_frame = model.predict(frame)
 
-        >>> frame.inspect()
+        >>> predicted_frame.inspect()
         [#]  data  name  cluster
         ========================
         [0]   2.0  ab          1
@@ -119,9 +119,9 @@ class KMeansModel(PropertiesObject):
         [8]   5.0  qr          2
 
 
-        >>> model.add_distance_columns(frame)
+        >>> model.add_distance_columns(predicted_frame)
 
-        >>> frame.inspect()
+        >>> predicted_frame.inspect()
         [#]  data  name  cluster  distance0  distance1  distance2
         =========================================================
         [0]   2.0  ab          1       36.0       0.64      12.25
@@ -149,7 +149,7 @@ class KMeansModel(PropertiesObject):
         >>> restored.centroids == centroids
         True
 
-        >>> restored_sizes = restored.compute_sizes(frame)
+        >>> restored_sizes = restored.compute_sizes(predicted_frame)
 
         >>> restored_sizes == sizes
         True
@@ -163,20 +163,20 @@ class KMeansModel(PropertiesObject):
 
     </hide>
 
-        >>> restored.predict(frame)
+        >>> predicted_frame2 = restored.predict(frame)
 
-        >>> frame.inspect()
-        [#]  data  name  cluster  distance0  distance1  distance2  cluster_0
-        ====================================================================
-        [0]   2.0  ab          1       36.0       0.64      12.25          1
-        [1]   1.0  cd          1       49.0       0.04      20.25          1
-        [2]   7.0  ef          0        1.0      33.64       2.25          0
-        [3]   1.0  gh          1       49.0       0.04      20.25          1
-        [4]   9.0  ij          0        1.0      60.84      12.25          0
-        [5]   2.0  kl          1       36.0       0.64      12.25          1
-        [6]   0.0  mn          1       64.0       1.44      30.25          1
-        [7]   6.0  op          2        4.0      23.04       0.25          2
-        [8]   5.0  qr          2        9.0      14.44       0.25          2
+        >>> predicted_frame2.inspect()
+        [#]  data  name  cluster
+        ========================
+        [0]   2.0  ab          1
+        [1]   1.0  cd          1
+        [2]   7.0  ef          0
+        [3]   1.0  gh          1
+        [4]   9.0  ij          0
+        [5]   2.0  kl          1
+        [6]   0.0  mn          1
+        [7]   6.0  op          2
+        [8]   5.0  qr          2
 
         >>> canonical_path = model.export_to_mar("sandbox/Kmeans.mar")
 
@@ -233,8 +233,10 @@ class KMeansModel(PropertiesObject):
         return self._scala.computeWsse(frame._scala, c)
 
     def predict(self, frame, columns=None):
+        """predict the frame given the trained model"""
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def add_distance_columns(self, frame, columns=None):
         c = self.__columns_to_option(columns)

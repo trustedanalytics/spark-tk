@@ -121,7 +121,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
     val predictSchema = frame.schema.addColumn(Column("predicted_class", DataTypes.float64))
     val wrapper = new RowWrapper(predictSchema)
     val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
-
+    println("Debug")
     new Frame(predictRdd, predictSchema)
   }
 
