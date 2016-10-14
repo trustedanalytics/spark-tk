@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 #  Copyright (c) 2016 Intel Corporation 
 #
@@ -15,17 +14,13 @@
 #  limitations under the License.
 #
 
-source common.sh
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
+NAME="[`basename $BASH_SOURCE[0]`]"
+DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
+echo "$NAME DIR=$DIR"
 
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
+MAINDIR="$(dirname $DIR)"
+MAINDIR="$(dirname $MAINDIR)"
 
+sparktkpackage=$MAINDIR/sparktkinstall
 
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n6 $MAINDIR/regression-tests
