@@ -37,8 +37,10 @@ sudo pip2.7 install $MAINDIR/*.gz
 # Do this before we download the graphframes
 echo "inflating jars"
 pushd $MAINDIR/regression-tests/automation
-cp $MAINDIR/*.zip .
+target=$(find $MAINDIR -name "sparktk-core*")
+cp $target .
 unzip *.zip
+mv sparktk-core* sparktk-core
 popd
 
 echo "Downloading graphframes"
