@@ -15,17 +15,13 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
-
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-
+source common.sh
 
 export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:/usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
 
-export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
+#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
+export SPARKTK_HOME=$sparktkinstall/
+
 
 echo "spark tk home"
 echo $SPARKTK_HOME

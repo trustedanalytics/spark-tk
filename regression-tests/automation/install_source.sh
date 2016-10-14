@@ -15,16 +15,7 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
-
-# This needs to be kept in sync with the parent POM file
-#GRAPHFRAMES_SOURCE=http://dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.1.0-spark1.6/graphframes-0.1.0-spark1.6.jar
-
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-echo "MAINDIR $MAINDIR"
+source common.sh
 
 
 echo "Install dependencies"
@@ -37,41 +28,23 @@ sudo pip2.7 uninstall -y sparktk
 
 echo "installing spark_tk"
 pushd $MAINDIR
-#sudo pip2.7 install $MAINDIR/*.gz
 echo FIND PACKAGE
 sparkcorepackage=$(find `pwd` -name "sparktk-core*.zip")
-echo UNZIP
-unzip -q $sparkcorepackage
-#pushd $(dirname $sparkcorepackage)
-INSTALLER=$(find `pwd` -name "install.sh")
-echo RUN_INSTALLER
-sudo -E $INSTALLER
+corepackage=$(echo $sparkcorepackage | sed -e "s|.zip||g")
 
-graphframes=$(find `pwd` -name "graphframes*")
+
+echo UNZIP
+unzip -o -q $sparkcorepackage
+
+echo RUN_INSTALLER
+pushd $corepackage
+INSTALLER=$(find `pwd` -name "install.sh")
+sudo -E $INSTALLER
+graphframes=$(find `pwd` -name "graphframes")
 echo "graphframes_package $graphframes"
+ls $graphframes/
+cp -rv $graphframes $MAINDIR/
 popd
 
-
-echo "Downloading graphframes"
-#rm -f graphframes.zip
-#wget -nv --no-check-certificate $GRAPHFRAMES_SOURCE  -O graphframes.zip
-#unzip -q graphframes.zip
-
-
-# Do this before we download the graphframes
-#echo "inflating jars"
-#pushd $MAINDIR/regression-tests/automation
-#cp $MAINDIR/*.zip .
-#unzip *.zip
-#popd
-
-
-#echo "Downloading graphframes"
-#rm -f graphframes.zip
-#wget -nv --no-check-certificate $GRAPHFRAMES_SOURCE  -O graphframes.zip
-#unzip -q graphframes.zip
-
-#copy graphframes
-#mv find $MAINDIR/GRAPHFRAMES
-
+mv $corepackage $sparktkpackage
 
