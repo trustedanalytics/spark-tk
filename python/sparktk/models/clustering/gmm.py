@@ -154,8 +154,7 @@ class GaussianMixtureModel(PropertiesObject):
 
         >>> predicted_frame =  model.predict(frame)
 
-        <skip>
-        >>> x = predicted_frame.take(9)
+        >>> predicted_frame.inspect()
         [#]  data  name  predicted_cluster
         ==================================
         [0]   9.0  ij                    0
@@ -167,7 +166,6 @@ class GaussianMixtureModel(PropertiesObject):
         [6]   1.0  gh                    1
         [7]   6.0  op                    0
         [8]   2.0  kl                    1
-        </skip>
 
         <hide>
         >>> x = predicted_frame.take(9)
@@ -258,7 +256,17 @@ class GaussianMixtureModel(PropertiesObject):
         return self._tc.jutils.convert.scala_map_to_python(cs)
 
     def predict(self, frame, columns=None):
-        """method to predict on a given frame"""
+        """
+       Predicts the labels for the observation columns in the given input frame. Creates a new frame
+       with the existing columns and a new predicted column.
+
+       Parameters
+       ----------
+
+       :param frame: (Frame) Frame used for predicting the values
+       :param c: (List[str]) Names of the observation columns.
+       :return: (Frame) A new frame containing the original frame's columns and a prediction column
+       """
         from sparktk.frame.frame import Frame
         c = self.__columns_to_option(columns)
         return Frame(self._tc, self._scala.predict(frame._scala, c))
@@ -274,7 +282,15 @@ class GaussianMixtureModel(PropertiesObject):
         self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):
-        """ export the trained model to MAR format for Scoring Engine """
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
         if isinstance(path, basestring):
             return self._scala.exportToMar(self._tc._scala_sc, path)
 

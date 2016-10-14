@@ -150,10 +150,12 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
   }
 
   /**
+   * Predicts the labels for the observation columns in the input frame
    * @param frame frame whose cluster assignments are to be predicted
    * @param observationColumns Column(s) containing the observations whose clusters are to be predicted. By default,
    *                           we predict the clusters over columns the GMMModel was trained on. The columns are
    *                           scaled using the same values used when training the model
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
   def predict(frame: Frame, observationColumns: Option[Seq[String]] = None): Frame = {
     require(frame != null, "frame is required")

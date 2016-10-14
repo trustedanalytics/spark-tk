@@ -219,12 +219,14 @@ case class PcaModel private[pca] (columns: Seq[String],
   }
 
   /**
-   *
+   * Predicts the labels for the observation columns in the input frame
    * @param frame frame on which to base predictions and to which the predictions will be added
    * @param columns the observation columns in that frame, must be equal to the number of columns this model was trained with.  Default is the same names as the train frame.
    * @param meanCentered whether to mean center the columns. Default is true
    * @param k the number of principal components to be computed, must be <= the k used in training.  Default is the trained k
    * @param tSquaredIndex whether the t-square index is to be computed. Default is false
+   *
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
   def predict(frame: Frame,
               columns: Option[List[String]] = None,

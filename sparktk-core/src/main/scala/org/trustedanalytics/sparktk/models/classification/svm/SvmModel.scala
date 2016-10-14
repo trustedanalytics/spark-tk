@@ -158,10 +158,11 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted class for each observation
+   * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the SvmModel
+   *                By default, we predict the labels over columns the SvmModel was trained on
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
   def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")

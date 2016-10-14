@@ -222,7 +222,20 @@ class PcaModel(PropertiesObject):
         return [x[i:i+self.k] for i in xrange(0,len(x),self.k)]
 
     def predict(self, frame, columns=None, mean_centered=None, k=None, t_squared_index=False):
-        """Adds columns to the given frame which are the principal compenent predictions"""
+        """
+       Predicts the labels for the observation columns in the given input frame. Creates a new frame
+       with the existing columns and a new predicted column.
+
+       Parameters
+       ----------
+
+       :param frame: (Frame) Frame used for predicting the values
+       :param columns: (List[str]) Names of the observation columns.
+       :param mean_centered: (boolean) whether to mean center the columns. Default is true
+       :param k: (int) the number of principal components to be computed, must be <= the k used in training.  Default is the trained k
+       :param t_squared_index: (boolean) whether the t-square index is to be computed. Default is false
+       :return: (Frame) A new frame containing the original frame's columns and a prediction column
+       """
         if mean_centered is None:
             mean_centered = self.mean_centered
         from sparktk.frame.frame import Frame
@@ -236,6 +249,14 @@ class PcaModel(PropertiesObject):
         self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):
-        """ export the trained model to MAR format for Scoring Engine """
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
         if isinstance(path, basestring):
             return self._scala.exportToMar(self._tc._scala_sc, path)

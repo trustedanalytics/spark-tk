@@ -157,7 +157,51 @@ class NaiveBayesModel(PropertiesObject):
     def lambda_parameter(self):
         return self._scala.lambdaParameter()
 
+
+
+
+
+    def predict(self, future_periods = 0, ts = None):
+        """
+        Forecasts future periods using ARIMA.
+
+        Provided fitted values of the time series as 1-step ahead forecasts, based on current model parameters, then
+        provide future periods of forecast.  We assume AR terms prior to the start of the series are equal to the
+        model's intercept term (or 0.0, if fit without an intercept term).  Meanwhile, MA terms prior to the start
+        are assumed to be 0.0.  If there is differencing, the first d terms come from the original series.
+
+        :param future_periods: (int) Periods in the future to forecast (beyond length of time series that the
+                               model was trained with).
+        :param ts: (Optional(List[float])) Optional list of time series values to use as golden values.  If no time
+                   series values are provided, the values used during training will be used during forecasting.
+
+        """
+        if not isinstance(future_periods, int):
+            raise TypeError("'future_periods' parameter must be an integer.")
+        if ts is not None:
+            if not isinstance(ts, list):
+                raise TypeError("'ts' parameter must be a list of float values." )
+
+        ts_predict_values = self._tc.jutils.convert.to_scala_option_list_double(ts)
+
+        return list(self._tc.jutils.convert.from_scala_seq(self._scala.predict(future_periods, ts_predict_values)))
+
+
+
+
+
     def predict(self, frame, columns=None):
+        """
+        Predicts the labels for the observation columns in the given input frame. Creates a new frame
+        with the existing columns and a new predicted column.
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) Frame used for predicting the values
+        :param c: (List[str]) Names of the observation columns.
+        :return: (Frame) A new frame containing the original frame's columns and a prediction column
+        """
         c = self.__columns_to_option(columns)
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, c))
@@ -175,7 +219,15 @@ class NaiveBayesModel(PropertiesObject):
         self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):
-        """ export the trained model to MAR format for Scoring Engine """
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
         if isinstance(path, basestring):
             return self._scala.exportToMar(self._tc._scala_sc, path)
 

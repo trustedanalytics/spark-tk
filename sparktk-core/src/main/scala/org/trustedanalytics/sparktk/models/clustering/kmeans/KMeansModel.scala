@@ -227,11 +227,12 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted cluster for each observation
+   * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param observationColumns Column(s) containing the observations whose clusters are to be predicted.
    *                           Default is to predict the clusters over columns the KMeans model was trained on.
    *                           The columns are scaled using the same values used when training the model
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
   def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Frame = {
     require(frame != null, "frame is required")
