@@ -154,6 +154,7 @@ class GaussianMixtureModel(PropertiesObject):
 
         >>> predicted_frame =  model.predict(frame)
 
+        <skip>
         >>> predicted_frame.inspect()
         [#]  data  name  predicted_cluster
         ==================================
@@ -166,6 +167,7 @@ class GaussianMixtureModel(PropertiesObject):
         [6]   1.0  gh                    1
         [7]   6.0  op                    0
         [8]   2.0  kl                    1
+        </skip>
 
         <hide>
         >>> x = predicted_frame.take(9)
