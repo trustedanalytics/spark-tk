@@ -117,8 +117,8 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
 
         # use our sparktk model to predict, download to pandas for 
         # ease of comparison
-        model.predict(self.frame, ['f1', 'f2', 'f3'])
-        analysis = self.frame.to_pandas()
+        predicted_frame = model.predict(self.frame, ['f1', 'f2', 'f3'])
+        analysis = predicted_frame.to_pandas()
         
         # iterate through the sparktk result and compare the prediction
         # with pyspark's prediction
