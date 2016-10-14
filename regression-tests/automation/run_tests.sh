@@ -29,4 +29,4 @@ echo "spark tk home"
 echo $SPARKTK_HOME
 
 py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
-py.test $MAINDIR/regresion-tests/sparktkregtests/testcases/scoretests
+py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests
