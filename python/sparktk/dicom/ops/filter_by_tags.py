@@ -25,7 +25,7 @@ def filter_by_tags(self, tags_values_dict):
     Parameters
     ----------
 
-    :param tags_values_dict: (dict(str, str)) dictionary of tags and values from xml string in metadata
+    :param tags_values_dict: (dict(str, str)) dictionary of tags and values from xml string in metadata.
 
 
     Examples
