@@ -20,7 +20,7 @@ source common.sh
 export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:/usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
 
 #export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkinstall/
+export SPARKTK_HOME=$sparktkpackage/
 
 
 echo "spark tk home"
