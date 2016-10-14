@@ -14,27 +14,13 @@
   <artifactId>spark-tk</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2016</inceptionYear>
 
-  <!--<project xmlns="http://maven.apache.org/POM/4.0.0"-->
-           <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-           <!--xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">-->
-    <!--<modelVersion>4.0.0</modelVersion>-->
-    <!--<groupId>org.trustedanalytics.atk</groupId>-->
-    <!--<artifactId>TrustedAnalytics</artifactId>-->
-    <!--<packaging>pom</packaging>-->
-    <!--<version>master-SNAPSHOT</version>-->
-    <!--<name>TrustedAnalytics Parent</name>-->
-    <!--<description>TrustedAnalytics : Large Scale Graph Analytics</description>-->
-    <!--<inceptionYear>2013</inceptionYear>-->
-
-  <!--<properties>-->
-    <!--<scala.version>2.7.0</scala.version>-->
-  <!--</properties>-->
 
     <repositories>
     <repository>
-        <id>central</id>
-        <url>http://repo1.maven.org/maven2</url>
+        <id>central1</id>
+        <url>http://central1.maven.org/maven2</url>
         <releases>
             <enabled>true</enabled>
         </releases>
@@ -63,17 +49,6 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-      <repository>
-        <id>atk</id>
-        <url>https://maven.trustedanalytics.org/content/repositories/public/</url>
-        <snapshots>
-          <enabled>true</enabled>
-            <updatePolicy>daily</updatePolicy>
-        </snapshots>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-      </repository>
       <repository>
         <id>cloudera cdh</id>
         <!--<url>https://repository.cloudera.com/artifactory/cloudera-repos</url>-->
@@ -121,13 +96,20 @@
       <dicom.version>3.3.7</dicom.version>
       <artifactIdExcludesHive>hive-exec,hive-metastore</artifactIdExcludesHive>
       <artifactIdExcludesHadoop>hadoop-aws,hadoop-annotations,hadoop-mapreduce-client-common,hadoop-mapreduce-client-core,hadoop-mapreduce-client-jobclient,hadoop-mapreduce-client-shuffle,hadoop-yarn-api,hadoop-yarn-client,hadoop-yarn-common,hadoop-yarn-server-common,hadoop-yarn-server-web-proxy</artifactIdExcludesHadoop>
-      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-core_${tap.scala.short.version},spark-mllib_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-launcher_${tap.scala.short.version},spark-network-common_${tap.scala.short.version},spark-network-shuffle_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
+      <artifactIdExcludesSpark>spark-hive_${tap.scala.short.version},spark-yarn_${tap.scala.short.version},spark-sql_${tap.scala.short.version},spark-graphx_${tap.scala.short.version},spark-catalyst_${tap.scala.short.version},spark-streaming_${tap.scala.short.version},spark-unsafe_${tap.scala.short.version}</artifactIdExcludesSpark>
       <artifactIdExcludesScala>spire_${tap.scala.short.version},breeze_${tap.scala.short.version},scala-library,scala-reflect,scalatest_${tap.scala.short.version}</artifactIdExcludesScala>
       <artifactIdExcludesMisc>jdk.tools,mesos,scala-compiler,joda-time</artifactIdExcludesMisc>
       <artifactIdExcludes>${artifactIdExcludesMisc},${artifactIdExcludesScala},${artifactIdExcludesSpark},${artifactIdExcludesHadoop},${artifactIdExcludesHive}</artifactIdExcludes>
         <!--org.apache.hadoop,org.apache.hbase,org.apache.hive-->
       <groupIdExcludes></groupIdExcludes>
+      <akka.version>2.2.3-shaded-protobuf</akka.version>
+      <akka.group>org.spark-project.akka</akka.group>
     </properties>
+    <modules>
+        <module>python</module>
+        <module>sparktk-core</module>
+        <module>regression-tests</module>
+    </modules>
     <profiles>
       <!--doc generation-->
         <profile>
@@ -148,6 +130,12 @@
                         <groupId>org.scala-tools</groupId>
                         <artifactId>maven-scala-plugin</artifactId>
                         <version>2.15.2</version>
+                      <configuration>
+                        <jvmArgs>
+                          <jvmArg>-Xms256m</jvmArg>
+                          <jvmArg>-Xmx512m</jvmArg>
+                        </jvmArgs>
+                      </configuration>
                         <executions>
                             <execution>
                                 <id>scaladocs-all</id>
@@ -161,7 +149,7 @@
                 </plugins>
             </build>
         </profile>
-      <profile>
+     <!-- <profile>
         <id>modules-all</id>
         <activation>
           <activeByDefault>true</activeByDefault>
@@ -172,7 +160,7 @@
         <modules>
           <module>sparktk-core</module>
         </modules>
-      </profile>
+      </profile>-->
 
       <profile>
         <id>python-unit-tests</id>
@@ -534,6 +522,8 @@
                   <exclude>**/PKG-INFO</exclude>
                 <exclude>**/*.sql</exclude>
                 <exclude>**/*pytest-report</exclude>
+                <exclude>**/dist/**/setup.cfg</exclude>
+
               </excludes>
             </configuration>
             <executions>
@@ -713,7 +703,16 @@
 
     <dependencyManagement>
       <dependencies>
-
+          <dependency>
+              <groupId>org.trustedanalytics</groupId>
+              <artifactId>model-archive-format</artifactId>
+              <version>0.1.1</version>
+          </dependency>
+          <dependency>
+              <groupId>org.trustedanalytics</groupId>
+              <artifactId>model-archive-interfaces</artifactId>
+              <version>0.1.1</version>
+          </dependency>
         <!-- START dicom dependencies -->
         <dependency>
           <groupId>org.dcm4che</groupId>
@@ -728,7 +727,12 @@
         <dependency>
           <groupId>org.dcm4che.tool</groupId>
           <artifactId>dcm4che-tool-dcm2xml</artifactId>
-          <version>${dicom.version}</version>
+                <version>${dicom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dcm4che.tool</groupId>
+                <artifactId>dcm4che-tool-xml2dcm</artifactId>
+                <version>${dicom.version}</version>
         </dependency>
         <dependency>
           <groupId>org.dcm4che</groupId>
@@ -855,6 +859,97 @@
               <artifactId>commons-logging</artifactId>
             </exclusion>
           </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-network-shuffle_${tap.scala.short.version}</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-network-common_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
+          <version>${tap.spark.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.4.4</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+          <version>2.4.4</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-json</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
+          <version>3.6.6.Final</version>
+        </dependency>
+        <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+          <version>4.0.29.Final</version>
+        </dependency>
+        <!--<dependency>-->
+          <!--<groupId>com.typesafe.akka</groupId>-->
+          <!--<artifactId>akka-remote_2.10</artifactId>-->
+          <!--<version>2.3.11</version>-->
+        <!--</dependency>-->
+        <dependency>
+          <groupId>${akka.group}</groupId>
+          <artifactId>akka-remote_2.10</artifactId>
+          <version>${akka.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.google.protobuf</groupId>
+              <artifactId>protobuf-java</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-unsafe_2.10</artifactId>
+          <version>1.6.0</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-core</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-core_2.10</artifactId>
+          <version>3.2.10</version>
+        </dependency>
+        <dependency>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-ast_2.10</artifactId>
+          <version>3.2.10</version>
+        </dependency>
+        <dependency>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-jackson_2.10</artifactId>
+          <version>3.2.10</version>
+        </dependency>
+        <dependency>
+          <groupId>com.thoughtworks.paranamer</groupId>
+          <artifactId>paranamer</artifactId>
+          <version>2.6</version>
         </dependency>
         <dependency>
           <groupId>org.apache.spark</groupId>
@@ -1081,6 +1176,17 @@
                 </exclusion>
           </exclusions>
         </dependency>
+
+        <!--<groupId>org.apache.spark</groupId>-->
+        <!--<artifactId>spark-assembly_2.10</artifactId>-->
+        <!--<version>1.6.0-cdh5.7.1</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+          <version>2.5.0</version>
+        </dependency>
+
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-client</artifactId>
@@ -1353,19 +1459,12 @@
               <version>2.10.4</version>
               <scope>provided</scope>
           </dependency>
-          <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty-all</artifactId>
-              <version>4.0.29.Final</version>
-              <scope>provided</scope>
-          </dependency>
-
-          <dependency>
-              <groupId>com.fasterxml.jackson.core</groupId>
-              <artifactId>jackson-databind</artifactId>
-              <version>2.2.3</version>
-              <scope>provided</scope>
-          </dependency>
+          <!--<dependency>-->
+              <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+              <!--<artifactId>jackson-databind</artifactId>-->
+              <!--<version>2.2.3</version>-->
+              <!--<scope>provided</scope>-->
+          <!--</dependency>-->
           <dependency>
               <groupId>org.fusesource.leveldbjni</groupId>
               <artifactId>leveldbjni-all</artifactId>
@@ -1488,12 +1587,6 @@
               <groupId>org.apache.ivy</groupId>
               <artifactId>ivy</artifactId>
               <version>2.4.0</version>
-              <scope>provided</scope>
-          </dependency>
-          <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty</artifactId>
-              <version>3.6.6.Final</version>
               <scope>provided</scope>
           </dependency>
 

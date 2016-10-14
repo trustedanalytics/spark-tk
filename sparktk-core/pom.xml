@@ -57,6 +57,11 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.trustedanalytics</groupId>-->
+                <!--<artifactId>atk-maven-plugin</artifactId>-->
+            <!--</plugin>-->
+            
                       
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -86,7 +91,6 @@
                                 </goals>
                                 <configuration>
                                     <executable>bash</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                       <argument>package.sh</argument>
                                     </arguments>
@@ -111,24 +115,18 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <!-- Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)",osgi.extender;filter:="(osgi.extender=osgi.serviceloader.processor)",osgi.serviceloader;filter:="(osgi.serviceloader=*)";cardinality:=multiple</Require-Capability>
-                        <Provide-Capability>osgi.serviceloader;osgi.serviceloader=javax.imageio.spi.ImageReaderSpi</Provide-Capability-->
-                        <SPI-Consumer>*</SPI-Consumer>
-                        <SPI-Provider>javax.imageio.spi.ImageReaderSpi</SPI-Provider>
-                    </instructions>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>model-archive-format</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.trustedanalytics</groupId>
+            <artifactId>model-archive-interfaces</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
@@ -140,6 +138,10 @@
         <dependency>
             <groupId>org.dcm4che.tool</groupId>
             <artifactId>dcm4che-tool-dcm2xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-xml2dcm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>
@@ -268,12 +270,24 @@
             <artifactId>mahout-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-network-shuffle_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-math</artifactId>
         </dependency>
         <dependency>
             <groupId>com.databricks</groupId>
-            <artifactId>spark-csv_2.10</artifactId>
+            <artifactId>spark-csv_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cloudera.sparkts</groupId>
