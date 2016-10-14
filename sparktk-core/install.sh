@@ -43,11 +43,35 @@ fi
 
 graphframes=$(find `pwd`/lib/ -name "graphframes*.jar")
 unzip -o $graphframes "graphframes/*" .
-cp python/setup.py graphframes/
 
-pip install -U graphframes/
 
-pip install -U python/sparktk*.tar.gz
+PYTHON=python
+$PYTHON -V > /dev/stdout 2>&1 | grep "Python 2.7"
+if [ $? -eq 1 ]; then
+    PYTHON=python2.7
+    $PYTHON -V > /dev/stdout 2>&1 | grep "Python 2.7"
+    if [ $? -eq 1 ]; then
+            echo "you don't have python 2.7 installed"
+            exit 1
+    fi
+fi
+
+PIP=pip
+$PIP -V > /dev/stdout 2>&1 | grep "python 2.7"
+if [ $? -eq 1 ]; then
+    PIP=pip2.7
+    $PIP -V > /dev/stdout 2>&1 | grep "python 2.7"
+    if [ $? -eq 1 ]; then
+            echo "you don't have pip 2.7 installed"
+            exit 1
+    fi
+fi
+
+PYTHON_INSTALL_PATH=$($PYTHON -c "import site; print site.getsitepackages()[0]")
+
+cp -rv graphframes $PYTHON_INSTALL_PATH/
+
+$PIP install -U python/sparktk*.tar.gz
 
 
 
