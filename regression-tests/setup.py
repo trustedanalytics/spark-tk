@@ -24,12 +24,11 @@ reqs = [str(ir.req) for ir in install_reqs]
 
 POST="DEV"
 BUILD="0"
-
 VERSION="0.7"
 
 setup(
     # Application name:
-    name="sparktk",
+    name="sparktk-regression-tests",
 
     version="{0}-{1}{2}".format(VERSION, POST, BUILD),
 
@@ -38,7 +37,7 @@ setup(
 
 
     # Packages
-    packages=["sparktk"],
+    packages=["automation", "datasets", "exampletests", "generatedata", "sparktkregtests"],
 
     # Include additional files into the package
     include_package_data=True,
@@ -51,9 +50,6 @@ setup(
 
     description="spark-tk is a library which enhances the Spark experience by providing a rich, easy-to-use API for Python and Scala.",
 
-    long_description=open("README.rst").read(),
-
     # Dependent packages (distributions)
     install_requires=reqs,
-
-)
+    )

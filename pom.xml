@@ -14,22 +14,8 @@
   <artifactId>spark-tk</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <inceptionYear>2016</inceptionYear>
 
-  <!--<project xmlns="http://maven.apache.org/POM/4.0.0"-->
-           <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
-           <!--xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">-->
-    <!--<modelVersion>4.0.0</modelVersion>-->
-    <!--<groupId>org.trustedanalytics.atk</groupId>-->
-    <!--<artifactId>TrustedAnalytics</artifactId>-->
-    <!--<packaging>pom</packaging>-->
-    <!--<version>master-SNAPSHOT</version>-->
-    <!--<name>TrustedAnalytics Parent</name>-->
-    <!--<description>TrustedAnalytics : Large Scale Graph Analytics</description>-->
-    <!--<inceptionYear>2013</inceptionYear>-->
-
-  <!--<properties>-->
-    <!--<scala.version>2.7.0</scala.version>-->
-  <!--</properties>-->
 
     <repositories>
     <repository>
@@ -119,6 +105,11 @@
       <akka.version>2.2.3-shaded-protobuf</akka.version>
       <akka.group>org.spark-project.akka</akka.group>
     </properties>
+    <modules>
+        <module>python</module>
+        <module>sparktk-core</module>
+        <module>regression-tests</module>
+    </modules>
     <profiles>
       <!--doc generation-->
         <profile>
@@ -158,7 +149,7 @@
                 </plugins>
             </build>
         </profile>
-      <profile>
+     <!-- <profile>
         <id>modules-all</id>
         <activation>
           <activeByDefault>true</activeByDefault>
@@ -169,7 +160,7 @@
         <modules>
           <module>sparktk-core</module>
         </modules>
-      </profile>
+      </profile>-->
 
       <profile>
         <id>python-unit-tests</id>
@@ -531,6 +522,8 @@
                   <exclude>**/PKG-INFO</exclude>
                 <exclude>**/*.sql</exclude>
                 <exclude>**/*pytest-report</exclude>
+                <exclude>**/dist/**/setup.cfg</exclude>
+
               </excludes>
             </configuration>
             <executions>
