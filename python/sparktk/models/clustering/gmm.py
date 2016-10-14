@@ -259,8 +259,9 @@ class GaussianMixtureModel(PropertiesObject):
 
     def predict(self, frame, columns=None):
         """method to predict on a given frame"""
+        from sparktk.frame.frame import Frame
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def __columns_to_option(self, c):
         if c is not None:
