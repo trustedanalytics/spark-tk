@@ -15,18 +15,16 @@
 #  limitations under the License.
 #
 
-source common.sh
+NAME="[`basename $BASH_SOURCE[0]`]"
+DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
+echo "$NAME DIR=$DIR"
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
+MAINDIR="$(dirname $DIR)"
+MAINDIR="$(dirname $MAINDIR)"
+MAINDIR="$(dirname $MAINDIR)"
 
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
+scoring_model=$1
 
-
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
-py.test $MAINDIR/regresion-tests/sparktkregtests/testcases/scoretests
+pushd $MAINDIR/scoring/scoring_model
+./bin/model-scoring.sh -Dtrustedanalytics.scoring-engine.archive-mar=$scoring_model -Dtrustedanalytics.scoring.port=9100 > $MAINDIR/scoring_out.log 2> $MAINDIR/scoring_error.log
+popd
