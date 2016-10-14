@@ -100,12 +100,13 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted class for each observation
+   * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the NaiveBayesModel
+   *                By default, we predict the labels over columns the NaiveBayesModel was trained on
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
+  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (columns.isDefined) {
       require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
@@ -118,7 +119,10 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(Column("predicted_class", DataTypes.float64)))
+    val predictSchema = frame.schema.addColumn(Column("predicted_class", DataTypes.float64))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -197,7 +201,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    * @return metadata about the model
    */
   def modelMetadata(): ModelMetaData = {
-    //todo provide a for the user to populate the custom metadata fields
+    //todo provide an API for the user to populate the custom metadata fields
     new ModelMetaData("Naive Bayes Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
