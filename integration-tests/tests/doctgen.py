@@ -35,7 +35,7 @@
 #
 
 """
-gendoct.py
+doctgen.py
 
 Generates a file of testcases which run the Python API documentation examples through doctest
 
@@ -91,7 +91,7 @@ test_file_name = os.path.join(here, "test_docs_generated.py")  # the name of gen
 
 
 sys.path.insert(0, path_to_doc)
-from docutils import parse_for_doctest, DocExamplesPreprocessor, DocExamplesException
+from docgen import parse_for_doctest, DocExamplesPreprocessor, DocExamplesException
 doctest.ELLIPSIS_MARKER = DocExamplesPreprocessor.doctest_ellipsis
 
 
