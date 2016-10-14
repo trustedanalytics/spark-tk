@@ -1,3 +1,20 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 """ Test UDF implementation."""
 import unittest
 from sparktkregtests.lib import sparktk_test
@@ -14,6 +31,7 @@ class UDFTest(sparktk_test.SparkTKTestCase):
                         ("num2", int)]
         self.frame = self.context.frame.import_csv(data_basic,
                                                    schema=schema_basic)
+        print "udf_remote_utils_direct.length(data_basic): " + str(udf_remote_utils_direct.length(data_basic))
 
     def test_udf_basic_module_install(self):
         """First test case from UDF testing"""
@@ -26,8 +44,8 @@ class UDFTest(sparktk_test.SparkTKTestCase):
             udf_remote_utils_direct.row_build, ('other_column', int))
 
         # get frame data for the entire frame and for the middle col
-        frame_take = self.frame.take(self.frame.row_count)
-        letter_col_take = self.frame.take(self.frame.row_count,
+        frame_take = self.frame.take(self.frame.count())
+        letter_col_take = self.frame.take(self.frame.count(),
                                           columns=['letter'])
 
         # extract just the letter column into an array of strings 
@@ -46,8 +64,8 @@ class UDFTest(sparktk_test.SparkTKTestCase):
             udf_remote_utils_indirect.distance, ('other_column', float))
 
         # get the data for the entire frame and just the letter col
-        frame_take = self.frame.take(self.frame.row_count)
-        letter_col_take = self.frame.take(self.frame.row_count,
+        frame_take = self.frame.take(self.frame.count())
+        letter_col_take = self.frame.take(self.frame.count(),
                                           columns=['letter'])
 
         # extract just the letter column into an array of strs
@@ -66,8 +84,8 @@ class UDFTest(sparktk_test.SparkTKTestCase):
         # logic is similar to above two tests
         udf_remote_utils_select.add_select_col(self.frame)
 
-        frame_take = self.frame.take(self.frame.row_count)
-        letter_col_take = self.frame.take(self.frame.row_count, columns=['letter'])
+        frame_take = self.frame.take(self.frame.count())
+        letter_col_take = self.frame.take(self.frame.count(), columns=['letter'])
         
         letter = [x[0].encode("ascii", "ignore") for x in letter_col_take.data]
         
@@ -86,7 +104,7 @@ class UDFTest(sparktk_test.SparkTKTestCase):
                 ('new_column', int))
             # because frames are created lazily we must perform
             # some kind of op on the frame to trigger the exception
-            self.frame.row_count
+            self.frame.count()
 
 if __name__ == "__main__":
     unittest.main()
