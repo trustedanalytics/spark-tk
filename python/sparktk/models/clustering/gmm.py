@@ -152,10 +152,10 @@ class GaussianMixtureModel(PropertiesObject):
         >>> assert(np.allclose(expected_sigma, actual_sigma, atol=1e+01))
         </hide>
 
-        >>> model.predict(frame)
+        >>> predicted_frame =  model.predict(frame)
 
         <skip>
-        >>> x = frame.take(9)
+        >>> x = predicted_frame.take(9)
         [#]  data  name  predicted_cluster
         ==================================
         [0]   9.0  ij                    0
@@ -170,7 +170,7 @@ class GaussianMixtureModel(PropertiesObject):
         </skip>
 
         <hide>
-        >>> x = frame.take(9)
+        >>> x = predicted_frame.take(9)
         >>> val = set(map(lambda y : y[2], x))
         >>> newlist = [[z[1] for z in x if z[2]==a]for a in val]
         >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
