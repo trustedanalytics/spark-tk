@@ -17,17 +17,15 @@
 
 from setuptools import setup
 from pip.req import parse_requirements
-import os
-import time
 
 
 install_reqs = parse_requirements("requirements.txt", session=False)
 reqs = [str(ir.req) for ir in install_reqs]
 
-POST=os.getenv("SPARKTK_POSTTAG","dev")
-BUILD=os.getenv("SPARKTK_BUILDNUMBER", "0")
+POST="DEV"
+BUILD="0"
 
-VERSION=os.getenv("SPARKTK_VERSION","0.7")
+VERSION="0.7"
 
 setup(
     # Application name:

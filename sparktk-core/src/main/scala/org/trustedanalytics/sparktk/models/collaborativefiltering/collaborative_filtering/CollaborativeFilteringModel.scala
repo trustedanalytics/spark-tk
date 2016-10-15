@@ -213,12 +213,12 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
    * @param outputProductColumnName A product  column name for the output frame
    * @param outputRatingColumnName A rating column name for the output frame
    */
-  def createPredictFrame(frame: Frame,
-                         inputSourceColumnName: String,
-                         inputDestColumnName: String,
-                         outputUserColumnName: String = "user",
-                         outputProductColumnName: String = "product",
-                         outputRatingColumnName: String = "rating"): Frame = {
+  def predict(frame: Frame,
+              inputSourceColumnName: String,
+              inputDestColumnName: String,
+              outputUserColumnName: String = "user",
+              outputProductColumnName: String = "product",
+              outputRatingColumnName: String = "rating"): Frame = {
 
     require(frame != null, "batch data as a frame is required")
 

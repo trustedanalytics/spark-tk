@@ -25,7 +25,7 @@ def filter_by_tags(self, tags_values_dict):
     Parameters
     ----------
 
-    :param tags_values_dict: (dict(str, str)) dictionary of tags and values from xml string in metadata
+    :param tags_values_dict: (dict(str, str)) dictionary of tags and values from xml string in metadata.
 
 
     Examples
@@ -83,6 +83,10 @@ def filter_by_tags(self, tags_values_dict):
 
     if not isinstance(tags_values_dict, dict):
         raise TypeError("tags_values_dict should be a type of dict, but found type as %" % type(tags_values_dict))
+
+    for tag, value in tags_values_dict.iteritems():
+        if not isinstance(tag, basestring) or not isinstance(value, basestring):
+            raise TypeError("both tag and value should be of <type 'str'>")
 
     #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
     def f(scala_dicom):
