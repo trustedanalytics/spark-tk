@@ -297,8 +297,7 @@ class MainApiDocs(object):
 </body>
 """
 
-    @staticmethod
-    def transform(full_package_dir):
+    def __init__(self, html_dir):
         """processes the full_package docs to include the Main APIs and present them in the forefront"""
         from distutils.dir_util import copy_tree
         import shutil
@@ -306,17 +305,19 @@ class MainApiDocs(object):
         # start with full_package docs
 
         # move full_package_dir down a level
-        logger.debug("rework_for_main('%s')", full_package_dir)
-        doc_root_dir = full_package_dir
-        doc_root_parent_dir = os.path.abspath(os.path.join(doc_root_dir, os.pardir))
-        tmp_full_package_dir = os.path.join(doc_root_parent_dir, "tmp-full")
-        full_package_dir = os.path.join(doc_root_dir, "full")
-        logger.debug("os.rename('%s', '%s')", doc_root_dir, tmp_full_package_dir)
-        os.rename(doc_root_dir, tmp_full_package_dir)
-        logger.debug("os.mkdir('%s')" % doc_root_dir)
-        os.mkdir(doc_root_dir)
-        logger.debug("os.rename('%s', '%s')", tmp_full_package_dir, full_package_dir)
-        os.rename(tmp_full_package_dir, full_package_dir)
+        logger.debug("rework_for_main('%s')", html_dir)
+        self.html_dir = html_dir
+        self.doc_root_parent_dir = os.path.abspath(os.path.join(self.html_dir, os.pardir))
+        self.tmp_html_dir = os.path.join(self.doc_root_parent_dir, "tmp-html")
+        try:
+            shutil.rmtree(self.tmp_html_dir)
+        except:
+            pass
+
+        logger.debug("os.rename('%s', '%s')", self.html_dir, self.tmp_html_dir)
+        os.rename(self.html_dir, self.tmp_html_dir)
+        logger.debug("os.mkdir('%s')" % self.html_dir)
+        os.mkdir(self.html_dir)
 
         # cp up the files interesting for "Main APIs"
 
@@ -324,90 +325,92 @@ class MainApiDocs(object):
                       "sparktk/graph/graph.m.html",
                       "sparktk/dicom/dicom.m.html"]
         for file_path in user_files:
-            src = os.path.join(full_package_dir, file_path)
-            dst = doc_root_dir
+            src = os.path.join(self.tmp_html_dir, file_path)
+            dst = self.html_dir
             logger.debug("shutil.copy('%s', '%s')", src, dst)
             shutil.copy(src, dst)
-            MainApiDocs.post_process_for_main(dst)
 
         user_dirs = [("sparktk/models", "models")]
         for dir_path, dir_name in user_dirs:
-            src = os.path.join(full_package_dir, dir_path)
-            dst = os.path.join(doc_root_dir, dir_name)
+            src = os.path.join(self.tmp_html_dir, dir_path)
+            dst = os.path.join(self.html_dir, dir_name)
             logger.debug("copy_tree('%s', '%s')", src, dst)
             copy_tree(src, dst)
 
-        MainApiDocs.make_main_index(doc_root_dir)
+        self._post_process_for_main(self.html_dir)
+        self._make_main_index()
 
-    @staticmethod
-    def make_main_index(doc_root_dir):
+        # move the tmp-html dir back under the new html dir, as the full package docs
+        self.full_package_dir = os.path.join(self.html_dir, "full")
+        logger.debug("os.rename('%s', '%s')", self.tmp_html_dir, self.full_package_dir)
+        os.rename(self.tmp_html_dir, self.full_package_dir)
 
-        # copy the index from the full package
-        logger.debug("make_main_index(%s)", doc_root_dir)
-        src = os.path.join(doc_root_dir, "full/sparktk/index.html")
-        dst = os.path.join(doc_root_dir, "index.html")
-        logger.debug("shutil.copy('%s', '%s')", src, dst)
+    def _make_main_index(self):
+
+        # copy the main index from the original html
+        src = os.path.join(self.tmp_html_dir, "sparktk/index.html")
+        dst = os.path.join(self.html_dir, "index.html")
+        logger.debug("_make_main_index: shutil.copy('%s', '%s')", src, dst)
         shutil.copy(src, dst)
 
         # post-processes the copied index.html
         def html_main_index_processor(full_name, reader, writer):
-            state = "copy"
+            COPY = 0
+            SKIP = 1
+            state = COPY
             for line in reader.readlines():
-                if state == "copy":
+                if state == COPY:
                     if line.lstrip().startswith("<body>"):
                         writer.write(MainApiDocs.main_index_body)
-                        state = "skip"
+                        state = SKIP
                     else:
                         writer.write(line)
-                elif state == "skip" and line.lstrip().startswith("</body>"):
-                        state = "copy"
+                elif state == SKIP and line.lstrip().startswith("</body>"):
+                        state = COPY
 
         process_file(dst, html_main_index_processor)
 
     @staticmethod
-    def post_process_for_main(path):
+    def _post_process_for_main(path):
+        header_pattern = re.compile('<span class="name">sparktk.*\.(\w+)</span>')
 
         def html_for_main_processor(full_name, reader, writer):
-            state = 'copy'
+            COPY = 0
+            SKIP = 1
+            SKIP_DIVS = 2
+            GET_FIRST_DIV = 3
+
+            state = COPY
             div_count = 0
             for line in reader.readlines():
-                if state == 'skip_divs':
-                    num_divs = line.count('<div ') + line.count('<div>')
-                    num_div_nots = line.count('</div>')
-                    div_count += (num_divs - num_div_nots)
-                    if div_count <= 0:
-                        state = 'copy'
-                    continue
-                if state == 'get_first_div':
+                if state == GET_FIRST_DIV:
                     assert(line.lstrip().startswith("<div"))
+                    state = SKIP_DIVS
+                    # fall through
+                if state == SKIP_DIVS:
                     num_divs = line.count('<div ') + line.count('<div>')
                     num_div_nots = line.count('</div>')
                     div_count += (num_divs - num_div_nots)
                     if div_count <= 0:
-                        state = 'copy'
-                    else:
-                        state = 'skip_divs'
+                        state = COPY
                     continue
-                if state == 'skip':
+                elif state == SKIP:
                     continue
-                if '<p class="source_link">' in line:
-                    state = 'get_first_div'
+                elif '<p class="source_link">' in line:
+                    # start skip divs for source link button
+                    state = GET_FIRST_DIV
                     continue
-                #processed_line = MainApiDocs.process_line_html_for_main(line, full_name)
-                processed_line = line  # todo - add processing
+
+                if line.lstrip().startswith('<h1 class="title">'):
+                    m = header_pattern.search(line)
+                    if m:
+                        line = '<h1 class="title"><span class="name">sparktk</span> %s</h1>' % m.groups()[0]
+                processed_line = line  # todo - add more processing?
                 writer.write(processed_line)
+
         walk_path(path, '.html', html_for_main_processor)
 
-    @staticmethod
-    def process_line_html_for_main(line, full_name):
-
-#<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.frame', this);">Show source &equiv;</a></p>
-        #if full_name.endswith("/index.html"):
-        if '<p class="source_link">' in line:
-            return ''
-
-        return line
-
+##############################################################################
 
 def main():
     script_name = os.path.basename(__file__)
@@ -435,7 +438,7 @@ def main():
         html_dir = os.path.abspath(value)
         print "[%s] processing HTML at %s" % (script_name, html_dir)
         post_process_html(html_dir)
-        MainApiDocs.transform(html_dir)
+        MainApiDocs(html_dir)
 
     elif option.startswith(py_flag):
         value = option[len(py_flag):]

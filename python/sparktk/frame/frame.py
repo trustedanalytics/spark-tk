@@ -47,16 +47,17 @@ __all__ = ["create",
 class Frame(object):
 
     def __init__(self, tc, source, schema=None, validate_schema=False):
+        """(Private constructor -- use tc.frame.create or other methods available from the TkContext)"""
         self._tc = tc
         if self._is_scala_frame(source):
             self._frame = source
-        elif self.is_scala_rdd(source):
+        elif self._is_scala_rdd(source):
             scala_schema = schema_to_scala(tc.sc, schema)
-            self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
-        elif self.is_scala_dataframe(source):
-            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source)
+            self._frame = self._create_scala_frame(tc.sc, source, scala_schema)
+        elif self._is_scala_dataframe(source):
+            self._frame = self._create_scala_frame_from_scala_dataframe(tc.sc, source)
         elif isinstance(source, DataFrame):
-            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
+            self._frame = self._create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
         elif isinstance(source, PythonFrame):
             self._frame = source
         else:
@@ -215,12 +216,12 @@ class Frame(object):
             raise TypeError("Unable to validate schema, because the pyrdd provided is not an RDD.")
 
     @staticmethod
-    def create_scala_frame(sc, scala_rdd, scala_schema):
+    def _create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
-    def create_scala_frame_from_scala_dataframe(sc, scala_dataframe):
+    def _create_scala_frame_from_scala_dataframe(sc, scala_dataframe):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_dataframe)
 
@@ -233,18 +234,18 @@ class Frame(object):
         """converts a PythonFrame to a Scala Frame"""
         scala_schema = schema_to_scala(self._tc.sc, python_frame.schema)
         scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.rdd.PythonJavaRdd.pythonToScala(python_frame.rdd._jrdd, scala_schema)
-        return self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+        return self._create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
 
     def _is_scala_frame(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.Frame)
 
-    def is_scala_rdd(self, item):
+    def _is_scala_rdd(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.rdd.RDD)
 
-    def is_scala_dataframe(self, item):
+    def _is_scala_dataframe(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.sql.DataFrame)
 
-    def is_python_rdd(self, item):
+    def _is_python_rdd(self, item):
         return isinstance(item, RDD)
 
     @property
@@ -264,7 +265,7 @@ class Frame(object):
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
-            self._frame = self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+            self._frame = self._create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
         return self._frame
 
     @property
@@ -319,12 +320,6 @@ class Frame(object):
         """
         return [name for name, data_type in self.schema]
 
-    def append_csv_file(self, file_name, schema, separator=','):
-        self._scala.appendCsvFile(file_name, schema_to_scala(self._tc.sc, schema), separator)
-
-    def export_to_csv(self, file_name):
-        self._scala.exportToCsv(file_name)
-
     # Frame Operations
 
     from sparktk.frame.ops.add_columns import add_columns
@@ -352,7 +347,7 @@ class Frame(object):
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.entropy import entropy
-    from sparktk.frame.ops.export_data import export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
+    from sparktk.frame.ops.export_data import export_to_csv, export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.group_by import group_by
