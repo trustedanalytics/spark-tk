@@ -102,7 +102,7 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
                 <property>
-                    <name>!NEVERSETME</name>
+                    <name>BUILD_NUMBER</name>
                 </property>
             </activation>
             <build>
