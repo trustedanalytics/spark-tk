@@ -31,7 +31,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
         kmodel.predict(self.frame_test)
         test_rows = self.frame_test.to_pandas(50)
-        result = kmodel.export_to_mar(self.get_export_file("kmeans")
+        result = kmodel.export_to_mar(self.get_export_file("kmeans"))
 
         with scoring_utils.scorer(result) as scorer:
             time.sleep(5)
