@@ -13,20 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.collaborativefiltering
+package org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering
 
-import org.apache.spark.mllib.linalg.{ Matrices, Vectors }
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-
-import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
-
-import org.apache.spark.sql._
+import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
-import org.trustedanalytics.sparktk.testutils.MatcherUtils._
 
 class CollaborativeFilteringModelTest extends TestingSparkContextWordSpec with Matchers {
 

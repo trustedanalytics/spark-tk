@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.collaborativefiltering
+package org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering
 
 import java.io.{ FileOutputStream, File }
 import java.nio.file.{ Files, Path }
