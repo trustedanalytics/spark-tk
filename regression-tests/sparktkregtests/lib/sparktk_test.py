@@ -34,7 +34,30 @@ def get_context():
     global global_tc
     with lock:
         if global_tc is None:
-            global_tc = stk.TkContext()
+		sparktkconf_dict = {'spark.driver.memory': "3712m", 
+					'spark.executor.instances' : '5', 
+					'spark.driver.cores': '1', 
+					'spark.driver.extraJavaOptions': '-Xmx2688m', 
+					'spark.driver.maxPermSize': '512m', 
+					'spark.driver.maxResultSize': '2g', 
+					'spark.dynamicAllocation.enabled': 'true', 
+					'spark.dynamicAllocation.maxExecutors': '116', 
+					'spark.dynamicAllocation.minExecutors': '1', 
+					'spark.executor.cores': '1', 
+					'spark.executor.extrajavaoptions': '-Xmx2688m',
+					'spark.executor.memory': '3200m', 
+					'spark.shuffle.io.preferDirectBufs': 'false', 
+					'spark.shuffle.service.enabled': 'true', 
+					'spark.yarn.am.waitTime': '1000000', 
+					'spark.yarn.driver.memoryOverhead': '384', 
+					'spark.yarn.executor.memoryOverhead': '384',
+					'spark.eventLog.enabled': 'false', 
+					'spark.sql.shuffle.partitions': '6'}
+                if config.run_mode:
+                    global_tc = stk.TkContext(master='yarn-client', extra_conf=sparktkconf_dict)
+
+                else:
+                    global_tc = stk.TkContext()
     return global_tc
 
 
@@ -44,6 +67,7 @@ class SparkTKTestCase(unittest.TestCase):
     def setUpClass(cls):
         """Build the context for use"""
         cls.context = get_context()
+        cls.context.sc.setCheckpointDir(config.checkpoint_dir)
 
     def setUp(self):
         pass
@@ -59,7 +83,7 @@ class SparkTKTestCase(unittest.TestCase):
         """Return the hdfs path to the given file"""
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
-        placed_path = "/user/" + config.user + "/qa_data/" + filename
+        placed_path = config.hdfs_data_dir + "/" + filename
         return placed_path
 
     def get_name(self, prefix):
@@ -71,9 +95,8 @@ class SparkTKTestCase(unittest.TestCase):
 
     def get_local_dataset(self, dataset):
         """gets the dataset from the dataset folder"""
-        this_directory = os.path.dirname(os.path.abspath(__file__))
-        dataset_directory = os.path.dirname(os.path.dirname(this_directory)) + "/datasets/"
-        return dataset_directory + dataset
+        dataset_directory = config.dataset_directory
+        return os.path.join(dataset_directory, dataset)
 
     def assertFramesEqual(self, frame1, frame2):
         frame1_take = frame1.take(frame1.count())

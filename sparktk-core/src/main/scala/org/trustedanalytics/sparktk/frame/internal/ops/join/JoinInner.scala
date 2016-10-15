@@ -22,7 +22,7 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, FrameSummarizat
 trait JoinInnerSummarization extends BaseFrame {
 
   /**
-   * JoinInner performs left join operation on one or two frames, creating a new frame.
+   * JoinInner performs inner join operation on one or two frames, creating a new frame.
    *
    * @param right        Another frame to join with.
    * @param leftOn       Names of the columns in the left frame used to match up the two frames.

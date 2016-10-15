@@ -13,28 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models
+import scala.util.Properties
 
-//import scala.concurrent.Future
-
-trait Model {
-  var data: Array[String]
+val EXPECTED_SPARK_VERSION = scala.util.Properties.envOrElse("SPARK_VERSION", "")
+var CURRENT_SPARK_VERSION = sc.version
+if (sc.version == EXPECTED_SPARK_VERSION) {
+  System.exit(0);
 }
-
-/**
- * Base interface for a Model loader.
- */
-//trait ModelLoader {
-//
-//  /**
-//   * Called for scoring
-//   */
-//  def score(row: Array[Any]): Array[Any]
-//
-//  def input(): Array[Field]
-//
-//  def output(): Array[Field]
-//
-//  def modelMetadata(): ModelMetaDataArgs
-//}
-
+else {
+  println(s"Incorrect spark version, expected $EXPECTED_SPARK_VERSION got $CURRENT_SPARK_VERSION.")
+  System.exit(1);
+}

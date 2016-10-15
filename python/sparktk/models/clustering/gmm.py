@@ -43,6 +43,9 @@ def train(frame,
     :return: GaussianMixtureModel
 
     """   
+    if frame is None:
+        raise ValueError("frame cannot be None")
+
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     seed = int(os.urandom(2).encode('hex'),16) if seed is None else seed
@@ -67,6 +70,26 @@ def load(path, tc=TkContext.implicit):
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.clustering.gmm.GaussianMixtureModel
+
+class Gaussian(PropertiesObject):
+    """
+    Gaussian sigma and mu values for a trained GaussianMixtureModel
+    """
+    def __init__(self, tc, scala_result):
+        self._tc = tc
+        self._mu = scala_result.mu()
+        self._sigma = scala_result.sigma()
+
+    @property
+    def mu(self):
+        """ (list[float]) The mean vector of the distribution """
+        return list(self._tc.jutils.convert.from_scala_seq(self._mu))
+
+    @property
+    def sigma(self):
+        """ (list[list[float]]) The covariance matrix of the distribution """
+        sigma_list = self._tc.jutils.convert.from_scala_seq(self._sigma)
+        return [list(self._tc.jutils.convert.from_scala_seq(s)) for s in sigma_list]
 
 
 class GaussianMixtureModel(PropertiesObject):
@@ -106,27 +129,33 @@ class GaussianMixtureModel(PropertiesObject):
         >>> model.k
         3
 
-        >>> d = [[s.encode('ascii') for s in list] for list in model.gaussians]
+        <skip>
+        >>> for g in model.gaussians:
+        ...     print g
+        mu    = [1.1984786097160265]
+        sigma = [[0.5599222134199012]]
+        mu    = [6.643997733061858]
+        sigma = [[2.19222016401446]]
+        mu    = [6.79435719737145]
+        sigma = [[2.2637494400157774]]
 
-        >>> mu =[]
-        >>> sigma = []
-        >>> for i in d:
-        ...     mu.append((i[0].partition('[')[2]).partition(']')[0])
-        ...     sigma.append((i[1].partition('List(List(')[2]).partition('))')[0])
-        >>> l = []
-        >>> for i in range(0, len(mu)):
-        ...     l.append([float(mu[i]), float(sigma[i])])
+        </skip>
 
-        >>> l.sort(key=lambda x: x[0])
-        >>> np.allclose(np.array(l),np.array([[1.1984454608177824, 0.5599200477022921],
-        ... [6.6173304476544335, 2.1848346923369246],
-        ... [6.79969916638852, 2.2623755196701305]]),atol=1e+01)
-        True
+        <hide>
+        >>> expected_mu = [1.1984454608177824,6.6173304476544335,6.79969916638852]
+        >>> expected_sigma = [[0.5599200477022921],[2.1848346923369246],[2.2623755196701305]]
 
-        >>> model.predict(frame)
+        >>> actual_mu = [g.mu[0] for g in model.gaussians]
+        >>> actual_sigma = [g.sigma[0] for g in model.gaussians]
+
+        >>> assert(np.allclose(expected_mu, actual_mu, atol=1e+01))
+        >>> assert(np.allclose(expected_sigma, actual_sigma, atol=1e+01))
+        </hide>
+
+        >>> predicted_frame =  model.predict(frame)
 
         <skip>
-        >>> x = frame.take(9)
+        >>> predicted_frame.inspect()
         [#]  data  name  predicted_cluster
         ==================================
         [0]   9.0  ij                    0
@@ -141,7 +170,7 @@ class GaussianMixtureModel(PropertiesObject):
         </skip>
 
         <hide>
-        >>> x = frame.take(9)
+        >>> x = predicted_frame.take(9)
         >>> val = set(map(lambda y : y[2], x))
         >>> newlist = [[z[1] for z in x if z[2]==a]for a in val]
         >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
@@ -216,11 +245,11 @@ class GaussianMixtureModel(PropertiesObject):
 
     @property
     def gaussians(self):
-        """the mu and sigma values"""
+        """Gaussian object, which contains the mu and sigma values"""
         g = self._tc.jutils.convert.from_scala_seq(self._scala.gaussians())
         results = []
         for i in g:
-            results.append(self._tc.jutils.convert.from_scala_seq(i))
+            results.append(Gaussian(self._tc, i))
         return results
 
     def cluster_sizes(self, frame):
@@ -229,9 +258,20 @@ class GaussianMixtureModel(PropertiesObject):
         return self._tc.jutils.convert.scala_map_to_python(cs)
 
     def predict(self, frame, columns=None):
-        """method to predict on a given frame"""
+        """
+       Predicts the labels for the observation columns in the given input frame. Creates a new frame
+       with the existing columns and a new predicted column.
+
+       Parameters
+       ----------
+
+       :param frame: (Frame) Frame used for predicting the values
+       :param c: (List[str]) Names of the observation columns.
+       :return: (Frame) A new frame containing the original frame's columns and a prediction column
+       """
+        from sparktk.frame.frame import Frame
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def __columns_to_option(self, c):
         if c is not None:
@@ -242,5 +282,18 @@ class GaussianMixtureModel(PropertiesObject):
     def save(self, path):
         """save the trained model to the given path"""
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

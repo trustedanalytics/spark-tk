@@ -62,9 +62,9 @@ Train a K-Means model
 
 Add cluster predictions to the frame
 
-    >>> km.predict(frame1)
+    >>> pf = km.predict(frame1)
 
-    >>> frame1.inspect()
+    >>> pf.inspect()
     [#]  a  b  c   cluster
     ======================
     [0]  2  3   7        0
@@ -81,9 +81,9 @@ Upload some new data and predict
 
     >>> frame2 = tc.frame.create([[3], [8], [16], [1], [13], [18]])
 
-    >>> km.predict(frame2, 'C0')
+    >>> pf2 = km.predict(frame2, 'C0')
 
-    >>> frame2.inspect()
+    >>> pf2.inspect()
     [#]  C0  cluster
     ================
     [0]   3        0
