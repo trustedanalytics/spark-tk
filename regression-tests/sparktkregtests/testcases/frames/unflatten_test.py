@@ -31,6 +31,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                             ("time", str),
                             ("reading", int)]
 
+    @unittest.skip("DPNG-11960")
     def test_unflatten_one_column(self):
         """ test for unflatten comma-separated rows """
         frame = self.context.frame.import_csv(self.datafile_unflatten,
@@ -67,6 +68,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
             self.assertTrue(row.equals(name_lookup[row['user']]))
         self.assertEqual(frame.count(), 5)
 
+    @unittest.skip("DPNG-11910")
     def test_unflatten_multiple_cols(self):
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)

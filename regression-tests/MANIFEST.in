@@ -1,0 +1,8 @@
+recursive-include automation        *
+recursive-include datasets          *
+recursive-include exampletests      *
+recursive-include generateddata     *
+recursive-include sparktkregtests   *
+include requirements.txt
+include README.md
+include LICENSE

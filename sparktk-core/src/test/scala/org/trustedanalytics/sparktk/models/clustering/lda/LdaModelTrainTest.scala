@@ -50,11 +50,6 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
 
   val epsilon = 1e-6
 
-  /** assertion that two doubles are almost equal */
-  def assertAlmostEqual(x: Double, y: Double, tolerance: Double = 1e-6): Unit = {
-    assert(Math.abs(x - y) < tolerance, s"${x} should equal ${y}+-${tolerance}")
-  }
-
   /** assertion that most likely topic is given by index */
   def assertLikelyTopic(v: Vector[Double], topicIndex: Int): Unit = {
     assert(v.indexOf(v.max) == topicIndex, s"topic should equal ${topicIndex}")
