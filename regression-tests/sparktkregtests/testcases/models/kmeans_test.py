@@ -172,11 +172,11 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                                  scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                                  k=5)
 
-            predicted_frame = kmodel.predict(self.frame_test)
-            predicted_frame.rename_columns(
+            self.frame_test.rename_columns(
                 {"Vec1": 'Dim1', "Vec2": 'Dim2', "Vec3": "Dim3",
                  "Vec4": "Dim4", "Vec5": 'Dim5'})
-            predicted_frame.count()
+            predicted_frame = kmodel.predict(self.frame_test)
+            print predicted_frame.inspect()
 
     def test_too_few_columns(self):
         """Check error on invalid num of columns"""
