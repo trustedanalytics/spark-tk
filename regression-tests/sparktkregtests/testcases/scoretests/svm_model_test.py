@@ -79,7 +79,7 @@ class SvmScoreTest(sparktk_test.SparkTKTestCase):
         svm_model = self.context.models.classification.svm.train(
             training_frame, u"model_class", ["x", "y"])
 
-        model_path = svm_model.export_to_mar(self.get_export_file("svm"))
+        model_path = svm_model.export_to_mar(self.get_export_file(self.get_name("svm")))
 
         test_rows = training_frame.to_pandas(training_frame.count())
         with scoring_utils.scorer(model_path) as scorer:

@@ -25,6 +25,6 @@ MAINDIR="$(dirname $MAINDIR)"
 
 scoring_model=$1
 
-pushd $MAINDIR/scoring/scoring_model
+pushd $MAINDIR/scoring/scoring_engine
 ./bin/model-scoring.sh -Dtrustedanalytics.scoring-engine.archive-mar=$scoring_model -Dtrustedanalytics.scoring.port=9100 > $MAINDIR/scoring_out.log 2> $MAINDIR/scoring_error.log
 popd
