@@ -121,9 +121,9 @@ class SvmModel(PropertiesObject):
         >>> model.observation_columns
         [u'data']
 
-        >>> model.predict(frame, ['data'])
+        >>> predicted_frame = model.predict(frame, ['data'])
 
-        >>> frame.inspect()
+        >>> predicted_frame.inspect()
         [#]  data   label  predicted_label
         ==================================
         [0]  -48.0  1                    1
@@ -138,7 +138,7 @@ class SvmModel(PropertiesObject):
         [9]   48.0  0                    0
 
 
-        >>> test_metrics = model.test(frame)
+        >>> test_metrics = model.test(predicted_frame)
 
         >>> test_metrics
         accuracy         = 1.0
@@ -161,6 +161,31 @@ class SvmModel(PropertiesObject):
 
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
+
+        >>> predicted_frame2 = restored.predict(frame)
+
+        >>> predicted_frame2.inspect()
+        [#]  data   label  predicted_label
+        ==================================
+        [0]  -48.0  1                    1
+        [1]  -75.0  1                    1
+        [2]  -63.0  1                    1
+        [3]  -57.0  1                    1
+        [4]   73.0  0                    0
+        [5]  -33.0  1                    1
+        [6]  100.0  0                    0
+        [7]  -54.0  1                    1
+        [8]   78.0  0                    0
+        [9]   48.0  0                    0
+
+        >>> canonical_path = model.export_to_mar("sandbox/SVM.mar")
+
+    <hide>
+    >>> import os
+    >>> os.path.exists(canonical_path)
+    True
+    </hide>
+
 
     """
 
@@ -214,9 +239,20 @@ class SvmModel(PropertiesObject):
         return self._scala.miniBatchFraction()
 
     def predict(self, frame, columns=None):
-        """predict the frame given the trained model"""
+        """
+       Predicts the labels for the observation columns in the given input frame. Creates a new frame
+       with the existing columns and a new predicted column.
+
+       Parameters
+       ----------
+
+       :param frame: (Frame) Frame used for predicting the values
+       :param c: (List[str]) Names of the observation columns.
+       :return: (Frame) A new frame containing the original frame's columns and a prediction column
+       """
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def test(self, frame, columns=None):
         """test the frame given the trained model"""
@@ -231,5 +267,19 @@ class SvmModel(PropertiesObject):
     def save(self, path):
         """save the trained model to path"""
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
+
 
 del PropertiesObject
