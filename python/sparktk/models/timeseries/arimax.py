@@ -34,6 +34,9 @@ def train(frame, ts_column, x_columns, p, d, q, x_max_lag, include_original_x=Tr
     If include_original_x is true, the model is fitted with an original exogenous variables. If includeIntercept is true,
     the model is fitted with an intercept.
 
+    Parameters
+    ----------
+
     :param frame: (Frame) Frame used for training.
     :param ts_column: (str) Name of the column that contains the time series values.
     :param x_columns: (List(str)) Names of the column(s) that contain the values of exogenous regressors.
@@ -220,6 +223,15 @@ class ArimaxModel(PropertiesObject):
         [8]    2.9  2.85726970866
         [9]    2.6  2.87356376648
 
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/arimax.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
@@ -323,6 +335,9 @@ class ArimaxModel(PropertiesObject):
         Predict the time series values for a test frame, based on the specified x values.  Creates a new frame
         revision with the existing columns and a new predicted_y column.
 
+        Parameters
+        ----------
+
         :param frame: (Frame) Frame used for predicting the ts values
         :param ts_column: (str) Name of the time series column
         :param x_columns: (List[str]) Names of the column(s) that contain the values of the exogenous inputs.
@@ -344,8 +359,30 @@ class ArimaxModel(PropertiesObject):
     def save(self, path):
         """
         Save the trained model to the specified path
+
+        Parameters
+        ----------
+
         :param path: Path to save
         """
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :returns (str) Full path to the saved .mar file
+
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        return self._scala.exportToMar(self._tc._scala_sc, path)
+
 
 del PropertiesObject

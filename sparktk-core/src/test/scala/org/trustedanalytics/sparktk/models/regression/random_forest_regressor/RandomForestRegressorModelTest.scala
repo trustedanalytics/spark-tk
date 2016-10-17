@@ -57,6 +57,44 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
         val model = RandomForestRegressorModel.train(frame, "", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
       }
     }
+
+    "return predictions when calling score method" in {
+      val rdd = sparkContext.parallelize(labeledPoint)
+      val frame = new Frame(rdd, schema)
+      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+
+      // Test data for scoring
+      val inputArray = Array[Any](16.8973559126, 2.6933495054)
+      val expectedPredict = 1.0
+
+      // Score and check the results
+      val scoreResult = model.score(inputArray)
+      assert(inputArray.length == model.input.length)
+      assert(scoreResult.length == model.output.length)
+      assert(scoreResult.slice(0, inputArray.length).sameElements(inputArray))
+      scoreResult(inputArray.length) match {
+        case prediction: Double => assert(prediction == expectedPredict)
+        case _ => throw new RuntimeException(s"Expected prediction to be a Double but is ${scoreResult(1).getClass.getSimpleName}")
+      }
+    }
+
+    "throw IllegalArgumentExceptions for invalid scoring parameters" in {
+      val rdd = sparkContext.parallelize(labeledPoint)
+      val frame = new Frame(rdd, schema)
+      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+
+      intercept[IllegalArgumentException] {
+        model.score(null)
+      }
+
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any]())
+      }
+
+      intercept[IllegalArgumentException] {
+        model.score(Array[Any](16.8973559126, 2.6933495054, "bogus"))
+      }
+    }
   }
 
 }

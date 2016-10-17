@@ -27,9 +27,13 @@ import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
-
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
+import org.apache.spark.mllib.linalg.Vectors
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object RandomForestRegressorModel extends TkSaveableObject {
 
@@ -166,19 +170,26 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
                                                                         maxBins: Int,
                                                                         seed: Int,
                                                                         categoricalFeaturesInfo: Option[Map[Int, Int]],
-                                                                        featureSubsetCategory: Option[String]) extends Serializable {
+                                                                        featureSubsetCategory: Option[String]) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted class for each observation
-   * @param frame - frame to add predictions to
+   * Predict the values for the data points.
+   *
+   * Predict the values for a test frame using trained Random Forest Classifier model, and create a new frame revision
+   * with existing columns and a new predicted value’s column.
+   *
+   * @param frame - A frame whose labels are to be predicted. By default, predict is run on the same columns over which
+   *              the model is trained.
    * @param columns Column(s) containing the observations whose labels are to be predicted.
    *                By default, we predict the labels over columns the RandomForestRegressorModel
+   * @return A new frame consisting of the existing columns of the frame and a new column with predicted value for
+   *         each observation.
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
+  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (columns.isDefined) {
       require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
@@ -192,7 +203,11 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(Column("predicted_value", DataTypes.float64)))
+    val predictSchema = frame.schema.addColumn(Column("predicted_value", DataTypes.float64))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -213,6 +228,45 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
       categoricalFeaturesInfo,
       featureSubsetCategory)
     TkSaveLoad.saveTk(sc, path, RandomForestRegressorModel.formatId, formatVersion, tkMetadata)
+  }
+
+  override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null or empty.")
+    val x: Array[Double] = new Array[Double](data.length)
+    data.zipWithIndex.foreach {
+      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
+    }
+    data :+ sparkModel.predict(Vectors.dense(x))
+  }
+
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Random Forest Regressor Model", classOf[RandomForestRegressorModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  override def input(): Array[Field] = {
+    val obsCols = observationColumns
+    var input = Array[Field]()
+    obsCols.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("Prediction", "Double")
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestRegressorModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 
