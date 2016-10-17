@@ -37,7 +37,6 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.query = ".//DicomAttribute[@keyword='KEYWORD']"
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_one_column_one_result_basic(self):
         """test filter with one unique tag"""
         # get pandas frame for ease of access
@@ -51,18 +50,16 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         # get the tag number for the sopinstanceuid element
         tag_number = random_row_sopi_id.get("tag")
         # get the corresponding value
-        tag_value = random_row_sopi_id.xpath("/Value/text()")
-
+        tag_value = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID") + "/Value/text()")[0]
         # ask dicom to filter by the tag-value pair we extracted
         self.dicom.filter_by_tags({ tag_number : tag_value })
 
         # since sopinstanceuid is supposed to be unique dicom should have
         # returned only one record, the record which we randomly selected above
         self.assertEqual(self.dicom.metadata.count(), 1)
-        record = self.dicom.metadata.take(1)
+        record = self.dicom.metadata.to_pandas()["metadata"][0]
         self.assertEqual(str(random_row), str(record))
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_one_col_multi_result_basic(self):
         """test filter by tag with one tag mult record result"""
         metadata = self.dicom.metadata.to_pandas()
@@ -70,25 +67,23 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         # get the first row and extract the patient id element from the metadata xml
         first_row = metadata["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
+        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0] 
         # get the tag number for the patient id xml element
         tag_number = first_row_patient_id.get("tag")
         # get the value for that tag
-        tag_value = first_row_patient_id.xpath("/Value/text()")
+        tag_value = xml_data.xpath(self.query.replace("KEYWORD", "PatientID") + "/Value/text()")[0]
 
         # we filter ourselves to get the expected result for this key value pair
-        expected_result = self._filter({"PatientID" : first_row_patient_id })
-
+        expected_result = self._filter({"PatientID" : tag_value })
         # ask dicom to filter by tag, giving the tag-value pair
-        self.dicom.filter_by_tags({ tag_number  : first_row_patient_id })
+        self.dicom.filter_by_tags({ tag_number  : tag_value })
 
         # compare our result to dicom's
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
         self.assertEqual(len(expected_result), self.dicom.metadata.count())
-        for record, filtered_record in zip(records, pandas_result):
+        for record, filtered_record in zip(expected_result, pandas_result):
             self.assertEqual(record, filtered_record.encode("ascii", "ignore"))
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_multiple_columns_basic(self):
         """test filter tags with multiple tags"""
         # here we will generate our filter
@@ -99,20 +94,20 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         first_row = metadata[0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
-        first_row_institution_name = xml_data.xpath(self.query.replace("KEYWORD", "InstitutionName"))[0]
+        first_row_body_part = xml_data.xpath(self.query.replace("KEYWORD", "BodyPartExamined"))[0]
         # get the tag numbers and values
         patient_id_tag = first_row_patient_id.get("tag")
-        patient_id_value = first_row_patient_id.xpath("/Value/text()")
-        institution_tag = first_row_institution_name.get("tag")
-        institution_value = first_row_institution_name.xpath("/Value/text()")
+        patient_id_value = xml_data.xpath(self.query.replace("KEYWORD", "PatientID") + "/Value/text()")[0]
+        body_part_tag = first_row_body_part.get("tag")
+        body_part_value = xml_data.xpath(self.query.replace("KEYWORD", "BodyPartExamined") + "/Value/text()")[0]
         keyword_filter["PatientID"] = patient_id_value
-        keyword_filter["InstitutionName"] = institution_value
+        keyword_filter["BodyPartExamined"] = body_part_value
 
         # we do the filtering ourselves to generate the expected result
         matching_records = self._filter(keyword_filter)
 
         # we ask dicom to filter by tag with the tag-value pairs we extracted
-        self.dicom.filter_by_tags({ patient_id_tag : patient_id_value, institution_tag : institution_value })
+        self.dicom.filter_by_tags({ patient_id_tag : patient_id_value, body_part_tag : body_part_value })
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         # finally we ensure dicom's result matches ours
@@ -121,19 +116,16 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
             ascii_actual_result = actual_record.encode("ascii", "ignore")
             self.assertEqual(ascii_actual_result, expected_record)
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_invalid_column(self):
         """test filter tags with invalid tag name"""
         self.dicom.filter_by_tags({ "invalid keyword" : "value" })
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")
     def test_filter_multiple_invalid_columns(self):
         """test filter tags with mult invalid tag names"""
         self.dicom.filter_by_tags({ "invalid" : "bla", "another_invalid_col" : "bla" })
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: extract/filter by keyword/tag not working")      
     def test_filter_invalid_valid_col_mix(self):
         """test filter tags with a mix of valid and invalid tags"""
         # first we will extract a valid tag number and value from the xml
@@ -141,7 +133,7 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
         patient_id_tag = patient_id.get("tag")
-        patient_id_value = patient_id.xpath("/Value/text()")
+        patient_id_value = xml_data.xpath(self.query.replace("KEYWORD", "PatientID") + "/Value/text()")[0] 
 
         # now we ask dicom to filter by tags giving it both the valid tag-value
         # pair we extracted and also an invalid tag-value pair
@@ -150,10 +142,9 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
         # since zero records match both criteria dicom should return no records
         self.assertEqual(0, self.dicom.metadata.count())
 
-    @unittest.skip("sparktk: improper filter does not give useful error in dicom.filter")
     def test_filter_invalid_type(self):
         """test filter tags with invalid param type"""
-        with self.assertRaisesRegexp(Exception, "does not exist"):
+        with self.assertRaisesRegexp(Exception, "incomplete format"):
             self.dicom.filter_by_tags(1)
 
     def _filter(self, keywords):
@@ -170,9 +161,10 @@ class DicomFilterTagsTest(sparktk_test.SparkTKTestCase):
             ascii_xml = row.encode("ascii", "ignore")
             xml = etree.fromstring(row.encode("ascii", "ignore"))
             for keyword in keywords:
-                this_row_keyword_value = xml.xpath(self.query.replace("KEYWORD", keyword))
+                this_row_keyword_value = xml.xpath(self.query.replace("KEYWORD", keyword) + "/Value/text()")[0]
                 if this_row_keyword_value == keywords[keyword]:
-                    matching_records.append(ascii_xml)
+                    if ascii_xml not in matching_records:
+                        matching_records.append(ascii_xml)
 
         return matching_records
                 

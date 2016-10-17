@@ -33,6 +33,9 @@ def train(ts, p, d, q, include_intercept=True, method="css-cgd", init_params=Non
     order (p, d, q) where p represents the autoregression terms, d represents the order of differencing, and q
     represents the moving average error terms.  If includeIntercept is true, the model is fitted with an intercept.
 
+    Parameters
+    ----------
+
     :param ts: (List[float]) Time series to which to fit an ARIMA(p, d, q) model.
     :param p: (int) Autoregressive order
     :param d: (int) Differencing order
@@ -194,6 +197,15 @@ class ArimaModel(PropertiesObject):
          13.66340392811346,
          14.201275185574925]
 
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/arima.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
+
     """
     def __init__(self, tc, scala_model):
         self._tc = tc
@@ -276,6 +288,9 @@ class ArimaModel(PropertiesObject):
         model's intercept term (or 0.0, if fit without an intercept term).  Meanwhile, MA terms prior to the start
         are assumed to be 0.0.  If there is differencing, the first d terms come from the original series.
 
+        Parameters
+        ----------
+
         :param future_periods: (int) Periods in the future to forecast (beyond length of time series that the
                                model was trained with).
         :param ts: (Optional(List[float])) Optional list of time series values to use as golden values.  If no time
@@ -295,8 +310,28 @@ class ArimaModel(PropertiesObject):
     def save(self, path):
         """
         Save the trained model to the specified path
+
+        Parameters
+        ----------
+
         :param path: Path to save
         """
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :returns (str) Full path to the saved .mar file
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

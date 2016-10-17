@@ -49,9 +49,9 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
         self.frame_test.rename_columns(
             {"Vec1": 'Dim1', "Vec2": 'Dim2', "Vec3": "Dim3",
              "Vec4": "Dim4", "Vec5": 'Dim5'})
-        kmodel.predict(
+        predicted_frame = kmodel.predict(
             self.frame_test, ['Dim1', 'Dim2', 'Dim3', 'Dim4', 'Dim5'])
-        self._validate(kmodel, self.frame_test)
+        self._validate(kmodel, predicted_frame)
 
     def test_add_distance_columns_twice(self):
         """tests kmeans model add distances cols twice"""
@@ -68,8 +68,8 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5)
-        kmodel.predict(self.frame_test)
-        self._validate(kmodel, self.frame_test)
+        predicted_frame = kmodel.predict(self.frame_test)
+        self._validate(kmodel, predicted_frame)
 
     def test_column_weights(self):
         """Tests kmeans cluster algorithm with weighted values."""
@@ -77,8 +77,8 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[0.1, 0.1, 0.1, 0.1, 0.1],
                                                              k=5)
-        kmodel.predict(self.frame_test)
-        self._validate(kmodel, self.frame_test)
+        predicted_frame = kmodel.predict(self.frame_test)
+        self._validate(kmodel, predicted_frame)
 
     def test_max_iterations(self):
         """Tests kmeans cluster algorithm with more iterations."""
@@ -87,8 +87,8 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
                                                              max_iter=35)
-        kmodel.predict(self.frame_test)
-        self._validate(kmodel, self.frame_test)
+        predicted_frame = kmodel.predict(self.frame_test)
+        self._validate(kmodel, predicted_frame)
 
     def test_epsilon_assign(self):
         """Tests kmeans cluster algorithm with an arbitrary epsilon. """
@@ -97,8 +97,8 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
                                                              epsilon=.000000000001)
-        kmodel.predict(self.frame_test)
-        self._validate(kmodel, self.frame_test)
+        predicted_frame = kmodel.predict(self.frame_test)
+        self._validate(kmodel, predicted_frame)
 
     @unittest.skip("publish model not complete in dev")
     def test_publish(self):
@@ -172,11 +172,11 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                                  scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                                  k=5)
 
-            self.frame_test.rename_columns(
+            predicted_frame = kmodel.predict(self.frame_test)
+            predicted_frame.rename_columns(
                 {"Vec1": 'Dim1', "Vec2": 'Dim2', "Vec3": "Dim3",
                  "Vec4": "Dim4", "Vec5": 'Dim5'})
-            kmodel.predict(self.frame_test)
-            self.frame_test.count()
+            predicted_frame.count()
 
     def test_too_few_columns(self):
         """Check error on invalid num of columns"""
@@ -186,7 +186,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                                  scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                                  k=5)
 
-            kmodel.predict(self.frame_test, columns=["Vec1", "Vec2"])
+            predicted_frame = kmodel.predict(self.frame_test, columns=["Vec1", "Vec2"])
 
     @unittest.skip("sparktk: Model training with null frame should give a useful exception message")
     def test_null_frame(self):

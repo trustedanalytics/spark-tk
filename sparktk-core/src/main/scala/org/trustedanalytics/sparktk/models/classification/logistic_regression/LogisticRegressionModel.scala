@@ -27,6 +27,11 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import scala.language.implicitConversions
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
+import org.apache.spark.mllib.linalg.DenseVector
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object LogisticRegressionModel extends TkSaveableObject {
 
@@ -105,6 +110,8 @@ object LogisticRegressionModel extends TkSaveableObject {
     require(numCorrections > 0, "number of corrections for LBFGS must be a positive value")
     require(miniBatchFraction > 0, "mini-batch fraction for SGD must be a positive value")
     require(stepSize > 0, "step size for SGD must be a positive value")
+
+    frame.schema.validateColumnsExist(observationColumns :+ labelColumn)
 
     val arguments = LogisticRegressionTrainArgs(frame,
       observationColumns.toList,
@@ -282,7 +289,7 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
                                                                  stepSize: Double,
                                                                  trainingSummary: LogisticRegressionSummaryTable,
                                                                  hessianMatrix: Option[DenseMatrix[Double]],
-                                                                 sparkModel: LogisticRegressionModelWithFrequency) extends Serializable {
+                                                                 sparkModel: LogisticRegressionModelWithFrequency) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -298,10 +305,9 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
    * @return Frame containing the original frame's columns and a column with the predicted label.
    */
-  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Unit = {
+  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Frame = {
     require(frame != null, "frame is required")
 
-    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     //Running MLLib
     if (observationColumnsPredict.isDefined) {
       require(observationColumns.length == observationColumnsPredict.get.length,
@@ -318,7 +324,11 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(predictColumn))
+    val predictSchema = frame.schema.addColumn(predictColumn)
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -400,6 +410,42 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
     }
   }
 
+  override def score(row: Array[Any]): Array[Any] = {
+    require(row != null && row.length > 0, "scoring input row must not be null nor empty")
+    val doubleArray = row.map(i => ScoringModelUtils.asDouble(i))
+    val predictedLabel = sparkModel.predict(new DenseVector(doubleArray)).toInt
+    row :+ predictedLabel
+  }
+
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Logistic Regression", classOf[LogisticRegressionModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  override def input(): Array[Field] = {
+    val obsCols = observationColumns
+    var input = Array[Field]()
+    obsCols.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("PredictedLabel", "Int")
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[LogisticRegressionModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
 }
 
 /**

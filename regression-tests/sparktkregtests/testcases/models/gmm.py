@@ -70,8 +70,8 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
             k=3,
             max_iterations=100,
             seed=15)
-        model.predict(self.frame)
-        results_df = self.frame.to_pandas(self.frame.count())
+        predicted_frame = model.predict(self.frame)
+        results_df = predicted_frame.to_pandas(self.frame.count())
 
         actual_cluster_sizes = Counter(results_df["predicted_cluster"].tolist())
         expected_cluster_sizes = {2: 27, 0: 17, 1: 6}
