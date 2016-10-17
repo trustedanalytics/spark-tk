@@ -23,7 +23,7 @@ NAME="[`basename $BASH_SOURCE[0]`]"
 DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
-target=/user/$USER
+target=/user/vcap
 
 sudo -u hdfs hdfs dfs -mkdir -p $target
 sudo -u hdfs hdfs dfs -mkdir -p $target/sparktk_checkpoint

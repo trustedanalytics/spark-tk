@@ -23,7 +23,7 @@ qa_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__fil
 dataset_directory = os.path.join(qa_root, "datasets")
 hdfs_namenode = os.getenv("CDH_MASTER", "localhost")
 user = os.getenv("USER", "hadoop")
-run_mode = True if os.getenv("RUN_MODE","yarn_client") == "yarn_client" else False 
+run_mode = True #if os.getenv("RUN_MODE","yarn_client") == "yarn_client" else False 
 
 # HDFS paths, need to be set NOT using os.join since HDFS doesn't use the system
 # path seperator, it uses HDFS path seperator ('/')
