@@ -69,9 +69,9 @@
         <profile>
             <id>docs</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+
                 <property>
-                    <name>!NEVERSETME</name>
+                    <name>env.DOCS</name>
                 </property>
             </activation>
             <build>
@@ -100,9 +100,9 @@
         <profile>
             <id>python-package</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+
                 <property>
-                    <name>!NEVERSETME</name>
+                    <name>env.BUILD_NUMBER</name>
                 </property>
             </activation>
             <build>
