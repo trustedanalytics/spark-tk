@@ -15,7 +15,9 @@
         <profile>
             <id>python-package-regression-test</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
             </activation>
             <build>
                 <plugins>
