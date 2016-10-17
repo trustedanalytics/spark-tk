@@ -86,7 +86,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
-                                                             max_iter=35)
+                                                             max_iterations=35)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
@@ -96,7 +96,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
-                                                             epsilon=.000000000001)
+                                                             convergence_tol=.000000000001)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
@@ -148,7 +148,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
     def test_convergence_tol_negative(self):
         """Check error on negative convergence_tol value."""
-        with self.assertRaisesRegexp(Exception, "convergence tolerance must be a positive value"):
+        with self.assertRaisesRegexp(Exception, "epsilon must be a positive value"):
             self.context.models.clustering.kmeans.train(self.frame_train,
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
