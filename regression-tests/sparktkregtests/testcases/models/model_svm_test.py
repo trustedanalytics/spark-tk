@@ -118,10 +118,10 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # Test against the original training data;
         # this should match almost perfectly.
-        svm_model.predict(training_frame)
+        predicted_frame = svm_model.predict(training_frame)
 
         # test the model, check that the accuracy is sufficient
-        test_obj = svm_model.test(training_frame)
+        test_obj = svm_model.test(predicted_frame)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
         # create a frame from the test data and predict
@@ -174,19 +174,19 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # Test against the original training data;
         # this should match almost perfectly.
-        svm_model.predict(training_frame)
+        predicted_frame = svm_model.predict(training_frame)
 
         # test the model and verify accuracy
-        test_obj = svm_model.test(training_frame)
+        test_obj = svm_model.test(predicted_frame)
         self.assertGreaterEqual(test_obj.accuracy, 0.75)
 
         # create a frame from the test data and predict
         outer_square = self.context.frame.create(
             test_data, schema=schema)
-        svm_model.predict(outer_square, ["d1", "d2", "d3"])
+        predicted_frame2 = svm_model.predict(outer_square, ["d1", "d2", "d3"])
 
         # test the model and verify accuracy
-        test_obj = svm_model.test(outer_square)
+        test_obj = svm_model.test(predicted_frame2)
         self.assertGreaterEqual(test_obj.accuracy, 0.75)
 
     def test_fuzzy_line(self):
@@ -217,15 +217,15 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # Test against the original training data;
         # this should match almost perfectly.
-        svm_model.predict(training_frame)
+        predicted_frame = svm_model.predict(training_frame)
 
-        test_obj = svm_model.test(training_frame)
+        test_obj = svm_model.test(predicted_frame)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
         outer_square = self.lattice2frame(test_lattice)
-        svm_model.predict(outer_square, ["x", "y"])
+        predicted_frame2 = svm_model.predict(outer_square, ["x", "y"])
 
-        test_obj = svm_model.test(outer_square)
+        test_obj = svm_model.test(predicted_frame2)
 
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
@@ -272,9 +272,9 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # Test against the original training data;
         # this should match almost perfectly.
-        svm_model.predict(training_frame)
+        predicted_frame = svm_model.predict(training_frame)
 
-        test_obj = svm_model.test(training_frame)
+        test_obj = svm_model.test(predicted_frame)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
     def test_all_in_class(self):
@@ -307,9 +307,9 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                                  ["x", "y"])
 
         outer_square = self.lattice2frame(test_lattice)
-        svm_model.predict(outer_square, ["x", "y"])
+        predicted_frame = svm_model.predict(outer_square, ["x", "y"])
 
-        test_obj = svm_model.test(outer_square)
+        test_obj = svm_model.test(predicted_frame)
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
     def test_shuttle(self):
@@ -371,8 +371,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                self.shuttle_schema)
         pred_frame.drop_columns("input_line")
 
-        svm_model.predict(pred_frame, observe_list)
-        self.assertLess(pred_frame.count() / total_row_count, 0.01)
+        predicted_frame = svm_model.predict(pred_frame, observe_list)
+        self.assertLess(predicted_frame.count() / total_row_count, 0.01)
 
     def test_3class_linear(self):
         """ Verify that 3-class model raises an exception.  """

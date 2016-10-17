@@ -219,7 +219,7 @@ def datetime_to_ms(date_time):
     if isinstance(date_time, datetime):
         ms = long(date_time.strftime("%s")) * 1000.0
         ms += date_time.microsecond // 1000
-        return ms
+        return long(ms)
     else:
         raise TypeError("Unable to calculate the number of milliseconds since epoch for type: %s" % type(date_time))
 

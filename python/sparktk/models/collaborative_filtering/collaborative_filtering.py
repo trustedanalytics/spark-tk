@@ -126,7 +126,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         >>> model = tc.models.collaborative_filtering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
         <progress>
 
-        >>> predict_result = model.create_predict_frame(predict_frame, 'source', 'dest')
+        >>> predict_result = model.predict(predict_frame, 'source', 'dest')
         <progress>
         <skip>
         >>> predict_result.inspect()
@@ -254,7 +254,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.productFrame())
 
-    def create_predict_frame(self,
+    def predict(self,
                              frame,
                              input_source_column_name,
                              input_dest_column_name,
@@ -273,12 +273,12 @@ class CollaborativeFilteringModel(PropertiesObject):
         :return: (Frame) returns predicted rating frame with specified output columns
         """
         from sparktk.frame.frame import Frame
-        return Frame(self._tc, self._scala.createPredictFrame(frame._scala,
-                                                                    input_source_column_name,
-                                                                    input_dest_column_name,
-                                                                    output_user_column_name,
-                                                                    output_product_column_name,
-                                                                    output_rating_column_name))
+        return Frame(self._tc, self._scala.predict(frame._scala,
+                                                   input_source_column_name,
+                                                   input_dest_column_name,
+                                                   output_user_column_name,
+                                                   output_product_column_name,
+                                                   output_rating_column_name))
 
     def recommend(self, entity_id, number_of_recommendations=1, recommend_products=True):
         """
