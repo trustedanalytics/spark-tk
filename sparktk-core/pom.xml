@@ -31,12 +31,7 @@
                     <excludes combine.children="append">
 
                         <exclude>metastore_db/</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientDescentWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/LBFGSWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/OptimizerWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/regression/org/trustedanalytics/sparktk/GeneralizedLinearAlgorithmWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/utils/org/trustedanalytics/sparktk/DataValidatorsWithFrequency.scala</exclude>
+
                     </excludes>
                 </configuration>
             </plugin>
