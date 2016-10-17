@@ -96,8 +96,8 @@ class ClassifierTest(unittest.TestCase):
         # then we test the model
         # meaning we try to see how it behaves in predicting outcomes
         # from data that it has been trained to recognize patterns in
-        nb_model.predict(frame)
-        result = nb_model.test(frame)
+        predicted_frame = nb_model.predict(frame)
+        result = nb_model.test(predicted_frame)
 
         # Lastly we check the result of the model test
         self.assertAlmostEqual(1, result.precision)
