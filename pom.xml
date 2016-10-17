@@ -496,6 +496,7 @@
                             <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/LBFGSWithFrequency.scala</exclude>
                             <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/OptimizerWithFrequency.scala</exclude>
                             <exclude>src/main/scala/org/apache/spark/mllib/regression/org/trustedanalytics/sparktk/GeneralizedLinearAlgorithmWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/regression/org/trustedanalytics/sparktk/LabeledPointWithFrequency.scala</exclude>
                             <exclude>src/main/scala/org/apache/spark/mllib/utils/org/trustedanalytics/sparktk/DataValidatorsWithFrequency.scala</exclude>
                             <exclude>datasets/dicom_xml/</exclude>
                             <exclude>regression-tests/datasets/</exclude>
