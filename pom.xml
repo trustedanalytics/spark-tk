@@ -489,6 +489,15 @@
                         </mapping>
                         <excludes combine.children="append">
                             <exclude>zinc-0.3.7/</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/CostFunction.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/classification/org/trustedanalytics/sparktk/LogisticRegressionModelWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientDescentWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/LBFGSWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/OptimizerWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/regression/org/trustedanalytics/sparktk/GeneralizedLinearAlgorithmWithFrequency.scala</exclude>
+                            <exclude>src/main/scala/org/apache/spark/mllib/utils/org/trustedanalytics/sparktk/DataValidatorsWithFrequency.scala</exclude>
+                            <exclude>datasets/dicom_xml/</exclude>
                             <exclude>regression-tests/datasets/</exclude>
                             <exclude>python.xml</exclude>
                             <exclude>integration-tests/tests/test_docs_generated.py</exclude>
