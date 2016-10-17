@@ -23,6 +23,7 @@ from sparktkregtests.lib import sparktk_test
 
 class ConnectedComponents(sparktk_test.SparkTKTestCase):
 
+    @unittest.skip("DPNG-11910")
     def test_connected_component(self):
         """ Tests the graphx connected components in ATK"""
         super(ConnectedComponents, self).setUp()

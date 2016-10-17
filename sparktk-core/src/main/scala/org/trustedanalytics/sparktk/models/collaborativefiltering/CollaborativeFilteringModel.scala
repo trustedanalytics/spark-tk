@@ -15,6 +15,10 @@
  */
 package org.trustedanalytics.sparktk.models.collaborativefiltering
 
+import java.io.{ FileOutputStream, File }
+import java.nio.file.{ Files, Path }
+
+import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
@@ -22,10 +26,12 @@ import org.apache.spark.mllib.recommendation.{ MatrixFactorizationModel, ALS, Ra
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaData, Field }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
+import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, TkSearchPath, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 
 object CollaborativeFilteringModel extends TkSaveableObject {
@@ -176,7 +182,7 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
                                        checkpointIterations: Int,
                                        targetRMSE: Double,
                                        rank: Int,
-                                       sparkModel: MatrixFactorizationModel) extends Serializable {
+                                       sparkModel: MatrixFactorizationModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -207,12 +213,12 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
    * @param outputProductColumnName A product  column name for the output frame
    * @param outputRatingColumnName A rating column name for the output frame
    */
-  def createPredictFrame(frame: Frame,
-                         inputSourceColumnName: String,
-                         inputDestColumnName: String,
-                         outputUserColumnName: String = "user",
-                         outputProductColumnName: String = "product",
-                         outputRatingColumnName: String = "rating"): Frame = {
+  def predict(frame: Frame,
+              inputSourceColumnName: String,
+              inputDestColumnName: String,
+              outputUserColumnName: String = "user",
+              outputProductColumnName: String = "product",
+              outputRatingColumnName: String = "rating"): Frame = {
 
     require(frame != null, "batch data as a frame is required")
 
@@ -266,6 +272,57 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
       targetRMSE,
       rank)
     TkSaveLoad.saveTk(sc, path, CollaborativeFilteringModel.formatId, formatVersion, tkMetadata)
+  }
+
+  /**
+   * gets the prediction on the provided record
+   * @param row a record that needs to be predicted on
+   * @return the row along with its prediction
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    throw new NotImplementedError()
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    input = input :+ Field(sourceColumnName, "Double")
+    input
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("Score", "Double")
+  }
+
+  /**
+   * @return metadata about the model
+   */
+  def modelMetadata(): ModelMetaData = {
+    //todo provide a for the user to populate the custom metadata fields
+    new ModelMetaData("Collaborative Filtering Model", classOf[CollaborativeFilteringModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   * @param sc active SparkContext
+   * @param marSavePath location where the MAR file needs to be saved
+   * @return full path to the location of the MAR file
+   */
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[CollaborativeFilteringModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 
   /**

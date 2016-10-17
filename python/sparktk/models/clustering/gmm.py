@@ -152,10 +152,10 @@ class GaussianMixtureModel(PropertiesObject):
         >>> assert(np.allclose(expected_sigma, actual_sigma, atol=1e+01))
         </hide>
 
-        >>> model.predict(frame)
+        >>> predicted_frame =  model.predict(frame)
 
         <skip>
-        >>> x = frame.take(9)
+        >>> predicted_frame.inspect()
         [#]  data  name  predicted_cluster
         ==================================
         [0]   9.0  ij                    0
@@ -170,7 +170,7 @@ class GaussianMixtureModel(PropertiesObject):
         </skip>
 
         <hide>
-        >>> x = frame.take(9)
+        >>> x = predicted_frame.take(9)
         >>> val = set(map(lambda y : y[2], x))
         >>> newlist = [[z[1] for z in x if z[2]==a]for a in val]
         >>> act_out = [[s.encode('ascii') for s in list] for list in newlist]
@@ -258,9 +258,20 @@ class GaussianMixtureModel(PropertiesObject):
         return self._tc.jutils.convert.scala_map_to_python(cs)
 
     def predict(self, frame, columns=None):
-        """method to predict on a given frame"""
+        """
+       Predicts the labels for the observation columns in the given input frame. Creates a new frame
+       with the existing columns and a new predicted column.
+
+       Parameters
+       ----------
+
+       :param frame: (Frame) Frame used for predicting the values
+       :param c: (List[str]) Names of the observation columns.
+       :return: (Frame) A new frame containing the original frame's columns and a prediction column
+       """
+        from sparktk.frame.frame import Frame
         c = self.__columns_to_option(columns)
-        self._scala.predict(frame._scala, c)
+        return Frame(self._tc, self._scala.predict(frame._scala, c))
 
     def __columns_to_option(self, c):
         if c is not None:
@@ -271,5 +282,18 @@ class GaussianMixtureModel(PropertiesObject):
     def save(self, path):
         """save the trained model to the given path"""
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
+        if isinstance(path, basestring):
+            return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

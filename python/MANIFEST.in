@@ -4,6 +4,3 @@ include requirements.txt
 include README.rst
 include LICENSE
 include NOTICE
-include manifest.yml.tpl
-include runtime.txt
-recursive-include vendor *
