@@ -22,6 +22,9 @@ import java.nio.file.{ Files, Path }
 import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.trustedanalytics.model.archive.format.ModelArchiveFormat
 import org.trustedanalytics.sparktk.saveload.SaveLoad
+import org.apache.commons.io.FileUtils
+import java.net.URI
+import org.apache.hadoop.conf.Configuration
 
 object ScoringModelUtils {
   /**
@@ -87,8 +90,8 @@ object ScoringModelUtils {
    * @param modelSrcDir location where the model has been saved
    * @return full path to the location of the MAR file for Scoring Engine
    */
-  def saveToMar(marSavePath: String, modelClass: String, modelSrcDir: Path): String = {
-    val zipFile: File = File.createTempFile("model", ".mar")
+  def saveToMar(marSavePath: String, modelClass: String, modelSrcDir: java.nio.file.Path): String = {
+    val zipFile: File = File.createTempFile("modelMar", ".mar")
     val zipOutStream = new FileOutputStream(zipFile)
     try {
       val codeSource = this.getClass.getProtectionDomain.getCodeSource
@@ -97,7 +100,13 @@ object ScoringModelUtils {
         val absolutePath = codeSource.getLocation.toString
         val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
         var jarFileList = x.jarsInSearchPath.values.toList
-        jarFileList = jarFileList ::: List(modelSrcDir.toFile)
+
+        val modelFile = File.createTempFile("localModel", "")
+        val localModelPath = new org.apache.hadoop.fs.Path(modelFile.toString)
+        val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(modelFile.toString), new Configuration())
+        hdfsFileSystem.copyToLocalFile(new org.apache.hadoop.fs.Path(modelSrcDir.toString), localModelPath)
+
+        jarFileList = jarFileList ::: List(new File(localModelPath.toString))
         ModelArchiveFormat.write(jarFileList, classOf[SparkTkModelAdapter].getName, modelClass, zipOutStream)
       }
       SaveLoad.saveMar(marSavePath, zipFile)
