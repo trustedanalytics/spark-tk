@@ -47,8 +47,8 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         model = self.context.models.regression.random_forest_regressor.train(
             self.frame, "class", ["feat1", "feat2"], seed=0)
 
-        model.predict(self.frame)
-        preddf = self.frame.to_pandas(self.frame.count())
+        result_frame = model.predict(self.frame)
+        preddf = result_frame.to_pandas(self.frame.count())
         for index, row in preddf.iterrows():
             self.assertAlmostEqual(row['class'], row['predicted_value'])
 
@@ -106,8 +106,8 @@ class RandomForest(sparktk_test.SparkTKTestCase):
             self.frame, "class", ["feat1", "feat2"], max_depth=0)
 
         #check predicted values for depth 0
-        model.predict(self.frame)
-        preddf = self.frame.to_pandas(self.frame.count())
+        result_frame = model.predict(self.frame)
+        preddf = result_frame.to_pandas(self.frame.count())
 
         expected_pred_labels = [0.41299999999999998]*self.frame.count()
         actual_pred_labels = preddf['predicted_value'].tolist()
