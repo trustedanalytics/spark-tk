@@ -42,7 +42,6 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
     def test_kmeans_standard(self):
         """Tests standard usage of the kmeans cluster algorithm."""
-        # No asserts because this test is too unstable
         kmodel = self.context.models.clustering.kmeans.train(
             self.frame_train, ["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"], 5)
 
