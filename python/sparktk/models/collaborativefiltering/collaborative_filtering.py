@@ -18,8 +18,9 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from collections import namedtuple
+from sparktk import TkContext
 
-__all__ = ["train"]
+__all__ = ["train", "load", "CollaborativeFilteringModel"]
 
 RecommendReturnTuple = namedtuple("RecommendReturnTuple", ['user', 'product', 'rating'])
 
@@ -78,10 +79,14 @@ def train(frame,
                                    target_rmse)
     return CollaborativeFilteringModel(tc, scala_model)
 
+def load(path, tc=TkContext.implicit):
+    """load KMeansModel from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, CollaborativeFilteringModel)
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering.CollaborativeFilteringModel
 
 
 def scala_collaborative_filtering_recommend_return_to_python(self, recommend_return):
@@ -123,7 +128,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         >>> predict_frame = tc.frame.create(rows_predict, schema_predict)
         <progress>
 
-        >>> model = tc.models.collaborative_filtering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
+        >>> model = tc.models.collaborativefiltering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
         <progress>
 
         >>> predict_result = model.predict(predict_frame, 'source', 'dest')
@@ -137,6 +142,43 @@ class CollaborativeFilteringModel(PropertiesObject):
         [2]     2        5  0.003955772
         [3]     1        5  0.029929327
         </skip>
+
+    The trained model can be saved and restored:
+
+        >>> model.save("sandbox/CF_Model")
+
+        >>> restored = tc.load("sandbox/CF_Model")
+
+    <hide>
+        >>> restored.alpha
+        0.5
+
+        >>> restored.num_factors
+        3
+
+        >>> restored.num_item_block
+        3
+
+        >>> restored.num_user_blocks
+        2
+
+        >>> restored.regularization
+        0.5
+
+        >>> restored.target_rmse
+        0.05
+
+    </hide>
+
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/collaborativeFilteringModel.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
+
         <hide>
         >>> expected =[[1, 4, 0.04834617],[1, 3, 0.040288474],[2, 5, 0.003955772],[1, 5, 0.029929327]]
 
@@ -169,6 +211,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         <progress>
         >>> "%.2f" % recommendations[0]['rating']
         '0.04'
+
         </hide>
     """
 
