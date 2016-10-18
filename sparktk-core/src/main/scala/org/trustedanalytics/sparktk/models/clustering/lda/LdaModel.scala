@@ -295,7 +295,7 @@ case class LdaModel private[lda] (documentColumnName: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[LdaModel].getName, tmpDir)
     }
     finally {
