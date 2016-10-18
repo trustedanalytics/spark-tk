@@ -22,7 +22,7 @@ from sparktk import TkContext
 
 __all__ = ["train", "load", "KMeansModel"]
 
-def train(frame, columns, k=2, scalings=None, max_iterations=20, convergence_tol=1e-4, seed=None, init_mode="k-means||"):
+def train(frame, columns, k=2, scalings=None, max_iterations=20, convergence_tolerance=1e-4, seed=None, init_mode="k-means||"):
     """
     Creates a KMeansModel by training on the given frame
 
@@ -32,7 +32,7 @@ def train(frame, columns, k=2, scalings=None, max_iterations=20, convergence_tol
     :param scalings: (Optional(List[float])) column scalings for each of the observation columns.  The scaling value is multiplied by
      the corresponding value in the observation column
     :param max_iterations: (Optional(int)) number of iterations for which the algorithm should run
-    :param convergence_tol: (Optional(float)) distance threshold within which we consider k-means to have converged. Default is 1e-4.
+    :param convergence_tolerance: (Optional(float)) distance threshold within which we consider k-means to have converged. Default is 1e-4.
      If all centers move less than this Euclidean distance, we stop iterating one run
     :param seed: Optional(long) seed for randomness
     :param init_mode: (Optional(str)) the initialization technique for the algorithm.   It can be either "random" to choose
@@ -55,7 +55,7 @@ def train(frame, columns, k=2, scalings=None, max_iterations=20, convergence_tol
 
     seed = seed if seed is None else long(seed)
     scala_seed = tc.jutils.convert.to_scala_option(seed)
-    scala_model = _scala_obj.train(frame._scala, scala_columns, k, scala_scalings, max_iterations, convergence_tol, init_mode, scala_seed)
+    scala_model = _scala_obj.train(frame._scala, scala_columns, k, scala_scalings, max_iterations, convergence_tolerance, init_mode, scala_seed)
     return KMeansModel(tc, scala_model)
 
 

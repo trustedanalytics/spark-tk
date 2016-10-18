@@ -33,7 +33,7 @@ def train(frame,
           max_iterations=100,
           reg_param=0.0,
           standardization=True,
-          convergence_tol=1E-6):
+          convergence_tolerance=1E-6):
     """
     Creates a LinearRegressionModel by training on the given frame
 
@@ -48,7 +48,7 @@ def train(frame,
     :param max_iterations: (int) Parameter for maximum number of iterations. Default is 100
     :param reg_param: (double) Parameter for regularization. Default is 0.0
     :param standardization: (bool) Parameter for whether to standardize the training features before fitting the model. Default is true
-    :param convergence_tol: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+    :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
     :return: (LinearRegressionModel) A trained linear regression model
     """
     if frame is None:
@@ -69,7 +69,7 @@ def train(frame,
                                    max_iterations,
                                    reg_param,
                                    standardization,
-                                   convergence_tol)
+                                   convergence_tolerance)
     return LinearRegressionModel(tc, scala_model)
 
 

@@ -96,7 +96,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5,
-                                                             convergence_tol=.000000000001)
+                                                             convergence_tolerance=.000000000001)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
@@ -153,7 +153,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=5,
-                                                        convergence_tol=-0.05)
+                                                        convergence_tolerance=-0.05)
 
     def test_convergence_tol_bad_type(self):
         """Check error on bad convergence_tol type."""
@@ -162,7 +162,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
                                                         k=5,
-                                                        convergence_tol=[])
+                                                        convergence_tolerance=[])
 
     def test_invalid_columns_predict(self):
         """Check error with invalid columns"""
