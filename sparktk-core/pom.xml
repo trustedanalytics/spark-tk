@@ -31,12 +31,7 @@
                     <excludes combine.children="append">
 
                         <exclude>metastore_db/</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientDescentWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/GradientWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/LBFGSWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/optimization/org/trustedanalytics/sparktk/OptimizerWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/regression/org/trustedanalytics/sparktk/GeneralizedLinearAlgorithmWithFrequency.scala</exclude>
-                        <exclude>src/main/scala/org/apache/spark/mllib/utils/org/trustedanalytics/sparktk/DataValidatorsWithFrequency.scala</exclude>
+
                     </excludes>
                 </configuration>
             </plugin>
@@ -58,47 +53,46 @@
                 </configuration>
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.trustedanalytics</groupId>-->
-                <!--<artifactId>atk-maven-plugin</artifactId>-->
+            <!--<groupId>org.trustedanalytics</groupId>-->
+            <!--<artifactId>atk-maven-plugin</artifactId>-->
             <!--</plugin>-->
-            
-                      
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
 
-                        <executions>
-                            <execution>
-                                <id>executable-shells</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>chmod</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>package.sh</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>package-core</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>bash</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                      <argument>package.sh</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>executable-shells</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>chmod</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
+                            <arguments>
+                                <argument>+x</argument>
+                                <argument>package.sh</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>package-core</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>package.sh</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -115,20 +109,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <!-- Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)",osgi.extender;filter:="(osgi.extender=osgi.serviceloader.processor)",osgi.serviceloader;filter:="(osgi.serviceloader=*)";cardinality:=multiple</Require-Capability>
-                        <Provide-Capability>osgi.serviceloader;osgi.serviceloader=javax.imageio.spi.ImageReaderSpi</Provide-Capability-->
-                        <SPI-Consumer>*</SPI-Consumer>
-                        <SPI-Provider>javax.imageio.spi.ImageReaderSpi</SPI-Provider>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -301,8 +281,8 @@
             <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
-        <groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cloudera.sparkts</groupId>

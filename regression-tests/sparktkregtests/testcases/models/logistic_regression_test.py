@@ -43,10 +43,10 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         log_model = self.context.models.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             'res')
-        log_model.predict(
+        predict_frame = log_model.predict(
             self.binomial_frame,
             ["vec0", "vec1", "vec2", "vec3", "vec4"])
-        frame = self.binomial_frame.copy(["actual", "predicted_label"])
+        frame = predict_frame.copy(["actual", "predicted_label"])
         labels = frame.to_pandas(frame.count())
         for _, row in labels.iterrows():
             self.assertEqual(row["actual"], row["predicted_label"])

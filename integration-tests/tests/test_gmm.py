@@ -53,11 +53,11 @@ def test_gmm(tc):
             assert(all(isinstance(s, float) for s in s_list))
 
     logger.info("predicting the cluster using the model and the frame")
-    model.predict(f)
-    assert(set(f.column_names) == set(['Data', 'Name','predicted_cluster']))
-    assert(len(f.column_names) == 3)
+    predicted_frame = model.predict(f)
+    assert(set(predicted_frame.column_names) == set(['Data', 'Name','predicted_cluster']))
+    assert(len(predicted_frame.column_names) == 3)
     assert(model.k == 3)
-    rows = f.take(13)
+    rows = predicted_frame.take(13)
 
     val = set(map(lambda y : y[2], rows))
     newlist = [[z[1] for z in rows if z[2] == a]for a in val]
