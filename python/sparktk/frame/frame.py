@@ -453,17 +453,12 @@ class MatrixCoercion(object):
 
         """
         def decorator(row):
-            result = []
             import numpy as np
             for i in xrange(len(schema)):
                 if type(schema[i][1]) == dtypes._Matrix:
                     if isinstance(row[i], list):
-                        result.append(np.array(row[i], dtype=np.float64))
-                    else:
-                        result.append(row[i])
-                else:
-                    result.append(row[i])
-            return result
+                        row[i] = np.array(row[i], dtype=np.float64)
+            return row
         return decorator
 
     @staticmethod
@@ -477,7 +472,6 @@ class MatrixCoercion(object):
         To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
         """
         def decorator(row):
-            result = []
             from pyspark.mllib.linalg import DenseMatrix
             for i in xrange(len(schema)):
                 if type(schema[i][1]) == dtypes._Matrix:
@@ -485,9 +479,6 @@ class MatrixCoercion(object):
                     arr=row[i].flatten()
                     # By default Mllib DenseMatrix constructs column-major matrix.
                     # Setting isTranposed=True, will construct row-major DenseMatrix
-                    dm = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
-                    result.append(dm)
-                else:
-                    result.append(row[i])
-            return result
+                    row[i] = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
+            return row
         return decorator
