@@ -33,7 +33,7 @@ import org.trustedanalytics.sparktk.models.timeseries.arimax.ArimaxModel
 import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
-import org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
+import org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering.CollaborativeFilteringModel
 import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
 
 object Loaders {

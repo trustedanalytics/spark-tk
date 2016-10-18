@@ -15,15 +15,18 @@
  */
 package org.trustedanalytics.sparktk.models.dimreduction.pca
 
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.{ FileUtils }
 import org.json4s.JsonAST.JValue
 
 import breeze.linalg._
 import breeze.numerics._
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseVector => MllibDenseVector }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseVector => MllibDenseVector, DenseMatrix => MllibDenseMatrix }
 import org.apache.spark.mllib.linalg.distributed.{ RowMatrix, IndexedRow, IndexedRowMatrix }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaData, Field }
 import org.apache.spark.sql.Row.merge
 import org.trustedanalytics.sparktk.TkContext
 import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics }
@@ -31,6 +34,7 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
 
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, SparkTkModelAdapter }
 import org.trustedanalytics.sparktk.saveload.{ TkSaveLoad, SaveLoad, TkSaveableObject }
 
 object PcaModel extends TkSaveableObject {
@@ -105,7 +109,7 @@ case class PcaModel private[pca] (columns: Seq[String],
                                   k: Int,
                                   columnMeans: MllibVector,
                                   singularValues: MllibVector,
-                                  rightSingularVectors: MllibMatrix) extends Serializable {
+                                  rightSingularVectors: MllibMatrix) extends Serializable with Model {
   /**
    * Saves this model to a file
    *
@@ -125,6 +129,94 @@ case class PcaModel private[pca] (columns: Seq[String],
     TkSaveLoad.saveTk(sc, path, PcaModel.formatId, formatVersion, jsonable)
   }
 
+  /**
+   * gets the prediction on the provided record
+   * @param row a record that needs to be predicted on
+   * @return the row along with its prediction
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = row.map(value => ScoringModelUtils.asDouble(value))
+    val y: MllibDenseMatrix = computePrincipalComponents(x)
+    val t_squared_index = computeTSquaredIndex(y.values, singularValues, k)
+    row ++ Array(y.values.toList, t_squared_index)
+  }
+
+  /**
+   * Compute the principal components for the observation
+   * @param x Each observation stored as an Array[Double]
+   * @return (org.apache.spark.mllib)DenseMatrix
+   */
+  def computePrincipalComponents(x: Array[Double]): MllibDenseMatrix = {
+    var inputVector = new MllibDenseVector(x)
+    if (meanCentered) {
+      val meanCenteredVector: Array[Double] = (new DenseVector(x) - new DenseVector(columnMeans.toArray)).toArray
+      inputVector = new MllibDenseVector(meanCenteredVector)
+    }
+    new MllibDenseMatrix(1, inputVector.size, inputVector.toArray).multiply(rightSingularVectors.asInstanceOf[MllibDenseMatrix])
+  }
+
+  /**
+   * Compute the t-squared index for the observation
+   * @param y Projection of singular vectors on the input
+   * @param singularValues Right singular values of the input
+   * @param k Number of principal components
+   * @return t-squared index for the observation
+   */
+  def computeTSquaredIndex(y: Array[Double], singularValues: MllibVector, k: Int): Double = {
+    val yArray: Array[Double] = y
+    var t: Double = 0.0
+    for (i <- 0 until k) {
+      if (singularValues(i) > 0)
+        t += ((yArray(i) * yArray(i)) / (singularValues(i) * singularValues(i)))
+    }
+    t
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    columns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    var output = input()
+    output = output :+ Field("principal_components", "List[Double]")
+    output :+ Field("t_squared_index", "Double")
+  }
+
+  /**
+   * @return metadata about the model
+   */
+  def modelMetadata(): ModelMetaData = {
+    //todo provide a for the user to populate the custom metadata fields
+    new ModelMetaData("Principal Components Model", classOf[PcaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   * @param sc active SparkContext
+   * @param marSavePath location where the MAR file needs to be saved
+   * @return full path to the location of the MAR file
+   */
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[PcaModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
+
   def columnMeansAsArray: Array[Double] = columnMeans.toArray
 
   def singularValuesAsArray: Array[Double] = singularValues.toArray
@@ -134,18 +226,20 @@ case class PcaModel private[pca] (columns: Seq[String],
   }
 
   /**
-   *
+   * Predicts the labels for the observation columns in the input frame
    * @param frame frame on which to base predictions and to which the predictions will be added
    * @param columns the observation columns in that frame, must be equal to the number of columns this model was trained with.  Default is the same names as the train frame.
    * @param meanCentered whether to mean center the columns. Default is true
    * @param k the number of principal components to be computed, must be <= the k used in training.  Default is the trained k
    * @param tSquaredIndex whether the t-square index is to be computed. Default is false
+   *
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
   def predict(frame: Frame,
               columns: Option[List[String]] = None,
               meanCentered: Boolean = true,
               k: Option[Int] = None,
-              tSquaredIndex: Boolean = false): Unit = {
+              tSquaredIndex: Boolean = false): Frame = {
 
     if (meanCentered) {
       require(this.meanCentered, "Cannot mean center the predict frame if the train frame was not mean centered.")
@@ -172,7 +266,7 @@ case class PcaModel private[pca] (columns: Seq[String],
     val componentRows = components.rows.map(row => (row.index, Row.fromSeq(row.vector.toArray.toSeq)))
     val joinedFrame = frameRdd.join(componentRows).map({ case (index, (rowA, rowB)) => (merge(rowA, rowB)) })
     val componentFrame = new FrameRdd(FrameSchema(frame.schema.columns ++ componentColumns), joinedFrame)
-    frame.init(componentFrame, componentFrame.schema)
+    new Frame(componentFrame, componentFrame.schema)
   }
 }
 

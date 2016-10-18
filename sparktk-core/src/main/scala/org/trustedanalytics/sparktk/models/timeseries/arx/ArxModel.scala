@@ -26,6 +26,10 @@ import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object ArxModel extends TkSaveableObject {
 
@@ -118,7 +122,7 @@ case class ArxModel private[arx] (timeseriesColumn: String,
                                   yMaxLag: Int,
                                   xMaxLag: Int,
                                   noIntercept: Boolean = false,
-                                  arxModel: SparkTsArxModel) extends Serializable {
+                                  arxModel: SparkTsArxModel) extends Serializable with Model {
 
   /**
    * An intercept term, zero if none desired
@@ -180,6 +184,61 @@ case class ArxModel private[arx] (timeseriesColumn: String,
   def save(sc: SparkContext, path: String): Unit = {
     val tkMetadata = ArxModelTkMetaData(timeseriesColumn, xColumns, yMaxLag, xMaxLag, noIntercept, arxModel.c, arxModel.coefficients)
     TkSaveLoad.saveTk(sc, path, ArxModel.formatId, ArxModel.currentFormatVersion, tkMetadata)
+  }
+
+  override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
+    val xColumnsLength = xColumns.length
+    var predictedValues = Array[Any]()
+
+    // We should have an array of y values, and an array of x values
+    if (data.length != 2)
+      throw new IllegalArgumentException("Expected 2 arrays of data (for y values and x values), but received " +
+        data.length.toString + " items.")
+
+    val yValues = data(0) match {
+      case a: Array[_] => new DenseVector(a.map(ScoringModelUtils.asDouble(_)))
+      case l: List[_] => new DenseVector(l.map(ScoringModelUtils.asDouble(_)).toArray)
+      case _ => throw new IllegalArgumentException(s"Expected first element in data array to be an Array[Double] of y values, but found ${data(0).getClass.getSimpleName}.")
+    }
+    val xArray = data(1) match {
+      case a: Array[_] => a.map(ScoringModelUtils.asDouble(_))
+      case l: List[_] => l.map(ScoringModelUtils.asDouble(_)).toArray
+      case _ => throw new IllegalArgumentException(s"Expected second element in data array to be an Array[Double] of x values, but found ${data(1).getClass.getSimpleName}.")
+    }
+
+    if (xArray.length != (yValues.length * xColumnsLength))
+      throw new IllegalArgumentException("Expected " + (yValues.length * xColumnsLength) + " x values, but received " +
+        xArray.length.toString)
+
+    val xValues = new DenseMatrix(rows = yValues.length, cols = xColumnsLength, data = xArray)
+
+    data :+ arxModel.predict(yValues, xValues).toArray
+  }
+
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("ARX Model", classOf[ArxModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  override def input(): Array[Field] = {
+    Array[Field](Field("y", "Array[Double]"), Field("x_values", "Array[Double]"))
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("score", "Array[Double]")
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[ArxModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 

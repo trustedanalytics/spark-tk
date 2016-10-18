@@ -18,11 +18,16 @@ package org.trustedanalytics.sparktk.models.timeseries.arima
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.SparkContext
-import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import com.cloudera.sparkts.models.{ ARIMA => SparkTsArima, ARIMAModel => SparkTsArimaModel }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import org.apache.commons.io.FileUtils
+import spray.json._
+import DefaultJsonProtocol._
+import java.nio.file.{ Files, Path }
 
 object ArimaModel extends TkSaveableObject {
 
@@ -111,6 +116,60 @@ object ArimaModel extends TkSaveableObject {
   }
 }
 
+object ARIMAModelFormat extends JsonFormat[(SparkTsArimaModel, DenseVector)] {
+
+  /**
+   * Converts from an ARIMAModel to a JsValue
+   * @param obj ARIMAModel where the format is
+   *            p : scala.Int
+   *            d : scala.Int
+   *            q : scala.Int
+   *            coefficients : scala:Array[scala.Double]
+   *            hasIntercept : scala.Boolean
+   * @return JsValue
+   */
+  override def write(obj: (SparkTsArimaModel, DenseVector)): JsValue = {
+    val model = obj._1
+    val ts = obj._2
+    JsObject(
+      "p" -> model.p.toJson,
+      "d" -> model.d.toJson,
+      "q" -> model.q.toJson,
+      "coefficients" -> model.coefficients.toJson,
+      "hasIntercept" -> model.hasIntercept.toJson,
+      "ts" -> ts.toArray.toJson
+    )
+  }
+
+  /**
+   * Reads a JsValue and returns an ARIMAModel.
+   * @param json JsValue
+   * @return ARIMAModel where the format is
+   *            p : scala.Int
+   *            d : scala.Int
+   *            q : scala.Int
+   *            coefficients : scala:Array[scala.Double]
+   *            hasIntercept : scala.Boolean
+   *         And DenseVector with the time series values
+   */
+  override def read(json: JsValue): (SparkTsArimaModel, DenseVector) = {
+    val fields = json.asJsObject.fields
+    val p = getOrInvalid(fields, "p").convertTo[Int]
+    val d = getOrInvalid(fields, "d").convertTo[Int]
+    val q = getOrInvalid(fields, "q").convertTo[Int]
+    val coefficients = getOrInvalid(fields, "coefficients").convertTo[Array[Double]]
+    val hasIntercept = getOrInvalid(fields, "hasIntercept").convertTo[Boolean]
+    val ts = getOrInvalid(fields, "ts").convertTo[Array[Double]]
+    val model = new SparkTsArimaModel(p, d, q, coefficients, hasIntercept)
+    (model, new DenseVector(ts))
+  }
+
+  def getOrInvalid[T](map: Map[String, T], key: String): T = {
+    // throw exception if a programmer made a mistake
+    map.getOrElse(key, deserializationError(s"expected key $key was not found in JSON $map"))
+  }
+}
+
 case class ArimaModel private[arima] (ts: DenseVector,
                                       p: Int,
                                       d: Int,
@@ -118,8 +177,7 @@ case class ArimaModel private[arima] (ts: DenseVector,
                                       includeIntercept: Boolean,
                                       method: String,
                                       initParams: Option[Seq[Double]],
-                                      arimaModel: SparkTsArimaModel) extends Serializable {
-
+                                      arimaModel: SparkTsArimaModel) extends Serializable with Model {
   /**
    * Coefficient values: intercept, AR, MA, with increasing degrees
    */
@@ -165,6 +223,56 @@ case class ArimaModel private[arima] (ts: DenseVector,
     TkSaveLoad.saveTk(sc, path, ArimaModel.formatId, ArimaModel.currentFormatVersion, tkMetadata)
   }
 
+  override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
+
+    // Scoring expects the data array to contain:
+    //  (1) an integer for the number of future values to forecast
+    //  (2) optional list of time series values
+    if (data.length != 1 && data.length != 2)
+      throw new IllegalArgumentException(s"Unexpected number of elements in the data array.  The ARIMA score model expects 1 or 2 elements, but received ${data.length}")
+
+    // Get number of future periods from the first item in the data array
+    val futurePeriods = ScoringModelUtils.asInt(data(0))
+
+    // If there is a second item in the data array, it should be a list of doubles (to use as the timeseries vector)
+    val timeseries: Option[Seq[Double]] = if (data.length == 2) {
+      data(1) match {
+        case tsArray: Array[_] => Some(tsArray.map(ScoringModelUtils.asDouble(_)))
+        case tsList: List[_] => Some(tsList.map(ScoringModelUtils.asDouble(_)).toArray)
+        case _ => throw new IllegalArgumentException(s"The ARIMA score model expectes the second item in the data array to be a " +
+          s"Array[Double].  Instead received ${data(1).getClass.getSimpleName} ")
+      }
+    }
+    else None
+
+    data :+ predict(futurePeriods, timeseries).toArray
+  }
+
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("ARIMA Model", classOf[ArimaModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  override def input(): Array[Field] = {
+    Array[Field](Field("future", "Int"), Field("timeseries", "Array[Double]"))
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("predicted_values", "Array[Double]")
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, "file://" + tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
 }
 
 /**
@@ -189,3 +297,9 @@ case class ArimaModelTkMetaData(ts: DenseVector,
                                 initParams: Option[Seq[Double]],
                                 hasIntercept: Boolean,
                                 coefficients: Array[Double]) extends Serializable
+
+case class ARIMAData(arimaModel: SparkTsArimaModel, tsValues: List[Double]) {
+  require(arimaModel != null, "arimaModel must not be null.")
+  require(tsValues != null && tsValues.nonEmpty, "tsValues must not be null or empty.")
+}
+
