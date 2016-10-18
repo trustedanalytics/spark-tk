@@ -276,7 +276,7 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[SvmModel].getName, tmpDir)
     }
     finally {
