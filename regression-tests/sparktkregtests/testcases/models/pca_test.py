@@ -152,7 +152,6 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
             np.absolute(np.array(expected_R_singular_vec)),
             atol=1e-04), True)
 
-    @unittest.skip("waiting on bug fix to be merged")
     def test_pca_predict(self):
         """Test the train functionality"""
         pca_model = self.context.models.dimreduction.pca.train(
