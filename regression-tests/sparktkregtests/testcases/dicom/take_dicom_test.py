@@ -66,12 +66,8 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
             dcm_xml_root = etree.fromstring(dcm_file)
             dcm_bulk_data = dcm_xml_root.xpath("//BulkData")[0]
             dcm_bulk_data.getparent().remove(dcm_bulk_data)
-            dicom_metadata.append(etree.tostring(dcm_xml_root))
-        
-        for metadata in dicom_metadata:
-            result = metadata in files
-            self.assertTrue(result)
-
+            self.assertTrue(etree.tostring(dcm_xml_root) in files)
+             
     def test_image_content_take_dcm_basic(self):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result

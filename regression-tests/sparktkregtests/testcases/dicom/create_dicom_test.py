@@ -53,17 +53,12 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         # where we loaded our files. We will remove this element from the metadata
         # before we compare
         metadata_pandas = self.dicom.metadata.to_pandas()
-        dicom_metadata = []
-        for (dcm_file, xml_file) in zip(metadata_pandas["metadata"], files):
+        for dcm_file in metadata_pandas["metadata"]:
             dcm_file = dcm_file.encode("ascii", "ignore")
             dcm_xml_root = etree.fromstring(dcm_file)
             dcm_bulk_data = dcm_xml_root.xpath("//BulkData")[0]
             dcm_bulk_data.getparent().remove(dcm_bulk_data)
-            dicom_metadata.append(etree.tostring(dcm_xml_root))
-        
-        for metadata in dicom_metadata:
-            result = metadata in files
-            self.assertTrue(result)
+            self.assertTrue(etree.tostring(dcm_xml_root) in files)
             
     def test_image_content_import_dcm_basic(self):
         """content test of image data for dicom"""
