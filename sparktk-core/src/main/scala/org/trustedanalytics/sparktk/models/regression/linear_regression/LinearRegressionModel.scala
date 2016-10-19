@@ -302,7 +302,7 @@ case class LinearRegressionModel(valueColumn: String,
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       // The spark linear regression model save will fail, if we don't specify the "overwrite", since the temp
       // directory has already been created.
-      save(sc, "file://" + tmpDir.toString, overwrite = true)
+      save(sc, tmpDir.toString, overwrite = true)
       ScoringModelUtils.saveToMar(marSavePath, classOf[LinearRegressionModel].getName, tmpDir)
     }
     finally {
