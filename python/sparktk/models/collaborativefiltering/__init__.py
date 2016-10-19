@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +15,5 @@
 #  limitations under the License.
 #
 
-source common.sh
+from sparktk.loggers import log_load; log_load(__name__); del log_load
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
-
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
-
-
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
-
-#export RUN_MODE=false
-py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests

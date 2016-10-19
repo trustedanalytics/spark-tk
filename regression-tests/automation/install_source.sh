@@ -17,7 +17,6 @@
 
 source common.sh
 
-
 echo "Install dependencies"
 sudo pip2.7 install --upgrade teamcity-messages pandas numpy scipy statsmodels glob2 sklearn
 
@@ -48,3 +47,20 @@ popd
 
 mv $corepackage $sparktkpackage
 
+ps -ef | grep scor
+for pid in $(ps -ef | grep "model-scor" | awk '{print $2}'); do kill -9 $pid; done
+
+echo "installing scoring engine"
+rm -rf $MAINDIR/scoring
+mkdir $MAINDIR/scoring
+pushd $MAINDIR
+scoring_engine=$(find `pwd` -name "model-scoring-java*.zip")
+echo $scoring_engine
+pushd scoring
+rm -rf scoring_engine
+mv $scoring_engine ./scoring.zip
+unzip -q scoring.zip
+rm *.zip
+mv model-scoring* scoring_engine
+popd
+popd

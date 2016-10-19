@@ -15,3 +15,17 @@
 #  limitations under the License.
 #
 
+import random
+import operator as o
+
+def rand_forest_class(lines, ptcnt):
+    """Generates data random forest dataset with 2 features"""
+    feat = len(lines[0])
+    for i in range(ptcnt):
+       r = [random.randint(0,10) for i in range(feat-1)]
+       val = all(map(lambda ls: sum(map(o.mul, ls, r+[1])) > 0, lines))
+       print ",".join(map(str, r)+['1' if val else '0'])
+    
+
+if __name__ == "__main__":
+    rand_forest_class([[0,-1,9], [0,1,-1], [1, 0, -1], [-1, 0, 9]], 1000)
