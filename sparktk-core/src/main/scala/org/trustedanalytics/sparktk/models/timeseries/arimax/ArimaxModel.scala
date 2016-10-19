@@ -217,12 +217,14 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
         data.length.toString + " items.")
 
     val yValues = data(0) match {
-      case yList: Array[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)))
+      case yArray: Array[_] => new BreezeDenseVector(yArray.map(ScoringModelUtils.asDouble(_)))
+      case yList: List[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)).toArray)
       case _ => throw new IllegalArgumentException("Expected first element in data array to be an Array[Double] of y values.")
     }
 
     val xArray = data(1) match {
-      case xList: Array[_] => xList.map(ScoringModelUtils.asDouble(_))
+      case xArray: Array[_] => xArray.map(ScoringModelUtils.asDouble(_))
+      case xList: List[_] => xList.map(ScoringModelUtils.asDouble(_)).toArray
       case _ => throw new IllegalArgumentException("Expected second element in data array to be an Array[Double] of x values.")
     }
 
@@ -252,7 +254,7 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaxModel].getName, tmpDir)
     }
     finally {
