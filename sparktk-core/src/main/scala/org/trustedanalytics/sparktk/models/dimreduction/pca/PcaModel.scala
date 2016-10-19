@@ -16,23 +16,16 @@
 package org.trustedanalytics.sparktk.models.dimreduction.pca
 
 import java.nio.file.{ Files, Path }
+import breeze.linalg
 import org.apache.commons.io.{ FileUtils }
 import org.json4s.JsonAST.JValue
-
-import breeze.linalg._
-import breeze.numerics._
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseVector => MllibDenseVector, DenseMatrix => MllibDenseMatrix }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors => MllibVectors, Matrix => MllibMatrix, Matrices => MllibMatrices, DenseMatrix, DenseVector }
 import org.apache.spark.mllib.linalg.distributed.{ RowMatrix, IndexedRow, IndexedRowMatrix }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.trustedanalytics.scoring.interfaces.{ Model, ModelMetaData, Field }
-import org.apache.spark.sql.Row.merge
 import org.trustedanalytics.sparktk.TkContext
-import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics }
-import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
-import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
-
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, SparkTkModelAdapter }
@@ -60,19 +53,18 @@ object PcaModel extends TkSaveableObject {
       require(k.get <= columns.length, s"k=$k must be less than or equal to the number of observation columns=${columns.length}")
       require(k.get >= 1, s"number of Eigen values to use (k=$k) must be greater than equal to 1.")
     }
-    val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd).zipWithIndex().map { case (row, index) => (index, row) }
-    val vectorRdd = new FrameRdd(frame.schema, frame.rdd).toDenseVectorRdd(columns)
-    val columnStatistics = Statistics.colStats(vectorRdd)
+    val trainFrameRdd = new FrameRdd(frame.schema, frame.rdd)
 
     val train_k = k.getOrElse(columns.length)
 
-    val rowMatrix = PrincipalComponentsFunctions.toIndexedRowMatrix(trainFrameRdd, frame.schema, columns, meanCentered, columnStatistics.mean.toArray)
+    val rowMatrix = PrincipalComponentsFunctions.toRowMatrix(trainFrameRdd, columns, meanCentered)
     val svd = rowMatrix.computeSVD(train_k, computeU = false)
+    val columnStatistics = trainFrameRdd.columnStatistics(columns)
 
     var singularValues = svd.s
     while (singularValues.size < train_k) {
       // todo: add logging for this case, where the value count is less than k (could happen for toy data --i.e. it did)
-      singularValues = new MllibDenseVector(singularValues.toArray :+ 0.0)
+      singularValues = new DenseVector(singularValues.toArray :+ 0.0)
     }
 
     PcaModel(columns, meanCentered, train_k, columnStatistics.mean, singularValues, svd.V)
@@ -137,7 +129,7 @@ case class PcaModel private[pca] (columns: Seq[String],
    */
   def score(row: Array[Any]): Array[Any] = {
     val x: Array[Double] = row.map(value => ScoringModelUtils.asDouble(value))
-    val y: MllibDenseMatrix = computePrincipalComponents(x)
+    val y: DenseMatrix = computePrincipalComponents(x)
     val t_squared_index = computeTSquaredIndex(y.values, singularValues, k)
     row ++ Array(y.values.toList, t_squared_index)
   }
@@ -147,13 +139,13 @@ case class PcaModel private[pca] (columns: Seq[String],
    * @param x Each observation stored as an Array[Double]
    * @return (org.apache.spark.mllib)DenseMatrix
    */
-  def computePrincipalComponents(x: Array[Double]): MllibDenseMatrix = {
-    var inputVector = new MllibDenseVector(x)
+  def computePrincipalComponents(x: Array[Double]): DenseMatrix = {
+    var inputVector = new org.apache.spark.mllib.linalg.DenseVector(x)
     if (meanCentered) {
-      val meanCenteredVector: Array[Double] = (new DenseVector(x) - new DenseVector(columnMeans.toArray)).toArray
-      inputVector = new MllibDenseVector(meanCenteredVector)
+      val meanCenteredVector: Array[Double] = (new linalg.DenseVector(x) - new linalg.DenseVector(columnMeans.toArray)).toArray
+      inputVector = new org.apache.spark.mllib.linalg.DenseVector(meanCenteredVector)
     }
-    new MllibDenseMatrix(1, inputVector.size, inputVector.toArray).multiply(rightSingularVectors.asInstanceOf[MllibDenseMatrix])
+    new DenseMatrix(1, inputVector.size, inputVector.toArray).multiply(rightSingularVectors.asInstanceOf[DenseMatrix])
   }
 
   /**
@@ -250,9 +242,8 @@ case class PcaModel private[pca] (columns: Seq[String],
     val predictK = k.getOrElse(this.k)
     require(predictK <= this.k, s"Number of components ($predictK) must be at most the number of components trained on ($this.k)")
 
-    val frameRdd = new FrameRdd(frame.schema, frame.rdd).zipWithIndex().map { case (row, index) => (index, row) }
-
-    val indexedRowMatrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd, frame.schema, predictColumns, meanCentered, columnMeansAsArray)
+    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val indexedRowMatrix = PrincipalComponentsFunctions.toIndexedRowMatrix(frameRdd, predictColumns, meanCentered)
     val principalComponents = PrincipalComponentsFunctions.computePrincipalComponents(rightSingularVectors, predictK, indexedRowMatrix)
 
     val pcaColumns = for (i <- 1 to predictK) yield Column("p_" + i.toString, DataTypes.float64)
@@ -264,10 +255,10 @@ case class PcaModel private[pca] (columns: Seq[String],
       case false => (pcaColumns, principalComponents)
     }
 
-    val componentRows = components.rows.map(row => (row.index, Row.fromSeq(row.vector.toArray.toSeq)))
-    val joinedFrame = frameRdd.join(componentRows).map({ case (index, (rowA, rowB)) => (merge(rowA, rowB)) })
-    val componentFrame = new FrameRdd(FrameSchema(frame.schema.columns ++ componentColumns), joinedFrame)
-    new Frame(componentFrame, componentFrame.schema)
+    val componentRows = components.rows.map(row => Row.fromSeq(row.vector.toArray.toSeq))
+    val componentFrame = new FrameRdd(FrameSchema(componentColumns), componentRows)
+    val resultFrameRdd = frameRdd.zipFrameRdd(componentFrame)
+    new Frame(resultFrameRdd.rdd, resultFrameRdd.schema)
   }
 }
 
@@ -284,16 +275,9 @@ object PrincipalComponentsFunctions extends Serializable {
   def computePrincipalComponents(eigenVectors: MllibMatrix,
                                  c: Int,
                                  indexedRowMatrix: IndexedRowMatrix): IndexedRowMatrix = {
-    val breezeEigenVectors = new DenseMatrix(eigenVectors.numRows, eigenVectors.numCols, eigenVectors.toArray)
-    val y: RDD[IndexedRow] = indexedRowMatrix.rows.map({
-      r =>
-        val rVector = r.vector.toArray
-        IndexedRow(
-          r.index, MllibVectors
-            .dense((new DenseMatrix(1, rVector.length, rVector) * breezeEigenVectors)
-              .toArray.take(c)))
-    })
-    new IndexedRowMatrix(y)
+    val y = indexedRowMatrix.multiply(eigenVectors)
+    val cComponentsOfY = new IndexedRowMatrix(y.rows.map(r => r.copy(vector = MllibVectors.dense(r.vector.toArray.take(c)))))
+    cComponentsOfY
   }
 
   /**
@@ -317,6 +301,19 @@ object PrincipalComponentsFunctions extends Serializable {
   }
 
   /**
+   * Convert frame to distributed row matrix
+   *
+   * @param frameRdd Input frame
+   * @param columns List of columns names for creating row matrix
+   * @param meanCentered If true, mean center the columns
+   * @return Distributed row matrix
+   */
+  def toRowMatrix(frameRdd: FrameRdd, columns: Seq[String], meanCentered: Boolean): RowMatrix = {
+    val vectorRdd = toVectorRdd(frameRdd, columns, meanCentered)
+    new RowMatrix(vectorRdd)
+  }
+
+  /**
    * Convert frame to distributed indexed row matrix
    *
    * @param frameRdd Input frame
@@ -324,31 +321,27 @@ object PrincipalComponentsFunctions extends Serializable {
    * @param meanCentered If true, mean center the columns
    * @return Distributed indexed row matrix
    */
-  def toIndexedRowMatrix(frameRdd: RDD[(Long, Row)], frameSchema: Schema, columns: Seq[String], meanCentered: Boolean, columnMeans: Array[Double]): IndexedRowMatrix = {
-    val rowWrapper = new RowWrapper(frameSchema)
-    val vectorRdd: RDD[IndexedRow] = if (meanCentered) {
-      val breezeColumnMeans = new DenseVector(columnMeans)
-      frameRdd.map {
-        case (index, row) => {
-          val breezeVector = new RowWrapperFunctions(rowWrapper(row)).valuesAsBreezeDenseVector(columns)
-
-          IndexedRow(index, MllibVectors.dense((breezeVector - breezeColumnMeans).toArray))
-        }
-      }
-    }
-    else {
-      frameRdd.map {
-        case (index, row) => {
-          val breezeVector = new RowWrapperFunctions(rowWrapper(row)).valuesAsDenseVector(columns)
-
-          IndexedRow(index, breezeVector)
-        }
-      }
-    }
-    new IndexedRowMatrix(vectorRdd)
-
+  def toIndexedRowMatrix(frameRdd: FrameRdd, columns: Seq[String], meanCentered: Boolean): IndexedRowMatrix = {
+    val vectorRdd = toVectorRdd(frameRdd, columns, meanCentered)
+    new IndexedRowMatrix(vectorRdd.zipWithIndex().map { case (vector, index) => IndexedRow(index, vector) })
   }
 
+  /**
+   * Convert frame to vector RDD
+   *
+   * @param frameRdd Input frame
+   * @param columns List of columns names for vector RDD
+   * @param meanCentered If true, mean center the columns
+   * @return Vector RDD
+   */
+  def toVectorRdd(frameRdd: FrameRdd, columns: Seq[String], meanCentered: Boolean): RDD[MllibVector] = {
+    if (meanCentered) {
+      frameRdd.toMeanCenteredDenseVectorRdd(columns)
+    }
+    else {
+      frameRdd.toDenseVectorRdd(columns)
+    }
+  }
 }
 
 /**
