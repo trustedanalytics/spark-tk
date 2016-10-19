@@ -32,7 +32,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
                     [dict(zip(["feat1", "feat2"],
                     map(lambda x: x,row[0:2])))])
                 self.assertAlmostEqual(
-                    float(row[3]), float(res.json()["data"][0]['Prediction']))
+                    float(row[3]), float(res.json()["data"][0]['PredictedClass']))
 
     def test_rand_forest_regression(self):
         """Test binomial classification of random forest model"""
@@ -49,6 +49,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
             for i, row in preddf.iterrows():
                 res = scorer.score(
                     [dict(zip(["feat1", "feat2"], map(lambda x: x,row[0:2])))])
+
                 self.assertAlmostEqual(
                     float(row[3]), float(res.json()["data"][0]['Prediction']))
 
