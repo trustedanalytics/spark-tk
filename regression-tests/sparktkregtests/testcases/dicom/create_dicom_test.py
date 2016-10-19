@@ -74,8 +74,11 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_pandas = self.dicom.pixeldata.to_pandas()
-        for (dcm_image, pixel_image) in zip(image_pandas["imagematrix"], files):
-            numpy.testing.assert_equal(pixel_image, dcm_image)
+        dcm_pixeldata_list = image_pandas["imagematrix"]
+
+        for dcm_pixeldata in dcm_pixeldata_list:
+            result = any(numpy.array_equal(dcm_pixeldata, file_pixeldata) for file_pixeldata in files)
+            self.assertEquals(result, True)
 
     def test_import_dicom_invalid_files(self):
         """tests import dicom with invalid data"""
@@ -83,6 +86,8 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(Exception, "Not a DICOM Stream"):
             dicom = self.context.dicom.import_dcm(dataset)
             dicom.metadata.count()
+
+
 
 
 if __name__ == "__main__":
