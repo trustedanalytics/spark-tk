@@ -30,5 +30,5 @@ echo $SPARKTK_HOME
 
 py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
 
-export RUN_MODE=false
+#export RUN_MODE=false
 py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests
