@@ -20,4 +20,9 @@ DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
 
 # make sure the model scoring servers get deleted
+sleep 10
+ps -ef | grep
 for pid in $(ps -ef | grep "model-scor" | awk '{print $2}'); do kill -9 $pid; done
+
+
+echo "return was" $?
