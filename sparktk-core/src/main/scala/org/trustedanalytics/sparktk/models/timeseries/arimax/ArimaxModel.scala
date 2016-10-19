@@ -254,7 +254,7 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaxModel].getName, tmpDir)
     }
     finally {

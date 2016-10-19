@@ -249,7 +249,7 @@ case class MaxModel private[max] (timeseriesColumn: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[MaxModel].getName, tmpDir)
     }
     finally {

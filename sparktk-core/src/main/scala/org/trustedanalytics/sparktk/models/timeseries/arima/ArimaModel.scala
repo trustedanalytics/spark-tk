@@ -266,7 +266,7 @@ case class ArimaModel private[arima] (ts: DenseVector,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaModel].getName, tmpDir)
     }
     finally {
