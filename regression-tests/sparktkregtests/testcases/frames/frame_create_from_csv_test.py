@@ -61,27 +61,24 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         for row in frame.take(frame.count()):
             self.assertEqual(type(row[0]), float)
 
-    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_duplicate_names_same_type(self):
         """CsvFile creation fails with duplicate names, same type."""
         # two num1's with same type
         bad = [("num1", int), ("num1", int), ("num2", int)]
         with self.assertRaisesRegexp(Exception, "duplicate column name"):
-            self.context.frame.import_csv(self.dataset, bad)
+            self.context.frame.import_csv(self.dataset, schema=bad)
 
-    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_type(self):
         """CsvFile cration with a schema of invalid type fails."""
         bad_schema = -77
-        with self.assertRaisesRegexp(Exception, "does not exist"):
-            self.context.frame.import_csv(self.dataset, bad_schema)
+        with self.assertRaisesRegexp(Exception, "expected to contain tuples"):
+            self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
-    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_format(self):
         """CsvFile creation fails with a malformed schema."""
         bad_schema = [int, int, float, float, str]
-        with self.assertRaisesRegexp(Exception, "invalid schema"):
-            self.context.frame.import_csv(self.dataset, bad_schema)
+        with self.assertRaisesRegexp(Exception, "expected to contain tuples"):
+            self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
     def test_frame_delim_colon(self):
         """Test building a frame with a colon delimiter."""
