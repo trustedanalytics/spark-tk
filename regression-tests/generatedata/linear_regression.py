@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +15,16 @@
 #  limitations under the License.
 #
 
-source common.sh
+import numpy
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
-
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
+def main(coeffs, count, var, width):
+    points = [[numpy.random.uniform(-width, width) for i in range(len(coeffs))] for i in range(count)]
+    vals = [i+[sum([coeff * j for (j,coeff) in zip(i,coeffs)])] for i in points]
 
 
-echo "spark tk home"
-echo $SPARKTK_HOME
+    for i in vals:
+        print ','.join(map(str, i))
 
-py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
 
-export RUN_MODE=false
-py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests
+if __name__ == "__main__":
+    main([0.5, -0.7, -.24, 0.4], 1000, 0.5, 3)
