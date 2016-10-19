@@ -45,8 +45,8 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
     new GenericRow(Array[Any](4.0, 0.0, 0.0, 6.0, 7.0))
   )
 
-  val columnMeans = Vectors.dense(Array(3.0, 1.56999, 0.3))
-  val columnMeans2 = Vectors.dense(Array(3.0, 0.3))
+  val columnMeans = Vectors.dense(Array(2.0, 0.33333, 1.0))
+  val columnMeans2 = Vectors.dense(Array(2.0, 5.66666666666667))
 
   val singularValues = Vectors.dense(Array(1.95285, 1.25895, 0.34988))
   val vFactor = Matrices.dense(3, 3, Array(-0.98806, -0.14751, 0.04444, 0.152455, -0.9777, 0.14391, 0.02222, 0.14896, 0.98859))
@@ -149,9 +149,9 @@ class PcaModelTest extends TestingSparkContextWordSpec with Matchers { //} with 
       vectors(0).index should equal(0)
       vectors(1).index should equal(1)
       vectors(2).index should equal(2)
-      vectors(0).vector.toArray should equalWithTolerance(Array(-3.0, 6.7))
-      vectors(1).vector.toArray should equalWithTolerance(Array(-1.0, 3.7))
-      vectors(2).vector.toArray should equalWithTolerance(Array(1.0, 5.7))
+      vectors(0).vector.toArray should equalWithTolerance(Array(-2.0, 1.3333333))
+      vectors(1).vector.toArray should equalWithTolerance(Array(0, -1.6666667))
+      vectors(2).vector.toArray should equalWithTolerance(Array(2.0, 0.33333333))
     }
   }
 

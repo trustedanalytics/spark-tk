@@ -31,6 +31,7 @@ import org.apache.spark.sql.Row.merge
 import org.trustedanalytics.sparktk.TkContext
 import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics }
 import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
+import org.trustedanalytics.sparktk.frame.internal.rdd.RowWrapperFunctions
 
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
@@ -292,7 +293,6 @@ object PrincipalComponentsFunctions extends Serializable {
             .dense((new DenseMatrix(1, rVector.length, rVector) * breezeEigenVectors)
               .toArray.take(c)))
     })
-    //val cComponentsOfY = new IndexedRowMatrix(y.rows.map(r => r.copy(vector = MllibVectors.dense(r.vector.toArray.take(c)))))
     new IndexedRowMatrix(y)
   }
 
@@ -330,20 +330,18 @@ object PrincipalComponentsFunctions extends Serializable {
       val breezeColumnMeans = new DenseVector(columnMeans)
       frameRdd.map {
         case (index, row) => {
-          val array = rowWrapper(row).valuesAsArray(columns, flattenInputs = true)
+          val breezeVector = new RowWrapperFunctions(rowWrapper(row)).valuesAsBreezeDenseVector(columns)
 
-          val b = array.map(i => DataTypes.toDouble(i))
-          IndexedRow(index, MllibVectors.dense((new DenseVector(b) - breezeColumnMeans).toArray))
+          IndexedRow(index, MllibVectors.dense((breezeVector - breezeColumnMeans).toArray))
         }
       }
     }
     else {
       frameRdd.map {
         case (index, row) => {
-          val array = rowWrapper(row).valuesAsArray(columns, flattenInputs = true)
+          val breezeVector = new RowWrapperFunctions(rowWrapper(row)).valuesAsDenseVector(columns)
 
-          val b = array.map(i => DataTypes.toDouble(i))
-          IndexedRow(index, MllibVectors.dense(b))
+          IndexedRow(index, breezeVector)
         }
       }
     }
