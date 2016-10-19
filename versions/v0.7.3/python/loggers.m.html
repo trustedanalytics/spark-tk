@@ -1,0 +1,2459 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>sparktk.loggers API documentation</title>
+    <meta name="description" content="Logging - simple helpers for now" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
+  }
+  #content {
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
+  }
+  #sidebar {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+    overflow: auto;
+    height: 100%;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #fixed_top_left {
+    display: block;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
+  }
+
+  #footer {
+    font-size: .75em;
+    margin-top: 20px;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 20px 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+      
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.loggers.LINE_FORMAT">LINE_FORMAT</a></li>
+    <li class="mono"><a href="#sparktk.loggers.loggers">loggers</a></li>
+    <li class="mono"><a href="#sparktk.loggers.loggers_env">loggers_env</a></li>
+    <li class="mono"><a href="#sparktk.loggers.loggers_env_name">loggers_env_name</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.loggers.log_load">log_load</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.loggers.Loggers">Loggers</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#sparktk.loggers.Loggers.get">get</a></li>
+    <li class="mono"><a href="#sparktk.loggers.Loggers.set_spark">set_spark</a></li>
+    <li class="mono"><a href="#sparktk.loggers.Loggers.set_sparktk_scala">set_sparktk_scala</a></li>
+    <li class="mono"><a href="#sparktk.loggers.Loggers.__init__">__init__</a></li>
+    <li class="mono"><a href="#sparktk.loggers.Loggers.set">set</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.loggers.NullHandler">NullHandler</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.__init__">__init__</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.acquire">acquire</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.addFilter">addFilter</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.close">close</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.createLock">createLock</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.emit">emit</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.filter">filter</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.flush">flush</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.format">format</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.get_name">get_name</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.handle">handle</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.handleError">handleError</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.release">release</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.removeFilter">removeFilter</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.setFormatter">setFormatter</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.setLevel">setLevel</a></li>
+    <li class="mono"><a href="#sparktk.loggers.NullHandler.set_name">set_name</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+      <article id="content">
+        <div>
+        
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">sparktk.loggers</span> module</h1>
+  <p>Logging - simple helpers for now</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers" class="source">
+    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
+
+<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
+<span class="c">#</span>
+<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c">#  you may not use this file except in compliance with the License.</span>
+<span class="c">#  You may obtain a copy of the License at</span>
+<span class="c">#</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c">#</span>
+<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
+<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c">#  See the License for the specific language governing permissions and</span>
+<span class="c">#  limitations under the License.</span>
+<span class="c">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Logging - simple helpers for now</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c"># Constants</span>
+<span class="n">LINE_FORMAT</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s">|</span><span class="si">%(levelname)-5s</span><span class="s">|</span><span class="si">%(name)s</span><span class="s">|</span><span class="si">%(message)s</span><span class="s">&#39;</span>
+
+<span class="c"># add a null handler to root logger to avoid handler warning messages</span>
+<span class="k">class</span> <span class="nc">NullHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;NullHandler&quot;</span>
+
+    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="c"># this line avoids the &#39;no handler&#39; warning msg when no logging is set at all</span>
+<span class="n">_null_handler</span> <span class="o">=</span> <span class="n">NullHandler</span><span class="p">()</span>
+<span class="n">_null_handler</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>  <span class="c"># add name explicitly for python 2.6</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">_null_handler</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Loggers</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection of loggers to stderr, wrapped for simplicity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># map first character of level to actual level setting, for convenience</span>
+    <span class="n">_level_map</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                  <span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">FATAL</span><span class="p">,</span>
+                  <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                  <span class="s">&#39;w&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">,</span>
+                  <span class="s">&#39;i&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                  <span class="s">&#39;d&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+                  <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;{0:&lt;8}  {1:&lt;50}  {2:&lt;14}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Level&quot;</span><span class="p">,</span> <span class="s">&quot;Logger&quot;</span><span class="p">,</span> <span class="s">&quot;# of Handlers&quot;</span><span class="p">),</span>
+                  <span class="s">&quot;{0:&lt;8}  {1:&lt;50}  {2:&lt;14}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">14</span><span class="p">)]</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="p">:</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_repr_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="n">entries</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_repr_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">alias</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alias</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">+=</span> <span class="s">&quot; (</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">alias</span>
+        <span class="k">return</span> <span class="s">&quot;{0:&lt;8}  {1:&lt;50}  {2:&lt;14}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">),</span>
+                                                 <span class="n">name</span><span class="p">,</span>
+                                                 <span class="nb">len</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">logger_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the logger of the given name&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="n">logger_name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">line_format</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the level and adds handlers to the given logger</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        level : int, str or logging.*, optional</span>
+<span class="sd">            The level to which the logger will be set.  May be 0,10,20,30,40,50</span>
+<span class="sd">            or &quot;DEBUG&quot;, &quot;INFO&quot;, etc.  (only first letter is requirecd)</span>
+<span class="sd">            Setting to None disables the logging to stderr</span>
+<span class="sd">            See `https://docs.python.org/2/library/logging.html`</span>
+<span class="sd">            If not specified, DEBUG is used</span>
+<span class="sd">            To turn OFF the logger, set level to 0 or None</span>
+<span class="sd">        logger_name: str, optional</span>
+<span class="sd">            The name of the logger.  If empty string, then the sparktk root logger is set</span>
+<span class="sd">        output: file or str, or list of such, optional</span>
+<span class="sd">            The file object or name of the file to log to.  If empty, then stderr is used</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        # to enable INFO level logging to file &#39;log.txt&#39; and no printing to stderr:</span>
+<span class="sd">        &gt;&gt;&gt; loggers.set(&#39;INFO&#39;, &#39;sparktk.frame&#39;,&#39;log.txt&#39;, False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger_name</span> <span class="o">=</span> <span class="n">logger_name</span> <span class="k">if</span> <span class="n">logger_name</span> <span class="o">!=</span> <span class="s">&#39;root&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">level</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turn_logger_off</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+
+        <span class="n">line_format</span> <span class="o">=</span> <span class="n">line_format</span> <span class="k">if</span> <span class="n">line_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">LINE_FORMAT</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">logger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Bad output argument </span><span class="si">%s</span><span class="s">.  Expected stream or file name.&quot;</span> <span class="o">%</span> <span class="n">output</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">handler_name</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">handler_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">level</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c"># only require first letter</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_level_map</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_handler_to_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)</span>
+
+        <span class="c"># store logger name</span>
+        <span class="k">if</span> <span class="n">logger_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_logger_has_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="n">h</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">handler_name</span><span class="p">])</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_add_handler_to_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="n">line_format</span><span class="p">):</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">handler_name</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">line_format</span><span class="p">,</span> <span class="s">&#39;%y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_turn_logger_off</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span>
+        <span class="n">victim_handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">victim_handlers</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">logger</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_spark</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Controls the logging level for the messages generated by Spark</span>
+
+<span class="sd">        :param sc: (SparkContext) valid SparkContext (python)</span>
+<span class="sd">        :param level: (str) log level, like &quot;info&quot;, &quot;debug&quot;, &quot;warn&quot;, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkContext</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">SparkContext</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;set_spark requires a valid SparkContext object for first arg, received type=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">sc</span><span class="p">))</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span>
+        <span class="n">new_level</span> <span class="o">=</span> <span class="n">Loggers</span><span class="o">.</span><span class="n">_get_scala_logger_level</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">LogManager</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;org&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">LogManager</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;akka&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_sparktk_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Controls the logging level for the messages generated by the Scala part of sparktk</span>
+
+<span class="sd">        :param tc: (TkContext) valid TkContext (python)</span>
+<span class="sd">        :param level: (str) log level, like &quot;info&quot;, &quot;debug&quot;, &quot;warn&quot;, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tc</span><span class="o">.</span><span class="n">_jtc</span><span class="o">.</span><span class="n">setLoggerLevel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Loggers</span><span class="o">.</span><span class="n">_get_scala_logger_level</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">)))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_scala_logger_level</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level_string</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">level_string</span><span class="p">:</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="s">&quot;&lt;unspecified&gt;&quot;</span>
+        <span class="n">valid_levels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;d&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+            <span class="s">&quot;e&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="s">&quot;w&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">WARN</span><span class="p">,</span>
+            <span class="s">&quot;i&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+            <span class="s">&quot;o&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">OFF</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">valid_levels</span><span class="p">[</span><span class="n">level_string</span><span class="o">.</span><span class="n">lower</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Bad logging level &#39;</span><span class="si">%s</span><span class="s">&#39;.  Valid levels include: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">level_string</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">lev</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">lev</span><span class="o">.</span><span class="n">toString</span><span class="p">())</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">valid_levels</span><span class="o">.</span><span class="n">values</span><span class="p">()))))</span>
+
+
+<span class="k">def</span> <span class="nf">log_load</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">logger_name</span><span class="o">=</span><span class="s">&#39;sparktk&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    intended to log when a module is imported</span>
+
+<span class="sd">    Usage is to put a line like this at the top of the .py file:</span>
+
+<span class="sd">    ``from sparktk.loggers import log_load; log_load(__name__); del log_load``</span>
+
+<span class="sd">    :param module: name of the module, usually __name__</span>
+<span class="sd">    :param logger_name: override the logger name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;load module </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">module</span><span class="p">)</span>
+
+
+<span class="n">loggers</span> <span class="o">=</span> <span class="n">Loggers</span><span class="p">()</span>
+
+
+<span class="c"># Logging backdoor</span>
+<span class="c">#</span>
+<span class="c"># If env variable is set, we will call loggers.set immediately, so the loggers</span>
+<span class="c"># can run during the rest of the sparktk package import</span>
+<span class="c">#</span>
+<span class="c"># The value of this env var is a JSON list containing map, each of which</span>
+<span class="c"># represents a call to loggers.set.  The map holds the **kwargs for the</span>
+<span class="c"># call to loggers.set</span>
+<span class="c">#</span>
+<span class="c"># Example:  This sets the module logger to debug for core/frame.py</span>
+<span class="c">#</span>
+<span class="c"># $ export SPARK_TK_LOGGERS=&#39;[{&quot;logger_name&quot;: &quot;sparktk&quot;, &quot;level&quot;: &quot;debug&quot;}]&#39;</span>
+<span class="c">#</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">loggers_env_name</span> <span class="o">=</span> <span class="s">&quot;SPARK_TK_LOGGERS&quot;</span>
+<span class="n">loggers_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">loggers_env_name</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">loggers_env</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;$SPARK_TK_LOGGERS=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">loggers_env</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">json</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">loggers_env</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="n">entry</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;!! Error trying to ingest logging env variable $</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">loggers_env_name</span><span class="p">)</span>
+        <span class="k">raise</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="sparktk.loggers.LINE_FORMAT" class="name">var <span class="ident">LINE_FORMAT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.loggers.loggers" class="name">var <span class="ident">loggers</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.loggers.loggers_env" class="name">var <span class="ident">loggers_env</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.loggers.loggers_env_name" class="name">var <span class="ident">loggers_env_name</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.log_load">
+    <p>def <span class="ident">log_load</span>(</p><p>module, logger_name=&#39;sparktk&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>intended to log when a module is imported</p>
+<p>Usage is to put a line like this at the top of the .py file:</p>
+<p><code>from sparktk.loggers import log_load; log_load(__name__); del log_load</code></p>
+<table><tr><td class='param-name'>module: </td><td class='param-desc'>name of the module, usually __name__
+</td></tr></table>
+
+<p>:param logger_name: override the logger name</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.log_load', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.log_load" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">log_load</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">logger_name</span><span class="o">=</span><span class="s">&#39;sparktk&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    intended to log when a module is imported</span>
+
+<span class="sd">    Usage is to put a line like this at the top of the .py file:</span>
+
+<span class="sd">    ``from sparktk.loggers import log_load; log_load(__name__); del log_load``</span>
+
+<span class="sd">    :param module: name of the module, usually __name__</span>
+<span class="sd">    :param logger_name: override the logger name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;load module </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">module</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="sparktk.loggers.Loggers" class="name">class <span class="ident">Loggers</span></p>
+      
+  
+    <div class="desc"><p>Collection of loggers to stderr, wrapped for simplicity</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.Loggers', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.Loggers" class="source">
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Loggers</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collection of loggers to stderr, wrapped for simplicity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># map first character of level to actual level setting, for convenience</span>
+    <span class="n">_level_map</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">,</span>
+                  <span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">FATAL</span><span class="p">,</span>
+                  <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                  <span class="s">&#39;w&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">,</span>
+                  <span class="s">&#39;i&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                  <span class="s">&#39;d&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+                  <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;{0:&lt;8}  {1:&lt;50}  {2:&lt;14}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Level&quot;</span><span class="p">,</span> <span class="s">&quot;Logger&quot;</span><span class="p">,</span> <span class="s">&quot;# of Handlers&quot;</span><span class="p">),</span>
+                  <span class="s">&quot;{0:&lt;8}  {1:&lt;50}  {2:&lt;14}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">14</span><span class="p">)]</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="p">:</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_repr_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="n">entries</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_repr_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">alias</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alias</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">+=</span> <span class="s">&quot; (</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">alias</span>
+        <span class="k">return</span> <span class="s">&quot;{0:&lt;8}  {1:&lt;50}  {2:&lt;14}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">),</span>
+                                                 <span class="n">name</span><span class="p">,</span>
+                                                 <span class="nb">len</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">logger_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the logger of the given name&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="n">logger_name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">line_format</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the level and adds handlers to the given logger</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        level : int, str or logging.*, optional</span>
+<span class="sd">            The level to which the logger will be set.  May be 0,10,20,30,40,50</span>
+<span class="sd">            or &quot;DEBUG&quot;, &quot;INFO&quot;, etc.  (only first letter is requirecd)</span>
+<span class="sd">            Setting to None disables the logging to stderr</span>
+<span class="sd">            See `https://docs.python.org/2/library/logging.html`</span>
+<span class="sd">            If not specified, DEBUG is used</span>
+<span class="sd">            To turn OFF the logger, set level to 0 or None</span>
+<span class="sd">        logger_name: str, optional</span>
+<span class="sd">            The name of the logger.  If empty string, then the sparktk root logger is set</span>
+<span class="sd">        output: file or str, or list of such, optional</span>
+<span class="sd">            The file object or name of the file to log to.  If empty, then stderr is used</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        # to enable INFO level logging to file &#39;log.txt&#39; and no printing to stderr:</span>
+<span class="sd">        &gt;&gt;&gt; loggers.set(&#39;INFO&#39;, &#39;sparktk.frame&#39;,&#39;log.txt&#39;, False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger_name</span> <span class="o">=</span> <span class="n">logger_name</span> <span class="k">if</span> <span class="n">logger_name</span> <span class="o">!=</span> <span class="s">&#39;root&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">level</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turn_logger_off</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+
+        <span class="n">line_format</span> <span class="o">=</span> <span class="n">line_format</span> <span class="k">if</span> <span class="n">line_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">LINE_FORMAT</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">logger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Bad output argument </span><span class="si">%s</span><span class="s">.  Expected stream or file name.&quot;</span> <span class="o">%</span> <span class="n">output</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">handler_name</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">handler_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">level</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c"># only require first letter</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_level_map</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_handler_to_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)</span>
+
+        <span class="c"># store logger name</span>
+        <span class="k">if</span> <span class="n">logger_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_logger_has_handler</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="n">h</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">handler_name</span><span class="p">])</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_add_handler_to_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="n">line_format</span><span class="p">):</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">handler_name</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">line_format</span><span class="p">,</span> <span class="s">&#39;%y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_turn_logger_off</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span>
+        <span class="n">victim_handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">victim_handlers</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">logger</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_spark</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Controls the logging level for the messages generated by Spark</span>
+
+<span class="sd">        :param sc: (SparkContext) valid SparkContext (python)</span>
+<span class="sd">        :param level: (str) log level, like &quot;info&quot;, &quot;debug&quot;, &quot;warn&quot;, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkContext</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">SparkContext</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;set_spark requires a valid SparkContext object for first arg, received type=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">sc</span><span class="p">))</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span>
+        <span class="n">new_level</span> <span class="o">=</span> <span class="n">Loggers</span><span class="o">.</span><span class="n">_get_scala_logger_level</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">LogManager</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;org&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">LogManager</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;akka&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_sparktk_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Controls the logging level for the messages generated by the Scala part of sparktk</span>
+
+<span class="sd">        :param tc: (TkContext) valid TkContext (python)</span>
+<span class="sd">        :param level: (str) log level, like &quot;info&quot;, &quot;debug&quot;, &quot;warn&quot;, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tc</span><span class="o">.</span><span class="n">_jtc</span><span class="o">.</span><span class="n">setLoggerLevel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Loggers</span><span class="o">.</span><span class="n">_get_scala_logger_level</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">)))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_scala_logger_level</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level_string</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">level_string</span><span class="p">:</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="s">&quot;&lt;unspecified&gt;&quot;</span>
+        <span class="n">valid_levels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&quot;d&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+            <span class="s">&quot;e&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="s">&quot;w&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">WARN</span><span class="p">,</span>
+            <span class="s">&quot;i&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+            <span class="s">&quot;o&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">Level</span><span class="o">.</span><span class="n">OFF</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">valid_levels</span><span class="p">[</span><span class="n">level_string</span><span class="o">.</span><span class="n">lower</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Bad logging level &#39;</span><span class="si">%s</span><span class="s">&#39;.  Valid levels include: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">level_string</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">lev</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">lev</span><span class="o">.</span><span class="n">toString</span><span class="p">())</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">valid_levels</span><span class="o">.</span><span class="n">values</span><span class="p">()))))</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.loggers.Loggers">Loggers</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.Loggers.get">
+    <p>def <span class="ident">get</span>(</p><p>logger_name)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>returns the logger of the given name</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.Loggers.get', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.Loggers.get" class="source">
+    <div class="codehilite"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">logger_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;returns the logger of the given name&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.Loggers.set_spark">
+    <p>def <span class="ident">set_spark</span>(</p><p>sc, level)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Controls the logging level for the messages generated by Spark</p>
+<table><tr><td class='param-name'>sc</td><td class='param-type'>(SparkContext):</td><td class='param-desc'>valid SparkContext (python)
+</td></tr></table>
+
+<table><tr><td class='param-name'>level</td><td class='param-type'>(str):</td><td class='param-desc'>log level, like "info", "debug", "warn", etc.</td></tr></table></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.Loggers.set_spark', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.Loggers.set_spark" class="source">
+    <div class="codehilite"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">set_spark</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Controls the logging level for the messages generated by Spark</span>
+<span class="sd">    :param sc: (SparkContext) valid SparkContext (python)</span>
+<span class="sd">    :param level: (str) log level, like &quot;info&quot;, &quot;debug&quot;, &quot;warn&quot;, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkContext</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">SparkContext</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;set_spark requires a valid SparkContext object for first arg, received type=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">sc</span><span class="p">))</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">log4j</span>
+    <span class="n">new_level</span> <span class="o">=</span> <span class="n">Loggers</span><span class="o">.</span><span class="n">_get_scala_logger_level</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">LogManager</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;org&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">LogManager</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;akka&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.Loggers.set_sparktk_scala">
+    <p>def <span class="ident">set_sparktk_scala</span>(</p><p>tc, level)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Controls the logging level for the messages generated by the Scala part of sparktk</p>
+<table><tr><td class='param-name'>tc</td><td class='param-type'>(TkContext):</td><td class='param-desc'>valid TkContext (python)
+</td></tr></table>
+
+<table><tr><td class='param-name'>level</td><td class='param-type'>(str):</td><td class='param-desc'>log level, like "info", "debug", "warn", etc.</td></tr></table></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.Loggers.set_sparktk_scala', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.Loggers.set_sparktk_scala" class="source">
+    <div class="codehilite"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">set_sparktk_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Controls the logging level for the messages generated by the Scala part of sparktk</span>
+<span class="sd">    :param tc: (TkContext) valid TkContext (python)</span>
+<span class="sd">    :param level: (str) log level, like &quot;info&quot;, &quot;debug&quot;, &quot;warn&quot;, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tc</span><span class="o">.</span><span class="n">_jtc</span><span class="o">.</span><span class="n">setLoggerLevel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Loggers</span><span class="o">.</span><span class="n">_get_scala_logger_level</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="p">,</span> <span class="n">level</span><span class="p">)))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.Loggers.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.Loggers.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.Loggers.__init__" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.Loggers.set">
+    <p>def <span class="ident">set</span>(</p><p>self, level=10, logger_name=&#39;&#39;, output=None, line_format=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Sets the level and adds handlers to the given logger</p>
+<div class='section-header'>Parameters:</div>
+
+<p>level : int, str or logging.*, optional
+    The level to which the logger will be set.  May be 0,10,20,30,40,50
+    or "DEBUG", "INFO", etc.  (only first letter is requirecd)
+    Setting to None disables the logging to stderr
+    See <code>https://docs.python.org/2/library/logging.html</code>
+    If not specified, DEBUG is used
+    To turn OFF the logger, set level to 0 or None
+logger_name: str, optional
+    The name of the logger.  If empty string, then the sparktk root logger is set
+output: file or str, or list of such, optional
+    The file object or name of the file to log to.  If empty, then stderr is used</p>
+<div class='section-header'>Examples:</div>
+
+<h1>to enable INFO level logging to file 'log.txt' and no printing to stderr:</h1>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>loggers.set('INFO', 'sparktk.frame','log.txt', False)</p>
+</blockquote>
+</blockquote>
+</blockquote></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.Loggers.set', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.Loggers.set" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="n">logger_name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">line_format</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the level and adds handlers to the given logger</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    level : int, str or logging.*, optional</span>
+<span class="sd">        The level to which the logger will be set.  May be 0,10,20,30,40,50</span>
+<span class="sd">        or &quot;DEBUG&quot;, &quot;INFO&quot;, etc.  (only first letter is requirecd)</span>
+<span class="sd">        Setting to None disables the logging to stderr</span>
+<span class="sd">        See `https://docs.python.org/2/library/logging.html`</span>
+<span class="sd">        If not specified, DEBUG is used</span>
+<span class="sd">        To turn OFF the logger, set level to 0 or None</span>
+<span class="sd">    logger_name: str, optional</span>
+<span class="sd">        The name of the logger.  If empty string, then the sparktk root logger is set</span>
+<span class="sd">    output: file or str, or list of such, optional</span>
+<span class="sd">        The file object or name of the file to log to.  If empty, then stderr is used</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    # to enable INFO level logging to file &#39;log.txt&#39; and no printing to stderr:</span>
+<span class="sd">    &gt;&gt;&gt; loggers.set(&#39;INFO&#39;, &#39;sparktk.frame&#39;,&#39;log.txt&#39;, False)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger_name</span> <span class="o">=</span> <span class="n">logger_name</span> <span class="k">if</span> <span class="n">logger_name</span> <span class="o">!=</span> <span class="s">&#39;root&#39;</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">level</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turn_logger_off</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="n">line_format</span> <span class="o">=</span> <span class="n">line_format</span> <span class="k">if</span> <span class="n">line_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">LINE_FORMAT</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">logger</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Bad output argument </span><span class="si">%s</span><span class="s">.  Expected stream or file name.&quot;</span> <span class="o">%</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">handler_name</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">handler_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">level</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c"># only require first letter</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_level_map</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_add_handler_to_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)</span>
+    <span class="c"># store logger name</span>
+    <span class="k">if</span> <span class="n">logger_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user_logger_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logger</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.loggers.NullHandler" class="name">class <span class="ident">NullHandler</span></p>
+      
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler" class="source">
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">NullHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;NullHandler&quot;</span>
+
+    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.loggers.NullHandler">NullHandler</a></li>
+          <li>logging.Handler</li>
+          <li>logging.Filterer</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.loggers.NullHandler.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, level=0)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initializes the instance - basically setting the formatter to None
+and the filter list to empty.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.__init__" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">NOTSET</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes the instance - basically setting the formatter to None</span>
+<span class="sd">    and the filter list to empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Filterer</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">_checkLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c"># Add the handler to the global _handlerList (for cleanup on shutdown)</span>
+    <span class="n">_addHandlerRef</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">createLock</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.acquire">
+    <p>def <span class="ident">acquire</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Acquire the I/O thread lock.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.acquire', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.acquire" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Acquire the I/O thread lock.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.addFilter">
+    <p>def <span class="ident">addFilter</span>(</p><p>self, filter)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Add the specified filter to this handler.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.addFilter', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.addFilter" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">addFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add the specified filter to this handler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">filter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.close">
+    <p>def <span class="ident">close</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Tidy up any resources used by the handler.</p>
+<p>This version removes the handler from an internal map of handlers,
+_handlers, which is used for handler lookup by name. Subclasses
+should ensure that this gets called from overridden close()
+methods.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.close', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.close" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tidy up any resources used by the handler.</span>
+<span class="sd">    This version removes the handler from an internal map of handlers,</span>
+<span class="sd">    _handlers, which is used for handler lookup by name. Subclasses</span>
+<span class="sd">    should ensure that this gets called from overridden close()</span>
+<span class="sd">    methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#get the module data lock, as we&#39;re updating a shared structure.</span>
+    <span class="n">_acquireLock</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>    <span class="c">#unlikely to raise an exception, but you never know...</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="n">_handlers</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">_handlers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">_releaseLock</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.createLock">
+    <p>def <span class="ident">createLock</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Acquire a thread lock for serializing access to the underlying I/O.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.createLock', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.createLock" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">createLock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Acquire a thread lock for serializing access to the underlying I/O.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">thread</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="bp">None</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.emit">
+    <p>def <span class="ident">emit</span>(</p><p>self, record)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.emit', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.emit" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.filter">
+    <p>def <span class="ident">filter</span>(</p><p>self, record)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Determine if a record is loggable by consulting all the filters.</p>
+<p>The default is to allow the record to be logged; any filter can veto
+this and the record is then dropped. Returns a zero value if a record
+is to be dropped, else non-zero.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.filter', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.filter" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine if a record is loggable by consulting all the filters.</span>
+<span class="sd">    The default is to allow the record to be logged; any filter can veto</span>
+<span class="sd">    this and the record is then dropped. Returns a zero value if a record</span>
+<span class="sd">    is to be dropped, else non-zero.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rv</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+            <span class="n">rv</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">rv</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.flush">
+    <p>def <span class="ident">flush</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Ensure all logging output has been flushed.</p>
+<p>This version does nothing and is intended to be implemented by
+subclasses.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.flush', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.flush" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensure all logging output has been flushed.</span>
+<span class="sd">    This version does nothing and is intended to be implemented by</span>
+<span class="sd">    subclasses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.format">
+    <p>def <span class="ident">format</span>(</p><p>self, record)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Format the specified record.</p>
+<p>If a formatter is set, use it. Otherwise, use the default formatter
+for the module.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.format', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.format" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format the specified record.</span>
+<span class="sd">    If a formatter is set, use it. Otherwise, use the default formatter</span>
+<span class="sd">    for the module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="p">:</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="n">_defaultFormatter</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.get_name">
+    <p>def <span class="ident">get_name</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.get_name', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.get_name" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.handle">
+    <p>def <span class="ident">handle</span>(</p><p>self, record)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Conditionally emit the specified logging record.</p>
+<p>Emission depends on filters which may have been added to the handler.
+Wrap the actual emission of the record with acquisition/release of
+the I/O thread lock. Returns whether the filter passed the record for
+emission.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.handle', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.handle" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Conditionally emit the specified logging record.</span>
+<span class="sd">    Emission depends on filters which may have been added to the handler.</span>
+<span class="sd">    Wrap the actual emission of the record with acquisition/release of</span>
+<span class="sd">    the I/O thread lock. Returns whether the filter passed the record for</span>
+<span class="sd">    emission.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rv</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">rv</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.handleError">
+    <p>def <span class="ident">handleError</span>(</p><p>self, record)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Handle errors which occur during an emit() call.</p>
+<p>This method should be called from handlers when an exception is
+encountered during an emit() call. If raiseExceptions is false,
+exceptions get silently ignored. This is what is mostly wanted
+for a logging system - most users will not care about errors in
+the logging system, they are more interested in application errors.
+You could, however, replace this with a custom handler if you wish.
+The record which was being processed is passed in to this method.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.handleError', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.handleError" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handleError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle errors which occur during an emit() call.</span>
+<span class="sd">    This method should be called from handlers when an exception is</span>
+<span class="sd">    encountered during an emit() call. If raiseExceptions is false,</span>
+<span class="sd">    exceptions get silently ignored. This is what is mostly wanted</span>
+<span class="sd">    for a logging system - most users will not care about errors in</span>
+<span class="sd">    the logging system, they are more interested in application errors.</span>
+<span class="sd">    You could, however, replace this with a custom handler if you wish.</span>
+<span class="sd">    The record which was being processed is passed in to this method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">raiseExceptions</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>  <span class="c"># see issue 13807</span>
+        <span class="n">ei</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ei</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ei</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                      <span class="bp">None</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;Logged from file </span><span class="si">%s</span><span class="s">, line </span><span class="si">%s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                             <span class="n">record</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">lineno</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">pass</span>    <span class="c"># see issue 5971</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">ei</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.release">
+    <p>def <span class="ident">release</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Release the I/O thread lock.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.release', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.release" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Release the I/O thread lock.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.removeFilter">
+    <p>def <span class="ident">removeFilter</span>(</p><p>self, filter)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Remove the specified filter from this handler.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.removeFilter', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.removeFilter" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">removeFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove the specified filter from this handler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.setFormatter">
+    <p>def <span class="ident">setFormatter</span>(</p><p>self, fmt)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set the formatter for this handler.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.setFormatter', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.setFormatter" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setFormatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the formatter for this handler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="n">fmt</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.setLevel">
+    <p>def <span class="ident">setLevel</span>(</p><p>self, level)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set the logging level of this handler.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.setLevel', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.setLevel" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the logging level of this handler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">_checkLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.loggers.NullHandler.set_name">
+    <p>def <span class="ident">set_name</span>(</p><p>self, name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.loggers.NullHandler.set_name', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.loggers.NullHandler.set_name" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="n">_acquireLock</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="n">_handlers</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">_handlers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">_handlers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">_releaseLock</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+  </div>
+</body>
+</html>

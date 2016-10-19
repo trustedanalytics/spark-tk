@@ -1,0 +1,573 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>TimeSeriesFunctions - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions</title>
+          <meta name="description" content="TimeSeriesFunctions - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions" />
+          <meta name="keywords" content="TimeSeriesFunctions sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions$';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/object_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal">internal</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops">ops</a>.<a href="package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries">timeseries</a></p>
+        <h1>TimeSeriesFunctions</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TimeSeriesFunctions</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Object contains utility functions for working with time series
+</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions"><span>TimeSeriesFunctions</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions.KeyAndValueColumnReturn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="KeyAndValueColumnReturnextendsProductwithSerializable"></a>
+      <a id="KeyAndValueColumnReturn:KeyAndValueColumnReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="TimeSeriesFunctions$$KeyAndValueColumnReturn.html"><span class="name">KeyAndValueColumnReturn</span></a><span class="params">(<span name="keyColumnName">keyColumnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="valueColumnName">valueColumnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Return value to discoverKeyAndValueColumns</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:AnyRef):Boolean"></a>
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:AnyRef):Boolean"></a>
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#createDateTimeIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="createDateTimeIndex(dateTimeList:List[org.joda.time.DateTime]):com.cloudera.sparkts.DateTimeIndex"></a>
+      <a id="createDateTimeIndex(List[DateTime]):DateTimeIndex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createDateTimeIndex</span><span class="params">(<span name="dateTimeList">dateTimeList: <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.joda.time.DateTime">DateTime</span>]</span>)</span><span class="result">: <span class="extype" name="com.cloudera.sparkts.DateTimeIndex">DateTimeIndex</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates a DateTimeIndex from the ist of Date/Times</p><div class="fullcomment"><div class="comment cmt"><p>Creates a DateTimeIndex from the ist of Date/Times</p></div><dl class="paramcmts block"><dt class="param">dateTimeList</dt><dd class="cmt"><p>List of Date/Times</p></dd><dt>returns</dt><dd class="cmt"><p>DateTimeIndex
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#createFrameFromTimeSeries" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="createFrameFromTimeSeries(timeseriesRdd:com.cloudera.sparkts.TimeSeriesRDD[String],keyColumn:String,valueColumn:String):org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="createFrameFromTimeSeries(TimeSeriesRDD[String],String,String):Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createFrameFromTimeSeries</span><span class="params">(<span name="timeseriesRdd">timeseriesRdd: <span class="extype" name="com.cloudera.sparkts.TimeSeriesRDD">TimeSeriesRDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="keyColumn">keyColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="valueColumn">valueColumn: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="../../../Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates a Frame for the specified TimeSeriesRdd
+</p><div class="fullcomment"><div class="comment cmt"><p>Creates a Frame for the specified TimeSeriesRdd
+</p></div><dl class="paramcmts block"><dt class="param">timeseriesRdd</dt><dd class="cmt"><p>TimeSeriesRDD</p></dd><dt class="param">keyColumn</dt><dd class="cmt"><p>Name of the key column</p></dd><dt class="param">valueColumn</dt><dd class="cmt"><p>Name of column that contains a series of values for each key</p></dd><dt>returns</dt><dd class="cmt"><p>FrameRdd
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#createTimeSeriesRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="createTimeSeriesRDD(keyColumn:String,valueColumn:String,frame:org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd,dateTimeIndex:com.cloudera.sparkts.DateTimeIndex):com.cloudera.sparkts.TimeSeriesRDD[String]"></a>
+      <a id="createTimeSeriesRDD(String,String,FrameRdd,DateTimeIndex):TimeSeriesRDD[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createTimeSeriesRDD</span><span class="params">(<span name="keyColumn">keyColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="valueColumn">valueColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="frame">frame: <a href="../../rdd/FrameRdd.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd">FrameRdd</a></span>, <span name="dateTimeIndex">dateTimeIndex: <span class="extype" name="com.cloudera.sparkts.DateTimeIndex">DateTimeIndex</span></span>)</span><span class="result">: <span class="extype" name="com.cloudera.sparkts.TimeSeriesRDD">TimeSeriesRDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates a TimeSeriesRDD from the specified SparkFrame, with the DateTimeIndex provided</p><div class="fullcomment"><div class="comment cmt"><p>Creates a TimeSeriesRDD from the specified SparkFrame, with the DateTimeIndex provided</p></div><dl class="paramcmts block"><dt class="param">keyColumn</dt><dd class="cmt"><p>Name of the key colum</p></dd><dt class="param">valueColumn</dt><dd class="cmt"><p>Name of the value column</p></dd><dt class="param">frame</dt><dd class="cmt"><p>Frame to use to create the TimeSeries RDD.  This frame should already be formatted
+             as a time series.</p></dd><dt class="param">dateTimeIndex</dt><dd class="cmt"><p>DateTime index for the time series</p></dd><dt>returns</dt><dd class="cmt"><p>TimeSeriesRDD
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#discoverKeyAndValueColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="discoverKeyAndValueColumns(schema:org.trustedanalytics.sparktk.frame.Schema):org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions.KeyAndValueColumnReturn"></a>
+      <a id="discoverKeyAndValueColumns(Schema):KeyAndValueColumnReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">discoverKeyAndValueColumns</span><span class="params">(<span name="schema">schema: <a href="../../../Schema.html" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>)</span><span class="result">: <a href="TimeSeriesFunctions$$KeyAndValueColumnReturn.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions.KeyAndValueColumnReturn">KeyAndValueColumnReturn</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Discovers the names of the column that contain the string key and vector of time series values.</p><div class="fullcomment"><div class="comment cmt"><p>Discovers the names of the column that contain the string key and vector of time series values.  The schema
+provided is expected to be for a time series frame, where we just have 2 columns: (1) String column that contains
+the key, and (2) Vector column tha contains the time series values.  If these exact columns are not found,
+exceptions are thrown.</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema for a time series frame</p></dd><dt>returns</dt><dd class="cmt"><p>Name of the key and value columns in the KeyAndValueColumnReturn object
+</p></dd></dl></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#getSparkVectorYAndXFromFrame" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getSparkVectorYAndXFromFrame(frame:org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd,yColumnName:String,xColumnNames:Seq[String]):(org.apache.spark.mllib.linalg.Vector,org.apache.spark.mllib.linalg.Matrix)"></a>
+      <a id="getSparkVectorYAndXFromFrame(FrameRdd,String,Seq[String]):(Vector,Matrix)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getSparkVectorYAndXFromFrame</span><span class="params">(<span name="frame">frame: <a href="../../rdd/FrameRdd.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd">FrameRdd</a></span>, <span name="yColumnName">yColumnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="xColumnNames">xColumnNames: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>, <span class="extype" name="org.apache.spark.mllib.linalg.Matrix">Matrix</span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Gets x (spark matrix) and y (spark matrix) values from the specified frame</p><div class="fullcomment"><div class="comment cmt"><p>Gets x (spark matrix) and y (spark matrix) values from the specified frame</p></div><dl class="paramcmts block"><dt class="param">frame</dt><dd class="cmt"><p>Frame to get values from</p></dd><dt class="param">yColumnName</dt><dd class="cmt"><p>Name of the column that has y values</p></dd><dt class="param">xColumnNames</dt><dd class="cmt"><p>Name of the columns that have x values</p></dd><dt>returns</dt><dd class="cmt"><p>Spark Vector of y values and Spark Matrix of x values
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#getVectorFromFrame" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getVectorFromFrame(frame:org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd,columnName:String):org.apache.spark.mllib.linalg.Vector"></a>
+      <a id="getVectorFromFrame(FrameRdd,String):Vector"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getVectorFromFrame</span><span class="params">(<span name="frame">frame: <a href="../../rdd/FrameRdd.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd">FrameRdd</a></span>, <span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns a spark vector that contains the data from the specified column in the frame provided.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a spark vector that contains the data from the specified column in the frame provided.
+</p></div><dl class="paramcmts block"><dt class="param">frame</dt><dd class="cmt"><p>Frame of data</p></dd><dt class="param">columnName</dt><dd class="cmt"><p>Name of the column to get data.  Data must be numerical</p></dd><dt>returns</dt><dd class="cmt"><p>DenseVector of data from the column
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#getYAndXFromFrame" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getYAndXFromFrame(frame:org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd,yColumnName:String,xColumnNames:Seq[String]):(breeze.linalg.Vector[Double],breeze.linalg.Matrix[Double])"></a>
+      <a id="getYAndXFromFrame(FrameRdd,String,Seq[String]):(Vector[Double],Matrix[Double])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getYAndXFromFrame</span><span class="params">(<span name="frame">frame: <a href="../../rdd/FrameRdd.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd">FrameRdd</a></span>, <span name="yColumnName">yColumnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="xColumnNames">xColumnNames: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: (<span class="extype" name="breeze.linalg.Vector">Vector</span>[<span class="extype" name="scala.Double">Double</span>], <span class="extype" name="breeze.linalg.Matrix">Matrix</span>[<span class="extype" name="scala.Double">Double</span>])</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Gets x (breeze matrix) and y (breeze vector) values from the specified frame</p><div class="fullcomment"><div class="comment cmt"><p>Gets x (breeze matrix) and y (breeze vector) values from the specified frame</p></div><dl class="paramcmts block"><dt class="param">frame</dt><dd class="cmt"><p>Frame to get values from</p></dd><dt class="param">yColumnName</dt><dd class="cmt"><p>Name of the column that has y values</p></dd><dt class="param">xColumnNames</dt><dd class="cmt"><p>Name of the columns that have x values</p></dd><dt>returns</dt><dd class="cmt"><p>Breeze Vector of y values and Breeze Matrix of x values
+</p></dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#parseZonedDateTime" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="parseZonedDateTime(dateTime:org.joda.time.DateTime):java.time.ZonedDateTime"></a>
+      <a id="parseZonedDateTime(DateTime):ZonedDateTime"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">parseZonedDateTime</span><span class="params">(<span name="dateTime">dateTime: <span class="extype" name="org.joda.time.DateTime">DateTime</span></span>)</span><span class="result">: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Parses the DateTime as a ZonedDateTime</p><div class="fullcomment"><div class="comment cmt"><p>Parses the DateTime as a ZonedDateTime</p></div><dl class="paramcmts block"><dt class="param">dateTime</dt><dd class="cmt"><p>Date/time</p></dd><dt>returns</dt><dd class="cmt"><p>ZonedDateTime
+</p></dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions#toTimestamp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="toTimestamp:org.apache.spark.sql.UserDefinedFunction"></a>
+      <a id="toTimestamp:UserDefinedFunction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toTimestamp</span><span class="result">: <span class="extype" name="org.apache.spark.sql.UserDefinedFunction">UserDefinedFunction</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

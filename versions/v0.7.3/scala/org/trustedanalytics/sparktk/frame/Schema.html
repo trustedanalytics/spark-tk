@@ -1,0 +1,1072 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>Schema - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.Schema</title>
+          <meta name="description" content="Schema - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.Schema" />
+          <meta name="keywords" content="Schema sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.Schema" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.Schema';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <img src="../../../../lib/trait_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="org">org</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a></p>
+        <h1>Schema</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Schema</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Schema for a data frame. Contains the columns with names and data types.
+</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+          <span class="toggle">Known Subclasses</span>
+          <div class="subClasses hiddenContent"><a href="FrameSchema.html" class="extype" name="org.trustedanalytics.sparktk.frame.FrameSchema">FrameSchema</a>, <a href="GraphElementSchema.html" class="extype" name="org.trustedanalytics.sparktk.frame.GraphElementSchema">GraphElementSchema</a></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="org.trustedanalytics.sparktk.frame.Schema"><span>Schema</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        
+
+        <div id="values" class="values members">
+              <h3>Abstract Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.Schema#columns" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="columns:Seq[org.trustedanalytics.sparktk.frame.Column]"></a>
+      <a id="columns:Seq[Column]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columns</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#copy" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="copy(columns:Seq[org.trustedanalytics.sparktk.frame.Column]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="copy(Seq[Column]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">copy</span><span class="params">(<span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        <div id="values" class="values members">
+              <h3>Concrete Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:AnyRef):Boolean"></a>
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:AnyRef):Boolean"></a>
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#addColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="addColumn(columnName:String,dataType:org.trustedanalytics.sparktk.frame.DataTypes.DataType):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="addColumn(String,DataType):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addColumn</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dataType">dataType: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Add a column to the schema
+</p><div class="fullcomment"><div class="comment cmt"><p>Add a column to the schema
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>name</p></dd><dt class="param">dataType</dt><dd class="cmt"><p>the type for the column</p></dd><dt>returns</dt><dd class="cmt"><p>a new copy of the Schema with the column added
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#addColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="addColumn(column:org.trustedanalytics.sparktk.frame.Column):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="addColumn(Column):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addColumn</span><span class="params">(<span name="column">column: <a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Add a column to the schema
+</p><div class="fullcomment"><div class="comment cmt"><p>Add a column to the schema
+</p></div><dl class="paramcmts block"><dt class="param">column</dt><dd class="cmt"><p>New column</p></dd><dt>returns</dt><dd class="cmt"><p>a new copy of the Schema with the column added
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#addColumnFixName" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addColumnFixName(column:org.trustedanalytics.sparktk.frame.Column):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="addColumnFixName(Column):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addColumnFixName</span><span class="params">(<span name="column">column: <a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Add column but fix the name automatically if there is any conflicts with existing column names.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#addColumnIfNotExists" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="addColumnIfNotExists(columnName:String,dataType:org.trustedanalytics.sparktk.frame.DataTypes.DataType):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="addColumnIfNotExists(String,DataType):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addColumnIfNotExists</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dataType">dataType: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Add a column if it doesn't already exist.</p><div class="fullcomment"><div class="comment cmt"><p>Add a column if it doesn't already exist.</p><p>Throws error if column name exists with different data type
+</p></div></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#addColumns" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addColumns(newColumns:Seq[org.trustedanalytics.sparktk.frame.Column]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="addColumns(Seq[Column]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addColumns</span><span class="params">(<span name="newColumns">newColumns: <span class="extype" name="scala.Seq">Seq</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns a new schema with the given columns appended.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#addColumnsFixNames" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addColumnsFixNames(columnsToAdd:Seq[org.trustedanalytics.sparktk.frame.Column]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="addColumnsFixNames(Seq[Column]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addColumnsFixNames</span><span class="params">(<span name="columnsToAdd">columnsToAdd: <span class="extype" name="scala.Seq">Seq</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Add columns but fix the names automatically if there are any conflicts with existing column names.</p>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#column" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="column(columnIndex:Int):org.trustedanalytics.sparktk.frame.Column"></a>
+      <a id="column(Int):Column"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">column</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Get all of the info about a column - this is a nicer wrapper than tuples
+</p><div class="fullcomment"><div class="comment cmt"><p>Get all of the info about a column - this is a nicer wrapper than tuples
+</p></div><dl class="paramcmts block"><dt class="param">columnIndex</dt><dd class="cmt"><p>the index for the column</p></dd><dt>returns</dt><dd class="cmt"><p>complete column info
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#column" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="column(columnName:Option[String]):Option[org.trustedanalytics.sparktk.frame.Column]"></a>
+      <a id="column(Option[String]):Option[Column]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">column</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convenience method for optionally getting a Column.</p><div class="fullcomment"><div class="comment cmt"><p>Convenience method for optionally getting a Column.</p><p>This is helpful when specifying a columnName was optional for the user.
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>the name of the column</p></dd><dt>returns</dt><dd class="cmt"><p>complete column info, if a name was provided
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#column" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="column(columnName:String):org.trustedanalytics.sparktk.frame.Column"></a>
+      <a id="column(String):Column"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">column</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Get all of the info about a column - this is a nicer wrapper than tuples
+</p><div class="fullcomment"><div class="comment cmt"><p>Get all of the info about a column - this is a nicer wrapper than tuples
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>the name of the column</p></dd><dt>returns</dt><dd class="cmt"><p>complete column info
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnDataType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="columnDataType(columnName:String):org.trustedanalytics.sparktk.frame.DataTypes.DataType"></a>
+      <a id="columnDataType(String):DataType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnDataType</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">get column datatype by column name
+</p><div class="fullcomment"><div class="comment cmt"><p>get column datatype by column name
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>name of the column
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="columnIndex(columnName:String):Int"></a>
+      <a id="columnIndex(String):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnIndex</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">get column index by column name</p><div class="fullcomment"><div class="comment cmt"><p>get column index by column name</p><p>Throws exception if not found, check first with hasColumn()
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>name of the column to find index
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnIndices" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="columnIndices(columnNames:Seq[String]):Seq[Int]"></a>
+      <a id="columnIndices(Seq[String]):Seq[Int]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnIndices</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Retrieve list of column index based on column names
+</p><div class="fullcomment"><div class="comment cmt"><p>Retrieve list of column index based on column names
+</p></div><dl class="paramcmts block"><dt class="param">columnNames</dt><dd class="cmt"><p>input column names
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnNames" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="columnNames:Seq[String]"></a>
+      <a id="columnNames:Seq[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnNames</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnNamesAsString" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="columnNamesAsString:String"></a>
+      <a id="columnNamesAsString:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnNamesAsString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Column names as comma separated list in a single string
+(useful for error messages, etc)
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnNamesExcept" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="columnNamesExcept(columnNamesToExclude:Seq[String]):Seq[String]"></a>
+      <a id="columnNamesExcept(Seq[String]):Seq[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnNamesExcept</span><span class="params">(<span name="columnNamesToExclude">columnNamesToExclude: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Get the list of column names except those provided
+</p><div class="fullcomment"><div class="comment cmt"><p>Get the list of column names except those provided
+</p></div><dl class="paramcmts block"><dt class="param">columnNamesToExclude</dt><dd class="cmt"><p>column names you want to filter</p></dd><dt>returns</dt><dd class="cmt"><p>the other column names, if any
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="columns(columnNames:Iterable[String]):Iterable[org.trustedanalytics.sparktk.frame.Column]"></a>
+      <a id="columns(Iterable[String]):Iterable[Column]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columns</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Iterable">Iterable</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Select a subset of columns.</p><div class="fullcomment"><div class="comment cmt"><p>Select a subset of columns.</p><p>List can be empty.
+</p></div></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#columnsExcept" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="columnsExcept(columnNamesToExclude:Seq[String]):Seq[org.trustedanalytics.sparktk.frame.Column]"></a>
+      <a id="columnsExcept(Seq[String]):Seq[Column]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">columnsExcept</span><span class="params">(<span name="columnNamesToExclude">columnNamesToExclude: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Get the list of columns except those provided
+</p><div class="fullcomment"><div class="comment cmt"><p>Get the list of columns except those provided
+</p></div><dl class="paramcmts block"><dt class="param">columnNamesToExclude</dt><dd class="cmt"><p>columns you want to filter</p></dd><dt>returns</dt><dd class="cmt"><p>the other columns, if any
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#convertType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="convertType(columnIndex:Int,updatedDataType:org.trustedanalytics.sparktk.frame.DataTypes.DataType):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="convertType(Int,DataType):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">convertType</span><span class="params">(<span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="updatedDataType">updatedDataType: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convert data type for a column</p><div class="fullcomment"><div class="comment cmt"><p>Convert data type for a column</p></div><dl class="paramcmts block"><dt class="param">columnIndex</dt><dd class="cmt"><p>index of the column to change</p></dd><dt class="param">updatedDataType</dt><dd class="cmt"><p>the new data type for that column</p></dd><dt>returns</dt><dd class="cmt"><p>the updated Schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#convertType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="convertType(columnName:String,updatedDataType:org.trustedanalytics.sparktk.frame.DataTypes.DataType):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="convertType(String,DataType):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">convertType</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="updatedDataType">updatedDataType: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convert data type for a column
+</p><div class="fullcomment"><div class="comment cmt"><p>Convert data type for a column
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>the column to change</p></dd><dt class="param">updatedDataType</dt><dd class="cmt"><p>the new data type for that column</p></dd><dt>returns</dt><dd class="cmt"><p>the updated Schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#copySubset" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="copySubset(columnNames:Seq[String]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="copySubset(Seq[String]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">copySubset</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Copy a subset of columns into a new Schema
+</p><div class="fullcomment"><div class="comment cmt"><p>Copy a subset of columns into a new Schema
+</p></div><dl class="paramcmts block"><dt class="param">columnNames</dt><dd class="cmt"><p>the columns to keep</p></dd><dt>returns</dt><dd class="cmt"><p>the new Schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#copySubsetWithRename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="copySubsetWithRename(columnNamesWithRename:Map[String,String]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="copySubsetWithRename(Map[String,String]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">copySubsetWithRename</span><span class="params">(<span name="columnNamesWithRename">columnNamesWithRename: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Produces a renamed subset schema from this schema
+</p><div class="fullcomment"><div class="comment cmt"><p>Produces a renamed subset schema from this schema
+</p></div><dl class="paramcmts block"><dt class="param">columnNamesWithRename</dt><dd class="cmt"><p>rename mapping</p></dd><dt>returns</dt><dd class="cmt"><p>new schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#dropColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dropColumn(columnName:String):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="dropColumn(String):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dropColumn</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Remove a column from this schema
+</p><div class="fullcomment"><div class="comment cmt"><p>Remove a column from this schema
+</p></div><dl class="paramcmts block"><dt class="param">columnName</dt><dd class="cmt"><p>the name to remove</p></dd><dt>returns</dt><dd class="cmt"><p>a new copy of the Schema with the column removed
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#dropColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dropColumns(columnNames:Iterable[String]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="dropColumns(Iterable[String]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dropColumns</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Remove a list of columns from this schema
+</p><div class="fullcomment"><div class="comment cmt"><p>Remove a list of columns from this schema
+</p></div><dl class="paramcmts block"><dt class="param">columnNames</dt><dd class="cmt"><p>the names to remove</p></dd><dt>returns</dt><dd class="cmt"><p>a new copy of the Schema with the columns removed
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#dropColumnsByIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dropColumnsByIndex(columnIndices:Seq[Int]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="dropColumnsByIndex(Seq[Int]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dropColumnsByIndex</span><span class="params">(<span name="columnIndices">columnIndices: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Remove columns by the indices
+</p><div class="fullcomment"><div class="comment cmt"><p>Remove columns by the indices
+</p></div><dl class="paramcmts block"><dt class="param">columnIndices</dt><dd class="cmt"><p>the indices to remove</p></dd><dt>returns</dt><dd class="cmt"><p>a new copy of the Schema with the columns removed
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#dropIgnoreColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dropIgnoreColumns():org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="dropIgnoreColumns():Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dropIgnoreColumns</span><span class="params">()</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Drop all columns with the 'ignore' data type.</p><div class="fullcomment"><div class="comment cmt"><p>Drop all columns with the 'ignore' data type.</p><p>The ignore data type is a slight hack for ignoring some columns on import.
+</p></div></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#getNewColumnName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getNewColumnName(candidate:String):String"></a>
+      <a id="getNewColumnName(String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getNewColumnName</span><span class="params">(<span name="candidate">candidate: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">create a column name that is unique, suitable for adding to the schema
+(subject to race conditions, only provides unique name for schema as
+currently defined)
+</p><div class="fullcomment"><div class="comment cmt"><p>create a column name that is unique, suitable for adding to the schema
+(subject to race conditions, only provides unique name for schema as
+currently defined)
+</p></div><dl class="paramcmts block"><dt class="param">candidate</dt><dd class="cmt"><p>a candidate string to start with, an _N number will be
+                 append to make it unique</p></dd><dt>returns</dt><dd class="cmt"><p>unique column name for this schema, as currently defined
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#hasColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="hasColumn(columnName:String):Boolean"></a>
+      <a id="hasColumn(String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hasColumn</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">True if this schema contains the supplied columnName
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#hasColumnWithType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="hasColumnWithType(columnName:String,dataType:org.trustedanalytics.sparktk.frame.DataTypes.DataType):Boolean"></a>
+      <a id="hasColumnWithType(String,DataType):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hasColumnWithType</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dataType">dataType: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">True if this schema contains the supplied columnName with the given dataType
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#hasColumns" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="hasColumns(columnNames:Iterable[String]):Boolean"></a>
+      <a id="hasColumns(Iterable[String]):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hasColumns</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">True if this schema contains all of the supplied columnNames
+</p>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#renameColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="renameColumn(existingName:String,newName:String):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="renameColumn(String,String):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">renameColumn</span><span class="params">(<span name="existingName">existingName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="newName">newName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Rename a column
+</p><div class="fullcomment"><div class="comment cmt"><p>Rename a column
+</p></div><dl class="paramcmts block"><dt class="param">existingName</dt><dd class="cmt"><p>the old name</p></dd><dt class="param">newName</dt><dd class="cmt"><p>the new name</p></dd><dt>returns</dt><dd class="cmt"><p>the updated schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#renameColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="renameColumns(names:Map[String,String]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="renameColumns(Map[String,String]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">renameColumns</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Renames several columns
+</p><div class="fullcomment"><div class="comment cmt"><p>Renames several columns
+</p></div><dl class="paramcmts block"><dt class="param">names</dt><dd class="cmt"><p>oldName -&gt; newName</p></dd><dt>returns</dt><dd class="cmt"><p>new renamed schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#reorderColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reorderColumns(columnNames:Vector[String]):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="reorderColumns(Vector[String]):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reorderColumns</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Vector">Vector</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Re-order the columns in the schema.</p><div class="fullcomment"><div class="comment cmt"><p>Re-order the columns in the schema.</p><p>No columns will be dropped.  Any column not named will be tacked onto the end.
+</p></div><dl class="paramcmts block"><dt class="param">columnNames</dt><dd class="cmt"><p>the names you want to occur first, in the order you want</p></dd><dt>returns</dt><dd class="cmt"><p>the updated schema
+</p></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#requireColumnIsNumerical" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="requireColumnIsNumerical(columnName:String):Unit"></a>
+      <a id="requireColumnIsNumerical(String):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">requireColumnIsNumerical</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#requireColumnIsType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="requireColumnIsType(columnName:String,dataTypeChecker:org.trustedanalytics.sparktk.frame.DataTypes.DataType=&gt;Boolean):Unit"></a>
+      <a id="requireColumnIsType(String,(DataType)⇒Boolean):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">requireColumnIsType</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dataTypeChecker">dataTypeChecker: (<a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Validate that a column exists, and has the expected data type by supplying a custom checker, like isVectorDataType
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#requireColumnIsType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="requireColumnIsType(columnName:String,dataType:org.trustedanalytics.sparktk.frame.DataTypes.DataType):Unit"></a>
+      <a id="requireColumnIsType(String,DataType):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">requireColumnIsType</span><span class="params">(<span name="columnName">columnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dataType">dataType: <a href="DataTypes$$DataType.html" class="extype" name="org.trustedanalytics.sparktk.frame.DataTypes.DataType">DataType</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Validate that a column exists, and has the expected data type
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#requireColumnsAreVectorizable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="requireColumnsAreVectorizable(columnNames:Seq[String]):Unit"></a>
+      <a id="requireColumnsAreVectorizable(Seq[String]):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">requireColumnsAreVectorizable</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Either single column name that is a vector or a list of columns that are numeric primitives
+that can be converted to a vector.</p><div class="fullcomment"><div class="comment cmt"><p>Either single column name that is a vector or a list of columns that are numeric primitives
+that can be converted to a vector.</p><p>List cannot be empty
+</p></div></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#requireColumnsOfNumericPrimitives" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="requireColumnsOfNumericPrimitives(columnNames:Iterable[String]):Unit"></a>
+      <a id="requireColumnsOfNumericPrimitives(Iterable[String]):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">requireColumnsOfNumericPrimitives</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Validate that all columns are of numeric data type
+</p>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#toFrameSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toFrameSchema:org.trustedanalytics.sparktk.frame.FrameSchema"></a>
+      <a id="toFrameSchema:FrameSchema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toFrameSchema</span><span class="result">: <a href="FrameSchema.html" class="extype" name="org.trustedanalytics.sparktk.frame.FrameSchema">FrameSchema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convert the current schema to a FrameSchema.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the current schema to a FrameSchema.</p><p>This is useful when copying a Schema whose internals might be a VertexSchema
+or EdgeSchema but you need to make sure it is a FrameSchema.
+</p></div></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a> → AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#union" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="union(schema:org.trustedanalytics.sparktk.frame.Schema):org.trustedanalytics.sparktk.frame.Schema"></a>
+      <a id="union(Schema):Schema"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">union</span><span class="params">(<span name="schema">schema: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>)</span><span class="result">: <a href="" class="extype" name="org.trustedanalytics.sparktk.frame.Schema">Schema</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Union schemas together, keeping as much info as possible.</p><div class="fullcomment"><div class="comment cmt"><p>Union schemas together, keeping as much info as possible.</p><p>Vertex and/or Edge schema information will be maintained for this schema only</p><p>Column type conflicts will cause error
+</p></div></div>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#validateColumnsExist" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="validateColumnsExist(columnNames:Iterable[String]):Iterable[String]"></a>
+      <a id="validateColumnsExist(Iterable[String]):Iterable[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateColumnsExist</span><span class="params">(<span name="columnNames">columnNames: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Validate that the list of column names provided exist in this schema
+throwing an exception if any does not exist.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.Schema#validateRenameMapping" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="validateRenameMapping(names:Map[String,String],forCopy:Boolean):Unit"></a>
+      <a id="validateRenameMapping(Map[String,String],Boolean):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateRenameMapping</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="forCopy">forCopy: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Validates a Map argument used for renaming schema, throwing exceptions for violations
+</p><div class="fullcomment"><div class="comment cmt"><p>Validates a Map argument used for renaming schema, throwing exceptions for violations
+</p></div><dl class="paramcmts block"><dt class="param">names</dt><dd class="cmt"><p>victimName -&gt; newName
+</p></dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+    </body>
+      </html>

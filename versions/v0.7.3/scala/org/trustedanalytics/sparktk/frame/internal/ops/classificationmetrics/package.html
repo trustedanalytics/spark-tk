@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>classificationmetrics - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics</title>
+          <meta name="description" content="classificationmetrics - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics" />
+          <meta name="keywords" content="classificationmetrics sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal">internal</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops">ops</a></p>
+        <h1>classificationmetrics</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">classificationmetrics</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.BinaryClassCounter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BinaryClassCounterextendsProductwithSerializable"></a>
+      <a id="BinaryClassCounter:BinaryClassCounter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="BinaryClassCounter.html"><span class="name">BinaryClassCounter</span></a><span class="params">(<span name="truePositives">truePositives: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="falsePositives">falsePositives: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="trueNegatives">trueNegatives: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="falseNegatives">falseNegatives: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="count">count: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Model Accuracy, Precision, Recall, FMeasure, Confusion matrix for binary-class
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.BinaryClassMetrics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BinaryClassMetrics[T]extendsSerializablewithProduct"></a>
+      <a id="BinaryClassMetrics[T]:BinaryClassMetrics[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="BinaryClassMetrics.html"><span class="name">BinaryClassMetrics</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="labelPredictRdd">labelPredictRdd: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="../../rdd/ScoreAndLabel.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.rdd.ScoreAndLabel">ScoreAndLabel</a>[<span class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.BinaryClassMetrics.T">T</span>]]</span>, <span name="positiveLabel">positiveLabel: <span class="extype" name="scala.Any">Any</span></span>, <span name="beta">beta: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">1</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Class used for calculating binary classification metrics</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.BinaryClassificationMetrics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BinaryClassificationMetricsextendsFrameSummarization[org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ClassificationMetricValue]withProductwithSerializable"></a>
+      <a id="BinaryClassificationMetrics:BinaryClassificationMetrics"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="BinaryClassificationMetrics.html"><span class="name">BinaryClassificationMetrics</span></a><span class="params">(<span name="labelColumn">labelColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="predColumn">predColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="posLabel">posLabel: <span class="extype" name="scala.Any">Any</span></span>, <span name="beta">beta: <span class="extype" name="scala.Double">Double</span></span>, <span name="frequencyColumn">frequencyColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<a href="ClassificationMetricValue.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ClassificationMetricValue">ClassificationMetricValue</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.BinaryClassificationMetricsSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BinaryClassificationMetricsSummarizationextendsBaseFrame"></a>
+      <a id="BinaryClassificationMetricsSummarization:BinaryClassificationMetricsSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="BinaryClassificationMetricsSummarization.html"><span class="name">BinaryClassificationMetricsSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ClassificationMetricValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClassificationMetricValueextendsProductwithSerializable"></a>
+      <a id="ClassificationMetricValue:ClassificationMetricValue"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ClassificationMetricValue.html"><span class="name">ClassificationMetricValue</span></a><span class="params">(<span name="fMeasure">fMeasure: <span class="extype" name="scala.Double">Double</span></span>, <span name="accuracy">accuracy: <span class="extype" name="scala.Double">Double</span></span>, <span name="recall">recall: <span class="extype" name="scala.Double">Double</span></span>, <span name="precision">precision: <span class="extype" name="scala.Double">Double</span></span>, <span name="confusionMatrix">confusionMatrix: <a href="ConfusionMatrix.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ConfusionMatrix">ConfusionMatrix</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Classification metrics
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ConfusionMatrix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ConfusionMatrixextendsProductwithSerializable"></a>
+      <a id="ConfusionMatrix:ConfusionMatrix"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ConfusionMatrix.html"><span class="name">ConfusionMatrix</span></a><span class="params">(<span name="rowLabels">rowLabels: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="columnLabels">columnLabels: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.MultiClassClassificationMetrics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MultiClassClassificationMetricsextendsFrameSummarization[org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ClassificationMetricValue]withProductwithSerializable"></a>
+      <a id="MultiClassClassificationMetrics:MultiClassClassificationMetrics"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MultiClassClassificationMetrics.html"><span class="name">MultiClassClassificationMetrics</span></a><span class="params">(<span name="labelColumn">labelColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="predColumn">predColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="beta">beta: <span class="extype" name="scala.Double">Double</span></span>, <span name="frequencyColumn">frequencyColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<a href="ClassificationMetricValue.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ClassificationMetricValue">ClassificationMetricValue</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.MultiClassClassificationMetricsSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="MultiClassClassificationMetricsSummarizationextendsBaseFrame"></a>
+      <a id="MultiClassClassificationMetricsSummarization:MultiClassClassificationMetricsSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="MultiClassClassificationMetricsSummarization.html"><span class="name">MultiClassClassificationMetricsSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.MultiClassMetrics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MultiClassMetrics[T]extendsSerializable"></a>
+      <a id="MultiClassMetrics[T]:MultiClassMetrics[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="MultiClassMetrics.html"><span class="name">MultiClassMetrics</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Model Accuracy, Precision, Recall, FMeasure, Confusion matrix for multi-class
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.SerializableType" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SerializableType[T]extendsAnyRef"></a>
+      <a id="SerializableType[T]:SerializableType[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SerializableType.html"><span class="name">SerializableType</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.ClassificationMetricsFunctions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClassificationMetricsFunctions"></a>
+      <a id="ClassificationMetricsFunctions:ClassificationMetricsFunctions"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ClassificationMetricsFunctions$.html"><span class="name">ClassificationMetricsFunctions</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Model Accuracy, Precision, Recall, FMeasure, ConfusionMatrix</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.SerializableType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SerializableType"></a>
+      <a id="SerializableType:SerializableType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SerializableType$.html"><span class="name">SerializableType</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Serializable type for representing Scala and Java serializable types
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

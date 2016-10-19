@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>exportdata - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.exportdata</title>
+          <meta name="description" content="exportdata - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.exportdata" />
+          <meta name="keywords" content="exportdata sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.internal.ops.exportdata" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.internal.ops.exportdata.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal">internal</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops">ops</a></p>
+        <h1>exportdata</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">exportdata</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsv" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToCsvextendsFrameSummarization[Unit]withProductwithSerializable"></a>
+      <a id="ExportToCsv:ExportToCsv"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToCsv.html"><span class="name">ExportToCsv</span></a><span class="params">(<span name="fileName">fileName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Char">Char</span></span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Unit">Unit</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsvSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ExportToCsvSummarizationextendsBaseFrame"></a>
+      <a id="ExportToCsvSummarization:ExportToCsvSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToCsvSummarization.html"><span class="name">ExportToCsvSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToHbase" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToHbaseextendsFrameSummarization[Unit]withProductwithSerializable"></a>
+      <a id="ExportToHbase:ExportToHbase"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToHbase.html"><span class="name">ExportToHbase</span></a><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="keyColumnName">keyColumnName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="familyName">familyName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Unit">Unit</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToHbaseSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ExportToHbaseSummarizationextendsBaseFrame"></a>
+      <a id="ExportToHbaseSummarization:ExportToHbaseSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToHbaseSummarization.html"><span class="name">ExportToHbaseSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToHive" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToHiveextendsFrameSummarization[Unit]withProductwithSerializable"></a>
+      <a id="ExportToHive:ExportToHive"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToHive.html"><span class="name">ExportToHive</span></a><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Unit">Unit</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToHiveSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ExportToHiveSummarizationextendsBaseFrame"></a>
+      <a id="ExportToHiveSummarization:ExportToHiveSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToHiveSummarization.html"><span class="name">ExportToHiveSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToJdbc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToJdbcextendsFrameSummarization[Unit]withProductwithSerializable"></a>
+      <a id="ExportToJdbc:ExportToJdbc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToJdbc.html"><span class="name">ExportToJdbc</span></a><span class="params">(<span name="connectionUrl">connectionUrl: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Unit">Unit</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToJdbcSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ExportToJdbcSummarizationextendsBaseFrame"></a>
+      <a id="ExportToJdbcSummarization:ExportToJdbcSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToJdbcSummarization.html"><span class="name">ExportToJdbcSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToJson" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToJsonextendsFrameSummarization[Unit]withProductwithSerializable"></a>
+      <a id="ExportToJson:ExportToJson"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToJson.html"><span class="name">ExportToJson</span></a><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="count">count: <span class="extype" name="scala.Int">Int</span></span>, <span name="offset">offset: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Unit">Unit</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToJsonSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ExportToJsonSummarizationextendsBaseFrame"></a>
+      <a id="ExportToJsonSummarization:ExportToJsonSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToJsonSummarization.html"><span class="name">ExportToJsonSummarization</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToCsv" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToCsv"></a>
+      <a id="ExportToCsv:ExportToCsv"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToCsv$.html"><span class="name">ExportToCsv</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToHbase" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToHbase"></a>
+      <a id="ExportToHbase:ExportToHbase"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToHbase$.html"><span class="name">ExportToHbase</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToHive" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToHive"></a>
+      <a id="ExportToHive:ExportToHive"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToHive$.html"><span class="name">ExportToHive</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToJdbc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToJdbc"></a>
+      <a id="ExportToJdbc:ExportToJdbc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToJdbc$.html"><span class="name">ExportToJdbc</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToJson" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToJson"></a>
+      <a id="ExportToJson:ExportToJson"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToJson$.html"><span class="name">ExportToJson</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

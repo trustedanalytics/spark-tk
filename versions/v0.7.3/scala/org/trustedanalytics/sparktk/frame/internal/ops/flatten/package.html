@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>flatten - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.flatten</title>
+          <meta name="description" content="flatten - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.flatten" />
+          <meta name="keywords" content="flatten sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.internal.ops.flatten" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.internal.ops.flatten.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal">internal</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops">ops</a></p>
+        <h1>flatten</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">flatten</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumns" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FlattenColumnsextendsFrameTransformwithProductwithSerializable"></a>
+      <a id="FlattenColumns:FlattenColumns"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="FlattenColumns.html"><span class="name">FlattenColumns</span></a><span class="params">(<span name="columns">columns: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>])]</span>)</span><span class="result"> extends <a href="../../FrameTransform.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameTransform">FrameTransform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FlattenColumnsTransformextendsBaseFrame"></a>
+      <a id="FlattenColumnsTransform:FlattenColumnsTransform"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FlattenColumnsTransform.html"><span class="name">FlattenColumnsTransform</span></a><span class="result"> extends <a href="../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsFunctions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FlattenColumnsFunctions"></a>
+      <a id="FlattenColumnsFunctions:FlattenColumnsFunctions"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FlattenColumnsFunctions$.html"><span class="name">FlattenColumnsFunctions</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">This is a wrapper to encapsulate methods that may need to be serialized to executed on Spark worker nodes.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

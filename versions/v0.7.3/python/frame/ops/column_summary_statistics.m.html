@@ -1,0 +1,2106 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>sparktk.frame.ops.column_summary_statistics API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
+  }
+  #content {
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
+  }
+  #sidebar {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+    overflow: auto;
+    height: 100%;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #fixed_top_left {
+    display: block;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
+  }
+
+  #footer {
+    font-size: .75em;
+    margin-top: 20px;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 20px 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+      
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.frame.ops.column_summary_statistics.column_summary_statistics">column_summary_statistics</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics">ColumnSummaryStatistics</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.__init__">__init__</a></li>
+    <li class="mono"><a href="#sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_dict">to_dict</a></li>
+    <li class="mono"><a href="#sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_json">to_json</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+      <article id="content">
+        <div>
+        
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">sparktk.frame.ops.column_summary_statistics</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.ops.column_summary_statistics', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.frame.ops.column_summary_statistics" class="source">
+    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
+
+<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
+<span class="c">#</span>
+<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c">#  you may not use this file except in compliance with the License.</span>
+<span class="c">#  You may obtain a copy of the License at</span>
+<span class="c">#</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c">#</span>
+<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
+<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c">#  See the License for the specific language governing permissions and</span>
+<span class="c">#  limitations under the License.</span>
+<span class="c">#</span>
+
+<span class="kn">from</span> <span class="nn">sparktk.propobj</span> <span class="kn">import</span> <span class="n">PropertiesObject</span>
+
+<span class="k">class</span> <span class="nc">ColumnSummaryStatistics</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ColumnSummaryStatistics class contains values that are returned from the column_summary_statistics frame operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scala_result</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometric_mean</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">geometricMean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">variance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">standardDeviation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">totalWeight</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">minimum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">maximum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_lower</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">meanConfidenceLower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_upper</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">meanConfidenceUpper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bad_row_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">badRowCount</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_good_row_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">goodRowCount</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_positive_weight_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">positiveWeightCount</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_non_positive_weight_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">nonPositiveWeightCount</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometric_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometric_mean</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean_confidence_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_lower</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean_confidence_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_upper</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bad_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bad_row_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">good_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_good_row_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">positive_weight_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positive_weight_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">non_positive_weight_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_positive_weight_count</span>
+
+<span class="k">def</span> <span class="nf">column_summary_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_column</span><span class="p">,</span> <span class="n">weights_column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">use_popultion_variance</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate multiple statistics for a column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    :param data_column: (str) The column to be statistically summarized.</span>
+<span class="sd">                        Must contain numerical data; all NaNs and infinite values are excluded from the calculation.</span>
+<span class="sd">    :param weights_column: (Optional[str]) Name of column holding weights of column values.</span>
+<span class="sd">    :param use_popultion_variance: (Optional[bool]) If true, the variance is calculated as the population variance.</span>
+<span class="sd">                                   If false, the variance calculated as the sample variance.</span>
+<span class="sd">                                   Because this option affects the variance, it affects the standard deviation and</span>
+<span class="sd">                                   the confidence intervals as well.</span>
+<span class="sd">                                   Default is false.</span>
+<span class="sd">    :return: (ColumnSummaryStatistics) ColumnSummaryStatistics object containing summary statistics.</span>
+
+<span class="sd">    The data returned is composed of multiple components:</span>
+
+<span class="sd">    * mean : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Arithmetic mean of the data.</span>
+<span class="sd">    * geometric_mean : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Geometric mean of the data. None when there is a data element &lt;= 0, 1.0 when there are no data elements.</span>
+<span class="sd">    * variance : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        None when there are &lt;= 1 many data elements. Sample variance is the weighted sum of the squared distance of each data element from the weighted mean, divided by the total weight minus 1. None when the sum of the weights is &lt;= 1. Population variance is the weighted sum of the squared distance of each data element from the weighted mean, divided by the total weight.</span>
+<span class="sd">    * standard_deviation : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The square root of the variance. None when  sample variance is being used and the sum of weights is &lt;= 1.</span>
+<span class="sd">    * total_weight : long&lt;br&gt;</span>
+<span class="sd">        The count of all data elements that are finite numbers. In other words, after excluding NaNs and infinite values.</span>
+<span class="sd">    * minimum : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Minimum value in the data. None when there are no data elements.</span>
+<span class="sd">    * maximum : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Maximum value in the data. None when there are no data elements.</span>
+<span class="sd">    * mean_confidence_lower : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Lower limit of the 95% confidence interval about the mean. Assumes a Gaussian distribution. None when there are no elements of positive weight.</span>
+<span class="sd">    * mean_confidence_upper : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Upper limit of the 95% confidence interval about the mean. Assumes a Gaussian distribution. None when there are no elements of positive weight.</span>
+<span class="sd">    * bad_row_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number of rows containing a NaN or infinite value in either the data or weights column.</span>
+<span class="sd">    * good_row_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number of rows not containing a NaN or infinite value in either the data or weights column.</span>
+<span class="sd">    * positive_weight_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number of valid data elements with weight &gt; 0. This is the number of entries used in the statistical calculation.</span>
+<span class="sd">    * non_positive_weight_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number valid data elements with finite weight &lt;= 0.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    * Sample Variance&lt;br&gt;</span>
+<span class="sd">        Sample Variance is computed by the following formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \left( \frac{1}{W - 1} \right) * sum_{i} \</span>
+<span class="sd">            \left(x_{i} - M \right) ^{2}</span>
+
+<span class="sd">        where :math:`W` is sum of weights over valid elements of positive</span>
+<span class="sd">        weight, and :math:`M` is the weighted mean.</span>
+
+<span class="sd">    * Population Variance&lt;br&gt;</span>
+<span class="sd">        Population Variance is computed by the following formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \left( \frac{1}{W} \right) * sum_{i} \</span>
+<span class="sd">            \left(x_{i} - M \right) ^{2}</span>
+
+<span class="sd">        where :math:`W` is sum of weights over valid elements of positive</span>
+<span class="sd">        weight, and :math:`M` is the weighted mean.</span>
+
+<span class="sd">    * Standard Deviation&lt;br&gt;</span>
+<span class="sd">        The square root of the variance.</span>
+
+<span class="sd">    * Logging Invalid Data&lt;br&gt;</span>
+<span class="sd">        A row is bad when it contains a NaN or infinite value in either</span>
+<span class="sd">        its data or weights column.</span>
+<span class="sd">        In this case, it contributes to bad_row_count; otherwise it</span>
+<span class="sd">        contributes to good row count.</span>
+
+<span class="sd">        A good row can be skipped because the value in its weight</span>
+<span class="sd">        column is less than or equal to 0.</span>
+<span class="sd">        In this case, it contributes to non_positive_weight_count, otherwise</span>
+<span class="sd">        (when the weight is greater than 0) it contributes to</span>
+<span class="sd">        valid_data_weight_pair_count.</span>
+
+<span class="sd">    **Equations**</span>
+
+<span class="sd">        bad_row_count + good_row_count = # rows in the frame</span>
+<span class="sd">        positive_weight_count + non_positive_weight_count = good_row_count</span>
+
+<span class="sd">    In particular, when no weights column is provided and all weights are 1.0:</span>
+
+<span class="sd">        non_positive_weight_count = 0 and</span>
+<span class="sd">        positive_weight_count = good_row_count</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    Given a frame with column &#39;a&#39; accessed by a Frame object &#39;my_frame&#39;:</span>
+
+<span class="sd">        &gt;&gt;&gt; data = [[2],[3],[3],[5],[7],[10],[30]]</span>
+<span class="sd">        &gt;&gt;&gt; schema = [(&#39;a&#39;, int)]</span>
+<span class="sd">        &gt;&gt;&gt; my_frame = tc.frame.create(data, schema)</span>
+<span class="sd">        [===Job Progress===]</span>
+
+<span class="sd">    Inspect my_frame</span>
+
+<span class="sd">        &gt;&gt;&gt; my_frame.inspect()</span>
+<span class="sd">        [#]  a</span>
+<span class="sd">        =======</span>
+<span class="sd">        [0]   2</span>
+<span class="sd">        [1]   3</span>
+<span class="sd">        [2]   3</span>
+<span class="sd">        [3]   5</span>
+<span class="sd">        [4]   7</span>
+<span class="sd">        [5]  10</span>
+<span class="sd">        [6]  30</span>
+
+<span class="sd">    Compute and return summary statistics for values in column *a*:</span>
+
+<span class="sd">        &gt;&gt;&gt; summary_statistics = my_frame.column_summary_statistics(&#39;a&#39;)</span>
+<span class="sd">        [===Job Progress===]</span>
+<span class="sd">        &gt;&gt;&gt; print summary_statistics</span>
+<span class="sd">        bad_row_count             = 0</span>
+<span class="sd">        geometric_mean            = 5.67257514519</span>
+<span class="sd">        good_row_count            = 7</span>
+<span class="sd">        maximum                   = 30.0</span>
+<span class="sd">        mean                      = 8.57142857143</span>
+<span class="sd">        mean_confidence_lower     = 1.27708372993</span>
+<span class="sd">        mean_confidence_upper     = 15.8657734129</span>
+<span class="sd">        minimum                   = 2.0</span>
+<span class="sd">        non_positive_weight_count = 0</span>
+<span class="sd">        positive_weight_count     = 7</span>
+<span class="sd">        standard_deviation        = 9.84644001416</span>
+<span class="sd">        total_weight              = 7.0</span>
+<span class="sd">        variance                  = 96.9523809524</span>
+
+<span class="sd">    Given a frame with column &#39;a&#39; and column &#39;w&#39; as weights accessed by a Frame object &#39;my_frame&#39;:</span>
+
+<span class="sd">        &gt;&gt;&gt; data = [[2,1.7],[3,0.5],[3,1.2],[5,0.8],[7,1.1],[10,0.8],[30,0.1]]</span>
+<span class="sd">        &gt;&gt;&gt; schema = [(&#39;a&#39;, int), (&#39;w&#39;, float)]</span>
+<span class="sd">        &gt;&gt;&gt; my_frame = tc.frame.create(data, schema)</span>
+<span class="sd">        [===Job Progress===]</span>
+
+<span class="sd">    Inspect my_frame</span>
+
+<span class="sd">        &gt;&gt;&gt; my_frame.inspect()</span>
+<span class="sd">        [#]  a   w</span>
+<span class="sd">        ============</span>
+<span class="sd">        [0]   2  1.7</span>
+<span class="sd">        [1]   3  0.5</span>
+<span class="sd">        [2]   3  1.2</span>
+<span class="sd">        [3]   5  0.8</span>
+<span class="sd">        [4]   7  1.1</span>
+<span class="sd">        [5]  10  0.8</span>
+<span class="sd">        [6]  30  0.1</span>
+
+<span class="sd">    Compute and return summary statistics values in column &#39;a&#39; with weights &#39;w&#39;:</span>
+
+<span class="sd">        &gt;&gt;&gt; summary_statistics = my_frame.column_summary_statistics(&#39;a&#39;, weights_column=&#39;w&#39;)</span>
+<span class="sd">        [===Job Progress===]</span>
+<span class="sd">        &gt;&gt;&gt; print summary_statistics</span>
+<span class="sd">        bad_row_count             = 0</span>
+<span class="sd">        geometric_mean            = 4.03968288152</span>
+<span class="sd">        good_row_count            = 7</span>
+<span class="sd">        maximum                   = 30.0</span>
+<span class="sd">        mean                      = 5.03225806452</span>
+<span class="sd">        mean_confidence_lower     = 1.42847242276</span>
+<span class="sd">        mean_confidence_upper     = 8.63604370627</span>
+<span class="sd">        minimum                   = 2.0</span>
+<span class="sd">        non_positive_weight_count = 0</span>
+<span class="sd">        positive_weight_count     = 7</span>
+<span class="sd">        standard_deviation        = 4.57824177679</span>
+<span class="sd">        total_weight              = 6.2</span>
+<span class="sd">        variance                  = 20.9602977667</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ColumnSummaryStatistics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">columnSummaryStatistics</span><span class="p">(</span><span class="n">data_column</span><span class="p">,</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">weights_column</span><span class="p">),</span>
+                                                                       <span class="n">use_popultion_variance</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="sparktk.frame.ops.column_summary_statistics.column_summary_statistics">
+    <p>def <span class="ident">column_summary_statistics</span>(</p><p>self, data_column, weights_column=None, use_popultion_variance=False)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Calculate multiple statistics for a column.</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>data_column</td><td class='param-type'>(str):</td><td class='param-desc'>The column to be statistically summarized.
+                    Must contain numerical data; all NaNs and infinite values are excluded from the calculation.
+</td></tr></table>
+
+<table><tr><td class='param-name'>weights_column</td><td class='param-type'>(Optional[str]):</td><td class='param-desc'>Name of column holding weights of column values.
+</td></tr></table>
+
+<table><tr><td class='param-name'>use_popultion_variance</td><td class='param-type'>(Optional[bool]):</td><td class='param-desc'>If true, the variance is calculated as the population variance.
+                               If false, the variance calculated as the sample variance.
+                               Because this option affects the variance, it affects the standard deviation and
+                               the confidence intervals as well.
+                               Default is false.
+</td></tr></table>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(ColumnSummaryStatistics): </td><td class='param-desc'>ColumnSummaryStatistics object containing summary statistics.</td></tr></table></p>
+
+<p>The data returned is composed of multiple components:</p>
+<ul>
+<li>mean : [ double | None ]<br>
+    Arithmetic mean of the data.</li>
+<li>geometric_mean : [ double | None ]<br>
+    Geometric mean of the data. None when there is a data element &lt;= 0, 1.0 when there are no data elements.</li>
+<li>variance : [ double | None ]<br>
+    None when there are &lt;= 1 many data elements. Sample variance is the weighted sum of the squared distance of each data element from the weighted mean, divided by the total weight minus 1. None when the sum of the weights is &lt;= 1. Population variance is the weighted sum of the squared distance of each data element from the weighted mean, divided by the total weight.</li>
+<li>standard_deviation : [ double | None ]<br>
+    The square root of the variance. None when  sample variance is being used and the sum of weights is &lt;= 1.</li>
+<li>total_weight : long<br>
+    The count of all data elements that are finite numbers. In other words, after excluding NaNs and infinite values.</li>
+<li>minimum : [ double | None ]<br>
+    Minimum value in the data. None when there are no data elements.</li>
+<li>maximum : [ double | None ]<br>
+    Maximum value in the data. None when there are no data elements.</li>
+<li>mean_confidence_lower : [ double | None ]<br>
+    Lower limit of the 95% confidence interval about the mean. Assumes a Gaussian distribution. None when there are no elements of positive weight.</li>
+<li>mean_confidence_upper : [ double | None ]<br>
+    Upper limit of the 95% confidence interval about the mean. Assumes a Gaussian distribution. None when there are no elements of positive weight.</li>
+<li>bad_row_count : [ double | None ]<br>
+    The number of rows containing a NaN or infinite value in either the data or weights column.</li>
+<li>good_row_count : [ double | None ]<br>
+    The number of rows not containing a NaN or infinite value in either the data or weights column.</li>
+<li>positive_weight_count : [ double | None ]<br>
+    The number of valid data elements with weight &gt; 0. This is the number of entries used in the statistical calculation.</li>
+<li>non_positive_weight_count : [ double | None ]<br>
+    The number valid data elements with finite weight &lt;= 0.</li>
+</ul>
+<div class='section-header'>Notes:</div>
+
+<ul>
+<li>
+<p>Sample Variance<br>
+    Sample Variance is computed by the following formula:</p>
+<p>.. math::</p>
+<div class="codehilite"><pre>\left( rac{1}{W - 1}
+</pre></div>
+
+
+<p>ight) * sum_{i}             \left(x_{i} - M 
+ight) ^{2}</p>
+<p>where :math:<code>W</code> is sum of weights over valid elements of positive
+weight, and :math:<code>M</code> is the weighted mean.</p>
+</li>
+<li>
+<p>Population Variance<br>
+    Population Variance is computed by the following formula:</p>
+<p>.. math::</p>
+<div class="codehilite"><pre>\left( rac{1}{W}
+</pre></div>
+
+
+<p>ight) * sum_{i}             \left(x_{i} - M 
+ight) ^{2}</p>
+<p>where :math:<code>W</code> is sum of weights over valid elements of positive
+weight, and :math:<code>M</code> is the weighted mean.</p>
+</li>
+<li>
+<p>Standard Deviation<br>
+    The square root of the variance.</p>
+</li>
+<li>
+<p>Logging Invalid Data<br>
+    A row is bad when it contains a NaN or infinite value in either
+    its data or weights column.
+    In this case, it contributes to bad_row_count; otherwise it
+    contributes to good row count.</p>
+<p>A good row can be skipped because the value in its weight
+column is less than or equal to 0.
+In this case, it contributes to non_positive_weight_count, otherwise
+(when the weight is greater than 0) it contributes to
+valid_data_weight_pair_count.</p>
+</li>
+</ul>
+<p><strong>Equations</strong></p>
+<div class="codehilite"><pre>bad_row_count + good_row_count = # rows in the frame
+positive_weight_count + non_positive_weight_count = good_row_count
+</pre></div>
+
+
+<p>In particular, when no weights column is provided and all weights are 1.0:</p>
+<div class="codehilite"><pre>non_positive_weight_count = 0 and
+positive_weight_count = good_row_count
+</pre></div>
+
+
+<div class='section-header'>Examples:</div>
+
+<p>Given a frame with column 'a' accessed by a Frame object 'my_frame':</p>
+<div class="codehilite"><pre>&gt;&gt;&gt; data = [[2],[3],[3],[5],[7],[10],[30]]
+&gt;&gt;&gt; schema = [(&#39;a&#39;, int)]
+&gt;&gt;&gt; my_frame = tc.frame.create(data, schema)
+[===Job Progress===]
+</pre></div>
+
+
+<p>Inspect my_frame</p>
+<div class="codehilite"><pre>&gt;&gt;&gt; my_frame.inspect()
+[#]  a
+=======
+[0]   2
+[1]   3
+[2]   3
+[3]   5
+[4]   7
+[5]  10
+[6]  30
+</pre></div>
+
+
+<p>Compute and return summary statistics for values in column <em>a</em>:</p>
+<div class="codehilite"><pre>&gt;&gt;&gt; summary_statistics = my_frame.column_summary_statistics(&#39;a&#39;)
+[===Job Progress===]
+&gt;&gt;&gt; print summary_statistics
+bad_row_count             = 0
+geometric_mean            = 5.67257514519
+good_row_count            = 7
+maximum                   = 30.0
+mean                      = 8.57142857143
+mean_confidence_lower     = 1.27708372993
+mean_confidence_upper     = 15.8657734129
+minimum                   = 2.0
+non_positive_weight_count = 0
+positive_weight_count     = 7
+standard_deviation        = 9.84644001416
+total_weight              = 7.0
+variance                  = 96.9523809524
+</pre></div>
+
+
+<p>Given a frame with column 'a' and column 'w' as weights accessed by a Frame object 'my_frame':</p>
+<div class="codehilite"><pre>&gt;&gt;&gt; data = [[2,1.7],[3,0.5],[3,1.2],[5,0.8],[7,1.1],[10,0.8],[30,0.1]]
+&gt;&gt;&gt; schema = [(&#39;a&#39;, int), (&#39;w&#39;, float)]
+&gt;&gt;&gt; my_frame = tc.frame.create(data, schema)
+[===Job Progress===]
+</pre></div>
+
+
+<p>Inspect my_frame</p>
+<div class="codehilite"><pre>&gt;&gt;&gt; my_frame.inspect()
+[#]  a   w
+============
+[0]   2  1.7
+[1]   3  0.5
+[2]   3  1.2
+[3]   5  0.8
+[4]   7  1.1
+[5]  10  0.8
+[6]  30  0.1
+</pre></div>
+
+
+<p>Compute and return summary statistics values in column 'a' with weights 'w':</p>
+<div class="codehilite"><pre>&gt;&gt;&gt; summary_statistics = my_frame.column_summary_statistics(&#39;a&#39;, weights_column=&#39;w&#39;)
+[===Job Progress===]
+&gt;&gt;&gt; print summary_statistics
+bad_row_count             = 0
+geometric_mean            = 4.03968288152
+good_row_count            = 7
+maximum                   = 30.0
+mean                      = 5.03225806452
+mean_confidence_lower     = 1.42847242276
+mean_confidence_upper     = 8.63604370627
+minimum                   = 2.0
+non_positive_weight_count = 0
+positive_weight_count     = 7
+standard_deviation        = 4.57824177679
+total_weight              = 6.2
+variance                  = 20.9602977667
+</pre></div></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.ops.column_summary_statistics.column_summary_statistics', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.frame.ops.column_summary_statistics.column_summary_statistics" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">column_summary_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_column</span><span class="p">,</span> <span class="n">weights_column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">use_popultion_variance</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate multiple statistics for a column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    :param data_column: (str) The column to be statistically summarized.</span>
+<span class="sd">                        Must contain numerical data; all NaNs and infinite values are excluded from the calculation.</span>
+<span class="sd">    :param weights_column: (Optional[str]) Name of column holding weights of column values.</span>
+<span class="sd">    :param use_popultion_variance: (Optional[bool]) If true, the variance is calculated as the population variance.</span>
+<span class="sd">                                   If false, the variance calculated as the sample variance.</span>
+<span class="sd">                                   Because this option affects the variance, it affects the standard deviation and</span>
+<span class="sd">                                   the confidence intervals as well.</span>
+<span class="sd">                                   Default is false.</span>
+<span class="sd">    :return: (ColumnSummaryStatistics) ColumnSummaryStatistics object containing summary statistics.</span>
+
+<span class="sd">    The data returned is composed of multiple components:</span>
+
+<span class="sd">    * mean : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Arithmetic mean of the data.</span>
+<span class="sd">    * geometric_mean : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Geometric mean of the data. None when there is a data element &lt;= 0, 1.0 when there are no data elements.</span>
+<span class="sd">    * variance : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        None when there are &lt;= 1 many data elements. Sample variance is the weighted sum of the squared distance of each data element from the weighted mean, divided by the total weight minus 1. None when the sum of the weights is &lt;= 1. Population variance is the weighted sum of the squared distance of each data element from the weighted mean, divided by the total weight.</span>
+<span class="sd">    * standard_deviation : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The square root of the variance. None when  sample variance is being used and the sum of weights is &lt;= 1.</span>
+<span class="sd">    * total_weight : long&lt;br&gt;</span>
+<span class="sd">        The count of all data elements that are finite numbers. In other words, after excluding NaNs and infinite values.</span>
+<span class="sd">    * minimum : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Minimum value in the data. None when there are no data elements.</span>
+<span class="sd">    * maximum : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Maximum value in the data. None when there are no data elements.</span>
+<span class="sd">    * mean_confidence_lower : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Lower limit of the 95% confidence interval about the mean. Assumes a Gaussian distribution. None when there are no elements of positive weight.</span>
+<span class="sd">    * mean_confidence_upper : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        Upper limit of the 95% confidence interval about the mean. Assumes a Gaussian distribution. None when there are no elements of positive weight.</span>
+<span class="sd">    * bad_row_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number of rows containing a NaN or infinite value in either the data or weights column.</span>
+<span class="sd">    * good_row_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number of rows not containing a NaN or infinite value in either the data or weights column.</span>
+<span class="sd">    * positive_weight_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number of valid data elements with weight &gt; 0. This is the number of entries used in the statistical calculation.</span>
+<span class="sd">    * non_positive_weight_count : [ double | None ]&lt;br&gt;</span>
+<span class="sd">        The number valid data elements with finite weight &lt;= 0.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    * Sample Variance&lt;br&gt;</span>
+<span class="sd">        Sample Variance is computed by the following formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \left( \frac{1}{W - 1} \right) * sum_{i} \</span>
+<span class="sd">            \left(x_{i} - M \right) ^{2}</span>
+
+<span class="sd">        where :math:`W` is sum of weights over valid elements of positive</span>
+<span class="sd">        weight, and :math:`M` is the weighted mean.</span>
+
+<span class="sd">    * Population Variance&lt;br&gt;</span>
+<span class="sd">        Population Variance is computed by the following formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \left( \frac{1}{W} \right) * sum_{i} \</span>
+<span class="sd">            \left(x_{i} - M \right) ^{2}</span>
+
+<span class="sd">        where :math:`W` is sum of weights over valid elements of positive</span>
+<span class="sd">        weight, and :math:`M` is the weighted mean.</span>
+
+<span class="sd">    * Standard Deviation&lt;br&gt;</span>
+<span class="sd">        The square root of the variance.</span>
+
+<span class="sd">    * Logging Invalid Data&lt;br&gt;</span>
+<span class="sd">        A row is bad when it contains a NaN or infinite value in either</span>
+<span class="sd">        its data or weights column.</span>
+<span class="sd">        In this case, it contributes to bad_row_count; otherwise it</span>
+<span class="sd">        contributes to good row count.</span>
+
+<span class="sd">        A good row can be skipped because the value in its weight</span>
+<span class="sd">        column is less than or equal to 0.</span>
+<span class="sd">        In this case, it contributes to non_positive_weight_count, otherwise</span>
+<span class="sd">        (when the weight is greater than 0) it contributes to</span>
+<span class="sd">        valid_data_weight_pair_count.</span>
+
+<span class="sd">    **Equations**</span>
+
+<span class="sd">        bad_row_count + good_row_count = # rows in the frame</span>
+<span class="sd">        positive_weight_count + non_positive_weight_count = good_row_count</span>
+
+<span class="sd">    In particular, when no weights column is provided and all weights are 1.0:</span>
+
+<span class="sd">        non_positive_weight_count = 0 and</span>
+<span class="sd">        positive_weight_count = good_row_count</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    Given a frame with column &#39;a&#39; accessed by a Frame object &#39;my_frame&#39;:</span>
+
+<span class="sd">        &gt;&gt;&gt; data = [[2],[3],[3],[5],[7],[10],[30]]</span>
+<span class="sd">        &gt;&gt;&gt; schema = [(&#39;a&#39;, int)]</span>
+<span class="sd">        &gt;&gt;&gt; my_frame = tc.frame.create(data, schema)</span>
+<span class="sd">        [===Job Progress===]</span>
+
+<span class="sd">    Inspect my_frame</span>
+
+<span class="sd">        &gt;&gt;&gt; my_frame.inspect()</span>
+<span class="sd">        [#]  a</span>
+<span class="sd">        =======</span>
+<span class="sd">        [0]   2</span>
+<span class="sd">        [1]   3</span>
+<span class="sd">        [2]   3</span>
+<span class="sd">        [3]   5</span>
+<span class="sd">        [4]   7</span>
+<span class="sd">        [5]  10</span>
+<span class="sd">        [6]  30</span>
+
+<span class="sd">    Compute and return summary statistics for values in column *a*:</span>
+
+<span class="sd">        &gt;&gt;&gt; summary_statistics = my_frame.column_summary_statistics(&#39;a&#39;)</span>
+<span class="sd">        [===Job Progress===]</span>
+<span class="sd">        &gt;&gt;&gt; print summary_statistics</span>
+<span class="sd">        bad_row_count             = 0</span>
+<span class="sd">        geometric_mean            = 5.67257514519</span>
+<span class="sd">        good_row_count            = 7</span>
+<span class="sd">        maximum                   = 30.0</span>
+<span class="sd">        mean                      = 8.57142857143</span>
+<span class="sd">        mean_confidence_lower     = 1.27708372993</span>
+<span class="sd">        mean_confidence_upper     = 15.8657734129</span>
+<span class="sd">        minimum                   = 2.0</span>
+<span class="sd">        non_positive_weight_count = 0</span>
+<span class="sd">        positive_weight_count     = 7</span>
+<span class="sd">        standard_deviation        = 9.84644001416</span>
+<span class="sd">        total_weight              = 7.0</span>
+<span class="sd">        variance                  = 96.9523809524</span>
+
+<span class="sd">    Given a frame with column &#39;a&#39; and column &#39;w&#39; as weights accessed by a Frame object &#39;my_frame&#39;:</span>
+
+<span class="sd">        &gt;&gt;&gt; data = [[2,1.7],[3,0.5],[3,1.2],[5,0.8],[7,1.1],[10,0.8],[30,0.1]]</span>
+<span class="sd">        &gt;&gt;&gt; schema = [(&#39;a&#39;, int), (&#39;w&#39;, float)]</span>
+<span class="sd">        &gt;&gt;&gt; my_frame = tc.frame.create(data, schema)</span>
+<span class="sd">        [===Job Progress===]</span>
+
+<span class="sd">    Inspect my_frame</span>
+
+<span class="sd">        &gt;&gt;&gt; my_frame.inspect()</span>
+<span class="sd">        [#]  a   w</span>
+<span class="sd">        ============</span>
+<span class="sd">        [0]   2  1.7</span>
+<span class="sd">        [1]   3  0.5</span>
+<span class="sd">        [2]   3  1.2</span>
+<span class="sd">        [3]   5  0.8</span>
+<span class="sd">        [4]   7  1.1</span>
+<span class="sd">        [5]  10  0.8</span>
+<span class="sd">        [6]  30  0.1</span>
+
+<span class="sd">    Compute and return summary statistics values in column &#39;a&#39; with weights &#39;w&#39;:</span>
+
+<span class="sd">        &gt;&gt;&gt; summary_statistics = my_frame.column_summary_statistics(&#39;a&#39;, weights_column=&#39;w&#39;)</span>
+<span class="sd">        [===Job Progress===]</span>
+<span class="sd">        &gt;&gt;&gt; print summary_statistics</span>
+<span class="sd">        bad_row_count             = 0</span>
+<span class="sd">        geometric_mean            = 4.03968288152</span>
+<span class="sd">        good_row_count            = 7</span>
+<span class="sd">        maximum                   = 30.0</span>
+<span class="sd">        mean                      = 5.03225806452</span>
+<span class="sd">        mean_confidence_lower     = 1.42847242276</span>
+<span class="sd">        mean_confidence_upper     = 8.63604370627</span>
+<span class="sd">        minimum                   = 2.0</span>
+<span class="sd">        non_positive_weight_count = 0</span>
+<span class="sd">        positive_weight_count     = 7</span>
+<span class="sd">        standard_deviation        = 4.57824177679</span>
+<span class="sd">        total_weight              = 6.2</span>
+<span class="sd">        variance                  = 20.9602977667</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ColumnSummaryStatistics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">columnSummaryStatistics</span><span class="p">(</span><span class="n">data_column</span><span class="p">,</span>
+                                                                       <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">weights_column</span><span class="p">),</span>
+                                                                       <span class="n">use_popultion_variance</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics" class="name">class <span class="ident">ColumnSummaryStatistics</span></p>
+      
+  
+    <div class="desc"><p>ColumnSummaryStatistics class contains values that are returned from the column_summary_statistics frame operation.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics" class="source">
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">ColumnSummaryStatistics</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ColumnSummaryStatistics class contains values that are returned from the column_summary_statistics frame operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scala_result</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometric_mean</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">geometricMean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">variance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">standardDeviation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">totalWeight</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">minimum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">maximum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_lower</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">meanConfidenceLower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_upper</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">meanConfidenceUpper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bad_row_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">badRowCount</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_good_row_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">goodRowCount</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_positive_weight_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">positiveWeightCount</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_non_positive_weight_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">nonPositiveWeightCount</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometric_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometric_mean</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">standard_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean_confidence_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_lower</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean_confidence_upper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_upper</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bad_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bad_row_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">good_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_good_row_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">positive_weight_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positive_weight_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">non_positive_weight_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_positive_weight_count</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics">ColumnSummaryStatistics</a></li>
+          <li>sparktk.propobj.PropertiesObject</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.bad_row_count" class="name">var <span class="ident">bad_row_count</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.geometric_mean" class="name">var <span class="ident">geometric_mean</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.good_row_count" class="name">var <span class="ident">good_row_count</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.maximum" class="name">var <span class="ident">maximum</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.mean" class="name">var <span class="ident">mean</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.mean_confidence_lower" class="name">var <span class="ident">mean_confidence_lower</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.mean_confidence_upper" class="name">var <span class="ident">mean_confidence_upper</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.minimum" class="name">var <span class="ident">minimum</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.non_positive_weight_count" class="name">var <span class="ident">non_positive_weight_count</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.positive_weight_count" class="name">var <span class="ident">positive_weight_count</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.standard_deviation" class="name">var <span class="ident">standard_deviation</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.total_weight" class="name">var <span class="ident">total_weight</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.variance" class="name">var <span class="ident">variance</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, scala_result)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.__init__" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scala_result</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_geometric_mean</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">geometricMean</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">variance</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_standard_deviation</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">standardDeviation</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_total_weight</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">totalWeight</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">minimum</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">maximum</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_lower</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">meanConfidenceLower</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mean_confidence_upper</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">meanConfidenceUpper</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bad_row_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">badRowCount</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_good_row_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">goodRowCount</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_positive_weight_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">positiveWeightCount</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_non_positive_weight_count</span> <span class="o">=</span> <span class="n">scala_result</span><span class="o">.</span><span class="n">nonPositiveWeightCount</span><span class="p">()</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_dict">
+    <p>def <span class="ident">to_dict</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_dict', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_dict" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">()</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">d</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_json">
+    <p>def <span class="ident">to_json</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_json', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.frame.ops.column_summary_statistics.ColumnSummaryStatistics.to_json" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+  </div>
+</body>
+</html>

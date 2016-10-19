@@ -1,0 +1,9 @@
+{
+ "DEFAULT_VERSION": "v0.7.3", 
+ "VERSIONS": {
+  "v0.7.3": {
+   "type": "Production", 
+   "version": "v.0.7.3"
+  }
+ }
+}

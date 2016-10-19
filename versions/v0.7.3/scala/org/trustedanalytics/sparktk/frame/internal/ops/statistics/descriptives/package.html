@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>descriptives - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives</title>
+          <meta name="description" content="descriptives - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives" />
+          <meta name="keywords" content="descriptives sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal">internal</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops">ops</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.statistics">statistics</a></p>
+        <h1>descriptives</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">descriptives</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalSummary" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CategoricalSummaryextendsFrameSummarization[Array[org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalSummaryOutput]]withProductwithSerializable"></a>
+      <a id="CategoricalSummary:CategoricalSummary"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CategoricalSummary.html"><span class="name">CategoricalSummary</span></a><span class="params">(<span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="topK">topK: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]]</span>, <span name="threshold">threshold: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]]</span>)</span><span class="result"> extends <a href="../../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Array">Array</span>[<a href="CategoricalSummaryOutput.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalSummaryOutput">CategoricalSummaryOutput</a>]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalSummaryOutput" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CategoricalSummaryOutputextendsProductwithSerializable"></a>
+      <a id="CategoricalSummaryOutput:CategoricalSummaryOutput"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CategoricalSummaryOutput.html"><span class="name">CategoricalSummaryOutput</span></a><span class="params">(<span name="column">column: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="levels">levels: <span class="extype" name="scala.Array">Array</span>[<a href="LevelData.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.LevelData">LevelData</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalSummarySummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CategoricalSummarySummarizationextendsBaseFrame"></a>
+      <a id="CategoricalSummarySummarization:CategoricalSummarySummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CategoricalSummarySummarization.html"><span class="name">CategoricalSummarySummarization</span></a><span class="result"> extends <a href="../../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnMedian" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnMedianextendsFrameSummarization[Option[org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnMedianReturn]]withProductwithSerializable"></a>
+      <a id="ColumnMedian:ColumnMedian"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnMedian.html"><span class="name">ColumnMedian</span></a><span class="params">(<span name="dataColumn">dataColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weightsColumn">weightsColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="../../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<span class="extype" name="scala.Option">Option</span>[<a href="ColumnMedianReturn.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnMedianReturn">ColumnMedianReturn</a>]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnMedianReturn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnMedianReturnextendsProductwithSerializable"></a>
+      <a id="ColumnMedianReturn:ColumnMedianReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnMedianReturn.html"><span class="name">ColumnMedianReturn</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">The median value of the (possibly weighted) column.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnMedianSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ColumnMedianSummarizationextendsBaseFrame"></a>
+      <a id="ColumnMedianSummarization:ColumnMedianSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnMedianSummarization.html"><span class="name">ColumnMedianSummarization</span></a><span class="result"> extends <a href="../../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnMode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnModeextendsFrameSummarization[org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnModeReturn]withProductwithSerializable"></a>
+      <a id="ColumnMode:ColumnMode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnMode.html"><span class="name">ColumnMode</span></a><span class="params">(<span name="dataColumnName">dataColumnName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weightsColumn">weightsColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="maxModesReturned">maxModesReturned: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result"> extends <a href="../../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<a href="ColumnModeReturn.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnModeReturn">ColumnModeReturn</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnModeReturn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnModeReturnextendsProductwithSerializable"></a>
+      <a id="ColumnModeReturn:ColumnModeReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnModeReturn.html"><span class="name">ColumnModeReturn</span></a><span class="params">(<span name="modes">modes: <span class="extype" name="scala.Any">Any</span></span>, <span name="weightOfMode">weightOfMode: <span class="extype" name="scala.Double">Double</span></span>, <span name="totalWeight">totalWeight: <span class="extype" name="scala.Double">Double</span></span>, <span name="modeCount">modeCount: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Mode data for a dataframe column.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnModeSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ColumnModeSummarizationextendsBaseFrame"></a>
+      <a id="ColumnModeSummarization:ColumnModeSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnModeSummarization.html"><span class="name">ColumnModeSummarization</span></a><span class="result"> extends <a href="../../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnSummaryStatistics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnSummaryStatisticsextendsFrameSummarization[org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnSummaryStatisticsReturn]withProductwithSerializable"></a>
+      <a id="ColumnSummaryStatistics:ColumnSummaryStatistics"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnSummaryStatistics.html"><span class="name">ColumnSummaryStatistics</span></a><span class="params">(<span name="dataColumn">dataColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weightsColumn">weightsColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="usePopulationVariance">usePopulationVariance: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="../../../FrameSummarization.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.FrameSummarization">FrameSummarization</a>[<a href="ColumnSummaryStatisticsReturn.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnSummaryStatisticsReturn">ColumnSummaryStatisticsReturn</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnSummaryStatisticsReturn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnSummaryStatisticsReturnextendsProductwithSerializable"></a>
+      <a id="ColumnSummaryStatisticsReturn:ColumnSummaryStatisticsReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnSummaryStatisticsReturn.html"><span class="name">ColumnSummaryStatisticsReturn</span></a><span class="params">(<span name="mean">mean: <span class="extype" name="scala.Double">Double</span></span>, <span name="geometricMean">geometricMean: <span class="extype" name="scala.Double">Double</span></span>, <span name="variance">variance: <span class="extype" name="scala.Double">Double</span></span>, <span name="standardDeviation">standardDeviation: <span class="extype" name="scala.Double">Double</span></span>, <span name="totalWeight">totalWeight: <span class="extype" name="scala.Double">Double</span></span>, <span name="minimum">minimum: <span class="extype" name="scala.Double">Double</span></span>, <span name="maximum">maximum: <span class="extype" name="scala.Double">Double</span></span>, <span name="meanConfidenceLower">meanConfidenceLower: <span class="extype" name="scala.Double">Double</span></span>, <span name="meanConfidenceUpper">meanConfidenceUpper: <span class="extype" name="scala.Double">Double</span></span>, <span name="badRowCount">badRowCount: <span class="extype" name="scala.Long">Long</span></span>, <span name="goodRowCount">goodRowCount: <span class="extype" name="scala.Long">Long</span></span>, <span name="positiveWeightCount">positiveWeightCount: <span class="extype" name="scala.Long">Long</span></span>, <span name="nonPositiveWeightCount">nonPositiveWeightCount: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Summary statistics for a dataframe column.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnSummaryStatisticsSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ColumnSummaryStatisticsSummarizationextendsBaseFrame"></a>
+      <a id="ColumnSummaryStatisticsSummarization:ColumnSummaryStatisticsSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnSummaryStatisticsSummarization.html"><span class="name">ColumnSummaryStatisticsSummarization</span></a><span class="result"> extends <a href="../../../BaseFrame.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.BaseFrame">BaseFrame</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.LevelData" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LevelDataextendsProductwithSerializable"></a>
+      <a id="LevelData:LevelData"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LevelData.html"><span class="name">LevelData</span></a><span class="params">(<span name="level">level: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="frequency">frequency: <span class="extype" name="scala.Int">Int</span></span>, <span name="percentage">percentage: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.CategoricalSummaryFunctions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CategoricalSummaryFunctions"></a>
+      <a id="CategoricalSummaryFunctions:CategoricalSummaryFunctions"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CategoricalSummaryFunctions$.html"><span class="name">CategoricalSummaryFunctions</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Compute categorical summary for an RDD with a single column
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.ColumnStatistics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnStatistics"></a>
+      <a id="ColumnStatistics:ColumnStatistics"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnStatistics$.html"><span class="name">ColumnStatistics</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Provides functions for taking statistics on column data.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

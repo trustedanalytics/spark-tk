@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>orientdb - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.graph.internal.ops.orientdb</title>
+          <meta name="description" content="orientdb - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.graph.internal.ops.orientdb" />
+          <meta name="keywords" content="orientdb sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.graph.internal.ops.orientdb" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.graph.internal.ops.orientdb.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.graph">graph</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal">internal</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops">ops</a></p>
+        <h1>orientdb</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">orientdb</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.EdgeFrameWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EdgeFrameWriterextendsSerializable"></a>
+      <a id="EdgeFrameWriter:EdgeFrameWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="EdgeFrameWriter.html"><span class="name">EdgeFrameWriter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">exports the current frame to OrientDB edges class
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.EdgeWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EdgeWriterextendsAnyRef"></a>
+      <a id="EdgeWriter:EdgeWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="EdgeWriter.html"><span class="name">EdgeWriter</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">exports Spark SQL Row to OrientDB edge</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdb" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToOrientdbextendsGraphSummarization[org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbReturn]withProductwithSerializable"></a>
+      <a id="ExportToOrientdb:ExportToOrientdb"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToOrientdb.html"><span class="name">ExportToOrientdb</span></a><span class="params">(<span name="dbUrl">dbUrl: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="userName">userName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="password">password: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="rootPassword">rootPassword: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="vertexTypeColumnName">vertexTypeColumnName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="edgeTypeColumnName">edgeTypeColumnName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="batchSize">batchSize: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1000</span></span>)</span><span class="result"> extends <a href="../../GraphSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.GraphSummarization">GraphSummarization</a>[<a href="ExportToOrientdbReturn.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbReturn">ExportToOrientdbReturn</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbReturn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExportToOrientdbReturnextendsProductwithSerializable"></a>
+      <a id="ExportToOrientdbReturn:ExportToOrientdbReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToOrientdbReturn.html"><span class="name">ExportToOrientdbReturn</span></a><span class="params">(<span name="exportedVerticesSummary">exportedVerticesSummary: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Long">Long</span>]</span>, <span name="verticesTypes">verticesTypes: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Long">Long</span>]</span>, <span name="exportedEdgesSummary">exportedEdgesSummary: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Long">Long</span>]</span>, <span name="edgesTypes">edgesTypes: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Long">Long</span>]</span>, <span name="dbUri">dbUri: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">returns the output arguments of ExportOrientDbGraphPlugin</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ExportToOrientdbSummarizationextendsBaseGraph"></a>
+      <a id="ExportToOrientdbSummarization:ExportToOrientdbSummarization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ExportToOrientdbSummarization.html"><span class="name">ExportToOrientdbSummarization</span></a><span class="result"> extends <a href="../../BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.GraphFrameFunctions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GraphFrameFunctionsextendsAnyRef"></a>
+      <a id="GraphFrameFunctions:GraphFrameFunctions"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="GraphFrameFunctions.html"><span class="name">GraphFrameFunctions</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">exports a graph frame to OrientDB graph
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OrientConfextendsSerializablewithProduct"></a>
+      <a id="OrientConf:OrientConf"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="OrientConf.html"><span class="name">OrientConf</span></a><span class="params">(<span name="dbUri">dbUri: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dbUserName">dbUserName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dbPassword">dbPassword: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="rootPassword">rootPassword: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="batchSize">batchSize: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1000</span></span>, <span name="dbProperties">dbProperties: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>]] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">the database configurations parameters</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.SchemaWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SchemaWriterextendsSerializable"></a>
+      <a id="SchemaWriter:SchemaWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SchemaWriter.html"><span class="name">SchemaWriter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">exports the graph frame schema to OrientDB graph schema
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.Statistics" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StatisticsextendsAnyRef"></a>
+      <a id="Statistics:Statistics"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Statistics.html"><span class="name">Statistics</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">collect Statistics
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.VertexFrameWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VertexFrameWriterextendsSerializable"></a>
+      <a id="VertexFrameWriter:VertexFrameWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="VertexFrameWriter.html"><span class="name">VertexFrameWriter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">exports data frame to OrientDB vertices class
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.VertexWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VertexWriterextendsAnyRef"></a>
+      <a id="VertexWriter:VertexWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="VertexWriter.html"><span class="name">VertexWriter</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">exports graph frame vertex to OrientDB
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.DataTypesConverter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataTypesConverter"></a>
+      <a id="DataTypesConverter:DataTypesConverter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DataTypesConverter$.html"><span class="name">DataTypesConverter</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">converts Spark data types to OrientDB data type
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientdbGraphFactory" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OrientdbGraphFactory"></a>
+      <a id="OrientdbGraphFactory:OrientdbGraphFactory"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="OrientdbGraphFactory$.html"><span class="name">OrientdbGraphFactory</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">OrientDB graph factory
+</p>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.exportGraphParam" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="exportGraphParam"></a>
+      <a id="exportGraphParam:exportGraphParam"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="exportGraphParam$.html"><span class="name">exportGraphParam</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">hard coded parameters
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

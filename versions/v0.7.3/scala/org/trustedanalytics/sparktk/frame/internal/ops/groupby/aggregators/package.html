@@ -1,0 +1,307 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>aggregators - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators</title>
+          <meta name="description" content="aggregators - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators" />
+          <meta name="keywords" content="aggregators sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame">frame</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal">internal</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops">ops</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby">groupby</a></p>
+        <h1>aggregators</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">aggregators</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.AbstractVarianceAggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AbstractVarianceAggregatorextendsGroupByAggregator"></a>
+      <a id="AbstractVarianceAggregator:AbstractVarianceAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AbstractVarianceAggregator.html"><span class="name">AbstractVarianceAggregator</span></a><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Abstract class used to incrementally the compute sample variance and standard deviation</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.ColumnAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnAggregatorextendsProductwithSerializable"></a>
+      <a id="ColumnAggregator:ColumnAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnAggregator.html"><span class="name">ColumnAggregator</span></a><span class="params">(<span name="column">column: <a href="../../../../Column.html" class="extype" name="org.trustedanalytics.sparktk.frame.Column">Column</a></span>, <span name="columnIndex">columnIndex: <span class="extype" name="scala.Int">Int</span></span>, <span name="aggregator">aggregator: <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Column and corresponding aggregator.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.CompensatedSum" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CompensatedSumextendsProductwithSerializable"></a>
+      <a id="CompensatedSum:CompensatedSum"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CompensatedSum.html"><span class="name">CompensatedSum</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">0.0</span></span>, <span name="delta">delta: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">0.0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Counter used to calculate sums using the Kahan summation algorithm</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.CountAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CountAggregatorextendsGroupByAggregatorwithProductwithSerializable"></a>
+      <a id="CountAggregator:CountAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CountAggregator.html"><span class="name">CountAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> Aggregator for counting column values.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.DistinctCountAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DistinctCountAggregatorextendsGroupByAggregatorwithProductwithSerializable"></a>
+      <a id="DistinctCountAggregator:DistinctCountAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="DistinctCountAggregator.html"><span class="name">DistinctCountAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Aggregator for counting distinct column values.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="GroupByAggregatorextendsSerializable"></a>
+      <a id="GroupByAggregator:GroupByAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="GroupByAggregator.html"><span class="name">GroupByAggregator</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> Trait for group-by aggregators</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.HistogramAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="HistogramAggregatorextendsGroupByAggregatorwithProductwithSerializable"></a>
+      <a id="HistogramAggregator:HistogramAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="HistogramAggregator.html"><span class="name">HistogramAggregator</span></a><span class="params">(<span name="cutoffs">cutoffs: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="includeLowest">includeLowest: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">scala.None</span></span>, <span name="strictBinning">strictBinning: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Boolean">Boolean</span>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Aggregator for computing histograms using a list of cutoffs.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.MaxAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MaxAggregatorextendsGroupByAggregatorwithProductwithSerializable"></a>
+      <a id="MaxAggregator:MaxAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MaxAggregator.html"><span class="name">MaxAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> Aggregator for computing the maximum column values using Spark's aggregateByKey()</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.MeanAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MeanAggregatorextendsGroupByAggregatorwithProductwithSerializable"></a>
+      <a id="MeanAggregator:MeanAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MeanAggregator.html"><span class="name">MeanAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> Aggregator for incrementally computing the mean column value using Spark's aggregateByKey()
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.MeanCounter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MeanCounterextendsProductwithSerializable"></a>
+      <a id="MeanCounter:MeanCounter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MeanCounter.html"><span class="name">MeanCounter</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Long">Long</span></span>, <span name="sum">sum: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Counter used to compute the arithmetic mean incrementally.</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.MinAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MinAggregatorextendsGroupByAggregatorwithProductwithSerializable"></a>
+      <a id="MinAggregator:MinAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MinAggregator.html"><span class="name">MinAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Aggregator for computing the minimum column values using Spark's aggregateByKey()</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.StandardDeviationAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StandardDeviationAggregatorextendsAbstractVarianceAggregatorwithProductwithSerializable"></a>
+      <a id="StandardDeviationAggregator:StandardDeviationAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="StandardDeviationAggregator.html"><span class="name">StandardDeviationAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="AbstractVarianceAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.AbstractVarianceAggregator">AbstractVarianceAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Aggregator for computing standard deviation
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.SumAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SumAggregator[T]extendsGroupByAggregator"></a>
+      <a id="SumAggregator[T]:SumAggregator[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SumAggregator.html"><span class="name">SumAggregator</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="GroupByAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.GroupByAggregator">GroupByAggregator</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt"> Aggregator for computing the sum of column values using Spark's aggregateByKey()
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.VarianceAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VarianceAggregatorextendsAbstractVarianceAggregatorwithProductwithSerializable"></a>
+      <a id="VarianceAggregator:VarianceAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="VarianceAggregator.html"><span class="name">VarianceAggregator</span></a><span class="params">()</span><span class="result"> extends <a href="AbstractVarianceAggregator.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.AbstractVarianceAggregator">AbstractVarianceAggregator</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Aggregator for computing variance
+</p>
+    </li><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.VarianceCounter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VarianceCounterextendsProductwithSerializable"></a>
+      <a id="VarianceCounter:VarianceCounter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="VarianceCounter.html"><span class="name">VarianceCounter</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Long">Long</span></span>, <span name="mean">mean: <a href="CompensatedSum.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.CompensatedSum">CompensatedSum</a></span>, <span name="m2">m2: <a href="CompensatedSum.html" class="extype" name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.CompensatedSum">CompensatedSum</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Counter used to compute sample variance incrementally.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.frame.internal.ops.groupby.aggregators.ColumnAggregator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ColumnAggregator"></a>
+      <a id="ColumnAggregator:ColumnAggregator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ColumnAggregator$.html"><span class="name">ColumnAggregator</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

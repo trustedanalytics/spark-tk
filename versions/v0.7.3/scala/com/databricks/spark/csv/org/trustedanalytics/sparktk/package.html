@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>sparktk - sparktk-core master-SNAPSHOT API - com.databricks.spark.csv.org.trustedanalytics.sparktk</title>
+          <meta name="description" content="sparktk - sparktk - core master - SNAPSHOT API - com.databricks.spark.csv.org.trustedanalytics.sparktk" />
+          <meta name="keywords" content="sparktk sparktk core master SNAPSHOT API com.databricks.spark.csv.org.trustedanalytics.sparktk" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../../index.html';
+            var hash = 'com.databricks.spark.csv.org.trustedanalytics.sparktk.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="com">com</a>.<a href="../../../../../package.html" class="extype" name="com.databricks">databricks</a>.<a href="../../../../package.html" class="extype" name="com.databricks.spark">spark</a>.<a href="../../../package.html" class="extype" name="com.databricks.spark.csv">csv</a>.<a href="../../package.html" class="extype" name="com.databricks.spark.csv.org">org</a>.<a href="../package.html" class="extype" name="com.databricks.spark.csv.org.trustedanalytics">trustedanalytics</a></p>
+        <h1>sparktk</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sparktk</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.databricks.spark.csv.org.trustedanalytics.sparktk.DefaultSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DefaultSourceextendsRelationProviderwithSchemaRelationProviderwithCreatableRelationProvider"></a>
+      <a id="DefaultSource:DefaultSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="DefaultSource.html"><span class="name">DefaultSource</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.sources.RelationProvider">RelationProvider</span> with <span class="extype" name="org.apache.spark.sql.sources.SchemaRelationProvider">SchemaRelationProvider</span> with <span class="extype" name="org.apache.spark.sql.sources.CreatableRelationProvider">CreatableRelationProvider</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.databricks.spark.csv.org.trustedanalytics.sparktk.TkCsvRelation" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TkCsvRelationextendsBaseRelationwithTableScanwithPrunedScanwithInsertableRelationwithProductwithSerializable"></a>
+      <a id="TkCsvRelation:TkCsvRelation"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="TkCsvRelation.html"><span class="name">TkCsvRelation</span></a><span class="params">(<span name="baseRDD">baseRDD: () ⇒ <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="location">location: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="useHeader">useHeader: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="delimiter">delimiter: <span class="extype" name="scala.Char">Char</span></span>, <span name="quote">quote: <span class="extype" name="java.lang.Character">Character</span></span>, <span name="escape">escape: <span class="extype" name="java.lang.Character">Character</span></span>, <span name="comment">comment: <span class="extype" name="java.lang.Character">Character</span></span>, <span name="parseMode">parseMode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parserLib">parserLib: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ignoreLeadingWhiteSpace">ignoreLeadingWhiteSpace: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="ignoreTrailingWhiteSpace">ignoreTrailingWhiteSpace: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="treatEmptyValuesAsNulls">treatEmptyValuesAsNulls: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="userSchema">userSchema: <span class="extype" name="org.apache.spark.sql.types.StructType">StructType</span> = <span class="symbol">null</span></span>, <span name="inferCsvSchema">inferCsvSchema: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="codec">codec: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>, <span name="nullValue">nullValue: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="dateFormat">dateFormat: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">null</span></span>)</span><span class="params">(<span name="sqlContext">sqlContext: <span class="extype" name="org.apache.spark.sql.SQLContext">SQLContext</span></span>)</span><span class="result"> extends <span class="extype" name="org.apache.spark.sql.sources.BaseRelation">BaseRelation</span> with <span class="extype" name="org.apache.spark.sql.sources.TableScan">TableScan</span> with <span class="extype" name="org.apache.spark.sql.sources.PrunedScan">PrunedScan</span> with <span class="extype" name="org.apache.spark.sql.sources.InsertableRelation">InsertableRelation</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+    </body>
+      </html>

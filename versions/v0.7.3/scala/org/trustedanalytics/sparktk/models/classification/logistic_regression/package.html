@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>logistic_regression - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.models.classification.logistic_regression</title>
+          <meta name="description" content="logistic regression - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.models.classification.logistic regression" />
+          <meta name="keywords" content="logistic regression sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.models.classification.logistic regression" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.models.classification.logistic_regression.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../../../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics.sparktk.models">models</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk.models.classification">classification</a></p>
+        <h1>logistic_regression</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logistic_regression</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.ApproximateCovarianceMatrix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ApproximateCovarianceMatrixextendsProductwithSerializable"></a>
+      <a id="ApproximateCovarianceMatrix:ApproximateCovarianceMatrix"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ApproximateCovarianceMatrix.html"><span class="name">ApproximateCovarianceMatrix</span></a><span class="params">(<span name="hessianMatrix">hessianMatrix: <span class="extype" name="breeze.linalg.DenseMatrix">DenseMatrix</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="reorderMatrix">reorderMatrix: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Covariance matrix generated from model's hessian matrix</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionData" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionDataextendsProductwithSerializable"></a>
+      <a id="LogisticRegressionData:LogisticRegressionData"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionData.html"><span class="name">LogisticRegressionData</span></a><span class="params">(<span name="logRegModel">logRegModel: <a href="../../../../../apache/spark/mllib/classification/org/trustedanalytics/sparktk/LogisticRegressionModelWithFrequency.html" class="extype" name="org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency">LogisticRegressionModelWithFrequency</a></span>, <span name="observationColumns">observationColumns: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Command for loading model data into existing model in the model database.</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModelextendsSerializablewithProduct"></a>
+      <a id="LogisticRegressionModel:LogisticRegressionModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModel.html"><span class="name">LogisticRegressionModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Logistic Regression Model
+</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelMetaData" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModelMetaDataextendsSerializablewithProduct"></a>
+      <a id="LogisticRegressionModelMetaData:LogisticRegressionModelMetaData"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModelMetaData.html"><span class="name">LogisticRegressionModelMetaData</span></a><span class="params">(<span name="observationColumns">observationColumns: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="labelColumn">labelColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="frequencyColumn">frequencyColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="numClasses">numClasses: <span class="extype" name="scala.Int">Int</span></span>, <span name="optimizer">optimizer: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="computeCovariance">computeCovariance: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="intercept">intercept: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="featureScaling">featureScaling: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="threshold">threshold: <span class="extype" name="scala.Double">Double</span></span>, <span name="regType">regType: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="regParam">regParam: <span class="extype" name="scala.Double">Double</span></span>, <span name="numIterations">numIterations: <span class="extype" name="scala.Int">Int</span></span>, <span name="convergenceTolerance">convergenceTolerance: <span class="extype" name="scala.Double">Double</span></span>, <span name="numCorrections">numCorrections: <span class="extype" name="scala.Int">Int</span></span>, <span name="miniBatchFraction">miniBatchFraction: <span class="extype" name="scala.Double">Double</span></span>, <span name="stepSize">stepSize: <span class="extype" name="scala.Double">Double</span></span>, <span name="hessianMatrixRows">hessianMatrixRows: <span class="extype" name="scala.Int">Int</span></span>, <span name="hessianMatrixCols">hessianMatrixCols: <span class="extype" name="scala.Int">Int</span></span>, <span name="hessianMatrixData">hessianMatrixData: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Logistic Regression Meta data
+</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelWrapper" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModelWrapperextendsHessianMatrix"></a>
+      <a id="LogisticRegressionModelWrapper:LogisticRegressionModelWrapper"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModelWrapper.html"><span class="name">LogisticRegressionModelWrapper</span></a><span class="result"> extends <a href="../../../../../apache/spark/mllib/evaluation/org/trustedanalytics/sparktk/HessianMatrix.html" class="extype" name="org.apache.spark.mllib.evaluation.org.trustedanalytics.sparktk.HessianMatrix">HessianMatrix</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelWrapperWithLBFGS" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModelWrapperWithLBFGSextendsLogisticRegressionModelWrapper"></a>
+      <a id="LogisticRegressionModelWrapperWithLBFGS:LogisticRegressionModelWrapperWithLBFGS"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModelWrapperWithLBFGS.html"><span class="name">LogisticRegressionModelWrapperWithLBFGS</span></a><span class="result"> extends <a href="LogisticRegressionModelWrapper.html" class="extype" name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelWrapper">LogisticRegressionModelWrapper</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Logistic regression model with Limited-memory BFGS
+</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelWrapperWithSGD" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModelWrapperWithSGDextendsLogisticRegressionModelWrapper"></a>
+      <a id="LogisticRegressionModelWrapperWithSGD:LogisticRegressionModelWrapperWithSGD"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModelWrapperWithSGD.html"><span class="name">LogisticRegressionModelWrapperWithSGD</span></a><span class="result"> extends <a href="LogisticRegressionModelWrapper.html" class="extype" name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelWrapper">LogisticRegressionModelWrapper</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Logistic regression model with Stochastic Gradient Descent
+</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionSummaryTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionSummaryTableextendsProductwithSerializable"></a>
+      <a id="LogisticRegressionSummaryTable:LogisticRegressionSummaryTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionSummaryTable.html"><span class="name">LogisticRegressionSummaryTable</span></a><span class="params">(<span name="numFeatures">numFeatures: <span class="extype" name="scala.Int">Int</span></span>, <span name="numClasses">numClasses: <span class="extype" name="scala.Int">Int</span></span>, <span name="coefficients">coefficients: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Double">Double</span>]</span>, <span name="degreesFreedom">degreesFreedom: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Double">Double</span>]</span>, <span name="covarianceMatrix">covarianceMatrix: <span class="extype" name="scala.Option">Option</span>[<a href="../../../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a>] = <span class="symbol">scala.None</span></span>, <span name="standardErrors">standardErrors: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Double">Double</span>]] = <span class="symbol">scala.None</span></span>, <span name="waldStatistic">waldStatistic: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Double">Double</span>]] = <span class="symbol">scala.None</span></span>, <span name="pValue">pValue: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Double">Double</span>]] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Summary table with results of logistic regression train plugin
+</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionTrainArgs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionTrainArgsextendsProductwithSerializable"></a>
+      <a id="LogisticRegressionTrainArgs:LogisticRegressionTrainArgs"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionTrainArgs.html"><span class="name">LogisticRegressionTrainArgs</span></a><span class="params">(<span name="frame">frame: <a href="../../../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>, <span name="observationColumns">observationColumns: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="labelColumn">labelColumn: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="frequencyColumn">frequencyColumn: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="numClasses">numClasses: <span class="extype" name="scala.Int">Int</span></span>, <span name="optimizer">optimizer: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="computeCovariance">computeCovariance: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="intercept">intercept: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="featureScaling">featureScaling: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="threshold">threshold: <span class="extype" name="scala.Double">Double</span></span>, <span name="regType">regType: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="regParam">regParam: <span class="extype" name="scala.Double">Double</span></span>, <span name="numIterations">numIterations: <span class="extype" name="scala.Int">Int</span></span>, <span name="convergenceTolerance">convergenceTolerance: <span class="extype" name="scala.Double">Double</span></span>, <span name="numCorrections">numCorrections: <span class="extype" name="scala.Int">Int</span></span>, <span name="miniBatchFraction">miniBatchFraction: <span class="extype" name="scala.Double">Double</span></span>, <span name="stepSize">stepSize: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Input arguments for logistic regression train plugin
+</p>
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.SummaryTableBuilder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SummaryTableBuilderextendsProductwithSerializable"></a>
+      <a id="SummaryTableBuilder:SummaryTableBuilder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SummaryTableBuilder.html"><span class="name">SummaryTableBuilder</span></a><span class="params">(<span name="logRegModel">logRegModel: <a href="../../../../../apache/spark/mllib/classification/org/trustedanalytics/sparktk/LogisticRegressionModelWithFrequency.html" class="extype" name="org.apache.spark.mllib.classification.org.trustedanalytics.sparktk.LogisticRegressionModelWithFrequency">LogisticRegressionModelWithFrequency</a></span>, <span name="observationColumns">observationColumns: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="isAddIntercept">isAddIntercept: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="hessianMatrix">hessianMatrix: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="breeze.linalg.DenseMatrix">DenseMatrix</span>[<span class="extype" name="scala.Double">Double</span>]] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Summary table builder
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModel"></a>
+      <a id="LogisticRegressionModel:LogisticRegressionModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModel$.html"><span class="name">LogisticRegressionModel</span></a><span class="result"> extends <a href="../../../saveload/TkSaveableObject.html" class="extype" name="org.trustedanalytics.sparktk.saveload.TkSaveableObject">TkSaveableObject</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModelWrapperFactory" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LogisticRegressionModelWrapperFactory"></a>
+      <a id="LogisticRegressionModelWrapperFactory:LogisticRegressionModelWrapperFactory"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LogisticRegressionModelWrapperFactory$.html"><span class="name">LogisticRegressionModelWrapperFactory</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../lib/template.js"></script>
+    </body>
+      </html>

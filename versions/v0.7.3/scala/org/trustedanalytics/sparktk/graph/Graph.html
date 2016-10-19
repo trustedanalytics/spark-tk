@@ -1,0 +1,750 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>Graph - sparktk-core master-SNAPSHOT API - org.trustedanalytics.sparktk.graph.Graph</title>
+          <meta name="description" content="Graph - sparktk - core master - SNAPSHOT API - org.trustedanalytics.sparktk.graph.Graph" />
+          <meta name="keywords" content="Graph sparktk core master SNAPSHOT API org.trustedanalytics.sparktk.graph.Graph" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'org.trustedanalytics.sparktk.graph.Graph';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <a href="Graph$.html" title="Go to companion"><img src="../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="org">org</a>.<a href="../../package.html" class="extype" name="org.trustedanalytics">trustedanalytics</a>.<a href="../package.html" class="extype" name="org.trustedanalytics.sparktk">sparktk</a>.<a href="package.html" class="extype" name="org.trustedanalytics.sparktk.graph">graph</a></p>
+        <h1><a href="Graph$.html" title="Go to companion">Graph</a></h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Graph</span><span class="result"> extends <a href="internal/BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a> with <span class="extype" name="scala.Serializable">Serializable</span> with <a href="internal/ops/ConnectedComponentsSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization">ConnectedComponentsSummarization</a> with <a href="internal/ops/ClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization">ClusteringCoefficientSummarization</a> with <a href="internal/ops/DegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization">DegreeSummarization</a> with <a href="internal/ops/orientdb/ExportToOrientdbSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization">ExportToOrientdbSummarization</a> with <a href="internal/ops/GlobalClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization">GlobalClusteringCoefficientSummarization</a> with <a href="internal/ops/LabelPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization">LabelPropagationSummarization</a> with <a href="internal/ops/LoopyBeliefPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization">LoopyBeliefPropagationSummarization</a> with <a href="internal/ops/PageRankSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization">PageRankSummarization</a> with <a href="internal/ops/SaveSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization">SaveSummarization</a> with <a href="internal/ops/TriangleCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization">TriangleCountSummarization</a> with <a href="internal/ops/VertexCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization">VertexCountSummarization</a> with <a href="internal/ops/WeightedDegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization">WeightedDegreeSummarization</a></span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><a href="internal/ops/WeightedDegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization">WeightedDegreeSummarization</a>, <a href="internal/ops/VertexCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization">VertexCountSummarization</a>, <a href="internal/ops/TriangleCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization">TriangleCountSummarization</a>, <a href="internal/ops/SaveSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization">SaveSummarization</a>, <a href="internal/ops/PageRankSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization">PageRankSummarization</a>, <a href="internal/ops/LoopyBeliefPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization">LoopyBeliefPropagationSummarization</a>, <a href="internal/ops/LabelPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization">LabelPropagationSummarization</a>, <a href="internal/ops/GlobalClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization">GlobalClusteringCoefficientSummarization</a>, <a href="internal/ops/orientdb/ExportToOrientdbSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization">ExportToOrientdbSummarization</a>, <a href="internal/ops/DegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization">DegreeSummarization</a>, <a href="internal/ops/ClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization">ClusteringCoefficientSummarization</a>, <a href="internal/ops/ConnectedComponentsSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization">ConnectedComponentsSummarization</a>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="internal/BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="org.trustedanalytics.sparktk.graph.Graph"><span>Graph</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization"><span>WeightedDegreeSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization"><span>VertexCountSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization"><span>TriangleCountSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization"><span>SaveSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization"><span>PageRankSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization"><span>LoopyBeliefPropagationSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization"><span>LabelPropagationSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization"><span>GlobalClusteringCoefficientSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization"><span>ExportToOrientdbSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization"><span>DegreeSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization"><span>ClusteringCoefficientSummarization</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization"><span>ConnectedComponentsSummarization</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph"><span>BaseGraph</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="org.trustedanalytics.sparktk.graph.Graph#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(verticesFrame:org.trustedanalytics.sparktk.frame.Frame,edgesFrame:org.trustedanalytics.sparktk.frame.Frame):org.trustedanalytics.sparktk.graph.Graph"></a>
+      <a id="&lt;init&gt;:Graph"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Graph</span><span class="params">(<span name="verticesFrame">verticesFrame: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>, <span name="edgesFrame">edgesFrame: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>)</span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.graph.Graph#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(verticesFrame:org.apache.spark.sql.DataFrame,edgesFrame:org.apache.spark.sql.DataFrame):org.trustedanalytics.sparktk.graph.Graph"></a>
+      <a id="&lt;init&gt;:Graph"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Graph</span><span class="params">(<span name="verticesFrame">verticesFrame: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="edgesFrame">edgesFrame: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>)</span>
+      </span>
+      </h4>
+      
+    </li><li name="org.trustedanalytics.sparktk.graph.Graph#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(graphFrame:org.graphframes.GraphFrame):org.trustedanalytics.sparktk.graph.Graph"></a>
+      <a id="&lt;init&gt;:Graph"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Graph</span><span class="params">(<span name="graphFrame">graphFrame: <span class="extype" name="org.graphframes.GraphFrame">GraphFrame</span></span>)</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:AnyRef):Boolean"></a>
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:AnyRef):Boolean"></a>
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization#clusteringCoefficient" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusteringCoefficient():org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="clusteringCoefficient():Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusteringCoefficient</span><span class="params">()</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The clustering coefficient of a vertex provides a measure of how
+tightly clustered that vertex's neighborhood is.</p><div class="fullcomment"><div class="comment cmt"><p>The clustering coefficient of a vertex provides a measure of how
+tightly clustered that vertex's neighborhood is.</p><p>Formally:</p><p>.. math::</p><p>   cc(v)  = \frac{ \| \{ (u,v,w) \in V<sup>3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+       E \} \| }{\| \{ (u,v,w) \in V</sup>3: \ \{v, u \}, \{v, w\} \in E \} \|}</p><p>For further reading on clustering
+coefficients, see http://en.wikipedia.org/wiki/Clustering_coefficient.</p><p>This method returns a frame with the vertex id associated with it's local
+clustering coefficient
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The DataFrame associating each vertex id with it's local clustering coefficient</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/ClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization">ClusteringCoefficientSummarization</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization#connectedComponents" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="connectedComponents():org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="connectedComponents():Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">connectedComponents</span><span class="params">()</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Connected components are disjoint subgraphs in which all vertices are
+connected to all other vertices in the same component via paths, but not
+connected via paths to vertices in any other component.</p><div class="fullcomment"><div class="comment cmt"><p>Connected components are disjoint subgraphs in which all vertices are
+connected to all other vertices in the same component via paths, but not
+connected via paths to vertices in any other component.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The dataframe containing the vertices and which component they belong to
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/ConnectedComponentsSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization">ConnectedComponentsSummarization</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization#degree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="degree(degreeOption:String):org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="degree(String):Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">degree</span><span class="params">(<span name="degreeOption">degreeOption: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;undirected&quot;</span></span>)</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns a frame with annotations concerning the degree of each vertex,
+weighted by a given edge weight
+</p><div class="fullcomment"><div class="comment cmt"><p>Returns a frame with annotations concerning the degree of each vertex,
+weighted by a given edge weight
+</p></div><dl class="paramcmts block"><dt class="param">degreeOption</dt><dd class="cmt"><p>One of &quot;in&quot;, &quot;out&quot; or &quot;undirected&quot;. Determines the edge direction for the degree</p></dd><dt>returns</dt><dd class="cmt"><p>The dataframe containing the vertices and their corresponding weights
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/DegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization">DegreeSummarization</a></dd></dl></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.BaseGraph#execute" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="execute[T](summarization:org.trustedanalytics.sparktk.graph.internal.GraphSummarization[T]):T"></a>
+      <a id="execute[T](GraphSummarization[T]):T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">execute</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="summarization">summarization: <a href="internal/GraphSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.GraphSummarization">GraphSummarization</a>[<span class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph.execute.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph.execute.T">T</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="internal/BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization#exportToOrientdb" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="exportToOrientdb(dbUrl:String,userName:String,password:String,rootPassword:String,vertexTypeColumnName:Option[String],edgeTypeColumnName:Option[String],batchSize:Int):org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbReturn"></a>
+      <a id="exportToOrientdb(String,String,String,String,Option[String],Option[String],Int):ExportToOrientdbReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">exportToOrientdb</span><span class="params">(<span name="dbUrl">dbUrl: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="userName">userName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="password">password: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="rootPassword">rootPassword: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="vertexTypeColumnName">vertexTypeColumnName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="edgeTypeColumnName">edgeTypeColumnName: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="batchSize">batchSize: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1000</span></span>)</span><span class="result">: <a href="internal/ops/orientdb/ExportToOrientdbReturn.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbReturn">ExportToOrientdbReturn</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Save GraphFrame to OrientDB graph
+</p><div class="fullcomment"><div class="comment cmt"><p>Save GraphFrame to OrientDB graph
+</p></div><dl class="paramcmts block"><dt class="param">dbUrl</dt><dd class="cmt"><p>OrientDB database full URI</p></dd><dt class="param">userName</dt><dd class="cmt"><p>the database user name</p></dd><dt class="param">password</dt><dd class="cmt"><p>the database password</p></dd><dt class="param">rootPassword</dt><dd class="cmt"><p>OrientDB server password</p></dd><dt class="param">vertexTypeColumnName</dt><dd class="cmt"><p>vertex type column name</p></dd><dt class="param">edgeTypeColumnName</dt><dd class="cmt"><p>edge type column name</p></dd><dt class="param">batchSize</dt><dd class="cmt"><p>batch size</p></dd><dt>returns</dt><dd class="cmt"><p>summary statistics for the number of exported edges and vertices
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/orientdb/ExportToOrientdbSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization">ExportToOrientdbSummarization</a></dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization#globalClusteringCoefficient" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="globalClusteringCoefficient():Double"></a>
+      <a id="globalClusteringCoefficient():Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">globalClusteringCoefficient</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The clustering coefficient of a graph provides a measure of how tightly
+clustered an undirected graph is.</p><div class="fullcomment"><div class="comment cmt"><p>The clustering coefficient of a graph provides a measure of how tightly
+clustered an undirected graph is.</p><p>More formally:</p><p>.. math::</p><p>   cc(G)  = \frac{ \| \{ (u,v,w) \in V<sup>3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+       E \} \| }{\| \{ (u,v,w) \in V</sup>3: \ \{u,v\}, \{u, w\} \in E \} \|}</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The global clustering coefficient for the graph
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/GlobalClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization">GlobalClusteringCoefficientSummarization</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.BaseGraph#graphState" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="graphState:org.trustedanalytics.sparktk.graph.internal.GraphState"></a>
+      <a id="graphState:GraphState"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">graphState</span><span class="result">: <a href="internal/GraphState.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.GraphState">GraphState</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a></dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization#labelPropagation" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="labelPropagation(maxIterations:Int):org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="labelPropagation(Int):Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">labelPropagation</span><span class="params">(<span name="maxIterations">maxIterations: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Label propagation attempts to determine communities based off of neighbor associations.</p><div class="fullcomment"><div class="comment cmt"><p>Label propagation attempts to determine communities based off of neighbor associations. A community
+is a label that any vertex can have assigned to it, vertices are assumed to be more likely members
+of communities they are near.</p><p>This algorithm can fail to converge, oscillate or return the trivial solution (all members of one
+community).
+</p></div><dl class="paramcmts block"><dt class="param">maxIterations</dt><dd class="cmt"><p>the number of iterations to run label propagation for</p></dd><dt>returns</dt><dd class="cmt"><p>dataFrame with the vertices associated with their respective communities
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/LabelPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization">LabelPropagationSummarization</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.BaseGraph#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:org.slf4j.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization#loopyBeliefPropagation" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="loopyBeliefPropagation(prior:String,edgeWeight:String,maxIterations:Int):org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="loopyBeliefPropagation(String,String,Int):Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loopyBeliefPropagation</span><span class="params">(<span name="prior">prior: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="edgeWeight">edgeWeight: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="maxIterations">maxIterations: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">10</span></span>)</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns a frame with annotations concerning the posterior distribution given a prior distribution.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a frame with annotations concerning the posterior distribution given a prior distribution.
+This assumes the graph is a Potts model, that is a triangle free graph with weights on each edge
+and each vertex represents a discrete distribution, which is annotated in a property on the vertex.</p><p>This method returns the result of the loopy belief optimizer on that Potts model given the priors.
+</p></div><dl class="paramcmts block"><dt class="param">prior</dt><dd class="cmt"><p>The column name for the prior distribution. This is a space separated string</p></dd><dt class="param">edgeWeight</dt><dd class="cmt"><p>the column name for the edge weight</p></dd><dt class="param">maxIterations</dt><dd class="cmt"><p>the maximum number of iterations to run for</p></dd><dt>returns</dt><dd class="cmt"><p>The dataframe containing the vertices and their corresponding label weights
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/LoopyBeliefPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization">LoopyBeliefPropagationSummarization</a></dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization#pageRank" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="pageRank(maxIterations:Option[Int],resetProbability:Option[Double],convergenceTolerance:Option[Double]):org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="pageRank(Option[Int],Option[Double],Option[Double]):Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pageRank</span><span class="params">(<span name="maxIterations">maxIterations: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="resetProbability">resetProbability: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="convergenceTolerance">convergenceTolerance: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Calculates the page rank for each vertex</p><div class="fullcomment"><div class="comment cmt"><p>Calculates the page rank for each vertex</p><p>   **Basics and Background**</p><p>   *PageRank* is a method for determining which vertices in a directed graph are
+   the most central or important.
+   *PageRank* gives each vertex a score which can be interpreted as the
+   probability that a person randomly walking along the edges of the graph will
+   visit that vertex.</p><p>   The calculation of *PageRank* is based on the supposition that if a vertex has
+   many vertices pointing to it, then it is &quot;important&quot;,
+   and that a vertex grows in importance as more important vertices point to it.
+   The calculation is based only on the network structure of the graph and makes
+   no use of any side data, properties, user-provided scores or similar
+   non-topological information.</p><p>   *PageRank* was most famously used as the core of the Google search engine for
+   many years, but as a general measure of :term:<code>centrality</code> in a graph, it has
+   other uses to other problems, such as :term:<code>recommendation systems</code> and
+   analyzing predator-prey food webs to predict extinctions.</p><p>   **Background references**</p><p>  Basic description and principles: <code>Wikipedia\: PageRank</code>_
+  Applications to food web analysis: <code>Stanford\: Applications of PageRank</code>_
+  Applications to recommendation systems: <code>PLoS\: Computational Biology</code>_</p><p>NOTE:: exactly one of maxIterations and convergenceTolerance must be set
+</p></div><dl class="paramcmts block"><dt class="param">maxIterations</dt><dd class="cmt"><p>The maximum number of iterations to run for. Mutually exclusive with convergenceTolerance</p></dd><dt class="param">resetProbability</dt><dd class="cmt"><p>The reset probability for the page rank equation</p></dd><dt class="param">convergenceTolerance</dt><dd class="cmt"><p>If the difference between two iterations of page rank is less than this, page rank will terminate. Mutually exclusive with maxIterations</p></dd><dt>returns</dt><dd class="cmt"><p>The dataframe containing the vertices and their corresponding page rank
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/PageRankSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization">PageRankSummarization</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization#save" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="save(path:String):Unit"></a>
+      <a id="save(String):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">save</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Save the current frame.</p><div class="fullcomment"><div class="comment cmt"><p>Save the current frame.
+</p></div><dl class="paramcmts block"><dt class="param">path</dt><dd class="cmt"><p>The destination path.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/SaveSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization">SaveSummarization</a></dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.Graph#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.trustedanalytics.sparktk.graph.Graph">Graph</a> → AnyRef → Any</dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization#triangleCount" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="triangleCount():org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="triangleCount():Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">triangleCount</span><span class="params">()</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns a frame with the number of triangles each vertex is contained in
+</p><div class="fullcomment"><div class="comment cmt"><p>Returns a frame with the number of triangles each vertex is contained in
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The dataframe containing the vertices and their corresponding triangle counts
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/TriangleCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization">TriangleCountSummarization</a></dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization#vertexCount" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="vertexCount():Long"></a>
+      <a id="vertexCount():Long"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">vertexCount</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Counts all of the rows in the vertices frame.</p><div class="fullcomment"><div class="comment cmt"><p>Counts all of the rows in the vertices frame.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The number of rows in the frame.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/VertexCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization">VertexCountSummarization</a></dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization#weightedDegree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="weightedDegree(edgeWeight:String,degreeOption:String,defaultWeight:Float):org.trustedanalytics.sparktk.frame.Frame"></a>
+      <a id="weightedDegree(String,String,Float):Frame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">weightedDegree</span><span class="params">(<span name="edgeWeight">edgeWeight: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="degreeOption">degreeOption: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;undirected&quot;</span></span>, <span name="defaultWeight">defaultWeight: <span class="extype" name="scala.Float">Float</span> = <span class="symbol">0.0f</span></span>)</span><span class="result">: <a href="../frame/Frame.html" class="extype" name="org.trustedanalytics.sparktk.frame.Frame">Frame</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns a frame with annotations concerning the degree of each node,
+weighted by a given edge weight
+</p><div class="fullcomment"><div class="comment cmt"><p>Returns a frame with annotations concerning the degree of each node,
+weighted by a given edge weight
+</p></div><dl class="paramcmts block"><dt class="param">edgeWeight</dt><dd class="cmt"><p>the name of the weight value in the edge</p></dd><dt class="param">degreeOption</dt><dd class="cmt"><p>One of &quot;in&quot;, &quot;out&quot; or &quot;undirected&quot;. Determines the edge direction for the degree</p></dd><dt class="param">defaultWeight</dt><dd class="cmt"><p>A weight value to use if there is no entry for the weight property on an edge</p></dd><dt>returns</dt><dd class="cmt"><p>The dataframe containing the vertices and their corresponding weights
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="internal/ops/WeightedDegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization">WeightedDegreeSummarization</a></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization">
+              <h3>Inherited from <a href="internal/ops/WeightedDegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.WeightedDegreeSummarization">WeightedDegreeSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization">
+              <h3>Inherited from <a href="internal/ops/VertexCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.VertexCountSummarization">VertexCountSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization">
+              <h3>Inherited from <a href="internal/ops/TriangleCountSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.TriangleCountSummarization">TriangleCountSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization">
+              <h3>Inherited from <a href="internal/ops/SaveSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.SaveSummarization">SaveSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization">
+              <h3>Inherited from <a href="internal/ops/PageRankSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.PageRankSummarization">PageRankSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization">
+              <h3>Inherited from <a href="internal/ops/LoopyBeliefPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LoopyBeliefPropagationSummarization">LoopyBeliefPropagationSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization">
+              <h3>Inherited from <a href="internal/ops/LabelPropagationSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.LabelPropagationSummarization">LabelPropagationSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization">
+              <h3>Inherited from <a href="internal/ops/GlobalClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.GlobalClusteringCoefficientSummarization">GlobalClusteringCoefficientSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization">
+              <h3>Inherited from <a href="internal/ops/orientdb/ExportToOrientdbSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdbSummarization">ExportToOrientdbSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization">
+              <h3>Inherited from <a href="internal/ops/DegreeSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.DegreeSummarization">DegreeSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization">
+              <h3>Inherited from <a href="internal/ops/ClusteringCoefficientSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ClusteringCoefficientSummarization">ClusteringCoefficientSummarization</a></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization">
+              <h3>Inherited from <a href="internal/ops/ConnectedComponentsSummarization.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.ops.ConnectedComponentsSummarization">ConnectedComponentsSummarization</a></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">
+              <h3>Inherited from <a href="internal/BaseGraph.html" class="extype" name="org.trustedanalytics.sparktk.graph.internal.BaseGraph">BaseGraph</a></h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+    </body>
+      </html>
