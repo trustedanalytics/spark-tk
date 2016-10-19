@@ -51,9 +51,10 @@ echo "installing scoring engine"
 rm -rf $MAINDIR/scoring
 mkdir $MAINDIR/scoring
 pushd $MAINDIR
-scoring_engine=$(find `pwd` -name "model-scoring*")
+scoring_engine=$(find `pwd` -name "model-scoring-java*.zip")
 echo $scoring_engine
 pushd scoring
+rm -rf scoring_engine
 mv $scoring_engine ./scoring.zip
 unzip -q scoring.zip
 rm *.zip
