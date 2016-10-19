@@ -47,6 +47,9 @@ popd
 
 mv $corepackage $sparktkpackage
 
+ps -ef | grep scor
+for pid in $(ps -ef | grep "model-scor" | awk '{print $2}'); do kill -9 $pid; done
+
 echo "installing scoring engine"
 rm -rf $MAINDIR/scoring
 mkdir $MAINDIR/scoring
