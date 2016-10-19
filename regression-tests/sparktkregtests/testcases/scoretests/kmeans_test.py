@@ -36,9 +36,9 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                   ("term", str)]
 
         self.frame_train = self.context.frame.import_csv(
-            self.get_file("kmeans_5c_5d_5000pt_train.csv"), schema=schema)
+            self.get_file("kmeans_train.csv"), schema=schema)
         self.frame_test = self.context.frame.import_csv(
-            self.get_file("kmeans_5c_5d_5000pt_test.csv"), schema=schema)
+            self.get_file("kmeans_test.csv"), schema=schema)
 
     def test_kmeans_standard(self):
         """Tests standard usage of the kmeans cluster algorithm."""
@@ -55,7 +55,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                     [dict(zip(["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"],
                     list(i[0:5])))])
 
-                self.assertEqual(i["cluster"], res.json()["data"][0]['score'])
+                self.assertEqual(i["cluster"]+1, res.json()["data"][0]['score'])
 
 
 if __name__ == '__main__':
