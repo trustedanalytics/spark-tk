@@ -58,7 +58,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
 
         lda_model = self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count32',
-            num_topics=5, max_iterations=50, random_seed=5,
+            num_topics=5, max_iterations=50, seed=5,
             alpha=[-1.0], check_point_interval=1)
 
         predict_vals1 = lda_model.predict(
@@ -200,21 +200,21 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
                 Exception, "invalid literal .* \'foo\'")):
             self.context.models.clustering.lda.train(
                 self.lda_frame, 'paper', 'word', 'count',
-                num_topics=5, random_seed="foo")
+                num_topics=5, seed="foo")
 
     def test_lda_no_random_seed(self):
         """Test lda with a fixed random seed"""
         self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count',
-            num_topics=5, random_seed=0, max_iterations=20,
-            alpha=[-1.0], check_point_interval=1)
+            num_topics=5, seed=5, max_iterations=20,
+            alpha=[-1.0], check_point_interval=10)
 
     @unittest.skip("not implemented")
     def test_lda_publish(self):
         """Test training for more iterations."""
         lda_model = self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count',
-            num_topics=5, max_iterations=30, random_seed=5,
+            num_topics=5, max_iterations=30, seed=5,
             check_point_interval=1)
         path = lda_model.publish()
         self.assertIn("hdfs", path)
@@ -224,7 +224,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         """Test training for more iterations."""
         lda_model = self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count', num_topics=5,
-            max_iterations=30, random_seed=5, alpha=[-1.0],
+            max_iterations=30, seed=5, alpha=[-1.0],
             check_point_interval=1)
 
         self._confirm_model_valid(lda_model)

@@ -148,7 +148,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
     def test_convergence_tol_negative(self):
         """Check error on negative convergence_tol value."""
-        with self.assertRaisesRegexp(Exception, "epsilon must be a positive value"):
+        with self.assertRaisesRegexp(Exception, "convergence tolerance must be a positive value"):
             self.context.models.clustering.kmeans.train(self.frame_train,
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
