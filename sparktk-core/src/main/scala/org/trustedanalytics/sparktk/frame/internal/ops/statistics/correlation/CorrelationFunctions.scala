@@ -44,7 +44,7 @@ object CorrelationFunctions extends Serializable {
 
     val dblVal: Double = correlation.toArray(1)
 
-    if (dblVal.isNaN || abs(dblVal) < .000001) 0 else dblVal
+    dblVal
   }
 
   /**
@@ -60,7 +60,7 @@ object CorrelationFunctions extends Serializable {
     val correlation: Matrix = Statistics.corr(frameRdd.toDenseVectorRdd(dataColumnNames))
     val vecArray = correlation.toArray.grouped(correlation.numCols).toArray
     val arrGenericRow = vecArray.map(row => {
-      val temp: Array[Any] = row.map(x => if (x.isNaN || abs(x) < .000001) 0 else x)
+      val temp: Array[Any] = row.map(x => x)
       new GenericRow(temp)
     })
 

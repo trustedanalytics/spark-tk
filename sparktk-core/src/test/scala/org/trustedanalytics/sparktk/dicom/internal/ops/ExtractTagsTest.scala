@@ -24,6 +24,7 @@ class ExtractTagsTest extends TestingSparkContextWordSpec with Matchers {
   "Extract Tags" should {
     "extract value for each tag and add column for each tag to assign value. For missing tag, value is null" in {
       val dicom = importDcm(sparkContext, "../integration-tests/datasets/dicom_uncompressed")
+
       val columnCount = dicom.metadata.schema.columnNames.length
 
       columnCount shouldBe 2

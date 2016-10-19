@@ -23,6 +23,7 @@ from sparktkregtests.lib import sparktk_test
 
 class ConnectedComponents(sparktk_test.SparkTKTestCase):
 
+    @unittest.skip("DPNG-11910")
     def test_connected_component(self):
         """ Tests the graphx connected components in ATK"""
         super(ConnectedComponents, self).setUp()
@@ -48,9 +49,9 @@ class ConnectedComponents(sparktk_test.SparkTKTestCase):
 
         components = self.graph.connected_components()
         components.add_columns(
-            lambda x: x['Vertex'].split('_')[1], ("element", str))
+            lambda x: x['id'].split('_')[1], ("element", str))
         frame = components.to_pandas(components.count())
-        group = frame.groupby('Component').agg(lambda x: x.nunique())
+        group = frame.groupby('component').agg(lambda x: x.nunique())
 
         # Each component should only have 1 element value, the name of the
         # component

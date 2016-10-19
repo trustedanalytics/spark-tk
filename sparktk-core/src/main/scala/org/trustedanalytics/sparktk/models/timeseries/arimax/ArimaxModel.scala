@@ -22,11 +22,15 @@ import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.sql.Row
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.TkContext
-import breeze.linalg.{ max, DenseVector => BreezeDenseVector }
+import breeze.linalg.{ max, DenseVector => BreezeDenseVector, DenseMatrix => BreezeDenseMatrix }
 import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.TimeSeriesFunctions
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object ArimaxModel extends TkSaveableObject {
 
@@ -140,7 +144,7 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
                                         includeOriginalXreg: Boolean = true,
                                         includeIntercept: Boolean = true,
                                         initParams: Option[Seq[Double]],
-                                        arimaxModel: SparkTsArimaxModel) extends Serializable {
+                                        arimaxModel: SparkTsArimaxModel) extends Serializable with Model {
 
   /**
    * An intercept term
@@ -201,6 +205,63 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
     val tkMetadata = ArimaxModelTkMetaData(timeseriesColumn, xColumns, p, d, q, xregMaxLag, includeOriginalXreg, includeIntercept, arimaxModel.coefficients, initParams)
     TkSaveLoad.saveTk(sc, path, ArimaxModel.formatId, ArimaxModel.currentFormatVersion, tkMetadata)
   }
+
+  override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data must not be null nor empty")
+    val xColumnsLength = xColumns.length
+    var predictedValues = Array[Any]()
+
+    // We should have an array of y values, and an array of x values
+    if (data.length != 2)
+      throw new IllegalArgumentException("Expected 2 arrays of data (for y values and x values), but received " +
+        data.length.toString + " items.")
+
+    val yValues = data(0) match {
+      case yArray: Array[_] => new BreezeDenseVector(yArray.map(ScoringModelUtils.asDouble(_)))
+      case yList: List[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)).toArray)
+      case _ => throw new IllegalArgumentException("Expected first element in data array to be an Array[Double] of y values.")
+    }
+
+    val xArray = data(1) match {
+      case xArray: Array[_] => xArray.map(ScoringModelUtils.asDouble(_))
+      case xList: List[_] => xList.map(ScoringModelUtils.asDouble(_)).toArray
+      case _ => throw new IllegalArgumentException("Expected second element in data array to be an Array[Double] of x values.")
+    }
+
+    if (xArray.length != (yValues.length * xColumnsLength))
+      throw new IllegalArgumentException("Expected " + (yValues.length * xColumnsLength) + " x values, but received " +
+        xArray.length.toString)
+
+    val xValues = new BreezeDenseMatrix(rows = yValues.length, cols = xColumnsLength, data = xArray)
+
+    data :+ arimaxModel.predict(yValues, xValues).toArray
+  }
+
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("ARIMAX Model", classOf[ArimaxModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  override def input(): Array[Field] = {
+    Array[Field](Field("y", "Array[Double]"), Field("x_values", "Array[Double]"))
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("score", "Array[Double]")
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaxModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
+
 }
 
 /**

@@ -15,8 +15,10 @@
  */
 package org.trustedanalytics.sparktk.models.classification.naive_bayes
 
+import java.nio.file.{ Files, Path }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.classification.{ NaiveBayesModel => SparkNaiveBayesModel, NaiveBayes }
+import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -27,6 +29,9 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, ScoreAndLabel, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.io.{ FileUtils }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
@@ -88,19 +93,20 @@ object NaiveBayesModel extends TkSaveableObject {
 case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesModel,
                                                  labelColumn: String,
                                                  observationColumns: Seq[String],
-                                                 lambdaParameter: Double) extends Serializable {
+                                                 lambdaParameter: Double) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted class for each observation
+   * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the NaiveBayesModel
+   *                By default, we predict the labels over columns the NaiveBayesModel was trained on
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
+  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (columns.isDefined) {
       require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
@@ -113,7 +119,10 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(Column("predicted_class", DataTypes.float64)))
+    val predictSchema = frame.schema.addColumn(Column("predicted_class", DataTypes.float64))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -155,6 +164,64 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
     val tkMetadata = NaiveBayesModelTkMetaData(labelColumn, observationColumns, lambdaParameter)
     TkSaveLoad.saveTk(sc, path, NaiveBayesModel.formatId, formatVersion, tkMetadata)
   }
+
+  /**
+   * gets the prediction on the provided record
+   * @param row a record that needs to be predicted on
+   * @return the row along with its prediction
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = new Array[Double](row.length)
+    row.zipWithIndex.foreach {
+      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
+    }
+    row :+ sparkModel.predict(Vectors.dense(x))
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    observationColumns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("Score", "Double")
+  }
+
+  /**
+   * @return metadata about the model
+   */
+  def modelMetadata(): ModelMetaData = {
+    //todo provide an API for the user to populate the custom metadata fields
+    new ModelMetaData("Naive Bayes Model", classOf[NaiveBayesModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   * @param sc active SparkContext
+   * @param marSavePath location where the MAR file needs to be saved
+   * @return full path to the location of the MAR file
+   */
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[NaiveBayesModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
+
 }
 
 /**

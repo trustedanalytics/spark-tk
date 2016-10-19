@@ -15,16 +15,19 @@
  */
 package org.trustedanalytics.sparktk.models.clustering.kmeans
 
+import java.nio.file.{ Path, Files }
+import org.apache.commons.io.{ FileUtils }
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.{ KMeans => SparkKMeans, KMeansModel => SparkKMeansModel }
-import org.apache.spark.mllib.linalg.{ Vector => MllibVector }
+import org.apache.spark.mllib.linalg.{ Vector => MllibVector, Vectors }
 import org.apache.spark.sql.Row
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ VectorUtils, FrameRdd, RowWrapperFunctions }
 import org.trustedanalytics.sparktk.frame._
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
-
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 
@@ -89,7 +92,8 @@ object KMeansModel extends TkSaveableObject {
    * @return
    */
   def load(tc: TkContext, path: String): KMeansModel = {
-    tc.load(path).asInstanceOf[KMeansModel]
+    val m = tc.load(path).asInstanceOf[KMeansModel]
+    m
   }
 
   def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
@@ -146,7 +150,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
                                         epsilon: Double,
                                         initializationMode: String,
                                         seed: Option[Long] = None,
-                                        sparkModel: SparkKMeansModel) extends Serializable {
+                                        sparkModel: SparkKMeansModel) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -223,13 +227,14 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted cluster for each observation
+   * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param observationColumns Column(s) containing the observations whose clusters are to be predicted.
    *                           Default is to predict the clusters over columns the KMeans model was trained on.
    *                           The columns are scaled using the same values used when training the model
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
-  def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Unit = {
+  def predict(frame: Frame, observationColumns: Option[Vector[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
       require(columns.length == observationColumns.get.length, s"Number of columns for train and predict should be same (train columns=$columns, observation columns=$observationColumns)")
@@ -241,8 +246,11 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
       val prediction = sparkModel.predict(point)
       Row.apply(prediction)
     }
+    val predictSchema = frame.schema.addColumn(Column(frame.schema.getNewColumnName("cluster"), DataTypes.int32))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
 
-    frame.addColumns(predictMapper, Seq(Column(frame.schema.getNewColumnName("cluster"), DataTypes.int32)))
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -255,6 +263,60 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
     val formatVersion: Int = 1
     val tkMetadata = KMeansModelTkMetaData(columns, k, scalings, maxIterations, epsilon, initializationMode, seed)
     TkSaveLoad.saveTk(sc, path, KMeansModel.formatId, formatVersion, tkMetadata)
+  }
+
+  /**
+   * gets the prediction on the provided record
+   * @param row a record that needs to be predicted on
+   * @return the row along with its prediction
+   */
+  def score(row: Array[Any]): Array[Any] = {
+    val x: Array[Double] = row.map(y => ScoringModelUtils.asDouble(y))
+    row :+ (sparkModel.predict(Vectors.dense(x)) + 1)
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes
+   */
+  def input(): Array[Field] = {
+    var input = Array[Field]()
+    columns.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  /**
+   * @return fields containing the input names and their datatypes along with the output and its datatype
+   */
+  def output(): Array[Field] = {
+    val output = input()
+    output :+ Field("score", "Int")
+  }
+
+  /**
+   * @return metadata about the model
+   */
+  def modelMetadata(): ModelMetaData = {
+    //todo provide an API for the user to populate the custom metadata fields
+    new ModelMetaData("KMeans Model", classOf[KMeansModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  /**
+   * @param sc active SparkContext
+   * @param marSavePath location where the MAR file needs to be saved
+   * @return full path to the location of the MAR file
+   */
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[KMeansModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 
