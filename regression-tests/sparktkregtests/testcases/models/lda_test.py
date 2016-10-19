@@ -207,7 +207,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count',
             num_topics=5, seed=5, max_iterations=20,
-            alpha=[-1.0], check_point_interval=10)
+            alpha=[-1.0], check_point_interval=1)
 
     @unittest.skip("not implemented")
     def test_lda_publish(self):
