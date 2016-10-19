@@ -76,16 +76,16 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result
         files = []
-        for filename in sorted([f for f in os.listdir(self.image_directory)]):
+        for filename in os.listdir(self.image_directory):
             pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_inspect = self.dicom.pixeldata.take(self.count)
-        for (dcm_image, pixel_image) in zip(image_inspect, files):
-            numpy.testing.assert_equal(pixel_image, dcm_image[1])
-
+        for dcm_image in image_inspect:
+            result = any(numpy.array_equal(dcm_image[1], file_image) for file_image in files)
+            self.assertTrue(result)
 
 
 if __name__ == "__main__":
