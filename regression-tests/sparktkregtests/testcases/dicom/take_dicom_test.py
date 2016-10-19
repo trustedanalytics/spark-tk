@@ -22,6 +22,7 @@ from sparktkregtests.lib import sparktk_test
 import os
 import dicom
 import numpy
+from lxml import etree
 
 
 class TakeDicomTest(sparktk_test.SparkTKTestCase):
@@ -41,31 +42,35 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
         image_result = self.dicom.pixeldata.inspect(self.dicom.pixeldata.count())
         self.assertEqual(len(metadata_result.rows), len(image_result.rows))
 
-    def test_metadata_content(self):
-        """tests dicom metadata content"""
-        # get the files that make up our dicom so we can compare content
+    def test_metadata_content_take_dcm_basic(self):
+        """content test of dicom metadata import"""
+        # here we will get the files so we can generate the expected result
         files = []
-        for filename in sorted([f for f in os.listdir(self.xml_directory)]):
-            with open(self.xml_directory + str(filename)) as xmlfile:
-                contents = xmlfile.read()
-                files.append(contents)
+        for filename in os.listdir(self.xml_directory):
+            if filename.endswith(".xml"):
+                with open(self.xml_directory + str(filename), 'rb') as xmlfile:
+                    contents = xmlfile.read()
+                    xml = etree.fromstring(contents)
+                    bulk_data = xml.xpath("//BulkData")[0]
+                    bulk_data.getparent().remove(bulk_data)
+                    files.append(etree.tostring(xml))
 
-        take = self.dicom.metadata.take(self.count)
-
-        # iterate through the dicom metadata and compare it with the data from the file
-        for (dcm_file, xml_file) in zip(take, files):
+        # the BulkData location element of the metadata xml will be different
+        # since the dicom may load the data from a differnet location then
+        # where we loaded our files. We will remove this element from the metadata
+        # before we compare
+        metadata_take = self.dicom.metadata.take(self.count)
+        dicom_metadata = []
+        for dcm_file in metadata_take:
             dcm_file = dcm_file[1].encode("ascii", "ignore")
-            # the bulkdata tag will differ between the files and dicom metadata
-            # because it records where the file was loaded from
-            # so we will remove it before comparing
-            bulk_data_index = xml_file.index("<BulkData")
-            xml_bulk_data = xml_file[bulk_data_index:bulk_data_index + xml_file[bulk_data_index:].index(">") + 1]
-            dcm_bulk_data = dcm_file[bulk_data_index:bulk_data_index + dcm_file[bulk_data_index:].index(">") + 1]
-
-            xml_file = xml_file.replace(xml_bulk_data, "")
-            dcm_file = dcm_file.replace(dcm_bulk_data, "")
-
-            self.assertEqual(dcm_file, xml_file)
+            dcm_xml_root = etree.fromstring(dcm_file)
+            dcm_bulk_data = dcm_xml_root.xpath("//BulkData")[0]
+            dcm_bulk_data.getparent().remove(dcm_bulk_data)
+            dicom_metadata.append(etree.tostring(dcm_xml_root))
+        
+        for metadata in dicom_metadata:
+            result = metadata in files
+            self.assertTrue(result)
 
     def test_image_content_take_dcm_basic(self):
         """content test of image data for dicom"""
