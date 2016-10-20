@@ -36,7 +36,7 @@ REPL session and debug from there.  i.e. It is most likely not a multiple SparkC
  - Solution: execute doctest on examples as integration tests
  - What is doctest?  A python module which looks through text for what appears to be interactive python sessions and executes them.  Test results are based on comparing REPL output.  [https://docs.python.org/2/library/doctest.html](https://docs.python.org/2/library/doctest.html)
 
-See `tests/gendoct.py` which is responsible for extracting the code snippets and forming testcases.
+See `tests/doctgen.py` which is responsible for extracting the code snippets and forming testcases.
 
 In general, any code snippets which use `>>> ` notation will be analyzed for testing.
 

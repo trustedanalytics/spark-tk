@@ -82,7 +82,7 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rows, edgeSchema)
 
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count",
-        numTopics = 2, maxIterations = 10, alpha = Some(List(1.3d, 1.3d)), beta = 1.6f, randomSeed = Some(25))
+        numTopics = 2, maxIterations = 10, alpha = Some(List(1.3d, 1.3d)), beta = 1.6f, seed = Some(25))
       val ldaRunner = LdaTrainFunctions.initializeLdaRunner(trainArgs)
 
       assert(ldaRunner.getK == 2)
@@ -97,7 +97,7 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rows, edgeSchema)
 
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count",
-        numTopics = 2, maxIterations = 10, randomSeed = Some(25))
+        numTopics = 2, maxIterations = 10, seed = Some(25))
       val ldaModel = LdaTrainFunctions.trainLdaModel(trainArgs)
 
       val topicsGivenDoc = ldaModel.getTopicsGivenDocFrame.map(row => {

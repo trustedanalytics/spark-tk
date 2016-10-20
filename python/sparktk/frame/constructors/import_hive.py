@@ -24,33 +24,34 @@ def import_hive(hive_query, tc=TkContext.implicit):
 
     Define the sql query to retrieve the data from a hive table.
 
-    Only a subset of Hive data types are supported.
+    Only a subset of Hive data types are supported:
 
-    Data Type   Support
-    ___________ ___________________________
 
-    boolean     cast to int
+        DataType    Support
+        ----------  ------------------------------------
+        boolean     cast to int
 
-    bigint      native support
-    int         native support
-    tinyint     cast to int
-    smallint    cast to int
+        bigint      native support
+        int         native support
+        tinyint     cast to int
+        smallint    cast to int
 
-    decimal     cast to double, may lose precision
-    double      native support
-    float       native support
+        decimal     cast to double, may lose precision
+        double      native support
+        float       native support
 
-    date        cast to string
-    string      native support
-    timestamp   cast to string
-    varchar     cast to string
+        date        cast to string
+        string      native support
+        timestamp   cast to string
+        varchar     cast to string
 
-    arrays      not supported
-    binary      not supported
-    char        not supported
-    maps        not supported
-    structs     not supported
-    union       not supported
+        arrays      not supported
+        binary      not supported
+        char        not supported
+        maps        not supported
+        structs     not supported
+        union       not supported
+
 
     Parameters
     ----------

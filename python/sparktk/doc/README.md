@@ -7,7 +7,7 @@ sparktk uses the [pdoc](https://github.com/BurntSushi/pdoc) tool to generate API
 There are 2 processing steps required in addition to calling pdoc.
 
 1. Python pre-processing: Before pdoc is invoked, the sparktk module is copied to a tmp
-   folder.  Python code in the `docutils.py` module parses and processes the tags that can
+   folder.  Python code in the `docgen.py` module parses and processes the tags that can
    be embedded in the doc strings, to hide or replace sections of text from the examples.  
    pdoc is pointed to this processed package.  (`pip2.7 install pdoc` if you're missing it)
    
@@ -18,7 +18,7 @@ There are 2 processing steps required in addition to calling pdoc.
        (1) The templates/css.mako file, there is an "Up" link defined which points to "index.html"
    
        (2) For index.html files, post-processing must happen to change the "index.html" link
-       to "..".  Again using `docutils.py`, the HTML is post-processed to make this change.  It
+       to "..".  Again using `docgen.py`, the HTML is post-processed to make this change.  It
        is hopeful that pdoc will provide better support directly.  Also, more work could be
        done in the css and html templates to avoid this post-processing.
        

@@ -35,7 +35,7 @@ TMP_SPARKTK_DIR=$tmp_dir/sparktk
 rm -r $TMP_SPARKTK_DIR/doc
 
 echo $NAME pre-processing the python for the special doctest flags
-python2.7 -m docutils -py=$TMP_SPARKTK_DIR
+python2.7 -m docgen -py=$TMP_SPARKTK_DIR
 
 
 echo $NAME cd $TMP_SPARKTK_DIR
@@ -46,6 +46,7 @@ TEMPLATE_DIR=$SPARKTK_DIR/doc/templates
 
 # specify output folder:
 HTML_DIR=$SPARKTK_DIR/doc/html
+rm -rf $HTML_DIR
 
 # call pdoc
 echo $NAME PYTHONPATH=$TMP_SPARKTK_PARENT_DIR pdoc --only-pypath --html --html-dir=$HTML_DIR --template-dir $TEMPLATE_DIR --overwrite sparktk
@@ -53,11 +54,22 @@ PYTHONPATH=$TMP_SPARKTK_PARENT_DIR pdoc --only-pypath --html --html-dir=$HTML_DI
 
 popd > /dev/null
 
+# convert a copy of the README.md to python and call pdoc to get the html version
+echo $NAME convert README.md to python and run pdoc
+(echo '"""'; tail -n +6 ../../../README.md; echo '"""') > readme.py
+pdoc --html --html-no-source --overwrite readme.py
+echo $NAME mv readme.m.html html/readme.m.html
+mv readme.m.html html/readme.m.html
+
 # Post-processing:  Patch the "Up" links
 echo $NAME post-processing the HTML
-python2.7 -m docutils -html=$HTML_DIR
+python2.7 -m docgen -html=$HTML_DIR -main
 
 echo $NAME cleaning up...
+rm readme.py
+rm readme.pyc
+rm html/full/readme.m.html
+
 echo $NAME rm $tmp_dir
 rm -r $tmp_dir
 
