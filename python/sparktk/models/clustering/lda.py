@@ -265,7 +265,7 @@ class LdaModel(PropertiesObject):
         >>> prediction2.has_key('new_words_count')
         True
         
-        >>> canonical_path = model.export_to_mar("sandbox/Kmeans.mar")
+        >>> canonical_path = model.export_to_mar("sandbox/lda.mar")
 
     <hide>
     >>> import os
