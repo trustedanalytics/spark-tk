@@ -149,7 +149,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering with invalid rating"""
         with self.assertRaisesRegexp(
                 Exception,
-                'requirement failed: column invalid_int was not found'):
+                'requirement failed: column invalid_rating was not found'):
             self.context.models.collaborativefiltering \
                 .collaborative_filtering \
                 .train(self.frame, "user_int", "item_int", "invalid_rating")
@@ -193,7 +193,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering invalid max steps"""
         with self.assertRaisesRegexp(
                 Exception,
-                'ValueError: Found max_steps = -15.  Expected non-negative integer.'):
+                'Found max_steps = -15.  Expected non-negative integer.'):
             self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
@@ -204,7 +204,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering with invalid regularization"""
         with self.assertRaisesRegexp(
                 Exception,
-                'ValueError: \'regularization\' parameter must have a value between 0 and 1'):
+                '\'regularization\' parameter must have a value between 0 and 1'):
             self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
@@ -212,7 +212,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
 
         with self.assertRaisesRegexp(
                 Exception,
-                'ValueError: \'regularization\' parameter must have a value between 0 and 1'):
+                '\'regularization\' parameter must have a value between 0 and 1'):
             self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
@@ -223,13 +223,13 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering with invalid alpha"""
         with self.assertRaisesRegexp(
                 Exception,
-                'ValueError: \'alpha\' parameter must have a value between 0 and 1'):
+                '\'alpha\' parameter must have a value between 0 and 1'):
             self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating", alpha=-1.0)
 
         with self.assertRaisesRegexp(
-                Exception, 'ValueError: \'alpha\' parameter must have a value between 0 and 1'):
+                Exception, '\'alpha\' parameter must have a value between 0 and 1'):
             self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating", alpha=41.0)
