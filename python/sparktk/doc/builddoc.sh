@@ -66,9 +66,11 @@ echo $NAME post-processing the HTML
 python2.7 -m docgen -html=$HTML_DIR -main
 
 echo $NAME cleaning up...
+rm readme.py
+rm readme.pyc
+rm html/full/readme.m.html
+
 echo $NAME rm $tmp_dir
-#rm -r $tmp_dir
-#rm readme.py*
-#rm html/readme.m.html
+rm -r $tmp_dir
 
 echo $NAME Done.
