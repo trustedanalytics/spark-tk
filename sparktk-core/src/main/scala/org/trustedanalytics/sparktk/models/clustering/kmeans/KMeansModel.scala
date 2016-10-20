@@ -39,7 +39,7 @@ object KMeansModel extends TkSaveableObject {
    * @param k Desired number of clusters
    * @param scalings Optional scaling values, each is multiplied by the corresponding value in the observation column
    * @param maxIterations Number of iterations for which the algorithm should run
-   * @param epsilon Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
+   * @param convergenceTolerance Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
    *                centers move less than this Euclidean distance, we stop iterating one run
    * @param initializationMode The initialization technique for the algorithm.  It could be either "random" to
    *                           choose random points as initial clusters, or "k-means||" to use a parallel variant
@@ -51,7 +51,7 @@ object KMeansModel extends TkSaveableObject {
             k: Int = 2,
             scalings: Option[Seq[Double]] = None,
             maxIterations: Int = 20,
-            epsilon: Double = 1e-4,
+            convergenceTolerance: Double = 1e-4,
             initializationMode: String = "k-means||",
             seed: Option[Long] = None): KMeansModel = {
     require(columns != null && columns.nonEmpty, "columns must not be null nor empty")
@@ -61,14 +61,14 @@ object KMeansModel extends TkSaveableObject {
     }
     require(k > 0, "k must be at least 1")
     require(maxIterations > 0, "maxIterations must be a positive value")
-    require(epsilon > 0.0, "epsilon must be a positive value")
+    require(convergenceTolerance > 0.0, "convergence tolerance must be a positive value")
     require(initializationMode == "random" || initializationMode == "k-means||", "initialization mode must be 'random' or 'k-means||'")
 
     val sparkKMeans = new SparkKMeans()
     sparkKMeans.setK(k)
     sparkKMeans.setMaxIterations(maxIterations)
     sparkKMeans.setInitializationMode(initializationMode)
-    sparkKMeans.setEpsilon(epsilon)
+    sparkKMeans.setEpsilon(convergenceTolerance)
     if (seed.isDefined) {
       sparkKMeans.setSeed(seed.get)
     }
@@ -82,7 +82,7 @@ object KMeansModel extends TkSaveableObject {
     val model = sparkKMeans.run(vectorRDD)
     trainFrameRdd.unpersist()
 
-    KMeansModel(columns, k, scalings, maxIterations, epsilon, initializationMode, seed, model)
+    KMeansModel(columns, k, scalings, maxIterations, convergenceTolerance, initializationMode, seed, model)
   }
 
   /**
@@ -102,7 +102,7 @@ object KMeansModel extends TkSaveableObject {
     val m: KMeansModelTkMetaData = SaveLoad.extractFromJValue[KMeansModelTkMetaData](tkMetadata)
     val sparkModel = SparkKMeansModel.load(sc, path)
 
-    KMeansModel(m.columns, m.k, m.scalings, m.maxIterations, m.epsilon, m.initializationMode, m.seed, sparkModel)
+    KMeansModel(m.columns, m.k, m.scalings, m.maxIterations, m.convergenceTolerance, m.initializationMode, m.seed, sparkModel)
   }
 
   /**
@@ -135,7 +135,7 @@ object KMeansModel extends TkSaveableObject {
  * @param k Desired number of clusters
  * @param scalings Optional scaling values, each is multiplied by the corresponding value in the observation column
  * @param maxIterations Number of iterations for which the algorithm should run
- * @param epsilon Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
+ * @param convergenceTolerance Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
  *                centers move less than this Euclidean distance, we stop iterating one run
  * @param initializationMode The initialization technique for the algorithm.  It could be either "random" to
  *                           choose random points as initial clusters, or "k-means||" to use a parallel variant
@@ -147,7 +147,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
                                         k: Int,
                                         scalings: Option[Seq[Double]],
                                         maxIterations: Int,
-                                        epsilon: Double,
+                                        convergenceTolerance: Double,
                                         initializationMode: String,
                                         seed: Option[Long] = None,
                                         sparkModel: SparkKMeansModel) extends Serializable with Model {
@@ -261,7 +261,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
-    val tkMetadata = KMeansModelTkMetaData(columns, k, scalings, maxIterations, epsilon, initializationMode, seed)
+    val tkMetadata = KMeansModelTkMetaData(columns, k, scalings, maxIterations, convergenceTolerance, initializationMode, seed)
     TkSaveLoad.saveTk(sc, path, KMeansModel.formatId, formatVersion, tkMetadata)
   }
 
@@ -311,7 +311,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[KMeansModel].getName, tmpDir)
     }
     finally {
@@ -326,7 +326,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
  * @param k Desired number of clusters
  * @param scalings Optional scaling values, each is multiplied by the corresponding value in the observation column
  * @param maxIterations Number of iterations for which the algorithm should run
- * @param epsilon Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
+ * @param convergenceTolerance Distance threshold within which we consider k-means to have converged. Default is 1e-4. If all
  *                centers move less than this Euclidean distance, we stop iterating one run
  * @param initializationMode The initialization technique for the algorithm.  It could be either "random" to
  *                           choose random points as initial clusters, or "k-means||" to use a parallel variant
@@ -337,7 +337,7 @@ case class KMeansModelTkMetaData(columns: Seq[String],
                                  k: Int,
                                  scalings: Option[Seq[Double]],
                                  maxIterations: Int,
-                                 epsilon: Double,
+                                 convergenceTolerance: Double,
                                  initializationMode: String,
                                  seed: Option[Long] = None) extends Serializable
 

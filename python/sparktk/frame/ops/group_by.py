@@ -64,12 +64,10 @@ class GroupByHistogram:
 
 def group_by(self, group_by_columns, *aggregations):
     """
-    Create a Summarized Frame with Aggregations (Avg, Count, Max, Min, Mean, Sum, Stdev, ...).
-
+    Create a summarized frame with aggregations (Avg, Count, Max, Min, Mean, Sum, Stdev, ...).
 
     Parameters
     ----------
-
 
     :param group_by_columns: (List[str]) list of columns to group on
     :param aggregations: (dict) Aggregation function based on entire row, and/or dictionaries (one or more) of { column name str : aggregation function(s) }.
@@ -78,19 +76,8 @@ def group_by(self, group_by_columns, *aggregations):
     Creates a new frame and returns a Frame object to access it.Takes a column or group of columns, finds the unique combination of
     values, and creates unique rows with these column values.The other columns are combined according to the aggregation argument(s).
 
-    Notes
-    -----
-    *   Column order is not guaranteed when columns are added
-    *   The column names created by aggregation functions in the new frame
-        are the original column name appended with the '_' character and
-        the aggregation function.
+    Aggregation currently supports using the following functions:
 
-        For example, if the original field is *a* and the function is
-        *avg*, the resultant column is named *a_avg*.
-
-    *   An aggregation argument of *count* results in a column named *count*.
-    *   The aggregation function *agg.count* is the only full row aggregation function supported at this time.
-    *   Aggregation currently supports using the following functions:
             *   avg
             *   count
             *   count_distinct
@@ -98,28 +85,25 @@ def group_by(self, group_by_columns, *aggregations):
             *   min
             *   stdev
             *   sum
-            *   var (see glossary :term:`Bias vs Variance`)
-            *   The aggregation arguments also accepts the User Defined function(UDF). UDF acts on each row
-            *   histogram(cutoffs, include_lowest=True, strict_binning=False)
-                    - cutoffs: (List[int or float or long or double]) An array of values containing bin cutoff points. Array can be list or tuple. If an array is provided,
-                                values must be progressively increasing. All bin boundaries must be included, so, with N bins, you need N+1 values.
-                                Ex: [1, 5, 8, 12] - creates three bins
-                                        0 (bin) - values [1 inclusive - 5 exclusive]
-                                        1 (bin) - values [5 inclusive - 8 exclusive]
-                                        2 (bin) - values [8 inclusive - 9 exclusive]
+            *   var
+            *   histogram()
 
-                    - include_lowest: (Optional[bool]) Specify how the boundary conditions are handled. ``True`` indicates that the lower bound of the bin is inclusive.
-                                      ``False`` indicates that the upper bound is inclusive. Default is ``True``.
 
-                    - strict_binning: (Optional(bool)) Specify how values outside of the cutoffs array should be binned. If set to ``True``, each value less than cutoffs[0]
-                                      or greater than cutoffs[-1] will be assigned a bin value of -1. If set to ``False``, values less than cutoffs[0] will be included in
-                                      the first bin while values greater than cutoffs[-1] will be included in the final bin.
 
-     Examples
-     -------
-     For setup, we will use a Frame *my_frame* accessing a frame with a column *a*:
+    Notes
+    -----
+    *   Column order is not guaranteed when columns are added
+    *   The column names created by aggregation functions in the new frame are the original column name appended
+        with the '_' character and the aggregation function. For example, if the original field is *a* and the
+        function is *avg*, the resultant column is named *a_avg*.
 
-    .. code::
+    *   An aggregation argument of *count* results in a column named *count*.
+    *   The aggregation function *agg.count* is the only full row aggregation function supported at this time.
+
+    Examples
+    -------
+
+    Consider this frame:
 
         <hide>
         >>> data = [[1, "alpha", 3.0, "small", 1, 3.0, 9],
@@ -145,7 +129,7 @@ def group_by(self, group_by_columns, *aggregations):
         [5]  2  bravo     7.0  small   1  8.0  5
         [6]  2  bravo    12.0  large   1  6.0  4
 
-        Count the groups in column 'b'
+    Count the groups in column 'b'
 
         >>> b_count = frame.group_by('b', tc.agg.count)
         <progress>
@@ -156,8 +140,10 @@ def group_by(self, group_by_columns, *aggregations):
         [1]  charlie      1
         [2]  bravo        4
 
+    Group by columns 'a' and 'b' and compute the average for column 'c'
+
         >>> avg1 = frame.group_by(['a', 'b'], {'c' : tc.agg.avg})
-        <progress>
+
         >>> avg1.inspect()
         [#]  a  b        c_AVG
         ======================
@@ -166,8 +152,9 @@ def group_by(self, group_by_columns, *aggregations):
         [2]  1  bravo      5.0
         [3]  1  alpha      4.0
 
+    Group by column 'a' and make a bunch of calculations for the grouped columns 'f' and 'g'
+
         >>> mix_frame = frame.group_by('a', tc.agg.count, {'f': [tc.agg.avg, tc.agg.sum, tc.agg.min], 'g': tc.agg.max})
-        <progress>
 
         >>> mix_frame.inspect()
         [#]  a  count  g_MAX  f_AVG  f_SUM  f_MIN
@@ -175,10 +162,31 @@ def group_by(self, group_by_columns, *aggregations):
         [0]  2      4      7   6.25   25.0    5.0
         [1]  1      3      9    5.0   15.0    3.0
 
-        GroupbyHistogram
+
+    **Group by with histogram**.  The histogram aggregation argument is configured with these parameters:
+
+    :param cutoffs: (List[int or float or long or double]) An array of values containing bin cutoff points.
+    Array can be list or tuple. If an array is provided, values must be progressively increasing. All bin
+    boundaries must be included, so, with N bins, you need N+1 values.  For example,
+
+        cutoffs=[1, 5, 8, 12] # creates three bins:
+                              #  bin0 holds values [1 inclusive - 5 exclusive]
+                              #  bin1 holds values [5 inclusive - 8 exclusive]
+                              #  bin2 holds values [8 inclusive - 9 exclusive]
+
+    :param include_lowest: (Optional[bool]) Specify how the boundary conditions are handled. ``True``
+    indicates that the lower bound of the bin is inclusive.  ``False`` indicates that the upper bound is
+    inclusive. Default is ``True``.
+
+    :param strict_binning: (Optional(bool)) Specify how values outside of the cutoffs array should be
+    binned. If set to ``True``, each value less than cutoffs[0] or greater than cutoffs[-1] will be
+    assigned a bin value of -1. If set to ``False``, values less than cutoffs[0] will be included in
+    the first bin while values greater than cutoffs[-1] will be included in the final bin.
+
+    Example
+    -------
 
         >>> hist = frame.group_by('a', {'g': tc.agg.histogram([1, 5, 8, 9])})
-        <progress>
 
         >>> hist.inspect()
         [#]  a  g_HISTOGRAM
@@ -187,7 +195,6 @@ def group_by(self, group_by_columns, *aggregations):
         [1]  1    [0.0, 0.0, 1.0]
 
         >>> hist = frame.group_by('a', {'g': tc.agg.histogram([1, 5, 8, 9], False)})
-        <progress>
 
         >>> hist.inspect()
         [#]  a  g_HISTOGRAM

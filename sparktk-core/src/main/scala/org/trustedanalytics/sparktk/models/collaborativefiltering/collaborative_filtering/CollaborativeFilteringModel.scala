@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.collaborativefiltering
+package org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering
 
 import java.io.{ FileOutputStream, File }
 import java.nio.file.{ Files, Path }
@@ -275,21 +275,22 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
   }
 
   /**
-   * gets the prediction on the provided record
-   * @param row a record that needs to be predicted on
+   * Predicts the rating of one user for one product.
+   * @param row a record that needs to be predicted on (user and product integers)
    * @return the row along with its prediction
    */
   def score(row: Array[Any]): Array[Any] = {
-    throw new NotImplementedError()
+    require(row != null && row.length == 2, "Input row must have two integers (for user and product).")
+    val user = ScoringModelUtils.asInt(row(0))
+    val product = ScoringModelUtils.asInt(row(1))
+    row :+ sparkModel.predict(user, product)
   }
 
   /**
    * @return fields containing the input names and their datatypes
    */
   def input(): Array[Field] = {
-    var input = Array[Field]()
-    input = input :+ Field(sourceColumnName, "Double")
-    input
+    Array[Field](Field("user", "Int"), Field("product", "Int"))
   }
 
   /**
@@ -317,7 +318,7 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[CollaborativeFilteringModel].getName, tmpDir)
     }
     finally {

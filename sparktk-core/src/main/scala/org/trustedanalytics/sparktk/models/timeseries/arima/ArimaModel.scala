@@ -232,16 +232,14 @@ case class ArimaModel private[arima] (ts: DenseVector,
     if (data.length != 1 && data.length != 2)
       throw new IllegalArgumentException(s"Unexpected number of elements in the data array.  The ARIMA score model expects 1 or 2 elements, but received ${data.length}")
 
-    if (data(0).isInstanceOf[Int] == false)
-      throw new IllegalArgumentException(s"The ARIMA score model expects the first item in the data array to be an integer.  Instead received ${data(0).getClass.getSimpleName}.")
-
     // Get number of future periods from the first item in the data array
     val futurePeriods = ScoringModelUtils.asInt(data(0))
 
     // If there is a second item in the data array, it should be a list of doubles (to use as the timeseries vector)
     val timeseries: Option[Seq[Double]] = if (data.length == 2) {
       data(1) match {
-        case tsList: Array[_] => Some(tsList.map(ScoringModelUtils.asDouble(_)).toArray)
+        case tsArray: Array[_] => Some(tsArray.map(ScoringModelUtils.asDouble(_)))
+        case tsList: List[_] => Some(tsList.map(ScoringModelUtils.asDouble(_)).toArray)
         case _ => throw new IllegalArgumentException(s"The ARIMA score model expectes the second item in the data array to be a " +
           s"Array[Double].  Instead received ${data(1).getClass.getSimpleName} ")
       }
@@ -268,7 +266,7 @@ case class ArimaModel private[arima] (ts: DenseVector,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaModel].getName, tmpDir)
     }
     finally {
