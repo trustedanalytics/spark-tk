@@ -54,12 +54,21 @@ PYTHONPATH=$TMP_SPARKTK_PARENT_DIR pdoc --only-pypath --html --html-dir=$HTML_DI
 
 popd > /dev/null
 
+# convert a copy of the README.md to python and call pdoc to get the html version
+echo $NAME convert README.md to python and run pdoc
+(echo '"""'; tail -n +6 ../../../README.md; echo '"""') > readme.py
+pdoc --html --html-no-source --overwrite readme.py
+echo $NAME mv readme.m.html html/readme.m.html
+mv readme.m.html html/readme.m.html
+
 # Post-processing:  Patch the "Up" links
 echo $NAME post-processing the HTML
 python2.7 -m docgen -html=$HTML_DIR -main
 
 echo $NAME cleaning up...
 echo $NAME rm $tmp_dir
-rm -r $tmp_dir
+#rm -r $tmp_dir
+#rm readme.py*
+#rm html/readme.m.html
 
 echo $NAME Done.

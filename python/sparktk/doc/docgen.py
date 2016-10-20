@@ -269,6 +269,9 @@ class MainApiDocs(object):
                     <li class="mono"><a href="frame.m.html">frame</a></li>
                     <li class="mono"><a href="graph.m.html">graph</a></li>
                     <li class="mono"><a href="models/index.html">models</a></li>
+                    <li class="mono"><a href="tkcontext.m.html">tkcontext</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
 
@@ -279,11 +282,10 @@ class MainApiDocs(object):
             </header>
 
             <section id="section-items">
-            (Note: This is documentation for the main APIs.  For package details, see
+            (Note: This is documentation for the main Python APIs.  For package details, see
             <a href="full/sparktk/index.html">the complete python docs</a>)
             <br>
-
-
+            %s
             </section>
         </div>
         <div class="clear" />
@@ -323,7 +325,8 @@ class MainApiDocs(object):
 
         user_files = ["sparktk/frame/frame.m.html",
                       "sparktk/graph/graph.m.html",
-                      "sparktk/dicom/dicom.m.html"]
+                      "sparktk/dicom/dicom.m.html",
+                      "sparktk/tkcontext.m.html"]
         for file_path in user_files:
             src = os.path.join(self.tmp_html_dir, file_path)
             dst = self.html_dir
@@ -338,20 +341,57 @@ class MainApiDocs(object):
             copy_tree(src, dst)
 
         self._post_process_for_main(self.html_dir)
-        self._make_main_index()
+        self._make_main_index_html()
+        self._patch_main_tkcontext_html()
+        self._patch_full_index_html()
 
         # move the tmp-html dir back under the new html dir, as the full package docs
         self.full_package_dir = os.path.join(self.html_dir, "full")
         logger.debug("os.rename('%s', '%s')", self.tmp_html_dir, self.full_package_dir)
         os.rename(self.tmp_html_dir, self.full_package_dir)
 
-    def _make_main_index(self):
+    def _make_main_index_html(self):
+        """
+        Creates the main index.html for the landing page
+        """
 
         # copy the main index from the original html
         src = os.path.join(self.tmp_html_dir, "sparktk/index.html")
         dst = os.path.join(self.html_dir, "index.html")
+        try:
+            readme_src = os.path.join(self.tmp_html_dir, "readme.m.html")
+            readme_text = []
+            start = '<h1 class="title"><span class="name">readme</span> module</h1>'
+            stop = '</header>'
+            copy = False
+            with open(readme_src, "r") as reader:
+                for line in reader.readlines():
+                    if not copy:
+                        if start in line:
+                            copy = True
+                    else:
+                        if stop in line:
+                            break
+                        readme_text.append(line)
+        except IOError as e:
+            print "IOError: %s" % e
+            readme_text = ''
+
         logger.debug("_make_main_index: shutil.copy('%s', '%s')", src, dst)
         shutil.copy(src, dst)
+
+        bonus_text = """
+First create a TkContext (more details <a href="tkcontext.m.html#sparktk.tkcontext.TkContext.__init__">here</a>).
+<br>
+<br>
+The sparktk Python API centers around the TkContext object. This object holds the session's requisite SparkContext
+object in order to work with Spark. It also provides the entry point to the main APIs.
+<br>
+<br>
+        """
+        joined = ''.join(readme_text)
+        joined = joined.replace('Create a TkContext', bonus_text)
+        body = self.main_index_body % joined
 
         # post-processes the copied index.html
         def html_main_index_processor(full_name, reader, writer):
@@ -361,54 +401,226 @@ class MainApiDocs(object):
             for line in reader.readlines():
                 if state == COPY:
                     if line.lstrip().startswith("<body>"):
-                        writer.write(MainApiDocs.main_index_body)
+                        writer.write(body)
                         state = SKIP
                     else:
                         writer.write(line)
                 elif state == SKIP and line.lstrip().startswith("</body>"):
                         state = COPY
 
+
         process_file(dst, html_main_index_processor)
 
-    @staticmethod
-    def _post_process_for_main(path):
-        header_pattern = re.compile('<span class="name">sparktk.*\.(\w+)</span>')
+    def _patch_main_tkcontext_html(self):
+        """
+        Patches up the tkcontext.html for the main API section
 
-        def html_for_main_processor(full_name, reader, writer):
+        Expects the file to be already cleansed of "show source" buttons
+        """
+
+        def extra(line):
+            """Some extra line processing for the tkcontext.html to do during one of the 'remove' passes below"""
+
+            # Don't need to show the validate method publically --it's really only used internally
+            if '<li class="mono"><a href="#sparktk.tkcontext.TkContext.validate">validate</a></li>' in line:
+                return ''
+
+            # Remove the "Classes" header --unneeded and distracting for the this page
+            if '<li class="set"><h3><a href="#header-classes">Classes</a></h3>' in line:
+                return '<li class="set"><h3></h3>'
+            if '<h2 class="section-title" id="header-classes">Classes</h2>' in line:
+                return ''
+
+            # patch the index on the left to include links to all the public attributes on the Context
+            if '<li class="mono"><a href="#sparktk.tkcontext.TkContext.__init__">__init__</a></li>' in line:
+                return '\n        '.join([
+                    line,
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.agg">agg</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.dicom">dicom</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.examples">examples</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.frame">frame</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.graph">graph</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.load">load</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.models">models</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.sc">sc</a></li>',
+                    '<li class="mono"><a href="#sparktk.tkcontext.TkContext.sql_context">sql_context</a></li>',
+                ])
+            if '<li class="mono"><a href="#sparktk.tkcontext.TkContext.load">load</a></li>' in line:
+                # this line is covered by the previous edit.  "load" is actually provided by default, but since
+                # we want to alphabetize the index, this line would appear out of place, so removing it
+                return ''
+
+            return line
+
+        dst = os.path.join(self.html_dir, "tkcontext.m.html")
+
+        # remove some of the headers and sections that would confuse landing page user
+
+        # don't need to show the validate method
+        process_file(dst, self._get_tag_remover('<h3>Static methods</h3>', 'div', extra_line_processor=extra))
+
+        # don't need to show awkward inheritance display
+        process_file(dst, self._get_tag_remover('<h3>Ancestors (in MRO)</h3>', 'ul'))
+
+        # don't need to have a Class variables label
+        process_file(dst, self._get_tag_remover('<h3>Class variables</h3>', 'div'))
+
+
+    def _patch_full_index_html(self):
+        # put back reference to main index in the full index
+        # needs to happen AFTER the main index is created
+
+        back_reference_html = """
+        (Note: This is documentation for the complete sparktk python package. For general usage, see
+        <a href="../../index.html">the main Python APIs documentation</a>)
+        <br>
+        """
+
+        def full_html_index_processor(full_name, reader, writer):
+            found = False
+            for line in reader.readlines():
+                writer.write(line)
+                if not found and '<section id="section-items">' in line:
+                    writer.write(back_reference_html)
+                    found = True
+
+        dst = os.path.join(self.tmp_html_dir, "sparktk/index.html")
+        process_file(dst, full_html_index_processor)
+
+    @staticmethod
+    def _get_show_source_remover(extra_line_processor=None):
+        return MainApiDocs._get_tag_remover(tag_start_tell='<p class="source_link">',
+                                            extra_line_processor=extra_line_processor)
+
+    @staticmethod
+    def _get_tag_remover(tag_start_tell, tag_name='div', extra_line_processor=None):
+        """
+        Creates a method which will skip chunks of html designated by the tag_name, immediately after a 'tell'
+
+        :param tag_start_tell: this is a snippet of a line which should be skipped and marks the start of
+         the following html to skip
+        :param tag_name: the name of the html tag that marks a block to remove
+        :param extra_line_processor: if provided, this processor will execute on every line that is not skipped.  The
+         output of this function replaces the line.
+
+
+        Example
+        -------
+
+        HTML that has "Static methods" that we want to remove:
+
+        blah blah
+        </div>
+
+        <h3>Static methods</h3>
+        <div class="item">
+          <div class="name def" id="sparktk.tkcontext.TkContext.validate">
+            <p>def <span class="ident">validate</span>(</p><p>tc, arg_name=&#39;tc&#39;)</p>
+          </div>
+        ...
+        </div>
+
+        <div class="newthing">
+        ...
+        </div>
+
+        >>> x = MainApiDocs._get_tag_remover(tag_start_tell='<h3>Static methods</h3>',
+        ...                                  tag_name='div')
+
+
+        Yields HTML:
+
+        blah blah
+        </div>
+
+        <div class="newthing">
+        ...
+        </div>
+
+        """
+
+        extra = extra_line_processor
+        tell = tag_start_tell
+        tag = tag_name
+        if isinstance(tell, basestring):
+            tell = [tell]
+        elif not isinstance(tell, list):
+            raise ValueError("tag_start_tell must be a string of a list of strings, got %s" % type(tag_start_tell))
+
+        def _tag_remover(full_name, reader, writer):
             COPY = 0
             SKIP = 1
-            SKIP_DIVS = 2
-            GET_FIRST_DIV = 3
+            SKIP_TAGS = 2
+            GET_FIRST_TAG = 3
 
             state = COPY
-            div_count = 0
+            start_tag = '<' + tag
+            start_tag_space = start_tag + ' '
+            start_tag_closed = start_tag + '>'
+            end_tag = '</' + tag + '>'
+            tag_count = 0
+            line_count = -1
             for line in reader.readlines():
-                if state == GET_FIRST_DIV:
-                    assert(line.lstrip().startswith("<div"))
-                    state = SKIP_DIVS
+                line_count += 1
+                if state == GET_FIRST_TAG:
+                    if not line.strip():
+                        continue
+                    #print "GET_FIRST_TAG (#%s): %s" % (line_count, line)
+                    assert line.lstrip().startswith(start_tag), "bad line %s" % line
+                    state = SKIP_TAGS
                     # fall through
-                if state == SKIP_DIVS:
-                    num_divs = line.count('<div ') + line.count('<div>')
-                    num_div_nots = line.count('</div>')
-                    div_count += (num_divs - num_div_nots)
-                    if div_count <= 0:
+                if state == SKIP_TAGS:
+                    #print "SKIP_TAGS (#%s): %s" % (line_count, line)
+                    num_tags = line.count(start_tag_space) + line.count(start_tag_closed)
+                    num_tag_nots = line.count(end_tag)
+                    tag_count += (num_tags - num_tag_nots)
+                    if tag_count <= 0:
+                        #print "SKIP_TAGS: div_count <= 0, back to copy (#%s): %s" % (lie_count, line)
                         state = COPY
                     continue
                 elif state == SKIP:
                     continue
-                elif '<p class="source_link">' in line:
-                    # start skip divs for source link button
-                    state = GET_FIRST_DIV
-                    continue
+                else:
+                    for t in tell:
+                        if t in line:
+                            # start skip divs
+                            #print "ELSE (#%s): '%s' in '%s'" % (line_count, t, line)
+                            state = GET_FIRST_TAG
+                            break
+                    if state == GET_FIRST_TAG:
+                        continue
 
-                if line.lstrip().startswith('<h1 class="title">'):
-                    m = header_pattern.search(line)
-                    if m:
-                        line = '<h1 class="title"><span class="name">sparktk</span> %s</h1>' % m.groups()[0]
-                processed_line = line  # todo - add more processing?
+                processed_line = line if not extra else extra(line)
+
                 writer.write(processed_line)
 
-        walk_path(path, '.html', html_for_main_processor)
+        return _tag_remover
+
+    def _post_process_for_main(self, path):
+        """walks through a directory (the one holding the main API htmls) and cleans up (more removes clutter)"""
+
+        # Simplify header to not have the full module name
+        header_pattern = re.compile('<span class="name">sparktk.*\.(\w+)</span>')
+
+        def header_rework(line):
+            if line.lstrip().startswith('<h1 class="title">'):
+                m = header_pattern.search(line)
+                if m:
+                    line = '<h1 class="title"><span class="name">sparktk</span> %s</h1>' % m.groups()[0]
+            return line
+
+        # use remover to remove all the show_source buttons
+        processor = self._get_show_source_remover(header_rework)
+
+        # go!
+        walk_path(path, '.html', processor)
+
+def remove_show_source(path, extra_line_processor=None):
+    """
+    public module utility - make it easy to remove 'show_source' buttons from any file
+    """
+    remover = MainApiDocs._get_show_source_remover(extra_line_processor=extra_line_processor)
+    process_file(path, remover)
 
 ##############################################################################
 

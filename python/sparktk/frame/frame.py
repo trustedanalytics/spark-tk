@@ -297,14 +297,15 @@ class Frame(object):
         return self._python.rdd
 
     @property
+    def dataframe(self):
+        """pyspark DataFrame (causes conversion through Scala)"""
+        return DataFrame(self._scala.dataframe(), self._tc.sql_context)
+
+    @property
     def schema(self):
         if self._is_scala:
             return schema_to_python(self._tc.sc, self._frame.schema())  # need ()'s on schema because it's a def in scala
         return self._frame.schema
-
-    @property
-    def dataframe(self):
-        return DataFrame(self._scala.dataframe(), self._tc.sql_context)
 
     @property
     def column_names(self):

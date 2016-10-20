@@ -1,8 +1,4 @@
-[![Build Status](https://travis-ci.org/trustedanalytics/spark-tk.svg?branch=master)](https://travis-ci.org/trustedanalytics/spark-tk)
-
-
-# spark-tk
-
+"""
 **spark-tk** is a library which enhances the Spark experience by providing a rich, easy-to-use API for Python and
 Scala.
 
@@ -95,3 +91,4 @@ Upload some new data and predict
     [4]  13        1
     [5]  18        2
 
+"""
