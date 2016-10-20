@@ -213,11 +213,13 @@ case class MaxModel private[max] (timeseriesColumn: String,
         data.length.toString + " items.")
 
     val yValues = data(0) match {
-      case yList: Array[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)))
+      case yList: List[_] => new BreezeDenseVector(yList.map(ScoringModelUtils.asDouble(_)).toArray)
+      case yArray: Array[_] => new BreezeDenseVector(yArray.map(ScoringModelUtils.asDouble(_)))
       case _ => throw new IllegalArgumentException("Expected first element in data array to be an Array[Double] of y values.")
     }
     val xArray = data(1) match {
-      case xList: Array[_] => xList.map(ScoringModelUtils.asDouble(_))
+      case xList: List[_] => xList.map(ScoringModelUtils.asDouble(_)).toArray
+      case xArray: Array[_] => xArray.map(ScoringModelUtils.asDouble(_))
       case _ => throw new IllegalArgumentException("Expected second element in data array to be an Array[Double] of x values.")
     }
 
@@ -247,7 +249,7 @@ case class MaxModel private[max] (timeseriesColumn: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[MaxModel].getName, tmpDir)
     }
     finally {

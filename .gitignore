@@ -55,3 +55,4 @@ virtpy
 *.log
 **/metastore_db*
 **/*egg-info*
+scoring

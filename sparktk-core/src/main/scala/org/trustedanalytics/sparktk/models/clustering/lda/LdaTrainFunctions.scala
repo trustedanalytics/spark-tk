@@ -60,8 +60,8 @@ object LdaTrainFunctions extends Serializable {
     ldaRunner.setTopicConcentration(args.beta)
     ldaRunner.setMaxIterations(args.maxIterations)
     ldaRunner.setK(args.numTopics)
-    if (args.randomSeed.isDefined) {
-      ldaRunner.setSeed(args.randomSeed.get)
+    if (args.seed.isDefined) {
+      ldaRunner.setSeed(args.seed.get)
     }
     ldaRunner.setCheckpointInterval(args.checkPointInterval)
     ldaRunner

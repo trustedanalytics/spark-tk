@@ -30,7 +30,7 @@ def train(frame,
           alpha = None,
           beta = 1.1,
           num_topics = 10,
-          random_seed = None,
+          seed = None,
           check_point_interval = 10):
     """
     Creates a LdaModel by training on the given frame
@@ -60,7 +60,7 @@ def train(frame,
                       result in more computation but lead to more specific topics.
                       Valid value range is all positive int.
                       Default is 10.
-    :param randomSeed: (Optional(long)) An optional random seed.
+    :param seed: (Optional(long)) An optional random seed.
                       The random seed is used to initialize the pseudorandom number generator
                       used in the LDA model. Setting the random seed to the same value every
                       time the model is trained, allows LDA to generate the same topic distribution
@@ -81,8 +81,8 @@ def train(frame,
     _scala_obj = get_scala_obj(tc)
 
     scala_alpha = tc.jutils.convert.to_scala_option_list_double(alpha)
-    random_seed = random_seed if random_seed is None else long(random_seed)
-    scala_seed = tc.jutils.convert.to_scala_option(random_seed)
+    seed = seed if seed is None else long(seed)
+    scala_seed = tc.jutils.convert.to_scala_option(seed)
     scala_model = _scala_obj.train(frame._scala,
                                    document_column_name,
                                    word_column_name,
@@ -323,9 +323,9 @@ class LdaModel(PropertiesObject):
         return self._scala.numTopics()
 
     @property
-    def random_seed(self):
+    def seed(self):
         """Random seed used to train the model"""
-        return self._tc.jutils.convert.from_scala_option(self._scala.randomSeed())
+        return self._tc.jutils.convert.from_scala_option(self._scala.seed())
 
     @property
     def check_point_interval(self):

@@ -27,10 +27,12 @@ target=/user/$USER
 
 sudo -u hdfs hdfs dfs -mkdir -p $target
 sudo -u hdfs hdfs dfs -mkdir -p $target/sparktk_checkpoint
+sudo -u hdfs hdfs dfs -mkdir -p $target/sparktk_export
 sudo -u hdfs hdfs dfs -mkdir -p $target/qa_data
 
 sudo -u hdfs hdfs dfs -chown $USER:$USER $target
 sudo -u hdfs hdfs dfs -chown $USER:$USER $target/sparktk_checkpoint
+sudo -u hdfs hdfs dfs -chown $USER:$USER $target/sparktk_export
 sudo -u hdfs hdfs dfs -chown $USER:$USER $target/qa_data
 
 hdfs dfs -put -f $DIR/../datasets/* $target/qa_data

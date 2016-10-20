@@ -198,11 +198,13 @@ case class ArxModel private[arx] (timeseriesColumn: String,
 
     val yValues = data(0) match {
       case a: Array[_] => new DenseVector(a.map(ScoringModelUtils.asDouble(_)))
-      case _ => throw new IllegalArgumentException("Expected first element in data array to be an Array[Double] of y values.")
+      case l: List[_] => new DenseVector(l.map(ScoringModelUtils.asDouble(_)).toArray)
+      case _ => throw new IllegalArgumentException(s"Expected first element in data array to be an Array[Double] of y values, but found ${data(0).getClass.getSimpleName}.")
     }
     val xArray = data(1) match {
       case a: Array[_] => a.map(ScoringModelUtils.asDouble(_))
-      case _ => throw new IllegalArgumentException("Expected second element in data array to be an Array[Double] of x values.")
+      case l: List[_] => l.map(ScoringModelUtils.asDouble(_)).toArray
+      case _ => throw new IllegalArgumentException(s"Expected second element in data array to be an Array[Double] of x values, but found ${data(1).getClass.getSimpleName}.")
     }
 
     if (xArray.length != (yValues.length * xColumnsLength))
@@ -231,7 +233,7 @@ case class ArxModel private[arx] (timeseriesColumn: String,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[ArxModel].getName, tmpDir)
     }
     finally {
