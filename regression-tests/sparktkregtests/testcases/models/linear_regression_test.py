@@ -111,7 +111,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         """Test test a different model tolerance"""
         model = self.context.models.regression.linear_regression.train(
             self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
-                          tolerance=0.0000000000000000001)
+                          convergence_tolerance=0.0000000000000000001)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
