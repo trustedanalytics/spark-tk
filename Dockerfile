@@ -32,10 +32,10 @@ RUN wget -nv https://bootstrap.pypa.io/get-pip.py
 RUN python get-pip.py
 
 # DOWNLOAD SPARK BINARY AND SET SPARK_HOME
-RUN wget -nv http://archive.apache.org/dist/spark/spark-1.6.2/spark-1.6.2-bin-hadoop2.6.tgz
-RUN tar xzf spark-1.6.2-bin-hadoop2.6.tgz
-RUN mv spark-1.6.2-bin-hadoop2.6 spark
-RUN rm spark-1.6.2-bin-hadoop2.6.tgz
+RUN wget -nv http://archive.apache.org/dist/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
+RUN tar xzf spark-1.6.0-bin-hadoop2.6.tgz
+RUN mv spark-1.6.0-bin-hadoop2.6 spark
+RUN rm spark-1.6.0-bin-hadoop2.6.tgz
 
 ENV SPARK_HOME /usr/src/app/spark
 
