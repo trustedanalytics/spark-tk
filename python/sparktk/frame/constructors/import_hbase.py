@@ -22,6 +22,9 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=TkContext.
     """
     Import data from hbase table into frame
 
+    Parameters
+    ----------
+
     :param table_name: (str) hbase table name
     :param schema: (list[list[str, str, type]]) hbase schema as a List of List(string) (columnFamily, columnName,
                    dataType for cell value)

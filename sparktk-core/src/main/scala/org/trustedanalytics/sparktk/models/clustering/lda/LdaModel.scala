@@ -61,7 +61,7 @@ object LdaModel extends TkSaveableObject {
    *                  result in more computation but lead to more specific topics.
    *                  Valid value range is all positive int.
    *                  Default is 10.
-   * @param randomSeed An optional random seed.
+   * @param seed An optional random seed.
    *                   The random seed is used to initialize the pseudorandom number generator
    *                   used in the LDA model. Setting the random seed to the same value every
    *                   time the model is trained, allows LDA to generate the same topic distribution
@@ -80,7 +80,7 @@ object LdaModel extends TkSaveableObject {
             alpha: Option[List[Double]] = None,
             beta: Float = 1.1f,
             numTopics: Int = 10,
-            randomSeed: Option[Long] = None,
+            seed: Option[Long] = None,
             checkPointInterval: Int = 10): LdaModel = {
 
     // validate arguments
@@ -97,7 +97,7 @@ object LdaModel extends TkSaveableObject {
       alpha,
       beta,
       numTopics,
-      randomSeed,
+      seed,
       checkPointInterval
     )
 
@@ -110,7 +110,7 @@ object LdaModel extends TkSaveableObject {
       alpha,
       beta,
       numTopics,
-      randomSeed,
+      seed,
       checkPointInterval,
       frame.rowCount(),
       ldaModel)
@@ -129,7 +129,7 @@ object LdaModel extends TkSaveableObject {
       m.alpha,
       m.beta,
       m.numTopics,
-      m.randomSeed,
+      m.seed,
       m.checkPointInterval,
       m.trainingDataRowCount,
       sparkModel)
@@ -185,7 +185,7 @@ object LdaModel extends TkSaveableObject {
  *                           Checkpointing helps with recovery (when nodes fail). It also helps with eliminating
  *                           temporary shuffle files on disk, which can be important when LDA is run for many
  *                           iterations. If the checkpoint directory is not set, this setting is ignored.
- * @param randomSeed An optional random seed.
+ * @param seed An optional random seed.
  *                   The random seed is used to initialize the pseudorandom number generator
  *                   used in the LDA model. Setting the random seed to the same value every
  *                   time the model is trained, allows LDA to generate the same topic distribution
@@ -199,7 +199,7 @@ case class LdaModel private[lda] (documentColumnName: String,
                                   alpha: Option[List[Double]],
                                   beta: Float,
                                   numTopics: Int,
-                                  randomSeed: Option[Long],
+                                  seed: Option[Long],
                                   checkPointInterval: Int,
                                   trainingDataRowCount: Long,
                                   sparkModel: TkLdaModel) extends Serializable with Model {
@@ -240,7 +240,7 @@ case class LdaModel private[lda] (documentColumnName: String,
       alpha,
       beta,
       numTopics,
-      randomSeed,
+      seed,
       checkPointInterval,
       trainingDataRowCount)
     TkSaveLoad.saveTk(sc, path, LdaModel.formatId, formatVersion, tkMetadata)
@@ -312,7 +312,7 @@ case class LdaModelTkMetaData(documentColumnName: String,
                               alpha: Option[List[Double]],
                               beta: Float,
                               numTopics: Int,
-                              randomSeed: Option[Long],
+                              seed: Option[Long],
                               checkPointInterval: Int,
                               trainingDataRowCount: Long) extends Serializable
 

@@ -7,12 +7,14 @@
 Scala.
 
 Tabular data is abstracted as **Frames** where expected operations are available and easy to call using column names.
-You don’t need to know the details of Spark’s many APIs.  However, if you want to leverage them, it is easy to dip 
+You don't need to know the details of Spark's many APIs.  However, if you want to leverage them, it is easy to dip 
 into those APIs and the functional programming model provided by Spark.
 
 The library provides **machine learning** support through straightforward APIs to train and use various models.
 
 ## Example:
+
+Create a TkContext
 
 [//]:# "<skip>"
 
