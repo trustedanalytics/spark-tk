@@ -16,4 +16,5 @@
 #
 
 def save(self, path):
+    """Persists the dicom object to the given file path"""
     self._get_new_scala().save(path)
