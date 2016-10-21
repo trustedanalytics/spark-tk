@@ -890,71 +890,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1114,386 +1049,8 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">sparktk.models.clustering.lda</span> module</h1>
+<h1 class="title"><span class="name">sparktk</span> lda</h1>  
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda" class="source">
-    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
-
-<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
-<span class="c">#</span>
-<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-<span class="c">#  you may not use this file except in compliance with the License.</span>
-<span class="c">#  You may obtain a copy of the License at</span>
-<span class="c">#</span>
-<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c">#</span>
-<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
-<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c">#  See the License for the specific language governing permissions and</span>
-<span class="c">#  limitations under the License.</span>
-<span class="c">#</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.loggers</span> <span class="kn">import</span> <span class="n">log_load</span><span class="p">;</span> <span class="n">log_load</span><span class="p">(</span><span class="n">__name__</span><span class="p">);</span> <span class="k">del</span> <span class="n">log_load</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.propobj</span> <span class="kn">import</span> <span class="n">PropertiesObject</span>
-<span class="kn">from</span> <span class="nn">sparktk.lazyloader</span> <span class="kn">import</span> <span class="n">implicit</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;train&quot;</span><span class="p">,</span> <span class="s">&quot;load&quot;</span><span class="p">,</span> <span class="s">&quot;LdaModel&quot;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">document_column_name</span><span class="p">,</span>
-          <span class="n">word_column_name</span><span class="p">,</span>
-          <span class="n">word_count_column_name</span><span class="p">,</span>
-          <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
-          <span class="n">alpha</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span>
-          <span class="n">num_topics</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-          <span class="n">random_seed</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">check_point_interval</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a LdaModel by training on the given frame</span>
-<span class="sd">    See the discussion about `Latent Dirichlet Allocation at Wikipedia. &lt;http://en.wikipedia.org/wiki/Latent_Dirichlet_allocation&gt;`</span>
-<span class="sd">    :param frame: (Frame) Input frame data</span>
-<span class="sd">    :param documentColumnName: (str) Column Name for documents. Column should contain a str value.</span>
-<span class="sd">    :param wordColumnName: (str) Column name for words. Column should contain a str value.</span>
-<span class="sd">    :param wordCountColumnName: (str) Column name for word count. Column should contain an int32 or int64 value.</span>
-<span class="sd">    :param maxIterations: (int) The maximum number of iterations that the algorithm will execute.</span>
-<span class="sd">                         The valid value range is all positive int. Default is 20.</span>
-<span class="sd">    :param alpha: (Optional(List(float))) The :term:`hyperparameter` for document-specific distribution over topics.</span>
-<span class="sd">                  Mainly used as a smoothing parameter in :term:`Bayesian inference`.</span>
-<span class="sd">                  If set to a singleton list List(-1d), then docConcentration is set automatically.</span>
-<span class="sd">                  If set to singleton list List(t) where t != -1, then t is replicated to a vector of length k during</span>
-<span class="sd">                  LDAOptimizer.initialize(). Otherwise, the alpha must be length k.</span>
-<span class="sd">                  Currently the EM optimizer only supports symmetric distributions, so all values in the vector should be the same.</span>
-<span class="sd">                  Values should be greater than 1.0. Default value is -1.0 indicating automatic setting.</span>
-<span class="sd">    :param beta: (float) The :term:`hyperparameter` for word-specific distribution over topics.</span>
-<span class="sd">                 Mainly used as a smoothing parameter in :term:`Bayesian inference`.</span>
-<span class="sd">                 smaller value implies that topics are more concentrated on a small</span>
-<span class="sd">                 subset of words.</span>
-<span class="sd">                 Valid value range is all positive float greater than or equal to 1.</span>
-<span class="sd">                 Default is 0.1.</span>
-<span class="sd">    :param numTopics: (int) The number of topics to identify in the LDA model.</span>
-<span class="sd">                      Using fewer topics will speed up the computation, but the extracted topics</span>
-<span class="sd">                      might be more abstract or less specific; using more topics will</span>
-<span class="sd">                      result in more computation but lead to more specific topics.</span>
-<span class="sd">                      Valid value range is all positive int.</span>
-<span class="sd">                      Default is 10.</span>
-<span class="sd">    :param randomSeed: (Optional(long)) An optional random seed.</span>
-<span class="sd">                      The random seed is used to initialize the pseudorandom number generator</span>
-<span class="sd">                      used in the LDA model. Setting the random seed to the same value every</span>
-<span class="sd">                      time the model is trained, allows LDA to generate the same topic distribution</span>
-<span class="sd">                      if the corpus and LDA parameters are unchanged.</span>
-<span class="sd">    :param checkPointInterval (int) Period (in iterations) between checkpoints (default = 10).</span>
-<span class="sd">                              Checkpointing helps with recovery (when nodes fail). It also helps with eliminating</span>
-<span class="sd">                              temporary shuffle files on disk, which can be important when LDA is run for many</span>
-<span class="sd">                              iterations. If the checkpoint directory is not set, this setting is ignored.</span>
-
-<span class="sd">    :return: (LdaModel) Trained Lda Model</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-
-    <span class="n">scala_alpha</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_double</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-    <span class="n">random_seed</span> <span class="o">=</span> <span class="n">random_seed</span> <span class="k">if</span> <span class="n">random_seed</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="nb">long</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
-    <span class="n">scala_seed</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">document_column_name</span><span class="p">,</span>
-                                   <span class="n">word_column_name</span><span class="p">,</span>
-                                   <span class="n">word_count_column_name</span><span class="p">,</span>
-                                   <span class="n">max_iterations</span><span class="p">,</span>
-                                   <span class="n">scala_alpha</span><span class="p">,</span>
-                                   <span class="n">beta</span><span class="p">,</span>
-                                   <span class="n">num_topics</span><span class="p">,</span>
-                                   <span class="n">scala_seed</span><span class="p">,</span>
-                                   <span class="n">check_point_interval</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LdaModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Gets reference to the scala object&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">trustedanalytics</span><span class="o">.</span><span class="n">sparktk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">clustering</span><span class="o">.</span><span class="n">lda</span><span class="o">.</span><span class="n">LdaModel</span>
-
-
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load LdaModel from given path&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">tc</span> <span class="ow">is</span> <span class="n">implicit</span><span class="p">:</span>
-        <span class="n">implicit</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;tc&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">LdaModel</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">LdaModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained Lda model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create([[&#39;nytimes&#39;,&#39;harry&#39;,3], [&#39;nytimes&#39;,&#39;economy&#39;,35], [&#39;nytimes&#39;,&#39;jobs&#39;,40], [&#39;nytimes&#39;,&#39;magic&#39;,1],</span>
-<span class="sd">        ...                                 [&#39;nytimes&#39;,&#39;realestate&#39;,15], [&#39;nytimes&#39;,&#39;movies&#39;,6],[&#39;economist&#39;,&#39;economy&#39;,50],</span>
-<span class="sd">        ...                                 [&#39;economist&#39;,&#39;jobs&#39;,35], [&#39;economist&#39;,&#39;realestate&#39;,20],[&#39;economist&#39;,&#39;movies&#39;,1],</span>
-<span class="sd">        ...                                 [&#39;economist&#39;,&#39;harry&#39;,1],[&#39;economist&#39;,&#39;magic&#39;,1],[&#39;harrypotter&#39;,&#39;harry&#39;,40],</span>
-<span class="sd">        ...                                 [&#39;harrypotter&#39;,&#39;magic&#39;,30],[&#39;harrypotter&#39;,&#39;chamber&#39;,20],[&#39;harrypotter&#39;,&#39;secrets&#39;,30]],</span>
-<span class="sd">        ...                                 [(&#39;doc_id&#39;, str), (&#39;word_id&#39;, str), (&#39;word_count&#39;, long)])</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  doc_id     word_id     word_count</span>
-<span class="sd">        ======================================</span>
-<span class="sd">        [0]  nytimes    harry                3</span>
-<span class="sd">        [1]  nytimes    economy             35</span>
-<span class="sd">        [2]  nytimes    jobs                40</span>
-<span class="sd">        [3]  nytimes    magic                1</span>
-<span class="sd">        [4]  nytimes    realestate          15</span>
-<span class="sd">        [5]  nytimes    movies               6</span>
-<span class="sd">        [6]  economist  economy             50</span>
-<span class="sd">        [7]  economist  jobs                35</span>
-<span class="sd">        [8]  economist  realestate          20</span>
-<span class="sd">        [9]  economist  movies               1</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.clustering.lda.train(frame, &#39;doc_id&#39;, &#39;word_id&#39;, &#39;word_count&#39;, max_iterations = 3, num_topics = 2)</span>
-
-<span class="sd">        &gt;&gt;&gt; print model.report</span>
-<span class="sd">        ======Graph Statistics======</span>
-<span class="sd">        Number of vertices: 11} (doc: 3, word: 8})</span>
-<span class="sd">        Number of edges: 16</span>
-<span class="sd">        &lt;BLANKLINE&gt;</span>
-<span class="sd">        ======LDA Configuration======</span>
-<span class="sd">        numTopics: 2</span>
-<span class="sd">        alpha: 26.0</span>
-<span class="sd">        beta: 1.100000023841858</span>
-<span class="sd">        maxIterations: 3</span>
-<span class="sd">        &lt;BLANKLINE&gt;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.document_column_name</span>
-<span class="sd">        u&#39;doc_id&#39;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.word_column_name</span>
-<span class="sd">        u&#39;word_id&#39;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.max_iterations</span>
-<span class="sd">        3</span>
-
-<span class="sd">        &gt;&gt;&gt; model.training_data_row_count</span>
-<span class="sd">        16L</span>
-
-<span class="sd">        &gt;&gt;&gt; model.check_point_interval</span>
-<span class="sd">        10</span>
-
-<span class="sd">        &gt;&gt;&gt; model.topics_given_doc_frame.schema</span>
-<span class="sd">        [(u&#39;doc_id&#39;, &lt;type &#39;unicode&#39;&gt;), (u&#39;topic_probabilities&#39;, vector(2))]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.topics_given_doc_frame.inspect(columns = [&#39;doc_id&#39;])</span>
-<span class="sd">        [#]  doc_id       topic_probabilities</span>
-<span class="sd">        ===========================================================</span>
-<span class="sd">        [0]  harrypotter  [0.06417509902256538, 0.9358249009774346]</span>
-<span class="sd">        [1]  economist    [0.8065841283073141, 0.19341587169268581]</span>
-<span class="sd">        [2]  nytimes      [0.855316939742769, 0.14468306025723088]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.word_given_topics_frame.inspect()</span>
-<span class="sd">        [#]  word_id     topic_probabilities</span>
-<span class="sd">        =============================================================</span>
-<span class="sd">        [0]  harry       [0.005015572372943657, 0.2916109787103347]</span>
-<span class="sd">        [1]  realestate  [0.167941871746252, 0.032187084858186256]</span>
-<span class="sd">        [2]  secrets     [0.026543839878055035, 0.17103864163730945]</span>
-<span class="sd">        [3]  movies      [0.03704750433384287, 0.003294403360133419]</span>
-<span class="sd">        [4]  magic       [0.016497495727347045, 0.19676900962555072]</span>
-<span class="sd">        [5]  economy     [0.3805836266747442, 0.10952481503975171]</span>
-<span class="sd">        [6]  chamber     [0.0035944004256137523, 0.13168123398523954]</span>
-<span class="sd">        [7]  jobs        [0.36277568884120137, 0.06389383278349432]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.topics_given_word_frame.inspect()</span>
-<span class="sd">        [#]  word_id     topic_probabilities</span>
-<span class="sd">        ===========================================================</span>
-<span class="sd">        [0]  harry       [0.018375903962878668, 0.9816240960371213]</span>
-<span class="sd">        [1]  realestate  [0.8663322126823493, 0.13366778731765067]</span>
-<span class="sd">        [2]  secrets     [0.15694172611285945, 0.8430582738871405]</span>
-<span class="sd">        [3]  movies      [0.9444179131148587, 0.055582086885141324]</span>
-<span class="sd">        [4]  magic       [0.09026309091077593, 0.9097369090892241]</span>
-<span class="sd">        [5]  economy     [0.8098866029287505, 0.19011339707124958]</span>
-<span class="sd">        [6]  chamber     [0.0275551649439219, 0.9724448350560781]</span>
-<span class="sd">        [7]  jobs        [0.8748608515169193, 0.12513914848308066]</span>
-
-
-<span class="sd">        &gt;&gt;&gt; prediction = model.predict([&#39;harry&#39;, &#39;secrets&#39;, &#39;magic&#39;, &#39;harry&#39;, &#39;chamber&#39; &#39;test&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; prediction</span>
-<span class="sd">        {u&#39;topics_given_doc&#39;: [0.3149285399451628, 0.48507146005483726], u&#39;new_words_percentage&#39;: 20.0, u&#39;new_words_count&#39;: 1}</span>
-<span class="sd">        &gt;&gt;&gt; prediction[&#39;topics_given_doc&#39;]</span>
-<span class="sd">        [0.3149285399451628, 0.48507146005483726]</span>
-<span class="sd">        &gt;&gt;&gt; prediction[&#39;new_words_percentage&#39;]</span>
-<span class="sd">        20.0</span>
-<span class="sd">        &gt;&gt;&gt; prediction[&#39;new_words_count&#39;]</span>
-<span class="sd">        1</span>
-<span class="sd">        &gt;&gt;&gt; prediction.has_key(&#39;topics_given_doc&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction.has_key(&#39;new_words_percentage&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction.has_key(&#39;new_words_count&#39;)</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/lda&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/lda&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.document_column_name == model.document_column_name</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.check_point_interval == model.check_point_interval</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.max_iterations == model.max_iterations</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.topics_given_doc_frame.schema</span>
-<span class="sd">        [(u&#39;doc_id&#39;, &lt;type &#39;unicode&#39;&gt;), (u&#39;topic_probabilities&#39;, vector(2))]</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.topics_given_doc_frame.inspect()</span>
-<span class="sd">        [#]  doc_id       topic_probabilities</span>
-<span class="sd">        ===========================================================</span>
-<span class="sd">        [0]  harrypotter  [0.06417509902256538, 0.9358249009774346]</span>
-<span class="sd">        [1]  economist    [0.8065841283073141, 0.19341587169268581]</span>
-<span class="sd">        [2]  nytimes      [0.855316939742769, 0.14468306025723088]</span>
-
-<span class="sd">        &gt;&gt;&gt; prediction2 = restored.predict([&#39;harry&#39;, &#39;secrets&#39;, &#39;magic&#39;, &#39;harry&#39;, &#39;chamber&#39; &#39;test&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; prediction2</span>
-<span class="sd">        {u&#39;topics_given_doc&#39;: [0.3149285399451628, 0.48507146005483726], u&#39;new_words_percentage&#39;: 20.0, u&#39;new_words_count&#39;: 1}</span>
-<span class="sd">        &gt;&gt;&gt; prediction2[&#39;topics_given_doc&#39;]</span>
-<span class="sd">        [0.3149285399451628, 0.48507146005483726]</span>
-<span class="sd">        &gt;&gt;&gt; prediction2[&#39;new_words_percentage&#39;]</span>
-<span class="sd">        20.0</span>
-<span class="sd">        &gt;&gt;&gt; prediction2[&#39;new_words_count&#39;]</span>
-<span class="sd">        1</span>
-<span class="sd">        &gt;&gt;&gt; prediction2.has_key(&#39;topics_given_doc&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction2.has_key(&#39;new_words_percentage&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction2.has_key(&#39;new_words_count&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        </span>
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/Kmeans.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">LdaModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">document_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column Name for documents&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">documentColumnName</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">word_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name for words&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">wordColumnName</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">word_count_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name for word count&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">wordCountColumnName</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The maximum number of iterations that the algorithm could have executed&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">maxIterations</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Hyperparameter for document-specific distribution over topics&quot;&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">alpha</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">beta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Hyperparameter for word-specific distribution over topics&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">beta</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of topics to identify in the LdaModel&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numTopics</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Random seed used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">randomSeed</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">check_point_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checkpoint Interval used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">checkPointInterval</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Summary Report of the Training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">topics_given_doc_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Frame for topics given document&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">topicsGivenDocFrame</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">word_given_topics_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Frame for word given topics&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">wordGivenTopicsFrame</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">topics_given_word_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Frame for topics given word&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">topicsGivenWordFrame</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">training_data_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Row count of the frame used to train this model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">trainingDataRowCount</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Predict topic probabilities for the documents given the trained model&quot;&quot;&quot;</span>
-        <span class="n">scala_documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
-        <span class="n">predicted_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">scala_documents</span><span class="p">)</span>
-
-        <span class="n">topics_given_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="n">predicted_output</span><span class="o">.</span><span class="n">topicsGivenDoc</span><span class="p">())</span>
-        <span class="n">new_words_count</span> <span class="o">=</span> <span class="n">predicted_output</span><span class="o">.</span><span class="n">newWordsCount</span><span class="p">()</span>
-        <span class="n">new_words_percentage</span> <span class="o">=</span> <span class="n">predicted_output</span><span class="o">.</span><span class="n">newWordsPercentage</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="p">{</span><span class="s">u&quot;topics_given_doc&quot;</span><span class="p">:</span><span class="n">topics_given_doc</span><span class="p">,</span>
-                <span class="s">u&quot;new_words_count&quot;</span><span class="p">:</span><span class="n">new_words_count</span><span class="p">,</span>
-                <span class="s">u&quot;new_words_percentage&quot;</span><span class="p">:</span><span class="n">new_words_percentage</span><span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Save the trained model&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; export the trained model to MAR format for Scoring Engine &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-<span class="k">del</span> <span class="n">PropertiesObject</span>
-</pre></div>
-
-  </div>
 
   </header>
 
@@ -1511,16 +1068,6 @@ table {
   
     <div class="desc"><p>load LdaModel from given path</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.load', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.load" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load LdaModel from given path&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">tc</span> <span class="ow">is</span> <span class="n">implicit</span><span class="p">:</span>
-        <span class="n">implicit</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;tc&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">LdaModel</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1528,7 +1075,7 @@ table {
       
   <div class="item">
     <div class="name def" id="sparktk.models.clustering.lda.train">
-    <p>def <span class="ident">train</span>(</p><p>frame, document_column_name, word_column_name, word_count_column_name, max_iterations=20, alpha=None, beta=1.1, num_topics=10, random_seed=None, check_point_interval=10)</p>
+    <p>def <span class="ident">train</span>(</p><p>frame, document_column_name, word_column_name, word_count_column_name, max_iterations=20, alpha=None, beta=1.1, num_topics=10, seed=None, check_point_interval=10)</p>
     </div>
     
 
@@ -1561,7 +1108,7 @@ See the discussion about <code>Latent Dirichlet Allocation at Wikipedia. &lt;htt
                   result in more computation but lead to more specific topics.
                   Valid value range is all positive int.
                   Default is 10.
-</td></tr></table><table><tr><td class='param-name'>randomSeed</td><td class='param-type'>(Optional(long)):</td><td class='param-desc'>An optional random seed.
+</td></tr></table><table><tr><td class='param-name'>seed</td><td class='param-type'>(Optional(long)):</td><td class='param-desc'>An optional random seed.
                   The random seed is used to initialize the pseudorandom number generator
                   used in the LDA model. Setting the random seed to the same value every
                   time the model is trained, allows LDA to generate the same topic distribution
@@ -1572,83 +1119,6 @@ See the discussion about <code>Latent Dirichlet Allocation at Wikipedia. &lt;htt
                           iterations. If the checkpoint directory is not set, this setting is ignored.</p>
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(LdaModel): </td><td class='param-desc'>Trained Lda Model</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.train', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.train" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">document_column_name</span><span class="p">,</span>
-          <span class="n">word_column_name</span><span class="p">,</span>
-          <span class="n">word_count_column_name</span><span class="p">,</span>
-          <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
-          <span class="n">alpha</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span>
-          <span class="n">num_topics</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-          <span class="n">random_seed</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">check_point_interval</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a LdaModel by training on the given frame</span>
-<span class="sd">    See the discussion about `Latent Dirichlet Allocation at Wikipedia. &lt;http://en.wikipedia.org/wiki/Latent_Dirichlet_allocation&gt;`</span>
-<span class="sd">    :param frame: (Frame) Input frame data</span>
-<span class="sd">    :param documentColumnName: (str) Column Name for documents. Column should contain a str value.</span>
-<span class="sd">    :param wordColumnName: (str) Column name for words. Column should contain a str value.</span>
-<span class="sd">    :param wordCountColumnName: (str) Column name for word count. Column should contain an int32 or int64 value.</span>
-<span class="sd">    :param maxIterations: (int) The maximum number of iterations that the algorithm will execute.</span>
-<span class="sd">                         The valid value range is all positive int. Default is 20.</span>
-<span class="sd">    :param alpha: (Optional(List(float))) The :term:`hyperparameter` for document-specific distribution over topics.</span>
-<span class="sd">                  Mainly used as a smoothing parameter in :term:`Bayesian inference`.</span>
-<span class="sd">                  If set to a singleton list List(-1d), then docConcentration is set automatically.</span>
-<span class="sd">                  If set to singleton list List(t) where t != -1, then t is replicated to a vector of length k during</span>
-<span class="sd">                  LDAOptimizer.initialize(). Otherwise, the alpha must be length k.</span>
-<span class="sd">                  Currently the EM optimizer only supports symmetric distributions, so all values in the vector should be the same.</span>
-<span class="sd">                  Values should be greater than 1.0. Default value is -1.0 indicating automatic setting.</span>
-<span class="sd">    :param beta: (float) The :term:`hyperparameter` for word-specific distribution over topics.</span>
-<span class="sd">                 Mainly used as a smoothing parameter in :term:`Bayesian inference`.</span>
-<span class="sd">                 smaller value implies that topics are more concentrated on a small</span>
-<span class="sd">                 subset of words.</span>
-<span class="sd">                 Valid value range is all positive float greater than or equal to 1.</span>
-<span class="sd">                 Default is 0.1.</span>
-<span class="sd">    :param numTopics: (int) The number of topics to identify in the LDA model.</span>
-<span class="sd">                      Using fewer topics will speed up the computation, but the extracted topics</span>
-<span class="sd">                      might be more abstract or less specific; using more topics will</span>
-<span class="sd">                      result in more computation but lead to more specific topics.</span>
-<span class="sd">                      Valid value range is all positive int.</span>
-<span class="sd">                      Default is 10.</span>
-<span class="sd">    :param randomSeed: (Optional(long)) An optional random seed.</span>
-<span class="sd">                      The random seed is used to initialize the pseudorandom number generator</span>
-<span class="sd">                      used in the LDA model. Setting the random seed to the same value every</span>
-<span class="sd">                      time the model is trained, allows LDA to generate the same topic distribution</span>
-<span class="sd">                      if the corpus and LDA parameters are unchanged.</span>
-<span class="sd">    :param checkPointInterval (int) Period (in iterations) between checkpoints (default = 10).</span>
-<span class="sd">                              Checkpointing helps with recovery (when nodes fail). It also helps with eliminating</span>
-<span class="sd">                              temporary shuffle files on disk, which can be important when LDA is run for many</span>
-<span class="sd">                              iterations. If the checkpoint directory is not set, this setting is ignored.</span>
-
-<span class="sd">    :return: (LdaModel) Trained Lda Model</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-
-    <span class="n">scala_alpha</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_double</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-    <span class="n">random_seed</span> <span class="o">=</span> <span class="n">random_seed</span> <span class="k">if</span> <span class="n">random_seed</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="nb">long</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
-    <span class="n">scala_seed</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">document_column_name</span><span class="p">,</span>
-                                   <span class="n">word_column_name</span><span class="p">,</span>
-                                   <span class="n">word_count_column_name</span><span class="p">,</span>
-                                   <span class="n">max_iterations</span><span class="p">,</span>
-                                   <span class="n">scala_alpha</span><span class="p">,</span>
-                                   <span class="n">beta</span><span class="p">,</span>
-                                   <span class="n">num_topics</span><span class="p">,</span>
-                                   <span class="n">scala_seed</span><span class="p">,</span>
-                                   <span class="n">check_point_interval</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LdaModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1663,12 +1133,12 @@ See the discussion about <code>Latent Dirichlet Allocation at Wikipedia. &lt;htt
     <div class="desc"><p>A trained Lda model</p>
 <div class='section-header'>Example:</div>
 
-<div class="codehilite"><pre>&gt;&gt;&gt; frame = tc.frame.create([[&#39;nytimes&#39;,&#39;harry&#39;,3], [&#39;nytimes&#39;,&#39;economy&#39;,35], [&#39;nytimes&#39;,&#39;jobs&#39;,40], [&#39;nytimes&#39;,&#39;magic&#39;,1],
-...                                 [&#39;nytimes&#39;,&#39;realestate&#39;,15], [&#39;nytimes&#39;,&#39;movies&#39;,6],[&#39;economist&#39;,&#39;economy&#39;,50],
-...                                 [&#39;economist&#39;,&#39;jobs&#39;,35], [&#39;economist&#39;,&#39;realestate&#39;,20],[&#39;economist&#39;,&#39;movies&#39;,1],
-...                                 [&#39;economist&#39;,&#39;harry&#39;,1],[&#39;economist&#39;,&#39;magic&#39;,1],[&#39;harrypotter&#39;,&#39;harry&#39;,40],
-...                                 [&#39;harrypotter&#39;,&#39;magic&#39;,30],[&#39;harrypotter&#39;,&#39;chamber&#39;,20],[&#39;harrypotter&#39;,&#39;secrets&#39;,30]],
-...                                 [(&#39;doc_id&#39;, str), (&#39;word_id&#39;, str), (&#39;word_count&#39;, long)])
+<pre><code>&gt;&gt;&gt; frame = tc.frame.create([['nytimes','harry',3], ['nytimes','economy',35], ['nytimes','jobs',40], ['nytimes','magic',1],
+...                                 ['nytimes','realestate',15], ['nytimes','movies',6],['economist','economy',50],
+...                                 ['economist','jobs',35], ['economist','realestate',20],['economist','movies',1],
+...                                 ['economist','harry',1],['economist','magic',1],['harrypotter','harry',40],
+...                                 ['harrypotter','magic',30],['harrypotter','chamber',20],['harrypotter','secrets',30]],
+...                                 [('doc_id', str), ('word_id', str), ('word_count', long)])
 
 &gt;&gt;&gt; frame.inspect()
 [#]  doc_id     word_id     word_count
@@ -1684,7 +1154,7 @@ See the discussion about <code>Latent Dirichlet Allocation at Wikipedia. &lt;htt
 [8]  economist  realestate          20
 [9]  economist  movies               1
 
-&gt;&gt;&gt; model = tc.models.clustering.lda.train(frame, &#39;doc_id&#39;, &#39;word_id&#39;, &#39;word_count&#39;, max_iterations = 3, num_topics = 2)
+&gt;&gt;&gt; model = tc.models.clustering.lda.train(frame, 'doc_id', 'word_id', 'word_count', max_iterations = 3, num_topics = 2)
 
 &gt;&gt;&gt; print model.report
 ======Graph Statistics======
@@ -1699,10 +1169,10 @@ maxIterations: 3
 &lt;BLANKLINE&gt;
 
 &gt;&gt;&gt; model.document_column_name
-u&#39;doc_id&#39;
+u'doc_id'
 
 &gt;&gt;&gt; model.word_column_name
-u&#39;word_id&#39;
+u'word_id'
 
 &gt;&gt;&gt; model.max_iterations
 3
@@ -1714,9 +1184,9 @@ u&#39;word_id&#39;
 10
 
 &gt;&gt;&gt; model.topics_given_doc_frame.schema
-[(u&#39;doc_id&#39;, &lt;type &#39;unicode&#39;&gt;), (u&#39;topic_probabilities&#39;, vector(2))]
+[(u'doc_id', &lt;type 'unicode'&gt;), (u'topic_probabilities', vector(2))]
 
-&gt;&gt;&gt; model.topics_given_doc_frame.inspect(columns = [&#39;doc_id&#39;])
+&gt;&gt;&gt; model.topics_given_doc_frame.inspect(columns = ['doc_id'])
 [#]  doc_id       topic_probabilities
 ===========================================================
 [0]  harrypotter  [0.06417509902256538, 0.9358249009774346]
@@ -1748,26 +1218,26 @@ u&#39;word_id&#39;
 [7]  jobs        [0.8748608515169193, 0.12513914848308066]
 
 
-&gt;&gt;&gt; prediction = model.predict([&#39;harry&#39;, &#39;secrets&#39;, &#39;magic&#39;, &#39;harry&#39;, &#39;chamber&#39; &#39;test&#39;])
+&gt;&gt;&gt; prediction = model.predict(['harry', 'secrets', 'magic', 'harry', 'chamber' 'test'])
 
 &gt;&gt;&gt; prediction
-{u&#39;topics_given_doc&#39;: [0.3149285399451628, 0.48507146005483726], u&#39;new_words_percentage&#39;: 20.0, u&#39;new_words_count&#39;: 1}
-&gt;&gt;&gt; prediction[&#39;topics_given_doc&#39;]
+{u'topics_given_doc': [0.3149285399451628, 0.48507146005483726], u'new_words_percentage': 20.0, u'new_words_count': 1}
+&gt;&gt;&gt; prediction['topics_given_doc']
 [0.3149285399451628, 0.48507146005483726]
-&gt;&gt;&gt; prediction[&#39;new_words_percentage&#39;]
+&gt;&gt;&gt; prediction['new_words_percentage']
 20.0
-&gt;&gt;&gt; prediction[&#39;new_words_count&#39;]
+&gt;&gt;&gt; prediction['new_words_count']
 1
-&gt;&gt;&gt; prediction.has_key(&#39;topics_given_doc&#39;)
+&gt;&gt;&gt; prediction.has_key('topics_given_doc')
 True
-&gt;&gt;&gt; prediction.has_key(&#39;new_words_percentage&#39;)
+&gt;&gt;&gt; prediction.has_key('new_words_percentage')
 True
-&gt;&gt;&gt; prediction.has_key(&#39;new_words_count&#39;)
+&gt;&gt;&gt; prediction.has_key('new_words_count')
 True
 
-&gt;&gt;&gt; model.save(&quot;sandbox/lda&quot;)
+&gt;&gt;&gt; model.save("sandbox/lda")
 
-&gt;&gt;&gt; restored = tc.load(&quot;sandbox/lda&quot;)
+&gt;&gt;&gt; restored = tc.load("sandbox/lda")
 
 &gt;&gt;&gt; restored.document_column_name == model.document_column_name
 True
@@ -1779,7 +1249,7 @@ True
 True
 
 &gt;&gt;&gt; restored.topics_given_doc_frame.schema
-[(u&#39;doc_id&#39;, &lt;type &#39;unicode&#39;&gt;), (u&#39;topic_probabilities&#39;, vector(2))]
+[(u'doc_id', &lt;type 'unicode'&gt;), (u'topic_probabilities', vector(2))]
 
 &gt;&gt;&gt; restored.topics_given_doc_frame.inspect()
 [#]  doc_id       topic_probabilities
@@ -1788,291 +1258,26 @@ True
 [1]  economist    [0.8065841283073141, 0.19341587169268581]
 [2]  nytimes      [0.855316939742769, 0.14468306025723088]
 
-&gt;&gt;&gt; prediction2 = restored.predict([&#39;harry&#39;, &#39;secrets&#39;, &#39;magic&#39;, &#39;harry&#39;, &#39;chamber&#39; &#39;test&#39;])
+&gt;&gt;&gt; prediction2 = restored.predict(['harry', 'secrets', 'magic', 'harry', 'chamber' 'test'])
 
 &gt;&gt;&gt; prediction2
-{u&#39;topics_given_doc&#39;: [0.3149285399451628, 0.48507146005483726], u&#39;new_words_percentage&#39;: 20.0, u&#39;new_words_count&#39;: 1}
-&gt;&gt;&gt; prediction2[&#39;topics_given_doc&#39;]
+{u'topics_given_doc': [0.3149285399451628, 0.48507146005483726], u'new_words_percentage': 20.0, u'new_words_count': 1}
+&gt;&gt;&gt; prediction2['topics_given_doc']
 [0.3149285399451628, 0.48507146005483726]
-&gt;&gt;&gt; prediction2[&#39;new_words_percentage&#39;]
+&gt;&gt;&gt; prediction2['new_words_percentage']
 20.0
-&gt;&gt;&gt; prediction2[&#39;new_words_count&#39;]
+&gt;&gt;&gt; prediction2['new_words_count']
 1
-&gt;&gt;&gt; prediction2.has_key(&#39;topics_given_doc&#39;)
+&gt;&gt;&gt; prediction2.has_key('topics_given_doc')
 True
-&gt;&gt;&gt; prediction2.has_key(&#39;new_words_percentage&#39;)
+&gt;&gt;&gt; prediction2.has_key('new_words_percentage')
 True
-&gt;&gt;&gt; prediction2.has_key(&#39;new_words_count&#39;)
+&gt;&gt;&gt; prediction2.has_key('new_words_count')
 True
 
-&gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/Kmeans.mar&quot;)
-</pre></div></div>
+&gt;&gt;&gt; canonical_path = model.export_to_mar("sandbox/lda.mar")
+</code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">LdaModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained Lda model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create([[&#39;nytimes&#39;,&#39;harry&#39;,3], [&#39;nytimes&#39;,&#39;economy&#39;,35], [&#39;nytimes&#39;,&#39;jobs&#39;,40], [&#39;nytimes&#39;,&#39;magic&#39;,1],</span>
-<span class="sd">        ...                                 [&#39;nytimes&#39;,&#39;realestate&#39;,15], [&#39;nytimes&#39;,&#39;movies&#39;,6],[&#39;economist&#39;,&#39;economy&#39;,50],</span>
-<span class="sd">        ...                                 [&#39;economist&#39;,&#39;jobs&#39;,35], [&#39;economist&#39;,&#39;realestate&#39;,20],[&#39;economist&#39;,&#39;movies&#39;,1],</span>
-<span class="sd">        ...                                 [&#39;economist&#39;,&#39;harry&#39;,1],[&#39;economist&#39;,&#39;magic&#39;,1],[&#39;harrypotter&#39;,&#39;harry&#39;,40],</span>
-<span class="sd">        ...                                 [&#39;harrypotter&#39;,&#39;magic&#39;,30],[&#39;harrypotter&#39;,&#39;chamber&#39;,20],[&#39;harrypotter&#39;,&#39;secrets&#39;,30]],</span>
-<span class="sd">        ...                                 [(&#39;doc_id&#39;, str), (&#39;word_id&#39;, str), (&#39;word_count&#39;, long)])</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  doc_id     word_id     word_count</span>
-<span class="sd">        ======================================</span>
-<span class="sd">        [0]  nytimes    harry                3</span>
-<span class="sd">        [1]  nytimes    economy             35</span>
-<span class="sd">        [2]  nytimes    jobs                40</span>
-<span class="sd">        [3]  nytimes    magic                1</span>
-<span class="sd">        [4]  nytimes    realestate          15</span>
-<span class="sd">        [5]  nytimes    movies               6</span>
-<span class="sd">        [6]  economist  economy             50</span>
-<span class="sd">        [7]  economist  jobs                35</span>
-<span class="sd">        [8]  economist  realestate          20</span>
-<span class="sd">        [9]  economist  movies               1</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.clustering.lda.train(frame, &#39;doc_id&#39;, &#39;word_id&#39;, &#39;word_count&#39;, max_iterations = 3, num_topics = 2)</span>
-
-<span class="sd">        &gt;&gt;&gt; print model.report</span>
-<span class="sd">        ======Graph Statistics======</span>
-<span class="sd">        Number of vertices: 11} (doc: 3, word: 8})</span>
-<span class="sd">        Number of edges: 16</span>
-<span class="sd">        &lt;BLANKLINE&gt;</span>
-<span class="sd">        ======LDA Configuration======</span>
-<span class="sd">        numTopics: 2</span>
-<span class="sd">        alpha: 26.0</span>
-<span class="sd">        beta: 1.100000023841858</span>
-<span class="sd">        maxIterations: 3</span>
-<span class="sd">        &lt;BLANKLINE&gt;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.document_column_name</span>
-<span class="sd">        u&#39;doc_id&#39;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.word_column_name</span>
-<span class="sd">        u&#39;word_id&#39;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.max_iterations</span>
-<span class="sd">        3</span>
-
-<span class="sd">        &gt;&gt;&gt; model.training_data_row_count</span>
-<span class="sd">        16L</span>
-
-<span class="sd">        &gt;&gt;&gt; model.check_point_interval</span>
-<span class="sd">        10</span>
-
-<span class="sd">        &gt;&gt;&gt; model.topics_given_doc_frame.schema</span>
-<span class="sd">        [(u&#39;doc_id&#39;, &lt;type &#39;unicode&#39;&gt;), (u&#39;topic_probabilities&#39;, vector(2))]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.topics_given_doc_frame.inspect(columns = [&#39;doc_id&#39;])</span>
-<span class="sd">        [#]  doc_id       topic_probabilities</span>
-<span class="sd">        ===========================================================</span>
-<span class="sd">        [0]  harrypotter  [0.06417509902256538, 0.9358249009774346]</span>
-<span class="sd">        [1]  economist    [0.8065841283073141, 0.19341587169268581]</span>
-<span class="sd">        [2]  nytimes      [0.855316939742769, 0.14468306025723088]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.word_given_topics_frame.inspect()</span>
-<span class="sd">        [#]  word_id     topic_probabilities</span>
-<span class="sd">        =============================================================</span>
-<span class="sd">        [0]  harry       [0.005015572372943657, 0.2916109787103347]</span>
-<span class="sd">        [1]  realestate  [0.167941871746252, 0.032187084858186256]</span>
-<span class="sd">        [2]  secrets     [0.026543839878055035, 0.17103864163730945]</span>
-<span class="sd">        [3]  movies      [0.03704750433384287, 0.003294403360133419]</span>
-<span class="sd">        [4]  magic       [0.016497495727347045, 0.19676900962555072]</span>
-<span class="sd">        [5]  economy     [0.3805836266747442, 0.10952481503975171]</span>
-<span class="sd">        [6]  chamber     [0.0035944004256137523, 0.13168123398523954]</span>
-<span class="sd">        [7]  jobs        [0.36277568884120137, 0.06389383278349432]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.topics_given_word_frame.inspect()</span>
-<span class="sd">        [#]  word_id     topic_probabilities</span>
-<span class="sd">        ===========================================================</span>
-<span class="sd">        [0]  harry       [0.018375903962878668, 0.9816240960371213]</span>
-<span class="sd">        [1]  realestate  [0.8663322126823493, 0.13366778731765067]</span>
-<span class="sd">        [2]  secrets     [0.15694172611285945, 0.8430582738871405]</span>
-<span class="sd">        [3]  movies      [0.9444179131148587, 0.055582086885141324]</span>
-<span class="sd">        [4]  magic       [0.09026309091077593, 0.9097369090892241]</span>
-<span class="sd">        [5]  economy     [0.8098866029287505, 0.19011339707124958]</span>
-<span class="sd">        [6]  chamber     [0.0275551649439219, 0.9724448350560781]</span>
-<span class="sd">        [7]  jobs        [0.8748608515169193, 0.12513914848308066]</span>
-
-
-<span class="sd">        &gt;&gt;&gt; prediction = model.predict([&#39;harry&#39;, &#39;secrets&#39;, &#39;magic&#39;, &#39;harry&#39;, &#39;chamber&#39; &#39;test&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; prediction</span>
-<span class="sd">        {u&#39;topics_given_doc&#39;: [0.3149285399451628, 0.48507146005483726], u&#39;new_words_percentage&#39;: 20.0, u&#39;new_words_count&#39;: 1}</span>
-<span class="sd">        &gt;&gt;&gt; prediction[&#39;topics_given_doc&#39;]</span>
-<span class="sd">        [0.3149285399451628, 0.48507146005483726]</span>
-<span class="sd">        &gt;&gt;&gt; prediction[&#39;new_words_percentage&#39;]</span>
-<span class="sd">        20.0</span>
-<span class="sd">        &gt;&gt;&gt; prediction[&#39;new_words_count&#39;]</span>
-<span class="sd">        1</span>
-<span class="sd">        &gt;&gt;&gt; prediction.has_key(&#39;topics_given_doc&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction.has_key(&#39;new_words_percentage&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction.has_key(&#39;new_words_count&#39;)</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/lda&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/lda&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.document_column_name == model.document_column_name</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.check_point_interval == model.check_point_interval</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.max_iterations == model.max_iterations</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.topics_given_doc_frame.schema</span>
-<span class="sd">        [(u&#39;doc_id&#39;, &lt;type &#39;unicode&#39;&gt;), (u&#39;topic_probabilities&#39;, vector(2))]</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.topics_given_doc_frame.inspect()</span>
-<span class="sd">        [#]  doc_id       topic_probabilities</span>
-<span class="sd">        ===========================================================</span>
-<span class="sd">        [0]  harrypotter  [0.06417509902256538, 0.9358249009774346]</span>
-<span class="sd">        [1]  economist    [0.8065841283073141, 0.19341587169268581]</span>
-<span class="sd">        [2]  nytimes      [0.855316939742769, 0.14468306025723088]</span>
-
-<span class="sd">        &gt;&gt;&gt; prediction2 = restored.predict([&#39;harry&#39;, &#39;secrets&#39;, &#39;magic&#39;, &#39;harry&#39;, &#39;chamber&#39; &#39;test&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; prediction2</span>
-<span class="sd">        {u&#39;topics_given_doc&#39;: [0.3149285399451628, 0.48507146005483726], u&#39;new_words_percentage&#39;: 20.0, u&#39;new_words_count&#39;: 1}</span>
-<span class="sd">        &gt;&gt;&gt; prediction2[&#39;topics_given_doc&#39;]</span>
-<span class="sd">        [0.3149285399451628, 0.48507146005483726]</span>
-<span class="sd">        &gt;&gt;&gt; prediction2[&#39;new_words_percentage&#39;]</span>
-<span class="sd">        20.0</span>
-<span class="sd">        &gt;&gt;&gt; prediction2[&#39;new_words_count&#39;]</span>
-<span class="sd">        1</span>
-<span class="sd">        &gt;&gt;&gt; prediction2.has_key(&#39;topics_given_doc&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction2.has_key(&#39;new_words_percentage&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        &gt;&gt;&gt; prediction2.has_key(&#39;new_words_count&#39;)</span>
-<span class="sd">        True</span>
-<span class="sd">        </span>
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/Kmeans.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">LdaModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">document_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column Name for documents&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">documentColumnName</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">word_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name for words&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">wordColumnName</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">word_count_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name for word count&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">wordCountColumnName</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The maximum number of iterations that the algorithm could have executed&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">maxIterations</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Hyperparameter for document-specific distribution over topics&quot;&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">alpha</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">beta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Hyperparameter for word-specific distribution over topics&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">beta</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of topics to identify in the LdaModel&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numTopics</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Random seed used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">randomSeed</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">check_point_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checkpoint Interval used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">checkPointInterval</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Summary Report of the Training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">topics_given_doc_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Frame for topics given document&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">topicsGivenDocFrame</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">word_given_topics_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Frame for word given topics&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">wordGivenTopicsFrame</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">topics_given_word_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Frame for topics given word&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">topicsGivenWordFrame</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">training_data_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Row count of the frame used to train this model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">trainingDataRowCount</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Predict topic probabilities for the documents given the trained model&quot;&quot;&quot;</span>
-        <span class="n">scala_documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
-        <span class="n">predicted_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">scala_documents</span><span class="p">)</span>
-
-        <span class="n">topics_given_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="n">predicted_output</span><span class="o">.</span><span class="n">topicsGivenDoc</span><span class="p">())</span>
-        <span class="n">new_words_count</span> <span class="o">=</span> <span class="n">predicted_output</span><span class="o">.</span><span class="n">newWordsCount</span><span class="p">()</span>
-        <span class="n">new_words_percentage</span> <span class="o">=</span> <span class="n">predicted_output</span><span class="o">.</span><span class="n">newWordsPercentage</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="p">{</span><span class="s">u&quot;topics_given_doc&quot;</span><span class="p">:</span><span class="n">topics_given_doc</span><span class="p">,</span>
-                <span class="s">u&quot;new_words_count&quot;</span><span class="p">:</span><span class="n">new_words_count</span><span class="p">,</span>
-                <span class="s">u&quot;new_words_percentage&quot;</span><span class="p">:</span><span class="n">new_words_percentage</span><span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Save the trained model&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; export the trained model to MAR format for Scoring Engine &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
 
@@ -2151,23 +1356,23 @@ True
 
             </div>
             <div class="item">
-            <p id="sparktk.models.clustering.lda.LdaModel.random_seed" class="name">var <span class="ident">random_seed</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Random seed used to train the model</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
             <p id="sparktk.models.clustering.lda.LdaModel.report" class="name">var <span class="ident">report</span></p>
             
 
             
   
     <div class="desc"><p>Summary Report of the Training</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.models.clustering.lda.LdaModel.seed" class="name">var <span class="ident">seed</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Random seed used to train the model</p></div>
   <div class="source_cont">
 </div>
 
@@ -2249,15 +1454,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-    <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2273,15 +1469,6 @@ True
   
     <div class="desc"><p>export the trained model to MAR format for Scoring Engine</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel.export_to_mar', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel.export_to_mar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; export the trained model to MAR format for Scoring Engine &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2297,21 +1484,6 @@ True
   
     <div class="desc"><p>Predict topic probabilities for the documents given the trained model</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel.predict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel.predict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Predict topic probabilities for the documents given the trained model&quot;&quot;&quot;</span>
-    <span class="n">scala_documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
-    <span class="n">predicted_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">scala_documents</span><span class="p">)</span>
-    <span class="n">topics_given_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="n">predicted_output</span><span class="o">.</span><span class="n">topicsGivenDoc</span><span class="p">())</span>
-    <span class="n">new_words_count</span> <span class="o">=</span> <span class="n">predicted_output</span><span class="o">.</span><span class="n">newWordsCount</span><span class="p">()</span>
-    <span class="n">new_words_percentage</span> <span class="o">=</span> <span class="n">predicted_output</span><span class="o">.</span><span class="n">newWordsPercentage</span><span class="p">()</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s">u&quot;topics_given_doc&quot;</span><span class="p">:</span><span class="n">topics_given_doc</span><span class="p">,</span>
-            <span class="s">u&quot;new_words_count&quot;</span><span class="p">:</span><span class="n">new_words_count</span><span class="p">,</span>
-            <span class="s">u&quot;new_words_percentage&quot;</span><span class="p">:</span><span class="n">new_words_percentage</span><span class="p">}</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2327,14 +1499,6 @@ True
   
     <div class="desc"><p>Save the trained model</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel.save', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel.save" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Save the trained model&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2349,15 +1513,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel.to_dict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel.to_dict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">()</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">d</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2372,13 +1527,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.clustering.lda.LdaModel.to_json', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.clustering.lda.LdaModel.to_json" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>

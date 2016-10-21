@@ -890,71 +890,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1114,431 +1049,8 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">sparktk.models.classification.logistic_regression</span> module</h1>
+<h1 class="title"><span class="name">sparktk</span> logistic_regression</h1>  
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression" class="source">
-    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
-
-<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
-<span class="c">#</span>
-<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-<span class="c">#  you may not use this file except in compliance with the License.</span>
-<span class="c">#  You may obtain a copy of the License at</span>
-<span class="c">#</span>
-<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c">#</span>
-<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
-<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c">#  See the License for the specific language governing permissions and</span>
-<span class="c">#  limitations under the License.</span>
-<span class="c">#</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.frame.ops.classification_metrics_value</span> <span class="kn">import</span> <span class="n">ClassificationMetricsValue</span>
-<span class="kn">from</span> <span class="nn">sparktk.models.logistic_regression_summary_table</span> <span class="kn">import</span> <span class="n">LogisticRegressionSummaryTable</span>
-<span class="kn">from</span> <span class="nn">sparktk.loggers</span> <span class="kn">import</span> <span class="n">log_load</span>
-<span class="kn">from</span> <span class="nn">sparktk.propobj</span> <span class="kn">import</span> <span class="n">PropertiesObject</span>
-
-<span class="n">log_load</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
-<span class="k">del</span> <span class="n">log_load</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;train&quot;</span><span class="p">,</span> <span class="s">&quot;LogisticRegressionModel&quot;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">label_column</span><span class="p">,</span>
-          <span class="n">frequency_column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-          <span class="n">num_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-          <span class="n">optimizer</span><span class="o">=</span><span class="s">&quot;LBFGS&quot;</span><span class="p">,</span>
-          <span class="n">compute_covariance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">intercept</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">feature_scaling</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-          <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-          <span class="n">reg_type</span><span class="o">=</span><span class="s">&quot;L2&quot;</span><span class="p">,</span>
-          <span class="n">reg_param</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-          <span class="n">num_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-          <span class="n">convergence_tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-          <span class="n">num_corrections</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-          <span class="n">mini_batch_fraction</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-          <span class="n">step_size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">     Build logistic regression model.</span>
-
-<span class="sd">     Creating a Logistic Regression Model using the observation column and label column of the train frame.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) A frame to train the model on.</span>
-<span class="sd">    :param observation_columns: (List[str]) Column(s) containing the observations.</span>
-<span class="sd">    :param label_column: (str) Column name containing the label for each observation.</span>
-<span class="sd">    :param frequency_column:(Option[str]) Optional column containing the frequency of observations.</span>
-<span class="sd">    :param num_classes: (int) Number of classes</span>
-<span class="sd">    :param optimizer: (str) Set type of optimizer.</span>
-<span class="sd">                           LBFGS - Limited-memory BFGS.</span>
-<span class="sd">                           LBFGS supports multinomial logistic regression.</span>
-<span class="sd">                           SGD - Stochastic Gradient Descent.</span>
-<span class="sd">                           SGD only supports binary logistic regression.</span>
-<span class="sd">    :param compute_covariance: (bool) Compute covariance matrix for the model.</span>
-<span class="sd">    :param intercept: (bool) Add intercept column to training data.</span>
-<span class="sd">    :param feature_scaling: (bool) Perform feature scaling before training model.</span>
-<span class="sd">    :param threshold: (double) Threshold for separating positive predictions from negative predictions.</span>
-<span class="sd">    :param reg_type: (str) Set type of regularization</span>
-<span class="sd">                            L1 - L1 regularization with sum of absolute values of coefficients</span>
-<span class="sd">                            L2 - L2 regularization with sum of squares of coefficients</span>
-<span class="sd">    :param reg_param: (double) Regularization parameter</span>
-<span class="sd">    :param num_iterations: (int) Maximum number of iterations</span>
-<span class="sd">    :param convergence_tolerance: (double) Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.</span>
-<span class="sd">    :param num_corrections: (int) Number of corrections used in LBFGS update.</span>
-<span class="sd">                           Default is 10.</span>
-<span class="sd">                           Values of less than 3 are not recommended;</span>
-<span class="sd">                           large values will result in excessive computing time.</span>
-<span class="sd">    :param mini_batch_fraction: (double) Fraction of data to be used for each SGD iteration</span>
-<span class="sd">    :param step_size: (double) Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)</span>
-<span class="sd">    :return: (LogisticRegressionModel) A LogisticRegressionModel with a summary of the trained model.</span>
-<span class="sd">                     The data returned is composed of multiple components\:</span>
-<span class="sd">                     **int** : *numFeatures*</span>
-<span class="sd">                         Number of features in the training data</span>
-<span class="sd">                     **int** : *numClasses*</span>
-<span class="sd">                         Number of classes in the training data</span>
-<span class="sd">                     **table** : *summaryTable*</span>
-<span class="sd">                         A summary table composed of:</span>
-<span class="sd">                     **Frame** : *CovarianceMatrix (optional)*</span>
-<span class="sd">                         Covariance matrix of the trained model.</span>
-<span class="sd">                     The covariance matrix is the inverse of the Hessian matrix for the trained model.</span>
-<span class="sd">                     The Hessian matrix is the second-order partial derivatives of the model&#39;s log-likelihood function.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Frame cannot be None&quot;</span><span class="p">)</span>
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="n">observation_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">observation_columns</span><span class="p">]</span>
-
-    <span class="n">scala_observation_columns</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_vector_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-    <span class="n">scala_frequency_column</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">frequency_column</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">compute_covariance</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;compute_covariance must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">compute_covariance</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;intercept must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">intercept</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">feature_scaling</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;feature_scaling must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">feature_scaling</span><span class="p">))</span>
-
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">scala_observation_columns</span><span class="p">,</span>
-                                   <span class="n">label_column</span><span class="p">,</span>
-                                   <span class="n">scala_frequency_column</span><span class="p">,</span>
-                                   <span class="n">num_classes</span><span class="p">,</span>
-                                   <span class="n">optimizer</span><span class="p">,</span>
-                                   <span class="n">compute_covariance</span><span class="p">,</span>
-                                   <span class="n">intercept</span><span class="p">,</span>
-                                   <span class="n">feature_scaling</span><span class="p">,</span>
-                                   <span class="n">threshold</span><span class="p">,</span>
-                                   <span class="n">reg_type</span><span class="p">,</span>
-                                   <span class="n">reg_param</span><span class="p">,</span>
-                                   <span class="n">num_iterations</span><span class="p">,</span>
-                                   <span class="n">convergence_tolerance</span><span class="p">,</span>
-                                   <span class="n">num_corrections</span><span class="p">,</span>
-                                   <span class="n">mini_batch_fraction</span><span class="p">,</span>
-                                   <span class="nb">float</span><span class="p">(</span><span class="n">step_size</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">LogisticRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Gets reference to the scala object&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">trustedanalytics</span><span class="o">.</span><span class="n">sparktk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">classification</span><span class="o">.</span><span class="n">logistic_regression</span><span class="o">.</span><span class="n">LogisticRegressionModel</span>
-
-
-<span class="k">class</span> <span class="nc">LogisticRegressionModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained logistic regression model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    --------</span>
-
-<span class="sd">        &gt;&gt;&gt; rows = [[4.9,1.4,0], [4.7,1.3,0], [4.6,1.5,0], [6.3,4.9,1],[6.1,4.7,1], [6.4,4.3,1], [6.6,4.4,1],[7.2,6.0,2], [7.2,5.8,2], [7.4,6.1,2], [7.9,6.4,2]]</span>
-<span class="sd">        &gt;&gt;&gt; schema = [(&#39;Sepal_Length&#39;, float),(&#39;Petal_Length&#39;, float), (&#39;Class&#39;, int)]</span>
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create(rows, schema)</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">    Consider the following frame containing three columns.</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  Sepal_Length  Petal_Length  Class</span>
-<span class="sd">        ======================================</span>
-<span class="sd">        [0]           4.9           1.4      0</span>
-<span class="sd">        [1]           4.7           1.3      0</span>
-<span class="sd">        [2]           4.6           1.5      0</span>
-<span class="sd">        [3]           6.3           4.9      1</span>
-<span class="sd">        [4]           6.1           4.7      1</span>
-<span class="sd">        [5]           6.4           4.3      1</span>
-<span class="sd">        [6]           6.6           4.4      1</span>
-<span class="sd">        [7]           7.2           6.0      2</span>
-<span class="sd">        [8]           7.2           5.8      2</span>
-<span class="sd">        [9]           7.4           6.1      2</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.classification.logistic_regression.train(frame, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;], &#39;Class&#39;, num_classes=3, optimizer=&#39;LBFGS&#39;, compute_covariance=True)</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.training_summary</span>
-<span class="sd">                        coefficients  degrees_freedom  standard_errors  \</span>
-<span class="sd">        intercept_0        -0.780153                1              NaN</span>
-<span class="sd">        Sepal_Length_1   -120.442165                1  28497036.888425</span>
-<span class="sd">        Sepal_Length_0    -63.683819                1  28504715.870243</span>
-<span class="sd">        intercept_1       -90.484405                1              NaN</span>
-<span class="sd">        Petal_Length_0    117.979824                1  36178481.415888</span>
-<span class="sd">        Petal_Length_1    206.339649                1  36172481.900910</span>
-
-<span class="sd">                        wald_statistic   p_value</span>
-<span class="sd">        intercept_0                NaN       NaN</span>
-<span class="sd">        Sepal_Length_1       -0.000004  1.000000</span>
-<span class="sd">        Sepal_Length_0       -0.000002  1.000000</span>
-<span class="sd">        intercept_1                NaN       NaN</span>
-<span class="sd">        Petal_Length_0        0.000003  0.998559</span>
-<span class="sd">        Petal_Length_1        0.000006  0.998094</span>
-
-<span class="sd">        &gt;&gt;&gt; model.training_summary.covariance_matrix.inspect()</span>
-<span class="sd">        [#]  Sepal_Length_0      Petal_Length_0      intercept_0</span>
-<span class="sd">        ===============================================================</span>
-<span class="sd">        [0]   8.12518826843e+14   -1050552809704907   5.66008788624e+14</span>
-<span class="sd">        [1]  -1.05055305606e+15   1.30888251756e+15   -3.5175956714e+14</span>
-<span class="sd">        [2]   5.66010683868e+14  -3.51761845892e+14  -2.52746479908e+15</span>
-<span class="sd">        [3]   8.12299962335e+14  -1.05039425964e+15   5.66614798332e+14</span>
-<span class="sd">        [4]  -1.05027789037e+15    1308665462990595    -352436215869081</span>
-<span class="sd">        [5]     566011198950063  -3.51665950639e+14   -2527929411221601</span>
-
-<span class="sd">        [#]  Sepal_Length_1      Petal_Length_1      intercept_1</span>
-<span class="sd">        ===============================================================</span>
-<span class="sd">        [0]     812299962806401  -1.05027764456e+15   5.66009303434e+14</span>
-<span class="sd">        [1]  -1.05039450654e+15   1.30866546361e+15  -3.51663671537e+14</span>
-<span class="sd">        [2]     566616693386615   -3.5243849435e+14   -2.5279294114e+15</span>
-<span class="sd">        [3]    8.1208111142e+14   -1050119118230513   5.66615352448e+14</span>
-<span class="sd">        [4]  -1.05011936458e+15   1.30844844687e+15   -3.5234036349e+14</span>
-<span class="sd">        [5]     566617247774244  -3.52342642321e+14   -2528394057347494</span>
-
-<span class="sd">        &gt;&gt;&gt; predict_frame = model.predict(frame, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; predict_frame.inspect()</span>
-<span class="sd">        [#]  Sepal_Length  Petal_Length  Class  predicted_label</span>
-<span class="sd">        =======================================================</span>
-<span class="sd">        [0]           4.9           1.4      0                0</span>
-<span class="sd">        [1]           4.7           1.3      0                0</span>
-<span class="sd">        [2]           4.6           1.5      0                0</span>
-<span class="sd">        [3]           6.3           4.9      1                1</span>
-<span class="sd">        [4]           6.1           4.7      1                1</span>
-<span class="sd">        [5]           6.4           4.3      1                1</span>
-<span class="sd">        [6]           6.6           4.4      1                1</span>
-<span class="sd">        [7]           7.2           6.0      2                2</span>
-<span class="sd">        [8]           7.2           5.8      2                2</span>
-<span class="sd">        [9]           7.4           6.1      2                2</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics = model.test(frame, &#39;Class&#39;, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics</span>
-<span class="sd">        accuracy         = 1.0</span>
-<span class="sd">        confusion_matrix =             Predicted_0.0  Predicted_1.0  Predicted_2.0</span>
-<span class="sd">        Actual_0.0              3              0              0</span>
-<span class="sd">        Actual_1.0              0              4              0</span>
-<span class="sd">        Actual_2.0              0              0              4</span>
-<span class="sd">        f_measure        = 1.0</span>
-<span class="sd">        precision        = 1.0</span>
-<span class="sd">        recall           = 1.0</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/logistic_regression&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/logistic_regression&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.training_summary.num_features == model.training_summary.num_features</span>
-<span class="sd">        True</span>
-
-<span class="sd">    The trained model can also be exported to a .mar file, to be used with the scoring engine:</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/logisticRegressionModel.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loads a Logistic Regression Model from a scala model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">LogisticRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column(s) containing the observations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumns</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">label_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name containing the label for each observation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">labelColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">frequency_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Optional column containing the frequency of observations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">frequencyColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of classes&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numClasses</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set type of optimizer.</span>
-<span class="sd">            LBFGS - Limited-memory BFGS.</span>
-<span class="sd">            LBFGS supports multinomial logistic regression.</span>
-<span class="sd">            SGD - Stochastic Gradient Descent.</span>
-<span class="sd">            SGD only supports binary logistic regression.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">optimizer</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">compute_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compute covariance matrix for the model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">computeCovariance</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;intercept column of training data.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">intercept</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">feature_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perform feature scaling before training model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">featureScaling</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Threshold for separating positive predictions from negative predictions.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">threshold</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set type of regularization</span>
-<span class="sd">            L1 - L1 regularization with sum of absolute values of coefficients</span>
-<span class="sd">            L2 - L2 regularization with sum of squares of coefficients&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regType</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Regularization parameter&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regParam</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Maximum number of iterations&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numIterations</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">convergence_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">convergenceTolerance</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_corrections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of corrections used in LBFGS update.</span>
-<span class="sd">            Default is 10.</span>
-<span class="sd">            Values of less than 3 are not recommended;</span>
-<span class="sd">            large values will result in excessive computing time.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numCorrections</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mini_batch_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fraction of data to be used for each SGD iteration&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">miniBatchFraction</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">stepSize</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">training_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Logistic regression summary table&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">LogisticRegressionSummaryTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">trainingSummary</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">observation_columns_predict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict labels for data points using trained logistic regression model.</span>
-
-<span class="sd">        Predict the labels for a test frame using trained logistic regression model, and create a new frame revision with</span>
-<span class="sd">        existing columns and a new predicted label&#39;s column.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns</span>
-<span class="sd">                              over which the model is trained.</span>
-<span class="sd">        :param observation_columns_predict: (None or list[str]) Column(s) containing the observations whose labels are</span>
-<span class="sd">                                            to be predicted. Default is the labels the model was trained on.</span>
-<span class="sd">        :return: (Frame) Frame containing the original frame&#39;s columns and a column with the predicted label.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">columns_option</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns_predict</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">columns_option</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">label_column</span><span class="p">,</span> <span class="n">observation_columns_test</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the predictions for observations in a test frame</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) Frame whose labels are to be predicted.</span>
-<span class="sd">        :param label_column: (str) Column containing the actual label for each observation.</span>
-<span class="sd">        :param observation_columns_test: (None or list[str]) Column(s) containing the observations whose labels are to</span>
-<span class="sd">                                         be predicted and tested. Default is to test over the columns the SVM model was</span>
-<span class="sd">                                        trained on.</span>
-<span class="sd">        :return: (ClassificationMetricsValue) Object with binary classification metrics</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">scala_classification_metrics_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">label_column</span><span class="p">,</span>
-                                                               <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span>
-                                                               <span class="n">observation_columns_test</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="n">scala_classification_metrics_object</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save the trained model to path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 
   </header>
 
@@ -1603,113 +1115,6 @@ table {
                  The covariance matrix is the inverse of the Hessian matrix for the trained model.
                  The Hessian matrix is the second-order partial derivatives of the model's log-likelihood function.</td></tr></table></p></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.train', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.train" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">label_column</span><span class="p">,</span>
-          <span class="n">frequency_column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-          <span class="n">num_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-          <span class="n">optimizer</span><span class="o">=</span><span class="s">&quot;LBFGS&quot;</span><span class="p">,</span>
-          <span class="n">compute_covariance</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">intercept</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">feature_scaling</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-          <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-          <span class="n">reg_type</span><span class="o">=</span><span class="s">&quot;L2&quot;</span><span class="p">,</span>
-          <span class="n">reg_param</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-          <span class="n">num_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-          <span class="n">convergence_tolerance</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-          <span class="n">num_corrections</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-          <span class="n">mini_batch_fraction</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-          <span class="n">step_size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">     Build logistic regression model.</span>
-
-<span class="sd">     Creating a Logistic Regression Model using the observation column and label column of the train frame.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) A frame to train the model on.</span>
-<span class="sd">    :param observation_columns: (List[str]) Column(s) containing the observations.</span>
-<span class="sd">    :param label_column: (str) Column name containing the label for each observation.</span>
-<span class="sd">    :param frequency_column:(Option[str]) Optional column containing the frequency of observations.</span>
-<span class="sd">    :param num_classes: (int) Number of classes</span>
-<span class="sd">    :param optimizer: (str) Set type of optimizer.</span>
-<span class="sd">                           LBFGS - Limited-memory BFGS.</span>
-<span class="sd">                           LBFGS supports multinomial logistic regression.</span>
-<span class="sd">                           SGD - Stochastic Gradient Descent.</span>
-<span class="sd">                           SGD only supports binary logistic regression.</span>
-<span class="sd">    :param compute_covariance: (bool) Compute covariance matrix for the model.</span>
-<span class="sd">    :param intercept: (bool) Add intercept column to training data.</span>
-<span class="sd">    :param feature_scaling: (bool) Perform feature scaling before training model.</span>
-<span class="sd">    :param threshold: (double) Threshold for separating positive predictions from negative predictions.</span>
-<span class="sd">    :param reg_type: (str) Set type of regularization</span>
-<span class="sd">                            L1 - L1 regularization with sum of absolute values of coefficients</span>
-<span class="sd">                            L2 - L2 regularization with sum of squares of coefficients</span>
-<span class="sd">    :param reg_param: (double) Regularization parameter</span>
-<span class="sd">    :param num_iterations: (int) Maximum number of iterations</span>
-<span class="sd">    :param convergence_tolerance: (double) Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.</span>
-<span class="sd">    :param num_corrections: (int) Number of corrections used in LBFGS update.</span>
-<span class="sd">                           Default is 10.</span>
-<span class="sd">                           Values of less than 3 are not recommended;</span>
-<span class="sd">                           large values will result in excessive computing time.</span>
-<span class="sd">    :param mini_batch_fraction: (double) Fraction of data to be used for each SGD iteration</span>
-<span class="sd">    :param step_size: (double) Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)</span>
-<span class="sd">    :return: (LogisticRegressionModel) A LogisticRegressionModel with a summary of the trained model.</span>
-<span class="sd">                     The data returned is composed of multiple components\:</span>
-<span class="sd">                     **int** : *numFeatures*</span>
-<span class="sd">                         Number of features in the training data</span>
-<span class="sd">                     **int** : *numClasses*</span>
-<span class="sd">                         Number of classes in the training data</span>
-<span class="sd">                     **table** : *summaryTable*</span>
-<span class="sd">                         A summary table composed of:</span>
-<span class="sd">                     **Frame** : *CovarianceMatrix (optional)*</span>
-<span class="sd">                         Covariance matrix of the trained model.</span>
-<span class="sd">                     The covariance matrix is the inverse of the Hessian matrix for the trained model.</span>
-<span class="sd">                     The Hessian matrix is the second-order partial derivatives of the model&#39;s log-likelihood function.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Frame cannot be None&quot;</span><span class="p">)</span>
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="n">observation_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">observation_columns</span><span class="p">]</span>
-
-    <span class="n">scala_observation_columns</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_vector_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-    <span class="n">scala_frequency_column</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">frequency_column</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">compute_covariance</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;compute_covariance must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">compute_covariance</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;intercept must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">intercept</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">feature_scaling</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;feature_scaling must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">feature_scaling</span><span class="p">))</span>
-
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">scala_observation_columns</span><span class="p">,</span>
-                                   <span class="n">label_column</span><span class="p">,</span>
-                                   <span class="n">scala_frequency_column</span><span class="p">,</span>
-                                   <span class="n">num_classes</span><span class="p">,</span>
-                                   <span class="n">optimizer</span><span class="p">,</span>
-                                   <span class="n">compute_covariance</span><span class="p">,</span>
-                                   <span class="n">intercept</span><span class="p">,</span>
-                                   <span class="n">feature_scaling</span><span class="p">,</span>
-                                   <span class="n">threshold</span><span class="p">,</span>
-                                   <span class="n">reg_type</span><span class="p">,</span>
-                                   <span class="n">reg_param</span><span class="p">,</span>
-                                   <span class="n">num_iterations</span><span class="p">,</span>
-                                   <span class="n">convergence_tolerance</span><span class="p">,</span>
-                                   <span class="n">num_corrections</span><span class="p">,</span>
-                                   <span class="n">mini_batch_fraction</span><span class="p">,</span>
-                                   <span class="nb">float</span><span class="p">(</span><span class="n">step_size</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">LogisticRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1724,15 +1129,13 @@ table {
     <div class="desc"><p>A trained logistic regression model</p>
 <div class='section-header'>Example:</div>
 
-<div class="codehilite"><pre>&gt;&gt;&gt; rows = [[4.9,1.4,0], [4.7,1.3,0], [4.6,1.5,0], [6.3,4.9,1],[6.1,4.7,1], [6.4,4.3,1], [6.6,4.4,1],[7.2,6.0,2], [7.2,5.8,2], [7.4,6.1,2], [7.9,6.4,2]]
-&gt;&gt;&gt; schema = [(&#39;Sepal_Length&#39;, float),(&#39;Petal_Length&#39;, float), (&#39;Class&#39;, int)]
+<pre><code>&gt;&gt;&gt; rows = [[4.9,1.4,0], [4.7,1.3,0], [4.6,1.5,0], [6.3,4.9,1],[6.1,4.7,1], [6.4,4.3,1], [6.6,4.4,1],[7.2,6.0,2], [7.2,5.8,2], [7.4,6.1,2], [7.9,6.4,2]]
+&gt;&gt;&gt; schema = [('Sepal_Length', float),('Petal_Length', float), ('Class', int)]
 &gt;&gt;&gt; frame = tc.frame.create(rows, schema)
 [===Job Progress===]
-</pre></div>
-
-
+</code></pre>
 <p>Consider the following frame containing three columns.</p>
-<div class="codehilite"><pre>&gt;&gt;&gt; frame.inspect()
+<pre><code>&gt;&gt;&gt; frame.inspect()
 [#]  Sepal_Length  Petal_Length  Class
 ======================================
 [0]           4.9           1.4      0
@@ -1746,7 +1149,7 @@ table {
 [8]           7.2           5.8      2
 [9]           7.4           6.1      2
 
-&gt;&gt;&gt; model = tc.models.classification.logistic_regression.train(frame, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;], &#39;Class&#39;, num_classes=3, optimizer=&#39;LBFGS&#39;, compute_covariance=True)
+&gt;&gt;&gt; model = tc.models.classification.logistic_regression.train(frame, ['Sepal_Length', 'Petal_Length'], 'Class', num_classes=3, optimizer='LBFGS', compute_covariance=True)
 [===Job Progress===]
 
 &gt;&gt;&gt; model.training_summary
@@ -1784,7 +1187,7 @@ Petal_Length_1        0.000006  0.998094
 [4]  -1.05011936458e+15   1.30844844687e+15   -3.5234036349e+14
 [5]     566617247774244  -3.52342642321e+14   -2528394057347494
 
-&gt;&gt;&gt; predict_frame = model.predict(frame, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;])
+&gt;&gt;&gt; predict_frame = model.predict(frame, ['Sepal_Length', 'Petal_Length'])
 [===Job Progress===]
 
 &gt;&gt;&gt; predict_frame.inspect()
@@ -1801,7 +1204,7 @@ Petal_Length_1        0.000006  0.998094
 [8]           7.2           5.8      2                2
 [9]           7.4           6.1      2                2
 
-&gt;&gt;&gt; test_metrics = model.test(frame, &#39;Class&#39;, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;])
+&gt;&gt;&gt; test_metrics = model.test(frame, 'Class', ['Sepal_Length', 'Petal_Length'])
 [===Job Progress===]
 
 &gt;&gt;&gt; test_metrics
@@ -1814,305 +1217,17 @@ f_measure        = 1.0
 precision        = 1.0
 recall           = 1.0
 
-&gt;&gt;&gt; model.save(&quot;sandbox/logistic_regression&quot;)
+&gt;&gt;&gt; model.save("sandbox/logistic_regression")
 
-&gt;&gt;&gt; restored = tc.load(&quot;sandbox/logistic_regression&quot;)
+&gt;&gt;&gt; restored = tc.load("sandbox/logistic_regression")
 
 &gt;&gt;&gt; restored.training_summary.num_features == model.training_summary.num_features
 True
-</pre></div>
-
-
+</code></pre>
 <p>The trained model can also be exported to a .mar file, to be used with the scoring engine:</p>
-<div class="codehilite"><pre>&gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/logisticRegressionModel.mar&quot;)
-</pre></div></div>
+<pre><code>&gt;&gt;&gt; canonical_path = model.export_to_mar("sandbox/logisticRegressionModel.mar")
+</code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">LogisticRegressionModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained logistic regression model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    --------</span>
-
-<span class="sd">        &gt;&gt;&gt; rows = [[4.9,1.4,0], [4.7,1.3,0], [4.6,1.5,0], [6.3,4.9,1],[6.1,4.7,1], [6.4,4.3,1], [6.6,4.4,1],[7.2,6.0,2], [7.2,5.8,2], [7.4,6.1,2], [7.9,6.4,2]]</span>
-<span class="sd">        &gt;&gt;&gt; schema = [(&#39;Sepal_Length&#39;, float),(&#39;Petal_Length&#39;, float), (&#39;Class&#39;, int)]</span>
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create(rows, schema)</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">    Consider the following frame containing three columns.</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  Sepal_Length  Petal_Length  Class</span>
-<span class="sd">        ======================================</span>
-<span class="sd">        [0]           4.9           1.4      0</span>
-<span class="sd">        [1]           4.7           1.3      0</span>
-<span class="sd">        [2]           4.6           1.5      0</span>
-<span class="sd">        [3]           6.3           4.9      1</span>
-<span class="sd">        [4]           6.1           4.7      1</span>
-<span class="sd">        [5]           6.4           4.3      1</span>
-<span class="sd">        [6]           6.6           4.4      1</span>
-<span class="sd">        [7]           7.2           6.0      2</span>
-<span class="sd">        [8]           7.2           5.8      2</span>
-<span class="sd">        [9]           7.4           6.1      2</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.classification.logistic_regression.train(frame, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;], &#39;Class&#39;, num_classes=3, optimizer=&#39;LBFGS&#39;, compute_covariance=True)</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; model.training_summary</span>
-<span class="sd">                        coefficients  degrees_freedom  standard_errors  \</span>
-<span class="sd">        intercept_0        -0.780153                1              NaN</span>
-<span class="sd">        Sepal_Length_1   -120.442165                1  28497036.888425</span>
-<span class="sd">        Sepal_Length_0    -63.683819                1  28504715.870243</span>
-<span class="sd">        intercept_1       -90.484405                1              NaN</span>
-<span class="sd">        Petal_Length_0    117.979824                1  36178481.415888</span>
-<span class="sd">        Petal_Length_1    206.339649                1  36172481.900910</span>
-
-<span class="sd">                        wald_statistic   p_value</span>
-<span class="sd">        intercept_0                NaN       NaN</span>
-<span class="sd">        Sepal_Length_1       -0.000004  1.000000</span>
-<span class="sd">        Sepal_Length_0       -0.000002  1.000000</span>
-<span class="sd">        intercept_1                NaN       NaN</span>
-<span class="sd">        Petal_Length_0        0.000003  0.998559</span>
-<span class="sd">        Petal_Length_1        0.000006  0.998094</span>
-
-<span class="sd">        &gt;&gt;&gt; model.training_summary.covariance_matrix.inspect()</span>
-<span class="sd">        [#]  Sepal_Length_0      Petal_Length_0      intercept_0</span>
-<span class="sd">        ===============================================================</span>
-<span class="sd">        [0]   8.12518826843e+14   -1050552809704907   5.66008788624e+14</span>
-<span class="sd">        [1]  -1.05055305606e+15   1.30888251756e+15   -3.5175956714e+14</span>
-<span class="sd">        [2]   5.66010683868e+14  -3.51761845892e+14  -2.52746479908e+15</span>
-<span class="sd">        [3]   8.12299962335e+14  -1.05039425964e+15   5.66614798332e+14</span>
-<span class="sd">        [4]  -1.05027789037e+15    1308665462990595    -352436215869081</span>
-<span class="sd">        [5]     566011198950063  -3.51665950639e+14   -2527929411221601</span>
-
-<span class="sd">        [#]  Sepal_Length_1      Petal_Length_1      intercept_1</span>
-<span class="sd">        ===============================================================</span>
-<span class="sd">        [0]     812299962806401  -1.05027764456e+15   5.66009303434e+14</span>
-<span class="sd">        [1]  -1.05039450654e+15   1.30866546361e+15  -3.51663671537e+14</span>
-<span class="sd">        [2]     566616693386615   -3.5243849435e+14   -2.5279294114e+15</span>
-<span class="sd">        [3]    8.1208111142e+14   -1050119118230513   5.66615352448e+14</span>
-<span class="sd">        [4]  -1.05011936458e+15   1.30844844687e+15   -3.5234036349e+14</span>
-<span class="sd">        [5]     566617247774244  -3.52342642321e+14   -2528394057347494</span>
-
-<span class="sd">        &gt;&gt;&gt; predict_frame = model.predict(frame, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; predict_frame.inspect()</span>
-<span class="sd">        [#]  Sepal_Length  Petal_Length  Class  predicted_label</span>
-<span class="sd">        =======================================================</span>
-<span class="sd">        [0]           4.9           1.4      0                0</span>
-<span class="sd">        [1]           4.7           1.3      0                0</span>
-<span class="sd">        [2]           4.6           1.5      0                0</span>
-<span class="sd">        [3]           6.3           4.9      1                1</span>
-<span class="sd">        [4]           6.1           4.7      1                1</span>
-<span class="sd">        [5]           6.4           4.3      1                1</span>
-<span class="sd">        [6]           6.6           4.4      1                1</span>
-<span class="sd">        [7]           7.2           6.0      2                2</span>
-<span class="sd">        [8]           7.2           5.8      2                2</span>
-<span class="sd">        [9]           7.4           6.1      2                2</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics = model.test(frame, &#39;Class&#39;, [&#39;Sepal_Length&#39;, &#39;Petal_Length&#39;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics</span>
-<span class="sd">        accuracy         = 1.0</span>
-<span class="sd">        confusion_matrix =             Predicted_0.0  Predicted_1.0  Predicted_2.0</span>
-<span class="sd">        Actual_0.0              3              0              0</span>
-<span class="sd">        Actual_1.0              0              4              0</span>
-<span class="sd">        Actual_2.0              0              0              4</span>
-<span class="sd">        f_measure        = 1.0</span>
-<span class="sd">        precision        = 1.0</span>
-<span class="sd">        recall           = 1.0</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/logistic_regression&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/logistic_regression&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.training_summary.num_features == model.training_summary.num_features</span>
-<span class="sd">        True</span>
-
-<span class="sd">    The trained model can also be exported to a .mar file, to be used with the scoring engine:</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/logisticRegressionModel.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loads a Logistic Regression Model from a scala model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">LogisticRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column(s) containing the observations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumns</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">label_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name containing the label for each observation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">labelColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">frequency_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Optional column containing the frequency of observations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">frequencyColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of classes&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numClasses</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set type of optimizer.</span>
-<span class="sd">            LBFGS - Limited-memory BFGS.</span>
-<span class="sd">            LBFGS supports multinomial logistic regression.</span>
-<span class="sd">            SGD - Stochastic Gradient Descent.</span>
-<span class="sd">            SGD only supports binary logistic regression.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">optimizer</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">compute_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compute covariance matrix for the model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">computeCovariance</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;intercept column of training data.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">intercept</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">feature_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perform feature scaling before training model.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">featureScaling</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Threshold for separating positive predictions from negative predictions.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">threshold</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set type of regularization</span>
-<span class="sd">            L1 - L1 regularization with sum of absolute values of coefficients</span>
-<span class="sd">            L2 - L2 regularization with sum of squares of coefficients&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regType</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Regularization parameter&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regParam</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Maximum number of iterations&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numIterations</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">convergence_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convergence tolerance of iterations for L-BFGS. Smaller value will lead to higher accuracy with the cost of more iterations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">convergenceTolerance</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_corrections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of corrections used in LBFGS update.</span>
-<span class="sd">            Default is 10.</span>
-<span class="sd">            Values of less than 3 are not recommended;</span>
-<span class="sd">            large values will result in excessive computing time.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numCorrections</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mini_batch_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fraction of data to be used for each SGD iteration&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">miniBatchFraction</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">stepSize</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">training_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Logistic regression summary table&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">LogisticRegressionSummaryTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">trainingSummary</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">observation_columns_predict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict labels for data points using trained logistic regression model.</span>
-
-<span class="sd">        Predict the labels for a test frame using trained logistic regression model, and create a new frame revision with</span>
-<span class="sd">        existing columns and a new predicted label&#39;s column.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns</span>
-<span class="sd">                              over which the model is trained.</span>
-<span class="sd">        :param observation_columns_predict: (None or list[str]) Column(s) containing the observations whose labels are</span>
-<span class="sd">                                            to be predicted. Default is the labels the model was trained on.</span>
-<span class="sd">        :return: (Frame) Frame containing the original frame&#39;s columns and a column with the predicted label.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">columns_option</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns_predict</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">columns_option</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">label_column</span><span class="p">,</span> <span class="n">observation_columns_test</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the predictions for observations in a test frame</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) Frame whose labels are to be predicted.</span>
-<span class="sd">        :param label_column: (str) Column containing the actual label for each observation.</span>
-<span class="sd">        :param observation_columns_test: (None or list[str]) Column(s) containing the observations whose labels are to</span>
-<span class="sd">                                         be predicted and tested. Default is to test over the columns the SVM model was</span>
-<span class="sd">                                        trained on.</span>
-<span class="sd">        :return: (ClassificationMetricsValue) Object with binary classification metrics</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">scala_classification_metrics_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">label_column</span><span class="p">,</span>
-                                                               <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span>
-                                                               <span class="n">observation_columns_test</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="n">scala_classification_metrics_object</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save the trained model to path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
 
@@ -2331,15 +1446,6 @@ L2 - L2 regularization with sum of squares of coefficients</p></div>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-    <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2361,22 +1467,6 @@ L2 - L2 regularization with sum of squares of coefficients</p></div>
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(str): </td><td class='param-desc'>Full path to the saved .mar file</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.export_to_mar', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.export_to_mar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Exports the trained model as a model archive (.mar) to the specified path.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) Path to save the trained model</span>
-<span class="sd">    :return: (str) Full path to the saved .mar file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2405,27 +1495,6 @@ existing columns and a new predicted label's column.</p>
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the original frame's columns and a column with the predicted label.</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.predict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.predict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">observation_columns_predict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Predict labels for data points using trained logistic regression model.</span>
-<span class="sd">    Predict the labels for a test frame using trained logistic regression model, and create a new frame revision with</span>
-<span class="sd">    existing columns and a new predicted label&#39;s column.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns</span>
-<span class="sd">                          over which the model is trained.</span>
-<span class="sd">    :param observation_columns_predict: (None or list[str]) Column(s) containing the observations whose labels are</span>
-<span class="sd">                                        to be predicted. Default is the labels the model was trained on.</span>
-<span class="sd">    :return: (Frame) Frame containing the original frame&#39;s columns and a column with the predicted label.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">columns_option</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns_predict</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-    <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">columns_option</span><span class="p">))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2444,19 +1513,6 @@ existing columns and a new predicted label's column.</p>
 
 <table><tr><td class='param-name'>path</td><td class='param-type'>(str):</td><td class='param-desc'>Path to save</td></tr></table></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.save', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.save" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Save the trained model to path</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) Path to save</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2486,27 +1542,6 @@ existing columns and a new predicted label's column.</p>
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(ClassificationMetricsValue): </td><td class='param-desc'>Object with binary classification metrics</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.test', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.test" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">label_column</span><span class="p">,</span> <span class="n">observation_columns_test</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the predictions for observations in a test frame</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param frame: (Frame) Frame whose labels are to be predicted.</span>
-<span class="sd">    :param label_column: (str) Column containing the actual label for each observation.</span>
-<span class="sd">    :param observation_columns_test: (None or list[str]) Column(s) containing the observations whose labels are to</span>
-<span class="sd">                                     be predicted and tested. Default is to test over the columns the SVM model was</span>
-<span class="sd">                                    trained on.</span>
-<span class="sd">    :return: (ClassificationMetricsValue) Object with binary classification metrics</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">scala_classification_metrics_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">label_column</span><span class="p">,</span>
-                                                           <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span>
-                                                           <span class="n">observation_columns_test</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="n">scala_classification_metrics_object</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2521,15 +1556,6 @@ existing columns and a new predicted label's column.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.to_dict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.to_dict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">()</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">d</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2544,13 +1570,6 @@ existing columns and a new predicted label's column.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.to_json', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.logistic_regression.LogisticRegressionModel.to_json" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>

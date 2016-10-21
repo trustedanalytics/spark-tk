@@ -1,0 +1,1844 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>sparktk.sparkconf API documentation</title>
+    <meta name="description" content="Sets up Spark Context" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
+  }
+  #content {
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
+  }
+  #sidebar {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+    overflow: auto;
+    height: 100%;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #fixed_top_left {
+    display: block;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
+  }
+
+  #footer {
+    font-size: .75em;
+    margin-top: 20px;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 20px 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+      
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.sparkconf.CORE_TARGET">CORE_TARGET</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.LIB_DIR">LIB_DIR</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.SPARK_ASSEMBLY_SEARCH">SPARK_ASSEMBLY_SEARCH</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.default_spark_home">default_spark_home</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.default_spark_master">default_spark_master</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.default_sparktk_home">default_sparktk_home</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.logger">logger</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.sparkconf.create_sc">create_sc</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.get_jars_and_classpaths">get_jars_and_classpaths</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.get_source_code_target_dir">get_source_code_target_dir</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.get_spark_dirs">get_spark_dirs</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.get_sparktk_dirs">get_sparktk_dirs</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.print_bash_cmds_for_sparktk_env">print_bash_cmds_for_sparktk_env</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.set_env">set_env</a></li>
+    <li class="mono"><a href="#sparktk.sparkconf.set_env_for_sparktk">set_env_for_sparktk</a></li>
+  </ul>
+
+    </li>
+
+
+    </ul>
+  </div>
+
+      <article id="content">
+        <div>
+        
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">sparktk.sparkconf</span> module</h1>
+  <p>Sets up Spark Context</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf" class="source">
+    <pre><code># vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+"""Sets up Spark Context"""
+
+import os
+import shutil
+import atexit
+import glob2
+from pyspark import SparkContext, SparkConf
+from zip import zip_sparktk
+
+LIB_DIR="dependencies"
+SPARK_ASSEMBLY_SEARCH="**/spark-assembly*.jar"
+CORE_TARGET="sparktk-core/target"
+import logging
+logger = logging.getLogger('sparktk')
+
+def get_source_code_target_dir():
+    """gets the core/target folder as if this is running from source code"""
+    d = os.path.dirname
+    root = os.path.join(d(d(d(os.path.abspath(__file__)))))
+    target = os.path.join(root, CORE_TARGET)
+    return target
+
+
+# default values -- DO NOT CHANGE freely, instead change the environ variables
+default_spark_home = '/opt/cloudera/parcels/CDH/lib/spark'
+default_sparktk_home = get_source_code_target_dir()
+default_spark_master = 'local[4]'
+
+
+def set_env(name, value):
+    """helper to set env w/ log"""
+    logger.info("sparktk.sparkconf making $%s=%s" % (name, value))
+    os.environ[name] = value
+
+
+def get_jars_and_classpaths(dirs):
+    """
+    Helper which creates a tuple of two strings for the given dirs:
+
+    1. jars string - a comma-separated list of all the .jar files in the given directories
+    2. classpath string - a colon-separate list of all the given directories with a /* wildcard added
+
+    :param dirs: a str or list of str specifying the directors to use for building the jar strings
+    :return: (jars, classpath)
+    """
+    classpath = ':'.join(["%s/*" % d for d in dirs])
+
+    # list of tuples with the directory and jar file
+    dir_jar = [(d, f) for d in dirs for f in os.listdir(d) if f.endswith('.jar')]
+
+    # Get jar file list without any duplicate jars (use the one from the first directory it's found in).  If
+    # we don't remove duplicates, we get warnings about the jar already having been registered.
+    distinct_jars = set()
+    jar_files = []
+    for dir, jar in dir_jar:
+        if jar not in distinct_jars:
+            jar_files.append(os.path.join(dir, jar))
+            distinct_jars.add(jar)
+
+    jars = ','.join(jar_files)
+    return jars, classpath
+
+def get_spark_dirs():
+    try:
+        spark_home = os.environ['SPARK_HOME']
+    except KeyError:
+        raise RuntimeError("Missing value for environment variable SPARK_HOME.")
+
+    spark_assembly_search = glob2.glob(os.path.join(spark_home,SPARK_ASSEMBLY_SEARCH))
+    if len(spark_assembly_search) > 0:
+        spark_assembly = os.path.dirname(spark_assembly_search[0])
+    else:
+        raise RuntimeError("Couldn't find spark assembly jar")
+
+    return [spark_assembly]
+
+
+def get_sparktk_dirs():
+    """returns the folders which contain all the jars required to run sparktk"""
+    # todo: revisit when packaging is resolved, right now this assumes source code/build folder structure
+
+    try:
+        sparktk_home = os.environ['SPARKTK_HOME']
+    except KeyError:
+        raise RuntimeError("Missing value for SPARKTK_HOME.  Try setting $SPARKTK_HOME or the kwarg 'sparktk_home'")
+
+    dirs = [sparktk_home,
+            os.path.join(sparktk_home, LIB_DIR)]   # the /dependencies folder
+    return dirs
+
+
+def print_bash_cmds_for_sparktk_env():
+    """prints export cmds for each env var set by set_env_for_sparktk, for use in a bash script"""
+    # see ../gopyspark.sh
+    for name in ['SPARK_HOME',
+                 'SPARKTK_HOME',
+                 'PYSPARK_PYTHON',
+                 'PYSPARK_DRIVER_PYTHON',
+                 'PYSPARK_SUBMIT_ARGS',
+                 'SPARK_JAVA_OPTS',
+                 ]:
+        value = os.environ.get(name, None)
+        if value:
+            print "export %s='%s'" % (name, value)  # require the single-quotes because of spaces in the values
+
+
+def set_env_for_sparktk(spark_home=None,
+                        sparktk_home=None,
+                        pyspark_submit_args=None,
+                        other_libs=None,
+                        debug=None):
+
+    """Set env vars necessary to start up a Spark Context with sparktk"""
+
+    if spark_home:
+        set_env('SPARK_HOME', spark_home)
+    elif 'SPARK_HOME' not in os.environ:
+        set_env('SPARK_HOME', default_spark_home)
+
+    if sparktk_home:
+        set_env('SPARKTK_HOME', sparktk_home)
+    elif 'SPARKTK_HOME' not in os.environ:
+        set_env('SPARKTK_HOME', default_sparktk_home)
+
+    if not os.environ.get('PYSPARK_DRIVER_PYTHON'):
+        set_env('PYSPARK_DRIVER_PYTHON', 'python2.7')
+
+    if not os.environ.get('PYSPARK_PYTHON'):
+        set_env('PYSPARK_PYTHON', 'python2.7')
+
+    # Validate other libraries to verify they have the required functions
+    other_libs = _validate_other_libs(other_libs)
+
+    # Everything else go in PYSPARK_SUBMIT_ARGS
+    spark_dirs = get_spark_dirs()
+    spark_dirs.extend(get_sparktk_dirs())
+
+    # Get library directories from other_libs
+    if other_libs is not None:
+        for other_lib in other_libs:
+            other_lib_dirs = other_lib.get_library_dirs()
+            spark_dirs.extend(other_lib_dirs)
+
+    jars, driver_class_path = get_jars_and_classpaths(spark_dirs)
+
+    if not pyspark_submit_args:
+        using_env = True
+        pyspark_submit_args = os.environ.get('PYSPARK_SUBMIT_ARGS', '')
+    else:
+        using_env = False
+
+    pieces = pyspark_submit_args.split()
+    if ('--jars' in pieces) ^ ('--driver-class-path' in pieces):
+        # Pyspark bug where --jars doesn't add to driver path  https://github.com/apache/spark/pull/11687
+        # fix targeted for Spark 2.0, back-port to 1.6 unlikely
+        msg = "If setting --jars or --driver-class-path in pyspark_submit_args, both must be set (due to Spark): "
+        if using_env:
+            msg += "$PYSPARK_SUBMIT_ARGS=%s" % os.environ['PYSPARK_SUBMIT_ARGS']
+        else:
+            msg += "pyspark_submit_args=%s" % pyspark_submit_args
+        raise ValueError(msg)
+
+    jars_value_index = next((i for i, x in enumerate(pieces) if x == '--jars'), -1) + 1
+    if jars_value_index > 0:
+        pieces[jars_value_index] = ','.join([pieces[jars_value_index], jars])
+        driver_class_path_value_index = pieces.index('--driver-class-path') + 1
+        pieces[driver_class_path_value_index] = ':'.join([pieces[driver_class_path_value_index], driver_class_path])
+    else:
+        pieces = ['--jars', jars, '--driver-class-path', driver_class_path]
+
+    pyspark_submit_args = ' '.join(pieces)
+
+    set_env('PYSPARK_SUBMIT_ARGS', pyspark_submit_args)
+
+    if debug:
+        print "Adding args for remote java debugger"
+        try:
+            address = int(debug)
+        except:
+            address = 5005  # default
+        details = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address
+        set_env('SPARK_JAVA_OPTS', details)
+
+
+def create_sc(master=None,
+              py_files=None,
+              spark_home=None,
+              sparktk_home=None,
+              pyspark_submit_args=None,
+              app_name="sparktk",
+              other_libs=None,
+              extra_conf=None,
+              use_local_fs=False,
+              debug=None):
+    """
+    Creates a SparkContext with sparktk defaults
+
+    Many parameters can be overwritten
+
+    :param master: (str) spark master setting; for ex. 'local[4]' or 'yarn-client'
+    :param py_files: (list) list of str of paths to python dependencies; Note the the current python
+    package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
+    :param spark_home: (str) override $SPARK_HOME, the location of spark
+    :param sparktk_home: (str) override $SPARKTK_HOME, the location of spark-tk
+    :param pyspark_submit_args: (str) extra args passed to the pyspark submit
+    :param app_name: (str) name of spark app that will be created
+    :param other_libs: (list) other libraries (actual packages/modules) that are compatible with spark-tk,
+                       which need to be added to the spark context.  These libraries must be developed for usage with
+                       spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+    :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
+    :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
+    :return: pyspark SparkContext
+    """
+
+    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
+
+    # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
+    set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))
+
+    if not master:
+        master = default_spark_master
+        logger.info("sparktk.create_sc() master not specified, setting to %s", master)
+
+    conf = SparkConf().setMaster(master).setAppName(app_name)
+    if extra_conf:
+        for k, v in extra_conf.items():
+            conf = conf.set(k, v)
+
+    if use_local_fs:
+        conf.set("spark.hadoop.fs.default.name", "file:///")
+
+    if not py_files:
+        py_files = []
+
+    # zip up the relevant pieces of sparktk and put it in the py_files...
+    path = zip_sparktk()
+    tmp_dir = os.path.dirname(path)
+    logger.info("sparkconf created tmp dir for sparktk.zip %s" % tmp_dir)
+    atexit.register(shutil.rmtree, tmp_dir)  # make python delete this folder when it shuts down
+
+    py_files.append(path)
+
+    msg = '\n'.join(["=" * 80,
+                     "Creating SparkContext with the following SparkConf",
+                     "pyFiles=%s" % str(py_files),
+                     conf.toDebugString(),
+                     "=" * 80])
+    logger.info(msg)
+
+    sc = SparkContext(conf=conf, pyFiles=py_files)
+
+    return sc
+
+def _validate_other_libs(other_libs):
+    """
+    Validates the other_libs parameter.  Makes it a list, if it isn't already and verifies that all the items in the
+    list are python modules with the required functions.
+
+    Raises a TypeError, if the other_libs parameter is not valid.
+
+    :param other_libs: parameter to validate
+    :return: validated other_libs parameter
+    """
+    if other_libs is not None:
+        if not isinstance(other_libs, list):
+            other_libs = [other_libs]
+        import types
+        # todo: formalize and document the 'other_libs' for integration with spark-tk
+        required_functions = ["get_loaders","get_main_object","get_library_dirs"]
+        for lib in other_libs:
+            if not isinstance(lib, types.ModuleType):
+                raise TypeError("Expected other_libs to contain python modules, but received %s." % type(lib) )
+            for required_function in required_functions:
+                if not hasattr(lib, required_function):
+                    raise TypeError("other_lib '%s' is missing %s() function." % (lib.__name__,required_function))
+    return other_libs
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="sparktk.sparkconf.CORE_TARGET" class="name">var <span class="ident">CORE_TARGET</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.sparkconf.LIB_DIR" class="name">var <span class="ident">LIB_DIR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.sparkconf.SPARK_ASSEMBLY_SEARCH" class="name">var <span class="ident">SPARK_ASSEMBLY_SEARCH</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.sparkconf.default_spark_home" class="name">var <span class="ident">default_spark_home</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.sparkconf.default_spark_master" class="name">var <span class="ident">default_spark_master</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.sparkconf.default_sparktk_home" class="name">var <span class="ident">default_sparktk_home</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.sparkconf.logger" class="name">var <span class="ident">logger</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.create_sc">
+    <p>def <span class="ident">create_sc</span>(</p><p>master=None, py_files=None, spark_home=None, sparktk_home=None, pyspark_submit_args=None, app_name=&#39;sparktk&#39;, other_libs=None, extra_conf=None, use_local_fs=False, debug=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Creates a SparkContext with sparktk defaults</p>
+<p>Many parameters can be overwritten</p>
+<table><tr><td class='param-name'>master</td><td class='param-type'>(str):</td><td class='param-desc'>spark master setting; for ex. 'local[4]' or 'yarn-client'
+</td></tr></table>
+
+<table><tr><td class='param-name'>py_files</td><td class='param-type'>(list):</td><td class='param-desc'>list of str of paths to python dependencies; Note the the current python
+package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
+</td></tr></table>
+
+<table><tr><td class='param-name'>spark_home</td><td class='param-type'>(str):</td><td class='param-desc'>override $SPARK_HOME, the location of spark
+</td></tr></table>
+
+<table><tr><td class='param-name'>sparktk_home</td><td class='param-type'>(str):</td><td class='param-desc'>override $SPARKTK_HOME, the location of spark-tk
+</td></tr></table>
+
+<table><tr><td class='param-name'>pyspark_submit_args</td><td class='param-type'>(str):</td><td class='param-desc'>extra args passed to the pyspark submit
+</td></tr></table>
+
+<table><tr><td class='param-name'>app_name</td><td class='param-type'>(str):</td><td class='param-desc'>name of spark app that will be created
+</td></tr></table>
+
+<table><tr><td class='param-name'>other_libs</td><td class='param-type'>(list):</td><td class='param-desc'>other libraries (actual packages/modules) that are compatible with spark-tk,
+                   which need to be added to the spark context.  These libraries must be developed for usage with
+                   spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+</td></tr></table>
+
+<table><tr><td class='param-name'>extra_conf</td><td class='param-type'>(dict):</td><td class='param-desc'>dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+</td></tr></table>
+
+<table><tr><td class='param-name'>use_local_fs</td><td class='param-type'>(bool):</td><td class='param-desc'>simpler way to specify using local file system, rather than hdfs or other
+</td></tr></table>
+
+<table><tr><td class='param-name'>debug</td><td class='param-type'>(int or str):</td><td class='param-desc'>provide an port address to attach a debugger to the JVM that gets started
+</td></tr></table>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns: </td><td class='param-desc'>pyspark SparkContext</td></tr></table></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.create_sc', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.create_sc" class="source">
+    <pre><code>def create_sc(master=None,
+              py_files=None,
+              spark_home=None,
+              sparktk_home=None,
+              pyspark_submit_args=None,
+              app_name="sparktk",
+              other_libs=None,
+              extra_conf=None,
+              use_local_fs=False,
+              debug=None):
+    """
+    Creates a SparkContext with sparktk defaults
+
+    Many parameters can be overwritten
+
+    :param master: (str) spark master setting; for ex. 'local[4]' or 'yarn-client'
+    :param py_files: (list) list of str of paths to python dependencies; Note the the current python
+    package will be freshly zipped up and put in a tmp folder for shipping by spark, and then removed
+    :param spark_home: (str) override $SPARK_HOME, the location of spark
+    :param sparktk_home: (str) override $SPARKTK_HOME, the location of spark-tk
+    :param pyspark_submit_args: (str) extra args passed to the pyspark submit
+    :param app_name: (str) name of spark app that will be created
+    :param other_libs: (list) other libraries (actual packages/modules) that are compatible with spark-tk,
+                       which need to be added to the spark context.  These libraries must be developed for usage with
+                       spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
+    :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
+    :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
+    :return: pyspark SparkContext
+    """
+
+    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
+
+    # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
+    set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))
+
+    if not master:
+        master = default_spark_master
+        logger.info("sparktk.create_sc() master not specified, setting to %s", master)
+
+    conf = SparkConf().setMaster(master).setAppName(app_name)
+    if extra_conf:
+        for k, v in extra_conf.items():
+            conf = conf.set(k, v)
+
+    if use_local_fs:
+        conf.set("spark.hadoop.fs.default.name", "file:///")
+
+    if not py_files:
+        py_files = []
+
+    # zip up the relevant pieces of sparktk and put it in the py_files...
+    path = zip_sparktk()
+    tmp_dir = os.path.dirname(path)
+    logger.info("sparkconf created tmp dir for sparktk.zip %s" % tmp_dir)
+    atexit.register(shutil.rmtree, tmp_dir)  # make python delete this folder when it shuts down
+
+    py_files.append(path)
+
+    msg = '\n'.join(["=" * 80,
+                     "Creating SparkContext with the following SparkConf",
+                     "pyFiles=%s" % str(py_files),
+                     conf.toDebugString(),
+                     "=" * 80])
+    logger.info(msg)
+
+    sc = SparkContext(conf=conf, pyFiles=py_files)
+
+    return sc
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.get_jars_and_classpaths">
+    <p>def <span class="ident">get_jars_and_classpaths</span>(</p><p>dirs)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Helper which creates a tuple of two strings for the given dirs:</p>
+<ol>
+<li>jars string - a comma-separated list of all the .jar files in the given directories</li>
+<li>classpath string - a colon-separate list of all the given directories with a /* wildcard added</li>
+</ol>
+<table><tr><td class='param-name'>dirs: </td><td class='param-desc'>a str or list of str specifying the directors to use for building the jar strings
+</td></tr></table>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns: </td><td class='param-desc'>(jars, classpath)</td></tr></table></p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.get_jars_and_classpaths', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.get_jars_and_classpaths" class="source">
+    <pre><code>def get_jars_and_classpaths(dirs):
+    """
+    Helper which creates a tuple of two strings for the given dirs:
+
+    1. jars string - a comma-separated list of all the .jar files in the given directories
+    2. classpath string - a colon-separate list of all the given directories with a /* wildcard added
+
+    :param dirs: a str or list of str specifying the directors to use for building the jar strings
+    :return: (jars, classpath)
+    """
+    classpath = ':'.join(["%s/*" % d for d in dirs])
+
+    # list of tuples with the directory and jar file
+    dir_jar = [(d, f) for d in dirs for f in os.listdir(d) if f.endswith('.jar')]
+
+    # Get jar file list without any duplicate jars (use the one from the first directory it's found in).  If
+    # we don't remove duplicates, we get warnings about the jar already having been registered.
+    distinct_jars = set()
+    jar_files = []
+    for dir, jar in dir_jar:
+        if jar not in distinct_jars:
+            jar_files.append(os.path.join(dir, jar))
+            distinct_jars.add(jar)
+
+    jars = ','.join(jar_files)
+    return jars, classpath
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.get_source_code_target_dir">
+    <p>def <span class="ident">get_source_code_target_dir</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>gets the core/target folder as if this is running from source code</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.get_source_code_target_dir', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.get_source_code_target_dir" class="source">
+    <pre><code>def get_source_code_target_dir():
+    """gets the core/target folder as if this is running from source code"""
+    d = os.path.dirname
+    root = os.path.join(d(d(d(os.path.abspath(__file__)))))
+    target = os.path.join(root, CORE_TARGET)
+    return target
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.get_spark_dirs">
+    <p>def <span class="ident">get_spark_dirs</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.get_spark_dirs', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.get_spark_dirs" class="source">
+    <pre><code>def get_spark_dirs():
+    try:
+        spark_home = os.environ['SPARK_HOME']
+    except KeyError:
+        raise RuntimeError("Missing value for environment variable SPARK_HOME.")
+
+    spark_assembly_search = glob2.glob(os.path.join(spark_home,SPARK_ASSEMBLY_SEARCH))
+    if len(spark_assembly_search) > 0:
+        spark_assembly = os.path.dirname(spark_assembly_search[0])
+    else:
+        raise RuntimeError("Couldn't find spark assembly jar")
+
+    return [spark_assembly]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.get_sparktk_dirs">
+    <p>def <span class="ident">get_sparktk_dirs</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>returns the folders which contain all the jars required to run sparktk</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.get_sparktk_dirs', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.get_sparktk_dirs" class="source">
+    <pre><code>def get_sparktk_dirs():
+    """returns the folders which contain all the jars required to run sparktk"""
+    # todo: revisit when packaging is resolved, right now this assumes source code/build folder structure
+
+    try:
+        sparktk_home = os.environ['SPARKTK_HOME']
+    except KeyError:
+        raise RuntimeError("Missing value for SPARKTK_HOME.  Try setting $SPARKTK_HOME or the kwarg 'sparktk_home'")
+
+    dirs = [sparktk_home,
+            os.path.join(sparktk_home, LIB_DIR)]   # the /dependencies folder
+    return dirs
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.print_bash_cmds_for_sparktk_env">
+    <p>def <span class="ident">print_bash_cmds_for_sparktk_env</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>prints export cmds for each env var set by set_env_for_sparktk, for use in a bash script</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.print_bash_cmds_for_sparktk_env', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.print_bash_cmds_for_sparktk_env" class="source">
+    <pre><code>def print_bash_cmds_for_sparktk_env():
+    """prints export cmds for each env var set by set_env_for_sparktk, for use in a bash script"""
+    # see ../gopyspark.sh
+    for name in ['SPARK_HOME',
+                 'SPARKTK_HOME',
+                 'PYSPARK_PYTHON',
+                 'PYSPARK_DRIVER_PYTHON',
+                 'PYSPARK_SUBMIT_ARGS',
+                 'SPARK_JAVA_OPTS',
+                 ]:
+        value = os.environ.get(name, None)
+        if value:
+            print "export %s='%s'" % (name, value)  # require the single-quotes because of spaces in the values
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.set_env">
+    <p>def <span class="ident">set_env</span>(</p><p>name, value)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>helper to set env w/ log</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.set_env', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.set_env" class="source">
+    <pre><code>def set_env(name, value):
+    """helper to set env w/ log"""
+    logger.info("sparktk.sparkconf making $%s=%s" % (name, value))
+    os.environ[name] = value
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.sparkconf.set_env_for_sparktk">
+    <p>def <span class="ident">set_env_for_sparktk</span>(</p><p>spark_home=None, sparktk_home=None, pyspark_submit_args=None, other_libs=None, debug=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Set env vars necessary to start up a Spark Context with sparktk</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.sparkconf.set_env_for_sparktk', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.sparkconf.set_env_for_sparktk" class="source">
+    <pre><code>def set_env_for_sparktk(spark_home=None,
+                        sparktk_home=None,
+                        pyspark_submit_args=None,
+                        other_libs=None,
+                        debug=None):
+
+    """Set env vars necessary to start up a Spark Context with sparktk"""
+
+    if spark_home:
+        set_env('SPARK_HOME', spark_home)
+    elif 'SPARK_HOME' not in os.environ:
+        set_env('SPARK_HOME', default_spark_home)
+
+    if sparktk_home:
+        set_env('SPARKTK_HOME', sparktk_home)
+    elif 'SPARKTK_HOME' not in os.environ:
+        set_env('SPARKTK_HOME', default_sparktk_home)
+
+    if not os.environ.get('PYSPARK_DRIVER_PYTHON'):
+        set_env('PYSPARK_DRIVER_PYTHON', 'python2.7')
+
+    if not os.environ.get('PYSPARK_PYTHON'):
+        set_env('PYSPARK_PYTHON', 'python2.7')
+
+    # Validate other libraries to verify they have the required functions
+    other_libs = _validate_other_libs(other_libs)
+
+    # Everything else go in PYSPARK_SUBMIT_ARGS
+    spark_dirs = get_spark_dirs()
+    spark_dirs.extend(get_sparktk_dirs())
+
+    # Get library directories from other_libs
+    if other_libs is not None:
+        for other_lib in other_libs:
+            other_lib_dirs = other_lib.get_library_dirs()
+            spark_dirs.extend(other_lib_dirs)
+
+    jars, driver_class_path = get_jars_and_classpaths(spark_dirs)
+
+    if not pyspark_submit_args:
+        using_env = True
+        pyspark_submit_args = os.environ.get('PYSPARK_SUBMIT_ARGS', '')
+    else:
+        using_env = False
+
+    pieces = pyspark_submit_args.split()
+    if ('--jars' in pieces) ^ ('--driver-class-path' in pieces):
+        # Pyspark bug where --jars doesn't add to driver path  https://github.com/apache/spark/pull/11687
+        # fix targeted for Spark 2.0, back-port to 1.6 unlikely
+        msg = "If setting --jars or --driver-class-path in pyspark_submit_args, both must be set (due to Spark): "
+        if using_env:
+            msg += "$PYSPARK_SUBMIT_ARGS=%s" % os.environ['PYSPARK_SUBMIT_ARGS']
+        else:
+            msg += "pyspark_submit_args=%s" % pyspark_submit_args
+        raise ValueError(msg)
+
+    jars_value_index = next((i for i, x in enumerate(pieces) if x == '--jars'), -1) + 1
+    if jars_value_index > 0:
+        pieces[jars_value_index] = ','.join([pieces[jars_value_index], jars])
+        driver_class_path_value_index = pieces.index('--driver-class-path') + 1
+        pieces[driver_class_path_value_index] = ':'.join([pieces[driver_class_path_value_index], driver_class_path])
+    else:
+        pieces = ['--jars', jars, '--driver-class-path', driver_class_path]
+
+    pyspark_submit_args = ' '.join(pieces)
+
+    set_env('PYSPARK_SUBMIT_ARGS', pyspark_submit_args)
+
+    if debug:
+        print "Adding args for remote java debugger"
+        try:
+            address = int(debug)
+        except:
+            address = 5005  # default
+        details = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address
+        set_env('SPARK_JAVA_OPTS', details)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
+
+  </section>
+
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+  </div>
+</body>
+</html>

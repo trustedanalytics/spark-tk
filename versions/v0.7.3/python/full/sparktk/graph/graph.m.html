@@ -1,0 +1,3263 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>sparktk.graph.graph API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
+  }
+  #content {
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
+  }
+  #sidebar {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+    overflow: auto;
+    height: 100%;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #fixed_top_left {
+    display: block;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
+  }
+
+  #footer {
+    font-size: .75em;
+    margin-top: 20px;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 20px 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+      
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.graph.graph.create">create</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.import_orientdb_graph">import_orientdb_graph</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.load">load</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.graph.graph.Graph">Graph</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.__init__">__init__</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.clustering_coefficient">clustering_coefficient</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.connected_components">connected_components</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.create_edges_frame">create_edges_frame</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.create_vertices_frame">create_vertices_frame</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.degrees">degrees</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.export_to_orientdb">export_to_orientdb</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.global_clustering_coefficient">global_clustering_coefficient</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.label_propagation">label_propagation</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.loopy_belief_propagation">loopy_belief_propagation</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.page_rank">page_rank</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.save">save</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.triangle_count">triangle_count</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.vertex_count">vertex_count</a></li>
+    <li class="mono"><a href="#sparktk.graph.graph.Graph.weighted_degrees">weighted_degrees</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+      <article id="content">
+        <div>
+        
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">sparktk.graph.graph</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph" class="source">
+    <pre><code># vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+import logging
+logger = logging.getLogger('sparktk')
+from graphframes.graphframe import GraphFrame, _from_java_gf
+from py4j.protocol import Py4JJavaError
+from pyspark.sql.utils import IllegalArgumentException
+from sparktk import TkContext
+from sparktk.frame.frame import Frame
+from sparktk.arguments import require_type
+
+
+# import constructors for the API's sake (not actually dependencies of the Graph)
+from sparktk.graph.constructors.create import create
+from sparktk.graph.constructors.import_orientdb_graph import import_orientdb_graph
+
+__all__ = ["create",
+           "Graph",
+           "import_orientdb_graph",
+           "load"]
+
+
+class Graph(object):
+    """
+    sparktk Graph
+
+    Represents a graph with a frame defining vertices and another frame defining edges.  It is implemented as a very
+    thin wrapper of the spark GraphFrame (https://github.com/graphframes/graphframes) onto which additional methods
+    are available.
+
+    A vertices frame defines the vertices for the graph and must have a schema with a column
+    named "id" which provides unique vertex ID.  All other columns are treated as vertex properties.
+    If a column is also found named "vertex_type", it will be used as a special label to denote the type
+    of vertex, for example, when interfacing with logic (such as a graph DB) which expects a
+    specific vertex type.
+
+    An edge frame defines the edges of the graph; schema must have columns names "src" and "dst" which provide the
+    vertex ids of the edge.  All other columns are treated as edge properties.  If a column is also found named
+    "edge_type", it will be used as a special label to denote the type of edge, for example, when interfacing with logic
+    (such as a graph DB) which expects a specific edge type.
+
+    Unlike sparktk Frames, this Graph is immutable (it cannot be changed).  The vertices and edges may be extracted as
+    sparktk Frame objects, but those frames then take on a life of their own apart from this graph object.  Those frames
+    could be transformed and used to build a new graph object if necessary.
+
+    The underlying spark GraphFrame is available as the 'graphframe' property of this object.
+
+
+    Examples
+    --------
+
+        >>> viewers = tc.frame.create([['fred', 0],
+        ...                            ['wilma', 0],
+        ...                            ['pebbles', 1],
+        ...                            ['betty', 0],
+        ...                            ['barney', 0],
+        ...                            ['bamm bamm', 1]],
+        ...                           schema= [('id', str), ('kids', int)])
+
+        >>> titles = ['Croods', 'Jurassic Park', '2001', 'Ice Age', 'Land Before Time']
+
+        >>> movies = tc.frame.create([[t] for t in titles], schema=[('id', str)])
+
+        >>> vertices = viewers.copy()
+
+        >>> vertices.append(movies)
+
+        >>> vertices.inspect(20)
+        [##]  id                kids
+        ============================
+        [0]   fred                 0
+        [1]   wilma                0
+        [2]   pebbles              1
+        [3]   betty                0
+        [4]   barney               0
+        [5]   bamm bamm            1
+        [6]   Croods            None
+        [7]   Jurassic Park     None
+        [8]   2001              None
+        [9]   Ice Age           None
+        [10]  Land Before Time  None
+
+        >>> edges = tc.frame.create([['fred','Croods',5],
+        ...                          ['fred','Jurassic Park',5],
+        ...                          ['fred','2001',2],
+        ...                          ['fred','Ice Age',4],
+        ...                          ['wilma','Jurassic Park',3],
+        ...                          ['wilma','2001',5],
+        ...                          ['wilma','Ice Age',4],
+        ...                          ['pebbles','Croods',4],
+        ...                          ['pebbles','Land Before Time',3],
+        ...                          ['pebbles','Ice Age',5],
+        ...                          ['betty','Croods',5],
+        ...                          ['betty','Jurassic Park',3],
+        ...                          ['betty','Land Before Time',4],
+        ...                          ['betty','Ice Age',3],
+        ...                          ['barney','Croods',5],
+        ...                          ['barney','Jurassic Park',5],
+        ...                          ['barney','Land Before Time',3],
+        ...                          ['barney','Ice Age',5],
+        ...                          ['bamm bamm','Croods',5],
+        ...                          ['bamm bamm','Land Before Time',3]],
+        ...                         schema = ['src', 'dst', 'rating'])
+
+        >>> edges.inspect(20)
+        [##]  src        dst               rating
+        =========================================
+        [0]   fred       Croods                 5
+        [1]   fred       Jurassic Park          5
+        [2]   fred       2001                   2
+        [3]   fred       Ice Age                4
+        [4]   wilma      Jurassic Park          3
+        [5]   wilma      2001                   5
+        [6]   wilma      Ice Age                4
+        [7]   pebbles    Croods                 4
+        [8]   pebbles    Land Before Time       3
+        [9]   pebbles    Ice Age                5
+        [10]  betty      Croods                 5
+        [11]  betty      Jurassic Park          3
+        [12]  betty      Land Before Time       4
+        [13]  betty      Ice Age                3
+        [14]  barney     Croods                 5
+        [15]  barney     Jurassic Park          5
+        [16]  barney     Land Before Time       3
+        [17]  barney     Ice Age                5
+        [18]  bamm bamm  Croods                 5
+        [19]  bamm bamm  Land Before Time       3
+
+        >>> graph = tc.graph.create(vertices, edges)
+
+        >>> graph
+        Graph(v:[id: string, kids: int], e:[src: string, dst: string, rating: int])
+
+
+        >>> graph.save("sandbox/old_movie_graph")
+
+        >>> restored = tc.load("sandbox/old_movie_graph")
+
+        >>> restored
+        Graph(v:[id: string, kids: int], e:[src: string, dst: string, rating: int])
+
+
+    """
+    def __init__(self, tc, source_or_vertices_frame, edges_frame=None):
+        self._tc = tc
+        self._scala = None
+
+        # (note that the Scala code will validate appropriate frame schemas)
+
+        if isinstance(source_or_vertices_frame, Frame):
+            # Python Vertices and Edges Frames
+            vertices_frame = source_or_vertices_frame
+            require_type(Frame,
+                         edges_frame,
+                         'edges_frame',
+                         "Providing a vertices frame requires also providing an edges frame")
+            self._scala = self._create_scala_graph_from_scala_frames(self._tc,
+                                                                     vertices_frame._scala,
+                                                                     edges_frame._scala)
+        else:
+            source = source_or_vertices_frame
+            require_type(None,
+                         edges_frame,
+                         'edges_frame',
+                         'If edges_frames is provided, then a valid vertex frame must be provided as the first arg, instead of type %s' % type(source))
+            if self._is_scala_graph(source):
+                # Scala Graph
+                self._scala = source
+            elif isinstance(source, GraphFrame):
+                # python GraphFrame
+                scala_graphframe =  source._jvm_graph
+                self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, scala_graphframe)
+            elif self._is_scala_graphframe(source):
+                # scala GraphFrame
+                self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, source)
+            else:
+                raise TypeError("Cannot create from source type %s" % type(source))
+
+    def __repr__(self):
+        return self._scala.toString()
+
+    @staticmethod
+    def _get_scala_graph_class(tc):
+        """Gets reference to the sparktk scala Graph class"""
+        return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph
+
+    @staticmethod
+    def _get_scala_graphframe_class(tc):
+        """Gets reference to the scala GraphFrame class"""
+        return tc.sc._jvm.org.graphframes.GraphFrame
+
+    @staticmethod
+    def _create_scala_graph_from_scala_graphframe(tc, scala_graphframe):
+        try:
+            return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph(scala_graphframe)
+        except (Py4JJavaError, IllegalArgumentException) as e:
+            raise ValueError(str(e))
+
+    @staticmethod
+    def _create_scala_graph_from_scala_frames(tc, scala_vertices_frame, scala_edges_frame):
+        try:
+            return tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.FromFrames.create(scala_vertices_frame, scala_edges_frame)
+        except (Py4JJavaError, IllegalArgumentException) as e:
+            raise ValueError(str(e))
+
+    # this one for the Loader:
+    @staticmethod
+    def _from_scala(tc, scala_graph):
+        """creates a python Frame for the given scala Frame"""
+        return Graph(tc, scala_graph)
+
+    def _is_scala_graph(self, item):
+        return self._tc._jutils.is_jvm_instance_of(item, self._get_scala_graph_class(self._tc))
+
+    def _is_scala_graphframe(self, item):
+        return self._tc._jutils.is_jvm_instance_of(item, self._get_scala_graphframe_class(self._tc))
+
+    ##########################################################################
+    # API
+    ##########################################################################
+
+    @property
+    def graphframe(self):
+        """The underlying graphframe object which exposes several methods and properties"""
+        return _from_java_gf(self._scala.graphFrame(), self._tc.sql_context)
+
+    def create_vertices_frame(self):
+        """Creates a frame representing the vertices stored in this graph"""
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.graphFrame().vertices())
+
+    def create_edges_frame(self):
+        """Creates a frame representing the edges stored in this graph"""
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.graphFrame().edges())
+
+    # Graph Operations
+    from sparktk.graph.ops.connected_components import connected_components
+    from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
+    from sparktk.graph.ops.degrees import degrees
+    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
+    from sparktk.graph.ops.label_propagation import label_propagation
+    from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
+    from sparktk.graph.ops.page_rank import page_rank
+    from sparktk.graph.ops.save import save
+    from sparktk.graph.ops.triangle_count import triangle_count
+    from sparktk.graph.ops.vertex_count import vertex_count
+    from sparktk.graph.ops.weighted_degrees import weighted_degrees
+
+
+def load(path, tc=TkContext.implicit):
+    """load Graph from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Graph)
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.create">
+    <p>def <span class="ident">create</span>(</p><p>source_or_vertices_frame, edges_frame=None, tc=&lt;class &#39;sparktk.arguments.implicit&#39;&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Create a sparktk Graph from two sparktk Frames (or some other source)</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>source_or_vertices_frame: </td><td class='param-desc'>a graph source or a vertices frame
+                    Valid sources include: a python and spark GraphFrame, or a scala Graph
+                    Otherwise if a vertices frame is provided, then the edges_frame arg must also be supplied.
+                    A vertices frame defines the vertices for the graph and must have a schema with a column
+                    named "id" which provides unique vertex ID.  All other columns are treated as vertex properties.
+                    If a column is also found named "vertex_type", it will be used as a special label to denote the
+                    type of vertex, for example, when interfacing with logic (such as a graph DB) which expects a
+                    specific vertex type.</td></tr></table>
+
+<table><tr><td class='param-name'>edges_frame</td><td class='param-type'>(valid only if the source_or_vertices_frame arg is a vertices Frame):</td><td class='param-desc'>An edge frame defines the
+                    edges of the graph; schema must have columns names "src" and "dst" which provide the vertex ids
+                    of the edge.  All other columns are treated as edge properties.  If a column is also found named
+                    "edge_type", it will be used as a special label to denote the type of edge, for example, when
+                    interfacing with logic (such as a graph DB) which expects a specific edge type.</td></tr></table></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.create', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.create" class="source">
+    <pre><code>def create(source_or_vertices_frame, edges_frame=None, tc=TkContext.implicit):
+    """
+    Create a sparktk Graph from two sparktk Frames (or some other source)
+
+    Parameters
+    ----------
+    :param source_or_vertices_frame: a graph source or a vertices frame
+                        Valid sources include: a python and spark GraphFrame, or a scala Graph
+                        Otherwise if a vertices frame is provided, then the edges_frame arg must also be supplied.
+                        A vertices frame defines the vertices for the graph and must have a schema with a column
+                        named "id" which provides unique vertex ID.  All other columns are treated as vertex properties.
+                        If a column is also found named "vertex_type", it will be used as a special label to denote the
+                        type of vertex, for example, when interfacing with logic (such as a graph DB) which expects a
+                        specific vertex type.
+
+    :param edges_frame: (valid only if the source_or_vertices_frame arg is a vertices Frame) An edge frame defines the
+                        edges of the graph; schema must have columns names "src" and "dst" which provide the vertex ids
+                        of the edge.  All other columns are treated as edge properties.  If a column is also found named
+                        "edge_type", it will be used as a special label to denote the type of edge, for example, when
+                        interfacing with logic (such as a graph DB) which expects a specific edge type.
+    """
+    TkContext.validate(tc)
+    from sparktk.graph.graph import Graph
+    return Graph(tc, source_or_vertices_frame, edges_frame)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.import_orientdb_graph">
+    <p>def <span class="ident">import_orientdb_graph</span>(</p><p>db_url, user_name, password, root_password, tc=&lt;class &#39;sparktk.arguments.implicit&#39;&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Import graph from OrientDB to spark-tk as spark-tk graph (Spark GraphFrame)</p>
+<pre><code>Parameters
+----------
+:param:(str) db_url: OrientDB URI
+:param:(str) user_name: the database username
+:param:(str) password: the database password
+:param :(str)root_password: OrientDB server password
+
+Example
+-------
+
+   &gt;&gt;&gt; v = tc.frame.create([("a", "Alice", 34,"F"),
+    ...     ("b", "Bob", 36,"M"),
+    ...     ("c", "Charlie", 30,"M"),
+    ...     ("d", "David", 29,"M"),
+    ...     ("e", "Esther", 32,"F"),
+    ...     ("f", "Fanny", 36,"F"),
+    ...     ], ["id", "name", "age","gender"])
+
+    &gt;&gt;&gt; e = tc.frame.create([("a", "b", "friend"),
+    ...     ("b", "c", "follow"),
+    ...     ("c", "b", "follow"),
+    ...     ("f", "c", "follow"),
+    ...     ("e", "f", "follow"),
+    ...     ("e", "d", "friend"),
+    ...     ("d", "a", "friend"),
+    ...     ("a", "e", "friend")
+    ...     ], ["src", "dst", "relationship"])
+
+    &gt;&gt;&gt; sparktk_graph = tc.graph.create(v,e)
+
+    &gt;&gt;&gt; db = "test_db"
+
+    &gt;&gt;&gt; sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+
+    &gt;&gt;&gt; imported_gf = tc.graph.import_orientdb_graph(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password")
+
+    &gt;&gt;&gt; imported_gf.graphframe.vertices.show()
+</code></pre>
+<p>+-------+------+---+---+
+|   name|gender| id|age|
++-------+------+---+---+
+|    Bob|     M|  b| 36|
+|  David|     M|  d| 29|
+|Charlie|     M|  c| 30|
+|  Alice|     F|  a| 34|
+| Esther|     F|  e| 32|
+|  Fanny|     F|  f| 36|
++-------+------+---+---+</p>
+<pre><code>    &gt;&gt;&gt; imported_gf.graphframe.edges.show()
+</code></pre>
+<p>+---+------------+---+
+|dst|relationship|src|
++---+------------+---+
+|  f|      follow|  e|
+|  b|      follow|  c|
+|  c|      follow|  b|
+|  c|      follow|  f|
+|  b|      friend|  a|
+|  a|      friend|  d|
+|  d|      friend|  e|
+|  e|      friend|  a|
++---+------------+---+</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.import_orientdb_graph', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.import_orientdb_graph" class="source">
+    <pre><code>def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContext.implicit):
+    """
+    Import graph from OrientDB to spark-tk as spark-tk graph (Spark GraphFrame)
+
+    Parameters
+    ----------
+    :param:(str) db_url: OrientDB URI
+    :param:(str) user_name: the database username
+    :param:(str) password: the database password
+    :param :(str)root_password: OrientDB server password
+
+    Example
+    -------
+
+       >>> v = tc.frame.create([("a", "Alice", 34,"F"),
+        ...     ("b", "Bob", 36,"M"),
+        ...     ("c", "Charlie", 30,"M"),
+        ...     ("d", "David", 29,"M"),
+        ...     ("e", "Esther", 32,"F"),
+        ...     ("f", "Fanny", 36,"F"),
+        ...     ], ["id", "name", "age","gender"])
+
+        >>> e = tc.frame.create([("a", "b", "friend"),
+        ...     ("b", "c", "follow"),
+        ...     ("c", "b", "follow"),
+        ...     ("f", "c", "follow"),
+        ...     ("e", "f", "follow"),
+        ...     ("e", "d", "friend"),
+        ...     ("d", "a", "friend"),
+        ...     ("a", "e", "friend")
+        ...     ], ["src", "dst", "relationship"])
+
+        >>> sparktk_graph = tc.graph.create(v,e)
+
+        >>> db = "test_db"
+
+        >>> sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+
+        >>> imported_gf = tc.graph.import_orientdb_graph(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password")
+
+        >>> imported_gf.graphframe.vertices.show()
+
++-------+------+---+---+
+|   name|gender| id|age|
++-------+------+---+---+
+|    Bob|     M|  b| 36|
+|  David|     M|  d| 29|
+|Charlie|     M|  c| 30|
+|  Alice|     F|  a| 34|
+| Esther|     F|  e| 32|
+|  Fanny|     F|  f| 36|
++-------+------+---+---+
+
+        >>> imported_gf.graphframe.edges.show()
+
++---+------------+---+
+|dst|relationship|src|
++---+------------+---+
+|  f|      follow|  e|
+|  b|      follow|  c|
+|  c|      follow|  b|
+|  c|      follow|  f|
+|  b|      friend|  a|
+|  a|      friend|  d|
+|  d|      friend|  e|
+|  e|      friend|  a|
++---+------------+---+
+
+    """
+    TkContext.validate(tc)
+    scala_graph = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb.ImportFromOrientdb.importOrientdbGraph(tc.jutils.get_scala_sc(), db_url,user_name,password,root_password)
+    from sparktk.graph.graph import Graph
+    return Graph(tc, scala_graph)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.load">
+    <p>def <span class="ident">load</span>(</p><p>path, tc=&lt;class &#39;sparktk.arguments.implicit&#39;&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>load Graph from given path</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.load', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.load" class="source">
+    <pre><code>def load(path, tc=TkContext.implicit):
+    """load Graph from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Graph)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="sparktk.graph.graph.Graph" class="name">class <span class="ident">Graph</span></p>
+      
+  
+    <div class="desc"><p>sparktk Graph</p>
+<p>Represents a graph with a frame defining vertices and another frame defining edges.  It is implemented as a very
+thin wrapper of the spark GraphFrame (https://github.com/graphframes/graphframes) onto which additional methods
+are available.</p>
+<p>A vertices frame defines the vertices for the graph and must have a schema with a column
+named "id" which provides unique vertex ID.  All other columns are treated as vertex properties.
+If a column is also found named "vertex_type", it will be used as a special label to denote the type
+of vertex, for example, when interfacing with logic (such as a graph DB) which expects a
+specific vertex type.</p>
+<p>An edge frame defines the edges of the graph; schema must have columns names "src" and "dst" which provide the
+vertex ids of the edge.  All other columns are treated as edge properties.  If a column is also found named
+"edge_type", it will be used as a special label to denote the type of edge, for example, when interfacing with logic
+(such as a graph DB) which expects a specific edge type.</p>
+<p>Unlike sparktk Frames, this Graph is immutable (it cannot be changed).  The vertices and edges may be extracted as
+sparktk Frame objects, but those frames then take on a life of their own apart from this graph object.  Those frames
+could be transformed and used to build a new graph object if necessary.</p>
+<p>The underlying spark GraphFrame is available as the 'graphframe' property of this object.</p>
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; viewers = tc.frame.create([['fred', 0],
+...                            ['wilma', 0],
+...                            ['pebbles', 1],
+...                            ['betty', 0],
+...                            ['barney', 0],
+...                            ['bamm bamm', 1]],
+...                           schema= [('id', str), ('kids', int)])
+
+&gt;&gt;&gt; titles = ['Croods', 'Jurassic Park', '2001', 'Ice Age', 'Land Before Time']
+
+&gt;&gt;&gt; movies = tc.frame.create([[t] for t in titles], schema=[('id', str)])
+
+&gt;&gt;&gt; vertices = viewers.copy()
+
+&gt;&gt;&gt; vertices.append(movies)
+
+&gt;&gt;&gt; vertices.inspect(20)
+[##]  id                kids
+============================
+[0]   fred                 0
+[1]   wilma                0
+[2]   pebbles              1
+[3]   betty                0
+[4]   barney               0
+[5]   bamm bamm            1
+[6]   Croods            None
+[7]   Jurassic Park     None
+[8]   2001              None
+[9]   Ice Age           None
+[10]  Land Before Time  None
+
+&gt;&gt;&gt; edges = tc.frame.create([['fred','Croods',5],
+...                          ['fred','Jurassic Park',5],
+...                          ['fred','2001',2],
+...                          ['fred','Ice Age',4],
+...                          ['wilma','Jurassic Park',3],
+...                          ['wilma','2001',5],
+...                          ['wilma','Ice Age',4],
+...                          ['pebbles','Croods',4],
+...                          ['pebbles','Land Before Time',3],
+...                          ['pebbles','Ice Age',5],
+...                          ['betty','Croods',5],
+...                          ['betty','Jurassic Park',3],
+...                          ['betty','Land Before Time',4],
+...                          ['betty','Ice Age',3],
+...                          ['barney','Croods',5],
+...                          ['barney','Jurassic Park',5],
+...                          ['barney','Land Before Time',3],
+...                          ['barney','Ice Age',5],
+...                          ['bamm bamm','Croods',5],
+...                          ['bamm bamm','Land Before Time',3]],
+...                         schema = ['src', 'dst', 'rating'])
+
+&gt;&gt;&gt; edges.inspect(20)
+[##]  src        dst               rating
+=========================================
+[0]   fred       Croods                 5
+[1]   fred       Jurassic Park          5
+[2]   fred       2001                   2
+[3]   fred       Ice Age                4
+[4]   wilma      Jurassic Park          3
+[5]   wilma      2001                   5
+[6]   wilma      Ice Age                4
+[7]   pebbles    Croods                 4
+[8]   pebbles    Land Before Time       3
+[9]   pebbles    Ice Age                5
+[10]  betty      Croods                 5
+[11]  betty      Jurassic Park          3
+[12]  betty      Land Before Time       4
+[13]  betty      Ice Age                3
+[14]  barney     Croods                 5
+[15]  barney     Jurassic Park          5
+[16]  barney     Land Before Time       3
+[17]  barney     Ice Age                5
+[18]  bamm bamm  Croods                 5
+[19]  bamm bamm  Land Before Time       3
+
+&gt;&gt;&gt; graph = tc.graph.create(vertices, edges)
+
+&gt;&gt;&gt; graph
+Graph(v:[id: string, kids: int], e:[src: string, dst: string, rating: int])
+
+
+&gt;&gt;&gt; graph.save("sandbox/old_movie_graph")
+
+&gt;&gt;&gt; restored = tc.load("sandbox/old_movie_graph")
+
+&gt;&gt;&gt; restored
+Graph(v:[id: string, kids: int], e:[src: string, dst: string, rating: int])
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph" class="source">
+    <pre><code>class Graph(object):
+    """
+    sparktk Graph
+
+    Represents a graph with a frame defining vertices and another frame defining edges.  It is implemented as a very
+    thin wrapper of the spark GraphFrame (https://github.com/graphframes/graphframes) onto which additional methods
+    are available.
+
+    A vertices frame defines the vertices for the graph and must have a schema with a column
+    named "id" which provides unique vertex ID.  All other columns are treated as vertex properties.
+    If a column is also found named "vertex_type", it will be used as a special label to denote the type
+    of vertex, for example, when interfacing with logic (such as a graph DB) which expects a
+    specific vertex type.
+
+    An edge frame defines the edges of the graph; schema must have columns names "src" and "dst" which provide the
+    vertex ids of the edge.  All other columns are treated as edge properties.  If a column is also found named
+    "edge_type", it will be used as a special label to denote the type of edge, for example, when interfacing with logic
+    (such as a graph DB) which expects a specific edge type.
+
+    Unlike sparktk Frames, this Graph is immutable (it cannot be changed).  The vertices and edges may be extracted as
+    sparktk Frame objects, but those frames then take on a life of their own apart from this graph object.  Those frames
+    could be transformed and used to build a new graph object if necessary.
+
+    The underlying spark GraphFrame is available as the 'graphframe' property of this object.
+
+
+    Examples
+    --------
+
+        >>> viewers = tc.frame.create([['fred', 0],
+        ...                            ['wilma', 0],
+        ...                            ['pebbles', 1],
+        ...                            ['betty', 0],
+        ...                            ['barney', 0],
+        ...                            ['bamm bamm', 1]],
+        ...                           schema= [('id', str), ('kids', int)])
+
+        >>> titles = ['Croods', 'Jurassic Park', '2001', 'Ice Age', 'Land Before Time']
+
+        >>> movies = tc.frame.create([[t] for t in titles], schema=[('id', str)])
+
+        >>> vertices = viewers.copy()
+
+        >>> vertices.append(movies)
+
+        >>> vertices.inspect(20)
+        [##]  id                kids
+        ============================
+        [0]   fred                 0
+        [1]   wilma                0
+        [2]   pebbles              1
+        [3]   betty                0
+        [4]   barney               0
+        [5]   bamm bamm            1
+        [6]   Croods            None
+        [7]   Jurassic Park     None
+        [8]   2001              None
+        [9]   Ice Age           None
+        [10]  Land Before Time  None
+
+        >>> edges = tc.frame.create([['fred','Croods',5],
+        ...                          ['fred','Jurassic Park',5],
+        ...                          ['fred','2001',2],
+        ...                          ['fred','Ice Age',4],
+        ...                          ['wilma','Jurassic Park',3],
+        ...                          ['wilma','2001',5],
+        ...                          ['wilma','Ice Age',4],
+        ...                          ['pebbles','Croods',4],
+        ...                          ['pebbles','Land Before Time',3],
+        ...                          ['pebbles','Ice Age',5],
+        ...                          ['betty','Croods',5],
+        ...                          ['betty','Jurassic Park',3],
+        ...                          ['betty','Land Before Time',4],
+        ...                          ['betty','Ice Age',3],
+        ...                          ['barney','Croods',5],
+        ...                          ['barney','Jurassic Park',5],
+        ...                          ['barney','Land Before Time',3],
+        ...                          ['barney','Ice Age',5],
+        ...                          ['bamm bamm','Croods',5],
+        ...                          ['bamm bamm','Land Before Time',3]],
+        ...                         schema = ['src', 'dst', 'rating'])
+
+        >>> edges.inspect(20)
+        [##]  src        dst               rating
+        =========================================
+        [0]   fred       Croods                 5
+        [1]   fred       Jurassic Park          5
+        [2]   fred       2001                   2
+        [3]   fred       Ice Age                4
+        [4]   wilma      Jurassic Park          3
+        [5]   wilma      2001                   5
+        [6]   wilma      Ice Age                4
+        [7]   pebbles    Croods                 4
+        [8]   pebbles    Land Before Time       3
+        [9]   pebbles    Ice Age                5
+        [10]  betty      Croods                 5
+        [11]  betty      Jurassic Park          3
+        [12]  betty      Land Before Time       4
+        [13]  betty      Ice Age                3
+        [14]  barney     Croods                 5
+        [15]  barney     Jurassic Park          5
+        [16]  barney     Land Before Time       3
+        [17]  barney     Ice Age                5
+        [18]  bamm bamm  Croods                 5
+        [19]  bamm bamm  Land Before Time       3
+
+        >>> graph = tc.graph.create(vertices, edges)
+
+        >>> graph
+        Graph(v:[id: string, kids: int], e:[src: string, dst: string, rating: int])
+
+
+        >>> graph.save("sandbox/old_movie_graph")
+
+        >>> restored = tc.load("sandbox/old_movie_graph")
+
+        >>> restored
+        Graph(v:[id: string, kids: int], e:[src: string, dst: string, rating: int])
+
+
+    """
+    def __init__(self, tc, source_or_vertices_frame, edges_frame=None):
+        self._tc = tc
+        self._scala = None
+
+        # (note that the Scala code will validate appropriate frame schemas)
+
+        if isinstance(source_or_vertices_frame, Frame):
+            # Python Vertices and Edges Frames
+            vertices_frame = source_or_vertices_frame
+            require_type(Frame,
+                         edges_frame,
+                         'edges_frame',
+                         "Providing a vertices frame requires also providing an edges frame")
+            self._scala = self._create_scala_graph_from_scala_frames(self._tc,
+                                                                     vertices_frame._scala,
+                                                                     edges_frame._scala)
+        else:
+            source = source_or_vertices_frame
+            require_type(None,
+                         edges_frame,
+                         'edges_frame',
+                         'If edges_frames is provided, then a valid vertex frame must be provided as the first arg, instead of type %s' % type(source))
+            if self._is_scala_graph(source):
+                # Scala Graph
+                self._scala = source
+            elif isinstance(source, GraphFrame):
+                # python GraphFrame
+                scala_graphframe =  source._jvm_graph
+                self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, scala_graphframe)
+            elif self._is_scala_graphframe(source):
+                # scala GraphFrame
+                self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, source)
+            else:
+                raise TypeError("Cannot create from source type %s" % type(source))
+
+    def __repr__(self):
+        return self._scala.toString()
+
+    @staticmethod
+    def _get_scala_graph_class(tc):
+        """Gets reference to the sparktk scala Graph class"""
+        return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph
+
+    @staticmethod
+    def _get_scala_graphframe_class(tc):
+        """Gets reference to the scala GraphFrame class"""
+        return tc.sc._jvm.org.graphframes.GraphFrame
+
+    @staticmethod
+    def _create_scala_graph_from_scala_graphframe(tc, scala_graphframe):
+        try:
+            return tc.sc._jvm.org.trustedanalytics.sparktk.graph.Graph(scala_graphframe)
+        except (Py4JJavaError, IllegalArgumentException) as e:
+            raise ValueError(str(e))
+
+    @staticmethod
+    def _create_scala_graph_from_scala_frames(tc, scala_vertices_frame, scala_edges_frame):
+        try:
+            return tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.FromFrames.create(scala_vertices_frame, scala_edges_frame)
+        except (Py4JJavaError, IllegalArgumentException) as e:
+            raise ValueError(str(e))
+
+    # this one for the Loader:
+    @staticmethod
+    def _from_scala(tc, scala_graph):
+        """creates a python Frame for the given scala Frame"""
+        return Graph(tc, scala_graph)
+
+    def _is_scala_graph(self, item):
+        return self._tc._jutils.is_jvm_instance_of(item, self._get_scala_graph_class(self._tc))
+
+    def _is_scala_graphframe(self, item):
+        return self._tc._jutils.is_jvm_instance_of(item, self._get_scala_graphframe_class(self._tc))
+
+    ##########################################################################
+    # API
+    ##########################################################################
+
+    @property
+    def graphframe(self):
+        """The underlying graphframe object which exposes several methods and properties"""
+        return _from_java_gf(self._scala.graphFrame(), self._tc.sql_context)
+
+    def create_vertices_frame(self):
+        """Creates a frame representing the vertices stored in this graph"""
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.graphFrame().vertices())
+
+    def create_edges_frame(self):
+        """Creates a frame representing the edges stored in this graph"""
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.graphFrame().edges())
+
+    # Graph Operations
+    from sparktk.graph.ops.connected_components import connected_components
+    from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
+    from sparktk.graph.ops.degrees import degrees
+    from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
+    from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
+    from sparktk.graph.ops.label_propagation import label_propagation
+    from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
+    from sparktk.graph.ops.page_rank import page_rank
+    from sparktk.graph.ops.save import save
+    from sparktk.graph.ops.triangle_count import triangle_count
+    from sparktk.graph.ops.vertex_count import vertex_count
+    from sparktk.graph.ops.weighted_degrees import weighted_degrees
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.graph.graph.Graph">Graph</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="sparktk.graph.graph.Graph.graphframe" class="name">var <span class="ident">graphframe</span></p>
+            
+
+            
+  
+    <div class="desc"><p>The underlying graphframe object which exposes several methods and properties</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, tc, source_or_vertices_frame, edges_frame=None)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.__init__" class="source">
+    <pre><code>def __init__(self, tc, source_or_vertices_frame, edges_frame=None):
+    self._tc = tc
+    self._scala = None
+    # (note that the Scala code will validate appropriate frame schemas)
+    if isinstance(source_or_vertices_frame, Frame):
+        # Python Vertices and Edges Frames
+        vertices_frame = source_or_vertices_frame
+        require_type(Frame,
+                     edges_frame,
+                     'edges_frame',
+                     "Providing a vertices frame requires also providing an edges frame")
+        self._scala = self._create_scala_graph_from_scala_frames(self._tc,
+                                                                 vertices_frame._scala,
+                                                                 edges_frame._scala)
+    else:
+        source = source_or_vertices_frame
+        require_type(None,
+                     edges_frame,
+                     'edges_frame',
+                     'If edges_frames is provided, then a valid vertex frame must be provided as the first arg, instead of type %s' % type(source))
+        if self._is_scala_graph(source):
+            # Scala Graph
+            self._scala = source
+        elif isinstance(source, GraphFrame):
+            # python GraphFrame
+            scala_graphframe =  source._jvm_graph
+            self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, scala_graphframe)
+        elif self._is_scala_graphframe(source):
+            # scala GraphFrame
+            self._scala = self._create_scala_graph_from_scala_graphframe(self._tc, source)
+        else:
+            raise TypeError("Cannot create from source type %s" % type(source))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.clustering_coefficient">
+    <p>def <span class="ident">clustering_coefficient</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>The clustering coefficient of a vertex provides a measure of how
+tightly clustered that vertex's neighborhood is.</p>
+<p>Formally:</p>
+<p>.. math::</p>
+<p>cc(v)  = rac{ \| { (u,v,w) \in V^3: \ {u,v}, {u, w}, {v,w } \in            E } \| }{\| { (u,v,w) \in V^3: \ {v, u }, {v, w} \in E } \|}</p>
+<p>For further reading on clustering
+coefficients, see http://en.wikipedia.org/wiki/Clustering_coefficient.</p>
+<p>This method returns a frame with the vertex id associated with it's local
+clustering coefficient</p>
+<div class='section-header'>Parameters:</div>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's and their clustering coefficient</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.clustering_coefficient()
+&gt;&gt;&gt; result.inspect()
+[#]  id  clustering_coefficient
+===============================
+[0]   1          0.333333333333
+[1]   2                     1.0
+[2]   3                     1.0
+[3]   4                     0.0
+[4]   5                     0.0
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.clustering_coefficient', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.clustering_coefficient" class="source">
+    <pre><code>def clustering_coefficient(self):
+    """
+    The clustering coefficient of a vertex provides a measure of how
+    tightly clustered that vertex's neighborhood is.
+    
+    Formally:
+    
+    .. math::
+    
+       cc(v)  = \frac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+           E \} \| }{\| \{ (u,v,w) \in V^3: \ \{v, u \}, \{v, w\} \in E \} \|}
+    
+    For further reading on clustering
+    coefficients, see http://en.wikipedia.org/wiki/Clustering_coefficient.
+    
+    This method returns a frame with the vertex id associated with it's local
+    clustering coefficient
+
+    Parameters
+    ----------
+
+    :return: (Frame) Frame containing the vertex id's and their clustering coefficient
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int)]
+        >>> edge_schema = [('src', int), ('dst', int)]
+
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.clustering_coefficient()
+        >>> result.inspect()
+        [#]  id  clustering_coefficient
+        ===============================
+        [0]   1          0.333333333333
+        [1]   2                     1.0
+        [2]   3                     1.0
+        [3]   4                     0.0
+        [4]   5                     0.0
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.clusteringCoefficient())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.connected_components">
+    <p>def <span class="ident">connected_components</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Connected components determines groups all the vertices in a particular graph
+by whether or not there is path between these vertices. This method returns
+a frame with the vertices and their corresponding component</p>
+<div class='section-header'>Parameters:</div>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's and their components</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [4, 5] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.connected_components()
+&gt;&gt;&gt; result.inspect() 
+[#]  id  component
+==================
+[0]   1          1
+[1]   2          1
+[2]   3          1
+[3]   4          4
+[4]   5          4
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.connected_components', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.connected_components" class="source">
+    <pre><code>def connected_components(self):
+    """
+
+    Connected components determines groups all the vertices in a particular graph
+    by whether or not there is path between these vertices. This method returns
+    a frame with the vertices and their corresponding component
+
+    Parameters
+    ----------
+
+    :return: (Frame) Frame containing the vertex id's and their components
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int)]
+        >>> edge_schema = [('src', int), ('dst', int)]
+
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [4, 5] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.connected_components()
+        >>> result.inspect() 
+        [#]  id  component
+        ==================
+        [0]   1          1
+        [1]   2          1
+        [2]   3          1
+        [3]   4          4
+        [4]   5          4
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.connectedComponents())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.create_edges_frame">
+    <p>def <span class="ident">create_edges_frame</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Creates a frame representing the edges stored in this graph</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.create_edges_frame', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.create_edges_frame" class="source">
+    <pre><code>def create_edges_frame(self):
+    """Creates a frame representing the edges stored in this graph"""
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.graphFrame().edges())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.create_vertices_frame">
+    <p>def <span class="ident">create_vertices_frame</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Creates a frame representing the vertices stored in this graph</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.create_vertices_frame', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.create_vertices_frame" class="source">
+    <pre><code>def create_vertices_frame(self):
+    """Creates a frame representing the vertices stored in this graph"""
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.graphFrame().vertices())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.degrees">
+    <p>def <span class="ident">degrees</span>(</p><p>self, degree_option=&#39;undirected&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><strong>Degree Calculation</strong></p>
+<p>A fundamental quantity in graph analysis is the degree of a vertex:
+The degree of a vertex is the number of edges adjacent to it.</p>
+<p>For a directed edge relation, a vertex has both an out-degree (the number of
+edges leaving the vertex) and an in-degree (the number of edges entering the
+vertex).</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>degree_option</td><td class='param-type'>(String):</td><td class='param-desc'>Either in, out or undirected. String describing the direction of edges</td></tr></table>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's an their weights</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.degrees(degree_option="out")
+&gt;&gt;&gt; result.inspect() 
+[#]  id  degree
+===============
+[0]   1       3
+[1]   2       1
+[2]   3       0
+[3]   4       1
+[4]   5       0
+
+
+&gt;&gt;&gt; result = graph.degrees(degree_option="in")
+&gt;&gt;&gt; result.inspect()
+[#]  id  degree
+===============
+[0]   1       0
+[1]   2       1
+[2]   3       2
+[3]   4       1
+[4]   5       1
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.degrees', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.degrees" class="source">
+    <pre><code>def degrees(self, degree_option='undirected'):
+    """
+    **Degree Calculation**
+
+    A fundamental quantity in graph analysis is the degree of a vertex:
+    The degree of a vertex is the number of edges adjacent to it.
+
+    For a directed edge relation, a vertex has both an out-degree (the number of
+    edges leaving the vertex) and an in-degree (the number of edges entering the
+    vertex).
+
+    Parameters
+    ----------
+
+    :param degree_option: (String) Either in, out or undirected. String describing the direction of edges
+
+    :return: (Frame) Frame containing the vertex id's an their weights
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int)]
+        >>> edge_schema = [('src', int), ('dst', int)]
+
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.degrees(degree_option="out")
+        >>> result.inspect() 
+        [#]  id  degree
+        ===============
+        [0]   1       3
+        [1]   2       1
+        [2]   3       0
+        [3]   4       1
+        [4]   5       0
+
+
+        >>> result = graph.degrees(degree_option="in")
+        >>> result.inspect()
+        [#]  id  degree
+        ===============
+        [0]   1       0
+        [1]   2       1
+        [2]   3       2
+        [3]   4       1
+        [4]   5       1
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.degree(degree_option))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.export_to_orientdb">
+    <p>def <span class="ident">export_to_orientdb</span>(</p><p>self, db_url, user_name, password, root_password, vertex_type_column_name=None, edge_type_column_name=None, batch_size=1000)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Export Spark-tk Graph (GraphFrame) to OrientDB API creates OrientDB database with the given database name, URL
+and credentials. It exports the vertex and edge dataframes schema OrientDB based on the given vertex_type_column_name
+and edge_type_column_name. If any of them was None it exports it to the base type class.</p>
+<div class='section-header'>Parameters:</div>
+
+<p>:param:(str) db_url: OrientDB URI
+:param:(str) user_name: the database username
+:param:(str) password: the database password
+:param:(str) root_password: OrientDB server password
+:param:(Optional(str)) vertex_type_column_name: column name from the vertex data frame specified to be the vertex type
+:param:(Optional(str)) edge_type_column_name: column name from the edge data frame specified to be the edge type
+:param:(int) batch_size: batch size for graph ETL to OrientDB database</p>
+<div class='section-header'>Example:</div>
+
+<pre><code>&gt;&gt;&gt; v = tc.frame.create([("a", "Alice", 34,"F"),
+...     ("b", "Bob", 36,"M"),
+...     ("c", "Charlie", 30,"M"),
+...     ("d", "David", 29,"M"),
+...     ("e", "Esther", 32,"F"),
+...     ("f", "Fanny", 36,"F"),
+...     ], ["id", "name", "age","gender"])
+
+&gt;&gt;&gt; e = tc.frame.create([("a", "b", "friend"),
+...     ("b", "c", "follow"),
+...     ("c", "b", "follow"),
+...     ("f", "c", "follow"),
+...     ("e", "f", "follow"),
+...     ("e", "d", "friend"),
+...     ("d", "a", "friend"),
+...     ("a", "e", "friend")
+...     ], ["src", "dst", "relationship"])
+
+&gt;&gt;&gt; sparktk_graph = tc.graph.create(v,e)
+
+&gt;&gt;&gt; db = "test_db"
+
+&gt;&gt;&gt; result = sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+
+&gt;&gt;&gt; result
+db_uri                    = remote:hostname:2424/test_db
+edge_types                = {u'follow': 4L, u'friend': 4L}
+exported_edges_summary    = {u'Total Exported Edges Count': 8L, u'Failure Count': 0L}
+exported_vertices_summary = {u'Total Exported Vertices Count': 6L, u'Failure Count': 0L}
+vertex_types              = {u'M': 3L, u'F': 3L}
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.export_to_orientdb', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.export_to_orientdb" class="source">
+    <pre><code>def export_to_orientdb(self, db_url, user_name, password, root_password,vertex_type_column_name=None, edge_type_column_name=None,batch_size=1000):
+
+    """
+    Export Spark-tk Graph (GraphFrame) to OrientDB API creates OrientDB database with the given database name, URL
+    and credentials. It exports the vertex and edge dataframes schema OrientDB based on the given vertex_type_column_name
+    and edge_type_column_name. If any of them was None it exports it to the base type class.
+
+    Parameters
+    ----------
+
+    :param:(str) db_url: OrientDB URI
+    :param:(str) user_name: the database username
+    :param:(str) password: the database password
+    :param:(str) root_password: OrientDB server password
+    :param:(Optional(str)) vertex_type_column_name: column name from the vertex data frame specified to be the vertex type
+    :param:(Optional(str)) edge_type_column_name: column name from the edge data frame specified to be the edge type
+    :param:(int) batch_size: batch size for graph ETL to OrientDB database
+
+    Example
+    -------
+
+        >>> v = tc.frame.create([("a", "Alice", 34,"F"),
+        ...     ("b", "Bob", 36,"M"),
+        ...     ("c", "Charlie", 30,"M"),
+        ...     ("d", "David", 29,"M"),
+        ...     ("e", "Esther", 32,"F"),
+        ...     ("f", "Fanny", 36,"F"),
+        ...     ], ["id", "name", "age","gender"])
+
+        >>> e = tc.frame.create([("a", "b", "friend"),
+        ...     ("b", "c", "follow"),
+        ...     ("c", "b", "follow"),
+        ...     ("f", "c", "follow"),
+        ...     ("e", "f", "follow"),
+        ...     ("e", "d", "friend"),
+        ...     ("d", "a", "friend"),
+        ...     ("a", "e", "friend")
+        ...     ], ["src", "dst", "relationship"])
+
+        >>> sparktk_graph = tc.graph.create(v,e)
+
+        >>> db = "test_db"
+
+        >>> result = sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+
+        >>> result
+        db_uri                    = remote:hostname:2424/test_db
+        edge_types                = {u'follow': 4L, u'friend': 4L}
+        exported_edges_summary    = {u'Total Exported Edges Count': 8L, u'Failure Count': 0L}
+        exported_vertices_summary = {u'Total Exported Vertices Count': 6L, u'Failure Count': 0L}
+        vertex_types              = {u'M': 3L, u'F': 3L}
+    """
+    return ExportToOrientdbReturn(self._tc,self._scala.exportToOrientdb(db_url, user_name, password, root_password,self._tc._jutils.convert.to_scala_option(vertex_type_column_name),self._tc._jutils.convert.to_scala_option(edge_type_column_name), batch_size))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.global_clustering_coefficient">
+    <p>def <span class="ident">global_clustering_coefficient</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>The clustering coefficient of a graph provides a measure of how tightly
+clustered an undirected graph is.</p>
+<p>More formally:</p>
+<p>.. math::</p>
+<pre><code>cc(G)  = rac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in             E \} \| }{\| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\} \in E \} \|}
+</code></pre>
+<div class='section-header'>Parameters:</div>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Double): </td><td class='param-desc'>The global clustering coefficient of the graph</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>The clustering coefficient on a graph with some triangles will be
+greater than 0
+
+&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; graph.global_clustering_coefficient()
+0.5
+
+The clustering coefficient on a graph with no triangles (a tree) is
+0
+
+&gt;&gt;&gt; vertex_rows_star = [ [1], [2], [3], [4]]
+&gt;&gt;&gt; vertex_frame_star = tc.frame.create(vertex_rows_star, vertex_schema)
+
+&gt;&gt;&gt; edge_rows_star = [ [1, 2], [1, 3], [1, 4]]
+&gt;&gt;&gt; edge_frame_star = tc.frame.create(edge_rows_star, edge_schema)
+
+&gt;&gt;&gt; graph_star = tc.graph.create(vertex_frame_star, edge_frame_star)
+
+&gt;&gt;&gt; graph_star.global_clustering_coefficient()
+0.0
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.global_clustering_coefficient', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.global_clustering_coefficient" class="source">
+    <pre><code>def global_clustering_coefficient(self):
+    """
+
+    The clustering coefficient of a graph provides a measure of how tightly
+    clustered an undirected graph is.
+
+    More formally:
+
+    .. math::
+
+        cc(G)  = \frac{ \| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\}, \{v,w \} \in \
+            E \} \| }{\| \{ (u,v,w) \in V^3: \ \{u,v\}, \{u, w\} \in E \} \|}
+
+
+    Parameters
+    ----------
+
+    :return: (Double) The global clustering coefficient of the graph
+
+    Examples
+    --------
+        
+        The clustering coefficient on a graph with some triangles will be
+        greater than 0
+
+        >>> vertex_schema = [('id', int)]
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+
+        >>> edge_schema = [('src', int), ('dst', int)]
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> graph.global_clustering_coefficient()
+        0.5
+
+        The clustering coefficient on a graph with no triangles (a tree) is
+        0
+
+        >>> vertex_rows_star = [ [1], [2], [3], [4]]
+        >>> vertex_frame_star = tc.frame.create(vertex_rows_star, vertex_schema)
+
+        >>> edge_rows_star = [ [1, 2], [1, 3], [1, 4]]
+        >>> edge_frame_star = tc.frame.create(edge_rows_star, edge_schema)
+
+        >>> graph_star = tc.graph.create(vertex_frame_star, edge_frame_star)
+
+        >>> graph_star.global_clustering_coefficient()
+        0.0
+
+    """
+    return self._scala.globalClusteringCoefficient()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.label_propagation">
+    <p>def <span class="ident">label_propagation</span>(</p><p>self, max_iterations)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><div class='section-header'>Parameters:</div>
+
+<p>Assigns label based off of proximity to different vertices. The labels
+are initially 1 unique label per vertex (the vertex id), and as the
+algorithm runs some of these get erased</p>
+<p>Note this algorithm is neither guaranteed to converge, nor guaranteed to
+converge to the correct value.</p>
+<p>This calls graph frames label propagation which can be found at </p>
+<p>http://graphframes.github.io/api/scala/index.html#org.graphframes.lib.LabelPropagation</p>
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's and the community they are a member of</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.label_propagation(10)
+&gt;&gt;&gt; result.inspect()
+[#]  id  label
+==============
+[0]   1      1
+[1]   2      2
+[2]   3      2
+[3]   4      2
+[4]   5      1
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.label_propagation', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.label_propagation" class="source">
+    <pre><code>def label_propagation(self, max_iterations):
+    """
+
+    Parameters
+    ----------
+
+    Assigns label based off of proximity to different vertices. The labels
+    are initially 1 unique label per vertex (the vertex id), and as the
+    algorithm runs some of these get erased
+
+    Note this algorithm is neither guaranteed to converge, nor guaranteed to
+    converge to the correct value.
+
+    This calls graph frames label propagation which can be found at 
+
+    http://graphframes.github.io/api/scala/index.html#org.graphframes.lib.LabelPropagation
+
+    :return: (Frame) Frame containing the vertex id's and the community they are a member of
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int)]
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+        >>> edge_schema = [('src', int), ('dst', int)]
+
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.label_propagation(10)
+        >>> result.inspect()
+        [#]  id  label
+        ==============
+        [0]   1      1
+        [1]   2      2
+        [2]   3      2
+        [3]   4      2
+        [4]   5      1
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.labelPropagation(max_iterations))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.loopy_belief_propagation">
+    <p>def <span class="ident">loopy_belief_propagation</span>(</p><p>self, prior, edge_weight, max_iterations=10)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Performs loopy belief propagation on a graph representing a Potts model. This optimizes based off of
+user provided priors.</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>prior</td><td class='param-type'>(String):</td><td class='param-desc'>The name of the column of space delimited string of floats representing the prior distribution on a vertex
+</td></tr></table>
+
+<table><tr><td class='param-name'>edge_weight</td><td class='param-type'>(String):</td><td class='param-desc'>The name of the column of weight value on edges
+</td></tr></table>
+
+<table><tr><td class='param-name'>max_iterations: </td><td class='param-desc'>The number of iterations to run for</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int), ('label', float), ("prior_val", str), ("was_labeled", int)]
+&gt;&gt;&gt; vertex_rows = [ [1, 1, "0.7 0.3", 1], [2, 1, "0.7 0.3", 1], [3, 5, "0.7 0.3", 0], [4, 5, "0.7 0.3", 0], [5, 5, "0.7 0.3", 1] ]
+
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int), ('weight', int)]
+&gt;&gt;&gt; edge_rows = [ [1, 2, 2], [1, 3, 1], [2, 3, 1], [1, 4, 1], [4, 5, 1] ]
+
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+&gt;&gt;&gt; vertex_frame.inspect()
+[#]  id  label  prior_val  was_labeled
+======================================
+[0]   1    1.0  0.7 0.3              1
+[1]   2    1.0  0.7 0.3              1
+[2]   3    5.0  0.7 0.3              0
+[3]   4    5.0  0.7 0.3              0
+[4]   5    5.0  0.7 0.3              1
+
+&gt;&gt;&gt; result = graph.loopy_belief_propagation("prior_val", "weight", 2)
+&gt;&gt;&gt; result.inspect() 
+[#]  id  label  prior_val  was_labeled
+======================================
+[0]   1    1.0  0.7 0.3              1
+[1]   2    1.0  0.7 0.3              1
+[2]   3    5.0  0.7 0.3              0
+[3]   4    5.0  0.7 0.3              0
+[4]   5    5.0  0.7 0.3              1
+&lt;BLANKLINE&gt;
+[#]  posterior
+==============================================
+[0]  [0.9883347610773112,0.011665238922688819]
+[1]  [0.9743014865548763,0.025698513445123698]
+[2]  [0.9396772870897875,0.06032271291021254]
+[3]  [0.9319529856190276,0.06804701438097235]
+[4]  [0.8506957305238876,0.1493042694761125]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.loopy_belief_propagation', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.loopy_belief_propagation" class="source">
+    <pre><code>def loopy_belief_propagation(self, prior, edge_weight, max_iterations=10):
+    """
+
+    Performs loopy belief propagation on a graph representing a Potts model. This optimizes based off of
+    user provided priors.
+
+    Parameters
+    ----------
+
+    :param prior: (String) The name of the column of space delimited string of floats representing the prior distribution on a vertex
+    :param edge_weight: (String) The name of the column of weight value on edges
+    :param max_iterations: The number of iterations to run for
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int), ('label', float), ("prior_val", str), ("was_labeled", int)]
+        >>> vertex_rows = [ [1, 1, "0.7 0.3", 1], [2, 1, "0.7 0.3", 1], [3, 5, "0.7 0.3", 0], [4, 5, "0.7 0.3", 0], [5, 5, "0.7 0.3", 1] ]
+
+        >>> edge_schema = [('src', int), ('dst', int), ('weight', int)]
+        >>> edge_rows = [ [1, 2, 2], [1, 3, 1], [2, 3, 1], [1, 4, 1], [4, 5, 1] ]
+
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+        >>> vertex_frame.inspect()
+        [#]  id  label  prior_val  was_labeled
+        ======================================
+        [0]   1    1.0  0.7 0.3              1
+        [1]   2    1.0  0.7 0.3              1
+        [2]   3    5.0  0.7 0.3              0
+        [3]   4    5.0  0.7 0.3              0
+        [4]   5    5.0  0.7 0.3              1
+
+        >>> result = graph.loopy_belief_propagation("prior_val", "weight", 2)
+        >>> result.inspect() 
+        [#]  id  label  prior_val  was_labeled
+        ======================================
+        [0]   1    1.0  0.7 0.3              1
+        [1]   2    1.0  0.7 0.3              1
+        [2]   3    5.0  0.7 0.3              0
+        [3]   4    5.0  0.7 0.3              0
+        [4]   5    5.0  0.7 0.3              1
+        <BLANKLINE>
+        [#]  posterior
+        ==============================================
+        [0]  [0.9883347610773112,0.011665238922688819]
+        [1]  [0.9743014865548763,0.025698513445123698]
+        [2]  [0.9396772870897875,0.06032271291021254]
+        [3]  [0.9319529856190276,0.06804701438097235]
+        [4]  [0.8506957305238876,0.1493042694761125]
+
+
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.loopyBeliefPropagation(prior, edge_weight, max_iterations))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.page_rank">
+    <p>def <span class="ident">page_rank</span>(</p><p>self, convergence_tolerance=None, reset_probability=None, max_iterations=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><strong>Page Rank</strong></p>
+<p>Page Rank is a popular statistic that ranks vertices based off of
+connectivity in the global graph</p>
+<p>Exactly 1 of convergence_tolerance and max_iterations must be set (termination criteria)</p>
+<div class='section-header'>Parameters:</div>
+
+<p>:convergence_tolerance: (Float) If the difference between successive iterations is less than this, the algorithm terminates. Mutually exclusive with max_iterations
+:reset_probability: (Float) Value for the reset probabiity in the page rank algorithm
+:max_iterations: (Int) Maximum number of iterations the page rank should run before terminating. Mutually exclusive with convergence_tolerance</p>
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's and their page rank </td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.page_rank(max_iterations=20)
+&gt;&gt;&gt; result.inspect()
+[#]  id  pagerank
+=================
+[0]   1      0.15
+[1]   2    0.1925
+[2]   3  0.356125
+[3]   4    0.1925
+[4]   5  0.313625
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.page_rank', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.page_rank" class="source">
+    <pre><code>def page_rank(self, convergence_tolerance=None, reset_probability=None, max_iterations=None):
+    """
+    **Page Rank**
+
+    Page Rank is a popular statistic that ranks vertices based off of
+    connectivity in the global graph
+
+    Exactly 1 of convergence_tolerance and max_iterations must be set (termination criteria)
+
+    Parameters
+    ----------
+
+    :convergence_tolerance: (Float) If the difference between successive iterations is less than this, the algorithm terminates. Mutually exclusive with max_iterations
+    :reset_probability: (Float) Value for the reset probabiity in the page rank algorithm
+    :max_iterations: (Int) Maximum number of iterations the page rank should run before terminating. Mutually exclusive with convergence_tolerance
+
+    :return: (Frame) Frame containing the vertex id's and their page rank 
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int)]
+        >>> edge_schema = [('src', int), ('dst', int)]
+
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.page_rank(max_iterations=20)
+        >>> result.inspect()
+        [#]  id  pagerank
+        =================
+        [0]   1      0.15
+        [1]   2    0.1925
+        [2]   3  0.356125
+        [3]   4    0.1925
+        [4]   5  0.313625
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.pageRank(
+        self._tc.jutils.convert.to_scala_option(max_iterations),
+        self._tc.jutils.convert.to_scala_option(reset_probability),
+        self._tc.jutils.convert.to_scala_option(convergence_tolerance)))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.save">
+    <p>def <span class="ident">save</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Persists the graph to the given file path</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.save', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.save" class="source">
+    <pre><code>def save(self, path):
+    """Persists the graph to the given file path"""
+    self._scala.save(path)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.triangle_count">
+    <p>def <span class="ident">triangle_count</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Counts the number of triangles each vertex is a part of</p>
+<div class='section-header'>Parameters:</div>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's and the count of the number of triangle they are in</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int)]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int)]
+
+&gt;&gt;&gt; vertex_rows = [ [1], [2], [3], [4], [5] ]
+&gt;&gt;&gt; edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.triangle_count()
+&gt;&gt;&gt; result.inspect()
+[#]  count  id 
+==============
+[0]      1   1
+[1]      1   2
+[2]      1   3
+[3]      0   4
+[4]      0   5
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.triangle_count', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.triangle_count" class="source">
+    <pre><code>def triangle_count(self):
+    """
+    Counts the number of triangles each vertex is a part of
+
+    Parameters
+    ----------
+
+    :return: (Frame) Frame containing the vertex id's and the count of the number of triangle they are in
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int)]
+        >>> edge_schema = [('src', int), ('dst', int)]
+
+        >>> vertex_rows = [ [1], [2], [3], [4], [5] ]
+        >>> edge_rows = [ [1, 2], [1, 3], [2, 3], [1, 4], [4, 5] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.triangle_count()
+        >>> result.inspect()
+        [#]  count  id 
+        ==============
+        [0]      1   1
+        [1]      1   2
+        [2]      1   3
+        [3]      0   4
+        [4]      0   5
+
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.triangleCount())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.vertex_count">
+    <p>def <span class="ident">vertex_count</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Returns the number of rows in the vertices frame in this graph</p>
+<div class='section-header'>Example:</div>
+
+<pre><code>&gt;&gt;&gt; from graphframes import examples
+
+&gt;&gt;&gt; gf = examples.Graphs(tc.sql_context).friends()
+
+&gt;&gt;&gt; from sparktk.graph.graph import Graph
+
+&gt;&gt;&gt; g = Graph(tc, gf)
+
+&gt;&gt;&gt; g.vertex_count()
+6
+
+
+&gt;&gt;&gt; v = tc.frame.create([("a", "Alice", 34),
+...     ("b", "Bob", 36),
+...     ("c", "Charlie", 30),
+...     ("d", "David", 29),
+...     ("e", "Esther", 32),
+...     ("f", "Fanny", 36),
+...     ], ["id", "name", "age"])
+
+&gt;&gt;&gt; e = tc.frame.create([("a", "b", "friend"),
+...     ("b", "c", "follow"),
+...     ("c", "b", "follow"),
+...     ("f", "c", "follow"),
+...     ("e", "f", "follow"),
+...     ("e", "d", "friend"),
+...     ("d", "a", "friend"),
+...     ("a", "e", "friend")
+...     ], ["src", "dst", "relationship"])
+
+&gt;&gt;&gt; g2 = tc.graph.create(v, e)
+
+&gt;&gt;&gt; g2.vertex_count()
+6
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.vertex_count', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.vertex_count" class="source">
+    <pre><code>def vertex_count(self):
+
+    """
+    Returns the number of rows in the vertices frame in this graph
+
+    Example
+    -------
+
+        >>> from graphframes import examples
+
+        >>> gf = examples.Graphs(tc.sql_context).friends()
+
+        >>> from sparktk.graph.graph import Graph
+
+        >>> g = Graph(tc, gf)
+
+        >>> g.vertex_count()
+        6
+
+
+        >>> v = tc.frame.create([("a", "Alice", 34),
+        ...     ("b", "Bob", 36),
+        ...     ("c", "Charlie", 30),
+        ...     ("d", "David", 29),
+        ...     ("e", "Esther", 32),
+        ...     ("f", "Fanny", 36),
+        ...     ], ["id", "name", "age"])
+
+        >>> e = tc.frame.create([("a", "b", "friend"),
+        ...     ("b", "c", "follow"),
+        ...     ("c", "b", "follow"),
+        ...     ("f", "c", "follow"),
+        ...     ("e", "f", "follow"),
+        ...     ("e", "d", "friend"),
+        ...     ("d", "a", "friend"),
+        ...     ("a", "e", "friend")
+        ...     ], ["src", "dst", "relationship"])
+
+        >>> g2 = tc.graph.create(v, e)
+
+        >>> g2.vertex_count()
+        6
+
+    """
+    return int(self._scala.vertexCount())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.graph.graph.Graph.weighted_degrees">
+    <p>def <span class="ident">weighted_degrees</span>(</p><p>self, edge_weight, degree_option=&#39;undirected&#39;, default_weight=0.0)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p><strong>Degree Calculation</strong></p>
+<p>A fundamental quantity in graph analysis is the degree of a vertex:
+The degree of a vertex is the number of edges adjacent to it.</p>
+<p>For a directed edge relation, a vertex has both an out-degree (the number of
+edges leaving the vertex) and an in-degree (the number of edges entering the
+vertex).</p>
+<p>In the presence of edge weights, vertices can have weighted degrees: The
+weighted degree of a vertex is the sum of weights of edges adjacent to it.
+Analogously, the weighted in-degree of a vertex is the sum of the weights of
+the edges entering it, and the weighted out-degree is the sum
+of the weights of the edges leaving the vertex. If a property is missing or
+empty on particular vertex, the default weight is used.</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>edge_weight</td><td class='param-type'>(String):</td><td class='param-desc'>Name of the property that contains and edge weight
+</td></tr></table>
+
+<table><tr><td class='param-name'>degree_option</td><td class='param-type'>(String):</td><td class='param-desc'>Either in, out or undirected. String describing the direction of edges
+</td></tr></table>
+
+<table><tr><td class='param-name'>default_weight</td><td class='param-type'>(Numeric):</td><td class='param-desc'>Default weight value if a vertex has no value for the edge weight property</td></tr></table>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>Frame containing the vertex id's an their weights</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; vertex_schema = [('id', int), ('label', float)]
+&gt;&gt;&gt; edge_schema = [('src', int), ('dst', int), ('weight', int)]
+
+&gt;&gt;&gt; vertex_rows = [ [1, 1], [2, 1], [3, 5], [4, 5], [5, 5] ]
+&gt;&gt;&gt; edge_rows = [ [1, 2, 2], [1, 3, 1], [2, 3, 1], [1, 4, 1], [4, 5, 1] ]
+&gt;&gt;&gt; vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+&gt;&gt;&gt; edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+&gt;&gt;&gt; graph = tc.graph.create(vertex_frame, edge_frame)
+
+&gt;&gt;&gt; result = graph.weighted_degrees(edge_weight="weight", degree_option="out")
+&gt;&gt;&gt; result.inspect() 
+[#]  id  degree
+===============
+[0]   1       4
+[1]   2       1
+[2]   3       0
+[3]   4       1
+[4]   5       0
+
+
+&gt;&gt;&gt; result = graph.weighted_degrees(edge_weight="weight", degree_option="in")
+&gt;&gt;&gt; result.inspect()
+[#]  id  degree
+===============
+[0]   1       0
+[1]   2       2
+[2]   3       2
+[3]   4       1
+[4]   5       1
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.graph.graph.Graph.weighted_degrees', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.graph.graph.Graph.weighted_degrees" class="source">
+    <pre><code>def weighted_degrees(self, edge_weight, degree_option='undirected', default_weight=0.0):
+    """
+    **Degree Calculation**
+
+    A fundamental quantity in graph analysis is the degree of a vertex:
+    The degree of a vertex is the number of edges adjacent to it.
+
+    For a directed edge relation, a vertex has both an out-degree (the number of
+    edges leaving the vertex) and an in-degree (the number of edges entering the
+    vertex).
+
+    In the presence of edge weights, vertices can have weighted degrees: The
+    weighted degree of a vertex is the sum of weights of edges adjacent to it.
+    Analogously, the weighted in-degree of a vertex is the sum of the weights of
+    the edges entering it, and the weighted out-degree is the sum
+    of the weights of the edges leaving the vertex. If a property is missing or
+    empty on particular vertex, the default weight is used.
+
+    Parameters
+    ----------
+
+    :param edge_weight: (String) Name of the property that contains and edge weight
+    :param degree_option: (String) Either in, out or undirected. String describing the direction of edges
+    :param default_weight: (Numeric) Default weight value if a vertex has no value for the edge weight property
+
+    :return: (Frame) Frame containing the vertex id's an their weights
+
+    Examples
+    --------
+
+        >>> vertex_schema = [('id', int), ('label', float)]
+        >>> edge_schema = [('src', int), ('dst', int), ('weight', int)]
+
+        >>> vertex_rows = [ [1, 1], [2, 1], [3, 5], [4, 5], [5, 5] ]
+        >>> edge_rows = [ [1, 2, 2], [1, 3, 1], [2, 3, 1], [1, 4, 1], [4, 5, 1] ]
+        >>> vertex_frame = tc.frame.create(vertex_rows, vertex_schema)
+        >>> edge_frame = tc.frame.create(edge_rows, edge_schema)
+
+        >>> graph = tc.graph.create(vertex_frame, edge_frame)
+
+        >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="out")
+        >>> result.inspect() 
+        [#]  id  degree
+        ===============
+        [0]   1       4
+        [1]   2       1
+        [2]   3       0
+        [3]   4       1
+        [4]   5       0
+
+
+        >>> result = graph.weighted_degrees(edge_weight="weight", degree_option="in")
+        >>> result.inspect()
+        [#]  id  degree
+        ===============
+        [0]   1       0
+        [1]   2       2
+        [2]   3       2
+        [3]   4       1
+        [4]   5       1
+
+    """
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc, self._scala.weightedDegree(edge_weight, degree_option, default_weight))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+  </div>
+</body>
+</html>

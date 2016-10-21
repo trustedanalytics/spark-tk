@@ -1,0 +1,2254 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>sparktk.dtypes API documentation</title>
+    <meta name="description" content="definitions for Data Types" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
+  }
+  #content {
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
+  }
+  #sidebar {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+    overflow: auto;
+    height: 100%;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #fixed_top_left {
+    display: block;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
+  }
+
+  #footer {
+    font-size: .75em;
+    margin-top: 20px;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 20px 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+      
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.dtypes.dtypes">dtypes</a></li>
+    <li class="mono"><a href="#sparktk.dtypes.matrix">matrix</a></li>
+  </ul>
+
+    </li>
+
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes.datetime">datetime</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes.float">float32</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes.float">float32</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes._Ignore">ignore</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes.int">int32</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes.long">int64</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes._Unit">unit</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes._Unknown">unknown</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dtypes._Vector">vector</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#sparktk.dtypes._Vector.get_from_string">get_from_string</a></li>
+    <li class="mono"><a href="#sparktk.dtypes._Vector.__init__">__init__</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+      <article id="content">
+        <div>
+        
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">sparktk.dtypes</span> module</h1>
+  <p>definitions for Data Types</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes" class="source">
+    <pre><code># vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+"""
+definitions for Data Types
+"""
+
+# TODO - consider server providing types, similar to commands
+
+__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
+
+import numpy as np
+import json
+import re
+from pyspark.sql import types
+import logging
+logger = logging.getLogger('sparktk')
+
+# alias numpy types
+# todo: bring back the numpy types
+# this is temporary until the serialization gets completely figured out...
+# float32 = np.float32
+# float64 = np.float64
+# int32 = np.int32
+# int64 = np.int64
+float32 = float
+float64 = float
+int32 = int
+int64 = long
+
+from datetime import datetime
+import dateutil.parser as datetime_parser
+import pytz
+# Chose python's datetime over numpy.datetime64 because of time zone support and string serialization
+# Here's a long thread discussing numpy's datetime64 timezone problem:
+#   http://mail.scipy.org/pipermail/numpy-discussion/2013-April/066038.html
+# If need be, UDFs can create numpy objects from x using: numpy.datatime64(x.isoformat())
+
+
+class _Matrix(object):
+    base_type = np.ndarray
+    re_pattern = "matrix"
+
+    def __init__(self):
+        self.constructor = self._get_constructor()
+
+    def _get_constructor(self):
+
+        def constructor(value):
+            """
+            Creates a numpy ndarray from a value, which can be one of many types
+            """
+            if value is None:
+                return None
+            else:
+                return np.array(value, dtype=np.float64)
+        return constructor
+
+    @property
+    def is_complex_type(self):
+        return True
+
+    @staticmethod
+    def get_from_string(data_type_str):
+        if _Matrix.re_pattern != data_type_str:
+            raise "Invalid data type"
+        return _Matrix()
+
+    def __repr__(self):
+        return "matrix"
+
+matrix = _Matrix()
+
+class _Vector(object):
+
+    base_type = np.ndarray
+    re_pattern = re.compile(r"^vector\((\d+)\)$")
+
+    def __init__(self, length):
+        self.length = int(length)
+        self.constructor = self._get_constructor()
+
+    def _get_constructor(self):
+        length = self.length
+
+        def constructor(value):
+            """
+            Creates a numpy array from a value, which can be one of many types
+            """
+            if value is None:
+                return None
+            try:
+                # first try numpy's constructor
+                array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+            except:
+                # also support json or comma-sep string
+                if dtypes.value_is_string(value):
+                    try:
+                        value = json.loads(value)
+                    except:
+                        value = [np.float64(item.strip()) for item in value.split(',') if item]
+                    array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+                else:
+                    raise
+
+            array = np.atleast_1d(array)  # numpy thing, so that vectors of size 1 will still have dimension and length
+            if len(array) != length:
+                raise ValueError("Could not construct vector in Python Client.  Expected vector of length %s, but received length %d" % (length, len(array)))
+            return array
+        return constructor
+
+    @property
+    def is_complex_type(self):
+        return True
+
+    @staticmethod
+    def get_from_string(data_type_str):
+        return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+
+    def __repr__(self):
+        return "vector(%d)" % self.length
+
+vector = _Vector
+
+
+class _Unit(object):
+    """Ignore type used for schemas during file import"""
+    pass
+
+unit = _Unit
+
+
+class _Ignore(object):
+    """Ignore type used for schemas during file import"""
+    pass
+
+ignore = _Ignore
+
+
+class _Unknown(object):
+    """Unknown type used when type is indeterminate"""
+    pass
+
+unknown = _Unknown
+
+
+# map types to their string identifier
+_primitive_type_to_str_table = {
+    #bool: "bool", TODO
+    #bytearray: "bytearray", TODO
+    #dict: "dict", TODO
+    float32: "float32",
+    float64: "float64",
+    int32: "int32",
+    int64: "int64",
+    #list: "list", TODO
+    unicode: "unicode",
+    ignore: "ignore",
+    datetime: "datetime",
+}
+
+# map the pyspark sql type to the primitive data type
+_pyspark_type_to_primitive_type_table = {
+    #types.BooleanType : bool,
+    types.LongType : int,
+    types.IntegerType : int,
+    types.DoubleType : float,
+    types.DecimalType : float,
+    types.StringType : str,
+    types.TimestampType : datetime
+}
+
+# map data type to pyspark sql type
+_data_type_to_pyspark_type_table = {
+    int: types.IntegerType(),
+    long: types.LongType(),
+    float: types.DoubleType(),
+    str: types.StringType(),
+    unicode: types.StringType(),
+    datetime: types.TimestampType()
+}
+
+# build reverse map string -> type
+_primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()])
+
+_primitive_alias_type_to_type_table = {
+    float: float64,
+    int: int32,
+    long: int64,
+    str: unicode,
+    list: vector,
+    np.ndarray: matrix,
+}
+
+_primitive_alias_str_to_type_table = dict([(alias.__name__, t) for alias, t in _primitive_alias_type_to_type_table.iteritems()])
+_primitive_alias_str_to_type_table["string"] = unicode
+
+
+def datetime_to_ms(date_time):
+    """
+    Returns the number of milliseconds since epoch (1970-01-01).
+    :param date_time: (datetime) Date/time to convert to timestamp
+    :return: Timestamp (number of ms since epoch)
+    """
+    if isinstance(date_time, datetime):
+        ms = long(date_time.strftime("%s")) * 1000.0
+        ms += date_time.microsecond // 1000
+        return long(ms)
+    else:
+        raise TypeError("Unable to calculate the number of milliseconds since epoch for type: %s" % type(date_time))
+
+def ms_to_datetime_str(ms):
+    """
+    Returns the date/time string for the specified timestamp (milliseconds since epoch).
+    :param ms: Milliseconds since epoch (int or long)
+    :return: Date/time string
+    """
+    if isinstance(ms, long) or isinstance(ms, int):
+        return datetime.fromtimestamp(ms/1000.0, tz=pytz.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    else:
+        raise TypeError("Unable to convert timestamp milliseconds to a date/time string, because the value provided " +
+                        "is not a long/int.  Unsupported type: %" % type(ms))
+
+def datetime_constructor(value):
+    """Creates special constructor for datetime parsing.  Returns the number of ms since epoch."""
+    if dtypes.value_is_string(value):
+        return datetime_to_ms(datetime_parser.parse(value))
+    elif isinstance(value, long) or isinstance(value, int):
+        return value
+    else:
+        try:
+            return datetime_to_ms(datetime(*value))
+        except:
+            raise TypeError("cannot convert type to the datetime")
+
+
+def numpy_to_bson_friendly(obj):
+    """take an object and convert it to a type that can be serialized to bson if neccessary."""
+    if isinstance(obj, float32) or isinstance(obj, float64):
+        return float(obj)
+    if isinstance(obj, int32):
+        return int(obj)
+    if isinstance(obj, vector.base_type):
+        return obj.tolist()
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    if isinstance(obj, dict):
+        return dict([(numpy_to_bson_friendly(key), numpy_to_bson_friendly(value)) for key, value in obj.items()])
+    # Let the base class default method raise the TypeError
+    return obj
+
+
+class _DataTypes(object):
+    """
+    Provides functions with define and operate on supported data types.
+    """
+
+    def __contains__(self, item):
+        try:
+            self.validate(item)
+            return True
+        except ValueError:
+            return False
+
+    def __repr__(self):
+        aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
+        return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
+
+    @staticmethod
+    def value_is_string(value):
+        """get bool indication that value is a string, whether str or unicode"""
+        return isinstance(value, basestring)
+
+    @staticmethod
+    def value_is_missing_value(value):
+        return value is None
+
+    @staticmethod
+    def get_primitive_data_types():
+        return _primitive_type_to_str_table.keys()
+
+    @staticmethod
+    def to_string(data_type):
+        """
+        Returns the string representation of the given type
+
+        Parameters
+        ----------
+        data_type : type
+            valid data type; if invalid, a ValueError is raised
+
+        Returns
+        -------
+        result : str
+            string representation
+
+        Examples
+        --------
+        >>> dtypes.to_string(float32)
+        'float32'
+        """
+        valid_data_type = _DataTypes.get_from_type(data_type)
+        try:
+            return _primitive_type_to_str_table[valid_data_type]
+        except KeyError:
+            # complex data types should use their repr
+            return repr(valid_data_type)
+
+    @staticmethod
+    def get_from_string(data_type_str):
+        """
+        Returns the data type for the given type string representation
+
+        Parameters
+        ----------
+        data_type_str : str
+            valid data type str; if invalid, a ValueError is raised
+
+        Returns
+        -------
+        result : type
+            type represented by the string
+
+        Examples
+        --------
+        >>> dtypes.get_from_string('unicode')
+        unicode
+        """
+        try:
+            return _primitive_str_to_type_table[data_type_str]
+        except KeyError:
+            try:
+                return _primitive_alias_str_to_type_table[data_type_str]
+            except KeyError:
+                try:
+                    if data_type_str == 'matrix':
+                        return matrix.get_from_string(data_type_str)
+                    else:
+                        return vector.get_from_string(data_type_str)
+                except:
+                    raise ValueError("Unsupported type string '%s' " % data_type_str)
+
+    @staticmethod
+    def is_primitive_type(data_type):
+        return data_type in _primitive_type_to_str_table or data_type in _primitive_alias_type_to_type_table
+
+    @staticmethod
+    def is_complex_type(data_type):
+        try:
+            return data_type.is_complex_type
+        except AttributeError:
+            return False
+
+    @staticmethod
+    def is_primitive_alias_type(data_type):
+        return data_type in _primitive_alias_type_to_type_table
+
+    @staticmethod
+    def is_int(data_type):
+        return data_type in [int, int32, int64]
+
+    @staticmethod
+    def is_float(data_type):
+        return data_type in [float, float32, float64]
+
+    @staticmethod
+    def get_from_type(data_type):
+        """
+        Returns the data type for the given type (often it will return the same type)
+
+        Parameters
+        ----------
+        data_type : type
+            valid data type or type that may be aliased for a valid data type;
+            if invalid, a ValueError is raised
+
+        Returns
+        -------
+        result : type
+            valid data type for given type
+
+        Examples
+        --------
+        >>> dtypes.get_from_type(int)
+        numpy.int32
+        """
+        if _DataTypes.is_primitive_alias_type(data_type):
+            return _primitive_alias_type_to_type_table[data_type]
+        if _DataTypes.is_primitive_type(data_type) or _DataTypes.is_complex_type(data_type):
+            return data_type
+        raise ValueError("Unsupported type %s" % data_type)
+
+    @staticmethod
+    def validate(data_type):
+        """Raises a ValueError if data_type is not a valid data_type"""
+        _DataTypes.get_from_type(data_type)
+
+    @staticmethod
+    def get_constructor(to_type):
+        """gets the constructor for the to_type"""
+        try:
+            return to_type.constructor
+        except AttributeError:
+            if to_type == datetime:
+                return datetime_constructor
+
+            def constructor(value):
+                if value is None:
+                    return None
+                try:
+                    return to_type(value)
+                except Exception as e:
+                    print "ERROR for value %s.  %s" % (value, e)
+                    raise
+            return constructor
+
+    @staticmethod
+    def cast(value, to_type):
+        """
+        Returns the given value cast to the given type.  None is always returned as None
+
+        Parameters
+        ----------
+        value : object
+            value to convert by casting
+
+        to_type : type
+            valid data type to use for the cast
+
+        Returns
+        -------
+        results : object
+            the value cast to the to_type
+
+        Examples
+        --------
+        >>> dtypes.cast(3, float64)
+        3.0
+        >>> dtypes.cast(4.5, str)
+        '4.5'
+        >>> dtypes.cast(None, str)
+        None
+        >>> dtypes.cast(np.inf, float32)
+        None
+        """
+        if _DataTypes.value_is_missing_value(value):  # Special handling for missing values
+            return None
+        elif _DataTypes.is_primitive_type(to_type) and type(value) is to_type:  # Optimization
+            return value
+        try:
+            constructor = _DataTypes.get_constructor(to_type)
+            result = constructor(value)
+            return None if _DataTypes.value_is_missing_value(result) else result
+        except Exception as e:
+            raise ValueError(("Unable to cast to type %s\n" % to_type) + str(e))
+
+    @staticmethod
+    def datetime_from_iso(iso_string):
+        """create datetime object from ISO 8601 string"""
+        return datetime_parser.parse(iso_string)
+
+    @staticmethod
+    def get_primitive_type_from_pyspark_type(pyspark_type):
+        """
+        Get the primitive type for the specified pyspark sql data type.
+        
+        :param pyspark_type: pyspark.sql.types data type
+        :return: Primitive data type
+        """
+        if _pyspark_type_to_primitive_type_table.has_key(pyspark_type):
+            return _pyspark_type_to_primitive_type_table[pyspark_type]
+        else:
+            raise ValueError("Unable to cast pyspark type %s to primitive type." % str(pyspark_type))
+
+    @staticmethod
+    def merge_types (type_a, type_b):
+        """
+        Returns the lowest common denominator data type for the specified types.
+        :param type_a: Data type a to compare
+        :param type_b: Data type b t compare
+        :return: Merged data type
+        """
+        merged = unicode
+        numeric_types = [float, long, int, bool]       # numeric types in rank order
+        if type_a == type_b:
+            merged = type_a
+        elif type_a == unicode or type_b == unicode:
+            merged = unicode
+        elif type_a == str or type_b == str:
+            merged = str
+        elif type_a in numeric_types and type_b in numeric_types:
+            if numeric_types.index(type_a) > numeric_types.index(type_b):
+                merged = type_b
+            else:
+                merged = type_a
+        elif isinstance(type_a, vector) and isinstance(type_b, vector):
+            if type_a.length != type_b.length:
+                raise ValueError("Vectors must all be the same length (found vectors with length %s and %s)." % (type_a.length, type_b.length))
+            merged = type_a
+        return merged
+
+
+dtypes = _DataTypes()
+#valid_data_types = dtypes  # consider for backwards comp
+
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="sparktk.dtypes.dtypes" class="name">var <span class="ident">dtypes</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="sparktk.dtypes.matrix" class="name">var <span class="ident">matrix</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="sparktk.dtypes.datetime" class="name">class <span class="ident">datetime</span></p>
+      
+  
+    <div class="desc"><p>datetime(year, month, day[, hour[, minute[, second[, microsecond[,tzinfo]]]]])</p>
+<p>The year, month and day arguments are required. tzinfo may be None, or an
+instance of a tzinfo subclass. The remaining arguments may be ints or longs.</p></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes.datetime">datetime</a></li>
+          <li>datetime.date</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.day" class="name">var <span class="ident">day</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.hour" class="name">var <span class="ident">hour</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.max" class="name">var <span class="ident">max</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.microsecond" class="name">var <span class="ident">microsecond</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.min" class="name">var <span class="ident">min</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.minute" class="name">var <span class="ident">minute</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.month" class="name">var <span class="ident">month</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.resolution" class="name">var <span class="ident">resolution</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.second" class="name">var <span class="ident">second</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.tzinfo" class="name">var <span class="ident">tzinfo</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.datetime.year" class="name">var <span class="ident">year</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes.float" class="name">class <span class="ident">float32</span></p>
+      
+  
+    <div class="desc"><p>float(x) -&gt; floating point number</p>
+<p>Convert a string or number to a floating point number, if possible.</p></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes.float">float32</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes.float.imag" class="name">var <span class="ident">imag</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.float.real" class="name">var <span class="ident">real</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes.float" class="name">class <span class="ident">float64</span></p>
+      
+  
+    <div class="desc"><p>float(x) -&gt; floating point number</p>
+<p>Convert a string or number to a floating point number, if possible.</p></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes.float">float32</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes.float.imag" class="name">var <span class="ident">imag</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#sparktk.dtypes.float">float32</a></code>.<code><a href="#sparktk.dtypes.float.imag">imag</a></code>
+    </p>
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.float.real" class="name">var <span class="ident">real</span></p>
+            
+    <p class="inheritance">
+     <strong>Inheritance:</strong>
+       <code><a href="#sparktk.dtypes.float">float32</a></code>.<code><a href="#sparktk.dtypes.float.real">real</a></code>
+    </p>
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes._Ignore" class="name">class <span class="ident">ignore</span></p>
+      
+  
+    <div class="desc"><p>Ignore type used for schemas during file import</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes._Ignore', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes._Ignore" class="source">
+    <pre><code>class _Ignore(object):
+    """Ignore type used for schemas during file import"""
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes._Ignore">ignore</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes.int" class="name">class <span class="ident">int32</span></p>
+      
+  
+    <div class="desc"><p>int(x=0) -&gt; int or long
+int(x, base=10) -&gt; int or long</p>
+<p>Convert a number or string to an integer, or return 0 if no arguments
+are given.  If x is floating point, the conversion truncates towards zero.
+If x is outside the integer range, the function returns a long instead.</p>
+<p>If x is not a number or if base is given, then x must be a string or
+Unicode object representing an integer literal in the given base.  The
+literal can be preceded by '+' or '-' and be surrounded by whitespace.
+The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
+interpret the base from the string as an integer literal.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>int('0b100', base=0)
+4</p>
+</blockquote>
+</blockquote>
+</blockquote></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes.int">int32</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes.int.denominator" class="name">var <span class="ident">denominator</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.int.imag" class="name">var <span class="ident">imag</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.int.numerator" class="name">var <span class="ident">numerator</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.int.real" class="name">var <span class="ident">real</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes.long" class="name">class <span class="ident">int64</span></p>
+      
+  
+    <div class="desc"><p>long(x=0) -&gt; long
+long(x, base=10) -&gt; long</p>
+<p>Convert a number or string to a long integer, or return 0L if no arguments
+are given.  If x is floating point, the conversion truncates towards zero.</p>
+<p>If x is not a number or if base is given, then x must be a string or
+Unicode object representing an integer literal in the given base.  The
+literal can be preceded by '+' or '-' and be surrounded by whitespace.
+The base defaults to 10.  Valid bases are 0 and 2-36.  Base 0 means to
+interpret the base from the string as an integer literal.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>int('0b100', base=0)
+4L</p>
+</blockquote>
+</blockquote>
+</blockquote></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes.long">int64</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes.long.denominator" class="name">var <span class="ident">denominator</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.long.imag" class="name">var <span class="ident">imag</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.long.numerator" class="name">var <span class="ident">numerator</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes.long.real" class="name">var <span class="ident">real</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes._Unit" class="name">class <span class="ident">unit</span></p>
+      
+  
+    <div class="desc"><p>Ignore type used for schemas during file import</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes._Unit', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes._Unit" class="source">
+    <pre><code>class _Unit(object):
+    """Ignore type used for schemas during file import"""
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes._Unit">unit</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes._Unknown" class="name">class <span class="ident">unknown</span></p>
+      
+  
+    <div class="desc"><p>Unknown type used when type is indeterminate</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes._Unknown', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes._Unknown" class="source">
+    <pre><code>class _Unknown(object):
+    """Unknown type used when type is indeterminate"""
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes._Unknown">unknown</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="sparktk.dtypes._Vector" class="name">class <span class="ident">vector</span></p>
+      
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes._Vector', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes._Vector" class="source">
+    <pre><code>class _Vector(object):
+
+    base_type = np.ndarray
+    re_pattern = re.compile(r"^vector\((\d+)\)$")
+
+    def __init__(self, length):
+        self.length = int(length)
+        self.constructor = self._get_constructor()
+
+    def _get_constructor(self):
+        length = self.length
+
+        def constructor(value):
+            """
+            Creates a numpy array from a value, which can be one of many types
+            """
+            if value is None:
+                return None
+            try:
+                # first try numpy's constructor
+                array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+            except:
+                # also support json or comma-sep string
+                if dtypes.value_is_string(value):
+                    try:
+                        value = json.loads(value)
+                    except:
+                        value = [np.float64(item.strip()) for item in value.split(',') if item]
+                    array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
+                else:
+                    raise
+
+            array = np.atleast_1d(array)  # numpy thing, so that vectors of size 1 will still have dimension and length
+            if len(array) != length:
+                raise ValueError("Could not construct vector in Python Client.  Expected vector of length %s, but received length %d" % (length, len(array)))
+            return array
+        return constructor
+
+    @property
+    def is_complex_type(self):
+        return True
+
+    @staticmethod
+    def get_from_string(data_type_str):
+        return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+
+    def __repr__(self):
+        return "vector(%d)" % self.length
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dtypes._Vector">vector</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes._Vector.base_type" class="name">var <span class="ident">base_type</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes._Vector.re_pattern" class="name">var <span class="ident">re_pattern</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dtypes._Vector.get_from_string">
+    <p>def <span class="ident">get_from_string</span>(</p><p>data_type_str)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes._Vector.get_from_string', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes._Vector.get_from_string" class="source">
+    <pre><code>@staticmethod
+def get_from_string(data_type_str):
+    return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="sparktk.dtypes._Vector.constructor" class="name">var <span class="ident">constructor</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes._Vector.is_complex_type" class="name">var <span class="ident">is_complex_type</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dtypes._Vector.length" class="name">var <span class="ident">length</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dtypes._Vector.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, length)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dtypes._Vector.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dtypes._Vector.__init__" class="source">
+    <pre><code>def __init__(self, length):
+    self.length = int(length)
+    self.constructor = self._get_constructor()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+  </div>
+</body>
+</html>

@@ -890,71 +890,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1115,334 +1050,8 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">sparktk.models.classification.random_forest_classifier</span> module</h1>
+<h1 class="title"><span class="name">sparktk</span> random_forest_classifier</h1>  
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier" class="source">
-    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
-
-<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
-<span class="c">#</span>
-<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-<span class="c">#  you may not use this file except in compliance with the License.</span>
-<span class="c">#  You may obtain a copy of the License at</span>
-<span class="c">#</span>
-<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c">#</span>
-<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
-<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c">#  See the License for the specific language governing permissions and</span>
-<span class="c">#  limitations under the License.</span>
-<span class="c">#</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.loggers</span> <span class="kn">import</span> <span class="n">log_load</span><span class="p">;</span> <span class="n">log_load</span><span class="p">(</span><span class="n">__name__</span><span class="p">);</span> <span class="k">del</span> <span class="n">log_load</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.propobj</span> <span class="kn">import</span> <span class="n">PropertiesObject</span>
-<span class="kn">from</span> <span class="nn">sparktk.frame.ops.classification_metrics_value</span> <span class="kn">import</span> <span class="n">ClassificationMetricsValue</span>
-<span class="kn">from</span> <span class="nn">sparktk</span> <span class="kn">import</span> <span class="n">TkContext</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;train&quot;</span><span class="p">,</span> <span class="s">&quot;load&quot;</span><span class="p">,</span> <span class="s">&quot;RandomForestClassifierModel&quot;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">label_column</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-          <span class="n">num_trees</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-          <span class="n">impurity</span> <span class="o">=</span> <span class="s">&quot;gini&quot;</span><span class="p">,</span>
-          <span class="n">max_depth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-          <span class="n">max_bins</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-          <span class="n">seed</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">categorical_features_info</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">feature_subset_category</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a Random Forest Classifier Model by training on the given frame</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) frame frame of training data</span>
-<span class="sd">    :param label_column: (str) Column name containing the label for each observation</span>
-<span class="sd">    :param observation_columns: (list(str)) Column(s) containing the observations</span>
-<span class="sd">    :param num_classes: (int) Number of classes for classification. Default is 2</span>
-<span class="sd">    :param num_trees: (int) Number of tress in the random forest. Default is 1</span>
-<span class="sd">    :param impurity: (str) Criterion used for information gain calculation. Supported values &quot;gini&quot; or &quot;entropy&quot;.</span>
-<span class="sd">                    Default is &quot;gini&quot;</span>
-<span class="sd">    :param max_depth: (int) Maximum depth of the tree. Default is 4</span>
-<span class="sd">    :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100</span>
-<span class="sd">    :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed</span>
-<span class="sd">    :param categorical_features_info: (Optional(Dict(Int:Int))) Arity of categorical features. Entry (n-&gt; k) indicates</span>
-<span class="sd">                                      that feature &#39;n&#39; is categorical with &#39;k&#39; categories indexed from 0:{0,1,...,k-1}</span>
-<span class="sd">    :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.</span>
-<span class="sd">                                 Supported values &quot;auto&quot;,&quot;all&quot;,&quot;sqrt&quot;,&quot;log2&quot;,&quot;onethird&quot;.</span>
-<span class="sd">                                 If &quot;auto&quot; is set, this is based on num_trees: if num_trees == 1, set to &quot;all&quot;</span>
-<span class="sd">                                 ; if num_trees &gt; 1, set to &quot;sqrt&quot;</span>
-
-<span class="sd">    :return: (RandomForestClassifierModel) The trained random forest classifier model</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Random Forest is a supervised ensemble learning algorithm which can be used to perform binary and</span>
-<span class="sd">    multi-class classification. The Random Forest Classifier model is initialized, trained on columns of a frame,</span>
-<span class="sd">    used to predict the labels of observations in a frame, and tests the predicted labels against the true labels.</span>
-<span class="sd">    This model runs the MLLib implementation of Random Forest. During training, the decision trees are trained</span>
-<span class="sd">    in parallel. During prediction, each tree&#39;s prediction is counted as vote for one class. The label is predicted</span>
-<span class="sd">    to be the class which receives the most votes. During testing, labels of the observations are predicted and</span>
-<span class="sd">    tested against the true labels using built-in binary and multi-class Classification Metrics.</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;hex&#39;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span> <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">seed</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">label_column</span><span class="p">,</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">),</span>
-                                   <span class="n">num_classes</span><span class="p">,</span>
-                                   <span class="n">num_trees</span><span class="p">,</span>
-                                   <span class="n">impurity</span><span class="p">,</span>
-                                   <span class="n">max_depth</span><span class="p">,</span>
-                                   <span class="n">max_bins</span><span class="p">,</span>
-                                   <span class="n">seed</span><span class="p">,</span>
-                                   <span class="n">__get_categorical_features_info</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">categorical_features_info</span><span class="p">),</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">feature_subset_category</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">RandomForestClassifierModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">__get_categorical_features_info</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_map</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">TkContext</span><span class="o">.</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load RandomForestClassifierModel from given path&quot;&quot;&quot;</span>
-    <span class="n">TkContext</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">RandomForestClassifierModel</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Gets reference to the scala object&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">trustedanalytics</span><span class="o">.</span><span class="n">sparktk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">classification</span><span class="o">.</span><span class="n">random_forest_classifier</span><span class="o">.</span><span class="n">RandomForestClassifierModel</span>
-
-
-<span class="k">class</span> <span class="nc">RandomForestClassifierModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained Random Forest Classifier model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create([[1,19.8446136104,2.2985856384],[1,16.8973559126,2.6933495054],</span>
-<span class="sd">        ...                                 [1,5.5548729596,2.7777687995],[0,46.1810010826,3.1611961917],</span>
-<span class="sd">        ...                                 [0,44.3117586448,3.3458963222],[0,34.6334526911,3.6429838715]],</span>
-<span class="sd">        ...                                 [(&#39;Class&#39;, int), (&#39;Dim_1&#39;, float), (&#39;Dim_2&#39;, float)])</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  Class  Dim_1          Dim_2</span>
-<span class="sd">        =======================================</span>
-<span class="sd">        [0]      1  19.8446136104  2.2985856384</span>
-<span class="sd">        [1]      1  16.8973559126  2.6933495054</span>
-<span class="sd">        [2]      1   5.5548729596  2.7777687995</span>
-<span class="sd">        [3]      0  46.1810010826  3.1611961917</span>
-<span class="sd">        [4]      0  44.3117586448  3.3458963222</span>
-<span class="sd">        [5]      0  34.6334526911  3.6429838715</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.classification.random_forest_classifier.train(frame, &#39;Class&#39;, [&#39;Dim_1&#39;, &#39;Dim_2&#39;], num_classes=2, num_trees=1, impurity=&quot;entropy&quot;, max_depth=4, max_bins=100)</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame = model.predict(frame, [&#39;Dim_1&#39;, &#39;Dim_2&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame.inspect()</span>
-<span class="sd">        [#]  Class  Dim_1          Dim_2         predicted_class</span>
-<span class="sd">        ========================================================</span>
-<span class="sd">        [0]      1  19.8446136104  2.2985856384                1</span>
-<span class="sd">        [1]      1  16.8973559126  2.6933495054                1</span>
-<span class="sd">        [2]      1   5.5548729596  2.7777687995                1</span>
-<span class="sd">        [3]      0  46.1810010826  3.1611961917                0</span>
-<span class="sd">        [4]      0  44.3117586448  3.3458963222                0</span>
-<span class="sd">        [5]      0  34.6334526911  3.6429838715                0</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics = model.test(frame, [&#39;Dim_1&#39;,&#39;Dim_2&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics</span>
-<span class="sd">        accuracy         = 1.0</span>
-<span class="sd">        confusion_matrix =             Predicted_Pos  Predicted_Neg</span>
-<span class="sd">        Actual_Pos              3              0</span>
-<span class="sd">        Actual_Neg              0              3</span>
-<span class="sd">        f_measure        = 1.0</span>
-<span class="sd">        precision        = 1.0</span>
-<span class="sd">        recall           = 1.0</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/randomforestclassifier&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/randomforestclassifier&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.label_column == model.label_column</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.seed == model.seed</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)</span>
-<span class="sd">        True</span>
-
-<span class="sd">    The trained model can also be exported to a .mar file, to be used with the scoring engine:</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/rfClassifier.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loads a random forest classifier model from a scala model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">RandomForestClassifierModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">label_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;column containing the label used for model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">labelColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;observation columns used for model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumns</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;number of classes in the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numClasses</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_trees</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;number of trees in the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numTrees</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">impurity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;impurity value of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">impurity</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;maximum depth of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">maxDepth</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;maximum bins in the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">maxBins</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;seed used during training of the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">categorical_features_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;categorical feature dictionary used during model training&quot;&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">categoricalFeaturesInfo</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">scala_map_to_python</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">feature_subset_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;feature subset category of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">featureSubsetCategory</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame</span>
-<span class="sd">        revision with existing columns and a new predicted label&#39;s column.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns</span>
-<span class="sd">                      over which the model is trained.</span>
-<span class="sd">        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.</span>
-<span class="sd">                        By default, we predict the labels over columns the RandomForestModel was trained on.</span>
-<span class="sd">        :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted</span>
-<span class="sd">                 label for each observation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict test frame labels and return metrics.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) The frame whose labels are to be predicted</span>
-<span class="sd">        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.</span>
-<span class="sd">                       By default, we predict the labels over columns the RandomForest was trained on.</span>
-<span class="sd">        :return: (ClassificationMetricsValue) Binary classification metrics comprised of:</span>
-<span class="sd">                accuracy (double)</span>
-<span class="sd">                The proportion of predictions that are correctly identified</span>
-<span class="sd">                confusion_matrix (dictionary)</span>
-<span class="sd">                A table used to describe the performance of a classification model</span>
-<span class="sd">                f_measure (double)</span>
-<span class="sd">                The harmonic mean of precision and recall</span>
-<span class="sd">                precision (double)</span>
-<span class="sd">                The proportion of predicted positive instances that are correctly identified</span>
-<span class="sd">                recall (double)</span>
-<span class="sd">                The proportion of positive instances that are correctly identified.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__columns_to_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save the trained model to path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-<span class="k">del</span> <span class="n">PropertiesObject</span>
-</pre></div>
-
-  </div>
 
   </header>
 
@@ -1460,15 +1069,6 @@ table {
   
     <div class="desc"><p>load RandomForestClassifierModel from given path</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.load', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.load" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">TkContext</span><span class="o">.</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load RandomForestClassifierModel from given path&quot;&quot;&quot;</span>
-    <span class="n">TkContext</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">RandomForestClassifierModel</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1534,78 +1134,6 @@ in parallel. During prediction, each tree's prediction is counted as vote for on
 to be the class which receives the most votes. During testing, labels of the observations are predicted and
 tested against the true labels using built-in binary and multi-class Classification Metrics.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.train', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.train" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">label_column</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-          <span class="n">num_trees</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-          <span class="n">impurity</span> <span class="o">=</span> <span class="s">&quot;gini&quot;</span><span class="p">,</span>
-          <span class="n">max_depth</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-          <span class="n">max_bins</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-          <span class="n">seed</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">categorical_features_info</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">feature_subset_category</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a Random Forest Classifier Model by training on the given frame</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) frame frame of training data</span>
-<span class="sd">    :param label_column: (str) Column name containing the label for each observation</span>
-<span class="sd">    :param observation_columns: (list(str)) Column(s) containing the observations</span>
-<span class="sd">    :param num_classes: (int) Number of classes for classification. Default is 2</span>
-<span class="sd">    :param num_trees: (int) Number of tress in the random forest. Default is 1</span>
-<span class="sd">    :param impurity: (str) Criterion used for information gain calculation. Supported values &quot;gini&quot; or &quot;entropy&quot;.</span>
-<span class="sd">                    Default is &quot;gini&quot;</span>
-<span class="sd">    :param max_depth: (int) Maximum depth of the tree. Default is 4</span>
-<span class="sd">    :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100</span>
-<span class="sd">    :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed</span>
-<span class="sd">    :param categorical_features_info: (Optional(Dict(Int:Int))) Arity of categorical features. Entry (n-&gt; k) indicates</span>
-<span class="sd">                                      that feature &#39;n&#39; is categorical with &#39;k&#39; categories indexed from 0:{0,1,...,k-1}</span>
-<span class="sd">    :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.</span>
-<span class="sd">                                 Supported values &quot;auto&quot;,&quot;all&quot;,&quot;sqrt&quot;,&quot;log2&quot;,&quot;onethird&quot;.</span>
-<span class="sd">                                 If &quot;auto&quot; is set, this is based on num_trees: if num_trees == 1, set to &quot;all&quot;</span>
-<span class="sd">                                 ; if num_trees &gt; 1, set to &quot;sqrt&quot;</span>
-
-<span class="sd">    :return: (RandomForestClassifierModel) The trained random forest classifier model</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Random Forest is a supervised ensemble learning algorithm which can be used to perform binary and</span>
-<span class="sd">    multi-class classification. The Random Forest Classifier model is initialized, trained on columns of a frame,</span>
-<span class="sd">    used to predict the labels of observations in a frame, and tests the predicted labels against the true labels.</span>
-<span class="sd">    This model runs the MLLib implementation of Random Forest. During training, the decision trees are trained</span>
-<span class="sd">    in parallel. During prediction, each tree&#39;s prediction is counted as vote for one class. The label is predicted</span>
-<span class="sd">    to be the class which receives the most votes. During testing, labels of the observations are predicted and</span>
-<span class="sd">    tested against the true labels using built-in binary and multi-class Classification Metrics.</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;hex&#39;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span> <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">seed</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">label_column</span><span class="p">,</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">),</span>
-                                   <span class="n">num_classes</span><span class="p">,</span>
-                                   <span class="n">num_trees</span><span class="p">,</span>
-                                   <span class="n">impurity</span><span class="p">,</span>
-                                   <span class="n">max_depth</span><span class="p">,</span>
-                                   <span class="n">max_bins</span><span class="p">,</span>
-                                   <span class="n">seed</span><span class="p">,</span>
-                                   <span class="n">__get_categorical_features_info</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">categorical_features_info</span><span class="p">),</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">feature_subset_category</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">RandomForestClassifierModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1620,10 +1148,10 @@ tested against the true labels using built-in binary and multi-class Classificat
     <div class="desc"><p>A trained Random Forest Classifier model</p>
 <div class='section-header'>Example:</div>
 
-<div class="codehilite"><pre>&gt;&gt;&gt; frame = tc.frame.create([[1,19.8446136104,2.2985856384],[1,16.8973559126,2.6933495054],
+<pre><code>&gt;&gt;&gt; frame = tc.frame.create([[1,19.8446136104,2.2985856384],[1,16.8973559126,2.6933495054],
 ...                                 [1,5.5548729596,2.7777687995],[0,46.1810010826,3.1611961917],
 ...                                 [0,44.3117586448,3.3458963222],[0,34.6334526911,3.6429838715]],
-...                                 [(&#39;Class&#39;, int), (&#39;Dim_1&#39;, float), (&#39;Dim_2&#39;, float)])
+...                                 [('Class', int), ('Dim_1', float), ('Dim_2', float)])
 
 &gt;&gt;&gt; frame.inspect()
 [#]  Class  Dim_1          Dim_2
@@ -1635,9 +1163,9 @@ tested against the true labels using built-in binary and multi-class Classificat
 [4]      0  44.3117586448  3.3458963222
 [5]      0  34.6334526911  3.6429838715
 
-&gt;&gt;&gt; model = tc.models.classification.random_forest_classifier.train(frame, &#39;Class&#39;, [&#39;Dim_1&#39;, &#39;Dim_2&#39;], num_classes=2, num_trees=1, impurity=&quot;entropy&quot;, max_depth=4, max_bins=100)
+&gt;&gt;&gt; model = tc.models.classification.random_forest_classifier.train(frame, 'Class', ['Dim_1', 'Dim_2'], num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
 
-&gt;&gt;&gt; predicted_frame = model.predict(frame, [&#39;Dim_1&#39;, &#39;Dim_2&#39;])
+&gt;&gt;&gt; predicted_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
 &gt;&gt;&gt; predicted_frame.inspect()
 [#]  Class  Dim_1          Dim_2         predicted_class
@@ -1649,7 +1177,7 @@ tested against the true labels using built-in binary and multi-class Classificat
 [4]      0  44.3117586448  3.3458963222                0
 [5]      0  34.6334526911  3.6429838715                0
 
-&gt;&gt;&gt; test_metrics = model.test(frame, [&#39;Dim_1&#39;,&#39;Dim_2&#39;])
+&gt;&gt;&gt; test_metrics = model.test(frame, ['Dim_1','Dim_2'])
 
 &gt;&gt;&gt; test_metrics
 accuracy         = 1.0
@@ -1660,9 +1188,9 @@ f_measure        = 1.0
 precision        = 1.0
 recall           = 1.0
 
-&gt;&gt;&gt; model.save(&quot;sandbox/randomforestclassifier&quot;)
+&gt;&gt;&gt; model.save("sandbox/randomforestclassifier")
 
-&gt;&gt;&gt; restored = tc.load(&quot;sandbox/randomforestclassifier&quot;)
+&gt;&gt;&gt; restored = tc.load("sandbox/randomforestclassifier")
 
 &gt;&gt;&gt; restored.label_column == model.label_column
 True
@@ -1672,225 +1200,11 @@ True
 
 &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)
 True
-</pre></div>
-
-
+</code></pre>
 <p>The trained model can also be exported to a .mar file, to be used with the scoring engine:</p>
-<div class="codehilite"><pre>&gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/rfClassifier.mar&quot;)
-</pre></div></div>
+<pre><code>&gt;&gt;&gt; canonical_path = model.export_to_mar("sandbox/rfClassifier.mar")
+</code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">RandomForestClassifierModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained Random Forest Classifier model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create([[1,19.8446136104,2.2985856384],[1,16.8973559126,2.6933495054],</span>
-<span class="sd">        ...                                 [1,5.5548729596,2.7777687995],[0,46.1810010826,3.1611961917],</span>
-<span class="sd">        ...                                 [0,44.3117586448,3.3458963222],[0,34.6334526911,3.6429838715]],</span>
-<span class="sd">        ...                                 [(&#39;Class&#39;, int), (&#39;Dim_1&#39;, float), (&#39;Dim_2&#39;, float)])</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  Class  Dim_1          Dim_2</span>
-<span class="sd">        =======================================</span>
-<span class="sd">        [0]      1  19.8446136104  2.2985856384</span>
-<span class="sd">        [1]      1  16.8973559126  2.6933495054</span>
-<span class="sd">        [2]      1   5.5548729596  2.7777687995</span>
-<span class="sd">        [3]      0  46.1810010826  3.1611961917</span>
-<span class="sd">        [4]      0  44.3117586448  3.3458963222</span>
-<span class="sd">        [5]      0  34.6334526911  3.6429838715</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.classification.random_forest_classifier.train(frame, &#39;Class&#39;, [&#39;Dim_1&#39;, &#39;Dim_2&#39;], num_classes=2, num_trees=1, impurity=&quot;entropy&quot;, max_depth=4, max_bins=100)</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame = model.predict(frame, [&#39;Dim_1&#39;, &#39;Dim_2&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame.inspect()</span>
-<span class="sd">        [#]  Class  Dim_1          Dim_2         predicted_class</span>
-<span class="sd">        ========================================================</span>
-<span class="sd">        [0]      1  19.8446136104  2.2985856384                1</span>
-<span class="sd">        [1]      1  16.8973559126  2.6933495054                1</span>
-<span class="sd">        [2]      1   5.5548729596  2.7777687995                1</span>
-<span class="sd">        [3]      0  46.1810010826  3.1611961917                0</span>
-<span class="sd">        [4]      0  44.3117586448  3.3458963222                0</span>
-<span class="sd">        [5]      0  34.6334526911  3.6429838715                0</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics = model.test(frame, [&#39;Dim_1&#39;,&#39;Dim_2&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics</span>
-<span class="sd">        accuracy         = 1.0</span>
-<span class="sd">        confusion_matrix =             Predicted_Pos  Predicted_Neg</span>
-<span class="sd">        Actual_Pos              3              0</span>
-<span class="sd">        Actual_Neg              0              3</span>
-<span class="sd">        f_measure        = 1.0</span>
-<span class="sd">        precision        = 1.0</span>
-<span class="sd">        recall           = 1.0</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/randomforestclassifier&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/randomforestclassifier&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.label_column == model.label_column</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.seed == model.seed</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)</span>
-<span class="sd">        True</span>
-
-<span class="sd">    The trained model can also be exported to a .mar file, to be used with the scoring engine:</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/rfClassifier.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loads a random forest classifier model from a scala model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">RandomForestClassifierModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">label_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;column containing the label used for model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">labelColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;observation columns used for model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumns</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;number of classes in the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numClasses</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_trees</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;number of trees in the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numTrees</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">impurity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;impurity value of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">impurity</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;maximum depth of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">maxDepth</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">max_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;maximum bins in the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">maxBins</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;seed used during training of the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">categorical_features_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;categorical feature dictionary used during model training&quot;&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">categoricalFeaturesInfo</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">scala_map_to_python</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">feature_subset_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;feature subset category of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">featureSubsetCategory</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame</span>
-<span class="sd">        revision with existing columns and a new predicted label&#39;s column.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns</span>
-<span class="sd">                      over which the model is trained.</span>
-<span class="sd">        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.</span>
-<span class="sd">                        By default, we predict the labels over columns the RandomForestModel was trained on.</span>
-<span class="sd">        :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted</span>
-<span class="sd">                 label for each observation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict test frame labels and return metrics.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) The frame whose labels are to be predicted</span>
-<span class="sd">        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.</span>
-<span class="sd">                       By default, we predict the labels over columns the RandomForest was trained on.</span>
-<span class="sd">        :return: (ClassificationMetricsValue) Binary classification metrics comprised of:</span>
-<span class="sd">                accuracy (double)</span>
-<span class="sd">                The proportion of predictions that are correctly identified</span>
-<span class="sd">                confusion_matrix (dictionary)</span>
-<span class="sd">                A table used to describe the performance of a classification model</span>
-<span class="sd">                f_measure (double)</span>
-<span class="sd">                The harmonic mean of precision and recall</span>
-<span class="sd">                precision (double)</span>
-<span class="sd">                The proportion of predicted positive instances that are correctly identified</span>
-<span class="sd">                recall (double)</span>
-<span class="sd">                The proportion of positive instances that are correctly identified.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__columns_to_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save the trained model to path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
 
@@ -2023,15 +1337,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-    <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2053,22 +1358,6 @@ True
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(str): </td><td class='param-desc'>Full path to the saved .mar file</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.export_to_mar', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.export_to_mar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Exports the trained model as a model archive (.mar) to the specified path.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) Path to save the trained model</span>
-<span class="sd">    :return: (str) Full path to the saved .mar file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2097,27 +1386,6 @@ revision with existing columns and a new predicted label's column.</p>
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>A new frame consisting of the existing columns of the frame and a new column with predicted
          label for each observation.</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.predict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.predict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame</span>
-<span class="sd">    revision with existing columns and a new predicted label&#39;s column.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns</span>
-<span class="sd">                  over which the model is trained.</span>
-<span class="sd">    :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.</span>
-<span class="sd">                    By default, we predict the labels over columns the RandomForestModel was trained on.</span>
-<span class="sd">    :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted</span>
-<span class="sd">             label for each observation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-    <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2136,19 +1404,6 @@ revision with existing columns and a new predicted label's column.</p>
 
 <table><tr><td class='param-name'>path</td><td class='param-type'>(str):</td><td class='param-desc'>Path to save</td></tr></table></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.save', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.save" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Save the trained model to path</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) Path to save</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2184,33 +1439,6 @@ revision with existing columns and a new predicted label's column.</p>
         recall (double)
         The proportion of positive instances that are correctly identified.</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.test', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.test" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Predict test frame labels and return metrics.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param frame: (Frame) The frame whose labels are to be predicted</span>
-<span class="sd">    :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.</span>
-<span class="sd">                   By default, we predict the labels over columns the RandomForest was trained on.</span>
-<span class="sd">    :return: (ClassificationMetricsValue) Binary classification metrics comprised of:</span>
-<span class="sd">            accuracy (double)</span>
-<span class="sd">            The proportion of predictions that are correctly identified</span>
-<span class="sd">            confusion_matrix (dictionary)</span>
-<span class="sd">            A table used to describe the performance of a classification model</span>
-<span class="sd">            f_measure (double)</span>
-<span class="sd">            The harmonic mean of precision and recall</span>
-<span class="sd">            precision (double)</span>
-<span class="sd">            The proportion of predicted positive instances that are correctly identified</span>
-<span class="sd">            recall (double)</span>
-<span class="sd">            The proportion of positive instances that are correctly identified.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2225,15 +1453,6 @@ revision with existing columns and a new predicted label's column.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.to_dict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.to_dict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">()</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">d</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2248,13 +1467,6 @@ revision with existing columns and a new predicted label's column.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.to_json', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel.to_json" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>

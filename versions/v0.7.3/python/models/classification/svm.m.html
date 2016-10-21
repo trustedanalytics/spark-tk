@@ -890,71 +890,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1115,294 +1050,8 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">sparktk.models.classification.svm</span> module</h1>
+<h1 class="title"><span class="name">sparktk</span> svm</h1>  
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm" class="source">
-    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
-
-<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
-<span class="c">#</span>
-<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-<span class="c">#  you may not use this file except in compliance with the License.</span>
-<span class="c">#  You may obtain a copy of the License at</span>
-<span class="c">#</span>
-<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c">#</span>
-<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
-<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c">#  See the License for the specific language governing permissions and</span>
-<span class="c">#  limitations under the License.</span>
-<span class="c">#</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.loggers</span> <span class="kn">import</span> <span class="n">log_load</span><span class="p">;</span> <span class="n">log_load</span><span class="p">(</span><span class="n">__name__</span><span class="p">);</span> <span class="k">del</span> <span class="n">log_load</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.propobj</span> <span class="kn">import</span> <span class="n">PropertiesObject</span>
-<span class="kn">from</span> <span class="nn">sparktk.frame.ops.classification_metrics_value</span> <span class="kn">import</span> <span class="n">ClassificationMetricsValue</span>
-<span class="kn">from</span> <span class="nn">sparktk</span> <span class="kn">import</span> <span class="n">TkContext</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;train&quot;</span><span class="p">,</span> <span class="s">&quot;load&quot;</span><span class="p">,</span> <span class="s">&quot;SvmModel&quot;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">label_column</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">intercept</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
-          <span class="n">num_iterations</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-          <span class="n">step_size</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-          <span class="n">reg_type</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">reg_param</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-          <span class="n">mini_batch_fraction</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a Svm Model by training on the given frame</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) frame of training data</span>
-<span class="sd">    :param label_column: (str) Column containing the label for each observation</span>
-<span class="sd">    :param observation_columns: (list(str)) Column(s) containing the observations</span>
-<span class="sd">    :param intercept: (boolean) Flag indicating if the algorithm adds an intercept. Default is true</span>
-<span class="sd">    :param num_iterations: (int) Number of iterations for SGD. Default is 100</span>
-<span class="sd">    :param step_size: (float) Initial step size for SGD optimizer for the first step. Default is 1.0</span>
-<span class="sd">    :param reg_type: (Optional(str)) Regularization &quot;L1&quot; or &quot;L2&quot;. Default is &quot;L2&quot;</span>
-<span class="sd">    :param reg_param: (float) Regularization parameter. Default is 0.01</span>
-<span class="sd">    :param mini_batch_fraction: (float) Set fraction of data to be used for each SGD iteration. Default is 1.0; corresponding to deterministic/classical gradient descent</span>
-<span class="sd">    :return: (SvmModel) The SVM trained model (with SGD)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Support Vector Machine is a supervised algorithm used to perform binary classification. A Support Vector Machine</span>
-<span class="sd">    constructs a high dimensional hyperplane which is said to achieve a good separation when a hyperplane has the</span>
-<span class="sd">    largest distance to the nearest training-data point of any class. This model runs the MLLib implementation of SVM</span>
-<span class="sd">    with SGD optimizer. The SVM model is initialized, trained on columns of a frame, used to predict the labels</span>
-<span class="sd">    of observations in a frame, and tests the predicted labels against the true labels. During testing, labels of the</span>
-<span class="sd">    observations are predicted and tested against the true labels using built-in binary Classification Metrics.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">label_column</span><span class="p">,</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">),</span>
-                                   <span class="n">intercept</span><span class="p">,</span>
-                                   <span class="n">num_iterations</span><span class="p">,</span>
-                                   <span class="n">step_size</span><span class="p">,</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">reg_type</span><span class="p">),</span>
-                                   <span class="n">reg_param</span><span class="p">,</span>
-                                   <span class="n">mini_batch_fraction</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">SvmModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">TkContext</span><span class="o">.</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load SvmModel from given path&quot;&quot;&quot;</span>
-    <span class="n">TkContext</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">SvmModel</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Gets reference to the scala object&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">trustedanalytics</span><span class="o">.</span><span class="n">sparktk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">classification</span><span class="o">.</span><span class="n">svm</span><span class="o">.</span><span class="n">SvmModel</span>
-
-
-<span class="k">class</span> <span class="nc">SvmModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained Svm model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create([[-48.0,1], [-75.0,1], [-63.0,1], [-57.0,1], [73.0,0], [-33.0,1], [100.0,0],</span>
-<span class="sd">        ...                          [-54.0,1], [78.0,0], [48.0,0], [-55.0,1], [23.0,0], [45.0,0], [75.0,0]],</span>
-<span class="sd">        ...                          [(&quot;data&quot;, float),(&quot;label&quot;, str)])</span>
-
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  data   label</span>
-<span class="sd">        =================</span>
-<span class="sd">        [0]  -48.0  1</span>
-<span class="sd">        [1]  -75.0  1</span>
-<span class="sd">        [2]  -63.0  1</span>
-<span class="sd">        [3]  -57.0  1</span>
-<span class="sd">        [4]   73.0  0</span>
-<span class="sd">        [5]  -33.0  1</span>
-<span class="sd">        [6]  100.0  0</span>
-<span class="sd">        [7]  -54.0  1</span>
-<span class="sd">        [8]   78.0  0</span>
-<span class="sd">        [9]   48.0  0</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.classification.svm.train(frame, &#39;label&#39;, [&#39;data&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; model.label_column</span>
-<span class="sd">        u&#39;label&#39;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.observation_columns</span>
-<span class="sd">        [u&#39;data&#39;]</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame = model.predict(frame, [&#39;data&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame.inspect()</span>
-<span class="sd">        [#]  data   label  predicted_label</span>
-<span class="sd">        ==================================</span>
-<span class="sd">        [0]  -48.0  1                    1</span>
-<span class="sd">        [1]  -75.0  1                    1</span>
-<span class="sd">        [2]  -63.0  1                    1</span>
-<span class="sd">        [3]  -57.0  1                    1</span>
-<span class="sd">        [4]   73.0  0                    0</span>
-<span class="sd">        [5]  -33.0  1                    1</span>
-<span class="sd">        [6]  100.0  0                    0</span>
-<span class="sd">        [7]  -54.0  1                    1</span>
-<span class="sd">        [8]   78.0  0                    0</span>
-<span class="sd">        [9]   48.0  0                    0</span>
-
-
-<span class="sd">        &gt;&gt;&gt; test_metrics = model.test(predicted_frame)</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics</span>
-<span class="sd">        accuracy         = 1.0</span>
-<span class="sd">        confusion_matrix =             Predicted_Pos  Predicted_Neg</span>
-<span class="sd">        Actual_Pos              7              0</span>
-<span class="sd">        Actual_Neg              0              7</span>
-<span class="sd">        f_measure        = 1.0</span>
-<span class="sd">        precision        = 1.0</span>
-<span class="sd">        recall           = 1.0</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/svm&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/svm&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.label_column == model.label_column</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.intercept == model.intercept</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame2 = restored.predict(frame)</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame2.inspect()</span>
-<span class="sd">        [#]  data   label  predicted_label</span>
-<span class="sd">        ==================================</span>
-<span class="sd">        [0]  -48.0  1                    1</span>
-<span class="sd">        [1]  -75.0  1                    1</span>
-<span class="sd">        [2]  -63.0  1                    1</span>
-<span class="sd">        [3]  -57.0  1                    1</span>
-<span class="sd">        [4]   73.0  0                    0</span>
-<span class="sd">        [5]  -33.0  1                    1</span>
-<span class="sd">        [6]  100.0  0                    0</span>
-<span class="sd">        [7]  -54.0  1                    1</span>
-<span class="sd">        [8]   78.0  0                    0</span>
-<span class="sd">        [9]   48.0  0                    0</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/SVM.mar&quot;)</span>
-
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">SvmModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">label_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;column containing the label used during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">labelColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;columns containing the observation values used during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumns</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;intercept used during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">intercept</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;max number of iterations allowed during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numIterations</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;step size value used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">stepSize</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;regularization type used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regType</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;regularization parameter used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regParam</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mini_batch_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;minimum batch fraction used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">miniBatchFraction</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">       Predicts the labels for the observation columns in the given input frame. Creates a new frame</span>
-<span class="sd">       with the existing columns and a new predicted column.</span>
-
-<span class="sd">       Parameters</span>
-<span class="sd">       ----------</span>
-
-<span class="sd">       :param frame: (Frame) Frame used for predicting the values</span>
-<span class="sd">       :param c: (List[str]) Names of the observation columns.</span>
-<span class="sd">       :return: (Frame) A new frame containing the original frame&#39;s columns and a prediction column</span>
-<span class="sd">       &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;test the frame given the trained model&quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__columns_to_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;save the trained model to path&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-
-<span class="k">del</span> <span class="n">PropertiesObject</span>
-</pre></div>
-
-  </div>
 
   </header>
 
@@ -1420,15 +1069,6 @@ table {
   
     <div class="desc"><p>load SvmModel from given path</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.load', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.load" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">TkContext</span><span class="o">.</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load SvmModel from given path&quot;&quot;&quot;</span>
-    <span class="n">TkContext</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">SvmModel</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1483,63 +1123,6 @@ with SGD optimizer. The SVM model is initialized, trained on columns of a frame,
 of observations in a frame, and tests the predicted labels against the true labels. During testing, labels of the
 observations are predicted and tested against the true labels using built-in binary Classification Metrics.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.train', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.train" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">label_column</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">intercept</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
-          <span class="n">num_iterations</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-          <span class="n">step_size</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-          <span class="n">reg_type</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-          <span class="n">reg_param</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-          <span class="n">mini_batch_fraction</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a Svm Model by training on the given frame</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) frame of training data</span>
-<span class="sd">    :param label_column: (str) Column containing the label for each observation</span>
-<span class="sd">    :param observation_columns: (list(str)) Column(s) containing the observations</span>
-<span class="sd">    :param intercept: (boolean) Flag indicating if the algorithm adds an intercept. Default is true</span>
-<span class="sd">    :param num_iterations: (int) Number of iterations for SGD. Default is 100</span>
-<span class="sd">    :param step_size: (float) Initial step size for SGD optimizer for the first step. Default is 1.0</span>
-<span class="sd">    :param reg_type: (Optional(str)) Regularization &quot;L1&quot; or &quot;L2&quot;. Default is &quot;L2&quot;</span>
-<span class="sd">    :param reg_param: (float) Regularization parameter. Default is 0.01</span>
-<span class="sd">    :param mini_batch_fraction: (float) Set fraction of data to be used for each SGD iteration. Default is 1.0; corresponding to deterministic/classical gradient descent</span>
-<span class="sd">    :return: (SvmModel) The SVM trained model (with SGD)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Support Vector Machine is a supervised algorithm used to perform binary classification. A Support Vector Machine</span>
-<span class="sd">    constructs a high dimensional hyperplane which is said to achieve a good separation when a hyperplane has the</span>
-<span class="sd">    largest distance to the nearest training-data point of any class. This model runs the MLLib implementation of SVM</span>
-<span class="sd">    with SGD optimizer. The SVM model is initialized, trained on columns of a frame, used to predict the labels</span>
-<span class="sd">    of observations in a frame, and tests the predicted labels against the true labels. During testing, labels of the</span>
-<span class="sd">    observations are predicted and tested against the true labels using built-in binary Classification Metrics.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">label_column</span><span class="p">,</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">),</span>
-                                   <span class="n">intercept</span><span class="p">,</span>
-                                   <span class="n">num_iterations</span><span class="p">,</span>
-                                   <span class="n">step_size</span><span class="p">,</span>
-                                   <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">reg_type</span><span class="p">),</span>
-                                   <span class="n">reg_param</span><span class="p">,</span>
-                                   <span class="n">mini_batch_fraction</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">SvmModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1554,9 +1137,9 @@ observations are predicted and tested against the true labels using built-in bin
     <div class="desc"><p>A trained Svm model</p>
 <div class='section-header'>Example:</div>
 
-<div class="codehilite"><pre>&gt;&gt;&gt; frame = tc.frame.create([[-48.0,1], [-75.0,1], [-63.0,1], [-57.0,1], [73.0,0], [-33.0,1], [100.0,0],
+<pre><code>&gt;&gt;&gt; frame = tc.frame.create([[-48.0,1], [-75.0,1], [-63.0,1], [-57.0,1], [73.0,0], [-33.0,1], [100.0,0],
 ...                          [-54.0,1], [78.0,0], [48.0,0], [-55.0,1], [23.0,0], [45.0,0], [75.0,0]],
-...                          [(&quot;data&quot;, float),(&quot;label&quot;, str)])
+...                          [("data", float),("label", str)])
 
 
 &gt;&gt;&gt; frame.inspect()
@@ -1573,15 +1156,15 @@ observations are predicted and tested against the true labels using built-in bin
 [8]   78.0  0
 [9]   48.0  0
 
-&gt;&gt;&gt; model = tc.models.classification.svm.train(frame, &#39;label&#39;, [&#39;data&#39;])
+&gt;&gt;&gt; model = tc.models.classification.svm.train(frame, 'label', ['data'])
 
 &gt;&gt;&gt; model.label_column
-u&#39;label&#39;
+u'label'
 
 &gt;&gt;&gt; model.observation_columns
-[u&#39;data&#39;]
+[u'data']
 
-&gt;&gt;&gt; predicted_frame = model.predict(frame, [&#39;data&#39;])
+&gt;&gt;&gt; predicted_frame = model.predict(frame, ['data'])
 
 &gt;&gt;&gt; predicted_frame.inspect()
 [#]  data   label  predicted_label
@@ -1609,9 +1192,9 @@ f_measure        = 1.0
 precision        = 1.0
 recall           = 1.0
 
-&gt;&gt;&gt; model.save(&quot;sandbox/svm&quot;)
+&gt;&gt;&gt; model.save("sandbox/svm")
 
-&gt;&gt;&gt; restored = tc.load(&quot;sandbox/svm&quot;)
+&gt;&gt;&gt; restored = tc.load("sandbox/svm")
 
 &gt;&gt;&gt; restored.label_column == model.label_column
 True
@@ -1638,201 +1221,9 @@ True
 [8]   78.0  0                    0
 [9]   48.0  0                    0
 
-&gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/SVM.mar&quot;)
-</pre></div></div>
+&gt;&gt;&gt; canonical_path = model.export_to_mar("sandbox/SVM.mar")
+</code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">SvmModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A trained Svm model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create([[-48.0,1], [-75.0,1], [-63.0,1], [-57.0,1], [73.0,0], [-33.0,1], [100.0,0],</span>
-<span class="sd">        ...                          [-54.0,1], [78.0,0], [48.0,0], [-55.0,1], [23.0,0], [45.0,0], [75.0,0]],</span>
-<span class="sd">        ...                          [(&quot;data&quot;, float),(&quot;label&quot;, str)])</span>
-
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  data   label</span>
-<span class="sd">        =================</span>
-<span class="sd">        [0]  -48.0  1</span>
-<span class="sd">        [1]  -75.0  1</span>
-<span class="sd">        [2]  -63.0  1</span>
-<span class="sd">        [3]  -57.0  1</span>
-<span class="sd">        [4]   73.0  0</span>
-<span class="sd">        [5]  -33.0  1</span>
-<span class="sd">        [6]  100.0  0</span>
-<span class="sd">        [7]  -54.0  1</span>
-<span class="sd">        [8]   78.0  0</span>
-<span class="sd">        [9]   48.0  0</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.classification.svm.train(frame, &#39;label&#39;, [&#39;data&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; model.label_column</span>
-<span class="sd">        u&#39;label&#39;</span>
-
-<span class="sd">        &gt;&gt;&gt; model.observation_columns</span>
-<span class="sd">        [u&#39;data&#39;]</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame = model.predict(frame, [&#39;data&#39;])</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame.inspect()</span>
-<span class="sd">        [#]  data   label  predicted_label</span>
-<span class="sd">        ==================================</span>
-<span class="sd">        [0]  -48.0  1                    1</span>
-<span class="sd">        [1]  -75.0  1                    1</span>
-<span class="sd">        [2]  -63.0  1                    1</span>
-<span class="sd">        [3]  -57.0  1                    1</span>
-<span class="sd">        [4]   73.0  0                    0</span>
-<span class="sd">        [5]  -33.0  1                    1</span>
-<span class="sd">        [6]  100.0  0                    0</span>
-<span class="sd">        [7]  -54.0  1                    1</span>
-<span class="sd">        [8]   78.0  0                    0</span>
-<span class="sd">        [9]   48.0  0                    0</span>
-
-
-<span class="sd">        &gt;&gt;&gt; test_metrics = model.test(predicted_frame)</span>
-
-<span class="sd">        &gt;&gt;&gt; test_metrics</span>
-<span class="sd">        accuracy         = 1.0</span>
-<span class="sd">        confusion_matrix =             Predicted_Pos  Predicted_Neg</span>
-<span class="sd">        Actual_Pos              7              0</span>
-<span class="sd">        Actual_Neg              0              7</span>
-<span class="sd">        f_measure        = 1.0</span>
-<span class="sd">        precision        = 1.0</span>
-<span class="sd">        recall           = 1.0</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/svm&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/svm&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.label_column == model.label_column</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.intercept == model.intercept</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame2 = restored.predict(frame)</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame2.inspect()</span>
-<span class="sd">        [#]  data   label  predicted_label</span>
-<span class="sd">        ==================================</span>
-<span class="sd">        [0]  -48.0  1                    1</span>
-<span class="sd">        [1]  -75.0  1                    1</span>
-<span class="sd">        [2]  -63.0  1                    1</span>
-<span class="sd">        [3]  -57.0  1                    1</span>
-<span class="sd">        [4]   73.0  0                    0</span>
-<span class="sd">        [5]  -33.0  1                    1</span>
-<span class="sd">        [6]  100.0  0                    0</span>
-<span class="sd">        [7]  -54.0  1                    1</span>
-<span class="sd">        [8]   78.0  0                    0</span>
-<span class="sd">        [9]   48.0  0                    0</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/SVM.mar&quot;)</span>
-
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">SvmModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">label_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;column containing the label used during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">labelColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;columns containing the observation values used during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumns</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;intercept used during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">intercept</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;max number of iterations allowed during model training&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">numIterations</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;step size value used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">stepSize</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;regularization type used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regType</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reg_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;regularization parameter used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">regParam</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mini_batch_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;minimum batch fraction used to train the model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">miniBatchFraction</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">       Predicts the labels for the observation columns in the given input frame. Creates a new frame</span>
-<span class="sd">       with the existing columns and a new predicted column.</span>
-
-<span class="sd">       Parameters</span>
-<span class="sd">       ----------</span>
-
-<span class="sd">       :param frame: (Frame) Frame used for predicting the values</span>
-<span class="sd">       :param c: (List[str]) Names of the observation columns.</span>
-<span class="sd">       :return: (Frame) A new frame containing the original frame&#39;s columns and a prediction column</span>
-<span class="sd">       &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;test the frame given the trained model&quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__columns_to_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_list_string</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;save the trained model to path&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
 
@@ -1943,15 +1334,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-    <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1973,21 +1355,6 @@ True
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(str): </td><td class='param-desc'>Full path to the saved .mar file</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.export_to_mar', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.export_to_mar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Exports the trained model as a model archive (.mar) to the specified path</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) Path to save the trained model</span>
-<span class="sd">    :return: (str) Full path to the saved .mar file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2013,24 +1380,6 @@ with the existing columns and a new predicted column.</p>
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>A new frame containing the original frame's columns and a prediction column</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.predict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.predict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">   Predicts the labels for the observation columns in the given input frame. Creates a new frame</span>
-<span class="sd">   with the existing columns and a new predicted column.</span>
-<span class="sd">   Parameters</span>
-<span class="sd">   ----------</span>
-<span class="sd">   :param frame: (Frame) Frame used for predicting the values</span>
-<span class="sd">   :param c: (List[str]) Names of the observation columns.</span>
-<span class="sd">   :return: (Frame) A new frame containing the original frame&#39;s columns and a prediction column</span>
-<span class="sd">   &quot;&quot;&quot;</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-    <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2046,14 +1395,6 @@ with the existing columns and a new predicted column.</p>
   
     <div class="desc"><p>save the trained model to path</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.save', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.save" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;save the trained model to path&quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2069,15 +1410,6 @@ with the existing columns and a new predicted column.</p>
   
     <div class="desc"><p>test the frame given the trained model</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.test', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.test" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;test the frame given the trained model&quot;&quot;&quot;</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns_to_option</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ClassificationMetricsValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2092,15 +1424,6 @@ with the existing columns and a new predicted column.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.to_dict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.to_dict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">()</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">d</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2115,13 +1438,6 @@ with the existing columns and a new predicted column.</p>
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.classification.svm.SvmModel.to_json', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.classification.svm.SvmModel.to_json" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>

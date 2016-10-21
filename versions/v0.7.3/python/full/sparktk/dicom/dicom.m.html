@@ -1,0 +1,3315 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>sparktk.dicom.dicom API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: Arial, Helvetica, sans;
+    font-size: 14px;
+  }
+  #content {
+    position: absolute;
+    left: 25%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 30px;
+    height: 100%;
+  }
+  #sidebar {
+    position: absolute;
+    width: 25%;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+    overflow: auto;
+    height: 100%;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #fixed_top_left {
+    display: block;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+    background: transparent;
+    z-index: 1;  /* Set z-index so that it doesn't get lost behind the sidebar */
+  }
+
+  #footer {
+    font-size: .75em;
+    margin-top: 20px;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name, .param-name {
+    font-family: Consolas, "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+  .section-header {
+    font-weight: bold;
+    padding: 10px 0 5px 0;
+  }
+  .param-name {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+  }
+  .param-type {
+    font-style: italic;
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  .param-desc {
+    text-align: left;
+    vertical-align: top;
+    padding-left: 5px;
+  }
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+      background: #f9f9f9;
+      font-size: 13px;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 20px 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="index.html" id="fixed_top_left">Up</a>
+  <!--<a href="#" id="top">Top</a>-->
+  <div id="container">
+      
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#sparktk.dicom.dicom.import_dcm">import_dcm</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.load">load</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#sparktk.dicom.dicom.Dicom">Dicom</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.__init__">__init__</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.drop_rows">drop_rows</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.drop_rows_by_keywords">drop_rows_by_keywords</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.drop_rows_by_tags">drop_rows_by_tags</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.export_to_dcm">export_to_dcm</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.extract_keywords">extract_keywords</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.extract_tags">extract_tags</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.filter">filter</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.filter_by_keywords">filter_by_keywords</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.filter_by_tags">filter_by_tags</a></li>
+    <li class="mono"><a href="#sparktk.dicom.dicom.Dicom.save">save</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+      <article id="content">
+        <div>
+        
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">sparktk.dicom.dicom</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom" class="source">
+    <pre><code># vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+import logging
+logger = logging.getLogger('sparktk')
+from sparktk import TkContext
+
+# import constructors for the API's sake (not actually dependencies of the Dicom class)
+from sparktk.dicom.constructors.import_dcm import import_dcm
+
+__all__ = ["Dicom",
+           "import_dcm",
+           "load"]
+
+
+class Dicom(object):
+    """
+    sparktk Dicom
+
+    Represents a collection of DICOM data objects. Reference: [https://en.wikipedia.org/wiki/DICOM](https://en.wikipedia.org/wiki/DICOM)
+
+    The metadata property is a sparktk frame which defines the metadata of the collection of DICOM objects.
+    Its schema has a column named "id" which holds a unique integer ID for the record and another column which
+    holds a string of XML comprised of the metadata.  Users can run XQuery or invoke canned column extraction/filter
+    operations on this frame.
+
+    The pixeldata property is a sparktk frame which defines the pixeldata of the collection of DICOM objects.
+    Its schema has a column named "id" which holds a unique integer ID for the record and another column which
+    holds a matrix(internally it is a numpy.ndarray) comprised of the pixeldata.  Users can run numpy supported transformations on it.
+
+    dcm4che-3.x dependencies are used to support various operations on dicom images. It is available as java library
+    Reference: [https://github.com/dcm4che/dcm4che](https://github.com/dcm4che/dcm4che)
+
+    Note: Currently sparktk Dicom supports only uncompressed dicom images
+
+    Load a set of uncompressed sample .dcm files from path (integration-tests/datasets/dicom_uncompressed)
+    and create a dicom object. The below examples helps you to understand how to access dicom object properties.
+
+    Examples
+    --------
+
+        #Path can be local/hdfs to dcm file(s)
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        #use import_dcm available inside dicom module to create a dicom object from given dicom_path
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        #Type of dicom object created
+        >>> type(dicom)
+        <class 'sparktk.dicom.dicom.Dicom'>
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.pixeldata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        #pixeldata property is sparktk frame
+        >>> pixeldata = dicom.pixeldata.take(1)
+
+        #Display
+        >>> pixeldata
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
+        ...,
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+        #Access ndarray
+        >>> image_ndarray= pixeldata[0][1]
+
+        >>> type(image_ndarray)
+        <type 'numpy.ndarray'>
+
+        #Dimesions of the image matrix stored
+        >>> image_ndarray.shape
+        (320, 320)
+
+        #Use python matplot lib package to verify image visually
+        >>> import pylab
+        >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
+        >>> pylab.show()
+
+        #Save method persists the dicom object to disk
+        >>> dicom.save("sandbox/dicom_data")
+
+        #loads the saved dicom object
+        >>> load_dicom = tc.load("sandbox/dicom_data")
+
+        #Re-check whether we loaded back the dicom object or not
+        >>> type(load_dicom)
+        <class 'sparktk.dicom.dicom.Dicom'>
+
+        #Again access pixeldata and perform same operations as above
+        >>> load_pixeldata = load_dicom.pixeldata.take(1)
+
+        #Order may differ when you load back dicom object
+
+        >>> load_pixeldata
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
+        ...,
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+
+        >>> load_image_ndarray= load_pixeldata[0][1]
+
+        >>> type(load_image_ndarray)
+        <type 'numpy.ndarray'>
+
+        >>> load_image_ndarray.shape
+        (320, 320)
+
+        #Inspect metadata property to see dicom metadata xml content
+
+        >>> load_dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Using to built-in xml libraries to run xquery on metadata
+        >>> import xml.etree.ElementTree as ET
+
+        #Performing add_columns operation.
+        #Add xml tag as column in dicom metadata frame
+        #Here we add SOPInstanceUID as column to metadaframe
+
+        #sample function to apply on row - add_columns
+        >>> def extractor(tag_name):
+        ...    def _extractor(row):
+        ...        root = ET.fromstring(row["metadata"])
+        ...        for attribute in root.findall('DicomAttribute'):
+        ...            keyword = attribute.get('keyword')
+        ...            value = None
+        ...            if attribute.find('Value') is not None:
+        ...                value = attribute.find('Value').text
+        ...            if keyword == tag_name:
+        ...                return value
+        ...    return _extractor
+
+        >>> tag_name = "SOPInstanceUID"
+
+        >>> dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata                        SOPInstanceUID
+        =======================================================================
+        [0]   0  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [1]   1  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [2]   2  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+
+    """
+
+    def __init__(self, tc, scala_dicom):
+        self._tc = tc
+        from sparktk.frame.frame import Frame
+        self._metadata = Frame(self._tc, scala_dicom.metadata())
+        self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+
+    def __repr__(self):
+        #TODO Python friendly repr
+        #Write a string summary
+        return self._get_new_scala().toString()
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @property
+    def pixeldata(self):
+        return self._pixeldata
+
+    @staticmethod
+    def _from_scala(tc, scala_dicom):
+        """creates a python dicom for the given scala dicom"""
+        return Dicom(tc, scala_dicom)
+
+    #Creating new scala dicom to handle mutability issue.
+    # When import_dcm is invoked, it returns scala dicom object(scala metadata frame and pixeldata frame).
+    # When user performs add_columns or any operation which turns scala frame to python frame, the link is lost
+    # To avoid such issues, we create new dicom object using (metadata and pixeldata frames) when accessing scala method
+    def _get_new_scala(self):
+        return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
+
+    #method to call passed function with new scala dicom
+    def _call_scala(self, func):
+        from sparktk.frame.frame import Frame
+        scala_dicom = self._get_new_scala()
+        results = func(scala_dicom)
+        self._metadata = Frame(self._tc, scala_dicom.metadata())
+        self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+        return results
+
+    # Dicom Operations
+    from sparktk.dicom.ops.drop_rows import drop_rows
+    from sparktk.dicom.ops.drop_rows_by_keywords import drop_rows_by_keywords
+    from sparktk.dicom.ops.drop_rows_by_tags import drop_rows_by_tags
+    from sparktk.dicom.ops.extract_keywords import extract_keywords
+    from sparktk.dicom.ops.extract_tags import extract_tags
+    from sparktk.dicom.ops.export_to_dcm import export_to_dcm
+    from sparktk.dicom.ops.filter import filter
+    from sparktk.dicom.ops.filter_by_keywords import filter_by_keywords
+    from sparktk.dicom.ops.filter_by_tags import filter_by_tags
+    from sparktk.dicom.ops.save import save
+
+
+def load(path, tc=TkContext.implicit):
+    """load Dicom from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Dicom)
+
+
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.import_dcm">
+    <p>def <span class="ident">import_dcm</span>(</p><p>dicom_dir_path, tc=&lt;class &#39;sparktk.arguments.implicit&#39;&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Creates a dicom object with metadataFrame and pixeldataFrame from a dcm file(s)</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>dicom_dir_path</td><td class='param-type'>(str):</td><td class='param-desc'>Local/HDFS path of the dcm file(s)
+</td></tr></table>
+
+<p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Dicom): </td><td class='param-desc'>returns a dicom object with metadata and pixeldata frames</td></tr></table></p>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>#Path can be local/hdfs to dcm file(s)
+&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+#use import_dcm available inside dicom module to create a dicom object from given dicom_path
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+#Type of dicom object created
+&gt;&gt;&gt; type(dicom)
+&lt;class 'sparktk.dicom.dicom.Dicom'&gt;
+
+#Inspect metadata property to see dicom metadata xml content
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#pixeldata property is sparktk frame
+&gt;&gt;&gt; pixeldata = dicom.pixeldata.take(1)
+
+
+&gt;&gt;&gt; pixeldata
+[[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+[ 0.,  7.,  5., ...,  5.,  7.,  8.],
+[ 0.,  7.,  6., ...,  5.,  6.,  7.],
+...,
+[ 0.,  6.,  7., ...,  5.,  5.,  6.],
+[ 0.,  2.,  5., ...,  5.,  5.,  4.],
+[ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.import_dcm', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.import_dcm" class="source">
+    <pre><code>def import_dcm(dicom_dir_path, tc=TkContext.implicit):
+    """
+    Creates a dicom object with metadataFrame and pixeldataFrame from a dcm file(s)
+
+    Parameters
+    ----------
+
+    :param dicom_dir_path: (str) Local/HDFS path of the dcm file(s)
+    :return: (Dicom) returns a dicom object with metadata and pixeldata frames
+
+
+    Examples
+    --------
+        #Path can be local/hdfs to dcm file(s)
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        #use import_dcm available inside dicom module to create a dicom object from given dicom_path
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        #Type of dicom object created
+        >>> type(dicom)
+        <class 'sparktk.dicom.dicom.Dicom'>
+
+        #Inspect metadata property to see dicom metadata xml content
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #pixeldata property is sparktk frame
+        >>> pixeldata = dicom.pixeldata.take(1)
+
+
+        >>> pixeldata
+        [[0L, array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+        [ 0.,  7.,  5., ...,  5.,  7.,  8.],
+        [ 0.,  7.,  6., ...,  5.,  6.,  7.],
+        ...,
+        [ 0.,  6.,  7., ...,  5.,  5.,  6.],
+        [ 0.,  2.,  5., ...,  5.,  5.,  4.],
+        [ 1.,  1.,  3., ...,  1.,  1.,  0.]])]]
+
+    """
+    if not isinstance(dicom_dir_path, basestring):
+        raise ValueError("dicom_dir_path parameter must be a string, but is {0}.".format(type(dicom_dir_path)))
+
+    TkContext.validate(tc)
+
+    scala_dicom = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDcm(tc.jutils.get_scala_sc(), dicom_dir_path)
+    from sparktk.dicom.dicom import Dicom
+    return Dicom._from_scala(tc, scala_dicom)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.load">
+    <p>def <span class="ident">load</span>(</p><p>path, tc=&lt;class &#39;sparktk.arguments.implicit&#39;&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>load Dicom from given path</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.load', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.load" class="source">
+    <pre><code>def load(path, tc=TkContext.implicit):
+    """load Dicom from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Dicom)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="sparktk.dicom.dicom.Dicom" class="name">class <span class="ident">Dicom</span></p>
+      
+  
+    <div class="desc"><p>sparktk Dicom</p>
+<p>Represents a collection of DICOM data objects. Reference: <a href="https://en.wikipedia.org/wiki/DICOM">https://en.wikipedia.org/wiki/DICOM</a></p>
+<p>The metadata property is a sparktk frame which defines the metadata of the collection of DICOM objects.
+Its schema has a column named "id" which holds a unique integer ID for the record and another column which
+holds a string of XML comprised of the metadata.  Users can run XQuery or invoke canned column extraction/filter
+operations on this frame.</p>
+<p>The pixeldata property is a sparktk frame which defines the pixeldata of the collection of DICOM objects.
+Its schema has a column named "id" which holds a unique integer ID for the record and another column which
+holds a matrix(internally it is a numpy.ndarray) comprised of the pixeldata.  Users can run numpy supported transformations on it.</p>
+<p>dcm4che-3.x dependencies are used to support various operations on dicom images. It is available as java library
+Reference: <a href="https://github.com/dcm4che/dcm4che">https://github.com/dcm4che/dcm4che</a></p>
+<p>Note: Currently sparktk Dicom supports only uncompressed dicom images</p>
+<p>Load a set of uncompressed sample .dcm files from path (integration-tests/datasets/dicom_uncompressed)
+and create a dicom object. The below examples helps you to understand how to access dicom object properties.</p>
+<div class='section-header'>Examples:</div>
+
+<pre><code>#Path can be local/hdfs to dcm file(s)
+&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+#use import_dcm available inside dicom module to create a dicom object from given dicom_path
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+#Type of dicom object created
+&gt;&gt;&gt; type(dicom)
+&lt;class 'sparktk.dicom.dicom.Dicom'&gt;
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.pixeldata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+#pixeldata property is sparktk frame
+&gt;&gt;&gt; pixeldata = dicom.pixeldata.take(1)
+
+#Display
+&gt;&gt;&gt; pixeldata
+[[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+[   0.,  125.,  103., ...,  120.,  213.,  319.],
+[   0.,  117.,   94., ...,  135.,  223.,  325.],
+...,
+[   0.,   62.,   21., ...,  896.,  886.,  854.],
+[   0.,   63.,   23., ...,  941.,  872.,  897.],
+[   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+#Access ndarray
+&gt;&gt;&gt; image_ndarray= pixeldata[0][1]
+
+&gt;&gt;&gt; type(image_ndarray)
+&lt;type 'numpy.ndarray'&gt;
+
+#Dimesions of the image matrix stored
+&gt;&gt;&gt; image_ndarray.shape
+(320, 320)
+
+#Use python matplot lib package to verify image visually
+&gt;&gt;&gt; import pylab
+&gt;&gt;&gt; pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
+&gt;&gt;&gt; pylab.show()
+
+#Save method persists the dicom object to disk
+&gt;&gt;&gt; dicom.save("sandbox/dicom_data")
+
+#loads the saved dicom object
+&gt;&gt;&gt; load_dicom = tc.load("sandbox/dicom_data")
+
+#Re-check whether we loaded back the dicom object or not
+&gt;&gt;&gt; type(load_dicom)
+&lt;class 'sparktk.dicom.dicom.Dicom'&gt;
+
+#Again access pixeldata and perform same operations as above
+&gt;&gt;&gt; load_pixeldata = load_dicom.pixeldata.take(1)
+
+#Order may differ when you load back dicom object
+
+&gt;&gt;&gt; load_pixeldata
+[[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+[   0.,  125.,  103., ...,  120.,  213.,  319.],
+[   0.,  117.,   94., ...,  135.,  223.,  325.],
+...,
+[   0.,   62.,   21., ...,  896.,  886.,  854.],
+[   0.,   63.,   23., ...,  941.,  872.,  897.],
+[   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+
+&gt;&gt;&gt; load_image_ndarray= load_pixeldata[0][1]
+
+&gt;&gt;&gt; type(load_image_ndarray)
+&lt;type 'numpy.ndarray'&gt;
+
+&gt;&gt;&gt; load_image_ndarray.shape
+(320, 320)
+
+#Inspect metadata property to see dicom metadata xml content
+
+&gt;&gt;&gt; load_dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Using to built-in xml libraries to run xquery on metadata
+&gt;&gt;&gt; import xml.etree.ElementTree as ET
+
+#Performing add_columns operation.
+#Add xml tag as column in dicom metadata frame
+#Here we add SOPInstanceUID as column to metadaframe
+
+#sample function to apply on row - add_columns
+&gt;&gt;&gt; def extractor(tag_name):
+...    def _extractor(row):
+...        root = ET.fromstring(row["metadata"])
+...        for attribute in root.findall('DicomAttribute'):
+...            keyword = attribute.get('keyword')
+...            value = None
+...            if attribute.find('Value') is not None:
+...                value = attribute.find('Value').text
+...            if keyword == tag_name:
+...                return value
+...    return _extractor
+
+&gt;&gt;&gt; tag_name = "SOPInstanceUID"
+
+&gt;&gt;&gt; dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata                        SOPInstanceUID
+=======================================================================
+[0]   0  &lt;?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+[1]   1  &lt;?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+[2]   2  &lt;?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom" class="source">
+    <pre><code>class Dicom(object):
+    """
+    sparktk Dicom
+
+    Represents a collection of DICOM data objects. Reference: [https://en.wikipedia.org/wiki/DICOM](https://en.wikipedia.org/wiki/DICOM)
+
+    The metadata property is a sparktk frame which defines the metadata of the collection of DICOM objects.
+    Its schema has a column named "id" which holds a unique integer ID for the record and another column which
+    holds a string of XML comprised of the metadata.  Users can run XQuery or invoke canned column extraction/filter
+    operations on this frame.
+
+    The pixeldata property is a sparktk frame which defines the pixeldata of the collection of DICOM objects.
+    Its schema has a column named "id" which holds a unique integer ID for the record and another column which
+    holds a matrix(internally it is a numpy.ndarray) comprised of the pixeldata.  Users can run numpy supported transformations on it.
+
+    dcm4che-3.x dependencies are used to support various operations on dicom images. It is available as java library
+    Reference: [https://github.com/dcm4che/dcm4che](https://github.com/dcm4che/dcm4che)
+
+    Note: Currently sparktk Dicom supports only uncompressed dicom images
+
+    Load a set of uncompressed sample .dcm files from path (integration-tests/datasets/dicom_uncompressed)
+    and create a dicom object. The below examples helps you to understand how to access dicom object properties.
+
+    Examples
+    --------
+
+        #Path can be local/hdfs to dcm file(s)
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        #use import_dcm available inside dicom module to create a dicom object from given dicom_path
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        #Type of dicom object created
+        >>> type(dicom)
+        <class 'sparktk.dicom.dicom.Dicom'>
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.pixeldata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        #pixeldata property is sparktk frame
+        >>> pixeldata = dicom.pixeldata.take(1)
+
+        #Display
+        >>> pixeldata
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
+        ...,
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+        #Access ndarray
+        >>> image_ndarray= pixeldata[0][1]
+
+        >>> type(image_ndarray)
+        <type 'numpy.ndarray'>
+
+        #Dimesions of the image matrix stored
+        >>> image_ndarray.shape
+        (320, 320)
+
+        #Use python matplot lib package to verify image visually
+        >>> import pylab
+        >>> pylab.imshow(image_ndarray, cmap=pylab.cm.bone)
+        >>> pylab.show()
+
+        #Save method persists the dicom object to disk
+        >>> dicom.save("sandbox/dicom_data")
+
+        #loads the saved dicom object
+        >>> load_dicom = tc.load("sandbox/dicom_data")
+
+        #Re-check whether we loaded back the dicom object or not
+        >>> type(load_dicom)
+        <class 'sparktk.dicom.dicom.Dicom'>
+
+        #Again access pixeldata and perform same operations as above
+        >>> load_pixeldata = load_dicom.pixeldata.take(1)
+
+        #Order may differ when you load back dicom object
+
+        >>> load_pixeldata
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
+        ...,
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+
+        >>> load_image_ndarray= load_pixeldata[0][1]
+
+        >>> type(load_image_ndarray)
+        <type 'numpy.ndarray'>
+
+        >>> load_image_ndarray.shape
+        (320, 320)
+
+        #Inspect metadata property to see dicom metadata xml content
+
+        >>> load_dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Using to built-in xml libraries to run xquery on metadata
+        >>> import xml.etree.ElementTree as ET
+
+        #Performing add_columns operation.
+        #Add xml tag as column in dicom metadata frame
+        #Here we add SOPInstanceUID as column to metadaframe
+
+        #sample function to apply on row - add_columns
+        >>> def extractor(tag_name):
+        ...    def _extractor(row):
+        ...        root = ET.fromstring(row["metadata"])
+        ...        for attribute in root.findall('DicomAttribute'):
+        ...            keyword = attribute.get('keyword')
+        ...            value = None
+        ...            if attribute.find('Value') is not None:
+        ...                value = attribute.find('Value').text
+        ...            if keyword == tag_name:
+        ...                return value
+        ...    return _extractor
+
+        >>> tag_name = "SOPInstanceUID"
+
+        >>> dicom.metadata.add_columns(extractor(tag_name), (tag_name, str))
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata                        SOPInstanceUID
+        =======================================================================
+        [0]   0  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [1]   1  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+        [2]   2  <?xml version="1.0" encodin...  1.3.6.1.4.1.14519.5.2.1.730...
+
+    """
+
+    def __init__(self, tc, scala_dicom):
+        self._tc = tc
+        from sparktk.frame.frame import Frame
+        self._metadata = Frame(self._tc, scala_dicom.metadata())
+        self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+
+    def __repr__(self):
+        #TODO Python friendly repr
+        #Write a string summary
+        return self._get_new_scala().toString()
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @property
+    def pixeldata(self):
+        return self._pixeldata
+
+    @staticmethod
+    def _from_scala(tc, scala_dicom):
+        """creates a python dicom for the given scala dicom"""
+        return Dicom(tc, scala_dicom)
+
+    #Creating new scala dicom to handle mutability issue.
+    # When import_dcm is invoked, it returns scala dicom object(scala metadata frame and pixeldata frame).
+    # When user performs add_columns or any operation which turns scala frame to python frame, the link is lost
+    # To avoid such issues, we create new dicom object using (metadata and pixeldata frames) when accessing scala method
+    def _get_new_scala(self):
+        return self._tc.sc._jvm.org.trustedanalytics.sparktk.dicom.Dicom(self._metadata._scala, self._pixeldata._scala)
+
+    #method to call passed function with new scala dicom
+    def _call_scala(self, func):
+        from sparktk.frame.frame import Frame
+        scala_dicom = self._get_new_scala()
+        results = func(scala_dicom)
+        self._metadata = Frame(self._tc, scala_dicom.metadata())
+        self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+        return results
+
+    # Dicom Operations
+    from sparktk.dicom.ops.drop_rows import drop_rows
+    from sparktk.dicom.ops.drop_rows_by_keywords import drop_rows_by_keywords
+    from sparktk.dicom.ops.drop_rows_by_tags import drop_rows_by_tags
+    from sparktk.dicom.ops.extract_keywords import extract_keywords
+    from sparktk.dicom.ops.extract_tags import extract_tags
+    from sparktk.dicom.ops.export_to_dcm import export_to_dcm
+    from sparktk.dicom.ops.filter import filter
+    from sparktk.dicom.ops.filter_by_keywords import filter_by_keywords
+    from sparktk.dicom.ops.filter_by_tags import filter_by_tags
+    from sparktk.dicom.ops.save import save
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#sparktk.dicom.dicom.Dicom">Dicom</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="sparktk.dicom.dicom.Dicom.metadata" class="name">var <span class="ident">metadata</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="sparktk.dicom.dicom.Dicom.pixeldata" class="name">var <span class="ident">pixeldata</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, tc, scala_dicom)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.__init__" class="source">
+    <pre><code>def __init__(self, tc, scala_dicom):
+    self._tc = tc
+    from sparktk.frame.frame import Frame
+    self._metadata = Frame(self._tc, scala_dicom.metadata())
+    self._pixeldata = Frame(self._tc, scala_dicom.pixeldata())
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.drop_rows">
+    <p>def <span class="ident">drop_rows</span>(</p><p>self, predicate)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Drop the rows of dicom metadata and pixeldata frames using  given predicate</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>predicate: </td><td class='param-desc'>predicate to apply on filter</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+&gt;&gt;&gt; import xml.etree.ElementTree as ET
+
+#sample custom filter function
+&gt;&gt;&gt; def drop_meta(tag_name, tag_value):
+...    def _drop_meta(row):
+...        root = ET.fromstring(row["metadata"])
+...        for attribute in root.findall('DicomAttribute'):
+...            keyword = attribute.get('keyword')
+...            if attribute.get('keyword') is not None:
+...                if attribute.find('Value') is not None:
+...                    value = attribute.find('Value').text
+...                    if keyword == tag_name and value == tag_value:
+...                        return True
+...    return _drop_meta
+
+&gt;&gt;&gt; tag_name = "SOPInstanceUID"
+
+&gt;&gt;&gt; tag_value = "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"
+
+&gt;&gt;&gt; dicom.drop_rows(drop_meta(tag_name, tag_value))
+
+&gt;&gt;&gt; dicom.metadata.count()
+2
+
+#After filter
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   1  &lt;?xml version="1.0" encodin...
+[1]   2  &lt;?xml version="1.0" encodin...
+
+&gt;&gt;&gt; dicom.pixeldata.inspect(truncate=30)
+[#]  id  imagematrix
+===========================================================
+[0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+[   0.   70.   85. ...,  215.  288.  337.]
+[   0.   63.   72. ...,  228.  269.  317.]
+...,
+[   0.   42.   40. ...,  966.  919.  871.]
+[   0.   42.   33. ...,  988.  887.  860.]
+[   0.   46.   38. ...,  983.  876.  885.]]
+[1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+[    0.   111.   117. ...,   159.   148.   135.]
+[    0.   116.   111. ...,   152.   138.   139.]
+...,
+[    0.    49.    18. ...,  1057.   965.   853.]
+[    0.    42.    20. ...,  1046.   973.   891.]
+[    0.    48.    26. ...,  1041.   969.   930.]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.drop_rows', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.drop_rows" class="source">
+    <pre><code>def drop_rows(self, predicate):
+
+    """
+    Drop the rows of dicom metadata and pixeldata frames using  given predicate
+
+    Parameters
+    ----------
+
+    :param predicate: predicate to apply on filter
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        >>> import xml.etree.ElementTree as ET
+
+        #sample custom filter function
+        >>> def drop_meta(tag_name, tag_value):
+        ...    def _drop_meta(row):
+        ...        root = ET.fromstring(row["metadata"])
+        ...        for attribute in root.findall('DicomAttribute'):
+        ...            keyword = attribute.get('keyword')
+        ...            if attribute.get('keyword') is not None:
+        ...                if attribute.find('Value') is not None:
+        ...                    value = attribute.find('Value').text
+        ...                    if keyword == tag_name and value == tag_value:
+        ...                        return True
+        ...    return _drop_meta
+
+        >>> tag_name = "SOPInstanceUID"
+
+        >>> tag_value = "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"
+
+        >>> dicom.drop_rows(drop_meta(tag_name, tag_value))
+
+        >>> dicom.metadata.count()
+        2
+
+        #After filter
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   1  <?xml version="1.0" encodin...
+        [1]   2  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        ===========================================================
+        [0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.   70.   85. ...,  215.  288.  337.]
+        [   0.   63.   72. ...,  228.  269.  317.]
+        ...,
+        [   0.   42.   40. ...,  966.  919.  871.]
+        [   0.   42.   33. ...,  988.  887.  860.]
+        [   0.   46.   38. ...,  983.  876.  885.]]
+        [1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+        [    0.   111.   117. ...,   159.   148.   135.]
+        [    0.   116.   111. ...,   152.   138.   139.]
+        ...,
+        [    0.    49.    18. ...,  1057.   965.   853.]
+        [    0.    42.    20. ...,  1046.   973.   891.]
+        [    0.    48.    26. ...,  1041.   969.   930.]]
+
+    """
+
+    def inverted_predicate(row):
+        return not predicate(row)
+
+    self.metadata.filter(inverted_predicate)
+    filtered_id_frame = self.metadata.copy(columns= "id")
+    self._pixeldata = filtered_id_frame.join_inner(self.pixeldata, "id")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.drop_rows_by_keywords">
+    <p>def <span class="ident">drop_rows_by_keywords</span>(</p><p>self, keywords_values_dict)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Drop the rows based on dictionary of {"keyword":"value"}(applying 'and' operation on dictionary) from column holding xml string.</p>
+<p>Ex: keywords_values_dict -&gt; {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>keywords_values_dict</td><td class='param-type'>(dict(str, str)):</td><td class='param-desc'>dictionary of keywords and values from xml string in metadata</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+&gt;&gt;&gt; keywords_values_dict = {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
+&gt;&gt;&gt; dicom.drop_rows_by_keywords(keywords_values_dict)
+&gt;&gt;&gt; dicom.metadata.count()
+2
+
+#After drop_rows
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   1  &lt;?xml version="1.0" encodin...
+[1]   2  &lt;?xml version="1.0" encodin...
+
+&gt;&gt;&gt; dicom.pixeldata.inspect(truncate=30)
+[#]  id  imagematrix
+===========================================================
+[0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+[   0.   70.   85. ...,  215.  288.  337.]
+[   0.   63.   72. ...,  228.  269.  317.]
+...,
+[   0.   42.   40. ...,  966.  919.  871.]
+[   0.   42.   33. ...,  988.  887.  860.]
+[   0.   46.   38. ...,  983.  876.  885.]]
+[1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+[    0.   111.   117. ...,   159.   148.   135.]
+[    0.   116.   111. ...,   152.   138.   139.]
+...,
+[    0.    49.    18. ...,  1057.   965.   853.]
+[    0.    42.    20. ...,  1046.   973.   891.]
+[    0.    48.    26. ...,  1041.   969.   930.]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.drop_rows_by_keywords', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.drop_rows_by_keywords" class="source">
+    <pre><code>def drop_rows_by_keywords(self, keywords_values_dict):
+    """
+    Drop the rows based on dictionary of {"keyword":"value"}(applying 'and' operation on dictionary) from column holding xml string.
+
+    Ex: keywords_values_dict -> {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
+
+    Parameters
+    ----------
+
+    :param keywords_values_dict: (dict(str, str)) dictionary of keywords and values from xml string in metadata
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        >>> keywords_values_dict = {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
+        >>> dicom.drop_rows_by_keywords(keywords_values_dict)
+        >>> dicom.metadata.count()
+        2
+
+        #After drop_rows
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   1  <?xml version="1.0" encodin...
+        [1]   2  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        ===========================================================
+        [0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.   70.   85. ...,  215.  288.  337.]
+        [   0.   63.   72. ...,  228.  269.  317.]
+        ...,
+        [   0.   42.   40. ...,  966.  919.  871.]
+        [   0.   42.   33. ...,  988.  887.  860.]
+        [   0.   46.   38. ...,  983.  876.  885.]]
+        [1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+        [    0.   111.   117. ...,   159.   148.   135.]
+        [    0.   116.   111. ...,   152.   138.   139.]
+        ...,
+        [    0.    49.    18. ...,  1057.   965.   853.]
+        [    0.    42.    20. ...,  1046.   973.   891.]
+        [    0.    48.    26. ...,  1041.   969.   930.]]
+
+    """
+
+    if not isinstance(keywords_values_dict, dict):
+        raise TypeError("keywords_values_dict should be a type of dict, but found type as %" % type(keywords_values_dict))
+
+    for key, value in keywords_values_dict.iteritems():
+        if not isinstance(key, basestring) or not isinstance(value, basestring):
+            raise TypeError("both keyword and value should be of <type 'str'>")
+
+    #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
+    def f(scala_dicom):
+        scala_dicom.dropRowsByKeywords(self._tc.jutils.convert.to_scala_map(keywords_values_dict))
+
+    self._call_scala(f)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.drop_rows_by_tags">
+    <p>def <span class="ident">drop_rows_by_tags</span>(</p><p>self, tags_values_dict)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Drop the rows based on dictionary of {"tag":"value"}(applying 'and' operation on dictionary) from column holding xml string</p>
+<p>Ex: tags_values_dict -&gt; {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>tags_values_dict</td><td class='param-type'>(dict(str, str)):</td><td class='param-desc'>dictionary of tags and values from xml string in metadata</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+&gt;&gt;&gt; tags_values_dict = {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
+&gt;&gt;&gt; dicom.drop_rows_by_tags(tags_values_dict)
+&gt;&gt;&gt; dicom.metadata.count()
+2
+
+
+#After drop_rows
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   1  &lt;?xml version="1.0" encodin...
+[1]   2  &lt;?xml version="1.0" encodin...
+
+&gt;&gt;&gt; dicom.pixeldata.inspect(truncate=30)
+[#]  id  imagematrix
+===========================================================
+[0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+[   0.   70.   85. ...,  215.  288.  337.]
+[   0.   63.   72. ...,  228.  269.  317.]
+...,
+[   0.   42.   40. ...,  966.  919.  871.]
+[   0.   42.   33. ...,  988.  887.  860.]
+[   0.   46.   38. ...,  983.  876.  885.]]
+[1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+[    0.   111.   117. ...,   159.   148.   135.]
+[    0.   116.   111. ...,   152.   138.   139.]
+...,
+[    0.    49.    18. ...,  1057.   965.   853.]
+[    0.    42.    20. ...,  1046.   973.   891.]
+[    0.    48.    26. ...,  1041.   969.   930.]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.drop_rows_by_tags', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.drop_rows_by_tags" class="source">
+    <pre><code>def drop_rows_by_tags(self, tags_values_dict):
+    """
+    Drop the rows based on dictionary of {"tag":"value"}(applying 'and' operation on dictionary) from column holding xml string
+
+    Ex: tags_values_dict -> {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
+
+    Parameters
+    ----------
+
+    :param tags_values_dict: (dict(str, str)) dictionary of tags and values from xml string in metadata
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        >>> tags_values_dict = {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
+        >>> dicom.drop_rows_by_tags(tags_values_dict)
+        >>> dicom.metadata.count()
+        2
+
+
+        #After drop_rows
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   1  <?xml version="1.0" encodin...
+        [1]   2  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        ===========================================================
+        [0]   1  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.   70.   85. ...,  215.  288.  337.]
+        [   0.   63.   72. ...,  228.  269.  317.]
+        ...,
+        [   0.   42.   40. ...,  966.  919.  871.]
+        [   0.   42.   33. ...,  988.  887.  860.]
+        [   0.   46.   38. ...,  983.  876.  885.]]
+        [1]   2  [[    0.     0.     0. ...,     0.     0.     0.]
+        [    0.   111.   117. ...,   159.   148.   135.]
+        [    0.   116.   111. ...,   152.   138.   139.]
+        ...,
+        [    0.    49.    18. ...,  1057.   965.   853.]
+        [    0.    42.    20. ...,  1046.   973.   891.]
+        [    0.    48.    26. ...,  1041.   969.   930.]]
+
+    """
+
+    if not isinstance(tags_values_dict, dict):
+        raise TypeError("tags_values_dict should be a type of dict, but found type as %" % type(tags_values_dict))
+
+    for tag, value in tags_values_dict.iteritems():
+        if not isinstance(tag, basestring) or not isinstance(value, basestring):
+            raise TypeError("both tag and value should be of <type 'str'>")
+
+    #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
+    def f(scala_dicom):
+        scala_dicom.dropRowsByTags(self._tc.jutils.convert.to_scala_map(tags_values_dict))
+
+    self._call_scala(f)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.export_to_dcm">
+    <p>def <span class="ident">export_to_dcm</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>export_to_dcm creates .dcm image from dicom object with (metadata, imagedata) and saves to given path</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>path</td><td class='param-type'>(str):</td><td class='param-desc'>local/hdfs path</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.pixeldata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+#pixeldata property is sparktk frame
+&gt;&gt;&gt; pixeldata = dicom.pixeldata.take(1)
+
+#dispaly
+&gt;&gt;&gt; pixeldata
+[[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+[   0.,  125.,  103., ...,  120.,  213.,  319.],
+[   0.,  117.,   94., ...,  135.,  223.,  325.],
+...,
+[   0.,   62.,   21., ...,  896.,  886.,  854.],
+[   0.,   63.,   23., ...,  941.,  872.,  897.],
+[   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+&gt;&gt;&gt; dicom.export_to_dcm("dicom_export")
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.export_to_dcm', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.export_to_dcm" class="source">
+    <pre><code>def export_to_dcm(self, path):
+    """
+    export_to_dcm creates .dcm image from dicom object with (metadata, imagedata) and saves to given path
+
+    Parameters
+    ----------
+
+    :param path: (str) local/hdfs path
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.pixeldata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        #pixeldata property is sparktk frame
+        >>> pixeldata = dicom.pixeldata.take(1)
+
+        #dispaly
+        >>> pixeldata
+        [[0L, array([[   0.,    0.,    0., ...,    0.,    0.,    0.],
+        [   0.,  125.,  103., ...,  120.,  213.,  319.],
+        [   0.,  117.,   94., ...,  135.,  223.,  325.],
+        ...,
+        [   0.,   62.,   21., ...,  896.,  886.,  854.],
+        [   0.,   63.,   23., ...,  941.,  872.,  897.],
+        [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
+
+        >>> dicom.export_to_dcm("dicom_export")
+
+    """
+
+    if not isinstance(path, basestring):
+        raise TypeError("path must be a type of string, but found type as " % type(path))
+
+    def f(scala_dicom):
+        scala_dicom.exportToDcm(path)
+
+    self._call_scala(f)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.extract_keywords">
+    <p>def <span class="ident">extract_keywords</span>(</p><p>self, keywords)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Extracts value for each keyword from column holding xml string and adds column for each keyword to assign value
+For missing keyword, the value is None</p>
+<p>Ex: keywords -&gt; ["PatientID"]</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>keywords</td><td class='param-type'>(str or list(str)):</td><td class='param-desc'>List of keywords from metadata xml string</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+#Extract values for given keywords and add as new columns in metadata frame
+&gt;&gt;&gt; dicom.extract_keywords(["SOPInstanceUID", "Manufacturer", "StudyDate"])
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.column_names
+[u'id', u'metadata', u'SOPInstanceUID', u'Manufacturer', u'StudyDate']
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=20)
+[#]  id  metadata              SOPInstanceUID        Manufacturer  StudyDate
+============================================================================
+[0]   0  &lt;?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+[1]   1  &lt;?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+[2]   2  &lt;?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.extract_keywords', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.extract_keywords" class="source">
+    <pre><code>def extract_keywords(self, keywords):
+    """
+
+    Extracts value for each keyword from column holding xml string and adds column for each keyword to assign value
+    For missing keyword, the value is None
+
+    Ex: keywords -> ["PatientID"]
+
+    Parameters
+    ----------
+
+    :param keywords: (str or list(str)) List of keywords from metadata xml string
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        #Extract values for given keywords and add as new columns in metadata frame
+        >>> dicom.extract_keywords(["SOPInstanceUID", "Manufacturer", "StudyDate"])
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.column_names
+        [u'id', u'metadata', u'SOPInstanceUID', u'Manufacturer', u'StudyDate']
+
+        >>> dicom.metadata.inspect(truncate=20)
+        [#]  id  metadata              SOPInstanceUID        Manufacturer  StudyDate
+        ============================================================================
+        [0]   0  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [1]   1  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [2]   2  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+
+    """
+
+    if isinstance(keywords, basestring):
+        keywords = [keywords]
+
+    if not isinstance(keywords, list):
+        raise TypeError("keywords type should be either str or list but found type as %s" % type(keywords))
+
+    if self._metadata._is_scala:
+        def f(scala_dicom):
+            scala_dicom.extractKeywords(self._tc.jutils.convert.to_scala_vector_string(keywords))
+        self._call_scala(f)
+        return
+
+    # If metadata is python frame, run below udf
+    import xml.etree.ElementTree as ET
+
+    def extractor(dkeywords):
+        def _extractor(row):
+            root = ET.fromstring(row["metadata"])
+            values=[None]*len(dkeywords)
+            for attribute in root.findall('DicomAttribute'):
+                dkeyword = attribute.get('keyword')
+                if dkeyword in dkeywords:
+                    if attribute.find('Value') is not None:
+                        values[dkeywords.index(dkeyword)]=attribute.find('Value').text
+            return values
+        return _extractor
+
+    cols_type = [(key, str) for key in keywords]
+    self._metadata.add_columns(extractor(keywords), cols_type)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.extract_tags">
+    <p>def <span class="ident">extract_tags</span>(</p><p>self, tags)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Extracts value for each tag from column holding xml string and adds column for each tag to assign value.
+For missing tag, the value is None</p>
+<p>Ex: tags -&gt; ["00020001", "00020002"]</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>tags</td><td class='param-type'>(str or list(str)):</td><td class='param-desc'>List of tags from xml string of metadata column</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+#Extract value for each tag from column holding xml string
+&gt;&gt;&gt; dicom.extract_tags(["00080018", "00080070", "00080030"])
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.column_names
+[u'id', u'metadata', u'00080018', u'00080070', u'00080030']
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=20)
+[#]  id  metadata              00080018              00080070  00080030
+============================================================================
+[0]   0  &lt;?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+[1]   1  &lt;?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+[2]   2  &lt;?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.extract_tags', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.extract_tags" class="source">
+    <pre><code>def extract_tags(self, tags):
+    """
+    Extracts value for each tag from column holding xml string and adds column for each tag to assign value.
+    For missing tag, the value is None
+
+    Ex: tags -> ["00020001", "00020002"]
+
+    Parameters
+    ----------
+
+    :param tags: (str or list(str)) List of tags from xml string of metadata column
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        #Extract value for each tag from column holding xml string
+        >>> dicom.extract_tags(["00080018", "00080070", "00080030"])
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.column_names
+        [u'id', u'metadata', u'00080018', u'00080070', u'00080030']
+
+        >>> dicom.metadata.inspect(truncate=20)
+        [#]  id  metadata              00080018              00080070  00080030
+        ============================================================================
+        [0]   0  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [1]   1  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+        [2]   2  <?xml version="1....  1.3.6.1.4.1.14519...  SIEMENS       20030315
+
+    """
+
+    if isinstance(tags, basestring):
+        tags = [tags]
+
+    if not isinstance(tags, list):
+        raise TypeError("tags type should be either str or list but found type as %s" % type(tags))
+
+    if self._metadata._is_scala:
+        def f(scala_dicom):
+            scala_dicom.extractTags(self._tc.jutils.convert.to_scala_vector_string(tags))
+        self._call_scala(f)
+        return
+
+    #If metadata is python frame, run below udf
+    import xml.etree.ElementTree as ET
+
+    def extractor(dtags):
+        def _extractor(row):
+            root = ET.fromstring(row["metadata"])
+            values=[None]*len(dtags)
+            for attribute in root.findall('DicomAttribute'):
+                dtag = attribute.get('tag')
+                if dtag in dtags:
+                    if attribute.find('Value') is not None:
+                        values[dtags.index(dtag)]=attribute.find('Value').text
+            return values
+        return _extractor
+
+    cols_type = [(tag, str) for tag in tags]
+    self._metadata.add_columns(extractor(tags), cols_type)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.filter">
+    <p>def <span class="ident">filter</span>(</p><p>self, predicate)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Filter the rows of dicom metadata and pixeldata based on given predicate</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>predicate: </td><td class='param-desc'>predicate to apply on filter</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+&gt;&gt;&gt; import xml.etree.ElementTree as ET
+
+#sample custom filter function
+&gt;&gt;&gt; def filter_meta(tag_name, tag_value):
+...    def _filter_meta(row):
+...        root = ET.fromstring(row["metadata"])
+...        for attribute in root.findall('DicomAttribute'):
+...            keyword = attribute.get('keyword')
+...            if attribute.get('keyword') is not None:
+...                if attribute.find('Value') is not None:
+...                    value = attribute.find('Value').text
+...                    if keyword == tag_name and value == tag_value:
+...                        return True
+...    return _filter_meta
+
+&gt;&gt;&gt; tag_name = "SOPInstanceUID"
+
+&gt;&gt;&gt; tag_value = "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"
+
+&gt;&gt;&gt; dicom.filter(filter_meta(tag_name, tag_value))
+&gt;&gt;&gt; dicom.metadata.count()
+1
+
+#After filter
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+
+&gt;&gt;&gt; dicom.pixeldata.inspect(truncate=30)
+[#]  id  imagematrix
+=====================================================
+[0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+[   0.  125.  103. ...,  120.  213.  319.]
+[   0.  117.   94. ...,  135.  223.  325.]
+...,
+[   0.   62.   21. ...,  896.  886.  854.]
+[   0.   63.   23. ...,  941.  872.  897.]
+[   0.   60.   30. ...,  951.  822.  906.]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.filter', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.filter" class="source">
+    <pre><code>def filter(self, predicate):
+
+    """
+    Filter the rows of dicom metadata and pixeldata based on given predicate
+
+    Parameters
+    ----------
+
+    :param predicate: predicate to apply on filter
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        >>> import xml.etree.ElementTree as ET
+
+        #sample custom filter function
+        >>> def filter_meta(tag_name, tag_value):
+        ...    def _filter_meta(row):
+        ...        root = ET.fromstring(row["metadata"])
+        ...        for attribute in root.findall('DicomAttribute'):
+        ...            keyword = attribute.get('keyword')
+        ...            if attribute.get('keyword') is not None:
+        ...                if attribute.find('Value') is not None:
+        ...                    value = attribute.find('Value').text
+        ...                    if keyword == tag_name and value == tag_value:
+        ...                        return True
+        ...    return _filter_meta
+
+        >>> tag_name = "SOPInstanceUID"
+
+        >>> tag_value = "1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685"
+
+        >>> dicom.filter(filter_meta(tag_name, tag_value))
+        >>> dicom.metadata.count()
+        1
+
+        #After filter
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        =====================================================
+        [0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.  125.  103. ...,  120.  213.  319.]
+        [   0.  117.   94. ...,  135.  223.  325.]
+        ...,
+        [   0.   62.   21. ...,  896.  886.  854.]
+        [   0.   63.   23. ...,  941.  872.  897.]
+        [   0.   60.   30. ...,  951.  822.  906.]]
+
+    """
+
+    self.metadata.filter(predicate)
+    filtered_id_frame = self.metadata.copy(columns = "id")
+    self._pixeldata = filtered_id_frame.join_inner(self.pixeldata, "id")
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.filter_by_keywords">
+    <p>def <span class="ident">filter_by_keywords</span>(</p><p>self, keywords_values_dict)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Filter the rows based on dictionary of {"keyword":"value"}(applying 'and' operation on dictionary) from column holding xml string</p>
+<p>Ex: keywords_values_dict -&gt; {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>keywords_values_dict</td><td class='param-type'>(dict(str, str)):</td><td class='param-desc'>dictionary of keywords and values from xml string in metadata</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+&gt;&gt;&gt; keywords_values_dict = {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
+&gt;&gt;&gt; dicom.filter_by_keywords(keywords_values_dict)
+&gt;&gt;&gt; dicom.metadata.count()
+1
+
+#After filter
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+
+&gt;&gt;&gt; dicom.pixeldata.inspect(truncate=30)
+[#]  id  imagematrix
+=====================================================
+[0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+[   0.  125.  103. ...,  120.  213.  319.]
+[   0.  117.   94. ...,  135.  223.  325.]
+...,
+[   0.   62.   21. ...,  896.  886.  854.]
+[   0.   63.   23. ...,  941.  872.  897.]
+[   0.   60.   30. ...,  951.  822.  906.]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.filter_by_keywords', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.filter_by_keywords" class="source">
+    <pre><code>def filter_by_keywords(self, keywords_values_dict):
+    """
+    Filter the rows based on dictionary of {"keyword":"value"}(applying 'and' operation on dictionary) from column holding xml string
+
+    Ex: keywords_values_dict -> {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
+
+    Parameters
+    ----------
+
+    :param keywords_values_dict: (dict(str, str)) dictionary of keywords and values from xml string in metadata
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        >>> keywords_values_dict = {"SOPInstanceUID":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "Manufacturer":"SIEMENS", "StudyDate":"20030315"}
+        >>> dicom.filter_by_keywords(keywords_values_dict)
+        >>> dicom.metadata.count()
+        1
+
+        #After filter
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        =====================================================
+        [0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.  125.  103. ...,  120.  213.  319.]
+        [   0.  117.   94. ...,  135.  223.  325.]
+        ...,
+        [   0.   62.   21. ...,  896.  886.  854.]
+        [   0.   63.   23. ...,  941.  872.  897.]
+        [   0.   60.   30. ...,  951.  822.  906.]]
+
+    """
+
+    if not isinstance(keywords_values_dict, dict):
+        raise TypeError("keywords_values_dict should be a type of dict, but found type as %" % type(keywords_values_dict))
+
+    for key, value in keywords_values_dict.iteritems():
+        if not isinstance(key, basestring) or not isinstance(value, basestring):
+            raise TypeError("both keyword and value should be of <type 'str'>")
+
+    #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
+    def f(scala_dicom):
+        scala_dicom.filterByKeywords(self._tc.jutils.convert.to_scala_map(keywords_values_dict))
+
+    self._call_scala(f)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.filter_by_tags">
+    <p>def <span class="ident">filter_by_tags</span>(</p><p>self, tags_values_dict)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Filter the rows based on dictionary of {"tag":"value"}(applying 'and' operation on dictionary) from column holding xml string</p>
+<p>Ex: tags_values_dict -&gt; {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}</p>
+<div class='section-header'>Parameters:</div>
+
+<table><tr><td class='param-name'>tags_values_dict</td><td class='param-type'>(dict(str, str)):</td><td class='param-desc'>dictionary of tags and values from xml string in metadata.</td></tr></table>
+
+<div class='section-header'>Examples:</div>
+
+<pre><code>&gt;&gt;&gt; dicom_path = "../datasets/dicom_uncompressed"
+
+&gt;&gt;&gt; dicom = tc.dicom.import_dcm(dicom_path)
+
+&gt;&gt;&gt; dicom.metadata.count()
+3
+
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+[1]   1  &lt;?xml version="1.0" encodin...
+[2]   2  &lt;?xml version="1.0" encodin...
+
+#Part of xml string looks as below
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;NativeDicomModel xml:space="preserve"&gt;
+        &lt;DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"&gt;&lt;InlineBinary&gt;AAE=&lt;/InlineBinary&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"&gt;&lt;Value number="1"&gt;1.2.840.10008.5.1.4.1.1.4&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        &lt;DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"&gt;&lt;Value number="1"&gt;1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685&lt;/Value&gt;&lt;/DicomAttribute&gt;
+        ...
+
+&gt;&gt;&gt; tags_values_dict = {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
+&gt;&gt;&gt; dicom.filter_by_tags(tags_values_dict)
+&gt;&gt;&gt; dicom.metadata.count()
+1
+
+#After filter
+&gt;&gt;&gt; dicom.metadata.inspect(truncate=30)
+[#]  id  metadata
+=======================================
+[0]   0  &lt;?xml version="1.0" encodin...
+
+&gt;&gt;&gt; dicom.pixeldata.inspect(truncate=30)
+[#]  id  imagematrix
+=====================================================
+[0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+[   0.  125.  103. ...,  120.  213.  319.]
+[   0.  117.   94. ...,  135.  223.  325.]
+...,
+[   0.   62.   21. ...,  896.  886.  854.]
+[   0.   63.   23. ...,  941.  872.  897.]
+[   0.   60.   30. ...,  951.  822.  906.]]
+</code></pre></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.filter_by_tags', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.filter_by_tags" class="source">
+    <pre><code>def filter_by_tags(self, tags_values_dict):
+    """
+    Filter the rows based on dictionary of {"tag":"value"}(applying 'and' operation on dictionary) from column holding xml string
+
+    Ex: tags_values_dict -> {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
+
+    Parameters
+    ----------
+
+    :param tags_values_dict: (dict(str, str)) dictionary of tags and values from xml string in metadata.
+
+
+    Examples
+    --------
+
+        >>> dicom_path = "../datasets/dicom_uncompressed"
+
+        >>> dicom = tc.dicom.import_dcm(dicom_path)
+
+        >>> dicom.metadata.count()
+        3
+
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+        [1]   1  <?xml version="1.0" encodin...
+        [2]   2  <?xml version="1.0" encodin...
+
+        #Part of xml string looks as below
+        <?xml version="1.0" encoding="UTF-8"?>
+            <NativeDicomModel xml:space="preserve">
+                <DicomAttribute keyword="FileMetaInformationVersion" tag="00020001" vr="OB"><InlineBinary>AAE=</InlineBinary></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPClassUID" tag="00020002" vr="UI"><Value number="1">1.2.840.10008.5.1.4.1.1.4</Value></DicomAttribute>
+                <DicomAttribute keyword="MediaStorageSOPInstanceUID" tag="00020003" vr="UI"><Value number="1">1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685</Value></DicomAttribute>
+                ...
+
+        >>> tags_values_dict = {"00080018":"1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685", "00080070":"SIEMENS", "00080020":"20030315"}
+        >>> dicom.filter_by_tags(tags_values_dict)
+        >>> dicom.metadata.count()
+        1
+
+        #After filter
+        >>> dicom.metadata.inspect(truncate=30)
+        [#]  id  metadata
+        =======================================
+        [0]   0  <?xml version="1.0" encodin...
+
+        >>> dicom.pixeldata.inspect(truncate=30)
+        [#]  id  imagematrix
+        =====================================================
+        [0]   0  [[   0.    0.    0. ...,    0.    0.    0.]
+        [   0.  125.  103. ...,  120.  213.  319.]
+        [   0.  117.   94. ...,  135.  223.  325.]
+        ...,
+        [   0.   62.   21. ...,  896.  886.  854.]
+        [   0.   63.   23. ...,  941.  872.  897.]
+        [   0.   60.   30. ...,  951.  822.  906.]]
+
+    """
+
+    if not isinstance(tags_values_dict, dict):
+        raise TypeError("tags_values_dict should be a type of dict, but found type as %" % type(tags_values_dict))
+
+    for tag, value in tags_values_dict.iteritems():
+        if not isinstance(tag, basestring) or not isinstance(value, basestring):
+            raise TypeError("both tag and value should be of <type 'str'>")
+
+    #Always scala dicom is invoked, as python joins are expensive compared to serailizations.
+    def f(scala_dicom):
+        scala_dicom.filterByTags(self._tc.jutils.convert.to_scala_map(tags_values_dict))
+
+    self._call_scala(f)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="sparktk.dicom.dicom.Dicom.save">
+    <p>def <span class="ident">save</span>(</p><p>self, path)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Persists the dicom object to the given file path</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.dicom.dicom.Dicom.save', this);">Show source &equiv;</a></p>
+  <div id="source-sparktk.dicom.dicom.Dicom.save" class="source">
+    <pre><code>def save(self, path):
+    """Persists the dicom object to the given file path"""
+    self._get_new_scala().save(path)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+        </div>
+        <div class="clear" />
+        <footer id="footer">
+          <div>
+            spark-tk Python API Documentation
+          </div>
+        </footer>
+      </article>
+  </div>
+</body>
+</html>

@@ -890,71 +890,6 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
-.codehilite .c { color: #408080; font-style: italic } /* Comment */
-.codehilite .err { border: 1px solid #FF0000 } /* Error */
-.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
-.codehilite .o { color: #666666 } /* Operator */
-.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
-.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
-.codehilite .gd { color: #A00000 } /* Generic.Deleted */
-.codehilite .ge { font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00A000 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
-.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.codehilite .kt { color: #B00040 } /* Keyword.Type */
-.codehilite .m { color: #666666 } /* Literal.Number */
-.codehilite .s { color: #BA2121 } /* Literal.String */
-.codehilite .na { color: #7D9029 } /* Name.Attribute */
-.codehilite .nb { color: #008000 } /* Name.Builtin */
-.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.codehilite .no { color: #880000 } /* Name.Constant */
-.codehilite .nd { color: #AA22FF } /* Name.Decorator */
-.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #0000FF } /* Name.Function */
-.codehilite .nl { color: #A0A000 } /* Name.Label */
-.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.codehilite .nv { color: #19177C } /* Name.Variable */
-.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
-.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
-.codehilite .mf { color: #666666 } /* Literal.Number.Float */
-.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
-.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
-.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
-.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
-.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.codehilite .sx { color: #008000 } /* Literal.String.Other */
-.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
-.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
-.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
-.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .vc { color: #19177C } /* Name.Variable.Class */
-.codehilite .vg { color: #19177C } /* Name.Variable.Global */
-.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
 
   <style type="text/css">
   
@@ -1115,312 +1050,8 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">sparktk.models.regression.linear_regression</span> module</h1>
+<h1 class="title"><span class="name">sparktk</span> linear_regression</h1>  
   
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression" class="source">
-    <div class="codehilite"><pre><span class="c"># vim: set encoding=utf-8</span>
-
-<span class="c">#  Copyright (c) 2016 Intel Corporation </span>
-<span class="c">#</span>
-<span class="c">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-<span class="c">#  you may not use this file except in compliance with the License.</span>
-<span class="c">#  You may obtain a copy of the License at</span>
-<span class="c">#</span>
-<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c">#</span>
-<span class="c">#  Unless required by applicable law or agreed to in writing, software</span>
-<span class="c">#  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-<span class="c">#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="c">#  See the License for the specific language governing permissions and</span>
-<span class="c">#  limitations under the License.</span>
-<span class="c">#</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.loggers</span> <span class="kn">import</span> <span class="n">log_load</span><span class="p">;</span> <span class="n">log_load</span><span class="p">(</span><span class="n">__name__</span><span class="p">);</span> <span class="k">del</span> <span class="n">log_load</span>
-
-<span class="kn">from</span> <span class="nn">sparktk.propobj</span> <span class="kn">import</span> <span class="n">PropertiesObject</span>
-<span class="kn">from</span> <span class="nn">sparktk.models.regression.linear_regression_test_metrics</span> <span class="kn">import</span> <span class="n">LinearRegressionTestMetrics</span>
-<span class="kn">from</span> <span class="nn">sparktk</span> <span class="kn">import</span> <span class="n">TkContext</span>
-
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;train&quot;</span><span class="p">,</span> <span class="s">&quot;load&quot;</span><span class="p">,</span> <span class="s">&quot;LinearRegressionModel&quot;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">value_column</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">elastic_net_parameter</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-          <span class="n">fit_intercept</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-          <span class="n">reg_param</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-          <span class="n">standardization</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">tolerance</span><span class="o">=</span><span class="mf">1E-6</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a LinearRegressionModel by training on the given frame</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) A frame to train the model on</span>
-<span class="sd">    :param value_column: (str) Column name containing the value for each observation.</span>
-<span class="sd">    :param observation_columns: (List[str]) List of column(s) containing the observations.</span>
-<span class="sd">    :param elastic_net_parameter: (double) Parameter for the ElasticNet mixing. Default is 0.0</span>
-<span class="sd">    :param fit_intercept: (bool) Parameter for whether to fit an intercept term. Default is true</span>
-<span class="sd">    :param max_iterations: (int) Parameter for maximum number of iterations. Default is 100</span>
-<span class="sd">    :param reg_param: (double) Parameter for regularization. Default is 0.0</span>
-<span class="sd">    :param standardization: (bool) Parameter for whether to standardize the training features before fitting the model. Default is true</span>
-<span class="sd">    :param tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6</span>
-<span class="sd">    :return: (LinearRegressionModel) A trained linear regression model</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="n">scala_observation_columns</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_vector_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit_intercept</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;fit_intercept must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">fit_intercept</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">standardization</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standardization must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">standardization</span><span class="p">))</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">value_column</span><span class="p">,</span>
-                                   <span class="n">scala_observation_columns</span><span class="p">,</span>
-                                   <span class="n">elastic_net_parameter</span><span class="p">,</span>
-                                   <span class="n">fit_intercept</span><span class="p">,</span>
-                                   <span class="n">max_iterations</span><span class="p">,</span>
-                                   <span class="n">reg_param</span><span class="p">,</span>
-                                   <span class="n">standardization</span><span class="p">,</span>
-                                   <span class="n">tolerance</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LinearRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">TkContext</span><span class="o">.</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load LinearRegressionModel from given path&quot;&quot;&quot;</span>
-    <span class="n">TkContext</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">LinearRegressionModel</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Gets reference to the scala object&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">sc</span><span class="o">.</span><span class="n">_jvm</span><span class="o">.</span><span class="n">org</span><span class="o">.</span><span class="n">trustedanalytics</span><span class="o">.</span><span class="n">sparktk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">linear_regression</span><span class="o">.</span><span class="n">LinearRegressionModel</span>
-
-
-<span class="k">class</span> <span class="nc">LinearRegressionModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Linear Regression Model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">        &gt;&gt;&gt; rows = [[0,0],[1, 2.5],[2, 5.0],[3, 7.5],[4, 10],[5, 12.5],[6, 13.0],[7, 17.15], [8, 18.5],[9, 23.5]]</span>
-<span class="sd">        &gt;&gt;&gt; schema = [(&quot;x1&quot;, float),(&quot;y&quot;, float)]</span>
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create(rows, schema)</span>
-
-<span class="sd">        Consider the following frame with two columns.</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  x1  y</span>
-<span class="sd">        ==============</span>
-<span class="sd">        [0]   0      0</span>
-<span class="sd">        [1]   1    2.5</span>
-<span class="sd">        [2]   2    5.0</span>
-<span class="sd">        [3]   3    7.5</span>
-<span class="sd">        [4]   4     10</span>
-<span class="sd">        [5]   5   12.5</span>
-<span class="sd">        [6]   6   13.0</span>
-<span class="sd">        [7]   7  17.15</span>
-<span class="sd">        [8]   8   18.5</span>
-<span class="sd">        [9]   9   23.5</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.regression.linear_regression.train(frame,&#39;y&#39;,[&#39;x1&#39;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; model</span>
-<span class="sd">        explained_variance      = 49.2759280303</span>
-<span class="sd">        intercept               = -0.0327272727273</span>
-<span class="sd">        iterations              = 1</span>
-<span class="sd">        mean_absolute_error     = 0.529939393939</span>
-<span class="sd">        mean_squared_error      = 0.630096969697</span>
-<span class="sd">        objective_history       = [0.0]</span>
-<span class="sd">        observation_columns     = [u&#39;x1&#39;]</span>
-<span class="sd">        r2                      = 0.987374330661</span>
-<span class="sd">        root_mean_squared_error = 0.793786476136</span>
-<span class="sd">        value_column            = y</span>
-<span class="sd">        weights                 = [2.4439393939393925]</span>
-
-<span class="sd">        &gt;&gt;&gt; linear_regression_test_return = model.test(frame, &#39;y&#39;)</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; linear_regression_test_return</span>
-<span class="sd">        explained_variance      = 49.2759280303</span>
-<span class="sd">        mean_absolute_error     = 0.529939393939</span>
-<span class="sd">        mean_squared_error      = 0.630096969697</span>
-<span class="sd">        r2                      = 0.987374330661</span>
-<span class="sd">        root_mean_squared_error = 0.793786476136</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame = model.predict(frame, [&quot;x1&quot;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame.inspect()</span>
-<span class="sd">        [#]  x1   y      predicted_value</span>
-<span class="sd">        =================================</span>
-<span class="sd">        [0]  0.0    0.0  -0.0327272727273</span>
-<span class="sd">        [1]  1.0    2.5     2.41121212121</span>
-<span class="sd">        [2]  2.0    5.0     4.85515151515</span>
-<span class="sd">        [3]  3.0    7.5     7.29909090909</span>
-<span class="sd">        [4]  4.0   10.0     9.74303030303</span>
-<span class="sd">        [5]  5.0   12.5      12.186969697</span>
-<span class="sd">        [6]  6.0   13.0     14.6309090909</span>
-<span class="sd">        [7]  7.0  17.15     17.0748484848</span>
-<span class="sd">        [8]  8.0   18.5     19.5187878788</span>
-<span class="sd">        [9]  9.0   23.5     21.9627272727</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/linear_regression_model&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/linear_regression_model&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.value_column == model.value_column</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.intercept == model.intercept</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.test(frame, &#39;y&#39;).r2</span>
-<span class="sd">        0.987374330660537</span>
-
-<span class="sd">    The trained model can also be exported to a .mar file, to be used with the scoring engine:</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/linearRegressionModel.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">LinearRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">value_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name containing the value for each observation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">valueColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;List of column(s) containing the observations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumnsTrain</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The intercept of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">intercept</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Weights of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">weights</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">explained_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The explained variance regression score&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">explainedVariance</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean_absolute_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The risk function corresponding to the expected value of the absolute error loss or l1-norm loss&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">meanAbsoluteError</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean_squared_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The risk function corresponding to the expected value of the squared error loss or quadratic loss&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">meanSquaredError</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">objective_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Objective function(scaled loss + regularization) at each iteration&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The coefficient of determination of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">r2</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">root_mean_squared_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The square root of the mean squared error&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The number of training iterations until termination&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">iterations</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">observation_columns</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict values for a frame using a trained Linear Regression model</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) The frame to predict on</span>
-<span class="sd">        :param observation_columns: Optional(List[str]) List of column(s) containing the observations</span>
-<span class="sd">        :return: (Frame) returns frame with predicted column added</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">observation_columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Test the frame given the trained model</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) The frame to predict on</span>
-<span class="sd">        :param value_column: (String) Column name containing the value for each observation</span>
-<span class="sd">        :param observation_columns: Optional(List[str]) List of column(s) containing the observations</span>
-<span class="sd">        :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LinearRegressionTestMetrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">obs</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves the model to given path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) path to save</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 
   </header>
 
@@ -1438,15 +1069,6 @@ table {
   
     <div class="desc"><p>load LinearRegressionModel from given path</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.load', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.load" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tc</span><span class="o">=</span><span class="n">TkContext</span><span class="o">.</span><span class="n">implicit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;load LinearRegressionModel from given path&quot;&quot;&quot;</span>
-    <span class="n">TkContext</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">LinearRegressionModel</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1454,7 +1076,7 @@ table {
       
   <div class="item">
     <div class="name def" id="sparktk.models.regression.linear_regression.train">
-    <p>def <span class="ident">train</span>(</p><p>frame, value_column, observation_columns, elastic_net_parameter=0.0, fit_intercept=True, max_iterations=100, reg_param=0.0, standardization=True, tolerance=1e-06)</p>
+    <p>def <span class="ident">train</span>(</p><p>frame, value_column, observation_columns, elastic_net_parameter=0.0, fit_intercept=True, max_iterations=100, reg_param=0.0, standardization=True, convergence_tolerance=1e-06)</p>
     </div>
     
 
@@ -1487,62 +1109,11 @@ table {
 <table><tr><td class='param-name'>standardization</td><td class='param-type'>(bool):</td><td class='param-desc'>Parameter for whether to standardize the training features before fitting the model. Default is true
 </td></tr></table>
 
-<table><tr><td class='param-name'>tolerance</td><td class='param-type'>(str):</td><td class='param-desc'>Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+<table><tr><td class='param-name'>convergence_tolerance</td><td class='param-type'>(str):</td><td class='param-desc'>Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
 </td></tr></table>
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(LinearRegressionModel): </td><td class='param-desc'>A trained linear regression model</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.train', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.train" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span>
-          <span class="n">value_column</span><span class="p">,</span>
-          <span class="n">observation_columns</span><span class="p">,</span>
-          <span class="n">elastic_net_parameter</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-          <span class="n">fit_intercept</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-          <span class="n">reg_param</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-          <span class="n">standardization</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-          <span class="n">tolerance</span><span class="o">=</span><span class="mf">1E-6</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a LinearRegressionModel by training on the given frame</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    :param frame: (Frame) A frame to train the model on</span>
-<span class="sd">    :param value_column: (str) Column name containing the value for each observation.</span>
-<span class="sd">    :param observation_columns: (List[str]) List of column(s) containing the observations.</span>
-<span class="sd">    :param elastic_net_parameter: (double) Parameter for the ElasticNet mixing. Default is 0.0</span>
-<span class="sd">    :param fit_intercept: (bool) Parameter for whether to fit an intercept term. Default is true</span>
-<span class="sd">    :param max_iterations: (int) Parameter for maximum number of iterations. Default is 100</span>
-<span class="sd">    :param reg_param: (double) Parameter for regularization. Default is 0.0</span>
-<span class="sd">    :param standardization: (bool) Parameter for whether to standardize the training features before fitting the model. Default is true</span>
-<span class="sd">    :param tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6</span>
-<span class="sd">    :return: (LinearRegressionModel) A trained linear regression model</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;frame cannot be None&quot;</span><span class="p">)</span>
-
-    <span class="n">tc</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_tc</span>
-    <span class="n">_scala_obj</span> <span class="o">=</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">)</span>
-    <span class="n">scala_observation_columns</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_vector_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit_intercept</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;fit_intercept must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">fit_intercept</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">standardization</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standardization must be a bool, received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">standardization</span><span class="p">))</span>
-    <span class="n">scala_model</span> <span class="o">=</span> <span class="n">_scala_obj</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span>
-                                   <span class="n">value_column</span><span class="p">,</span>
-                                   <span class="n">scala_observation_columns</span><span class="p">,</span>
-                                   <span class="n">elastic_net_parameter</span><span class="p">,</span>
-                                   <span class="n">fit_intercept</span><span class="p">,</span>
-                                   <span class="n">max_iterations</span><span class="p">,</span>
-                                   <span class="n">reg_param</span><span class="p">,</span>
-                                   <span class="n">standardization</span><span class="p">,</span>
-                                   <span class="n">tolerance</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LinearRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -1557,8 +1128,8 @@ table {
     <div class="desc"><p>Linear Regression Model</p>
 <div class='section-header'>Example:</div>
 
-<div class="codehilite"><pre>&gt;&gt;&gt; rows = [[0,0],[1, 2.5],[2, 5.0],[3, 7.5],[4, 10],[5, 12.5],[6, 13.0],[7, 17.15], [8, 18.5],[9, 23.5]]
-&gt;&gt;&gt; schema = [(&quot;x1&quot;, float),(&quot;y&quot;, float)]
+<pre><code>&gt;&gt;&gt; rows = [[0,0],[1, 2.5],[2, 5.0],[3, 7.5],[4, 10],[5, 12.5],[6, 13.0],[7, 17.15], [8, 18.5],[9, 23.5]]
+&gt;&gt;&gt; schema = [("x1", float),("y", float)]
 &gt;&gt;&gt; frame = tc.frame.create(rows, schema)
 
 Consider the following frame with two columns.
@@ -1577,7 +1148,7 @@ Consider the following frame with two columns.
 [8]   8   18.5
 [9]   9   23.5
 
-&gt;&gt;&gt; model = tc.models.regression.linear_regression.train(frame,&#39;y&#39;,[&#39;x1&#39;])
+&gt;&gt;&gt; model = tc.models.regression.linear_regression.train(frame,'y',['x1'])
 [===Job Progress===]
 
 &gt;&gt;&gt; model
@@ -1587,13 +1158,13 @@ iterations              = 1
 mean_absolute_error     = 0.529939393939
 mean_squared_error      = 0.630096969697
 objective_history       = [0.0]
-observation_columns     = [u&#39;x1&#39;]
+observation_columns     = [u'x1']
 r2                      = 0.987374330661
 root_mean_squared_error = 0.793786476136
 value_column            = y
 weights                 = [2.4439393939393925]
 
-&gt;&gt;&gt; linear_regression_test_return = model.test(frame, &#39;y&#39;)
+&gt;&gt;&gt; linear_regression_test_return = model.test(frame, 'y')
 [===Job Progress===]
 
 &gt;&gt;&gt; linear_regression_test_return
@@ -1603,7 +1174,7 @@ mean_squared_error      = 0.630096969697
 r2                      = 0.987374330661
 root_mean_squared_error = 0.793786476136
 
-&gt;&gt;&gt; predicted_frame = model.predict(frame, [&quot;x1&quot;])
+&gt;&gt;&gt; predicted_frame = model.predict(frame, ["x1"])
 [===Job Progress===]
 
 &gt;&gt;&gt; predicted_frame.inspect()
@@ -1620,9 +1191,9 @@ root_mean_squared_error = 0.793786476136
 [8]  8.0   18.5     19.5187878788
 [9]  9.0   23.5     21.9627272727
 
-&gt;&gt;&gt; model.save(&quot;sandbox/linear_regression_model&quot;)
+&gt;&gt;&gt; model.save("sandbox/linear_regression_model")
 
-&gt;&gt;&gt; restored = tc.load(&quot;sandbox/linear_regression_model&quot;)
+&gt;&gt;&gt; restored = tc.load("sandbox/linear_regression_model")
 
 &gt;&gt;&gt; restored.value_column == model.value_column
 True
@@ -1633,233 +1204,13 @@ True
 &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)
 True
 
-&gt;&gt;&gt; restored.test(frame, &#39;y&#39;).r2
+&gt;&gt;&gt; restored.test(frame, 'y').r2
 0.987374330660537
-</pre></div>
-
-
+</code></pre>
 <p>The trained model can also be exported to a .mar file, to be used with the scoring engine:</p>
-<div class="codehilite"><pre>&gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/linearRegressionModel.mar&quot;)
-</pre></div></div>
+<pre><code>&gt;&gt;&gt; canonical_path = model.export_to_mar("sandbox/linearRegressionModel.mar")
+</code></pre></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">LinearRegressionModel</span><span class="p">(</span><span class="n">PropertiesObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Linear Regression Model</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">        &gt;&gt;&gt; rows = [[0,0],[1, 2.5],[2, 5.0],[3, 7.5],[4, 10],[5, 12.5],[6, 13.0],[7, 17.15], [8, 18.5],[9, 23.5]]</span>
-<span class="sd">        &gt;&gt;&gt; schema = [(&quot;x1&quot;, float),(&quot;y&quot;, float)]</span>
-<span class="sd">        &gt;&gt;&gt; frame = tc.frame.create(rows, schema)</span>
-
-<span class="sd">        Consider the following frame with two columns.</span>
-
-<span class="sd">        &gt;&gt;&gt; frame.inspect()</span>
-<span class="sd">        [#]  x1  y</span>
-<span class="sd">        ==============</span>
-<span class="sd">        [0]   0      0</span>
-<span class="sd">        [1]   1    2.5</span>
-<span class="sd">        [2]   2    5.0</span>
-<span class="sd">        [3]   3    7.5</span>
-<span class="sd">        [4]   4     10</span>
-<span class="sd">        [5]   5   12.5</span>
-<span class="sd">        [6]   6   13.0</span>
-<span class="sd">        [7]   7  17.15</span>
-<span class="sd">        [8]   8   18.5</span>
-<span class="sd">        [9]   9   23.5</span>
-
-<span class="sd">        &gt;&gt;&gt; model = tc.models.regression.linear_regression.train(frame,&#39;y&#39;,[&#39;x1&#39;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; model</span>
-<span class="sd">        explained_variance      = 49.2759280303</span>
-<span class="sd">        intercept               = -0.0327272727273</span>
-<span class="sd">        iterations              = 1</span>
-<span class="sd">        mean_absolute_error     = 0.529939393939</span>
-<span class="sd">        mean_squared_error      = 0.630096969697</span>
-<span class="sd">        objective_history       = [0.0]</span>
-<span class="sd">        observation_columns     = [u&#39;x1&#39;]</span>
-<span class="sd">        r2                      = 0.987374330661</span>
-<span class="sd">        root_mean_squared_error = 0.793786476136</span>
-<span class="sd">        value_column            = y</span>
-<span class="sd">        weights                 = [2.4439393939393925]</span>
-
-<span class="sd">        &gt;&gt;&gt; linear_regression_test_return = model.test(frame, &#39;y&#39;)</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; linear_regression_test_return</span>
-<span class="sd">        explained_variance      = 49.2759280303</span>
-<span class="sd">        mean_absolute_error     = 0.529939393939</span>
-<span class="sd">        mean_squared_error      = 0.630096969697</span>
-<span class="sd">        r2                      = 0.987374330661</span>
-<span class="sd">        root_mean_squared_error = 0.793786476136</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame = model.predict(frame, [&quot;x1&quot;])</span>
-<span class="sd">        [===Job Progress===]</span>
-
-<span class="sd">        &gt;&gt;&gt; predicted_frame.inspect()</span>
-<span class="sd">        [#]  x1   y      predicted_value</span>
-<span class="sd">        =================================</span>
-<span class="sd">        [0]  0.0    0.0  -0.0327272727273</span>
-<span class="sd">        [1]  1.0    2.5     2.41121212121</span>
-<span class="sd">        [2]  2.0    5.0     4.85515151515</span>
-<span class="sd">        [3]  3.0    7.5     7.29909090909</span>
-<span class="sd">        [4]  4.0   10.0     9.74303030303</span>
-<span class="sd">        [5]  5.0   12.5      12.186969697</span>
-<span class="sd">        [6]  6.0   13.0     14.6309090909</span>
-<span class="sd">        [7]  7.0  17.15     17.0748484848</span>
-<span class="sd">        [8]  8.0   18.5     19.5187878788</span>
-<span class="sd">        [9]  9.0   23.5     21.9627272727</span>
-
-<span class="sd">        &gt;&gt;&gt; model.save(&quot;sandbox/linear_regression_model&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored = tc.load(&quot;sandbox/linear_regression_model&quot;)</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.value_column == model.value_column</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.intercept == model.intercept</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; set(restored.observation_columns) == set(model.observation_columns)</span>
-<span class="sd">        True</span>
-
-<span class="sd">        &gt;&gt;&gt; restored.test(frame, &#39;y&#39;).r2</span>
-<span class="sd">        0.987374330660537</span>
-
-<span class="sd">    The trained model can also be exported to a .mar file, to be used with the scoring engine:</span>
-
-<span class="sd">        &gt;&gt;&gt; canonical_path = model.export_to_mar(&quot;sandbox/linearRegressionModel.mar&quot;)</span>
-
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-        <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_from_scala</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">LinearRegressionModel</span><span class="p">(</span><span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">value_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Column name containing the value for each observation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">valueColumn</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">observation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;List of column(s) containing the observations.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">observationColumnsTrain</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The intercept of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">intercept</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Weights of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">weights</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">explained_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The explained variance regression score&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">explainedVariance</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean_absolute_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The risk function corresponding to the expected value of the absolute error loss or l1-norm loss&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">meanAbsoluteError</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean_squared_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The risk function corresponding to the expected value of the squared error loss or quadratic loss&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">meanSquaredError</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">objective_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Objective function(scaled loss + regularization) at each iteration&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">from_scala_seq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">())</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The coefficient of determination of the trained model&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">r2</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">root_mean_squared_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The square root of the mean squared error&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">iterations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The number of training iterations until termination&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">iterations</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">observation_columns</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Predict values for a frame using a trained Linear Regression model</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) The frame to predict on</span>
-<span class="sd">        :param observation_columns: Optional(List[str]) List of column(s) containing the observations</span>
-<span class="sd">        :return: (Frame) returns frame with predicted column added</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-        <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)))</span>
-
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">observation_columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Test the frame given the trained model</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param frame: (Frame) The frame to predict on</span>
-<span class="sd">        :param value_column: (String) Column name containing the value for each observation</span>
-<span class="sd">        :param observation_columns: Optional(List[str]) List of column(s) containing the observations</span>
-<span class="sd">        :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LinearRegressionTestMetrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">obs</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves the model to given path</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) path to save</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the trained model as a model archive (.mar) to the specified path.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        :param path: (str) Path to save the trained model</span>
-<span class="sd">        :return: (str) Full path to the saved .mar file</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
 
@@ -2003,15 +1354,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc</span><span class="p">,</span> <span class="n">scala_model</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span> <span class="o">=</span> <span class="n">tc</span>
-    <span class="n">tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">validate_is_jvm_instance_of</span><span class="p">(</span><span class="n">scala_model</span><span class="p">,</span> <span class="n">get_scala_obj</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span> <span class="o">=</span> <span class="n">scala_model</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2033,22 +1375,6 @@ True
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(str): </td><td class='param-desc'>Full path to the saved .mar file</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.export_to_mar', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.export_to_mar" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">export_to_mar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Exports the trained model as a model archive (.mar) to the specified path.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) Path to save the trained model</span>
-<span class="sd">    :return: (str) Full path to the saved .mar file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;path parameter must be a str, but received </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">exportToMar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2073,22 +1399,6 @@ True
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(Frame): </td><td class='param-desc'>returns frame with predicted column added</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.predict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.predict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">observation_columns</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Predict values for a frame using a trained Linear Regression model</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param frame: (Frame) The frame to predict on</span>
-<span class="sd">    :param observation_columns: Optional(List[str]) List of column(s) containing the observations</span>
-<span class="sd">    :return: (Frame) returns frame with predicted column added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">sparktk.frame.frame</span> <span class="kn">import</span> <span class="n">Frame</span>
-    <span class="k">return</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2107,19 +1417,6 @@ True
 
 <table><tr><td class='param-name'>path</td><td class='param-type'>(str):</td><td class='param-desc'>path to save</td></tr></table></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.save', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.save" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Saves the model to given path</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param path: (str) path to save</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">_scala_sc</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2147,23 +1444,6 @@ True
 
 <p><table style='padding-top:10px'><tr><td class='param-name'>Returns</td><td class='param-type'>(LinearRegressionTestMetrics): </td><td class='param-desc'>LinearRegressionTestMetrics object consisting of results from model test</td></tr></table></p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.test', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.test" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">observation_columns</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test the frame given the trained model</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    :param frame: (Frame) The frame to predict on</span>
-<span class="sd">    :param value_column: (String) Column name containing the value for each observation</span>
-<span class="sd">    :param observation_columns: Optional(List[str]) List of column(s) containing the observations</span>
-<span class="sd">    :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tc</span><span class="o">.</span><span class="n">jutils</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">to_scala_option_list_string</span><span class="p">(</span><span class="n">observation_columns</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LinearRegressionTestMetrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scala</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">_scala</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">obs</span><span class="p">))</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2178,15 +1458,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.to_dict', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.to_dict" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">()</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">d</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
@@ -2201,13 +1472,6 @@ True
     
   
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-sparktk.models.regression.linear_regression.LinearRegressionModel.to_json', this);">Show source &equiv;</a></p>
-  <div id="source-sparktk.models.regression.linear_regression.LinearRegressionModel.to_json" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-</pre></div>
-
-  </div>
 </div>
 
   </div>
