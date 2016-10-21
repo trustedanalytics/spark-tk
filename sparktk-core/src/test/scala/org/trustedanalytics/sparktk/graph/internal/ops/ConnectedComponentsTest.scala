@@ -43,7 +43,7 @@ class ConnectedComponentsTest extends TestingSparkContextWordSpec with Matchers 
     val graph = buildGraph()
     val connectedComponents = graph.connectedComponents()
     connectedComponents.schema.columns should equal(List(Column("id", DataTypes.int32), Column("component", DataTypes.int64)))
-    connectedComponents.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 1)), new GenericRow(Array[Any](3, 1)), new GenericRow(Array[Any](5, 4)), new GenericRow(Array[Any](4, 4)))
+    connectedComponents.rdd.toArray.toList should contain theSameElementsAs List(new GenericRow(Array[Any](1, 0)), new GenericRow(Array[Any](3, 0)), new GenericRow(Array[Any](5, 2)), new GenericRow(Array[Any](4, 2)))
 
   }
 
