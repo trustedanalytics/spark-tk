@@ -36,7 +36,7 @@ algorithms. Since the graphs are built using frames, Frame operations may be sea
 
  + **Use Case:** applying a clustering algorithm to a vertex list with features developed using graph analytics.
 
-Spark-tk supports importing and exporting graphs to the OrientDB’s scalable graph database. Graph databases 
+Spark-tk supports importing and exporting graphs to the OrientDB's scalable graph database. Graph databases 
 allow users to run real-time queries on their graph data.
 
 
