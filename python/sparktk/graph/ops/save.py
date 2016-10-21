@@ -17,4 +17,5 @@
 
 
 def save(self, path):
+    """Persists the graph to the given file path"""
     self._scala.save(path)

@@ -36,7 +36,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)
         # get as a pandas frame to access data
-        pandas_frame = frame.to_pandas()
+        pandas_frame = frame.to_pandas(frame.count())
         pandas_data = []
         # use this dictionary to store expected results by name
         name_lookup = {}
@@ -64,15 +64,19 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         # it to the expected results we created
         unflatten_pandas = frame.to_pandas()
         for index, row in unflatten_pandas.iterrows():
-            self.assertTrue(row.equals(name_lookup[row['user']]))
+            self.assertEqual(row['user'], name_lookup[row['user']]['user'])
+            self.assertEqual(row['day'], name_lookup[row['user']]['day'])
+            self.assertItemsEqual(row['time'].split(','), name_lookup[row['user']]['time'].split(','))
+            self.assertItemsEqual(row['reading'].split(','), name_lookup[row['user']]['reading'].split(','))
+
         self.assertEqual(frame.count(), 5)
 
-    @unittest.skip("DPNG-11910")
     def test_unflatten_multiple_cols(self):
         frame = self.context.frame.import_csv(self.datafile_unflatten,
                 schema=self.schema_unflatten)
         # get a pandas frame of the data
-        pandas_frame = frame.to_pandas()
+        pandas_frame = frame.to_pandas(frame.count())
+
         name_lookup = {}
 
         # same logic as for unflatten_one_column,
@@ -99,7 +103,10 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         # which we have taken as a pandas frame
         unflatten_pandas = frame.to_pandas()
         for index, row in unflatten_pandas.iterrows():
-            self.assertTrue(row.equals(name_lookup[row['user']]))
+            self.assertEqual(row['user'], name_lookup[row['user']]['user'])
+            self.assertEqual(row['day'], name_lookup[row['user']]['day'])
+            self.assertItemsEqual(row['time'].split(','), name_lookup[row['user']]['time'].split(','))
+            self.assertItemsEqual(row['reading'].split(','), name_lookup[row['user']]['reading'].split(','))
 
     # same logic as single column but with sparse data
     # because there are so many rows in this data

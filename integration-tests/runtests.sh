@@ -41,7 +41,7 @@ echo "$NAME Calling clean.sh"
 cd tests
 
 echo "$NAME Generating the doctests test file"
-python2.7 gendoct.py
+python2.7 doctgen.py
 GEN_DOCTESTS_SUCCESS=$?
 if [[ $GEN_DOCTESTS_SUCCESS != 0 ]]
 then
