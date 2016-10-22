@@ -768,6 +768,12 @@
                 <artifactId>orientdb-client</artifactId>
                 <version>${tap.orientdb.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.orientechnologies/orientdb-enterprise -->
+            <dependency>
+                <groupId>com.orientechnologies</groupId>
+                <artifactId>orientdb-enterprise</artifactId>
+                <version>${tap.orientdb.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.tinkerpop.blueprints</groupId>
                 <artifactId>blueprints-core</artifactId>

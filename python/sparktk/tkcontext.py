@@ -25,6 +25,7 @@ from pyspark import SparkContext
 import logging
 logger = logging.getLogger('sparktk')
 
+
 __all__ = ['TkContext']
 
 
@@ -37,6 +38,7 @@ class TkContext(object):
     """
 
     _other_libs = None
+    __mock = object()
 
     def __init__(self,
                  sc=None,
@@ -136,6 +138,8 @@ class TkContext(object):
                                use_local_fs=use_local_fs,
                                debug=debug)
         if type(sc) is not SparkContext:
+            if sc is TkContext.__mock:
+                return
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc
         self._sql_context = None
@@ -175,6 +179,15 @@ class TkContext(object):
         """
         # Since tc is so commonly used as an implicit variable, it's worth special code here to save a lot of imports
         require_type(TkContext, tc, arg_name)
+
+    @staticmethod
+    def _create_mock_tc():
+        """
+        Creates a TkContext which does NOT have a valid SparkContext
+
+        (Useful for testing or exploring sparktk without having Spark around)
+        """
+        return TkContext(TkContext.__mock)
 
     @property
     def sc(self):

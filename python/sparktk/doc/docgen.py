@@ -370,6 +370,15 @@ class MainApiDocs(object):
                         if start in line:
                             copy = True
                     else:
+                        # Add some hyperlinks to the overview sections in the README.md part
+                        if '<h3>Frame Interface</h3>' in line:
+                            line = '<h3><a href="frame.m.html">Frame Interface</a></h3>'
+                        if '<h3>Graph Analytics</h3>' in line:
+                            line = '<h3><a href="graph.m.html">Graph Analytics</a></h3>'
+                        if '<h3>Machine Learning</h3>' in line:
+                            line = '<h3><a href="models/index.html">Machine Learning</a></h3>'
+                        if '<h3>Image Processing</h3>' in line:
+                            line = '<h3><a href="dicom.m.html">Image Processing</a></h3>'
                         if stop in line:
                             break
                         readme_text.append(line)
