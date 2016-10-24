@@ -16,7 +16,7 @@
 #
 
 
-def flatten_columns (self, *columns):
+def flatten_columns (self, columns):
     """
     Spread data to multiple rows based on cell data.
 
@@ -55,7 +55,7 @@ def flatten_columns (self, *columns):
 
     Now, spread out those sub-strings in column *b* and *c* by specifying the column names and delmiters:
 
-        >>> frame.flatten_columns(('b', ','), ('c', '|'))
+        >>> frame.flatten_columns([('b', ','), ('c', '|')])
         <progress>
 
     Note that the delimiters parameter is optional, and if no delimiter is specified, the default
@@ -97,5 +97,7 @@ def flatten_columns (self, *columns):
         [4]  2  double  orange|black
 
     """
+    if not isinstance(columns, list):
+        columns = [columns]
     columns = [c if isinstance(c, tuple) else (c, None) for c in columns]
     return self._scala.flattenColumns(self._tc.jutils.convert.to_scala_list_string_option_tuple(columns))

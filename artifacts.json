@@ -4,5 +4,8 @@
 	},
 	"sparktk-pip": {
 		"label": "Spark-tk pip package"
+	},
+	"licenses": {
+		"label": "Third party licenses and sources."
 	}
 }
