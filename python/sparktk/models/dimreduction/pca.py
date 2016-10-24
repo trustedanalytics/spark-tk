@@ -131,25 +131,26 @@ class PcaModel(PropertiesObject):
 
         </hide>
 
-        >>> model.predict(frame, mean_centered=True, t_squared_index=True, columns=['1','2','3','4','5','6'], k=3)
+        >>> predicted_frame = model.predict(frame, mean_centered=True, t_squared_index=True, columns=['1','2','3','4','5','6'], k=3)
         -etc-
 
-        >>> frame.inspect()
+        >>> predicted_frame.inspect()
         [#]  1    2    3    4    5    6    p_1              p_2
         ===================================================================
-        [0]  2.6  1.7  0.3  1.5  0.8  0.7   0.314738695012  -0.183753549226
-        [1]  3.3  1.8  0.4  0.7  0.9  0.8  -0.471198363594  -0.670419608227
+        [0]  1.5  1.2  0.5  1.4  0.6  0.4    1.44498618058   0.150509319195
+        [1]  2.6  1.7  0.3  1.5  0.8  0.7   0.314738695012  -0.183753549226
         [2]  3.5  1.7  0.3  1.7  0.6  0.4  -0.549024749481   0.235254068619
-        [3]  3.7  1.0  0.5  1.2  0.6  0.3  -0.739501762517   0.468409769639
-        [4]  1.5  1.2  0.5  1.4  0.6  0.4    1.44498618058   0.150509319195
+        [3]  3.3  1.8  0.4  0.7  0.9  0.8  -0.471198363594  -0.670419608227
+        [4]  3.7  1.0  0.5  1.2  0.6  0.3  -0.739501762517   0.468409769639
         <BLANKLINE>
         [#]  p_3              t_squared_index
         =====================================
-        [0]   0.312561560113   0.253649649849
-        [1]  -0.228746130528   0.740327252782
+        [0]  -0.163359836968   0.719188122813
+        [1]   0.312561560113   0.253649649849
         [2]   0.465756549839   0.563086507007
-        [3]  -0.386212142456   0.723748467549
-        [4]  -0.163359836968   0.719188122813
+        [3]  -0.228746130528   0.740327252782
+        [4]  -0.386212142456   0.723748467549
+
 
         >>> model.save('sandbox/pca1')
 
@@ -158,34 +159,25 @@ class PcaModel(PropertiesObject):
         >>> model2.k
         4
 
-        >>> frame.rename_columns({"p_1" : "p0_1", "p_2" : "p0_2", "p_3" : "p0_3", "t_squared_index" : "t0_squared_index"})
+        >>> predicted_frame2 = model2.predict(frame, mean_centered=True, t_squared_index=True, columns=['1','2','3','4','5','6'], k=3)
 
-        >>> model2.predict(frame, mean_centered=True, t_squared_index=True, columns=['1','2','3','4','5','6'], k=3)
-
-        >>> frame.inspect()
-        [#]  1    2    3    4    5    6    p0_1             p0_2
+        >>> predicted_frame2.inspect()
+        [#]  1    2    3    4    5    6    p_1              p_2
         ===================================================================
-        [0]  2.6  1.7  0.3  1.5  0.8  0.7   0.314738695012  -0.183753549226
-        [1]  3.3  1.8  0.4  0.7  0.9  0.8  -0.471198363594  -0.670419608227
+        [0]  1.5  1.2  0.5  1.4  0.6  0.4    1.44498618058   0.150509319195
+        [1]  2.6  1.7  0.3  1.5  0.8  0.7   0.314738695012  -0.183753549226
         [2]  3.5  1.7  0.3  1.7  0.6  0.4  -0.549024749481   0.235254068619
-        [3]  3.7  1.0  0.5  1.2  0.6  0.3  -0.739501762517   0.468409769639
-        [4]  1.5  1.2  0.5  1.4  0.6  0.4    1.44498618058   0.150509319195
-        <BLANKLINE>
-        [#]  p0_3             t0_squared_index  p_1              p_2
-        ========================================================================
-        [0]   0.312561560113    0.253649649849   0.314738695012  -0.183753549226
-        [1]  -0.228746130528    0.740327252782  -0.471198363594  -0.670419608227
-        [2]   0.465756549839    0.563086507007  -0.549024749481   0.235254068619
-        [3]  -0.386212142456    0.723748467549  -0.739501762517   0.468409769639
-        [4]  -0.163359836968    0.719188122813    1.44498618058   0.150509319195
+        [3]  3.3  1.8  0.4  0.7  0.9  0.8  -0.471198363594  -0.670419608227
+        [4]  3.7  1.0  0.5  1.2  0.6  0.3  -0.739501762517   0.468409769639
         <BLANKLINE>
         [#]  p_3              t_squared_index
         =====================================
-        [0]   0.312561560113   0.253649649849
-        [1]  -0.228746130528   0.740327252782
+        [0]  -0.163359836968   0.719188122813
+        [1]   0.312561560113   0.253649649849
         [2]   0.465756549839   0.563086507007
-        [3]  -0.386212142456   0.723748467549
-        [4]  -0.163359836968   0.719188122813
+        [3]  -0.228746130528   0.740327252782
+        [4]  -0.386212142456   0.723748467549
+
 
         >>> canonical_path = model.export_to_mar("sandbox/Kmeans.mar")
 
@@ -232,19 +224,41 @@ class PcaModel(PropertiesObject):
         return [x[i:i+self.k] for i in xrange(0,len(x),self.k)]
 
     def predict(self, frame, columns=None, mean_centered=None, k=None, t_squared_index=False):
-        """Adds columns to the given frame which are the principal compenent predictions"""
+        """
+       Predicts the labels for the observation columns in the given input frame. Creates a new frame
+       with the existing columns and a new predicted column.
+
+       Parameters
+       ----------
+
+       :param frame: (Frame) Frame used for predicting the values
+       :param columns: (List[str]) Names of the observation columns.
+       :param mean_centered: (boolean) whether to mean center the columns. Default is true
+       :param k: (int) the number of principal components to be computed, must be <= the k used in training.  Default is the trained k
+       :param t_squared_index: (boolean) whether the t-square index is to be computed. Default is false
+       :return: (Frame) A new frame containing the original frame's columns and a prediction column
+       """
         if mean_centered is None:
             mean_centered = self.mean_centered
-        self._scala.predict(frame._scala,
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala,
                             self._tc.jutils.convert.to_scala_option_list_string(columns),
                             mean_centered,
                             self._tc.jutils.convert.to_scala_option(k),
-                            t_squared_index)
+                            t_squared_index))
 
     def save(self, path):
         self._scala.save(self._tc._scala_sc, path)
 
     def export_to_mar(self, path):
-        """ export the trained model to MAR format for Scoring Engine """
+        """
+        Exports the trained model as a model archive (.mar) to the specified path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+        """
         if isinstance(path, basestring):
             return self._scala.exportToMar(self._tc._scala_sc, path)

@@ -76,7 +76,7 @@ def train(frame,
                            large values will result in excessive computing time.
     :param mini_batch_fraction: (double) Fraction of data to be used for each SGD iteration
     :param step_size: (double) Initial step size for SGD. In subsequent steps, the step size decreases by stepSize/sqrt(t)
-    :return A LogisticRegressionModel with a summary of the trained model.
+    :return: (LogisticRegressionModel) A LogisticRegressionModel with a summary of the trained model.
                      The data returned is composed of multiple components\:
                      **int** : *numFeatures*
                          Number of features in the training data
@@ -88,6 +88,7 @@ def train(frame,
                          Covariance matrix of the trained model.
                      The covariance matrix is the inverse of the Hessian matrix for the trained model.
                      The Hessian matrix is the second-order partial derivatives of the model's log-likelihood function.
+
     """
     if frame is None:
         raise ValueError("Frame cannot be None")
@@ -145,7 +146,7 @@ class LogisticRegressionModel(PropertiesObject):
         >>> frame = tc.frame.create(rows, schema)
         <progress>
 
-        Consider the following frame containing three columns.
+    Consider the following frame containing three columns.
 
         >>> frame.inspect()
         [#]  Sepal_Length  Petal_Length  Class
@@ -202,9 +203,10 @@ class LogisticRegressionModel(PropertiesObject):
         [5]     566617247774244  -3.52342642321e+14   -2528394057347494
         </skip>
 
-        >>> model.predict(frame, ['Sepal_Length', 'Petal_Length'])
+        >>> predict_frame = model.predict(frame, ['Sepal_Length', 'Petal_Length'])
         <progress>
-        >>> frame.inspect()
+
+        >>> predict_frame.inspect()
         [#]  Sepal_Length  Petal_Length  Class  predicted_label
         =======================================================
         [0]           4.9           1.4      0                0
@@ -237,6 +239,15 @@ class LogisticRegressionModel(PropertiesObject):
 
         >>> restored.training_summary.num_features == model.training_summary.num_features
         True
+
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/logisticRegressionModel.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
 
     """
 
@@ -345,17 +356,68 @@ class LogisticRegressionModel(PropertiesObject):
         return LogisticRegressionSummaryTable(self._tc, self._scala.trainingSummary())
 
     def predict(self, frame, observation_columns_predict):
-        """Adds columns to the given frame which are logistic regression model predictions"""
-        self._scala.predict(frame._scala,self._tc.jutils.convert.to_scala_option_list_string(
-                                                             observation_columns_predict))
+        """
+        Predict labels for data points using trained logistic regression model.
+
+        Predict the labels for a test frame using trained logistic regression model, and create a new frame revision with
+        existing columns and a new predicted label's column.
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
+                              over which the model is trained.
+        :param observation_columns_predict: (None or list[str]) Column(s) containing the observations whose labels are
+                                            to be predicted. Default is the labels the model was trained on.
+        :return: (Frame) Frame containing the original frame's columns and a column with the predicted label.
+        """
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(observation_columns_predict)
+        from sparktk.frame.frame import Frame
+        return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
     def test(self, frame, label_column, observation_columns_test):
-        """Get the predictions for observations in a test frame"""
+        """
+        Get the predictions for observations in a test frame
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) Frame whose labels are to be predicted.
+        :param label_column: (str) Column containing the actual label for each observation.
+        :param observation_columns_test: (None or list[str]) Column(s) containing the observations whose labels are to
+                                         be predicted and tested. Default is to test over the columns the SVM model was
+                                        trained on.
+        :return: (ClassificationMetricsValue) Object with binary classification metrics
+        """
         scala_classification_metrics_object = self._scala.test(frame._scala, label_column,
                                                                self._tc.jutils.convert.to_scala_option_list_string(
-                                                                   observation_columns_test))
+                                                               observation_columns_test))
         return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
 
     def save(self, path):
-        """save the trained model to path"""
+        """
+        Save the trained model to path
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save
+        """
         self._scala.save(self._tc._scala_sc, path)
+
+    def export_to_mar(self, path):
+        """
+        Exports the trained model as a model archive (.mar) to the specified path.
+
+        Parameters
+        ----------
+
+        :param path: (str) Path to save the trained model
+        :return: (str) Full path to the saved .mar file
+
+        """
+
+        if not isinstance(path, basestring):
+            raise TypeError("path parameter must be a str, but received %s" % type(path))
+
+        return self._scala.exportToMar(self._tc._scala_sc, path)

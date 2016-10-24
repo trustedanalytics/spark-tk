@@ -47,14 +47,14 @@ class AssignSample(sparktk_test.SparkTKTestCase):
         baseline = {'TR': 0.5, 'TE': 0.3, 'VA': 0.2}
         self._test_frame_assign("sample_bin", baseline)
 
-    def test_random_seed(self):
+    def test_seed(self):
         """ Test seed is default 0, and non-0 is different """
         self.frame.assign_sample(
             [0.6, 0.2, 0.1, 0.1], output_column="default")
         self.frame.assign_sample(
-            [0.6, 0.2, 0.1, 0.1], random_seed=0, output_column="seed_0")
+            [0.6, 0.2, 0.1, 0.1], seed=0, output_column="seed_0")
         self.frame.assign_sample(
-            [0.6, 0.2, 0.1, 0.1], random_seed=5, output_column="seed_5")
+            [0.6, 0.2, 0.1, 0.1], seed=5, output_column="seed_5")
         baseline = {'Sample_0': 0.6,
                     'Sample_1': 0.2,
                     'Sample_2': 0.1,
