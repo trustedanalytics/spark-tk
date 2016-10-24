@@ -19,8 +19,6 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
-import os
-import dicom
 import numpy
 import random
 from lxml import etree
@@ -48,44 +46,18 @@ class DicomDropTagsTest(sparktk_test.SparkTKTestCase):
         random_row = metadata["metadata"][random_row_index]
         xml_data = etree.fromstring(random_row.encode("ascii", "ignore"))
         random_row_sopi_id = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
-        expected_result = self._drop({ "SOPInstanceUID" : random_row_sopi_id })
+        expected_result = self._drop({"SOPInstanceUID": random_row_sopi_id})
         # get all of the records with our randomly selected sopinstanceuid
         # since sopinstanceuid is supposed to be unique for each record
         # we should only get back the record which we randomly selected above
         tag_number = xml_data.xpath(self.element_query.replace("KEYWORD", "SOPInstanceUID"))[0].get("tag")
-        self.dicom.drop_rows_by_tags({ tag_number : random_row_sopi_id })
+        self.dicom.drop_rows_by_tags({tag_number: random_row_sopi_id})
 
         # check that our result is correct
         # we should have gotten back from drop the row
         # which we randomly selected
         self.assertEqual(self.dicom.metadata.count(), self.count - 1)
-        record = self.dicom.metadata.take(1)
         self._compare_dicom_with_expected_result(expected_result)
-
-    #def test_drop_one_column_one_result_basic(self):
-    #    """test drop with one unique tag"""
-    #    # get pandas frame for ease of access
-    #    metadata = self.dicom.metadata.to_pandas()
-
-        # get a random row and extract its sopinstanceuid for our use
-    #    random_row_index = random.randint(0, self.dicom.metadata.count() - 1)
-    #    random_row = metadata["metadata"][random_row_index]
-    #    xml_data = etree.fromstring(random_row.encode("ascii", "ignore"))
-    #    random_row_sopi_id = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
-    #    id_value = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID") + "/Value/text()")[0]
-        # get the tag number for the sopinstanceuid element
-    #    tag_number = random_row_sopi_id.get("tag")
-        # get the corresponding value
-    #    tag_value = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID") + "/Value/text()")[0]
-    #    print "random row sopi id: " + str(id_value)
-    #    print "type: " + str(type(id_value))
-        #expected_result = self._drop({ "SOPInstanceUID" : id_value })
-    #    expected_result = self._drop({'SOPInstanceUID': '1.3.6.1.4.1.14519.5.2.1.7308.2101.234736319276602547946349519685'})
-    #    print "expected result: " + str(expected_result)
-        # ask dicom to drop by the tag-value pair we extracted
-    #    self.dicom.drop_rows_by_tags({ tag_number : tag_value })
-    #    print "len: " + str(len(expected_result["metadata"]))
-    #    self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_one_col_multi_result_basic(self):
         """test drop by tag with one tag mult record result"""
@@ -94,13 +66,13 @@ class DicomDropTagsTest(sparktk_test.SparkTKTestCase):
         # get the first row and extract the patient id element from the metadata xml
         first_row = metadata["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0] 
+        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
         # we drop ourselves to get the expected result for this key value pair
-        expected_result = self._drop({"PatientID" : first_row_patient_id })
+        expected_result = self._drop({"PatientID": first_row_patient_id})
         # ask dicom to drop by tag, giving the tag-value pair
         tag_number = xml_data.xpath(self.element_query.replace("KEYWORD", "PatientID"))[0].get("tag")
-        self.dicom.drop_rows_by_tags({ tag_number  : first_row_patient_id })
+        self.dicom.drop_rows_by_tags({tag_number: first_row_patient_id})
 
         # compare our result to dicom's
         self._compare_dicom_with_expected_result(expected_result)
@@ -126,20 +98,19 @@ class DicomDropTagsTest(sparktk_test.SparkTKTestCase):
         matching_records = self._drop(keyword_drop)
 
         # we ask dicom to drop by tag with the tag-value pairs we extracted
-        self.dicom.drop_rows_by_tags({ patient_id_tag : first_row_patient_id, body_part_tag : first_row_body_part })
-        pandas_meta = self.dicom.metadata.to_pandas()["metadata"]
+        self.dicom.drop_rows_by_tags({patient_id_tag: first_row_patient_id, body_part_tag: first_row_body_part})
 
         # finally we ensure dicom's result matches ours
         self._compare_dicom_with_expected_result(matching_records)
 
     def test_drop_invalid_column(self):
         """test drop tags with invalid tag name"""
-        self.dicom.drop_rows_by_tags({ "invalid keyword" : "value" })
+        self.dicom.drop_rows_by_tags({"invalid keyword": "value"})
         self.assertEqual(self.count, self.dicom.metadata.count())
 
     def test_drop_multiple_invalid_columns(self):
         """test drop tags with mult invalid tag names"""
-        self.dicom.drop_rows_by_tags({ "invalid" : "bla", "another_invalid_col" : "bla" })
+        self.dicom.drop_rows_by_tags({"invalid": "bla", "another_invalid_col": "bla"})
         self.assertEqual(self.count, self.dicom.metadata.count())
 
     def test_drop_invalid_valid_col_mix(self):
@@ -147,13 +118,13 @@ class DicomDropTagsTest(sparktk_test.SparkTKTestCase):
         # first we will extract a valid tag number and value from the xml
         first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0] 
+        patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
         patient_id_tag = xml_data.xpath(self.element_query.replace("KEYWORD", "PatientID"))[0].get("tag")
 
         # now we ask dicom to drop by tags giving it both the valid tag-value
         # pair we extracted and also an invalid tag-value pair
-        self.dicom.drop_rows_by_tags({ patient_id_tag : patient_id, "Invalid" : "bla" })
-        
+        self.dicom.drop_rows_by_tags({patient_id_tag: patient_id, "Invalid": "bla"})
+
         # since zero records match both criteria dicom should return no records
         self.assertEqual(self.count, self.dicom.metadata.count())
 
@@ -182,8 +153,8 @@ class DicomDropTagsTest(sparktk_test.SparkTKTestCase):
                     matching_metadata.append(ascii_xml)
                     matching_pixeldata.append(pixeldata)
 
-        return { "metadata" : matching_metadata, "pixeldata" : matching_pixeldata }
- 
+        return {"metadata": matching_metadata, "pixeldata": matching_pixeldata}
+
     def _compare_dicom_with_expected_result(self, expected_result):
         """compare expected result with actual result"""
         pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
@@ -193,7 +164,7 @@ class DicomDropTagsTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(actual_ascii, expected)
         for expected, actual in zip(expected_result["pixeldata"], pandas_pixeldata):
             numpy.testing.assert_equal(expected, actual)
-               
+
 
 if __name__ == "__main__":
     unittest.main()
