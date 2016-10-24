@@ -47,9 +47,9 @@ class UDFTest(sparktk_test.SparkTKTestCase):
         letter_col_take = self.frame.take(self.frame.count(),
                                           columns=['letter'])
 
-        # extract just the letter column into an array of strings 
+        # extract just the letter column into an array of strings
         letter = [x[0].encode("ascii", "ignore") for x in letter_col_take]
-        
+
         # get the index for the row containing a and c and verify
         a_row = letter.index('a')
         c_row = letter.index('c')
@@ -85,9 +85,9 @@ class UDFTest(sparktk_test.SparkTKTestCase):
 
         frame_take = self.frame.take(self.frame.count())
         letter_col_take = self.frame.take(self.frame.count(), columns=['letter'])
-        
+
         letter = [x[0].encode("ascii", "ignore") for x in letter_col_take]
-        
+
         a_row = letter.index('a')
         b_row = letter.index('b')
         self.assertEqual(frame_take[a_row][-1], frame_take[a_row][0])

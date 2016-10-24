@@ -15,6 +15,7 @@
 #  limitations under the License.
 #
 
+
 def add_select_col(frame):
 
     from sparktkregtests.lib.udftestlib import udf_remote_utils_indirect
