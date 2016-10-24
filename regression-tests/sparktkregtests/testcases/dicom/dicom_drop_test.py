@@ -19,10 +19,7 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
-import os
-import dicom
 import numpy
-import random
 from lxml import etree
 import datetime
 
@@ -47,26 +44,26 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
-        # ask dicom to drop using our key-value filter function
-        self.dicom.drop_rows(self._drop_key_values({ "PatientID" : patient_id }))
+        # ask dicom to drop using our key-value drop function
+        self.dicom.drop_rows(self._drop_key_values({"PatientID": patient_id}))
 
         # we generate our own result to compare to dicom's
-        expected_result = self._drop({ "PatientID" : patient_id })
+        expected_result = self._drop({"PatientID": patient_id})
 
         # ensure results match
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_multi_key(self):
-        """test drop with basic filter function mult keyval pairs"""
+        """test drop with basic drop function mult keyval pairs"""
         # first we extract key-value pairs from the first row's metadata
         # for our own use to generate a key-val dictionary
         first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
         sopi_id = xml.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
-        key_val = { "PatientID" : patient_id, "SOPInstanceUID" : sopi_id }
+        key_val = {"PatientID": patient_id, "SOPInstanceUID": sopi_id}
 
-        # we use our drop function and ask dicom to filter
+        # we use our drop function and ask dicom to drop
         self.dicom.drop_rows(self._drop_key_values(key_val))
 
         # here we generate our own result
@@ -76,24 +73,26 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_zero_matching_records(self):
-        """test drop with filter function returns none"""
-        # we give dicom a drop function which filters by
+        """test drop with drop function returns none"""
+        # we give dicom a drop function which drops by
         # key-value and give it a key-value pair which will
-        # return 0 records
-        pandas = self.dicom.metadata.to_pandas()
-        self.dicom.drop_rows(self._drop_key_values({ "PatientID" : -6 }))
+        # return 0 records, so dicom should not drop anything
+        self.dicom.drop_rows(self._drop_key_values({"PatientID": -6}))
+        # assert nothing was dropped since there were no matching records
         self.assertEqual(3, self.dicom.metadata.count())
 
     def test_drop_everything(self):
-        """test drop with filter function filters nothing"""
+        """test drop with drop function drops nothing"""
         # this drop function will return all records
-        self.dicom.drop_rows(self._drop_nothing())
+        self.dicom.drop_rows(self._drop_everything())
+        # assert all items were dropped
         self.assertEqual(self.dicom.metadata.count(), 0)
 
     def test_nothing(self):
-        """test drop function filter everything"""
-        # drop_everything filter out all of the records
-        self.dicom.drop_rows(self._drop_everything())
+        """test drop function drop everything"""
+        # drop_everything drop out all of the records
+        self.dicom.drop_rows(self._drop_nothing())
+        # assert nothing was dropped
         self.assertEqual(self.count, self.dicom.metadata.count())
 
     def test_drop_timestamp_range(self):
@@ -106,27 +105,29 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
 
         # here we will generate our own result by droping for records
         # which meet our criteria
-        expected_result = []
-        pandas = self.dicom.metadata.to_pandas()
-        # iterate through the rows and append all records with
-        # a study date between our begin and end date
-        for index, row in pandas.iterrows():
-            ascii_row = row["metadata"].encode("ascii", "ignore")
+        expected_result = {"metadata": [], "pixeldata": []}
+        pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
+        pandas_pixeldata = self.dicom.pixeldata.to_pandas()["imagematrix"]
+        # iterate through the rows and append all records which DO NOT
+        # have a study date between our begin and end date
+        for (metadata, pixeldata) in zip(pandas_metadata, pandas_pixeldata):
+            ascii_row = metadata.encode("ascii", "ignore")
             xml_root = etree.fromstring(ascii_row)
             study_date = xml_root.xpath(self.query.replace("KEYWORD", "StudyDate"))[0]
             datetime_study_date = datetime.datetime.strptime(study_date, "%Y%m%d")
             if datetime_study_date < begin_date or datetime_study_date > end_date:
-                expected_result.append(ascii_row)
-        
-        # now we ask dicom to use our drop function below to return
+                expected_result["metadata"].append(ascii_row)
+                expected_result["pixeldata"].append(pixeldata)
+
+        # now we ask dicom to use our drop function below to remove
         # all records with a StudyDate within our specified range
         self.dicom.drop_rows(self._drop_timestamp_range(begin_date, end_date))
-        
+
         # ensure that expected result matches actual
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_drop_has_bugs(self):
-        """test drop with a broken filter function"""
+        """test drop with a broken drop function"""
         with self.assertRaisesRegexp(Exception, "this drop is broken!"):
             self.dicom.drop_rows(self._drop_has_bugs())
             self.dicom.metadata.count()
@@ -135,7 +136,7 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         """test drop with an invalid param type"""
         # should fail because drop takes a function not a keyvalue pair
         with self.assertRaisesRegexp(Exception, "'dict' object is not callable"):
-            self.dicom.drop_rows({ "PatientID" : "bla" })
+            self.dicom.drop_rows({"PatientID": "bla"})
             self.dicom.metadata.count()
 
     def test_drop_invalid_function(self):
@@ -157,17 +158,17 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
                     return True
         return _drop_key_value
 
-    def _drop_nothing(self):
-        """returns all records"""
-        def _drop_nothing(row):
-            return True
-        return _drop_nothing
-
     def _drop_everything(self):
-        """returns no records"""
+        """returns all records"""
         def _drop_everything(row):
-            return False
+            return True
         return _drop_everything
+
+    def _drop_nothing(self):
+        """returns no records"""
+        def _drop_nothing(row):
+            return False
+        return _drop_nothing
 
     def _drop_timestamp_range(self, begin_date, end_date):
         """return records within studydate date range"""
@@ -211,28 +212,37 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
     def _drop(self, keywords):
         """drop records by key value pair"""
         # here we are generating the expected result
-        matching_records = []
+        matching_metadata = []
+        matching_pixeldata = []
 
         pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
-        for row in pandas_metadata:
-            ascii_xml = row.encode("ascii", "ignore")
-            xml = etree.fromstring(row.encode("ascii", "ignore"))
+        pandas_pixeldata = self.dicom.pixeldata.to_pandas()["imagematrix"]
+        for (metadata, image) in zip(pandas_metadata, pandas_pixeldata):
+            ascii_xml = metadata.encode("ascii", "ignore")
+            xml = etree.fromstring(ascii_xml)
             for keyword in keywords:
                 keyword_search = xml.xpath(self.query.replace("KEYWORD", keyword))
                 if len(keyword_search) != 0:
-                    if this_row_keyword_value != keyword:
-                        matching_records.append(ascii_xml)
+                    if keyword_search[0] != keyword:
+                        matching_metadata.append(ascii_xml)
+                        matching_pixeldata.append(image)
                 else:
-                    matching_records.append(ascii_xml)
+                    matching_metadata.append(ascii_xml)
+                    matching_pixeldata.append(image)
+        return {"metadata": matching_metadata, "pixeldata": matching_pixeldata}
 
-        return matching_records
-                
     def _compare_dicom_with_expected_result(self, expected_result):
         """compare expected result with actual result"""
-        pandas_result = self.dicom.metadata.to_pandas()["metadata"]
-        for expected, actual in zip(expected_result, pandas_result):
+        pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
+        pandas_pixeldata = self.dicom.pixeldata.to_pandas()["imagematrix"]
+
+        self.assertEqual(len(expected_result["metadata"]), len(pandas_metadata))
+        self.assertEqual(len(expected_result["pixeldata"]), len(pandas_pixeldata))
+        for (expected, actual) in zip(expected_result["metadata"], pandas_metadata):
             actual_ascii = actual.encode("ascii", "ignore")
             self.assertEqual(actual_ascii, expected)
+        for (expected, actual) in zip(expected_result["pixeldata"], pandas_pixeldata):
+            numpy.testing.assert_equal(expected, actual)
 
 
 if __name__ == "__main__":
