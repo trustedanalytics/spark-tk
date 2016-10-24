@@ -16,7 +16,7 @@
 #
 
 """
-Unit tests this integration-tests module (like gendoct.py and doc.py)
+Unit tests this integration-tests module (like doctgen.py and doc.py)
 
 They run alongside the integration tests and perform a sanity check on the doctest generation code
 """
@@ -24,7 +24,7 @@ They run alongside the integration tests and perform a sanity check on the docte
 
 import unittest
 
-from gendoct import DocExamplesPreprocessor, DocExamplesException
+from doctgen import DocExamplesPreprocessor, DocExamplesException
 
 
 class TestDoc(unittest.TestCase):

@@ -28,6 +28,9 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
     not match the schema's data type, it attempts to cast the data to the proper data type.  When the data is unable
     to be casted to the schema's data type, the item will be missing (None) in the frame.
 
+    Parameters
+    ----------
+
     :param data: (List of row data or RDD) Data source
     :param schema: (Optional(list[tuple(str, type)] or list[str])] Optionally specify a schema (list of tuples of
                    string column names and data type), column names (list of strings, and the column data types will

@@ -58,7 +58,7 @@ object LinearRegressionModel extends TkSaveableObject {
    * @param maxIterations Parameter for maximum number of iterations. Default is 100
    * @param regParam Parameter for regularization. Default is 0.0
    * @param standardization Parameter for whether to standardize the training features before fitting the model. Default is true
-   * @param tolerance Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+   * @param convergenceTolerance Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
    * @return returns LinearRegressionModel
    */
   def train(frame: Frame,
@@ -69,7 +69,7 @@ object LinearRegressionModel extends TkSaveableObject {
             maxIterations: Int = 100,
             regParam: Double = 0.0,
             standardization: Boolean = true,
-            tolerance: Double = 1E-6): LinearRegressionModel = {
+            convergenceTolerance: Double = 1E-6): LinearRegressionModel = {
 
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
@@ -89,7 +89,7 @@ object LinearRegressionModel extends TkSaveableObject {
       .setMaxIter(maxIterations)
       .setRegParam(regParam)
       .setStandardization(standardization)
-      .setTol(tolerance)
+      .setTol(convergenceTolerance)
       .setLabelCol(valueColumn)
       .setFeaturesCol(featuresName)
 
@@ -302,7 +302,7 @@ case class LinearRegressionModel(valueColumn: String,
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       // The spark linear regression model save will fail, if we don't specify the "overwrite", since the temp
       // directory has already been created.
-      save(sc, "file://" + tmpDir.toString, overwrite = true)
+      save(sc, tmpDir.toString, overwrite = true)
       ScoringModelUtils.saveToMar(marSavePath, classOf[LinearRegressionModel].getName, tmpDir)
     }
     finally {
