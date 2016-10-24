@@ -19,8 +19,6 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
-import os
-import dicom
 import numpy
 import random
 from lxml import etree
@@ -42,23 +40,22 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         """test drop with one unique key"""
         # get the pandas frame for ease of access
         metadata = self.dicom.metadata.to_pandas()
-        
+
         # grab a random row and extract the SOPInstanceUID from that record
         random_row_index = random.randint(0, self.dicom.metadata.count() - 1)
         random_row = metadata["metadata"][random_row_index]
         xml_data = etree.fromstring(random_row.encode("ascii", "ignore"))
         random_row_sopi_id = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
-        expected_result = self._drop({ "SOPInstanceUID" : random_row_sopi_id })
+        expected_result = self._drop({"SOPInstanceUID": random_row_sopi_id})
         # get all of the records with our randomly selected sopinstanceuid
         # since sopinstanceuid is supposed to be unique for each record
         # we should only get back the record which we randomly selected above
-        self.dicom.drop_rows_by_keywords({"SOPInstanceUID" : random_row_sopi_id })
+        self.dicom.drop_rows_by_keywords({"SOPInstanceUID": random_row_sopi_id})
 
         # check that our result is correct
         # we should have gotten back from drop the row
         # which we randomly selected
         self.assertEqual(self.dicom.metadata.count(), self.count - 1)
-        record = self.dicom.metadata.take(1)
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_one_col_multi_result_basic(self):
@@ -72,10 +69,10 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
         # drop the records ourselves to get the expected result
-        expected_result = self._drop({"PatientID" : first_row_patient_id })
+        expected_result = self._drop({"PatientID": first_row_patient_id})
 
         # get all of the records with that patient id
-        self.dicom.drop_rows_by_keywords({"PatientID" : first_row_patient_id })
+        self.dicom.drop_rows_by_keywords({"PatientID": first_row_patient_id})
 
         # get the pandas frame for ease of access
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
@@ -115,19 +112,19 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
 
     def test_drop_invalid_column(self):
         """test drop invalid key"""
-        self.dicom.drop_rows_by_keywords({ "invalid keyword" : "value" })
+        self.dicom.drop_rows_by_keywords({"invalid keyword": "value"})
         self.assertEqual(self.count, self.dicom.metadata.count())
         self.assertEqual(self.count, self.dicom.pixeldata.count())
 
     def test_drop_multiple_invalid_columns(self):
         """test drop mult invalid keys"""
-        self.dicom.drop_rows_by_keywords({ "invalid" : "bla", "another_invalid_col" : "bla" })
+        self.dicom.drop_rows_by_keywords({"invalid": "bla", "another_invalid_col": "bla"})
         self.assertEqual(self.count, self.dicom.metadata.count())
         self.assertEqual(self.count, self.dicom.pixeldata.count())
- 
+
     def test_valid_keyword_zero_results(self):
         """test drop with key-value pair, key exists but no matches"""
-        self.dicom.drop_rows_by_keywords({ "SOPInstanceUID" : "2" })
+        self.dicom.drop_rows_by_keywords({"SOPInstanceUID": "2"})
         self.assertEqual(self.count, self.dicom.metadata.count())
         self.assertEqual(self.count, self.dicom.pixeldata.count())
 
@@ -141,13 +138,13 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
 
         # now we ask dicom to drop using a filter which is a mix of a valid key-value
         # pair and an invalid key-value pair
-        self.dicom.drop_rows_by_keywords({ "PatientID" : patient_id, "Invalid" : "bla" })
+        self.dicom.drop_rows_by_keywords({"PatientID": patient_id, "Invalid": "bla"})
 
         # since there are no records which meet BOTH key value criterias
         # we assert that 0 records were returned
         self.assertEqual(self.count, self.dicom.metadata.count())
         self.assertEqual(self.count, self.dicom.pixeldata.count())
- 
+
     def test_drop_invalid_type(self):
         """test drop invalid param type"""
         with self.assertRaisesRegexp(Exception, "incomplete format"):
@@ -164,9 +161,9 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
         first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
-        expected_result = self._drop({ "PatientID" : first_row_patient_id })
+        expected_result = self._drop({"PatientID": first_row_patient_id})
 
-        self.dicom.drop_rows_by_keywords({ u'PatientID' : first_row_patient_id })
+        self.dicom.drop_rows_by_keywords({u'PatientID': first_row_patient_id})
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         self.assertEqual(len(expected_result["metadata"]), self.dicom.metadata.count())
@@ -194,8 +191,8 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
                     matching_metadata.append(ascii_xml)
                     matching_pixeldata.append(pixeldata)
 
-        return { "metadata" : matching_metadata, "pixeldata" : matching_pixeldata }
-                
+        return {"metadata": matching_metadata, "pixeldata": matching_pixeldata}
+
     def _compare_dicom_with_expected_result(self, expected_result):
         """compare expected result with actual result"""
         pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
