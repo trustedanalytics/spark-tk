@@ -40,14 +40,15 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         self.count = self.dicom.metadata.count()
 
     def test_drop_one_key(self):
-        """test filter with basic filter function"""
-        # extract a key-value pair from the first row metadata for our use
+        """test drop with basic drop function"""
+        # we are going to identify the patient id for a row in our dicom metadata
+        # this way we have a real-time key-value pair to use to give our drop function
         first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
-        # ask dicom to filter using our key-value filter function
-        self.dicom.drop_rows(self._filter_key_values({ "PatientID" : patient_id }))
+        # ask dicom to drop using our key-value filter function
+        self.dicom.drop_rows(self._drop_key_values({ "PatientID" : patient_id }))
 
         # we generate our own result to compare to dicom's
         expected_result = self._drop({ "PatientID" : patient_id })
@@ -56,7 +57,7 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_multi_key(self):
-        """test filter with basic filter function mult keyval pairs"""
+        """test drop with basic filter function mult keyval pairs"""
         # first we extract key-value pairs from the first row's metadata
         # for our own use to generate a key-val dictionary
         first_row = self.dicom.metadata.to_pandas()["metadata"][0]
@@ -65,8 +66,8 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         sopi_id = xml.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
         key_val = { "PatientID" : patient_id, "SOPInstanceUID" : sopi_id }
 
-        # we use our filter function and ask dicom to filter
-        self.dicom.drop_rows(self._filter_key_values(key_val))
+        # we use our drop function and ask dicom to filter
+        self.dicom.drop_rows(self._drop_key_values(key_val))
 
         # here we generate our own result
         expected_result = self._drop(key_val)
@@ -75,35 +76,35 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_zero_matching_records(self):
-        """test filter with filter function returns none"""
-        # we give dicom a filter function which filters by
+        """test drop with filter function returns none"""
+        # we give dicom a drop function which filters by
         # key-value and give it a key-value pair which will
         # return 0 records
         pandas = self.dicom.metadata.to_pandas()
-        self.dicom.drop_rows(self._filter_key_values({ "PatientID" : -6 }))
+        self.dicom.drop_rows(self._drop_key_values({ "PatientID" : -6 }))
         self.assertEqual(3, self.dicom.metadata.count())
 
     def test_drop_everything(self):
-        """test filter with filter function filters nothing"""
-        # this filter function will return all records
-        self.dicom.drop_rows(self._filter_nothing())
+        """test drop with filter function filters nothing"""
+        # this drop function will return all records
+        self.dicom.drop_rows(self._drop_nothing())
         self.assertEqual(self.dicom.metadata.count(), 0)
 
     def test_nothing(self):
-        """test filter function filter everything"""
-        # filter_everything filter out all of the records
-        self.dicom.drop_rows(self._filter_everything())
+        """test drop function filter everything"""
+        # drop_everything filter out all of the records
+        self.dicom.drop_rows(self._drop_everything())
         self.assertEqual(self.count, self.dicom.metadata.count())
 
     def test_drop_timestamp_range(self):
-        """test filter with timestamp range function"""
-        # we will test filter with a function which takes a begin and end
+        """test drop with timestamp range function"""
+        # we will test drop with a function which takes a begin and end
         # date and returns all records with a study date between them
         # we will set begin date to 15 years ago and end date to 5 years ago
         begin_date = datetime.datetime.now() - datetime.timedelta(days=15*365)
         end_date = datetime.datetime.now() - datetime.timedelta(days=5*365)
 
-        # here we will generate our own result by filtering for records
+        # here we will generate our own result by droping for records
         # which meet our criteria
         expected_result = []
         pandas = self.dicom.metadata.to_pandas()
@@ -117,35 +118,35 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
             if datetime_study_date < begin_date or datetime_study_date > end_date:
                 expected_result.append(ascii_row)
         
-        # now we ask dicom to use our filter function below to return
+        # now we ask dicom to use our drop function below to return
         # all records with a StudyDate within our specified range
-        self.dicom.drop_rows(self._filter_timestamp_range(begin_date, end_date))
+        self.dicom.drop_rows(self._drop_timestamp_range(begin_date, end_date))
         
         # ensure that expected result matches actual
         self._compare_dicom_with_expected_result(expected_result)
 
-    def test_drop_filter_has_bugs(self):
-        """test filter with a broken filter function"""
-        with self.assertRaisesRegexp(Exception, "this filter is broken!"):
-            self.dicom.drop_rows(self._filter_has_bugs())
+    def test_drop_drop_has_bugs(self):
+        """test drop with a broken filter function"""
+        with self.assertRaisesRegexp(Exception, "this drop is broken!"):
+            self.dicom.drop_rows(self._drop_has_bugs())
             self.dicom.metadata.count()
 
     def test_drop_invalid_param(self):
-        """test filter with an invalid param type"""
-        # should fail because filter takes a function not a keyvalue pair
+        """test drop with an invalid param type"""
+        # should fail because drop takes a function not a keyvalue pair
         with self.assertRaisesRegexp(Exception, "'dict' object is not callable"):
             self.dicom.drop_rows({ "PatientID" : "bla" })
             self.dicom.metadata.count()
 
     def test_drop_invalid_function(self):
-        """test filter with function which takes more than one param"""
+        """test drop with function which takes more than one param"""
         with self.assertRaisesRegexp(Exception, "takes exactly 2 arguments"):
-            self.dicom.drop_rows(self._filter_invalid())
+            self.dicom.drop_rows(self._drop_invalid())
             self.dicom.metadata.count()
 
-    def _filter_key_values(self, key_val):
-        """filter by key-value"""
-        def _filter_key_value(row):
+    def _drop_key_values(self, key_val):
+        """drop by key-value"""
+        def _drop_key_value(row):
             metadata = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(metadata)
             for key in key_val:
@@ -154,23 +155,23 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
                     return False
                 else:
                     return True
-        return _filter_key_value
+        return _drop_key_value
 
-    def _filter_nothing(self):
+    def _drop_nothing(self):
         """returns all records"""
-        def _filter_nothing(row):
+        def _drop_nothing(row):
             return True
-        return _filter_nothing
+        return _drop_nothing
 
-    def _filter_everything(self):
+    def _drop_everything(self):
         """returns no records"""
-        def _filter_everything(row):
+        def _drop_everything(row):
             return False
-        return _filter_everything
+        return _drop_everything
 
-    def _filter_timestamp_range(self, begin_date, end_date):
+    def _drop_timestamp_range(self, begin_date, end_date):
         """return records within studydate date range"""
-        def _filter_timestamp_range(row):
+        def _drop_timestamp_range(row):
             metadata = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(metadata)
             timestamp = xml_root.xpath(".//DicomAttribute[@keyword='StudyDate']/Value/text()")[0]
@@ -179,36 +180,36 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
                 return True
             else:
                 return False
-        return _filter_timestamp_range
+        return _drop_timestamp_range
 
-    def _filter_return_string(self):
-        """filter function which returns str"""
-        def _filter_return_string(row):
+    def _drop_return_string(self):
+        """drop function which returns str"""
+        def _drop_return_string(row):
             return "True"
-        return _filter_return_string
+        return _drop_return_string
 
-    def _filter_return_int(self):
-        """filter function returns int"""
-        def _filter_return_int(row):
+    def _drop_return_int(self):
+        """drop function returns int"""
+        def _drop_return_int(row):
             return -1
-        return _filter_return_int
+        return _drop_return_int
 
-    def _filter_has_bugs(self):
-        """broken filter function"""
-        def _filter_has_bugs(row):
-            raise Exception("this filter is broken!")
-        return _filter_has_bugs
+    def _drop_has_bugs(self):
+        """broken drop function"""
+        def _drop_has_bugs(row):
+            raise Exception("this drop is broken!")
+        return _drop_has_bugs
 
-    def _filter_invalid(self):
-        """filter function takes 2 params"""
-        # filter is invalid because it takes
+    def _drop_invalid(self):
+        """drop function takes 2 params"""
+        # drop is invalid because it takes
         # 2 parameters
-        def _filter_invalid(index, row):
+        def _drop_invalid(index, row):
             return True
-        return _filter_invalid
+        return _drop_invalid
 
     def _drop(self, keywords):
-        """filter records by key value pair"""
+        """drop records by key value pair"""
         # here we are generating the expected result
         matching_records = []
 
