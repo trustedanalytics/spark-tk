@@ -93,17 +93,6 @@ class UDFTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(frame_take[a_row][-1], frame_take[a_row][0])
         self.assertEqual(frame_take[b_row][-1], frame_take[b_row][2])
 
-    #@unittest.skip("add columns does not error with invalid func")
-    def test_udf_indirect_missing(self):
-        """Use a function that is missing a support function (indirect call)"""
-        with self.assertRaisesRegexp(Exception, "An error occurred"):
-            # git add columns an invalid function param
-            self.frame.add_columns(
-                lambda row: bogus_dependency.not_exist(row.letter) + row.num2,
-                ('new_column', int))
-            # because frames are created lazily we must perform
-            # some kind of op on the frame to trigger the exception
-            self.frame.count()
 
 if __name__ == "__main__":
     unittest.main()
