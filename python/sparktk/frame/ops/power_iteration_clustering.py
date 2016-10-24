@@ -47,9 +47,9 @@ def power_iteration_clustering(self, source_column, destination_column, similari
         ...                         [2,3,0.3],
         ...                         [3,0,0.03],
         ...                         [0,5,0.01],
-        ...                         [5,4,0.3],
+        ...                         [5,4,0.7],
         ...                         [5,6,1.0],
-        ...                         [4,6,0.3]],
+        ...                         [4,6,0.7]],
         ...                         [('Source', int), ('Destination', int), ('Similarity',float)])
 
         >>> frame.inspect()
@@ -60,11 +60,11 @@ def power_iteration_clustering(self, source_column, destination_column, similari
         [2]       2            3         0.3
         [3]       3            0        0.03
         [4]       0            5        0.01
-        [5]       5            4         0.3
+        [5]       5            4         0.7
         [6]       5            6         1.0
-        [7]       4            6         0.3
+        [7]       4            6         0.7
 
-        >>> x = frame.power_iteration_clustering('Source', 'Destination', 'Similarity', k=3)
+        >>> x = frame.power_iteration_clustering('Source', 'Destination', 'Similarity', k=3, max_iterations=20)
 
         >>> x.frame.inspect()
         [#]  id  cluster

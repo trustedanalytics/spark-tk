@@ -80,7 +80,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.create(block_data, schema=block_schema)
 
         # Validate flatten against hand crafted results
-        frame.flatten_columns("day", "gift")
+        frame.flatten_columns(["day", "gift"])
         frame_take = frame.take(frame.count())
         self.assertItemsEqual(frame_take, expected_take)
 
@@ -92,7 +92,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.create(block_data, schema=block_schema)
 
         # Validate flatten on known results
-        frame.flatten_columns('col1', 'col2')
+        frame.flatten_columns(['col1', 'col2'])
         frame_take = frame.take(frame.count())
         self.assertItemsEqual(frame_take, expected_take)
 
@@ -105,7 +105,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         block_schema = [("col1", str), ("col2", str), ("col3", str)]
         frame = self.context.frame.create(block_data, schema=block_schema)
         with self.assertRaisesRegexp(Exception, "Invalid column name"):
-            frame.flatten_columns(["col1", "col2", "col3"], [' ', '/'])
+            frame.flatten_columns([["col1", "col2", "col3"], [' ', '/']])
 
     def test_flatten_delim_same(self):
         """Test flatten with custom delimiter"""
@@ -125,7 +125,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
                          ["l", "n", None],
                          ["o", "p", "7"]]
         frame = self.context.frame.create(block_data, schema=block_schema)
-        frame.flatten_columns(('col1', '='), ('col2', '='), ('col3', '='))
+        frame.flatten_columns([('col1', '='), ('col2', '='), ('col3', '=')])
         actual_flat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_flat)
 
@@ -151,7 +151,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         frame1.flatten_columns("col3")
         self.assertEqual(9, frame1.count())
 
-        frame.flatten_columns("col1", "col2", "col3")
+        frame.flatten_columns(["col1", "col2", "col3"])
         actual_flat = frame.take(frame.count())
         self.assertItemsEqual(expected_flat, actual_flat)
 
