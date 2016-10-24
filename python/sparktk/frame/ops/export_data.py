@@ -16,6 +16,32 @@
 #
 
 
+def export_to_csv(self, file_name, separator=','):
+    """
+    Write current frame to disk as a CSV file
+
+    Parameters
+    ----------
+
+    :param file_name: (str) file destination
+    :param separator: (str) string to be used for delimiting the fields
+
+    Example
+    -------
+
+        >>> frame = tc.frame.create([[1, 2, 3], [4, 5, 6]])
+        >>> frame.export_to_csv("sandbox/export_example.csv")
+        >>> frame2 = tc.frame.import_csv("sandbox/export_example.csv")
+        >>> frame2.inspect()
+        [#]  C0  C1  C2
+        ===============
+        [0]   1   2   3
+        [1]   4   5   6
+
+    """
+    self._scala.exportToCsv(file_name, separator)
+
+
 def export_to_hbase(self, table_name, key_column_name=None, family_name="familyColumn"):
     """
     Write current frame to HBase table.
@@ -191,3 +217,4 @@ def export_to_json(self, path, count=0, offset=0):
 
     """
     self._scala.exportToJson(path, count, offset)
+

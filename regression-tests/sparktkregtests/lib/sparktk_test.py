@@ -86,11 +86,16 @@ class SparkTKTestCase(unittest.TestCase):
         placed_path = config.hdfs_data_dir + "/" + filename
         return placed_path
 
+    def get_export_file(self, filename):
+        # Note this is an HDFS path, not a userspace path. os.path library
+        # may be wrong
+        placed_path = config.export_dir + "/" + filename
+        return placed_path
+
     def get_name(self, prefix):
         """build a guid hardened unique name """
         datestamp = datetime.datetime.now().strftime("%m_%d_%H_%M_")
         name = prefix + datestamp + uuid.uuid1().hex
-
         return name
 
     def get_local_dataset(self, dataset):
