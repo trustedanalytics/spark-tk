@@ -31,7 +31,6 @@ class UDFTest(sparktk_test.SparkTKTestCase):
                         ("num2", int)]
         self.frame = self.context.frame.import_csv(data_basic,
                                                    schema=schema_basic)
-        print "udf_remote_utils_direct.length(data_basic): " + str(udf_remote_utils_direct.length(data_basic))
 
     def test_udf_basic_module_install(self):
         """First test case from UDF testing"""
@@ -49,13 +48,13 @@ class UDFTest(sparktk_test.SparkTKTestCase):
                                           columns=['letter'])
 
         # extract just the letter column into an array of strings 
-        letter = [x[0].encode("ascii", "ignore") for x in letter_col_take.data]
+        letter = [x[0].encode("ascii", "ignore") for x in letter_col_take]
         
         # get the index for the row containing a and c and verify
         a_row = letter.index('a')
         c_row = letter.index('c')
-        self.assertEqual(frame_take.data[c_row][-1], len(frame_take.data[c_row][1]))
-        self.assertEqual(frame_take.data[a_row][3], frame_take.data[a_row][2]+1)
+        self.assertEqual(frame_take[c_row][-1], len(frame_take[c_row][1]))
+        self.assertEqual(frame_take[a_row][3], frame_take[a_row][2]+1)
 
     def test_udf_indirect_std(self):
         """test indirect udf usage"""
@@ -69,15 +68,15 @@ class UDFTest(sparktk_test.SparkTKTestCase):
                                           columns=['letter'])
 
         # extract just the letter column into an array of strs
-        letter = [x[0].encode("ascii", "ignore") for x in letter_col_take.data]
+        letter = [x[0].encode("ascii", "ignore") for x in letter_col_take]
 
         # get the index of the col containing a and c and verify
         a_row = letter.index('a')
         c_row = letter.index('c')
         self.assertAlmostEqual(
-            frame_take.data[c_row][-1], frame_take.data[c_row][0] * 2.2360679775)
+            frame_take[c_row][-1], frame_take[c_row][0] * 2.2360679775)
         self.assertAlmostEqual(
-            frame_take.data[a_row][-1], frame_take.data[a_row][0] * 2.2360679775)
+            frame_take[a_row][-1], frame_take[a_row][0] * 2.2360679775)
 
     def test_udf_indirect_delayed(self):
         """Call a remote function."""
@@ -87,12 +86,12 @@ class UDFTest(sparktk_test.SparkTKTestCase):
         frame_take = self.frame.take(self.frame.count())
         letter_col_take = self.frame.take(self.frame.count(), columns=['letter'])
         
-        letter = [x[0].encode("ascii", "ignore") for x in letter_col_take.data]
+        letter = [x[0].encode("ascii", "ignore") for x in letter_col_take]
         
         a_row = letter.index('a')
         b_row = letter.index('b')
-        self.assertEqual(frame_take.data[a_row][-1], frame_take.data[a_row][0])
-        self.assertEqual(frame_take.data[b_row][-1], frame_take.data[b_row][2])
+        self.assertEqual(frame_take[a_row][-1], frame_take[a_row][0])
+        self.assertEqual(frame_take[b_row][-1], frame_take[b_row][2])
 
     #@unittest.skip("add columns does not error with invalid func")
     def test_udf_indirect_missing(self):
