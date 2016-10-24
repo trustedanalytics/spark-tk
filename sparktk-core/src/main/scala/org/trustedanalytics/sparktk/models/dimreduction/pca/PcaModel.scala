@@ -349,6 +349,23 @@ object PrincipalComponentsFunctions extends Serializable {
 
   }
 
+  /**
+   * Convert frame to vector RDD
+   *
+   * @param frameRdd Input frame
+   * @param columns List of columns names for vector RDD
+   * @param meanCentered If true, mean center the columns
+   * @return Vector RDD
+   */
+  def toVectorRdd(frameRdd: FrameRdd, columns: Seq[String], meanCentered: Boolean): RDD[MllibVector] = {
+    if (meanCentered) {
+      frameRdd.toMeanCenteredDenseVectorRdd(columns)
+    }
+    else {
+      frameRdd.toDenseVectorRdd(columns)
+    }
+  }
+
 }
 
 /**
