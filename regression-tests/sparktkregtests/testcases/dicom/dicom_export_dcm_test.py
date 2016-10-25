@@ -50,7 +50,8 @@ class ExportDicomTest(sparktk_test.SparkTKTestCase):
         for (original, actual) in zip(original_metadata, loaded_metadata):
             self.assertEqual(original, actual)
         for (original, actual) in zip(original_imagedata, loaded_imagedata):
-            numpy.testing.assert_
+            numpy.testing.assert_equal(original, actual)
+
 
 if __name__ == "__main__":
     unittest.main()
