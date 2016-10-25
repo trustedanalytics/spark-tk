@@ -19,6 +19,8 @@ from sparktk.frame.ops.classification_metrics_value import ClassificationMetrics
 from sparktk.models.logistic_regression_summary_table import LogisticRegressionSummaryTable
 from sparktk.loggers import log_load
 from sparktk.propobj import PropertiesObject
+from sparktk import TkContext
+
 
 log_load(__name__)
 del log_load
@@ -133,6 +135,10 @@ def get_scala_obj(tc):
     """Gets reference to the scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.classification.logistic_regression.LogisticRegressionModel
 
+def load(path, tc=TkContext.implicit):
+    """load LogisticRegressionModel from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, LogisticRegressionModel)
 
 class LogisticRegressionModel(PropertiesObject):
     """
