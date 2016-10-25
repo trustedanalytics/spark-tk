@@ -28,13 +28,7 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
 import scala.collection.immutable.{ Vector => ScalaVector }
 import scala.language.implicitConversions
 
-//import org.apache.spark.atk.graph.EdgeWrapper
-//import org.apache.spark.atk.graph.VertexWrapper
-//import org.apache.spark.frame.ordering.FrameOrderingUtils
-//import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics }
-//import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
-//import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
 import org.apache.spark.mllib.linalg.{ DenseVector => MllibDenseVector, DenseMatrix, Vector, Vectors, VectorUDT }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
@@ -43,30 +37,6 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.{ ArrayType, BooleanType, ByteType, DateType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.apache.spark.{ Partition, TaskContext }
-//import org.trustedanalytics.atk.domain.schema.Column
-//import org.trustedanalytics.atk.domain.schema.DataTypes
-//import org.trustedanalytics.atk.domain.schema.DataTypes.DataType
-//import org.trustedanalytics.atk.domain.schema.DataTypes._
-//import org.trustedanalytics.atk.domain.schema.DataTypes.float32
-//import org.trustedanalytics.atk.domain.schema.DataTypes.float64
-//import org.trustedanalytics.atk.domain.schema.DataTypes.int32
-//import org.trustedanalytics.atk.domain.schema.DataTypes.int64
-//import org.trustedanalytics.atk.domain.schema.FrameSchema
-//import org.trustedanalytics.atk.domain.schema.GraphSchema
-//import org.trustedanalytics.atk.domain.schema.Schema
-//import org.trustedanalytics.atk.domain.schema._
-//import org.trustedanalytics.atk.engine.frame.MiscFrameFunctions
-//import org.trustedanalytics.atk.engine.frame.RowWrapper
-//import org.trustedanalytics.atk.engine.frame.plugins.ScoreAndLabel
-//import org.trustedanalytics.atk.engine.frame.plugins.ScoreAndLabel
-//import org.trustedanalytics.atk.engine.frame.{ MiscFrameFunctions, RowWrapper }
-//import org.trustedanalytics.atk.engine.graph.plugins.EdgeHolder
-//import org.trustedanalytics.atk.engine.graph.plugins.EdgeSchemaAggregator
-//import org.trustedanalytics.atk.engine.graph.plugins.VertexSchemaAggregator
-//import org.trustedanalytics.atk.engine.graph.plugins.{ VertexSchemaAggregator, EdgeSchemaAggregator, EdgeHolder }
-//import org.trustedanalytics.atk.graphbuilder.elements.GBEdge
-//import org.trustedanalytics.atk.graphbuilder.elements.GBVertex
-//import org.trustedanalytics.atk.graphbuilder.elements.{ GBEdge, GBVertex }
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
