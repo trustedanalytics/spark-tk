@@ -49,13 +49,13 @@ class ExportDicomTest(sparktk_test.SparkTKTestCase):
             bulk_data_tag.getparent().remove(bulk_data_tag)
             original_formatted.append(etree.tostring(xml_root))
         original_imagedata = self.dicom.pixeldata.to_pandas()["imagematrix"]
-        
+
         # now we export the dicom object
         # we use our QA libraries to generate a path
         # we save the dicom to that path
         dcm_export_path = self.get_export_file(self.get_name("DICOM_EXPORT"))
         self.dicom.export_to_dcm(dcm_export_path)
-        
+
         # Now we will load back the data we just saved into a new dicom object
         # so that we can ensure the data is the same
         loaded_dicom = self.context.dicom.import_dcm(dcm_export_path)
