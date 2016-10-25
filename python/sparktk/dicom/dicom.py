@@ -17,9 +17,14 @@
 
 import logging
 logger = logging.getLogger('sparktk')
+from sparktk import TkContext
 
 # import constructors for the API's sake (not actually dependencies of the Dicom class)
 from sparktk.dicom.constructors.import_dcm import import_dcm
+
+__all__ = ["Dicom",
+           "import_dcm",
+           "load"]
 
 
 class Dicom(object):
@@ -244,4 +249,11 @@ class Dicom(object):
     from sparktk.dicom.ops.filter_by_keywords import filter_by_keywords
     from sparktk.dicom.ops.filter_by_tags import filter_by_tags
     from sparktk.dicom.ops.save import save
+
+
+def load(path, tc=TkContext.implicit):
+    """load Dicom from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Dicom)
+
 
