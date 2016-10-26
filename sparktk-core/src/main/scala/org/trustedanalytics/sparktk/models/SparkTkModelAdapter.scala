@@ -58,7 +58,7 @@ class SparkTkModelAdapter() extends ModelReader {
    * Create a TkContext with simple, local-mode SparkContext running with local fs
    * @return a new TkContext
    */
-  protected def createSimpleContext(modelZipStreamInput: ZipInputStream): TkContext = {
+  private def createSimpleContext(modelZipStreamInput: ZipInputStream): TkContext = {
     val conf = new SparkConf()
       .setAppName("simple")
       .setMaster("local[1]")
@@ -73,7 +73,7 @@ class SparkTkModelAdapter() extends ModelReader {
    * @param modelZipStreamInput Zip input stream containing the sparktk model
    * @return Location of the temporary directory holding the model
    */
-  protected def getModelPath(modelZipStreamInput: ZipInputStream): String = {
+  private def getModelPath(modelZipStreamInput: ZipInputStream): String = {
     var tmpDir: Path = null
     val bytesIn = new Array[Byte](4096)
     var fileStr: String = null

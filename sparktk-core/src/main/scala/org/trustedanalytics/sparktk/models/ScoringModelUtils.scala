@@ -19,7 +19,6 @@ import java.io.{ FileOutputStream, File }
 import java.net.URI
 import java.nio.DoubleBuffer
 import java.nio.file.{ Files, Path }
-import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.trustedanalytics.model.archive.format.ModelArchiveFormat
@@ -87,31 +86,16 @@ object ScoringModelUtils {
    * @param marSavePath location where the MAR file should be stored
    * @param modelClass name of the model class to be loaded during scoring
    * @param modelSrcDir location where the model has been saved
-   * @param modelReader Reader class for the Model, which should be used to read the .mar file.
-   * @param sourcePath Path to source location.  Defaults to use the path to the currently running jar.
    * @return full path to the location of the MAR file for Scoring Engine
    */
-  def saveToMar(marSavePath: String,
-                modelClass: String,
-                modelSrcDir: java.nio.file.Path,
-                modelReader: String = classOf[SparkTkModelAdapter].getName,
-                sourcePath: Option[String] = None): String = {
+  def saveToMar(marSavePath: String, modelClass: String, modelSrcDir: java.nio.file.Path): String = {
     val zipFile: File = File.createTempFile("modelMar", ".mar")
     val zipOutStream = new FileOutputStream(zipFile)
     try {
-      if (sourcePath.isDefined)
-        require(StringUtils.isNotEmpty(sourcePath.get), "sourcePath should not be null or empty")
+      val codeSource = this.getClass.getProtectionDomain.getCodeSource
 
-      val absolutePath = sourcePath.getOrElse({
-        val codeSource = this.getClass.getProtectionDomain.getCodeSource
-        if (codeSource != null)
-          codeSource.getLocation.toString
-        else
-          null
-      })
-
-      if (absolutePath != null) {
-        println(s"saveToMar path: ${absolutePath}")
+      if (codeSource != null) {
+        val absolutePath = codeSource.getLocation.toString
         val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
         var jarFileList = x.jarsInSearchPath.values.toList
 
@@ -121,7 +105,7 @@ object ScoringModelUtils {
         hdfsFileSystem.copyToLocalFile(new org.apache.hadoop.fs.Path(modelSrcDir.toString), localModelPath)
 
         jarFileList = jarFileList ::: List(new File(localModelPath.toString))
-        ModelArchiveFormat.write(jarFileList, modelReader, modelClass, zipOutStream)
+        ModelArchiveFormat.write(jarFileList, classOf[SparkTkModelAdapter].getName, modelClass, zipOutStream)
       }
       SaveLoad.saveMar(marSavePath, zipFile)
     }
