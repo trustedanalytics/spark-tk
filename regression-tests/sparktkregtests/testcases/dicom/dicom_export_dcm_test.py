@@ -33,7 +33,7 @@ class ExportDicomTest(sparktk_test.SparkTKTestCase):
         self.xml_directory = self.get_local_dataset("dicom_xml/")
         self.image_directory = self.get_local_dataset("dicom_uncompressed/")
 
-    @unittest.skip("Sparktk: dicom export to dcm throws error")
+    # @unittest.skip("Sparktk: dicom export to dcm throws error")
     def test_export_to_dcm(self):
         # first we will set aside the original data so that we can use it to
         # compare with later

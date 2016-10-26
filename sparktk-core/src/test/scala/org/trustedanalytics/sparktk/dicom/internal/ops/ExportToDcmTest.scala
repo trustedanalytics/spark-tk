@@ -35,7 +35,7 @@ class ExportToDcmTest extends TestingSparkContextWordSpec with Matchers {
       val export_status = new File(destPath).exists()
       assert(export_status.equals(true))
 
-      val loadedDicom= importDcm(sparkContext, destPath)
+      val loadedDicom = importDcm(sparkContext, destPath)
       assert(originalMetadataCount.equals(loadedDicom.metadata.rowCount()))
       assert(originalPixeldataCount.equals(loadedDicom.pixeldata.rowCount()))
 
