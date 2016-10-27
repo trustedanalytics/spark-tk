@@ -25,20 +25,34 @@ import config
 
 class scorer(object):
 
-    def __init__(self, model_path, host=config.scoring_engine_host):
+    def __init__(self, model_path, port, host=config.scoring_engine_host):
         """Set up the server location, port and model file"""
 
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
+        self.port = str(port)
         self.scoring_process = None
 
     def __enter__(self):
         """Activate the Server"""
-        run_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "run_scoring_model.sh")
+        #change current working directory to point at scoring_engine dir
+        run_path =  os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "../../../scoring/scoring_engine/"))
+
+        #keep track of cwd for future
+        test_dir = os.getcwd()
+        os.chdir(run_path)
 
         # make a new process group
-        self.scoring_process = sp.Popen([run_path, self.hdfs_path], preexec_fn=os.setsid)
+        self.scoring_process = sp.Popen(
+            ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path, 
+            "-Dtrustedanalytics.scoring.port=%s" % self.port],
+            preexec_fn=os.setsid)
+
+        #restore cwd
+        os.chdir(test_dir)
 
         # wait for server to start
         time.sleep(20)
@@ -58,7 +72,7 @@ class scorer(object):
         headers = {'Content-type': 'application/json',
                    'Accept': 'application/json,text/plain'}
 
-        scoring_host = self.host
+        scoring_host = self.host + ":" + self.port
         submit_string = 'http://'+scoring_host+'/v2/score'
         response = requests.post(submit_string, json={"records":data_val}, headers=headers)
         return response

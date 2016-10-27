@@ -36,6 +36,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
         self.frame = self.context.frame.import_csv(
             dataset, schema=schema)
+        self.port = 8080
 
     def test_model_publish(self):
         """Test publishing a linear regression model"""
@@ -46,7 +47,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
         file_name = self.get_name("linear_regression")
         model_path = model.export_to_mar(self.get_export_file(file_name))
-        with scoring_utils.scorer(model_path) as scorer:
+        with scoring_utils.scorer(model_path, self.port) as scorer:
             for _, i in test_rows.iterrows():
                 res = scorer.score(
                     [dict(zip(["c1", "c2", "c3", "c4"], list(i[0:4])))])
