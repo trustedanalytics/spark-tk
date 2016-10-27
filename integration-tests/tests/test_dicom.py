@@ -96,27 +96,27 @@ def test_check_mr_metadata_and_pixeldata_content(tc):
     assert((pydc_pixeldata == py_pixeldata).all() == True)
 
 
-# def test_matrix_using_import_dcm_and_export_dcm(tc):
-#     dicom_path = "../datasets/dicom_uncompressed/mr1.dcm"
-#     dicom = tc.dicom.import_dcm(dicom_path)
-#
-#     # using pydicom
-#     pydc_pixeldata = pydicom.read_file(dicom_path).pixel_array
-#
-#     # using our dicom module
-#     import_pixeldata = dicom.pixeldata.take(1)[0][1]
-#
-#     # Compare with pydicom pixeldata
-#     assert((pydc_pixeldata == import_pixeldata).all() == True)
-#
-#     save_path = "sandbox/dicom_export_test"
-#     dicom.export_to_dcm(save_path)
-#
-#     export_dicom = tc.dicom.import_dcm(save_path)
-#     export_pixeldata = export_dicom.pixeldata.take(1)[0][1]
-#
-#     # Test pixeldata, loading from saved location
-#     assert((pydc_pixeldata == export_pixeldata).all() == True)
+def test_matrix_using_import_dcm_and_export_dcm(tc):
+    dicom_path = "../datasets/dicom_uncompressed/mr1.dcm"
+    dicom = tc.dicom.import_dcm(dicom_path)
+
+    # using pydicom
+    pydc_pixeldata = pydicom.read_file(dicom_path).pixel_array
+
+    # using our dicom module
+    import_pixeldata = dicom.pixeldata.take(1)[0][1]
+
+    # Compare with pydicom pixeldata
+    assert((pydc_pixeldata == import_pixeldata).all() == True)
+
+    save_path = "sandbox/dicom_export_test"
+    dicom.export_to_dcm(save_path)
+
+    export_dicom = tc.dicom.import_dcm(save_path)
+    export_pixeldata = export_dicom.pixeldata.take(1)[0][1]
+
+    # Test pixeldata, loading from saved location
+    assert((pydc_pixeldata == export_pixeldata).all() == True)
 
 
 def test_matrix_using_frame_create_with_list(tc):
@@ -144,6 +144,7 @@ def test_matrix_using_frame_create_with_list(tc):
     py_new_matrix = frame.take(1)[0][2] /2
 
     assert((np_ndarray == py_new_matrix).all() == True)
+
 
 def test_matrix_using_frame_create_with_ndarray(tc):
     data = [[1, np.array([[1,2,3,5],[2,3,5,6],[4,6,7,3],[8,9,2,4]])]]
