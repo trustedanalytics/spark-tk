@@ -17,6 +17,7 @@
 
 """ test cases for random forest"""
 import unittest
+import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 from ConfigParser import SafeConfigParser
@@ -33,7 +34,10 @@ class RandomForest(sparktk_test.SparkTKTestCase):
 
         self.frame = self.context.frame.import_csv(filename, schema=schema)
         self.config = SafeConfigParser()
-        self.config.read('../../lib/port.ini')
+        filepath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..", "..", "lib", "port.ini"))
+        self.config.read(filepath)
 
     def test_class_scoring(self):
         """Test random forest classifier scoring model"""

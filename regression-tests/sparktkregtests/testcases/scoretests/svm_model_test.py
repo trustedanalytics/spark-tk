@@ -17,7 +17,7 @@
 
 """svm model test for scoring"""
 import unittest
-
+import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
 from ConfigParser import SafeConfigParser
@@ -87,7 +87,11 @@ class SvmScoreTest(sparktk_test.SparkTKTestCase):
         
         #read port number from port.ini
         config = SafeConfigParser()
-        config.read('../../lib/port.ini')
+        filepath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..", "..", "lib", "port.ini"))
+
+        config.read(filepath)
 
         with scoring_utils.scorer(
                 model_path, config.get('port', self.id())) as scorer:

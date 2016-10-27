@@ -17,7 +17,7 @@
 
 """ Tests Linear Regression scoring engine """
 import unittest
-
+import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 from ConfigParser import SafeConfigParser
@@ -39,7 +39,10 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
             dataset, schema=schema)
 
         self.config = SafeConfigParser()
-        self.config.read("../../lib/port.ini")
+        filepath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..", "..", "lib", "port.ini"))
+        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Test publishing a linear regression model"""

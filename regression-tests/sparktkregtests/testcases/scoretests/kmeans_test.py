@@ -18,7 +18,7 @@
 """ test cases for the kmeans clustering algorithm """
 import unittest
 import time
-
+import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
 from ConfigParser import SafeConfigParser
@@ -41,8 +41,11 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
         self.frame_test = self.context.frame.import_csv(
             self.get_file("kmeans_test.csv"), schema=schema)
         self.config = SafeConfigParser()
-        self.config.read('../../lib/port.ini')
+        filepath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..", "..", "lib", "port.ini"))
 
+        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Tests standard usage of the kmeans cluster algorithm."""

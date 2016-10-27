@@ -17,7 +17,7 @@
 
 """ Tests Naive Bayes Model against known values.  """
 import unittest
-
+import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 from ConfigParser import SafeConfigParser
@@ -36,7 +36,10 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
                   ("f3", int)]
         self.frame = self.context.frame.import_csv(dataset, schema=schema)
         self.config = SafeConfigParser()
-        self.config.read('../../lib/port.ini')
+        filepath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..", "..", "lib", "port.ini"))
+        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Test training intializes theta, pi and labels"""
