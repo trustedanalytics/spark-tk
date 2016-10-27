@@ -48,7 +48,7 @@ object CollaborativeFilteringModel extends TkSaveableObject {
    * @param numFactors number of the desired factors (rank)
    * @param useImplicit use implicit preference
    * @param numUserBlocks number of user blocks
-   * @param numItemBlock number of item blocks
+   * @param numItemBlocks number of item blocks
    * @param checkpointIterations Number of iterations between checkpoints
    * @param targetRMSE target RMSE
    * @return CollaborativeFilteringModel
@@ -63,7 +63,7 @@ object CollaborativeFilteringModel extends TkSaveableObject {
             numFactors: Int = 3,
             useImplicit: Boolean = false,
             numUserBlocks: Int = 2,
-            numItemBlock: Int = 3,
+            numItemBlocks: Int = 3,
             checkpointIterations: Int = 10,
             targetRMSE: Double = 0.05): CollaborativeFilteringModel = {
 
@@ -71,13 +71,13 @@ object CollaborativeFilteringModel extends TkSaveableObject {
     require(StringUtils.isNotEmpty(sourceColumnName), "source column name is required")
     require(StringUtils.isNotEmpty(destColumnName), "destination column name is required")
     require(StringUtils.isNotEmpty(weightColumnName), "weight column name is required")
-    require(maxSteps > 1, "min steps must be a positive integer")
-    require(regularization > 0 && regularization < 1, "regularization must be a positive value")
-    require(alpha > 0 & alpha < 1, "alpha must be a positive value")
+    require(maxSteps > 1, "max steps must be a positive integer")
+    require(regularization > 0 && regularization < 1, "regularization must be a positive value between 0 and 1")
+    require(alpha > 0 & alpha < 1, "alpha must be a positive value between 0 and 1")
     require(checkpointIterations > 0, "Iterations between checkpoints must be positive")
     require(numFactors > 0, "number of factors must be a positive integer")
     require(numUserBlocks > 0, "number of user blocks must be a positive integer")
-    require(numItemBlock > 0, "number of item blocks must be a positive integer")
+    require(numItemBlocks > 0, "number of item blocks must be a positive integer")
     require(targetRMSE > 0, "target RMSE must be a positive value")
 
     val schema = frame.schema
@@ -85,7 +85,7 @@ object CollaborativeFilteringModel extends TkSaveableObject {
 
     schema.requireColumnIsType(sourceColumnName, DataTypes.int)
     schema.requireColumnIsType(destColumnName, DataTypes.int)
-
+    schema.requireColumnIsType(weightColumnName, DataTypes.float64)
     val alsInput = frameRdd.mapRows(row => {
       Rating(row.intValue(sourceColumnName),
         row.intValue(destColumnName),
@@ -111,7 +111,7 @@ object CollaborativeFilteringModel extends TkSaveableObject {
       numFactors,
       useImplicit,
       numUserBlocks,
-      numItemBlock,
+      numItemBlocks,
       checkpointIterations,
       targetRMSE,
       alsTrainedModel.rank,
