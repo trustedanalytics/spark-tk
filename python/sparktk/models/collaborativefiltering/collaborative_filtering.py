@@ -18,8 +18,10 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from collections import namedtuple
+from sparktk import TkContext
+from sparktk.arguments import affirm_type, require_type
 
-__all__ = ["train"]
+__all__ = ["train", "load", "CollaborativeFilteringModel"]
 
 RecommendReturnTuple = namedtuple("RecommendReturnTuple", ['user', 'product', 'rating'])
 
@@ -34,7 +36,7 @@ def train(frame,
           num_factors=3,
           use_implicit=False,
           num_user_blocks=2,
-          num_item_block=3,
+          num_item_blocks=3,
           checkpoint_iterations=10,
           target_rmse=0.05):
     """
@@ -53,14 +55,29 @@ def train(frame,
     :param num_factors: (int) number of the desired factors (rank)
     :param use_implicit: (bool) use implicit preference
     :param num_user_blocks: (int) number of user blocks
-    :param num_item_block: (int) number of item blocks
+    :param num_item_blocks: (int) number of item blocks
     :param checkpoint_iterations: (int) Number of iterations between checkpoints
     :param target_rmse: (double) target RMSE
     :return: (CollaborativeFilteringModel) A trained collaborative filtering model
     """
-    if frame is None:
-        raise ValueError("frame cannot be None")
-
+    from sparktk.frame.frame import Frame
+    require_type(Frame, frame, 'frame')
+    require_type.non_empty_str(source_column_name, "source_column_name")
+    require_type.non_empty_str(dest_column_name, "dest_column_name")
+    require_type.non_empty_str(weight_column_name, "weight_column_name")
+    require_type.non_negative_int(max_steps, "max_steps")
+    require_type(float, regularization, "regularization")
+    if regularization > 1 or regularization < 0:
+        raise ValueError("'regularization' parameter must have a value between 0 and 1")
+    require_type(float, alpha, "alpha")
+    if alpha > 1 or alpha < 0:
+        raise ValueError("'alpha' parameter must have a value between 0 and 1")
+    require_type.non_negative_int(num_factors, "num_factors")
+    require_type(bool, use_implicit, "use_implicit")
+    require_type.non_negative_int(num_user_blocks, "num_user_blocks")
+    require_type.non_negative_int(num_item_blocks, "num_item_blocks")
+    require_type.non_negative_int(checkpoint_iterations, "checkpoint_iterations")
+    require_type(float, target_rmse, "target_rmse")
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_model = _scala_obj.train(frame._scala,
@@ -73,15 +90,19 @@ def train(frame,
                                    num_factors,
                                    use_implicit,
                                    num_user_blocks,
-                                   num_item_block,
+                                   num_item_blocks,
                                    checkpoint_iterations,
                                    target_rmse)
     return CollaborativeFilteringModel(tc, scala_model)
 
+def load(path, tc=TkContext.implicit):
+    """load KMeansModel from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, CollaborativeFilteringModel)
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering.CollaborativeFilteringModel
 
 
 def scala_collaborative_filtering_recommend_return_to_python(self, recommend_return):
@@ -123,7 +144,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         >>> predict_frame = tc.frame.create(rows_predict, schema_predict)
         <progress>
 
-        >>> model = tc.models.collaborative_filtering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
+        >>> model = tc.models.collaborativefiltering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
         <progress>
 
         >>> predict_result = model.predict(predict_frame, 'source', 'dest')
@@ -137,6 +158,43 @@ class CollaborativeFilteringModel(PropertiesObject):
         [2]     2        5  0.003955772
         [3]     1        5  0.029929327
         </skip>
+
+    The trained model can be saved and restored:
+
+        >>> model.save("sandbox/CF_Model")
+
+        >>> restored = tc.load("sandbox/CF_Model")
+
+    <hide>
+        >>> restored.alpha
+        0.5
+
+        >>> restored.num_factors
+        3
+
+        >>> restored.num_item_block
+        3
+
+        >>> restored.num_user_blocks
+        2
+
+        >>> restored.regularization
+        0.5
+
+        >>> restored.target_rmse
+        0.05
+
+    </hide>
+
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/collaborativeFilteringModel.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
+
         <hide>
         >>> expected =[[1, 4, 0.04834617],[1, 3, 0.040288474],[2, 5, 0.003955772],[1, 5, 0.029929327]]
 
@@ -169,6 +227,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         <progress>
         >>> "%.2f" % recommendations[0]['rating']
         '0.04'
+
         </hide>
     """
 

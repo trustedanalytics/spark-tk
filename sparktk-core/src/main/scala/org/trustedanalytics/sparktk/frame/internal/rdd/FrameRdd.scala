@@ -129,27 +129,6 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   }
 
   /**
-   * Convert FrameRdd into RDD[Vector] format required by MLLib
-   *
-   * @param featureColumnNames Names of the frame's column(s) to be used
-   * @return RDD of (org.apache.spark.mllib)Vector
-   */
-  def toDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
-    this.mapRows(row => {
-      val array = row.valuesAsArray(featureColumnNames, flattenInputs = true)
-      val b = array.map(i => DataTypes.toDouble(i))
-      Vectors.dense(b)
-    })
-  }
-
-  def toDenseVectorRdd(columns: Seq[String], weights: Option[Seq[Double]]): RDD[Vector] = {
-    weights match {
-      case Some(w) => toDenseVectorRddWithWeights(columns, w)
-      case None => toDenseVectorRdd(columns)
-    }
-  }
-
-  /**
    * Compute MLLib's MultivariateStatisticalSummary from FrameRdd
    *
    * @param columnNames Names of the frame's column(s) whose column statistics are to be computed
@@ -172,6 +151,27 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     vectorRdd.map(i => {
       Vectors.dense((new DenseVector(i.toArray) - new DenseVector(columnMeans.toArray)).toArray)
     })
+  }
+
+  /**
+   * Convert FrameRdd into RDD[Vector] format required by MLLib
+   *
+   * @param featureColumnNames Names of the frame's column(s) to be used
+   * @return RDD of (org.apache.spark.mllib)Vector
+   */
+  def toDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
+    this.mapRows(row => {
+      val array = row.valuesAsArray(featureColumnNames, flattenInputs = true)
+      val b = array.map(i => DataTypes.toDouble(i))
+      Vectors.dense(b)
+    })
+  }
+
+  def toDenseVectorRdd(columns: Seq[String], weights: Option[Seq[Double]]): RDD[Vector] = {
+    weights match {
+      case Some(w) => toDenseVectorRddWithWeights(columns, w)
+      case None => toDenseVectorRdd(columns)
+    }
   }
 
   /**
@@ -283,8 +283,8 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     new FrameRdd(frameSchema.copySubsetWithRename(columnNamesWithRename), mapRows(row => row.valuesAsRow(preservedOrderColumnNames)))
   }
 
-  /* Please see documentation. Zip works if 2 SchemaRDDs have the same number of partitions
-     and same number of elements in  each partition */
+  /* Please see documentation. Zip works if 2 SchemaRDDs have the same number of partitions and same number of elements
+  in  each partition */
   def zipFrameRdd(frameRdd: FrameRdd): FrameRdd = {
     new FrameRdd(frameSchema.addColumns(frameRdd.frameSchema.columns), this.zip(frameRdd).map { case (a, b) => Row.merge(a, b) })
   }
