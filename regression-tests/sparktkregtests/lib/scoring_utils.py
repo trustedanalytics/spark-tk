@@ -23,11 +23,11 @@ import signal
 import os
 import config
 
+
 class scorer(object):
 
     def __init__(self, model_path, port, host=config.scoring_engine_host):
         """Set up the server location, port and model file"""
-
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
@@ -39,7 +39,7 @@ class scorer(object):
         #change current working directory to point at scoring_engine dir
         run_path =  os.path.abspath(os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
-            "../../../scoring/scoring_engine/"))
+            "..", "..", "..", "scoring", "scoring_engine"))
 
         #keep track of cwd for future
         test_dir = os.getcwd()

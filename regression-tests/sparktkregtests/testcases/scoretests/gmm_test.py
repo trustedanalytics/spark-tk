@@ -37,6 +37,7 @@ import unittest
 
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
+from ConfigParser import SafeConfigParser
 
 
 class GMM(sparktk_test.SparkTKTestCase):
@@ -47,9 +48,11 @@ class GMM(sparktk_test.SparkTKTestCase):
         data_file = self.get_file("gmm_data.csv")
         self.frame = self.context.frame.import_csv(
             data_file, schema=[("x1", float), ("x2", float)])
+        self.config = SafeConfigParser()
+        self.config.read('../../lib/port.ini')
 
-    def test_model_publish(self):
-        """Test publishing a linear regression model"""
+    def test_model_scoring(self):
+        """Test publishing a gmm model"""
         model = self.context.models.clustering.gmm.train(
                     self.frame, ["x1", "x2"],
                     column_scalings=[1.0, 1.0],
@@ -64,7 +67,8 @@ class GMM(sparktk_test.SparkTKTestCase):
         file_name = self.get_name("gmm")
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
-        with scoring_utils.scorer(model_path) as scorer:
+        with scoring_utils.scorer(
+                model_path, self.config.get('port', self.id())) as scorer:
             for i, row in test_rows.iterrows():
                 res = scorer.score(
                     [dict(zip(["x1", "x2"], list(row[0:2])))])

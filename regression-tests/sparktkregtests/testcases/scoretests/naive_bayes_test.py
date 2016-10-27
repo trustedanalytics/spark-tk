@@ -20,6 +20,7 @@ import unittest
 
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
+from ConfigParser import SafeConfigParser
 
 
 class NaiveBayes(sparktk_test.SparkTKTestCase):
@@ -34,8 +35,10 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
                   ("f2", int),
                   ("f3", int)]
         self.frame = self.context.frame.import_csv(dataset, schema=schema)
+        self.config = SafeConfigParser()
+        self.config.read('../../lib/port.ini')
 
-    def test_model_basic(self):
+    def test_model_scoring(self):
         """Test training intializes theta, pi and labels"""
         model = self.context.models.classification.naive_bayes.train(self.frame, "label", ['f1', 'f2', 'f3'])
 
@@ -44,10 +47,14 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         analysis = res.to_pandas()
         file_name = self.get_name("naive_bayes")
         model_path = model.export_to_mar(self.get_export_file(file_name))
-        with scoring_utils.scorer(model_path) as scorer:
+        with scoring_utils.scorer(
+                model_path, self.config.get('port', self.id())) as scorer:
             for _, i in analysis.iterrows():
-                r = scorer.score([dict(zip(['f1', 'f2', 'f3'], map(lambda x: int(x), (i[1:4]))))])
-                self.assertEqual(r.json()["data"][0]['Score'], i['predicted_class'])
+                r = scorer.score(
+                    [dict(zip(['f1', 'f2', 'f3'],
+                    map(lambda x: int(x), (i[1:4]))))])
+                self.assertEqual(
+                    r.json()["data"][0]['Score'], i['predicted_class'])
 
 
 if __name__ == '__main__':

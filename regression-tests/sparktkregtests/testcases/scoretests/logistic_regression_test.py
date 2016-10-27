@@ -37,6 +37,7 @@ import unittest
 
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
+from ConfigParser import SafeConfigParser
 
 
 class LogisticRegression(sparktk_test.SparkTKTestCase):
@@ -56,9 +57,11 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
 
         self.frame = self.context.frame.import_csv(
             binomial_dataset, schema=schema, header=True)
+        self.config = SafeConfigParser()
+        self.config.read('../../lib/port.ini')
 
-    def test_model_publish(self):
-        """Test publishing a linear regression model"""
+    def test_model_scoring(self):
+        """Test publishing a logistic regression model"""
         model = self.context.models.classification.logistic_regression.train(
             self.frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             'res')
@@ -71,7 +74,8 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         file_name = self.get_name("logistic_regression")
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
-        with scoring_utils.scorer(model_path) as scorer:
+        with scoring_utils.scorer(
+                model_path, self.config.get('port', self.id())) as scorer:
             for i, row in test_rows.iterrows():
                 res = scorer.score(
                     [dict(zip(["vec0", "vec1", "vec2", "vec3", "vec4"], list(row[0:5])))])
