@@ -129,6 +129,31 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   }
 
   /**
+   * Compute MLLib's MultivariateStatisticalSummary from FrameRdd
+   *
+   * @param columnNames Names of the frame's column(s) whose column statistics are to be computed
+   * @return MLLib's MultivariateStatisticalSummary
+   */
+  def columnStatistics(columnNames: Seq[String]): MultivariateStatisticalSummary = {
+    val vectorRdd = toDenseVectorRdd(columnNames)
+    Statistics.colStats(vectorRdd)
+  }
+
+  /**
+   * Convert FrameRdd to RDD[Vector] by mean centering the specified columns
+   *
+   * @param featureColumnNames Names of the frame's column(s) to be used
+   * @return RDD of (org.apache.spark.mllib)Vector
+   */
+  def toMeanCenteredDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
+    val vectorRdd = toDenseVectorRdd(featureColumnNames)
+    val columnMeans: Vector = columnStatistics(featureColumnNames).mean
+    vectorRdd.map(i => {
+      Vectors.dense((new DenseVector(i.toArray) - new DenseVector(columnMeans.toArray)).toArray)
+    })
+  }
+
+  /**
    * Convert FrameRdd into RDD[Vector] format required by MLLib
    *
    * @param featureColumnNames Names of the frame's column(s) to be used
@@ -256,6 +281,12 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     }
     val preservedOrderColumnNames = frameSchema.columnNames.filter(name => columnNamesWithRename.contains(name))
     new FrameRdd(frameSchema.copySubsetWithRename(columnNamesWithRename), mapRows(row => row.valuesAsRow(preservedOrderColumnNames)))
+  }
+
+  /* Please see documentation. Zip works if 2 SchemaRDDs have the same number of partitions and same number of elements
+  in  each partition */
+  def zipFrameRdd(frameRdd: FrameRdd): FrameRdd = {
+    new FrameRdd(frameSchema.addColumns(frameRdd.frameSchema.columns), this.zip(frameRdd).map { case (a, b) => Row.merge(a, b) })
   }
 
   /**
