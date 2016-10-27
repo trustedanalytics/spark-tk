@@ -119,7 +119,7 @@ def test_check_mr_metadata_and_pixeldata_content(tc):
 #     assert((pydc_pixeldata == export_pixeldata).all() == True)
 
 
-def test_matrix_using_frame_create(tc):
+def test_matrix_using_frame_create_with_list(tc):
     data = [[1, [[1,2,3,5],[2,3,5,6],[4,6,7,3],[8,9,2,4]]]]
     schema = [('id', int),('pixeldata', dtypes.matrix)]
     frame = tc.frame.create(data, schema)
@@ -144,6 +144,17 @@ def test_matrix_using_frame_create(tc):
     py_new_matrix = frame.take(1)[0][2] /2
 
     assert((np_ndarray == py_new_matrix).all() == True)
+
+def test_matrix_using_frame_create_with_ndarray(tc):
+    data = [[1, np.array([[1,2,3,5],[2,3,5,6],[4,6,7,3],[8,9,2,4]])]]
+    schema = [('id', int),('pixeldata', dtypes.matrix)]
+    frame = tc.frame.create(data, schema)
+
+    assert(frame.count() == 1)
+
+    frame._scala
+
+    assert(frame.count() == 1)
 
 
 
