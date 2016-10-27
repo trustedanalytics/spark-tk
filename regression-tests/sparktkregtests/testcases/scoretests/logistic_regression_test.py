@@ -69,7 +69,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         predict = model.predict(
             self.frame,
             ["vec0", "vec1", "vec2", "vec3", "vec4"])
-        test_rows = predict.to_pandas(predict.count())
+        test_rows = predict.to_pandas(100)
 
         file_name = self.get_name("logistic_regression")
         model_path = model.export_to_mar(self.get_export_file(file_name))
