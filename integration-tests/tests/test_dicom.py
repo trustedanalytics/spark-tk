@@ -150,15 +150,15 @@ def test_matrix_using_frame_create_with_ndarray(tc):
     schema = [('id', int),('pixeldata', dtypes.matrix)]
     frame = tc.frame.create(data, schema)
 
-    assert(frame._is_python, True)
+    assert(frame._is_python == True)
     assert(frame.count(), 1)
 
     frame._scala
-    assert(frame._is_scala, True)
+    assert(frame._is_scala == True)
     assert(frame.count(), 1)
 
     frame._python
-    assert(frame._is_python, True)
+    assert(frame._is_python == True)
     assert(frame.count(), 1)
 
 
