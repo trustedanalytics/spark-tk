@@ -21,7 +21,7 @@ definitions for Data Types
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
+__all__ = ['dtypes', 'float32', 'float64', 'int32', 'int64', 'vector', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -136,28 +136,6 @@ class _Vector(object):
 
 vector = _Vector
 
-
-class _Unit(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-unit = _Unit
-
-
-class _Ignore(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-ignore = _Ignore
-
-
-class _Unknown(object):
-    """Unknown type used when type is indeterminate"""
-    pass
-
-unknown = _Unknown
-
-
 # map types to their string identifier
 _primitive_type_to_str_table = {
     #bool: "bool", TODO
@@ -169,7 +147,6 @@ _primitive_type_to_str_table = {
     int64: "int64",
     #list: "list", TODO
     unicode: "unicode",
-    ignore: "ignore",
     datetime: "datetime",
 }
 
@@ -366,18 +343,6 @@ class _DataTypes(object):
             return False
 
     @staticmethod
-    def is_primitive_alias_type(data_type):
-        return data_type in _primitive_alias_type_to_type_table
-
-    @staticmethod
-    def is_int(data_type):
-        return data_type in [int, int32, int64]
-
-    @staticmethod
-    def is_float(data_type):
-        return data_type in [float, float32, float64]
-
-    @staticmethod
     def get_from_type(data_type):
         """
         Returns the data type for the given type (often it will return the same type)
@@ -403,6 +368,10 @@ class _DataTypes(object):
         if _DataTypes.is_primitive_type(data_type) or _DataTypes.is_complex_type(data_type):
             return data_type
         raise ValueError("Unsupported type %s" % data_type)
+
+    @staticmethod
+    def is_primitive_alias_type(data_type):
+        return data_type in _primitive_alias_type_to_type_table
 
     @staticmethod
     def validate(data_type):
