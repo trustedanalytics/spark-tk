@@ -70,9 +70,16 @@ class TkContext(object):
                            which need to be added to the spark context.  These libraries must be developed for use with
                            spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
         :param extra_conf_file: (str) local file path to a spark conf file to supplement the spark conf
+                                File format is basic key-value pairs per line, like:
+
+                                    spark.executor.memory=6g
+                                    spark.files.overwrite=true
+
+        (NOTE: if env var $SPARKTK_EXTRA_CONF is set, the file it indicates will be used.)
+
         :param extra_conf_dict: (dict) dict for any extra spark conf settings,
-                                for ex. {"spark.hadoop.fs.default.name": "file:///"}
-                                these will override any matching settings from conf_file, if provided
+                                for ex.  {"spark.hadoop.fs.default.name": "file:///"}
+                                these will override any matching settings from extra_conf_file, if provided
         :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
         :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
         :return: TkContext
