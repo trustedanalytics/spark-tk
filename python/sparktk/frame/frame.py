@@ -29,6 +29,7 @@ from sparktk import TkContext
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
+from sparktk.frame.constructors.import_csv_raw import import_csv_raw
 from sparktk.frame.constructors.import_hbase import import_hbase
 from sparktk.frame.constructors.import_hive import import_hive
 from sparktk.frame.constructors.import_jdbc import import_jdbc
@@ -37,6 +38,7 @@ from sparktk.frame.constructors.import_pandas import import_pandas
 __all__ = ["create",
            "Frame",
            "import_csv",
+           "import_csv_raw",
            "import_hbase",
            "import_hive",
            "import_jdbc",

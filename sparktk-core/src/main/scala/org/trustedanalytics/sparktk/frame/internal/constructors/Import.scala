@@ -25,6 +25,38 @@ import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 object Import {
 
   /**
+   * Creates a frame by importing the data as strings from the specified csv file.  If the csv file has
+   * a header row, those values will be used as column names.  Otherwise, columns will be named generically,
+   * like 'C0', 'C1', 'C2', etc.
+   *
+   * @param path Full path to the csv file
+   * @param delimiter A string which indicates the separation of data fields.  This is usually a single
+   *                  character and could be a non-visible character, such as a tab. The default delimiter
+   *                  is a comma (,).
+   * @param header Boolean value indicating if the first line of the file will be used to name columns,
+   *               and not be included in the data.  The default value is false.
+   * @return Frame with data from the csv file
+   */
+  def importCsvRaw(sc: SparkContext,
+                   path: String,
+                   delimiter: String = ",",
+                   header: Boolean = false): Frame = {
+    require(StringUtils.isNotEmpty(path), "path should not be null or empty.")
+    require(StringUtils.isNotEmpty(delimiter), "delimiter should not be null or empty.")
+
+    // Load from csv
+    import org.apache.spark.sql.SQLContext
+    val sqlContext = new SQLContext(sc)
+    val dfr = sqlContext.read.format("com.databricks.spark.csv.org.trustedanalytics.sparktk")
+      .option("header", header.toString.toLowerCase)
+      .option("inferSchema", "false")
+      .option("delimiter", delimiter)
+    val df = dfr.load(path)
+    val frameRdd = FrameRdd.toFrameRdd(df)
+    new Frame(frameRdd, frameRdd.frameSchema)
+  }
+
+  /**
    * Creates a frame by importing data from a CSV file
    *
    * @param path Full path to the csv file
@@ -33,8 +65,11 @@ object Import {
    *                  is a comma (,).
    * @param header Boolean value indicating if the first line of the file will be used to name columns,
    *               and not be included in the data.  The default value is false.
-   * @param inferSchema Boolean value indicating if the column types will be automatically inferred.  It
-   *                    requires one extra pass over the data and is false by default.
+   * @param schema Optionally specify the schema for the dataset. If the value from the csv file cannot be
+   *               converted to the data type specified by the schema (for example, if the csv file has a string,
+   *               and the schema specifies an int), the value will show up as missing (None) in the frame.  If a
+   *               schema is not defined, the schema will be automatically inferred based on the type of data found
+   *               in the file (this requires an extra pass over the data).
    * @param dateTimeFormat String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat
    * specified at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
    * @return Frame with data from the csv file
@@ -43,18 +78,14 @@ object Import {
                 path: String,
                 delimiter: String = ",",
                 header: Boolean = false,
-                inferSchema: Boolean = false,
                 schema: Option[Schema] = None,
                 dateTimeFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSX"): Frame = {
-
-    // If a custom schema is provided there's no reason to infer the schema during the load
-    val loadWithInferSchema = if (schema.isDefined) false else inferSchema
 
     // Load from csv
     import org.apache.spark.sql.SQLContext
     val sqlContext = new SQLContext(sc)
     val headerStr = header.toString.toLowerCase
-    val inferSchemaStr = inferSchema.toString.toLowerCase
+    val inferSchemaStr = (!schema.isDefined).toString.toLowerCase
 
     var dfr = sqlContext.read.format("com.databricks.spark.csv.org.trustedanalytics.sparktk")
       .option("header", headerStr)
@@ -62,7 +93,7 @@ object Import {
       .option("delimiter", delimiter)
       .option("dateFormat", dateTimeFormat)
 
-    if (!inferSchema && schema.isDefined) {
+    if (schema.isDefined) {
       dfr = dfr.schema(StructType(schema.get.columns.map(column =>
         StructField(column.name, FrameRdd.schemaDataTypeToSqlDataType(column.dataType), true))))
     }

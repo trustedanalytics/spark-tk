@@ -21,8 +21,10 @@ from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
 from sparktk.frame import schema as sparktk_schema
+from sparktk.arguments import require_type
 
-def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, datetime_format="yyyy-MM-dd'T'HH:mm:ss.SSSX", tc=TkContext.implicit):
+
+def import_csv(path, delimiter=",", header=False, schema=None, datetime_format="yyyy-MM-dd'T'HH:mm:ss.SSSX", tc=TkContext.implicit):
     """
     Creates a frame with data from a csv file.
 
@@ -35,26 +37,24 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
                       is a comma (,).
     :param header: (Optional[bool]) Boolean value indicating if the first line of the file will be used to name columns,
                    and not be included in the data.  The default value is false.
-    :param infer_schema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
-                       It requires one extra pass over the data and is false by default.
     :param schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
                     columns specified in the schema must match the number of columns in the csv file provided.  If the
                     value from the csv file cannot be converted to the data type specified by the schema (for example,
                     if the csv file has a string, and the schema specifies an int), the value will show up as missing
-                    (None) in the frame.
+                    (None) in the frame.  If a schema is not defined, the schema will be automatically inferred based
+                    on the type of data found in the file (this requires an extra pass over the data).
     :param datetime_format: (str) String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat
                         specified at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
     :return: (Frame) Frame that contains the data from the csv file
 
     Examples
     --------
-    Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
-    there is a header and to infer the schema based on the data.
 
+    Load a frame from a csv file by specifying the path to the file, delimiter
 
         >>> file_path = "../datasets/cities.csv"
 
-        >>> frame = tc.frame.import_csv(file_path, "|", header=True, infer_schema=True)
+        >>> frame = tc.frame.import_csv(file_path, "|", header=True)
         -etc-
 
         >>> frame.inspect()
@@ -77,7 +77,7 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         <hide>
         >>> file_path = "../datasets/unicode.csv"
         >>> schema = [("a", unicode),("b", unicode),("c",unicode)]
-        >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False, infer_schema=False)
+        >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False)
         -etc-
 
         >>> frame.inspect()
@@ -89,22 +89,23 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         </hide>
 
     """
-
+    TkContext.validate(tc)
+    require_type.non_empty_str(path, "path")
+    require_type.non_empty_str(delimiter, "delimiter")
+    require_type(bool, header, "header")
+    require_type(str, datetime_format, "datetime_format")
 
     if schema is not None:
         infer_schema = False   # if a custom schema is provided, don't waste time inferring the schema during load
         sparktk_schema.validate(schema)
-    if not isinstance(header, bool):
-        raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
-    if not isinstance(infer_schema, bool):
-        raise ValueError("infer_schema parameter must be a boolean, but is {0}.".format(type(infer_schema)))
-    TkContext.validate(tc)
+    else:
+        infer_schema = True
 
     header_str = str(header).lower()
     infer_schema_str = str(infer_schema).lower()
     pyspark_schema = None
 
-    if (not infer_schema) and (schema is not None):
+    if schema is not None:
         fields = []
         for column in schema:
             if dtypes._data_type_to_pyspark_type_table.has_key(column[1]):
