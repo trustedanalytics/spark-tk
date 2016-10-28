@@ -51,8 +51,7 @@ object PythonJavaRdd {
   }
 
   private def pythonToJava(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Array[Any]] = {
-    SparkAliases.getSparkMLLibSerDe
-    val j = SparkAliases.SerDeUtil.pythonToJava(jrdd, batched = true)
+    val j = SparkAliases.MLLibSerDe.pythonToJava(jrdd, batched = true)
     toJavaArrayAnyRdd(j)
   }
 
