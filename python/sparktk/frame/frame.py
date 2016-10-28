@@ -422,3 +422,4 @@ class SchemaValidationReturn(PropertiesObject):
         """
         return self._bad_value_count
 
+

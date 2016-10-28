@@ -15,14 +15,19 @@
 #  limitations under the License.
 #
 
-from sparktk.dtypes import dtypes, matrix
+from sparktk.dtypes import _Matrix
+from sparktk.dtypes import dtypes
+from pyspark.mllib.linalg import DenseMatrix
+
 
 def jvm_scala_schema(sc):
     return sc._jvm.org.trustedanalytics.sparktk.frame.SchemaHelper
 
+
 def get_schema_for_columns(schema, selected_columns):
     indices = get_indices_for_selected_columns(schema, selected_columns)
     return [schema[i] for i in indices]
+
 
 def get_indices_for_selected_columns(schema, selected_columns):
     indices = []
@@ -36,9 +41,11 @@ def get_indices_for_selected_columns(schema, selected_columns):
 
     return indices
 
+
 def schema_to_scala(sc, python_schema):
     list_of_list_of_str_schema = map(lambda t: [t[0], dtypes.to_string(t[1])], python_schema)  # convert dtypes to strings
     return jvm_scala_schema(sc).pythonToScala(list_of_list_of_str_schema)
+
 
 def schema_to_python(sc, scala_schema):
     list_of_list_of_str_schema = jvm_scala_schema(sc).scalaToPython(scala_schema)
@@ -91,7 +98,7 @@ def schema_is_coercible(source, python_schema, in_scala=False):
     """
     flag = False
     for schema in python_schema:
-        if type(schema[1]) == dtypes._Matrix:
+        if type(schema[1]) == _Matrix:
             flag = True
             break
 
@@ -119,7 +126,7 @@ def type_coercer(schema):
     def decorator(row):
         import numpy as np
         for i in xrange(len(schema)):
-            if type(schema[i][1]) == dtypes._Matrix:
+            if type(schema[i][1]) == _Matrix:
                 if isinstance(row[i], list):
                     row[i] = np.array(row[i], dtype=np.float64)
         return row
@@ -138,7 +145,7 @@ def type_coercer_pymllib(schema):
     def decorator(row):
         from pyspark.mllib.linalg import DenseMatrix
         for i in xrange(len(schema)):
-            if type(schema[i][1]) == dtypes._Matrix:
+            if type(schema[i][1]) == _Matrix:
                 shape = row[i].shape
                 arr=row[i].flatten()
                 # By default Mllib DenseMatrix constructs column-major matrix.
