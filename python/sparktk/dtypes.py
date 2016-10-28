@@ -21,7 +21,7 @@ definitions for Data Types
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
+__all__ = ['dtypes', 'float32', 'float64', 'int32', 'int64', 'vector', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -78,12 +78,15 @@ class _Matrix(object):
     def get_from_string(data_type_str):
         if _Matrix.re_pattern != data_type_str:
             raise "Invalid data type"
-        return _Matrix()
+        new_matrix = _Matrix()
+        new_matrix.__name__ = "matrix"
+        return new_matrix
 
     def __repr__(self):
         return "matrix"
 
 matrix = _Matrix()
+matrix.__name__ = "matrix"
 
 class _Vector(object):
 
@@ -93,6 +96,7 @@ class _Vector(object):
     def __init__(self, length):
         self.length = int(length)
         self.constructor = self._get_constructor()
+        self.__name__ = "vector(%d)" % self.length
 
     def _get_constructor(self):
         length = self.length
@@ -108,7 +112,7 @@ class _Vector(object):
                 array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
             except:
                 # also support json or comma-sep string
-                if dtypes.value_is_string(value):
+                if isinstance(value, basestring):
                     try:
                         value = json.loads(value)
                     except:
@@ -129,48 +133,21 @@ class _Vector(object):
 
     @staticmethod
     def get_from_string(data_type_str):
-        return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+        vector_value = _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+        return vector_value
 
     def __repr__(self):
         return "vector(%d)" % self.length
 
 vector = _Vector
 
-
-class _Unit(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-unit = _Unit
-
-
-class _Ignore(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-ignore = _Ignore
-
-
-class _Unknown(object):
-    """Unknown type used when type is indeterminate"""
-    pass
-
-unknown = _Unknown
-
-
 # map types to their string identifier
 _primitive_type_to_str_table = {
-    #bool: "bool", TODO
-    #bytearray: "bytearray", TODO
-    #dict: "dict", TODO
-    float32: "float32",
     float64: "float64",
     int32: "int32",
     int64: "int64",
-    #list: "list", TODO
     unicode: "unicode",
-    ignore: "ignore",
-    datetime: "datetime",
+    datetime: "datetime"
 }
 
 # map the pyspark sql type to the primitive data type
@@ -195,7 +172,7 @@ _data_type_to_pyspark_type_table = {
 }
 
 # build reverse map string -> type
-_primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()])
+_primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()]+[("float32", float32)])
 
 _primitive_alias_type_to_type_table = {
     float: float64,
@@ -237,7 +214,7 @@ def ms_to_datetime_str(ms):
 
 def datetime_constructor(value):
     """Creates special constructor for datetime parsing.  Returns the number of ms since epoch."""
-    if dtypes.value_is_string(value):
+    if isinstance(value, basestring):
         return datetime_to_ms(datetime_parser.parse(value))
     elif isinstance(value, long) or isinstance(value, int):
         return value
@@ -277,48 +254,8 @@ class _DataTypes(object):
             return False
 
     def __repr__(self):
-        aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
+        aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, data_type.__name__) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
         return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
-
-    @staticmethod
-    def value_is_string(value):
-        """get bool indication that value is a string, whether str or unicode"""
-        return isinstance(value, basestring)
-
-    @staticmethod
-    def value_is_missing_value(value):
-        return value is None
-
-    @staticmethod
-    def get_primitive_data_types():
-        return _primitive_type_to_str_table.keys()
-
-    @staticmethod
-    def to_string(data_type):
-        """
-        Returns the string representation of the given type
-
-        Parameters
-        ----------
-        data_type : type
-            valid data type; if invalid, a ValueError is raised
-
-        Returns
-        -------
-        result : str
-            string representation
-
-        Examples
-        --------
-        >>> dtypes.to_string(float32)
-        'float32'
-        """
-        valid_data_type = _DataTypes.get_from_type(data_type)
-        try:
-            return _primitive_type_to_str_table[valid_data_type]
-        except KeyError:
-            # complex data types should use their repr
-            return repr(valid_data_type)
 
     @staticmethod
     def get_from_string(data_type_str):
@@ -366,18 +303,6 @@ class _DataTypes(object):
             return False
 
     @staticmethod
-    def is_primitive_alias_type(data_type):
-        return data_type in _primitive_alias_type_to_type_table
-
-    @staticmethod
-    def is_int(data_type):
-        return data_type in [int, int32, int64]
-
-    @staticmethod
-    def is_float(data_type):
-        return data_type in [float, float32, float64]
-
-    @staticmethod
     def get_from_type(data_type):
         """
         Returns the data type for the given type (often it will return the same type)
@@ -403,6 +328,10 @@ class _DataTypes(object):
         if _DataTypes.is_primitive_type(data_type) or _DataTypes.is_complex_type(data_type):
             return data_type
         raise ValueError("Unsupported type %s" % data_type)
+
+    @staticmethod
+    def is_primitive_alias_type(data_type):
+        return data_type in _primitive_alias_type_to_type_table
 
     @staticmethod
     def validate(data_type):
@@ -457,21 +386,16 @@ class _DataTypes(object):
         >>> dtypes.cast(np.inf, float32)
         None
         """
-        if _DataTypes.value_is_missing_value(value):  # Special handling for missing values
+        if value is None:  # Special handling for missing values
             return None
         elif _DataTypes.is_primitive_type(to_type) and type(value) is to_type:  # Optimization
             return value
         try:
             constructor = _DataTypes.get_constructor(to_type)
             result = constructor(value)
-            return None if _DataTypes.value_is_missing_value(result) else result
+            return result
         except Exception as e:
             raise ValueError(("Unable to cast to type %s\n" % to_type) + str(e))
-
-    @staticmethod
-    def datetime_from_iso(iso_string):
-        """create datetime object from ISO 8601 string"""
-        return datetime_parser.parse(iso_string)
 
     @staticmethod
     def get_primitive_type_from_pyspark_type(pyspark_type):

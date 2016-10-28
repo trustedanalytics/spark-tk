@@ -99,7 +99,7 @@ object ScoringModelUtils {
         val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
         var jarFileList = x.jarsInSearchPath.values.toList
 
-        if(marSavePath.startsWith("hdfs")) {
+        if (marSavePath.startsWith("hdfs")) {
           val modelFile = Files.createTempDirectory("localModel")
           val localModelPath = new org.apache.hadoop.fs.Path(modelFile.toString)
           val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(modelFile.toString), new Configuration())

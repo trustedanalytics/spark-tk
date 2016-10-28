@@ -515,6 +515,8 @@ object DataTypes {
       .toMap ++
       Map("str" -> string,
         "unicode" -> string,
+        "long" -> int64,
+        "float" -> float64,
         "int" -> int32,
         "datetime" -> datetime)
 
@@ -552,7 +554,9 @@ object DataTypes {
     s match {
       case vectorPattern(length) => vector(length.toLong)
       case "vector" => DataTypes.string
+      case "_Vector" => DataTypes.string
       case "matrix" => DataTypes.matrix
+      case "_Matrix" => DataTypes.matrix
       case _ => throw new IllegalArgumentException(s"Invalid datatype: '$s'")
     }
   }
@@ -605,24 +609,6 @@ object DataTypes {
       value.getClass.getName
     }
   }
-
-  //  @deprecated // Added deprecation to note this function is flawed; need a more sophisticated type sniffer (if even possible), especially as more types are added, like datetime, vector, lists, etc. which may have the same underlying raw values --blbarker 9/4/15
-  //  def dataTypeOfValue(value: Any): DataType = {
-  //    val matchesPrimitives = supportedPrimitiveTypes.filter { case (name: String, dataType: DataType) => dataType.isType(value) }.toList
-  //    if (matchesPrimitives.nonEmpty) {
-  //      if (matchesPrimitives.length > 1) {
-  //        // this would happen with null
-  //        logger.warn(s"$value matched more than one type: $matchesPrimitives")
-  //      }
-  //      matchesPrimitives.head._2
-  //    }
-  //    else {
-  //      // Check complex types
-  //      Try {
-  //        vector(vector.parse(value).get.length)
-  //      }.getOrElse(throw new IllegalArgumentException("No matching data type found for value: " + value))
-  //    }
-  //  }
 
   /**
    * Convert any type to any other type.

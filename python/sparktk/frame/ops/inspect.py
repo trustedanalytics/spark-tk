@@ -365,7 +365,7 @@ class RowsInspection(object):
 
 def _get_header_entry(name, data_type, with_type):
     if with_type:
-        return "%s:%s" % (name, dtypes.dtypes.to_string(data_type))
+        return "%s:%s" % (name, data_type.__name__)
     return name
 
 

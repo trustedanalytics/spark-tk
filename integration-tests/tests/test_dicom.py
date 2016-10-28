@@ -132,6 +132,8 @@ def test_matrix_using_frame_create_with_list(tc):
     frame._scala
 
     scala_matrix=frame.take(1)[0][1]
+    print scala_matrix
+    print frame.inspect()
     assert((np_ndarray == scala_matrix).all() == True)
 
     frame.add_columns(lambda row: row[1]*2, ('new_col', dtypes.matrix))
@@ -161,21 +163,3 @@ def test_matrix_using_frame_create_with_ndarray(tc):
     frame._python
     assert(frame._is_python == True)
     assert(frame.count(), 1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
