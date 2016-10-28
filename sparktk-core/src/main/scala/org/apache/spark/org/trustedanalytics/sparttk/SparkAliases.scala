@@ -22,16 +22,10 @@ import org.apache.spark.api.java.{ JavaUtils => SparkJavaUtils }
 
 import org.apache.spark.mllib.api.python.{ SerDe => SparkMLLibSerDe }
 
-object SparkAliases {
+object SparkAliases extends Serializable {
 
   val SerDeUtil = SparkSerDeUtil
-
-  lazy val MLLibSerDe = getSparkMLLibSerDe
-
-  def getSparkMLLibSerDe = {
-    SparkMLLibSerDe
-    SparkMLLibSerDe.initialize()
-  }
+  val MLLibSerDe = SparkMLLibSerDe
 
   type AutoBatchedPickler = SerDeUtil.AutoBatchedPickler
   type BoundedPriorityQueue[A] = SparkBoundedPriorityQueue[A]
