@@ -14,3 +14,12 @@ They are:
 - run_coverage.sh - runs the test coverage. Currently needed because of failings in the automation suite, may be removed in the future
 
 The tests use the `requirements.txt` files to list any required python code.
+
+# To Run
+
+Move the scoring engine package and the spark-tk package to the top level of this
+repository. Run the scripts in order (replacing `run_tests.sh` with `run_coverge.sh` if you
+wish to see the code coverage).
+
+Code coverage is in the `pytest` folder if run (an HTML report will be generated)
+
