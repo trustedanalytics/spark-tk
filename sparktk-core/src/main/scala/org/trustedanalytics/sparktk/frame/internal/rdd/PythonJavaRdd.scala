@@ -51,6 +51,7 @@ object PythonJavaRdd {
   }
 
   private def pythonToJava(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Array[Any]] = {
+    // calling SparkAliases.MLLibSerDe, internally registers DenseVectorPickler, DenseMatrixPickler, SparseMatrixPickler, SparseVectorPickler for serialization purpose.
     val j = SparkAliases.MLLibSerDe.pythonToJava(jrdd, batched = true)
     toJavaArrayAnyRdd(j)
   }

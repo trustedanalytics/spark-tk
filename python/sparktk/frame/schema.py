@@ -143,7 +143,6 @@ def type_coercer_pymllib(schema):
     To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
     """
     def decorator(row):
-        from pyspark.mllib.linalg import DenseMatrix
         for i in xrange(len(schema)):
             if type(schema[i][1]) == _Matrix:
                 shape = row[i].shape
