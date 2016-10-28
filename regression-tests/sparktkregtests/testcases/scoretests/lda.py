@@ -20,7 +20,6 @@ import unittest
 import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
-from ConfigParser import SafeConfigParser
 
 
 class LDAModelTest(sparktk_test.SparkTKTestCase):
@@ -34,11 +33,6 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
                   ('count', int),
                   ('topic', str)]
         self.lda_frame = self.context.frame.import_csv(self.get_file("lda8.csv"), schema=schema)
-        self.config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
-        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Test lda model scoring"""
@@ -54,7 +48,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         res = lda_model.predict(test_phrase)["topics_given_doc"]
 
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             result = scorer.score([{"paper":test_phrase}]).json()
             for i, j in zip(res, result[u"data"][0]["topics_given_doc"]):
                 self.assertAlmostEqual(i, j)

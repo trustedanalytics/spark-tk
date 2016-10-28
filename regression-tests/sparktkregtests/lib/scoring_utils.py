@@ -22,16 +22,22 @@ import time
 import signal
 import os
 import config
-
+from ConfigParser import SafeConfigParser
 
 class scorer(object):
 
-    def __init__(self, model_path, port, host=config.scoring_engine_host):
+    def __init__(self, model_path, port_id, host=config.scoring_engine_host):
         """Set up the server location, port and model file"""
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
-        self.port = str(port)
+        #set port
+        config = SafeConfigParser()
+        filepath = os.path.abspath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "port.ini"))
+        config.read(filepath)
+        self.port = config.get('port', port_id)
         self.scoring_process = None
 
     def __enter__(self):

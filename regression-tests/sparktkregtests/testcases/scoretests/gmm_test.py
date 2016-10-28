@@ -37,7 +37,6 @@ import unittest
 import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
-from ConfigParser import SafeConfigParser
 
 
 class GMM(sparktk_test.SparkTKTestCase):
@@ -48,11 +47,6 @@ class GMM(sparktk_test.SparkTKTestCase):
         data_file = self.get_file("gmm_data.csv")
         self.frame = self.context.frame.import_csv(
             data_file, schema=[("x1", float), ("x2", float)])
-        self.config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
-        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Test publishing a gmm model"""
@@ -71,7 +65,7 @@ class GMM(sparktk_test.SparkTKTestCase):
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             for i, row in test_rows.iterrows():
                 res = scorer.score(
                     [dict(zip(["x1", "x2"], list(row[0:2])))])

@@ -19,7 +19,6 @@ import unittest
 import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
-from ConfigParser import SafeConfigParser
 
 
 class PrincipalComponent(sparktk_test.SparkTKTestCase):
@@ -38,12 +37,6 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
                   ("X10", int)]
         pca_traindata = self.get_file("pcadata.csv")
         self.frame = self.context.frame.import_csv(pca_traindata, schema=schema)
-        self.config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
-
-        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Test pca scoring"""
@@ -57,7 +50,7 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             baseline = model.predict(self.frame, mean_centered=False)
             testvals = baseline.to_pandas(50)
 

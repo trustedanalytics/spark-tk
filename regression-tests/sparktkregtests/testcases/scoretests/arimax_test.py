@@ -21,7 +21,6 @@ import time
 import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
-from ConfigParser import SafeConfigParser
 
 class ArimaxTest(sparktk_test.SparkTKTestCase):
     def setUp(self):
@@ -38,13 +37,6 @@ class ArimaxTest(sparktk_test.SparkTKTestCase):
         self.ts_column ="Sales"
         self.x_columns = ["AdBudget", "GDP"]
 
-        self.config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
- 
-        self.config.read(filepath)
-
     def test_arima_scoring(self):
         """Tests standard usage of arima."""
         timeseries_column = self.train_frame.take(n=self.train_frame.count(), columns=self.ts_column)
@@ -55,7 +47,7 @@ class ArimaxTest(sparktk_test.SparkTKTestCase):
         prediction = predict[:99]
         model_path = output.export_to_mar(self.get_export_file(self.get_name("arima")))
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             r = scorer.score([{"future":0, "timeseries":timeseries_data}])
             scored =r.json()["data"][0]["predicted_values"]
             self.assertEqual(scored, predict)
@@ -74,7 +66,7 @@ class ArimaxTest(sparktk_test.SparkTKTestCase):
         model_path = output.export_to_mar(self.get_export_file(self.get_name("arx")))
 
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             r = scorer.score([{"y":y,"x_values":x}])
             scored =r.json()["data"][0]["score"]
             self.assertEqual(scored, expected_score)
@@ -93,7 +85,7 @@ class ArimaxTest(sparktk_test.SparkTKTestCase):
         model_path = output.export_to_mar(self.get_export_file(self.get_name("arimax")))
 
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             r = scorer.score([{"y":y,"x_values":x}])
             scored =r.json()["data"][0]["score"]
             self.assertEqual(scored, expected_score)
@@ -112,7 +104,7 @@ class ArimaxTest(sparktk_test.SparkTKTestCase):
         model_path = output.export_to_mar(self.get_export_file(self.get_name("max")))
 
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             r = scorer.score([{"y":y,"x_values":x}])
             scored =r.json()["data"][0]["score"]
             self.assertEqual(scored, expected_score)

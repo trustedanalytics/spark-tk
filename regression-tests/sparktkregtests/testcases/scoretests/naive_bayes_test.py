@@ -20,7 +20,6 @@ import unittest
 import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
-from ConfigParser import SafeConfigParser
 
 
 class NaiveBayes(sparktk_test.SparkTKTestCase):
@@ -35,11 +34,6 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
                   ("f2", int),
                   ("f3", int)]
         self.frame = self.context.frame.import_csv(dataset, schema=schema)
-        self.config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
-        self.config.read(filepath)
 
     def test_model_scoring(self):
         """Test training intializes theta, pi and labels"""
@@ -51,7 +45,7 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         file_name = self.get_name("naive_bayes")
         model_path = model.export_to_mar(self.get_export_file(file_name))
         with scoring_utils.scorer(
-                model_path, self.config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             for _, i in analysis.iterrows():
                 r = scorer.score(
                     [dict(zip(['f1', 'f2', 'f3'],

@@ -21,7 +21,6 @@ import time
 import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
-from ConfigParser import SafeConfigParser
 
 
 class KMeansClustering(sparktk_test.SparkTKTestCase):
@@ -40,12 +39,12 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
             self.get_file("kmeans_train.csv"), schema=schema)
         self.frame_test = self.context.frame.import_csv(
             self.get_file("kmeans_test.csv"), schema=schema)
-        self.config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
+        #self.config = SafeConfigParser()
+        #filepath = os.path.abspath(os.path.join(
+        #    os.path.dirname(os.path.realpath(__file__)),
+        #    "..", "..", "lib", "port.ini"))
 
-        self.config.read(filepath)
+        #self.config.read(filepath)
 
     def test_model_scoring(self):
         """Tests standard usage of the kmeans cluster algorithm."""
@@ -57,7 +56,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
         result = kmodel.export_to_mar(self.get_export_file(self.get_name("kmeans")))
 
         with scoring_utils.scorer(
-                result, self.config.get('port', self.id())) as scorer:
+                result, self.id()) as scorer:
             for _, i in test_rows.iterrows():
                 res = scorer.score(
                     [dict(zip(["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"],

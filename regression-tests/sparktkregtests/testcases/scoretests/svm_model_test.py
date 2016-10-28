@@ -20,7 +20,6 @@ import unittest
 import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
-from ConfigParser import SafeConfigParser
 
 
 class SvmScoreTest(sparktk_test.SparkTKTestCase):
@@ -85,16 +84,8 @@ class SvmScoreTest(sparktk_test.SparkTKTestCase):
 
         test_rows = training_frame.to_pandas(training_frame.count())
         
-        #read port number from port.ini
-        config = SafeConfigParser()
-        filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "..", "lib", "port.ini"))
-
-        config.read(filepath)
-
         with scoring_utils.scorer(
-                model_path, config.get('port', self.id())) as scorer:
+                model_path, self.id()) as scorer:
             for _, i in test_rows.iterrows():
                 res = scorer.score([dict(zip(["x", "y"], list(i[0:2])))])
                 self.assertEqual(i[2], res.json()["data"][0]['Prediction'])
