@@ -108,7 +108,7 @@ class _Vector(object):
                 array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
             except:
                 # also support json or comma-sep string
-                if dtypes.value_is_string(value):
+                if isinstance(value, basestring):
                     try:
                         value = json.loads(value)
                     except:
@@ -214,7 +214,7 @@ def ms_to_datetime_str(ms):
 
 def datetime_constructor(value):
     """Creates special constructor for datetime parsing.  Returns the number of ms since epoch."""
-    if dtypes.value_is_string(value):
+    if isinstance(value, basestring):
         return datetime_to_ms(datetime_parser.parse(value))
     elif isinstance(value, long) or isinstance(value, int):
         return value
@@ -256,19 +256,6 @@ class _DataTypes(object):
     def __repr__(self):
         aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
         return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
-
-    @staticmethod
-    def value_is_string(value):
-        """get bool indication that value is a string, whether str or unicode"""
-        return isinstance(value, basestring)
-
-    @staticmethod
-    def value_is_missing_value(value):
-        return value is None
-
-    @staticmethod
-    def get_primitive_data_types():
-        return _primitive_type_to_str_table.keys()
 
     @staticmethod
     def to_string(data_type):
@@ -426,14 +413,14 @@ class _DataTypes(object):
         >>> dtypes.cast(np.inf, float32)
         None
         """
-        if _DataTypes.value_is_missing_value(value):  # Special handling for missing values
+        if value is None:  # Special handling for missing values
             return None
         elif _DataTypes.is_primitive_type(to_type) and type(value) is to_type:  # Optimization
             return value
         try:
             constructor = _DataTypes.get_constructor(to_type)
             result = constructor(value)
-            return None if _DataTypes.value_is_missing_value(result) else result
+            return None
         except Exception as e:
             raise ValueError(("Unable to cast to type %s\n" % to_type) + str(e))
 
