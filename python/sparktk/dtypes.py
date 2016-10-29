@@ -420,7 +420,7 @@ class _DataTypes(object):
         try:
             constructor = _DataTypes.get_constructor(to_type)
             result = constructor(value)
-            return None
+            return result
         except Exception as e:
             raise ValueError(("Unable to cast to type %s\n" % to_type) + str(e))
 
