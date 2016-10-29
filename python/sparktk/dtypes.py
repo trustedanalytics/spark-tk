@@ -425,11 +425,6 @@ class _DataTypes(object):
             raise ValueError(("Unable to cast to type %s\n" % to_type) + str(e))
 
     @staticmethod
-    def datetime_from_iso(iso_string):
-        """create datetime object from ISO 8601 string"""
-        return datetime_parser.parse(iso_string)
-
-    @staticmethod
     def get_primitive_type_from_pyspark_type(pyspark_type):
         """
         Get the primitive type for the specified pyspark sql data type.
