@@ -130,7 +130,7 @@ def import_hbase(table_name, schema, start_tag=None, end_tag=None, tc=TkContext.
         raise ValueError("schema parameter must be a list, but is {0}.".format(type(table_name)))
     TkContext.validate(tc)
 
-    inner_lists=[tc._jutils.convert.to_scala_list([item[0], item[1], dtypes.to_string(item[2])]) for item in schema]
+    inner_lists=[tc._jutils.convert.to_scala_list([item[0], item[1], item[2].__name__]) for item in schema]
     scala_final_schema = tc.jutils.convert.to_scala_list(inner_lists)
 
     scala_frame = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.constructors.Import.importHbase(tc.jutils.get_scala_sc(),

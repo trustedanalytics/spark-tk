@@ -254,35 +254,8 @@ class _DataTypes(object):
             return False
 
     def __repr__(self):
-        aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
+        aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, data_type.__name__) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
         return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
-
-    @staticmethod
-    def to_string(data_type):
-        """
-        Returns the string representation of the given type
-
-        Parameters
-        ----------
-        data_type : type
-            valid data type; if invalid, a ValueError is raised
-
-        Returns
-        -------
-        result : str
-            string representation
-
-        Examples
-        --------
-        >>> dtypes.to_string(float32)
-        'float32'
-        """
-        valid_data_type = _DataTypes.get_from_type(data_type)
-        try:
-            return _primitive_type_to_str_table[valid_data_type]
-        except KeyError:
-            # complex data types should use their repr
-            return repr(valid_data_type)
 
     @staticmethod
     def get_from_string(data_type_str):
