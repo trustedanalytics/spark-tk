@@ -146,9 +146,9 @@ def type_coercer_pymllib(schema):
         for i in xrange(len(schema)):
             if type(schema[i][1]) == _Matrix:
                 shape = row[i].shape
-                arr = row[i].transpose().flatten()
                 # By default Mllib DenseMatrix constructs column-major matrix.
-                # Setting isTranposed=True, will construct row-major DenseMatrix
+                # So Transposing ndarray to maintain consistency
+                arr = row[i].transpose().flatten()
                 row[i] = DenseMatrix(shape[0], shape[1], arr)
         return row
     return decorator

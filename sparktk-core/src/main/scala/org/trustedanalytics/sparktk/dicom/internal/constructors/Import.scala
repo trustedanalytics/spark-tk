@@ -62,15 +62,6 @@ object Import extends Serializable {
 
     val data = Array.ofDim[Double](rows, cols)
 
-    //Filling data in column-wise order because MLLib DenseMatrix constructs matrix as column major.
-    /*Ex:Column-major dense matrix. The entry values are stored in a single array of doubles with columns listed in sequence. For example, the following matrix
-
-    1.0 2.0
-    3.0 4.0
-    5.0 6.0
-
-    is stored as [1.0, 3.0, 5.0, 2.0, 4.0, 6.0]*/
-
     for (i <- 0 until rows) {
       for (j <- 0 until cols) {
         data(i)(j) = raster.getSample(i, j, 0)
