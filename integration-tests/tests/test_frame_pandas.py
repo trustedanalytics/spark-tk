@@ -39,7 +39,7 @@ def test_frame_to_pandas_to_frame(tc):
     assert(len(frame1.schema) == len(frame2.schema))
     for col1, col2 in zip(frame1.schema, frame2.schema):
         assert(col1[0] == col2[0])
-        assert(dtypes.dtypes.get_from_type(col1[1]) == dtypes.dtypes.get_from_type(col2[1]))
+        assert(col1[1] == col2[1])
     assert(frame2.take(frame2.count()) == frame1.take(frame1.count()))
 
 

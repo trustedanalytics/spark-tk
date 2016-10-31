@@ -300,40 +300,13 @@ class _DataTypes(object):
             return False
 
     @staticmethod
-    def get_from_type(data_type):
-        """
-        Returns the data type for the given type (often it will return the same type)
-
-        Parameters
-        ----------
-        data_type : type
-            valid data type or type that may be aliased for a valid data type;
-            if invalid, a ValueError is raised
-
-        Returns
-        -------
-        result : type
-            valid data type for given type
-
-        Examples
-        --------
-        >>> dtypes.get_from_type(int)
-        numpy.int32
-        """
-        if _DataTypes.is_primitive_alias_type(data_type):
-            return _primitive_alias_type_to_type_table[data_type]
-        if _DataTypes.is_primitive_type(data_type) or _DataTypes.is_complex_type(data_type):
-            return data_type
-        raise ValueError("Unsupported type %s" % data_type)
-
-    @staticmethod
     def is_primitive_alias_type(data_type):
         return data_type in _primitive_alias_type_to_type_table
 
     @staticmethod
     def validate(data_type):
         """Raises a ValueError if data_type is not a valid data_type"""
-        _DataTypes.get_from_type(data_type)
+        data_type
 
     @staticmethod
     def get_constructor(to_type):
