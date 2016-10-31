@@ -45,7 +45,7 @@ class DicomCovarianceMatrixTest(sparktk_test.SparkTKTestCase):
             actual_cov = row['CovarianceMatrix_imagematrix']
 
             #expected ouput using numpy's covariance method
-            expected_cov = cov(row['imagematrix'], rowvar=False)
+            expected_cov = cov(row['imagematrix'])
             
             assert_almost_equal(actual_cov, expected_cov,
                                 decimal=4, err_msg="cov incorrect")
