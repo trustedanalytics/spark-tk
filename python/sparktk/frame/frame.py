@@ -253,17 +253,23 @@ class Frame(object):
     @property
     def _is_scala(self):
         """answers whether the current frame is backed by a Scala Frame"""
-        return self._is_scala_frame(self._frame)
+        answer = self._is_scala_frame(self._frame)
+        logger.info("frame._is_scala reference: %s" % answer)
+        return answer
 
     @property
     def _is_python(self):
         """answers whether the current frame is backed by a _PythonFrame"""
-        return not self._is_scala
+        answer =  not self._is_scala_frame(self._frame)
+        logger.info("frame._is_python reference: %s" % answer)
+        return answer
 
     @property
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
+
         if self._is_python:
+            logger.info("frame._scala reference: converting frame backend from Python to Scala")
             # If schema contains matrix dataype,
             # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
             self._frame.rdd = schema_is_coercible(self._frame.rdd, list(self._frame.schema), True)
@@ -271,12 +277,15 @@ class Frame(object):
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
             self._frame = self._create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+        else:
+            logger.info("frame._scala reference: frame already has a scala backend")
         return self._frame
 
     @property
     def _python(self):
         """gets frame backend as _PythonFrame, causes conversion if it is current not"""
         if self._is_scala:
+            logger.info("frame._python reference: converting frame backend from Scala to Python")
             # convert Scala Frame to a PythonFrame"""
             scala_schema = self._frame.schema()
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
@@ -285,6 +294,8 @@ class Frame(object):
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
             map_python_rdd = schema_is_coercible(python_rdd, list(python_schema))
             self._frame = PythonFrame(map_python_rdd, python_schema)
+        else:
+            logger.info("frame._python reference: frame already has a python backend")
         return self._frame
 
     ##########################################################################
