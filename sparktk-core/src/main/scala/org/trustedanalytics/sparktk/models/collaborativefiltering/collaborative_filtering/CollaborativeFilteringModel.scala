@@ -335,16 +335,22 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
    * @return Returns an array of recommendations (as array of csv-strings)
    */
   def recommend(entityId: Int, numberOfRecommendations: Int = 1, recommendProducts: Boolean = true): Seq[Map[String, AnyVal]] = {
+    require(numberOfRecommendations > 0, "numberOfRecommendations number be greater than 0.")
+
     val ratingsArray: Array[Rating] = if (recommendProducts) {
+      val userCount = sparkModel.userFeatures.lookup(entityId).length
+      require(userCount > 0, s"No users found with id = ${entityId}.")
       sparkModel.recommendProducts(entityId, numberOfRecommendations)
     }
     else {
+      val productCount = sparkModel.productFeatures.lookup(entityId).length
+      require(productCount > 0, s"No products found with id = ${entityId}.")
       sparkModel.recommendUsers(entityId, numberOfRecommendations)
     }
     formatReturn(ratingsArray)
   }
 
-  //helper function fro recommend
+  //helper function for recommend
   private def formatReturn(alsRecommendations: Array[Rating]): Seq[Map[String, AnyVal]] = {
     val recommendationAsList =
       for {
