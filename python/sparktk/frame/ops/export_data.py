@@ -32,11 +32,8 @@ def export_to_csv(self, file_name, separator=','):
         >>> frame = tc.frame.create([[1, 2, 3], [4, 5, 6]])
         >>> frame.export_to_csv("sandbox/export_example.csv")
         >>> frame2 = tc.frame.import_csv("sandbox/export_example.csv")
-        >>> frame2.inspect()
-        [#]  C0  C1  C2
-        ===============
-        [0]   1   2   3
-        [1]   4   5   6
+        >>> sorted(frame.take(frame.count())) == sorted(frame2.take(frame2.count()))
+        True
 
     """
     self._scala.exportToCsv(file_name, separator)
