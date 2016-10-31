@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-"""tests dicom.drop functionality"""
+"""tests dicom.drop by tag functionality"""
 
 import unittest
 from sparktkregtests.lib import sparktk_test

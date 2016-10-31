@@ -73,7 +73,7 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         self._compare_dicom_with_expected_result(expected_result)
 
     def test_drop_zero_matching_records(self):
-        """test drop with drop function returns none"""
+        """test drop with drop function which drops 0 records"""
         # we give dicom a drop function which drops by
         # key-value and give it a key-value pair which will
         # return 0 records, so dicom should not drop anything
@@ -82,14 +82,14 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(3, self.dicom.metadata.count())
 
     def test_drop_everything(self):
-        """test drop with drop function drops nothing"""
+        """test drop with drop function which drops all records"""
         # this drop function will return all records
         self.dicom.drop_rows(self._drop_everything())
         # assert all items were dropped
         self.assertEqual(self.dicom.metadata.count(), 0)
 
     def test_nothing(self):
-        """test drop function drop everything"""
+        """test drop function drops nothing"""
         # drop_everything drop out all of the records
         self.dicom.drop_rows(self._drop_nothing())
         # assert nothing was dropped

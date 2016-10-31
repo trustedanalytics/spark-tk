@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-"""tests dicom.drop functionality"""
+"""tests dicom.drop by keyword functionality"""
 
 import unittest
 from sparktkregtests.lib import sparktk_test
@@ -33,6 +33,7 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         self.dicom = self.context.dicom.import_dcm(self.dataset)
         self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
         self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
+        # query for the text value of that keyword from xml
         self.query = ".//DicomAttribute[@keyword='KEYWORD']/Value/text()"
         self.count = self.dicom.metadata.count()
 
