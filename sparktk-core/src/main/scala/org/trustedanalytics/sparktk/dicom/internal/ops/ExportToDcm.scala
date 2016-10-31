@@ -72,7 +72,7 @@ object ExportToDcm extends Serializable {
    * @param dcmAttributes DicomAttributes
    * @param path Local/HDFS path
    */
-  def writeToHDFS(dcmAttributes: Attributes, path: String): Unit = {
+  def writeToHDFS(id: String, dcmAttributes: Attributes, path: String): Unit = {
     val byteOutputStream = new ByteArrayOutputStream()
     //UID.ExplicitVRLittleEndian will enforce to include datatypes(also known as VR-Value Representation) for Attributes in Dicom File
     val dicomOutputStream = new DicomOutputStream(byteOutputStream, UID.ExplicitVRLittleEndian)
@@ -81,7 +81,7 @@ object ExportToDcm extends Serializable {
     //bytes to write to hdfs
     val bytes = byteOutputStream.toByteArray
 
-    val fileName = s"${java.lang.System.currentTimeMillis()}.dcm"
+    val fileName = s"$id.dcm"
     val filePath = StringUtils.join(path, "/", fileName)
 
     val hdfsPath = new Path(filePath)
@@ -100,6 +100,7 @@ object ExportToDcm extends Serializable {
     zipMetadataPixeldata.foreach {
       case (metadata, pixeldata) => {
 
+        val id = metadata(0).toString
         //Access the metadata column from metadatardd row
         val metadataStr = metadata(1).toString
         //Access the pixeldata column from pixeldataRdd row
@@ -116,7 +117,7 @@ object ExportToDcm extends Serializable {
         dcmAttributes.setInt(Tag.Columns, VR.US, pixeldataDM.numCols)
 
         //write updated DicomAttributes to Local/HDFS as .dcm files
-        writeToHDFS(dcmAttributes, path)
+        writeToHDFS(id, dcmAttributes, path)
       }
     }
 
