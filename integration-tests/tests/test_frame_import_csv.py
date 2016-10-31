@@ -34,7 +34,6 @@ def test_import_csv(tc):
     assert(len(f.schema) == 5)
     assert(f._is_scala)
 
-
 def test_import_csv_with_custom_schema(tc):
     path = "../datasets/cities.csv"
     try:
@@ -60,7 +59,6 @@ def test_import_csv_with_custom_schema_parse_error(tc):
     assert(rows[2] == ["blue",100, None])         # bad float
     assert(rows[3] == ["purple",None, 3.33333])   # bad integer
 
-
 def test_import_csv_with_no_header(tc):
     path = "../datasets/noheader.csv"
     # Test with no header and inferred schema
@@ -69,6 +67,14 @@ def test_import_csv_with_no_header(tc):
     assert(len(f.schema) == 4)
     assert(f.schema == [('C0', str), ('C1', int), ('C2', float), ('C3', dtypes.datetime)])
 
+def test_import_csv_with_column_names(tc):
+    path = "../datasets/noheader.csv"
+    # Test with no header and inferred schema
+    column_names = ["a","b","c","d"]
+    f = tc.frame.import_csv(path, header=False, schema=column_names)
+    assert(f.count() == 10)
+    assert(len(f.schema) == 4)
+    assert(f.schema == [('a', str), ('b', int), ('c', float), ('d', dtypes.datetime)])
 
 def test_import_csv_with_invalid_header(tc):
     path = "../datasets/cities.csv"

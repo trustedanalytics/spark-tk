@@ -63,13 +63,15 @@ object Import {
    * @param delimiter A string which indicates the separation of data fields.  This is usually a single
    *                  character and could be a non-visible character, such as a tab. The default delimiter
    *                  is a comma (,).
-   * @param header Boolean value indicating if the first line of the file will be used to name columns,
-   *               and not be included in the data.  The default value is false.
-   * @param schema Optionally specify the schema for the dataset. If the value from the csv file cannot be
-   *               converted to the data type specified by the schema (for example, if the csv file has a string,
-   *               and the schema specifies an int), the value will show up as missing (None) in the frame.  If a
-   *               schema is not defined, the schema will be automatically inferred based on the type of data found
-   *               in the file (this requires an extra pass over the data).
+   * @param header Boolean value indicating if the first line of the file will be used to name columns (unless a schema
+   *               is provided), and not be included in the data.  The default value is false.
+   * @param schema Optionally specify the schema or column names for the dataset. If a schema with data types is
+   *               provided, and the value from the csv file cannot be converted to the data type specified by the
+   *               schema (for example, if the csv file has a string, and the schema specifies an int), the value will
+   *               show up as missing (None) in the frame.  If just column names or no schema is defined, the column
+   *               types will be automatically inferred based on the data found in the file (this requires an extra pass
+   *               over the data).  If column names are specified, it will override the header values.  If there is no
+   *               header, and no column names are specified, the columns will be named generically ("C0", C1", "C2", etc).
    * @param dateTimeFormat String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat
    * specified at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
    * @return Frame with data from the csv file
@@ -78,37 +80,72 @@ object Import {
                 path: String,
                 delimiter: String = ",",
                 header: Boolean = false,
-                schema: Option[Schema] = None,
+                schema: Option[Either[Schema, List[String]]] = None,
                 dateTimeFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSX"): Frame = {
+    require(StringUtils.isNotEmpty(path), "path should not be null or empty.")
+    require(StringUtils.isNotEmpty(delimiter), "delimiter should not be null or empty.")
 
     // Load from csv
     import org.apache.spark.sql.SQLContext
     val sqlContext = new SQLContext(sc)
     val headerStr = header.toString.toLowerCase
-    val inferSchemaStr = (!schema.isDefined).toString.toLowerCase
+    var overrideColumnNames = List[String]()
+    var fullSchema: Option[Schema] = None
+
+    val inferSchema: Boolean = if (schema.isDefined) {
+      schema.get match {
+        case Left(s) =>
+          require(s != null, "schema must not be null.")
+          fullSchema = Some(s)
+          false
+        case Right(c) =>
+          require(c != null && c.length > 0, "schema column name list must not be null or empty.")
+          overrideColumnNames = c
+          true
+      }
+    }
+    else true
 
     var dfr = sqlContext.read.format("com.databricks.spark.csv.org.trustedanalytics.sparktk")
       .option("header", headerStr)
-      .option("inferSchema", inferSchemaStr)
+      .option("inferSchema", inferSchema.toString.toLowerCase)
       .option("delimiter", delimiter)
       .option("dateFormat", dateTimeFormat)
 
-    if (schema.isDefined) {
-      dfr = dfr.schema(StructType(schema.get.columns.map(column =>
+    if (fullSchema.isDefined) {
+      dfr = dfr.schema(StructType(fullSchema.get.columns.map(column =>
         StructField(column.name, FrameRdd.schemaDataTypeToSqlDataType(column.dataType), true))))
     }
 
     val df = dfr.load(path)
     val frameRdd = FrameRdd.toFrameRdd(df)
 
-    if (schema.isDefined) {
-      val numSpecifiedColumns = schema.get.columns.length
+    if (fullSchema.isDefined) {
+      val numSpecifiedColumns = fullSchema.get.columns.length
       val numColumnsFromLoad = frameRdd.frameSchema.columns.length
       if (numSpecifiedColumns != numColumnsFromLoad)
         throw new IllegalArgumentException("""The number of columns specified in the schema ($numSpecifiedColumns) does
                                            not match the number of columns found in the csv file ($numColumnsFromLoad).""")
     }
-    val frameSchema = if (schema.isDefined) schema.get else frameRdd.frameSchema
+
+    val frameSchema = if (fullSchema.isDefined) {
+      fullSchema.get
+    }
+    else {
+      val numFrameColumns = frameRdd.frameSchema.columnNames.length
+      var tempSchema = frameRdd.frameSchema
+      // Override column names
+      for ((newName, i) <- overrideColumnNames.zipWithIndex) {
+        if (i < numFrameColumns) {
+          println(s"rename ${frameRdd.schema.columnNames(i)} to ${newName}")
+          tempSchema = tempSchema.renameColumn(tempSchema.columnNames(i), newName)
+        }
+      }
+
+      tempSchema
+    }
+
+    println(s"Column names:  ${frameSchema.columnNames}")
 
     new Frame(frameRdd, frameSchema)
   }
