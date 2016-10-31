@@ -199,18 +199,11 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     "Import csv with empty list of column name overrides" in {
       val path = TEST_DATA + "/cities.csv"
       val columnNames = List[String]()
-      val frame = Import.importCsv(sparkContext, path, delimiter = "|", header = true, schema = Some(Right(columnNames)))
 
-      assert(frame.rdd.count == 20)
-      assert(frame.schema.columns.length == 6)
-
-      // no column name change
-      assert(frame.schema.columnDataType("rank") == DataTypes.int32)
-      assert(frame.schema.columnDataType("city") == DataTypes.string)
-      assert(frame.schema.columnDataType("population_2013") == DataTypes.int32)
-      assert(frame.schema.columnDataType("population_2010") == DataTypes.int32)
-      assert(frame.schema.columnDataType("change") == DataTypes.string)
-      assert(frame.schema.columnDataType("county") == DataTypes.string)
+      val ex = intercept[IllegalArgumentException] {
+        Import.importCsv(sparkContext, path, delimiter = "|", header = true, schema = Some(Right(columnNames)))
+      }
+      assert(ex.getMessage.contains("requirement failed: schema column name list must not be null or empty"))
     }
   }
 
