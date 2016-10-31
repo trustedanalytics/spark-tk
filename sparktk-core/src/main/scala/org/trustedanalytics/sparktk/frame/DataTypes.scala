@@ -516,7 +516,7 @@ object DataTypes {
       Map("str" -> string,
         "unicode" -> string,
         "long" -> int64,
-        "float" -> float32,
+        "float" -> float64,
         "int" -> int32,
         "datetime" -> datetime)
 
