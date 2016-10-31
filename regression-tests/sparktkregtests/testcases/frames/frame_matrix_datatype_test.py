@@ -31,8 +31,6 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         super(FrameMatrixDataTypeTest, self).setUp()
         self.dataset = [["A", [[1,2],[3,4]]], ["B", [[5,6],[7,8]]], ["C", [[9,10],[11,12],[13,14]]]]
         self.schema = [("C0", str), ("C1", matrix)]
-        self.frame = self.context.frame.create(self.dataset,
-                                               schema=self.schema)
 
     def test_frame_create_row_count(self):
         """ Trivial Frame creation. """
@@ -131,6 +129,25 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         # Convert the first 2 elements of the dataset to numpy array and get the fist column
         expected_result = [[numpy.array(item[1])[:,0]] for item in self.dataset[:2]]
         numpy.testing.assert_array_equal(obtained_result, expected_result) 
+
+    def test_covariance_matrix(self):
+        """Test the output of dicom_covariance_matrix"""
+        frame = self.context.frame.create(self.dataset, self.schema)
+        
+        frame.matrix_covariance_matrix("C1")
+
+        results = frame.to_pandas(frame.count())
+
+        #compare result
+        for i, row in results.iterrows():
+            actual_cov = row['CovarianceMatrix_C1']
+
+            #expected ouput using numpy's covariance method
+            expected_cov = numpy.cov(row['C1'])
+            
+            numpy.testing.assert_almost_equal(
+                actual_cov, expected_cov,
+                decimal=4, err_msg="cov incorrect")
 
     def test_matrix_svd(self):
         """ Test matrix svd operation on the frame"""
