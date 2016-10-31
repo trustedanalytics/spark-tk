@@ -138,16 +138,11 @@ vector = _Vector
 
 # map types to their string identifier
 _primitive_type_to_str_table = {
-    #bool: "bool", TODO
-    #bytearray: "bytearray", TODO
-    #dict: "dict", TODO
-    float32: "float32",
     float64: "float64",
     int32: "int32",
     int64: "int64",
-    #list: "list", TODO
     unicode: "unicode",
-    datetime: "datetime",
+    datetime: "datetime"
 }
 
 # map the pyspark sql type to the primitive data type
@@ -172,7 +167,7 @@ _data_type_to_pyspark_type_table = {
 }
 
 # build reverse map string -> type
-_primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()])
+_primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()]+[("float32", float32)])
 
 _primitive_alias_type_to_type_table = {
     float: float64,
@@ -278,6 +273,8 @@ class _DataTypes(object):
         unicode
         """
         try:
+            print _primitive_type_to_str_table
+            print _primitive_str_to_type_table
             return _primitive_str_to_type_table[data_type_str]
         except KeyError:
             try:
