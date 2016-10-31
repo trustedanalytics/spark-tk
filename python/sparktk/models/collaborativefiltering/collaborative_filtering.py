@@ -348,6 +348,10 @@ class CollaborativeFilteringModel(PropertiesObject):
         :param recommend_products: (bool) True - products for user; false - users for the product
         :return: Returns an array of recommendations (as array of csv-strings)
         """
+        require_type(int, entity_id, "entity_id")
+        require_type.non_negative_int(number_of_recommendations, "number_of_recommendations")
+        require_type(bool, recommend_products, "recommend_products")
+
         # returns scala list of scala map
         scala_list_of_scala_map = self._scala.recommend(entity_id, number_of_recommendations, recommend_products)
 
