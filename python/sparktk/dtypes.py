@@ -273,8 +273,6 @@ class _DataTypes(object):
         unicode
         """
         try:
-            print _primitive_type_to_str_table
-            print _primitive_str_to_type_table
             return _primitive_str_to_type_table[data_type_str]
         except KeyError:
             try:
