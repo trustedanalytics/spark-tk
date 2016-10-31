@@ -70,10 +70,6 @@ class _Matrix(object):
                 return np.array(value, dtype=np.float64)
         return constructor
 
-    @property
-    def is_complex_type(self):
-        return True
-
     @staticmethod
     def get_from_string(data_type_str):
         if _Matrix.re_pattern != data_type_str:
@@ -124,10 +120,6 @@ class _Vector(object):
                 raise ValueError("Could not construct vector in Python Client.  Expected vector of length %s, but received length %d" % (length, len(array)))
             return array
         return constructor
-
-    @property
-    def is_complex_type(self):
-        return True
 
     @staticmethod
     def get_from_string(data_type_str):
@@ -291,13 +283,6 @@ class _DataTypes(object):
     @staticmethod
     def is_primitive_type(data_type):
         return data_type in _primitive_type_to_str_table or data_type in _primitive_alias_type_to_type_table
-
-    @staticmethod
-    def is_complex_type(data_type):
-        try:
-            return data_type.is_complex_type
-        except AttributeError:
-            return False
 
     @staticmethod
     def is_primitive_alias_type(data_type):
