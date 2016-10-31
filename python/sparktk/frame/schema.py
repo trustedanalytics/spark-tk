@@ -44,7 +44,6 @@ def get_indices_for_selected_columns(schema, selected_columns):
 
 def schema_to_scala(sc, python_schema):
     list_of_list_of_str_schema = map(lambda t: [t[0], t[1].__name__], python_schema)  # convert dtypes to strings
-    print list_of_list_of_str_schema
     return jvm_scala_schema(sc).pythonToScala(list_of_list_of_str_schema)
 
 
