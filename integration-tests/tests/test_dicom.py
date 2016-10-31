@@ -161,21 +161,3 @@ def test_matrix_using_frame_create_with_ndarray(tc):
     frame._python
     assert(frame._is_python == True)
     assert(frame.count(), 1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

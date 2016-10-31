@@ -78,12 +78,14 @@ class _Matrix(object):
     def get_from_string(data_type_str):
         if _Matrix.re_pattern != data_type_str:
             raise "Invalid data type"
-        return _Matrix()
+        new_matrix = _Matrix()
+        new_matrix.__name__ = "matrix"
+        return new_matrix
 
     def __repr__(self):
         return "matrix"
 
-matrix = _Matrix()
+matrix = _Matrix
 
 class _Vector(object):
 
