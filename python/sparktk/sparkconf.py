@@ -314,7 +314,8 @@ def _parse_spark_conf(path):
     Parses the file found at the given path and returns a dict of spark conf.
 
     All values in the dict will be strings, regardless of the presence of quotations in the file; double quotes are
-    stripped from values.
+    stripped from values.  The '#' marks the beginning of a comment, which will be ignored, whether as a line, or
+    the tail end of a line.
 
     Parameters
     ----------
@@ -340,8 +341,13 @@ def _parse_spark_conf(path):
     conf = {}
     with open(path, 'r') as r:
         for line in r.readlines():
-            if line.strip():
-                k, v = line.split('=', 1)
+            comment_start_index = line.find('#')
+            text = line if comment_start_index < 0 else line[:comment_start_index]
+            if text.strip():
+                try:
+                    k, v = text.split('=', 1)
+                except ValueError:
+                    raise RuntimeError("spark conf file %s has a bad line; may be missing an '=': %s" % (path, line))
                 conf[k.strip()] = v.strip().strip('"')
     return conf
 

@@ -16,18 +16,17 @@
 #
 
 import unittest
+import os
 
-import sys; sys.path.insert(0, '/home/blbarker/dev/spark-tk/python' )
 from sparktk.sparkconf import _parse_spark_conf
 
 
 class TestParseSparkConf(unittest.TestCase):
 
-    def test_parse_spark_conf(self):
-        import os
+    def test_parse_spark_conf_good(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
-        conf = _parse_spark_conf(os.path.join(dir_path, 'sample-spark.conf'))
+        conf = _parse_spark_conf(os.path.join(dir_path, 'spark-pass.conf'))
 
         self.assertEqual(16, len(conf))
         self.assertEqual('false', conf['spark.shuffle.io.preferDirectBufs'])
@@ -36,7 +35,15 @@ class TestParseSparkConf(unittest.TestCase):
         self.assertEqual('2g', conf['spark.driver.maxResultSize'])
         self.assertEqual('384', conf['spark.yarn.executor.memoryOverhead'])
 
+    def test_parse_spark_conf_bad(self):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
 
+        try:
+            _parse_spark_conf(os.path.join(dir_path, 'spark-fail.conf'))
+        except RuntimeError as e:
+            self.assertTrue("may be missing an '='" in str(e))
+        else:
+            self.fail("Expected spark conf parser to fail on bad conf")
 
 
 if __name__ == '__main__':
