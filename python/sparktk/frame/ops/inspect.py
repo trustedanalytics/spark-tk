@@ -365,7 +365,7 @@ class RowsInspection(object):
 
 def _get_header_entry(name, data_type, with_type):
     if with_type:
-        return "%s:%s" % (name, dtypes.dtypes.to_string(data_type))
+        return "%s:%s" % (name, data_type.__name__)
     return name
 
 
@@ -373,13 +373,12 @@ def _get_header_entry_sizes(schema, with_types):
     return [len(_get_header_entry(name, data_type, with_types)) for name, data_type in schema]
 
 
-def is_type_float(t):
-    tpe = dtypes.dtypes.get_from_type(t)
-    return tpe is dtypes.float32 or tpe is dtypes.float64 or isinstance(t, dtypes.vector)
+def is_type_float(tpe):
+    return tpe is dtypes.float32 or tpe is dtypes.float64 or isinstance(tpe, dtypes.vector)
 
 
 def is_type_unicode(t):
-    return dtypes.dtypes.get_from_type(t) is unicode
+    return t is str or t is unicode
 
 
 def pad_left(s, target_len):

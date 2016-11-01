@@ -86,17 +86,6 @@ class Frame(object):
                 else:
                     # Schema is not a list or None
                     raise TypeError("Invalid schema type: %s.  Expected a list of tuples (str, type) with the column name and data type." % type(schema))
-                for item in schema:
-                    if not self._is_supported_datatype(item[1]):
-                        if inferred_schema:
-                            raise TypeError("The %s data type was found when inferring the schema, and it is not a "
-                                            "supported data type.  Instead, specify a schema that uses a supported data "
-                                            "type, and enable validate_schema so that the data is converted to the proper "
-                                            "data type.\n\nInferred schema: %s\n\nSupported data types: %s" %
-                                            (str(item[1]), str(schema), dtypes.dtypes))
-                        else:
-                            raise TypeError("Invalid schema.  %s is not a supported data type.\n\nSupported data types: %s" %
-                                            (str(item[1]), dtypes.dtypes))
 
                 source = tc.sc.parallelize(source)
             if schema and validate_schema:
@@ -106,6 +95,7 @@ class Frame(object):
                 logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
 
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
+
             map_source = schema_is_coercible(source, list(schema))
             self._frame = PythonFrame(map_source, schema)
 

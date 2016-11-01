@@ -15,23 +15,6 @@
 #  limitations under the License.
 #
 
-# vim: set encoding=utf-8
-
-#
-#  Copyright (c) 2015 Intel Corporation 
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-#
 
 import unittest
 import sparktk.frame.ops.inspect as ui
@@ -169,8 +152,8 @@ c=really really really really long'''
 ============='''
         self.assertEqual(expected, result)
         result = repr(ui.RowsInspection(r, s, offset=0, format_settings=ui.InspectSettings(wrap=5, width=80, with_types=True)))
-        expected = '''[##]  a:int32  b:unicode  c:unicode
-==================================='''
+        expected = '''[##]  a:int  b:unicode  c:unicode
+================================='''
         self.assertEqual(expected, result)
 
     def test_empty_stripes(self):
@@ -187,12 +170,12 @@ s                           ='''
         self.assertEqual(expected, result)
         result = repr(ui.RowsInspection(r, s, offset=0, format_settings=ui.InspectSettings(wrap='stripes', width=80, with_types=True)))
         result = '\n'.join([line.rstrip() for line in result.splitlines()])
-        expected = '''[0]----------------------------------
-i32:int32                           =
-floaties:float64                    =
-long_column_name_ugh_and_ugh:unicode=
-long_value:unicode                  =
-s:unicode                           ='''
+        expected = '''[0]------------------------------
+i32:int                         =
+floaties:float                  =
+long_column_name_ugh_and_ugh:str=
+long_value:str                  =
+s:str                           ='''
         self.assertEqual(expected, result)
 
     def test_line_numbers(self):

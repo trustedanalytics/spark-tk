@@ -115,5 +115,5 @@ def _sparktk_dtype_to_pandas_str(dtype):
     if dtype ==dtypes.datetime:
         return "datetime64[ns]"
     elif dtypes.dtypes.is_primitive_type(dtype):
-        return dtypes.dtypes.to_string(dtype)
+        return dtype.__name__
     return "object"
