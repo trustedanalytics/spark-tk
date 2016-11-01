@@ -554,7 +554,9 @@ object DataTypes {
     s match {
       case vectorPattern(length) => vector(length.toLong)
       case "vector" => DataTypes.string
+      case "_Vector" => DataTypes.string
       case "matrix" => DataTypes.matrix
+      case "_Matrix" => DataTypes.matrix
       case _ => throw new IllegalArgumentException(s"Invalid datatype: '$s'")
     }
   }
