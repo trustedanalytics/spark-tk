@@ -29,7 +29,7 @@ def test_frame_to_pandas_to_frame(tc):
     # bring to data frame and check the columns/types/row count
     df = frame1.to_pandas()
     assert(df.columns.tolist() == ['string_column', 'integer_column', 'float_column', 'datetime_column'])
-    assert([str(d) for d in df.dtypes] == ['object', 'int64', 'float64', 'datetime64[ns]'])
+    assert([str(d) for d in df.dtypes] == ['object', 'int64', 'float64', 'object'])
     assert(frame1.count() == len(df))
 
     # import the data frame back to a frame
