@@ -52,7 +52,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """CsvFile creation fails with duplicate names, different type."""
         # double num1's same type
         bad = [("num1", int), ("num1", str), ("num2", int)]
-        with self.assertRaisesRegexp(Exception, "schema has duplicate column names: ['num1']"):
+        with self.assertRaisesRegexp(Exception, "schema has duplicate column names: [\'num1\']"):
             self.context.frame.import_csv(self.dataset, schema=bad)
 
     def test_given_schema_is_honored(self):
@@ -73,14 +73,14 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
     def test_schema_invalid_type(self):
         """CsvFile cration with a schema of invalid type fails."""
         bad_schema = -77
-        with self.assertRaisesRegexp(Exception, "Unsupported type <type 'int'> for schema parameter"):
+        with self.assertRaisesRegexp(Exception, "Unsupported type <type \'int\'> for schema parameter"):
             self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
     #@unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_format(self):
         """CsvFile creation fails with a malformed schema."""
         bad_schema = [int, int, float, float, str]
-        with self.assertRaisesRegexp(Exception, "schema expected to contain tuples, encountered type <type 'type'>"):
+        with self.assertRaisesRegexp(Exception, "schema expected to contain tuples, encountered type <type \'type\'>"):
             self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
     def test_frame_delim_colon(self):
