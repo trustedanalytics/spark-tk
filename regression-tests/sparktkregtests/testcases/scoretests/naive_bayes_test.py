@@ -15,6 +15,7 @@
 #  limitations under the License.
 #
 
+
 """ Tests Naive Bayes Model against known values.  """
 import unittest
 import os

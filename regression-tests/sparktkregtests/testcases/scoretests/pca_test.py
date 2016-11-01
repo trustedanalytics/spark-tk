@@ -15,8 +15,8 @@
 #  limitations under the License.
 #
 
+
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
