@@ -374,7 +374,7 @@ def _get_header_entry_sizes(schema, with_types):
 
 
 def is_type_float(tpe):
-    return tpe is dtypes.float32 or tpe is dtypes.float64 or isinstance(t, dtypes.vector)
+    return tpe is dtypes.float32 or tpe is dtypes.float64 or isinstance(tpe, dtypes.vector)
 
 
 def is_type_unicode(t):
