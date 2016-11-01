@@ -112,7 +112,9 @@ def import_csv(path, delimiter=",", header=False, schema=None, datetime_format="
     column_names = []   # custom column names
 
     if schema is not None:
-        if all(isinstance(item, basestring) for item in schema):
+        if not isinstance(schema, list):
+            raise TypeError("Unsupported type %s for schema parameter." % type(schema))
+        elif all(isinstance(item, basestring) for item in schema):
             # schema is just column names
             column_names = schema
             schema = None
