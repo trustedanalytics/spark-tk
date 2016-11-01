@@ -16,7 +16,6 @@
 #
 
 from setup import tc, rm, get_sandbox_path
-from sparktk.dtypes import float32
 import os.path
 import shutil
 import subprocess

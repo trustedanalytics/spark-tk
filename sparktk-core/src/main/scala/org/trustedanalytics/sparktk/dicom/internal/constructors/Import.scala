@@ -57,28 +57,17 @@ object Import extends Serializable {
     //pixels data raster
     val raster: Raster = readers.readRaster(0, param)
 
-    val w = raster.getWidth
-    val h = raster.getHeight
+    val cols = raster.getWidth
+    val rows = raster.getHeight
 
-    //val data = raster.getDataBuffer.asInstanceOf[DataBufferUShort].getData.map(_.toDouble)
-    //    new DenseMatrix(h, w, data)
-    val data = Array.ofDim[Double](h, w)
+    val data = Array.ofDim[Double](rows, cols)
 
-    //Filling data in column-wise order because MLLib DenseMatrix constructs matrix as column major.
-    /*Ex:Column-major dense matrix. The entry values are stored in a single array of doubles with columns listed in sequence. For example, the following matrix
-
-    1.0 2.0
-    3.0 4.0
-    5.0 6.0
-
-    is stored as [1.0, 3.0, 5.0, 2.0, 4.0, 6.0]*/
-
-    for (i <- 0 until w) {
-      for (j <- 0 until h) {
-        data(j)(i) = raster.getSample(j, i, 0)
+    for (i <- 0 until rows) {
+      for (j <- 0 until cols) {
+        data(i)(j) = raster.getSample(i, j, 0)
       }
     }
-    new DenseMatrix(h, w, data.flatten)
+    new DenseMatrix(rows, cols, data.flatten)
   }
 
   /**

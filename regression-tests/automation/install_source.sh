@@ -18,7 +18,7 @@
 source common.sh
 
 echo "Install dependencies"
-sudo pip2.7 install --upgrade teamcity-messages pandas numpy scipy statsmodels glob2 sklearn
+sudo pip2.7 install --upgrade -r $DIR/requirements.txt
 
 
 echo "Uninstalling spark_tk"

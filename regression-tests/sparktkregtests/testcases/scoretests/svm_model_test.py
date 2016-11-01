@@ -15,9 +15,10 @@
 #  limitations under the License.
 #
 
+
 """svm model test for scoring"""
 import unittest
-
+import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
 
@@ -66,7 +67,7 @@ class SvmScoreTest(sparktk_test.SparkTKTestCase):
             frame = self.context.frame.create(block_data, schema=schema)
         return frame
 
-    def test_simple_line(self):
+    def test_model_scoring(self):
         """ Verify that SvmModel operates as expected.  """
         # Test set is a 3x3 square lattice of points
         #   with a fully accurate, linear, unbiased divider.
@@ -83,7 +84,9 @@ class SvmScoreTest(sparktk_test.SparkTKTestCase):
         model_path = svm_model.export_to_mar(self.get_export_file(file_name))
 
         test_rows = training_frame.to_pandas(training_frame.count())
-        with scoring_utils.scorer(model_path) as scorer:
+        
+        with scoring_utils.scorer(
+                model_path, self.id()) as scorer:
             for _, i in test_rows.iterrows():
                 res = scorer.score([dict(zip(["x", "y"], list(i[0:2])))])
                 self.assertEqual(i[2], res.json()["data"][0]['Prediction'])

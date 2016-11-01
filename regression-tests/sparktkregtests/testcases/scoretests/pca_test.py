@@ -15,9 +15,11 @@
 #  limitations under the License.
 #
 
+
 import unittest
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
+
 
 class PrincipalComponent(sparktk_test.SparkTKTestCase):
 
@@ -36,8 +38,8 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
         pca_traindata = self.get_file("pcadata.csv")
         self.frame = self.context.frame.import_csv(pca_traindata, schema=schema)
 
-    def test_pca_train(self):
-        """Test the train functionality and basic scoring"""
+    def test_model_scoring(self):
+        """Test pca scoring"""
         model = self.context.models.dimreduction.pca.train(
             self.frame,
             ["X1", "X2", "X3", "X4", "X5",
@@ -47,7 +49,8 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
         file_name = self.get_name("pca")
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
-        with scoring_utils.scorer(model_path) as scorer:
+        with scoring_utils.scorer(
+                model_path, self.id()) as scorer:
             baseline = model.predict(self.frame, mean_centered=False)
             testvals = baseline.to_pandas(50)
 
