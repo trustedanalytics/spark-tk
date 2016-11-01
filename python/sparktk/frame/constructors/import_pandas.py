@@ -214,10 +214,6 @@ def _validate(schema):
         name = field[0]
         if not isinstance(name, basestring):
             raise ValueError("First item in schema tuple must be a string")
-        try:
-            data_type = dtypes.dtypes.get_from_type(field[1])
-        except ValueError:
-            raise ValueError("Second item in schema tuple must be a supported type: " + str(dtypes.dtypes))
         else:
-            validated_schema.append((name, data_type))
+            validated_schema.append((name, field[1]))
     return validated_schema

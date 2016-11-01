@@ -26,7 +26,7 @@ class Row(object):
         """
 
         # Can afford a richer object since it will be reused per row, with more init up front to save calculation
-        standardized_schema = [(name, dtypes.get_from_type(t)) for name, t in schema]
+        standardized_schema = [(name, t) for name, t in schema]
         self.__schema_dict = OrderedDict(standardized_schema)
         self.__data = [] if data is None else data  # data is an array of strings right now
         self.__dtypes = self.__schema_dict.values()
