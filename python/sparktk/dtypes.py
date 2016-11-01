@@ -81,7 +81,8 @@ class _Matrix(object):
     def __repr__(self):
         return "matrix"
 
-matrix = _Matrix
+matrix = _Matrix()
+matrix.__name__ = "matrix"
 
 class _Vector(object):
 
@@ -91,6 +92,7 @@ class _Vector(object):
     def __init__(self, length):
         self.length = int(length)
         self.constructor = self._get_constructor()
+        self.__name__ = "vector(%d)" % self.length
 
     def _get_constructor(self):
         length = self.length
@@ -123,7 +125,8 @@ class _Vector(object):
 
     @staticmethod
     def get_from_string(data_type_str):
-        return _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+        vector_value = _Vector(_Vector.re_pattern.match(data_type_str).group(1))
+        return vector_value
 
     def __repr__(self):
         return "vector(%d)" % self.length
