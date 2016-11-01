@@ -378,7 +378,7 @@ def is_type_float(tpe):
 
 
 def is_type_unicode(t):
-    return t is unicode
+    return t is str or t is unicode
 
 
 def pad_left(s, target_len):
