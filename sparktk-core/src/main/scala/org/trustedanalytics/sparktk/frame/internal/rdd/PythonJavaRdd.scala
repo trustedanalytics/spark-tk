@@ -46,13 +46,13 @@ object PythonJavaRdd {
   }
 
   def pythonToScala(jrdd: JavaRDD[Array[Byte]], scalaSchema: Schema): RDD[Row] = {
-    SparkAliases.getSparkMLLibSerDe
     val raa: JavaRDD[Array[Any]] = pythonToJava(jrdd)
     toRowRdd(raa.rdd, scalaSchema)
   }
 
   private def pythonToJava(jrdd: JavaRDD[Array[Byte]]): JavaRDD[Array[Any]] = {
-    val j = SparkAliases.SerDeUtil.pythonToJava(jrdd, batched = true)
+    // calling SparkAliases.MLLibSerDe, internally registers DenseVectorPickler, DenseMatrixPickler, SparseMatrixPickler, SparseVectorPickler for serialization purpose.
+    val j = SparkAliases.MLLibSerDe.pythonToJava(jrdd, batched = true)
     toJavaArrayAnyRdd(j)
   }
 
