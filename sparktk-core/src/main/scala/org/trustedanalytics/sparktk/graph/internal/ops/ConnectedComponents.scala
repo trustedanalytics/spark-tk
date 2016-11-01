@@ -50,19 +50,20 @@ case class ConnectedComponents() extends GraphSummarization[Frame] {
 
     var graph = GraphFrame(state.graphFrame.vertices.withColumn(index, monotonicallyIncreasingId()), state.graphFrame.edges)
     var continue = true
-    var minner = udf { (a: Long, b: Long) => if (a > b) b else a }
+    var getMin = udf { (a: Long, b: Long) => if (a > b) b else a }
 
     while (continue) {
       val updatedComponent = graph
         .aggregateMessages
-        .sendToDst(minner(AggregateMessages.src(index), AggregateMessages.dst(index)))
-        .sendToSrc(minner(AggregateMessages.src(index), AggregateMessages.dst(index)))
+        .sendToDst(getMin(AggregateMessages.src(index), AggregateMessages.dst(index)))
+        .sendToSrc(getMin(AggregateMessages.src(index), AggregateMessages.dst(index)))
         .agg(min(AggregateMessages.msg).as(indexNew))
 
       val joinedComponent = updatedComponent
         .join(graph.vertices, graph.vertices(ID) === updatedComponent(ID))
         .drop(graph.vertices(ID))
 
+      // TODO: switch this to an accumulator argument
       continue = joinedComponent.where(col(index) !== col(indexNew)).count() > 0
 
       val newVertices = joinedComponent
