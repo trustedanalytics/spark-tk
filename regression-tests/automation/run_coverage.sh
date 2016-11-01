@@ -17,17 +17,20 @@
 
 source common.sh
 
+# Remove the sparktk package so it doesn't shadow ours
+sudo pip2.7 uninstall -y sparktk
+
 echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
+export PYTHONPATH=$MAINDIR/python:$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:/usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
 echo $PYTHONPATH
 
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
 export SPARKTK_HOME=$sparktkpackage/
 
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
+echo "spark tk home"
+echo $SPARKTK_HOME
 
-#export RUN_MODE=false
-py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests
+export DIR
+py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:pytest --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests

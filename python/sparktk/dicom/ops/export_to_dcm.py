@@ -69,9 +69,17 @@ def export_to_dcm(self, path):
         [   0.,   62.,   21., ...,  896.,  886.,  854.],
         [   0.,   63.,   23., ...,  941.,  872.,  897.],
         [   0.,   60.,   30., ...,  951.,  822.,  906.]])]]
-
-        >>> dicom.export_to_dcm("dicom_export")
         </skip>
+
+        >>> dicom.export_to_dcm("sandbox/dicom_export")
+
+        >>> loaded_dicom = tc.dicom.import_dcm("sandbox/dicom_export")
+
+        >>> loaded_dicom.metadata.count()
+        3
+
+        >>> loaded_dicom.pixeldata.count()
+        3
 
     """
 
