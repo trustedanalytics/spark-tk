@@ -85,7 +85,8 @@ class _Matrix(object):
     def __repr__(self):
         return "matrix"
 
-matrix = _Matrix
+matrix = _Matrix()
+matrix.__name__ = "matrix"
 
 class _Vector(object):
 
