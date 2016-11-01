@@ -84,47 +84,14 @@ class SparkTkModelAdapter() extends ModelReader {
         val individualFile = entry.getName
         //only unzip the dir containing the model
         if (!individualFile.contains(".jar") && !individualFile.contains(".json")) {
-          // todo: asood1 create these directories and subdirectories dynamically
-          if (individualFile.contains("topicsGivenDocFrame")) {
-            fileStr = tmpDir + "/topicsGivenDocFrame"
+          if (individualFile.contains("/")) {
+            //get the directory structure that needs to be built
+            fileStr = individualFile.substring(individualFile.lastIndexOf("sparktk-scoring-model"), individualFile.lastIndexOf("/"))
+            fileStr = tmpDir + fileStr.substring(fileStr.indexOf("/"), fileStr.length)
           }
-          else if (individualFile.contains("distLdaModel/data/globalTopicTotals")) {
-            fileStr = tmpDir + "/distLdaModel/data/globalTopicTotals"
-          }
-          else if (individualFile.contains("distLdaModel/data/tokenCounts")) {
-            fileStr = tmpDir + "/distLdaModel/data/tokenCounts"
-          }
-          else if (individualFile.contains("distLdaModel/data/topicCounts")) {
-            fileStr = tmpDir + "/distLdaModel/data/topicCounts"
-          }
-          else if (individualFile.contains("distLdaModel/metadata")) {
-            fileStr = tmpDir + "/distLdaModel/metadata"
-          }
-          else if (individualFile.contains("topicsGivenWordFrame")) {
-            fileStr = tmpDir + "/topicsGivenWordFrame"
-          }
-          else if (individualFile.contains("wordGivenTopicsFrame")) {
-            fileStr = tmpDir + "/wordGivenTopicsFrame"
-          }
-          else if (individualFile.contains("wordGivenTopicsFrame")) {
-            fileStr = tmpDir + "/wordGivenTopicsFrame"
-          }
-          else if (individualFile.contains("wordGivenTopicsFrame")) {
-            fileStr = tmpDir + "/wordGivenTopicsFrame"
-          }
-          else if (individualFile.contains("metadata")) {
-            fileStr = tmpDir + "/metadata"
-          }
-          else if (individualFile.contains("data")) {
-            fileStr = tmpDir + "/data"
-          }
-          else if (individualFile.contains("tk")) {
-            fileStr = tmpDir + "/tk"
-          }
-          logger.info(fileStr)
+
           Files.createDirectories(new File(fileStr).toPath)
           val file = individualFile.toString.substring(individualFile.toString.lastIndexOf("/") + 1, individualFile.toString.length)
-          logger.info(file)
           val bufferedOutStream = new BufferedOutputStream(new FileOutputStream(fileStr + "/" + file))
           var read = modelZipStreamInput.read(bytesIn)
           while (read != -1) {

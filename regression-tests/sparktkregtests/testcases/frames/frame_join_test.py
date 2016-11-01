@@ -137,11 +137,11 @@ class JoinTest(sparktk_test.SparkTKTestCase):
             self.prefix, file_format="list")
         flt32_frame = frame_utils.build_frame(
             block_data,
-            [("idnum", float32), ("count", str)],
+            [("idnum", float), ("count", str)],
             self.prefix, file_format="list")
         flt64_frame = frame_utils.build_frame(
             block_data,
-            [("idnum", float64), ("count", str)],
+            [("idnum", float), ("count", str)],
             self.prefix, file_format="list")
 
         # Try each join combination;

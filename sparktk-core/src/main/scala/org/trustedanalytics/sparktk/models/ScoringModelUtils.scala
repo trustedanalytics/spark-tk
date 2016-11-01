@@ -114,13 +114,18 @@ object ScoringModelUtils {
         val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
         var jarFileList = x.jarsInSearchPath.values.toList
 
-        val modelFile = Files.createTempDirectory("localModel")
-        val localModelPath = new org.apache.hadoop.fs.Path(modelFile.toString)
-        val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(modelFile.toString), new Configuration())
-        hdfsFileSystem.copyToLocalFile(new org.apache.hadoop.fs.Path(modelSrcDir.toString), localModelPath)
-
-        jarFileList = jarFileList ::: List(new File(localModelPath.toString))
+        if (marSavePath.startsWith("hdfs")) {
+          val modelFile = Files.createTempDirectory("localModel")
+          val localModelPath = new org.apache.hadoop.fs.Path(modelFile.toString)
+          val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(modelFile.toString), new Configuration())
+          hdfsFileSystem.copyToLocalFile(new org.apache.hadoop.fs.Path(modelSrcDir.toString), localModelPath)
+          jarFileList = jarFileList ::: List(new File(localModelPath.toString))
+        }
+        else {
+          jarFileList = jarFileList ::: List(new File(modelSrcDir.toString))
+        }
         ModelArchiveFormat.write(jarFileList, modelReader, modelClass, zipOutStream)
+
       }
       SaveLoad.saveMar(marSavePath, zipFile)
     }
