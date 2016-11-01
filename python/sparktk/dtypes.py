@@ -58,6 +58,9 @@ class _Matrix(object):
     def __init__(self):
         self.constructor = self._get_constructor()
 
+    def __call__(self, value):
+        self._get_constructor(value)
+
     def _get_constructor(self):
 
         def constructor(value):
@@ -93,6 +96,9 @@ class _Vector(object):
         self.length = int(length)
         self.constructor = self._get_constructor()
         self.__name__ = "vector(%d)" % self.length
+
+    def __call__(self, value):
+        self._get_constructor(value)
 
     def _get_constructor(self):
         length = self.length
@@ -237,18 +243,6 @@ class _DataTypes(object):
     """
     Provides functions with define and operate on supported data types.
     """
-
-    def __contains__(self, item):
-        try:
-            self.validate(item)
-            return True
-        except ValueError:
-            return False
-
-    def __repr__(self):
-        aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, data_type.__name__) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
-        return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
-
     @staticmethod
     def get_from_string(data_type_str):
         """

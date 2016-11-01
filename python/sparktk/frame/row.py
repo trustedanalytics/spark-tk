@@ -31,7 +31,7 @@ class Row(object):
         self.__data = [] if data is None else data  # data is an array of strings right now
         self.__dtypes = self.__schema_dict.values()
         self.__indices_dict = dict([(k, i) for i, k, in enumerate(self.__schema_dict.keys())])
-        self.__dtype_constructors = [dtypes.get_constructor(t) for t in self.__dtypes]
+        self.__dtype_constructors = self.__dtypes
 
     def __getattr__(self, name):
         if name != "_Row__schema_dict" and name in self.__schema_dict.keys():

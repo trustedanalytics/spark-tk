@@ -125,7 +125,7 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
     if schema is None:
         for column in df.schema.fields:
             try:
-                datatype = dtypes.dtypes.get_primitive_type_from_pyspark_type(type(column.dataType))
+                datatype = type(column.dataType)
             except ValueError:
                 raise TypeError("Unsupported data type ({0}) for column {1}.".format(str(column.dataType), column.name))
             df_schema.append((column.name, datatype))
