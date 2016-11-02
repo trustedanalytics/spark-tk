@@ -63,6 +63,10 @@ class JConvert(object):
     def scala_map_to_python(self, m):
         return self.scala.scalaMapToPython(m)
 
+    def scala_option_map_to_python(self, m):
+        python_map = self.scala.scalaMapToPython(m)
+        return self.scala.fromOption(python_map)
+
     def to_scala_option(self, item):
         return self.scala.toOption(item)
 

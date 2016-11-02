@@ -24,8 +24,9 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
  * converts vertex class from OrientDB database to RDD of vertices
  *
  * @param dbConfigurations OrientDB configurations
+ * @param dbName database name
  */
-class VertexFrameReader(dbConfigurations: OrientConf) {
+class VertexFrameReader(dbConfigurations: OrientConf, dbName:String) {
 
   /**
    * imports vertex class from OrientDB to RDD of vertices
@@ -34,7 +35,7 @@ class VertexFrameReader(dbConfigurations: OrientConf) {
    */
   def importOrientDbVertexClass(sc: SparkContext): RDD[Row] = {
 
-    val vertexRdd = new OrientDbVertexRdd(sc, dbConfigurations)
+    val vertexRdd = new OrientDbVertexRdd(sc, dbConfigurations, dbName)
     vertexRdd
   }
 }

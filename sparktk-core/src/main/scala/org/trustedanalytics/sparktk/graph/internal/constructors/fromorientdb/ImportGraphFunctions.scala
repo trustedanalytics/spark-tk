@@ -27,11 +27,11 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphF
  * @param sqlContext Spark SQL context
  */
 class ImportGraphFunctions(sqlContext: SQLContext) {
-  def orientGraphFrame(orientConf: OrientConf): GraphFrame = {
-    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf)
-    val vertexDataFrame = createVertexDataFrame(orientConf, orientGraph)
+  def orientGraphFrame(orientConf: OrientConf, dbName:String): GraphFrame = {
+    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
+    val vertexDataFrame = createVertexDataFrame(orientConf, orientGraph, dbName)
     GraphSchema.validateSchemaForVerticesFrame(vertexDataFrame)
-    val edgeDataFrame: DataFrame = createEdgeDataFrame(orientConf, orientGraph)
+    val edgeDataFrame: DataFrame = createEdgeDataFrame(orientConf, orientGraph, dbName)
     GraphSchema.validateSchemaForEdgesFrame(edgeDataFrame)
     GraphFrame(vertexDataFrame, edgeDataFrame)
   }
@@ -41,12 +41,13 @@ class ImportGraphFunctions(sqlContext: SQLContext) {
    *
    * @param orientConf OrientB database configurations
    * @param orientGraph OrientDB database
+   * @param dbName database name
    * @return edges data frame
    */
-  def createEdgeDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx): DataFrame = {
+  def createEdgeDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx, dbName:String): DataFrame = {
     val schemaReader = new SchemaReader(orientGraph)
     val edgeSchema = schemaReader.importEdgeSchema
-    val edgeFrameReader = new EdgeFrameReader(orientConf)
+    val edgeFrameReader = new EdgeFrameReader(orientConf, dbName)
     val edgeFrame = edgeFrameReader.importOrientDbEdgeClass(sqlContext.sparkContext)
     val edgeDataFrame = sqlContext.createDataFrame(edgeFrame, edgeSchema)
     edgeDataFrame
@@ -57,13 +58,14 @@ class ImportGraphFunctions(sqlContext: SQLContext) {
    *
    * @param orientConf OrientB database configurations
    * @param orientGraph OrientDB database
+   * @param dbName database name
    * @return vertices data frame
    */
-  def createVertexDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx): DataFrame = {
+  def createVertexDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx, dbName:String): DataFrame = {
 
     val schemaReader = new SchemaReader(orientGraph)
     val vertexSchema = schemaReader.importVertexSchema
-    val vertexFrameReader = new VertexFrameReader(orientConf)
+    val vertexFrameReader = new VertexFrameReader(orientConf, dbName)
     val vertexFrame = vertexFrameReader.importOrientDbVertexClass(sqlContext.sparkContext)
     val vertexDataFrame = sqlContext.createDataFrame(vertexFrame, vertexSchema)
     vertexDataFrame

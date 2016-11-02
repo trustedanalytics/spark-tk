@@ -53,7 +53,7 @@ trait TestingOrientDb {
     val uuid = java.util.UUID.randomUUID.toString
     tmpDir = DirectoryUtils.createTempDirectory("orientgraphtests")
     dbUri = "plocal:" + tmpDir.getAbsolutePath + "/" + dbName + uuid
-    dbConfig = new OrientConf(dbUri, dbUserName, dbUserName, rootPassword, batchSize, Some(dbProperties))
+    dbConfig = new OrientConf(dbUserName, dbUserName, rootPassword, batchSize, Some(dbProperties))
     val factory = new OrientGraphFactory(dbUri, dbUserName, dbPassword)
     orientFileGraph = factory.getNoTx
     orientFileGraph.declareIntent(new OIntentMassiveInsert())

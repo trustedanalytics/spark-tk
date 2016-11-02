@@ -24,7 +24,7 @@ import org.trustedanalytics.sparktk.graph.internal.GraphSchema
  * @param vertexFrame vertices data frame
  * @param dbConfig the database configurations parameters
  */
-class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf) extends Serializable {
+class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf, dbName:String) extends Serializable {
 
   /**
    * exports vertex dataframe to OrientDB
@@ -35,7 +35,7 @@ class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf) extends Se
   def exportVertexFrame(batchSize: Int, vertexTypeColumnName: Option[String] = None): Long = {
     val verticesCountRdd = vertexFrame.mapPartitions(iter => {
       var batchCounter = 0L
-      val orientGraph = OrientdbGraphFactory.graphDbConnector(dbConfig)
+      val orientGraph = OrientdbGraphFactory.graphDbConnector(dbConfig, dbName)
       try {
         val vertexWriter = new VertexWriter(orientGraph)
         while (iter.hasNext) {

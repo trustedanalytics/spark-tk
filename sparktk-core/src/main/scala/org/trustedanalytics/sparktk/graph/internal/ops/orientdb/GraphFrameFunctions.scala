@@ -41,12 +41,12 @@ class GraphFrameFunctions(state: GraphState) {
     schemaWriter.edgeSchema(state.graphFrame.edges, orientGraph, edgeTypeColumnName)
     orientGraph.shutdown(true, true)
     //export graph
-    val vertexFrameWriter = new VertexFrameWriter(state.graphFrame.vertices, orientConf)
+    val vertexFrameWriter = new VertexFrameWriter(state.graphFrame.vertices, orientConf, dbName)
     val verticesCount = vertexFrameWriter.exportVertexFrame(orientConf.batchSize, vertexTypeColumnName)
-    val edgeFrameWriter = new EdgeFrameWriter(state.graphFrame.edges, orientConf)
+    val edgeFrameWriter = new EdgeFrameWriter(state.graphFrame.edges, orientConf, dbName)
     val edgesCount = edgeFrameWriter.exportEdgeFrame(orientConf.batchSize, edgeTypeColumnName)
     //collect statistics
-    val stats = new Statistics(orientConf)
+    val stats = new Statistics(orientConf, dbName)
     stats.getStats(verticesCount, edgesCount)
   }
 }

@@ -18,16 +18,14 @@
 from sparktk.tkcontext import TkContext
 
 
-def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContext.implicit):
+def import_orientdb_graph(orient_conf,db_name,tc=TkContext.implicit):
     """
     Import graph from OrientDB to spark-tk as spark-tk graph (Spark GraphFrame)
 
     Parameters
     ----------
-    :param:(str) db_url: OrientDB URI
-    :param:(str) user_name: the database username
-    :param:(str) password: the database password
-    :param :(str)root_password: OrientDB server password
+    :param:(OrientConf) orient_conf: OrientDB configurations
+    :param:(str) db_name: the database name
 
     Example
     -------
@@ -90,6 +88,6 @@ def import_orientdb_graph(db_url, user_name, password, root_password,tc=TkContex
   </skip>
     """
     TkContext.validate(tc)
-    scala_graph = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb.ImportFromOrientdb.importOrientdbGraph(tc.jutils.get_scala_sc(), db_url,user_name,password,root_password)
+    scala_graph = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb.ImportFromOrientdb.importOrientdbGraph(tc.jutils.get_scala_sc(), orient_conf, db_name)
     from sparktk.graph.graph import Graph
     return Graph(tc, scala_graph)

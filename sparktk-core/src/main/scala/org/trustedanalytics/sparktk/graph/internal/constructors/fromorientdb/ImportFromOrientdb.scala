@@ -28,16 +28,13 @@ object ImportFromOrientdb {
   /**
    * imports OrientDB graph to spark-tk graph
    * @param sc spark context
-   * @param dbUrl database URI
-   * @param userName username
-   * @param password password
-   * @param rootPassword OrientDB server Password
+   * @param orientConf OrientDB configurations
+   * @param dbName the database name
    * @return spark-tk graph
    */
-  def importOrientdbGraph(sc: SparkContext, dbUrl: String, userName: String, password: String, rootPassword: String): Graph = {
+  def importOrientdbGraph(sc: SparkContext, orientConf: OrientConf, dbName:String): Graph = {
     val sqlContext = new SQLContext(sc)
-    val orientConf = OrientConf(dbUrl, userName, password, rootPassword)
     val importer = new ImportGraphFunctions(sqlContext)
-    new Graph(importer.orientGraphFrame(orientConf))
+    new Graph(importer.orientGraphFrame(orientConf, dbName))
   }
 }
