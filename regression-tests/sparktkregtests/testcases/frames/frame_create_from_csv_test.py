@@ -52,7 +52,7 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """CsvFile creation fails with duplicate names, different type."""
         # double num1's same type
         bad = [("num1", int), ("num1", str), ("num2", int)]
-        with self.assertRaisesRegexp(Exception, "schema has duplicate column names: [\'num1\']"):
+        with self.assertRaisesRegexp(Exception, "schema has duplicate column names: \[\'num1\'\]"):
             self.context.frame.import_csv(self.dataset, schema=bad)
 
     def test_given_schema_is_honored(self):
