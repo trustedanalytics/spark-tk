@@ -27,4 +27,4 @@ export SPARKTK_HOME=$sparktkpackage/
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:pytest --boxed -n10 $MAINDIR/regression-tests
+py.test --boxed -n10 $MAINDIR/regression-tests
