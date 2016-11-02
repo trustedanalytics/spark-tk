@@ -96,9 +96,8 @@ def to_pandas(self, n=None, offset=0, columns=None):
     pandas_df = pandas.DataFrame(frame_data, columns=headers)
 
     for i, dtype in enumerate(data_types):
-        dtype_str = _sparktk_dtype_to_pandas_str(dtype)
         try:
-            pandas_df[[headers[i]]] = pandas_df[[headers[i]]].astype(dtype_str)
+            pandas_df[[headers[i]]] = pandas_df[[headers[i]]].astype(dtype)
         except (TypeError, ValueError):
             if dtype_str.startswith("int"):
                 # DataFrame does not handle missing values in int columns. If we get this error, use the 'object' datatype instead.
@@ -112,8 +111,8 @@ def to_pandas(self, n=None, offset=0, columns=None):
 def _sparktk_dtype_to_pandas_str(dtype):
     """maps spark-tk schema types to types understood by pandas, returns string"""
     from sparktk import dtypes
-    if dtype ==dtypes.datetime:
+    if dtype == dtypes.datetime:
         return "datetime64[ns]"
     elif dtypes.dtypes.is_primitive_type(dtype):
-        return dtypes.dtypes.to_string(dtype)
+        return dtype.__name__
     return "object"

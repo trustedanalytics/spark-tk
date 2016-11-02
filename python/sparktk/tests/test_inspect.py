@@ -169,8 +169,8 @@ c=really really really really long'''
 ============='''
         self.assertEqual(expected, result)
         result = repr(ui.RowsInspection(r, s, offset=0, format_settings=ui.InspectSettings(wrap=5, width=80, with_types=True)))
-        expected = '''[##]  a:int32  b:unicode  c:unicode
-==================================='''
+        expected = '''[##]  a:int  b:unicode  c:unicode
+================================='''
         self.assertEqual(expected, result)
 
     def test_empty_stripes(self):
@@ -187,12 +187,12 @@ s                           ='''
         self.assertEqual(expected, result)
         result = repr(ui.RowsInspection(r, s, offset=0, format_settings=ui.InspectSettings(wrap='stripes', width=80, with_types=True)))
         result = '\n'.join([line.rstrip() for line in result.splitlines()])
-        expected = '''[0]----------------------------------
-i32:int32                           =
-floaties:float64                    =
-long_column_name_ugh_and_ugh:unicode=
-long_value:unicode                  =
-s:unicode                           ='''
+        expected = '''[0]------------------------------
+i32:int                         =
+floaties:float                  =
+long_column_name_ugh_and_ugh:str=
+long_value:str                  =
+s:str                           ='''
         self.assertEqual(expected, result)
 
     def test_line_numbers(self):
