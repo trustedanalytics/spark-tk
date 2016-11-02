@@ -52,7 +52,6 @@ fi
 #enable to debug
 #export SPARK_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=n,address=atk-wse.jf.intel.com:5005,suspend=y
 
-# todo - allow these pytest flags to be passed in to this script
 #python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
 #python2.7 -m pytest -k test_kmeans  # example to run individual test
 #python2.7 -m pytest -k test_docs_python_sparktk_frame_ops_drop_columns_py  # example to run individual doc test

@@ -366,7 +366,11 @@ class Frame(object):
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.entropy import entropy
-    from sparktk.frame.ops.export_data import export_to_csv, export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
+    from sparktk.frame.ops.export_to_csv import export_to_csv
+    from sparktk.frame.ops.export_to_jdbc import export_to_jdbc
+    from sparktk.frame.ops.export_to_json import export_to_json
+    from sparktk.frame.ops.export_to_hbase import export_to_hbase
+    from sparktk.frame.ops.export_to_hive import export_to_hive
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.group_by import group_by
