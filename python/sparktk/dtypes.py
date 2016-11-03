@@ -21,7 +21,7 @@ definitions for Data Types
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'float64', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
+__all__ = ['dtypes', 'float32', 'float64', 'int32', 'int64', 'vector', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -108,7 +108,7 @@ class _Vector(object):
                 array = np.array(value, dtype=np.float64)  # ensures the array is entirely made of doubles
             except:
                 # also support json or comma-sep string
-                if dtypes.value_is_string(value):
+                if isinstance(value, basestring):
                     try:
                         value = json.loads(value)
                     except:
@@ -136,28 +136,6 @@ class _Vector(object):
 
 vector = _Vector
 
-
-class _Unit(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-unit = _Unit
-
-
-class _Ignore(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-ignore = _Ignore
-
-
-class _Unknown(object):
-    """Unknown type used when type is indeterminate"""
-    pass
-
-unknown = _Unknown
-
-
 # map types to their string identifier
 _primitive_type_to_str_table = {
     #bool: "bool", TODO
@@ -169,7 +147,6 @@ _primitive_type_to_str_table = {
     int64: "int64",
     #list: "list", TODO
     unicode: "unicode",
-    ignore: "ignore",
     datetime: "datetime",
 }
 
@@ -237,7 +214,7 @@ def ms_to_datetime_str(ms):
 
 def datetime_constructor(value):
     """Creates special constructor for datetime parsing.  Returns the number of ms since epoch."""
-    if dtypes.value_is_string(value):
+    if isinstance(value, basestring):
         return datetime_to_ms(datetime_parser.parse(value))
     elif isinstance(value, long) or isinstance(value, int):
         return value
@@ -279,19 +256,6 @@ class _DataTypes(object):
     def __repr__(self):
         aliases = "\n(and aliases: %s)" % (", ".join(sorted(["%s->%s" % (alias.__name__, self.to_string(data_type)) for alias, data_type in _primitive_alias_type_to_type_table.iteritems()])))
         return ", ".join(sorted(_primitive_str_to_type_table.keys() + ["vector(n)"]+["matrix"])) + aliases
-
-    @staticmethod
-    def value_is_string(value):
-        """get bool indication that value is a string, whether str or unicode"""
-        return isinstance(value, basestring)
-
-    @staticmethod
-    def value_is_missing_value(value):
-        return value is None
-
-    @staticmethod
-    def get_primitive_data_types():
-        return _primitive_type_to_str_table.keys()
 
     @staticmethod
     def to_string(data_type):
@@ -366,18 +330,6 @@ class _DataTypes(object):
             return False
 
     @staticmethod
-    def is_primitive_alias_type(data_type):
-        return data_type in _primitive_alias_type_to_type_table
-
-    @staticmethod
-    def is_int(data_type):
-        return data_type in [int, int32, int64]
-
-    @staticmethod
-    def is_float(data_type):
-        return data_type in [float, float32, float64]
-
-    @staticmethod
     def get_from_type(data_type):
         """
         Returns the data type for the given type (often it will return the same type)
@@ -403,6 +355,10 @@ class _DataTypes(object):
         if _DataTypes.is_primitive_type(data_type) or _DataTypes.is_complex_type(data_type):
             return data_type
         raise ValueError("Unsupported type %s" % data_type)
+
+    @staticmethod
+    def is_primitive_alias_type(data_type):
+        return data_type in _primitive_alias_type_to_type_table
 
     @staticmethod
     def validate(data_type):
@@ -457,21 +413,16 @@ class _DataTypes(object):
         >>> dtypes.cast(np.inf, float32)
         None
         """
-        if _DataTypes.value_is_missing_value(value):  # Special handling for missing values
+        if value is None:  # Special handling for missing values
             return None
         elif _DataTypes.is_primitive_type(to_type) and type(value) is to_type:  # Optimization
             return value
         try:
             constructor = _DataTypes.get_constructor(to_type)
             result = constructor(value)
-            return None if _DataTypes.value_is_missing_value(result) else result
+            return result
         except Exception as e:
             raise ValueError(("Unable to cast to type %s\n" % to_type) + str(e))
-
-    @staticmethod
-    def datetime_from_iso(iso_string):
-        """create datetime object from ISO 8601 string"""
-        return datetime_parser.parse(iso_string)
 
     @staticmethod
     def get_primitive_type_from_pyspark_type(pyspark_type):
