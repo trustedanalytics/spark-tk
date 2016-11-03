@@ -60,14 +60,20 @@ object Import extends Serializable {
     val cols = raster.getWidth
     val rows = raster.getHeight
 
-    val data = Array.ofDim[Double](rows, cols)
-
-    for (i <- 0 until rows) {
-      for (j <- 0 until cols) {
-        data(i)(j) = raster.getSample(i, j, 0)
-      }
+    if (cols != rows) {
+      DenseMatrix.zeros(cols, cols)
     }
-    new DenseMatrix(rows, cols, data.flatten)
+    else {
+
+      val data = Array.ofDim[Double](cols, rows)
+
+      for (x <- 0 until cols) {
+        for (y <- 0 until rows) {
+          data(x)(y) = raster.getSample(x, y, 0)
+        }
+      }
+      new DenseMatrix(rows, cols, data.flatten)
+    }
   }
 
   /**

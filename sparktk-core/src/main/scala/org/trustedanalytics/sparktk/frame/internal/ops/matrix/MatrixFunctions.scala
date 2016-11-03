@@ -33,6 +33,6 @@ Creates Mllib DenseMatrix from a breeze DenseMatrix
   Creates Breeze DenseMatrix from an Mllib DenseMatrix
    */
   def asBreeze(mllibDM: DM): BDM[Double] = {
-    new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values, 0, mllibDM.numCols)
+    new BDM[Double](mllibDM.numRows, mllibDM.numCols, mllibDM.values)
   }
 }
