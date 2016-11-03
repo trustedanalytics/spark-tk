@@ -15,7 +15,7 @@
  */
 package org.trustedanalytics.sparktk.dicom.internal.constructors
 
-import java.awt.image.{ DataBufferUShort, Raster }
+import java.awt.image.Raster
 import java.io._
 import java.util.Iterator
 import javax.imageio.stream.ImageInputStream
@@ -67,6 +67,8 @@ object Import extends Serializable {
 
       val data = Array.ofDim[Double](cols, rows)
 
+      // Reading pixeldata along with x-axis and y-axis(x, y) but storing the data in 2D array as column-major.
+      // Mllib DenseMatrix stores data as column-major.
       for (x <- 0 until cols) {
         for (y <- 0 until rows) {
           data(x)(y) = raster.getSample(x, y, 0)
