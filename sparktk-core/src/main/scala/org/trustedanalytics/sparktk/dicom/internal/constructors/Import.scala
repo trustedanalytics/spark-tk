@@ -62,8 +62,8 @@ object Import extends Serializable {
 
     val data = Array.ofDim[Double](rows, cols)
 
-    for (i <- 0 until rows) {
-      for (j <- 0 until cols) {
+    for (i <- 0 until cols) {
+      for (j <- 0 until rows) {
         data(i)(j) = raster.getSample(i, j, 0)
       }
     }
