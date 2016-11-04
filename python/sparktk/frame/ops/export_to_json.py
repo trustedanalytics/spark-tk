@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,19 +15,17 @@
 #  limitations under the License.
 #
 
-source common.sh
+def export_to_json(self, path, count=0, offset=0):
+    """
+    Write current frame to HDFS in Json format.
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
+    Parameters
+    ----------
 
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
+    :param path: (str) The HDFS folder path where the files will be created.
+    :param count: (Optional[int]) The number of records you want. Default (0), or a non-positive value, is the
+                   whole frame.
+    :param offset: (Optional[int]) The number of rows to skip before exporting to the file. Default is zero (0).
 
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
-
-#export RUN_MODE=false
-py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests
+    """
+    self._scala.exportToJson(path, count, offset)

@@ -15,16 +15,22 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
+source common.sh
 
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-MAINDIR="$(dirname $MAINDIR)"
+# Remove the sparktk package so it doesn't shadow ours
+sudo pip2.7 uninstall -y sparktk
 
-scoring_model=$1
+echo "Python path"
+export PYTHONPATH=$MAINDIR/python:$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:/usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
+echo $PYTHONPATH
 
-pushd $MAINDIR/scoring/scoring_engine
-./bin/model-scoring.sh -Dtrustedanalytics.scoring-engine.archive-mar=$scoring_model -Dtrustedanalytics.scoring.port=9100 > $MAINDIR/scoring_out.log 2> $MAINDIR/scoring_error.log
-popd
+export SPARKTK_HOME=$sparktkpackage/
+
+echo "spark tk home"
+echo $SPARKTK_HOME
+
+echo "spark tk home"
+echo $SPARKTK_HOME
+
+export DIR
+py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:pytest --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests

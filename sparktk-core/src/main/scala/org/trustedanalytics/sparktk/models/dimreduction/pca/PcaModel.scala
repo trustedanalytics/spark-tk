@@ -348,7 +348,6 @@ object PrincipalComponentsFunctions extends Serializable {
     new IndexedRowMatrix(vectorRdd)
 
   }
-
 }
 
 /**

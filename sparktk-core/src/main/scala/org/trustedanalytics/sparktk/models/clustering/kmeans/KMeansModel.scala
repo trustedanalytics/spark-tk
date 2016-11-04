@@ -272,7 +272,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
    */
   def score(row: Array[Any]): Array[Any] = {
     val x: Array[Double] = row.map(y => ScoringModelUtils.asDouble(y))
-    row :+ (sparkModel.predict(Vectors.dense(x)) + 1)
+    row :+ (sparkModel.predict(Vectors.dense(x)))
   }
 
   /**

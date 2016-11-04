@@ -16,7 +16,6 @@
 #
 
 from setup import tc, rm, get_sandbox_path
-from sparktk.dtypes import float32
 import logging
 logger = logging.getLogger(__name__)
 
@@ -46,7 +45,7 @@ def test_multiclass_classification_metrics_001(tc):
 def test_multiclass_classification_metrics_002(tc):
     logger.info("create frame")
     rows = [[0.0, 0.0],[None, 0.0],[0.0, 0.0],[1.5, 1.5],[1.0, 1.0],[1.5, None]]
-    schema = [('labels', float32),('predictions', float32)]
+    schema = [('labels', float),('predictions', float)]
     frame = tc.frame.create(rows, schema)
 
     assert(frame.count(), 4, "frame should have 6 rows")

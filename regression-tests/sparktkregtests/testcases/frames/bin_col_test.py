@@ -134,13 +134,15 @@ class BinColTest(sparktk_test.SparkTKTestCase):
             self.frame.bin_column("index", ["a", "b"])
 
     def test_bin_column_cutoff_none(self):
-        """None for bin cutoffs errors"""
-        with self.assertRaisesRegexp(TypeError, "must be a string"):
-            self.frame.bin_column("index", None)
+        """empty bins with None"""
+        self.bc_empty(None)
 
     def test_bin_column_cutoff_empty(self):
         """Test reject empty cutoff list"""
-        result = self.frame.bin_column("index", [])
+        self.bc_empty([])
+
+    def bc_empty(self, empty_val):
+        result = self.frame.bin_column("index", empty_val)
         diff = [j-i for i, j in zip(result[:-1], result[1:])]
 
         # number of columns is sqrt(1000)
