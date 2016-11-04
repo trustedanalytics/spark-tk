@@ -59,9 +59,17 @@ def export_to_orientdb(self,orientdb_conf,db_name,vertex_type_column_name=None, 
         >>> sparktk_graph = tc.graph.create(v,e)
 
 
-        >>> db = "test_db"
+         >>> hostname = "localhost"
 
-        >>> result = sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+        >>> port_number = "2424"
+
+        >>> db_name = "GraphDatabase"
+
+        >>> root_password = "root"
+
+        >>> orient_conf = tc.graph.set_orientdb_configurations(hostname,port_number,"admin","admin",root_password)
+
+        >>> result = sparktk_graph.export_to_orientdb(orient_conf,db_name,vertex_type_column_name= "gender",edge_type_column_name="relationship")
 
         >>> result
         db_uri                    = remote:hostname:2424/test_db
@@ -71,7 +79,11 @@ def export_to_orientdb(self,orientdb_conf,db_name,vertex_type_column_name=None, 
         vertex_types              = {u'M': 3L, u'F': 3L}
   </skip>
     """
-    return ExportToOrientdbReturn(self._tc,self._scala.exportToOrientdb(orientdb_conf,db_name,self._tc._jutils.convert.to_scala_option(vertex_type_column_name),self._tc._jutils.convert.to_scala_option(edge_type_column_name)))
+    return ExportToOrientdbReturn(self._tc,
+                                  self._scala.exportToOrientdb(orientdb_conf._scala,
+                                                               db_name,
+                                                               self._tc._jutils.convert.to_scala_option(vertex_type_column_name),
+                                                               self._tc._jutils.convert.to_scala_option(edge_type_column_name)))
 
 
 class ExportToOrientdbReturn(PropertiesObject):

@@ -18,23 +18,23 @@ package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 import org.trustedanalytics.sparktk.graph.internal.GraphState
 
 /**
- * exports a graph frame to OrientDB graph
+ * Export graph to OrientDB graph
  *
  * @param state graph frame
  */
 class GraphFrameFunctions(state: GraphState) {
 
   /**
-    *  Save GraphFrame to OrientDB graph
-    * @param orientConf the database configurations
-    * @param dbName the database name
-    * @param vertexTypeColumnName vertex type column name
-    * @param edgeTypeColumnName edge type column name
-    * @return summary statistics for the number of exported edges and vertices
-    */
-  def saveToOrientGraph(orientConf: OrientConf, dbName:String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
+   *  Save GraphFrame to OrientDB graph
+   * @param orientConf the database configurations
+   * @param dbName the database name
+   * @param vertexTypeColumnName vertex type column name
+   * @param edgeTypeColumnName edge type column name
+   * @return summary statistics for the number of exported edges and vertices
+   */
+  def saveToOrientGraph(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
 
-    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf,dbName)
+    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
     //export schema
     val schemaWriter = new SchemaWriter
     schemaWriter.vertexSchema(state.graphFrame.vertices, orientGraph, vertexTypeColumnName)

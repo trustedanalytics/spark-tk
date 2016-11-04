@@ -26,7 +26,7 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
  * @param orientConf OrientDB database configurations
  * @param dbName database name
  */
-class EdgeFrameReader(orientConf: OrientConf, dbName:String) {
+class EdgeFrameReader(orientConf: OrientConf, dbName: String) {
 
   /**
    * imports edges class from OrientDB and converts it to Spark RDD

@@ -32,10 +32,10 @@ import scala.collection.mutable.ArrayBuffer
  * @param dbConfigurations OrientDB database configurations
  * @param dbName database name
  */
-class OrientDbEdgeRdd(sc: SparkContext, dbConfigurations: OrientConf, dbName:String) extends RDD[Row](sc, Nil) {
+class OrientDbEdgeRdd(sc: SparkContext, dbConfigurations: OrientConf, dbName: String) extends RDD[Row](sc, Nil) {
 
   override def compute(split: Partition, context: TaskContext): Iterator[Row] = {
-    val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations,dbName)
+    val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations, dbName)
     val partition = split.asInstanceOf[OrientDbPartition]
     val edgeBuffer = new ArrayBuffer[Row]()
     val schemaReader = new SchemaReader(graph)

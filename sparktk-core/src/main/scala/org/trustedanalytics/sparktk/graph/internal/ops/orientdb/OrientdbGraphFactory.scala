@@ -36,8 +36,8 @@ object OrientdbGraphFactory {
    * @param dbConfigurations OrientDB configurations
    * @return a non transactional OrientDB graph database instance
    */
-  def graphDbConnector(dbConfigurations: OrientConf,dbName:String): OrientGraphNoTx = {
-    val dbUrl = getUrl(dbConfigurations,dbName)
+  def graphDbConnector(dbConfigurations: OrientConf, dbName: String): OrientGraphNoTx = {
+    val dbUrl = getUrl(dbConfigurations, dbName)
     val orientDb: ODatabaseDocumentTx = new ODatabaseDocumentTx(dbUrl)
     dbConfigurations.dbProperties.foreach(propertyMap => {
       propertyMap.foreach { case (key, value) => orientDb.setProperty(key, value) }
@@ -49,14 +49,14 @@ object OrientdbGraphFactory {
       }
       else {
         new OServerAdmin(dbUrl).connect(rootUserName, dbConfigurations.rootPassword)
-        openGraphDb(orientDb, dbConfigurations,dbUrl)
+        openGraphDb(orientDb, dbConfigurations, dbUrl)
       }
     }
     else if (!orientDb.exists()) {
-      createGraphDb(dbConfigurations,dbUrl)
+      createGraphDb(dbConfigurations, dbUrl)
     }
     else {
-      openGraphDb(orientDb, dbConfigurations,dbUrl)
+      openGraphDb(orientDb, dbConfigurations, dbUrl)
     }
     orientGraphDb.declareIntent(new OIntentMassiveInsert())
     orientGraphDb
@@ -68,7 +68,7 @@ object OrientdbGraphFactory {
    * @param dbConfigurations OrientDB configurations
    * @return a non transactional Orient graph database instance
    */
-  def createGraphDb(dbConfigurations: OrientConf, dbUrl:String): OrientGraphNoTx = {
+  def createGraphDb(dbConfigurations: OrientConf, dbUrl: String): OrientGraphNoTx = {
     val graph = Try {
       val factory = new OrientGraphFactory(dbUrl, dbConfigurations.dbUserName, dbConfigurations.dbPassword)
       factory.declareIntent(new OIntentMassiveInsert())
@@ -88,7 +88,7 @@ object OrientdbGraphFactory {
    * @param dbConfigurations OrientDB configurations
    * @return a non transactional Orient graph database instance
    */
-  private def openGraphDb(orientDb: ODatabaseDocumentTx, dbConfigurations: OrientConf,dbUrl:String): OrientGraphNoTx = {
+  private def openGraphDb(orientDb: ODatabaseDocumentTx, dbConfigurations: OrientConf, dbUrl: String): OrientGraphNoTx = {
     Try {
       val db: ODatabaseDocumentTx = orientDb.open(dbConfigurations.dbUserName, dbConfigurations.dbPassword)
       db
@@ -100,14 +100,14 @@ object OrientdbGraphFactory {
   }
 
   /**
-    * create the database URL
-    *
-    * @param orientConf OrientDB configurations
-    * @param dbName OrientDB database name
-    * @return full database URL
-    */
-  def getUrl(orientConf: OrientConf,dbName:String):String = {
-    val dbUrl = s"remote:${orientConf.hostname}: ${orientConf.portNumber}/" + dbName
+   * create the database URL
+   *
+   * @param orientConf OrientDB configurations
+   * @param dbName OrientDB database name
+   * @return full database URL
+   */
+  def getUrl(orientConf: OrientConf, dbName: String): String = {
+    val dbUrl = s"remote:${orientConf.hostname}:${orientConf.portNumber}/" + dbName
     dbUrl
   }
 

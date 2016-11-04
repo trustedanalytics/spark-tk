@@ -29,6 +29,8 @@ trait TestingOrientDb {
   var tmpDir: File = null
   var dbUri: String = null
   var dbName: String = "OrientDbTest1"
+  var hostname = "localhost"
+  var portNumber = "2424"
   var dbUserName = "admin"
   var dbPassword = "admin"
   var rootPassword = "root"
@@ -53,10 +55,9 @@ trait TestingOrientDb {
     val uuid = java.util.UUID.randomUUID.toString
     tmpDir = DirectoryUtils.createTempDirectory("orientgraphtests")
     dbUri = "plocal:" + tmpDir.getAbsolutePath + "/" + dbName + uuid
-    dbConfig = new OrientConf(dbUserName, dbUserName, rootPassword, batchSize, Some(dbProperties))
+    dbConfig = OrientConf(hostname, portNumber, dbUserName, dbPassword, rootPassword, Option(dbProperties), batchSize)
     val factory = new OrientGraphFactory(dbUri, dbUserName, dbPassword)
     orientFileGraph = factory.getNoTx
-    orientFileGraph.declareIntent(new OIntentMassiveInsert())
   }
 
   /**

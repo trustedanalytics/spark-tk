@@ -27,7 +27,7 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphF
  * @param sqlContext Spark SQL context
  */
 class ImportGraphFunctions(sqlContext: SQLContext) {
-  def orientGraphFrame(orientConf: OrientConf, dbName:String): GraphFrame = {
+  def orientGraphFrame(orientConf: OrientConf, dbName: String): GraphFrame = {
     val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
     val vertexDataFrame = createVertexDataFrame(orientConf, orientGraph, dbName)
     GraphSchema.validateSchemaForVerticesFrame(vertexDataFrame)
@@ -44,7 +44,7 @@ class ImportGraphFunctions(sqlContext: SQLContext) {
    * @param dbName database name
    * @return edges data frame
    */
-  def createEdgeDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx, dbName:String): DataFrame = {
+  def createEdgeDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx, dbName: String): DataFrame = {
     val schemaReader = new SchemaReader(orientGraph)
     val edgeSchema = schemaReader.importEdgeSchema
     val edgeFrameReader = new EdgeFrameReader(orientConf, dbName)
@@ -61,7 +61,7 @@ class ImportGraphFunctions(sqlContext: SQLContext) {
    * @param dbName database name
    * @return vertices data frame
    */
-  def createVertexDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx, dbName:String): DataFrame = {
+  def createVertexDataFrame(orientConf: OrientConf, orientGraph: OrientGraphNoTx, dbName: String): DataFrame = {
 
     val schemaReader = new SchemaReader(orientGraph)
     val vertexSchema = schemaReader.importVertexSchema

@@ -19,35 +19,21 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait ExportToOrientdbSummarization extends BaseGraph {
 
-
   /**
-    * Save GraphFrame to OrientDB graph
-    * @param orientConf OrientDB configurations case class
-    * @param dbName OrientDB database name
-    * @param vertexTypeColumnName vertex type column name
-    * @param edgeTypeColumnName edge type column name
-    * @return summary statistics for the number of exported edges and vertices
-    */
-  def exportToOrientdb(orientConf: OrientConf, dbName:String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
+   * Save GraphFrame to OrientDB graph
+   * @param orientConf OrientDB configurations case class
+   * @param dbName OrientDB database name
+   * @param vertexTypeColumnName vertex type column name
+   * @param edgeTypeColumnName edge type column name
+   * @return summary statistics for the number of exported edges and vertices
+   */
+  def exportToOrientdb(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
     execute(ExportToOrientdb(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName))
   }
 
-  /**
-    * set OrientDB database configurations parameters
-    * @param hostName OrientDB docker container hostname
-    * @param portNumber OrientDB port number
-    * @param userName the database user name
-    * @param password the database password
-    * @param rootPassword the root password
-    * @param batchSize batch size
-    * @param dbProperties  additional database properties
-    */
-  def setOrientdbConfigurations(hostName: String, portNumber: String, userName: String, password: String, rootPassword: String, batchSize: Int = 1000, dbProperties: Option[Map[String, Any]] = None):OrientConf={
-    OrientConf(hostName, portNumber,userName, password, rootPassword, batchSize, dbProperties)
-  }
 }
 
-case class ExportToOrientdb(orientConf: OrientConf, dbName:String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None) extends GraphSummarization[ExportToOrientdbReturn] {
+case class ExportToOrientdb(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None) extends GraphSummarization[ExportToOrientdbReturn] {
 
   override def work(state: GraphState): ExportToOrientdbReturn = {
 
@@ -56,8 +42,30 @@ case class ExportToOrientdb(orientConf: OrientConf, dbName:String, vertexTypeCol
   }
 }
 
+object ExportToOrientdb {
+  /**
+   * Set OrientDB database credentials and other database parameters
+   * @param hostName OrientDB docker container hostname
+   * @param portNumber OrientDB port number
+   * @param userName the database user name
+   * @param password the database password
+   * @param rootPassword the root password
+   * @param batchSize batch size
+   * @param dbProperties  additional database properties
+   */
+  def setOrientdbConfigurations(hostName: String,
+                                portNumber: String,
+                                userName: String,
+                                password: String,
+                                rootPassword: String,
+                                dbProperties: Option[Map[String, Any]] = None,
+                                batchSize: Int = 1000): OrientConf = {
+    OrientConf(hostName, portNumber, userName, password, rootPassword, dbProperties, batchSize)
+  }
+}
+
 /**
- * returns the output arguments of ExportOrientDbGraphPlugin
+ * Return the output arguments of ExportOrientDbGraphPlugin
  * @param exportedVerticesSummary a dictionary of the total number of exported vertices and the failure count
  * @param verticesTypes a dictionary of vertex class names and the corresponding statistics of exported vertices
  * @param exportedEdgesSummary a dictionary of the total number of exported edges and the failure count

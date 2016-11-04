@@ -50,7 +50,7 @@ class EdgeWriterTest extends WordSpec with TestingOrientDb with TestingSparkCont
       val schemaWriter = new SchemaWriter
       schemaWriter.vertexSchema(friends.vertices, orientFileGraph)
       schemaWriter.edgeSchema(friends.edges, orientFileGraph)
-      val vertexFrameWriter = new VertexFrameWriter(friends.vertices, dbConfig,dbName)
+      val vertexFrameWriter = new VertexFrameWriter(friends.vertices, dbConfig, dbName)
       vertexFrameWriter.exportVertexFrame(dbConfig.batchSize)
       friends.edges.collect().foreach(row => {
         val edgeWriter = new EdgeWriter(orientFileGraph)

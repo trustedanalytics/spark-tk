@@ -16,16 +16,16 @@
 package org.trustedanalytics.sparktk.graph.internal.ops.orientdb
 
 /**
-  * the database configurations parameters
-  * @param hostname OrientDB docker container hostname
-  * @param portNumber OrientDB port number
-  * @param dbUserName the database user name
-  * @param dbPassword the database password
-  * @param rootPassword the root password
-  * @param batchSize batch size
-  * @param dbProperties  additional database properties
-  */
-case class OrientConf(hostname: String, portNumber: String, dbUserName: String, dbPassword: String, rootPassword: String, batchSize: Int = 1000, dbProperties: Option[Map[String, Any]] = None) extends Serializable {
+ * OrientDB database configurations
+ * @param hostname OrientDB docker container hostname
+ * @param portNumber OrientDB port number
+ * @param dbUserName the database user name
+ * @param dbPassword the database password
+ * @param rootPassword the root password
+ * @param batchSize batch size
+ * @param dbProperties  additional database properties
+ */
+case class OrientConf(hostname: String, portNumber: String, dbUserName: String, dbPassword: String, rootPassword: String, dbProperties: Option[Map[String, Any]] = None, batchSize: Int = 1000) extends Serializable {
 
   require(hostname != null, "host name is required")
   require(portNumber != null, "port number is required")

@@ -32,7 +32,7 @@ object ImportFromOrientdb {
    * @param dbName the database name
    * @return spark-tk graph
    */
-  def importOrientdbGraph(sc: SparkContext, orientConf: OrientConf, dbName:String): Graph = {
+  def importOrientdbGraph(sc: SparkContext, orientConf: OrientConf, dbName: String): Graph = {
     val sqlContext = new SQLContext(sc)
     val importer = new ImportGraphFunctions(sqlContext)
     new Graph(importer.orientGraphFrame(orientConf, dbName))

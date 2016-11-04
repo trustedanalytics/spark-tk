@@ -24,7 +24,7 @@ import org.trustedanalytics.sparktk.graph.internal.GraphSchema
  * @param edgeFrame edges data frame
  * @param dbConfig database configurations parameters
  */
-class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf, dbName:String) extends Serializable {
+class EdgeFrameWriter(edgeFrame: DataFrame, dbConfig: OrientConf, dbName: String) extends Serializable {
 
   /**
    * exports edges data frame to OrientDB edges class

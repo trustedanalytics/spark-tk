@@ -26,7 +26,7 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
  * @param dbConfigurations OrientDB configurations
  * @param dbName database name
  */
-class VertexFrameReader(dbConfigurations: OrientConf, dbName:String) {
+class VertexFrameReader(dbConfigurations: OrientConf, dbName: String) {
 
   /**
    * imports vertex class from OrientDB to RDD of vertices

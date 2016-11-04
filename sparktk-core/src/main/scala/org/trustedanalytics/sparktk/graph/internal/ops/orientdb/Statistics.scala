@@ -26,7 +26,7 @@ import scala.collection.mutable
  * @return exported vertices and edges summary statistics
  */
 class Statistics(orientConf: OrientConf, dbName: String) {
-  val orientGraphInstance = OrientdbGraphFactory.graphDbConnector(orientConf,dbName)
+  val orientGraphInstance = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
 
   /**
    * collect Statistics
@@ -36,7 +36,7 @@ class Statistics(orientConf: OrientConf, dbName: String) {
    * @return exported vertices and edges summary statistics
    */
   def getStats(verticesCount: Long, edgesCount: Long): ExportToOrientdbReturn = {
-    val dbUri = OrientdbGraphFactory.getUrl(orientConf,dbName)
+    val dbUri = OrientdbGraphFactory.getUrl(orientConf, dbName)
     val verticesSummary = getExportedVerticesSummary(verticesCount)
     val verticesTypesStats = getExportVertexClassStats
     val edgesSummary = getExportedEdgesSummary(edgesCount)

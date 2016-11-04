@@ -32,7 +32,7 @@ import scala.collection.mutable.ArrayBuffer
  * @param dbConfigurations OrientDB database configurations
  * @param dbName database name
  */
-class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf, dbName:String) extends RDD[Row](sc, Nil) {
+class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf, dbName: String) extends RDD[Row](sc, Nil) {
 
   override def compute(split: Partition, context: TaskContext): Iterator[Row] = {
     val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations, dbName)

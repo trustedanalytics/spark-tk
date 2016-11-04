@@ -24,7 +24,7 @@ import org.trustedanalytics.sparktk.graph.internal.GraphSchema
  * @param vertexFrame vertices data frame
  * @param dbConfig the database configurations parameters
  */
-class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf, dbName:String) extends Serializable {
+class VertexFrameWriter(vertexFrame: DataFrame, dbConfig: OrientConf, dbName: String) extends Serializable {
 
   /**
    * exports vertex dataframe to OrientDB

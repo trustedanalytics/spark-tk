@@ -51,11 +51,20 @@ def import_orientdb_graph(orient_conf,db_name,tc=TkContext.implicit):
         >>> sparktk_graph = tc.graph.create(v,e)
 
   <skip>
-        >>> db = "test_db"
 
-        >>> sparktk_graph.export_to_orientdb(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password",vertex_type_column_name= "gender",edge_type_column_name="relationship")
+        >>> hostname = "localhost"
 
-        >>> imported_gf = tc.graph.import_orientdb_graph(db_url="remote:hostname:2424/%s" % db,user_name= "admin",password = "admin",root_password = "orientdb_server_root_password")
+        >>> port_number = "2424"
+
+        >>> db_name = "GraphDatabase"
+
+        >>> root_password = "root"
+
+        >>> orient_conf = tc.graph.set_orientdb_configurations(hostname,port_number,"admin","admin",root_password)
+
+        >>> sparktk_graph.export_to_orientdb(orient_conf,db_name,vertex_type_column_name= "gender",edge_type_column_name="relationship")
+
+        >>> imported_gf = tc.graph.import_orientdb_graph(orient_conf,db_name)
 
         >>> imported_gf.graphframe.vertices.show()
 
@@ -88,6 +97,7 @@ def import_orientdb_graph(orient_conf,db_name,tc=TkContext.implicit):
   </skip>
     """
     TkContext.validate(tc)
-    scala_graph = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb.ImportFromOrientdb.importOrientdbGraph(tc.jutils.get_scala_sc(), orient_conf, db_name)
+    scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb.ImportFromOrientdb
+    scala_graph = scala_obj.importOrientdbGraph(tc.jutils.get_scala_sc(), orient_conf._scala, db_name)
     from sparktk.graph.graph import Graph
     return Graph(tc, scala_graph)
