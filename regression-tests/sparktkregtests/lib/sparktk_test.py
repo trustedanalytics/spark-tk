@@ -25,7 +25,7 @@ import sparktk as stk
 
 import config
 from threading import Lock
-udf_lib_path = os.path.dirname(os.path.abspath(__file__)) + "udftestlib/"
+udf_lib_path = os.path.dirname(os.path.abspath(__file__)) + "/udftestlib/"
 
 lock = Lock()
 global_tc = None
