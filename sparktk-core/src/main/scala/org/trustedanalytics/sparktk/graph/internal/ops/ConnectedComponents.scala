@@ -16,8 +16,9 @@
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.trustedanalytics.sparktk.frame.Frame
-import org.apache.spark.sql.functions.{ sum, array, col, count, explode, struct }
+import org.apache.spark.sql.functions._
 import org.graphframes.GraphFrame
+import org.graphframes.GraphFrame.ID
 import org.apache.spark.sql.DataFrame
 import org.graphframes.lib.AggregateMessages
 
@@ -42,7 +43,38 @@ trait ConnectedComponentsSummarization extends BaseGraph {
 
 case class ConnectedComponents() extends GraphSummarization[Frame] {
 
+  val index = "component"
+  val indexNew = "componentNew"
+
   override def work(state: GraphState): Frame = {
-    new Frame(state.graphFrame.connectedComponents.run.toDF())
+
+    var graph = GraphFrame(state.graphFrame.vertices.withColumn(index, monotonicallyIncreasingId()), state.graphFrame.edges)
+    var continue = true
+    var getMin = udf { (a: Long, b: Long) => if (a > b) b else a }
+
+    while (continue) {
+      val updatedComponent = graph
+        .aggregateMessages
+        .sendToDst(getMin(AggregateMessages.src(index), AggregateMessages.dst(index)))
+        .sendToSrc(getMin(AggregateMessages.src(index), AggregateMessages.dst(index)))
+        .agg(min(AggregateMessages.msg).as(indexNew))
+
+      val joinedComponent = updatedComponent
+        .join(graph.vertices, graph.vertices(ID) === updatedComponent(ID))
+        .drop(graph.vertices(ID))
+
+      // TODO: switch this to an accumulator argument
+      continue = joinedComponent.where(col(index) !== col(indexNew)).count() > 0
+
+      val newVertices = joinedComponent
+        .drop(index)
+        .withColumnRenamed(indexNew, index)
+
+      val unCachedVertices = AggregateMessages.getCachedDataFrame(newVertices)
+
+      graph = GraphFrame(unCachedVertices, state.graphFrame.edges)
+    }
+
+    new Frame(graph.vertices)
   }
 }

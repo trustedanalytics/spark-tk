@@ -24,7 +24,6 @@ echo $PYTHONPATH
 #export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
 export SPARKTK_HOME=$sparktkpackage/
 
-
 echo "spark tk home"
 echo $SPARKTK_HOME
 

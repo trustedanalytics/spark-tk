@@ -26,12 +26,18 @@ class ExportToDcmTest extends TestingSparkContextWordSpec with Matchers {
   "ExportToDcm" should {
     "create new .dcm from metadata and pixeldata and export to specified hdfs/local path" in {
       val dicom = importDcm(sparkContext, "../integration-tests/datasets/dicom_uncompressed")
+      val originalMetadataCount = dicom.metadata.rowCount()
+      val originalPixeldataCount = dicom.pixeldata.rowCount()
 
       val destPath = "../integration-tests/tests/sandbox/dicom_export"
       dicom.exportToDcm(destPath)
 
       val export_status = new File(destPath).exists()
       assert(export_status.equals(true))
+
+      val loadedDicom = importDcm(sparkContext, destPath)
+      assert(originalMetadataCount.equals(loadedDicom.metadata.rowCount()))
+      assert(originalPixeldataCount.equals(loadedDicom.pixeldata.rowCount()))
 
     }
   }

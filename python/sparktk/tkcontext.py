@@ -25,6 +25,7 @@ from pyspark import SparkContext
 import logging
 logger = logging.getLogger('sparktk')
 
+
 __all__ = ['TkContext']
 
 
@@ -37,17 +38,19 @@ class TkContext(object):
     """
 
     _other_libs = None
+    __mock = object()
 
     def __init__(self,
                  sc=None,
-                 master=default_spark_master,
+                 master=None,
                  py_files=None,
                  spark_home=None,
                  sparktk_home=None,
                  pyspark_submit_args=None,
-                 app_name="sparktk",
+                 app_name=None,
                  other_libs=None,
-                 extra_conf=None,
+                 extra_conf_file=None,
+                 extra_conf_dict=None,
                  use_local_fs=False,
                  debug=None):
         r"""
@@ -66,7 +69,17 @@ class TkContext(object):
         :param other_libs: (list) other libraries (actual python packages or modules) that are compatible with spark-tk,
                            which need to be added to the spark context.  These libraries must be developed for use with
                            spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
-        :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+        :param extra_conf_file: (str) local file path to a spark conf file to supplement the spark conf
+                                File format is basic key-value pairs per line, like:
+
+                                    spark.executor.memory=6g
+                                    spark.files.overwrite=true
+
+        (NOTE: if env var $SPARKTK_EXTRA_CONF is set, the file it indicates will be used.)
+
+        :param extra_conf_dict: (dict) dict for any extra spark conf settings,
+                                for ex.  {"spark.hadoop.fs.default.name": "file:///"}
+                                these will override any matching settings from extra_conf_file, if provided
         :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
         :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
         :return: TkContext
@@ -123,6 +136,11 @@ class TkContext(object):
         """
         if not sc:
             if SparkContext._active_spark_context:
+                msg = "New context NOT created because there is already an active SparkContext"
+                logger.warn(msg)
+                import sys
+                sys.stderr.write("[WARNING] %s\n" % msg)
+                sys.stderr.flush()
                 sc = SparkContext._active_spark_context
             else:
                 sc = create_sc(master=master,
@@ -132,10 +150,13 @@ class TkContext(object):
                                pyspark_submit_args=pyspark_submit_args,
                                app_name=app_name,
                                other_libs=other_libs,
-                               extra_conf=extra_conf,
+                               extra_conf_file=extra_conf_file,
+                               extra_conf_dict=extra_conf_dict,
                                use_local_fs=use_local_fs,
                                debug=debug)
         if type(sc) is not SparkContext:
+            if sc is TkContext.__mock:
+                return
             raise TypeError("sparktk context init requires a valid SparkContext.  Received type %s" % type(sc))
         self._sc = sc
         self._sql_context = None
@@ -175,6 +196,15 @@ class TkContext(object):
         """
         # Since tc is so commonly used as an implicit variable, it's worth special code here to save a lot of imports
         require_type(TkContext, tc, arg_name)
+
+    @staticmethod
+    def _create_mock_tc():
+        """
+        Creates a TkContext which does NOT have a valid SparkContext
+
+        (Useful for testing or exploring sparktk without having Spark around)
+        """
+        return TkContext(TkContext.__mock)
 
     @property
     def sc(self):
