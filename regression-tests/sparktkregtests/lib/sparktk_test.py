@@ -25,6 +25,7 @@ import sparktk as stk
 
 import config
 from threading import Lock
+udf_lib_path = os.path.dirname(os.path.abspath(__file__)) + "udftestlib/"
 
 lock = Lock()
 global_tc = None
@@ -54,7 +55,7 @@ def get_context():
 					'spark.eventLog.enabled': 'false', 
 					'spark.sql.shuffle.partitions': '6'}
                 if config.run_mode:
-                    global_tc = stk.TkContext(master='yarn-client', extra_conf=sparktkconf_dict)
+                    global_tc = stk.TkContext(master='yarn-client', extra_conf=sparktkconf_dict, py_files=[udf_lib_path])
 
                 else:
                     global_tc = stk.TkContext()
