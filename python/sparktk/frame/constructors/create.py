@@ -32,7 +32,7 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
     ----------
 
     :param data: (List of row data or RDD) Data source
-    :param schema: (Optional(list[tuple(str, type)] or list[str])) The are different options for specifying a schema.
+    :param schema: (Optional(list[tuple(str, type)] or list[str])) There are different options for specifying a schema.
                    Note that unless validate_schema is enabled, no attempt is made to check or convert the data to the
                    data type specified by the schema.  If the data provided does not match the schema (and
                    validate_schema is disabled), errors may be encountered when using certain frame operations.
