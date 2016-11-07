@@ -40,7 +40,7 @@ def import_csv_raw(path, delimiter=",", header=False, tc=TkContext.implicit):
     --------
 
     Import raw data from a csv file by specifying the path to the file, delimiter, and header option.  All data will
-    be brought in the the frame as strings, and columns will be named according to the header row, if there was one.
+    be brought in the frame as strings, and columns will be named according to the header row, if there was one.
 
         >>> file_path = "../datasets/cities.csv"
 
