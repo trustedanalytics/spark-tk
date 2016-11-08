@@ -137,15 +137,12 @@ object Import {
       // Override column names
       for ((newName, i) <- overrideColumnNames.zipWithIndex) {
         if (i < numFrameColumns) {
-          println(s"rename ${frameRdd.schema.columnNames(i)} to ${newName}")
           tempSchema = tempSchema.renameColumn(tempSchema.columnNames(i), newName)
         }
       }
 
       tempSchema
     }
-
-    println(s"Column names:  ${frameSchema.columnNames}")
 
     new Frame(frameRdd, frameSchema)
   }
