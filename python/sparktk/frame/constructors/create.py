@@ -32,12 +32,16 @@ def create(data, schema=None, validate_schema=False, tc=TkContext.implicit):
     ----------
 
     :param data: (List of row data or RDD) Data source
-    :param schema: (Optional(list[tuple(str, type)] or list[str])) Optionally specify a schema (list of tuples of
-                   string column names and data type), column names (list of strings, and the column data types will
-                   be inferred) or None (column data types will be inferred and column names will be numbered like C0,
-                   C1, C2, etc).  Note that unless validate_schema is enabled, no attempt is made to check or convert
-                   the data to the data type specified by the schema.  If the data provided does not match the schema
-                   (and validate_schema is disabled), errors may be encountered when using certain frame operations.
+    :param schema: (Optional(list[tuple(str, type)] or list[str])) There are different options for specifying a schema.
+                   Note that unless validate_schema is enabled, no attempt is made to check or convert the data to the
+                   data type specified by the schema.  If the data provided does not match the schema (and
+                   validate_schema is disabled), errors may be encountered when using certain frame operations.
+
+    *  Provide the full schema for the frame as a list of tuples (string column name and data type)
+    *  Provide the column names as a list of strings.  Column data types will be inferred, based on the data.
+    *  None, where the schema is automatically inferred based on the data.  Columns will be named
+    generically ("C0", "C1", "C2", etc).
+
     :param validate_schema: (Optional(bool)) When True, all data is checked to ensure that it matches the schema.
                             If the data does not match the schema's data type, it attempts to cast the data to the
                             proper data type.  When the data is unable to be casted to the schema's data type, a

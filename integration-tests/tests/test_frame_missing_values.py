@@ -20,7 +20,7 @@ from setup import tc, rm, get_sandbox_path
 def test_load_csv_with_missing_values_infer_schema(tc):
     # Load frame with missing values, inferring the schema
     path = "../datasets/missing_values.csv"
-    frame = tc.frame.import_csv(path, header=False, infer_schema=True)
+    frame = tc.frame.import_csv(path, header=False)
 
     # Check row count
     assert(5 == frame.count())
