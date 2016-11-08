@@ -27,7 +27,4 @@ export SPARKTK_HOME=$sparktkpackage/
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-py.test --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
-
-#export RUN_MODE=false
-py.test $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests
+py.test --boxed -n10 $MAINDIR/regression-tests
