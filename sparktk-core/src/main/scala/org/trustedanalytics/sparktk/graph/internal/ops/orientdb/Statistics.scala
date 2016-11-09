@@ -25,7 +25,7 @@ import scala.collection.mutable
  * @param orientConf    OrientDB configurations
  * @return exported vertices and edges summary statistics
  */
-class Statistics(orientConf: OrientConf, dbName: String) {
+class Statistics(orientConf: OrientdbConf, dbName: String) {
   val orientGraphInstance = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
 
   /**

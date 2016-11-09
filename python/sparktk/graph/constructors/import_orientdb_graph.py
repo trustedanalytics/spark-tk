@@ -18,14 +18,14 @@
 from sparktk.tkcontext import TkContext
 
 
-def import_orientdb_graph(orient_conf,db_name,tc=TkContext.implicit):
+def import_orientdb_graph(orient_conf, db_name, tc=TkContext.implicit):
     """
     Import graph from OrientDB to spark-tk as spark-tk graph (Spark GraphFrame)
 
     Parameters
     ----------
-    :param:(OrientConf) orient_conf: OrientDB configurations
-    :param:(str) db_name: the database name
+    :param orient_conf: (OrientConf) configuration settings for the OrientDB database
+    :param db_name: (str) the database name
 
     Example
     -------
@@ -60,11 +60,14 @@ def import_orientdb_graph(orient_conf,db_name,tc=TkContext.implicit):
 
         >>> root_password = "root"
 
-        >>> orient_conf = tc.graph.set_orientdb_configurations(hostname,port_number,"admin","admin",root_password)
+        >>> orient_conf = tc.graph.create_orientdb_conf(hostname, port_number, "admin", "admin", root_password)
 
-        >>> sparktk_graph.export_to_orientdb(orient_conf,db_name,vertex_type_column_name= "gender",edge_type_column_name="relationship")
+        >>> sparktk_graph.export_to_orientdb(orient_conf,
+        ...                                  db_name,
+        ...                                  vertex_type_column_name= "gender",
+        ...                                  edge_type_column_name="relationship")
 
-        >>> imported_gf = tc.graph.import_orientdb_graph(orient_conf,db_name)
+        >>> imported_gf = tc.graph.import_orientdb_graph(orient_conf, db_name)
 
         >>> imported_gf.graphframe.vertices.show()
 

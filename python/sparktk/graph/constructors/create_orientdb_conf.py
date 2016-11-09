@@ -19,7 +19,14 @@ from sparktk.propobj import PropertiesObject
 from sparktk.tkcontext import TkContext
 
 
-def set_orientdb_configurations(hostname, port_number, db_user_name, db_password, root_password, db_properties = None,batch_size = 1000, tc=TkContext.implicit):
+def create_orientdb_conf(hostname,
+                         port_number,
+                         db_user_name,
+                         db_password,
+                         root_password,
+                         db_properties=None,
+                         batch_size=1000,
+                         tc=TkContext.implicit):
 
     """
     Set OrientDB configurations to be passed to export_to_orientdb and import_orientdb_graph APIs.
@@ -27,15 +34,15 @@ def set_orientdb_configurations(hostname, port_number, db_user_name, db_password
     Parameters
     ----------
 
-    :param:(str) hostname: OrientDB server hostname
-    :param:(str) port_number: OrientDB server port number
-    :param:(str) db_user_name: OrientDB database user name
-    :param:(str) password: the database password
-    :param:(str) root_password: OrientDB server root password
-    :param:(int) batch_size: batch size for graph ETL to OrientDB database
-    :param:(Optional(dict(str,any))) db_properties: additional properties for OrientDB database
+    :param hostname: (str) OrientDB server hostname
+    :param port_number: (str) OrientDB server port number
+    :param db_user_name: (str) OrientDB database user name
+    :param db_password: (str) the database password
+    :param root_password: (str) OrientDB server root password
+    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database
+    :param batch_size: (int) batch size for graph ETL to OrientDB database
 
-    :return:(OrientConf) OrientDB configurations
+    :return (OrientConf) OrientDB configurations
 
     Example
     -------
@@ -46,7 +53,17 @@ def set_orientdb_configurations(hostname, port_number, db_user_name, db_password
 
         >>> root_password = "root"
 
-        >>> orient_conf = tc.graph.set_orientdb_configurations(hostname,port_number,"admin","admin",root_password)
+        >>> db_properties = dict("db.validation","false")
+
+        >>> batch_size = 1000
+
+        >>> orient_conf = tc.graph.create_orientdb_config(hostname,
+        ...                                               port_number,
+        ...                                               "admin",
+        ...                                               "admin",
+        ...                                               root_password,
+        ...                                               db_properties,
+        ...                                               batch_size)
 
         >>> orient_conf
         batch_size    = 1000
@@ -60,26 +77,26 @@ def set_orientdb_configurations(hostname, port_number, db_user_name, db_password
 
     """
     TkContext.validate(tc)
-    scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.ops.orientdb.ExportToOrientdb
+    scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConfig
     return OrientConf(tc,
-                      scala_obj.setOrientdbConfigurations(hostname,
-                                                         port_number,
-                                                         db_user_name,
-                                                         db_password,
-                                                         root_password,
-                                                         tc.jutils.convert.to_scala_option_map(db_properties),
-                                                         batch_size))
+                      scala_obj.createOrientdbConf(hostname,
+                                                   port_number,
+                                                   db_user_name,
+                                                   db_password,
+                                                   root_password,
+                                                   tc.jutils.convert.to_scala_option_map(db_properties),
+                                                   batch_size))
 
 
 class OrientConf(PropertiesObject):
     """
     OrientConf holds the configurations for OrientDB export and import APIs in Spark-TK
     """
-    def __init__(self, tc,scala_result):
+    def __init__(self, tc, scala_result):
         self._tc = tc
         self._scala = scala_result
         self._hostname = scala_result.hostname()
-        self._port_number= scala_result.portNumber()
+        self._port_number = scala_result.portNumber()
         self._db_user_name = scala_result.dbUserName()
         self._db_password = scala_result.dbPassword()
         self._root_password = scala_result.rootPassword()

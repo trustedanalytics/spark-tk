@@ -32,7 +32,7 @@ class GraphFrameFunctions(state: GraphState) {
    * @param edgeTypeColumnName edge type column name
    * @return summary statistics for the number of exported edges and vertices
    */
-  def saveToOrientGraph(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
+  def saveToOrientGraph(orientConf: OrientdbConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
 
     val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
     //export schema

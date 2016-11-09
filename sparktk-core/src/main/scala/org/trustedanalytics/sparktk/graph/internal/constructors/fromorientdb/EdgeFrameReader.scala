@@ -18,7 +18,7 @@ package org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
+import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientdbConf
 
 /**
  * converts edges from OrientDB graph database to Spark RDD
@@ -26,7 +26,7 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
  * @param orientConf OrientDB database configurations
  * @param dbName database name
  */
-class EdgeFrameReader(orientConf: OrientConf, dbName: String) {
+class EdgeFrameReader(orientConf: OrientdbConf, dbName: String) {
 
   /**
    * imports edges class from OrientDB and converts it to Spark RDD

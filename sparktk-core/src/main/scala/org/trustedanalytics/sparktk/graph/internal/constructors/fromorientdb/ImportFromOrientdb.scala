@@ -18,7 +18,7 @@ package org.trustedanalytics.sparktk.graph.internal.constructors.fromorientdb
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 import org.trustedanalytics.sparktk.graph.Graph
-import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
+import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientdbConf
 
 /**
  * imports graph from OrientDB to spark-tk
@@ -26,13 +26,14 @@ import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConf
 object ImportFromOrientdb {
 
   /**
-   * imports OrientDB graph to spark-tk graph
+   * Import OrientDB graph to spark-tk graph
+   *
    * @param sc spark context
-   * @param orientConf OrientDB configurations
+   * @param orientConf configuration settings for the OrientDB connection
    * @param dbName the database name
    * @return spark-tk graph
    */
-  def importOrientdbGraph(sc: SparkContext, orientConf: OrientConf, dbName: String): Graph = {
+  def importOrientdbGraph(sc: SparkContext, orientConf: OrientdbConf, dbName: String): Graph = {
     val sqlContext = new SQLContext(sc)
     val importer = new ImportGraphFunctions(sqlContext)
     new Graph(importer.orientGraphFrame(orientConf, dbName))

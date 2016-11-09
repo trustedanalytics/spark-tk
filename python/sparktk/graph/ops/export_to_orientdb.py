@@ -17,10 +17,10 @@
 
 from sparktk.propobj import PropertiesObject
 from sparktk.tkcontext import TkContext
-tc=TkContext.implicit
+tc = TkContext.implicit
 
 
-def export_to_orientdb(self,orientdb_conf,db_name,vertex_type_column_name=None, edge_type_column_name=None):
+def export_to_orientdb(self, orientdb_conf, db_name, vertex_type_column_name=None, edge_type_column_name=None):
 
     """
     Export Spark-tk Graph (GraphFrame) to OrientDB API creates OrientDB database with the given database name, URL
@@ -30,21 +30,21 @@ def export_to_orientdb(self,orientdb_conf,db_name,vertex_type_column_name=None, 
     Parameters
     ----------
 
-    :param:(OrientConf) orientdb_conf: OrientDB configurations
-    :param:(str) db_name: OrientDB database name
-    :param:(Optional(str)) vertex_type_column_name: column name from the vertex data frame specified to be the vertex type
-    :param:(Optional(str)) edge_type_column_name: column name from the edge data frame specified to be the edge type
+    :param orientdb_conf: (OrientConf) configuration settings for the OrientDB connection
+    :param db_name: (str) OrientDB database name
+    :param vertex_type_column_name: (Optional(str)) column name from the vertex data frame specified to be the vertex type
+    :param edge_type_column_name: (Optional(str)) column name from the edge data frame specified to be the edge type
 
     Example
     -------
   <skip>
-        >>> v = tc.frame.create([("a", "Alice", 34,"F"),
-        ...     ("b", "Bob", 36,"M"),
-        ...     ("c", "Charlie", 30,"M"),
-        ...     ("d", "David", 29,"M"),
-        ...     ("e", "Esther", 32,"F"),
-        ...     ("f", "Fanny", 36,"F"),
-        ...     ], ["id", "name", "age","gender"])
+        >>> v = tc.frame.create([("a", "Alice", 34, "F"),
+        ...     ("b", "Bob", 36, "M"),
+        ...     ("c", "Charlie", 30, "M"),
+        ...     ("d", "David", 29, "M"),
+        ...     ("e", "Esther", 32, "F"),
+        ...     ("f", "Fanny", 36, "F"),
+        ...     ], ["id", "name", "age", "gender"])
 
         >>> e = tc.frame.create([("a", "b", "friend"),
         ...     ("b", "c", "follow"),
@@ -56,10 +56,9 @@ def export_to_orientdb(self,orientdb_conf,db_name,vertex_type_column_name=None, 
         ...     ("a", "e", "friend")
         ...     ], ["src", "dst", "relationship"])
 
-        >>> sparktk_graph = tc.graph.create(v,e)
+        >>> sparktk_graph = tc.graph.create(v, e)
 
-
-         >>> hostname = "localhost"
+        >>> hostname = "localhost"
 
         >>> port_number = "2424"
 
@@ -67,9 +66,12 @@ def export_to_orientdb(self,orientdb_conf,db_name,vertex_type_column_name=None, 
 
         >>> root_password = "root"
 
-        >>> orient_conf = tc.graph.set_orientdb_configurations(hostname,port_number,"admin","admin",root_password)
+        >>> orient_conf = tc.graph.create_orientdb_config(hostname, port_number, "admin", "admin", root_password)
 
-        >>> result = sparktk_graph.export_to_orientdb(orient_conf,db_name,vertex_type_column_name= "gender",edge_type_column_name="relationship")
+        >>> result = sparktk_graph.export_to_orientdb(orient_conf,
+        ...                                           db_name,
+        ...                                           vertex_type_column_name="gender",
+        ...                                           edge_type_column_name="relationship")
 
         >>> result
         db_uri                    = remote:hostname:2424/test_db
@@ -90,7 +92,7 @@ class ExportToOrientdbReturn(PropertiesObject):
     """
     ExportToOrientdbReturn holds the data returned from ExportToOrientDB
     """
-    def __init__(self, tc,scala_result):
+    def __init__(self, tc, scala_result):
         self._tc = tc
         self._exported_vertices_summary = self._tc.jutils.convert.scala_map_to_python(scala_result.exportedVerticesSummary())
         self._vertices_types = self._tc.jutils.convert.scala_map_to_python(scala_result.verticesTypes())
@@ -122,6 +124,3 @@ class ExportToOrientdbReturn(PropertiesObject):
     def db_uri(self):
         """OrientDB database URL"""
         return self._db_uri
-
-
-
