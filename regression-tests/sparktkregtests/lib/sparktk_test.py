@@ -47,7 +47,7 @@ def get_context():
                                 'spark.yarn.executor.memoryOverhead': '384',
                                 'spark.eventLog.enabled': 'false',
                                 'spark.sql.shuffle.partitions': '6'}
-            
+
             if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
                 sparktkconf_dict['spark.driver.extraJavaOptions'] = sparktkconf_dict['spark.driver.extraJavaOptions'] + ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
             if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
