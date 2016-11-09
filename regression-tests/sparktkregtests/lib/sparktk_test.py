@@ -29,7 +29,6 @@ from threading import Lock
 lock = Lock()
 global_tc = None
 
-
 def get_context():
     global global_tc
     with lock:
@@ -48,6 +47,18 @@ def get_context():
                                 'spark.yarn.executor.memoryOverhead': '384',
                                 'spark.eventLog.enabled': 'false',
                                 'spark.sql.shuffle.partitions': '6'}
+            
+            if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
+                sparktkconf_dict['spark.driver.extraJavaOptions'] = sparktkconf_dict['spark.driver.extraJavaOptions'] + ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
+            if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
+                sparktkconf_dict['spark.executor.extraJavaOptions'] = ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
+
+            if 'SPARK_DRIVER_PORT' in os.environ:
+                sparktkconf_dict['spark.driver.port'] = os.environ['SPARK_DRIVER_PORT']
+
+            if 'SPARK_FILESERVER_PORT' in os.environ:
+                sparktkconf_dict['spark.fileserver.port'] = os.environ['SPARK_FILESERVER_PORT']
+
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
