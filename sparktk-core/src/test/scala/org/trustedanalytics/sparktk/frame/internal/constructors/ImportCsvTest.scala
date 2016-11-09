@@ -29,7 +29,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
       val header = true
       val inferSchema = true
 
-      val frame = Import.importCsv(sparkContext, path, delimiter, header, inferSchema)
+      val frame = Import.importCsv(sparkContext, path, delimiter, header)
 
       assert(frame.rdd.count == 20)
       assert(frame.schema.columns.length == 6)
@@ -44,7 +44,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     "Import frame with delimiter = , and string, int, float, bool, datetime types" in {
       val path = TEST_DATA + "/importcsvtest.csv"
 
-      val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
+      val frame = Import.importCsv(sparkContext, path, ",", header = true)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 4)
@@ -61,7 +61,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     "Import frame without a header row" in {
       val path = TEST_DATA + "/noheader.csv"
 
-      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
+      val frame = Import.importCsv(sparkContext, path, ",", header = false)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 4)
@@ -74,7 +74,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     "Import frame without inferring schema and no header row" in {
       val path = TEST_DATA + "/noheader.csv"
 
-      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false)
+      val frame = Import.importCsvRaw(sparkContext, path, ",", header = false)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 4)
@@ -87,7 +87,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     "Import frame with a header row, but no inferred schema" in {
       val path = TEST_DATA + "/importcsvtest.csv"
 
-      val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = false)
+      val frame = Import.importCsvRaw(sparkContext, path, ",", header = true)
 
       assert(frame.rdd.count == 10)
       assert(frame.schema.columns.length == 4)
@@ -104,7 +104,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
 
       intercept[Exception] {
         // Frame contains booleans, which aren't supported, so this should cause an exception when inferring the schema
-        Import.importCsv(sparkContext, path, ",", inferSchema = true)
+        Import.importCsv(sparkContext, path, ",")
       }
 
       val schema = FrameSchema(Vector(Column("id", DataTypes.int32),
@@ -113,14 +113,14 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
         Column("date", DataTypes.string)))
 
       // Specify the schema to treat booleans as strings, so this should pass
-      val frame = Import.importCsv(sparkContext, path, ",", inferSchema = false, schema = Some(schema))
+      val frame = Import.importCsv(sparkContext, path, ",", schema = Some(Left(schema)))
       assert(frame.rowCount() == 5)
     }
 
     "Import multiple csv files" in {
       val path = TEST_DATA + "/movie-part*.csv"
 
-      val frame = Import.importCsv(sparkContext, path, ",", header = true, inferSchema = true)
+      val frame = Import.importCsv(sparkContext, path, ",", header = true)
 
       assert(frame.rowCount() == 20)
       assert(frame.schema == FrameSchema(Vector(Column("user", DataTypes.int32),
@@ -132,7 +132,7 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
 
     "Import csv with missing values" in {
       val path = TEST_DATA + "/missing_values.csv"
-      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = true)
+      val frame = Import.importCsv(sparkContext, path, ",", header = false)
       assert(frame.rowCount() == 5)
       assert(frame.schema == FrameSchema(Vector(Column("C0", DataTypes.string),
         Column("C1", DataTypes.int32),
@@ -154,13 +154,56 @@ class ImportCsvTest extends TestingSparkContextWordSpec {
     "Import csv with unicode data type" in {
       val path = TEST_DATA + "/unicode.csv"
       val schema = FrameSchema(Vector(Column("a", DataTypes.unicode), Column("b", DataTypes.unicode), Column("c", DataTypes.unicode)))
-      val frame = Import.importCsv(sparkContext, path, ",", header = false, inferSchema = false, schema = Some(schema))
+      val frame = Import.importCsv(sparkContext, path, ",", header = false, schema = Some(Left(schema)))
       val data = frame.take(frame.rowCount().toInt)
       val expectedData: Array[Row] = Array(
         new GenericRow(Array[Any]("à", "ë", "ñ")),
         new GenericRow(Array[Any]("ã", "ê", "ü"))
       )
       assert(data.sameElements(expectedData))
+    }
+
+    "Import csv with overriding column names" in {
+      val path = TEST_DATA + "/cities.csv"
+      val columnNames = List[String]("a", "b", "c", "d", "e", "f")
+      val frame = Import.importCsv(sparkContext, path, delimiter = "|", header = true, schema = Some(Right(columnNames)))
+
+      assert(frame.rdd.count == 20)
+      assert(frame.schema.columns.length == 6)
+
+      // data types should have been inferred, and column names come from the list
+      assert(frame.schema.columnDataType("a") == DataTypes.int32)
+      assert(frame.schema.columnDataType("b") == DataTypes.string)
+      assert(frame.schema.columnDataType("c") == DataTypes.int32)
+      assert(frame.schema.columnDataType("d") == DataTypes.int32)
+      assert(frame.schema.columnDataType("e") == DataTypes.string)
+      assert(frame.schema.columnDataType("f") == DataTypes.string)
+    }
+
+    "Import csv with partial override of column names" in {
+      val path = TEST_DATA + "/cities.csv"
+      val columnNames = List[String]("a", "b", "c")
+      val frame = Import.importCsv(sparkContext, path, delimiter = "|", header = true, schema = Some(Right(columnNames)))
+
+      assert(frame.rdd.count == 20)
+      assert(frame.schema.columns.length == 6)
+
+      assert(frame.schema.columnDataType("a") == DataTypes.int32) // column name override
+      assert(frame.schema.columnDataType("b") == DataTypes.string) // column name override
+      assert(frame.schema.columnDataType("c") == DataTypes.int32) // column name override
+      assert(frame.schema.columnDataType("population_2010") == DataTypes.int32) // original column name
+      assert(frame.schema.columnDataType("change") == DataTypes.string) // original column name
+      assert(frame.schema.columnDataType("county") == DataTypes.string) // original column name
+    }
+
+    "Import csv with empty list of column name overrides" in {
+      val path = TEST_DATA + "/cities.csv"
+      val columnNames = List[String]()
+
+      val ex = intercept[IllegalArgumentException] {
+        Import.importCsv(sparkContext, path, delimiter = "|", header = true, schema = Some(Right(columnNames)))
+      }
+      assert(ex.getMessage.contains("requirement failed: schema column name list must not be null or empty"))
     }
   }
 
