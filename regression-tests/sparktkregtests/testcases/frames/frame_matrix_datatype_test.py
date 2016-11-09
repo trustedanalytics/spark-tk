@@ -175,7 +175,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
                 err_msg="Singual vectors incorrect")
 
     def test_matrix_pcs(self):
-        """ Test matrix svd operation on the frame"""
+        """ Test matrix pca operation on frame"""
         dataset = [["A", [[1,2,3],[3,4,5],[2,6,7]]],
             ["B", [[5,6,7],[7,8,9],[4,3,5]]],
             ["C", [[9,10,11],[11,12,13],[13,14,15]]]]
