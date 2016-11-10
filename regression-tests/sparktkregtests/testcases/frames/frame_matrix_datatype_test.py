@@ -190,7 +190,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
 
             #expected ouput using numpy's svd
             U, s, V = numpy.linalg.svd(row['C1'])
-            expected_pcs = row['C1'] * V.T
+            expected_pcs = row['C1'] * V
             numpy.testing.assert_almost_equal(
                 actual_pcs, expected_pcs, decimal=4,
                 err_msg="pcs incorrect")
