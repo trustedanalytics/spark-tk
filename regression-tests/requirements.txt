@@ -1,3 +1,11 @@
+teamcity-messages
 pandas
 numpy
 scipy
+statsmodels
+pydicom
+pytest-cov
+pytest-xdist
+glob2
+sklearn
+lxml
