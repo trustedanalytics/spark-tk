@@ -266,6 +266,7 @@ def create_sc(master=None,
     master_in_extra = False
     app_name_in_extra = False
     for k, v in extra.items():
+        print "k, v", k, v
         if k == "spark.master":
             master_in_extra = True
         if k == "spark.app.name":
