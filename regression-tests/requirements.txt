@@ -9,3 +9,4 @@ pytest-xdist
 glob2
 sklearn
 lxml
+networkx
