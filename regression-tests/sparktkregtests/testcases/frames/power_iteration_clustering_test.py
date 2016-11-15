@@ -46,7 +46,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
 
         frame = self.context.frame.create(data, schema=self.schema)
         result = frame.power_iteration_clustering(
-            "Source", "Destination", "Similarity", k=3, max_iterations=10)
+            "Source", "Destination", "Similarity", k=3, max_iterations=20)
 
         #check cluster sizes
         actual_cluster_sizes = sorted(result.cluster_sizes.values())
