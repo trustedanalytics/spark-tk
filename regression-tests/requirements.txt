@@ -11,3 +11,4 @@ sklearn
 lxml
 networkx
 requests
+psutil

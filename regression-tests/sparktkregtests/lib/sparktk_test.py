@@ -19,7 +19,8 @@
 import unittest
 import uuid
 import datetime
-import os
+import os, random
+import psutil
 
 import sparktk as stk
 
@@ -28,6 +29,32 @@ from threading import Lock
 
 lock = Lock()
 global_tc = None
+
+def find_open_port(bottom, top):
+    start_top_bottom = random.randint(1,2)
+    start = int(bottom)
+    direction = 1
+    if start_top_bottom == 1:
+        start = int(bottom)
+        direction = 1
+    else:
+        start = int(top)
+        direction = -1
+    ports = []
+    for i in psutil.net_connections(kind='inet4'):
+        ports.insert(-1, i.laddr[1])
+
+    ports.sort()
+
+    next_port=start
+    found_port=0
+    while found_port == 0 and next_port >= int(bottom) and next_port <= int(top) :
+        if next_port in ports:
+            next_port = next_port + direction
+        else:
+            found_port = next_port
+
+    return found_port
 
 def get_context():
     global global_tc
@@ -56,9 +83,11 @@ def get_context():
             if 'SPARK_DRIVER_PORT' in os.environ:
                 sparktkconf_dict['spark.driver.port'] = os.environ['SPARK_DRIVER_PORT']
 
-            if 'SPARK_FILESERVER_PORT' in os.environ:
-                sparktkconf_dict['spark.fileserver.port'] = os.environ['SPARK_FILESERVER_PORT']
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+               sparktkconf_dict['spark.driver.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
 
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+                sparktkconf_dict['spark.fileserver.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
