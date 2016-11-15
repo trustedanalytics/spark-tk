@@ -33,19 +33,20 @@ global_tc = None
 def find_open_port(bottom, top):
     start_top_bottom = random.randint(1,2)
     start = int(bottom)
-    direction = 1
+    direction = random.randint(1,10)
     if start_top_bottom == 1:
         start = int(bottom)
-        direction = 1
+        direction = direction
     else:
-        start = int(top)
-        direction = -1
+        start = (int(bottom) + int(top))/2
+        direction = -direction
     ports = []
+
     for i in psutil.net_connections(kind='inet4'):
         ports.insert(-1, i.laddr[1])
 
     ports.sort()
-
+    print direction
     next_port=start
     found_port=0
     while found_port == 0 and next_port >= int(bottom) and next_port <= int(top) :
@@ -53,6 +54,7 @@ def find_open_port(bottom, top):
             next_port = next_port + direction
         else:
             found_port = next_port
+
     print "bottom: ", bottom, "top : ", top, "direction ", direction, "found ", found_port
     return found_port
 
@@ -81,14 +83,17 @@ def get_context():
             if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
                 sparktkconf_dict['spark.executor.extraJavaOptions'] = ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
 
-            if 'SPARK_DRIVER_PORT' in os.environ:
-                sparktkconf_dict['spark.driver.port'] = os.environ['SPARK_DRIVER_PORT']
+
 
             if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
                sparktkconf_dict['spark.driver.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
 
             if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
                 sparktkconf_dict['spark.fileserver.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+                sparktkconf_dict['spark.ui.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+            
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
