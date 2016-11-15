@@ -53,7 +53,7 @@ def find_open_port(bottom, top):
             next_port = next_port + direction
         else:
             found_port = next_port
-
+    print "bottom: ", bottom, "top : ", top, "direction ", direction, "found ", found_port
     return found_port
 
 def get_context():
@@ -62,6 +62,7 @@ def get_context():
         if global_tc is None:
             sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
                                 'spark.ui.enabled': 'false',
+                                'spark.port.maxRetries': 50,
                                 'spark.driver.maxResultSize': '2g',
                                 'spark.dynamicAllocation.enabled': 'true',
                                 'spark.dynamicAllocation.maxExecutors': '16',
