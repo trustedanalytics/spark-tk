@@ -62,14 +62,21 @@ object JoinRddFunctions extends Serializable {
         rightFrame,
         leftFrame.schema.copySubset(left.joinColumns).columns.toList)
 
-      val joinedFrame = aliasedLeftFrame.toDataFrame.join(
-        aliasedRightFrame.toDataFrame,
-        left.joinColumns
-      )
+      val leftDf = aliasedLeftFrame.toDataFrame
+      val rightDf = aliasedRightFrame.toDataFrame
+      // If the join columns have same names in both the frames, specify the columns explicitly while
+      // calling dataframe join to not have duplicate columns - cause once one has duplicate columns,
+      // one can't select one out of those 2 columns. Else use expression maker.
+      val joinedFrame = right.joinColumns.sorted.equals(left.joinColumns.sorted) match {
+        case true => leftDf.join(rightDf, left.joinColumns)
+        case false =>
+          val expression = expressionMaker(leftDf, rightDf, left.joinColumns, right.joinColumns)
+          leftDf.join(rightDf, expression)
+      }
 
       // Get RDD out of the dataframe with frame columns in order
       val columnsInJoinedFrame = aliasedLeftFrame.schema.columnNames ++
-        aliasedRightFrame.schema.columnNames.filterNot(left.joinColumns.contains(_))
+        aliasedRightFrame.schema.columnNames.filterNot(right.joinColumns.contains(_))
       joinedFrame.selectExpr(columnsInJoinedFrame: _*).rdd
     }
     createJoinedFrame(joinedRdd, left, right, "inner")
