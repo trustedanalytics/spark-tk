@@ -59,7 +59,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         grouped_assignment = [list(val["id"]) for index, val in actual_assignment]
 
         expected_assignment = [[4, 5, 6], [1, 2, 3], [0]]
-        self.assertItemsEqual(grouped_assignment, expected_assignment)
+        self.assertEqual(sorted(grouped_assignment), sorted(expected_assignment))
 
     def test_circles_default(self):
         """ Test pic on similarity matrix for two concentric cicles """
