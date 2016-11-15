@@ -1,7 +1,22 @@
+/**
+ *  Copyright (c) 2016 Intel Corporation 
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.spark.ml.regression.org.trustedanalytics.sparktk
 
-import breeze.linalg.{DenseVector => BDV}
-import breeze.optimize.{CachedDiffFunction, DiffFunction, LBFGS => BreezeLBFGS}
+import breeze.linalg.{ DenseVector => BDV }
+import breeze.optimize.{ CachedDiffFunction, DiffFunction, LBFGS => BreezeLBFGS }
 import org.apache.hadoop.fs.Path
 import org.apache.spark.annotation.Since
 import org.apache.spark.broadcast.Broadcast
@@ -9,7 +24,7 @@ import org.apache.spark.ml.feature.Instance
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.param.shared._
 import org.apache.spark.ml.util._
-import org.apache.spark.ml.{Estimator, Model}
+import org.apache.spark.ml.{ Estimator, Model }
 import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.stat.MultivariateOnlineSummarizer
 import org.apache.spark.mllib.util.{ Loader, Saveable }
@@ -24,20 +39,20 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.{ Map, mutable }
 
 private[regression] trait CoxPhParams extends Params
-  with HasFeaturesCol
-  with HasLabelCol
-  with HasPredictionCol
-  with HasMaxIter
-  with HasTol
-  with HasFitIntercept
-  with Logging {
+    with HasFeaturesCol
+    with HasLabelCol
+    with HasPredictionCol
+    with HasMaxIter
+    with HasTol
+    with HasFitIntercept
+    with Logging {
 
   /**
-    * Param for censor column name.
-    * The value of this column could be 0 or 1.
-    * If the value is 1, it means the event has occurred i.e. uncensored; otherwise censored.
-    * @group param
-    */
+   * Param for censor column name.
+   * The value of this column could be 0 or 1.
+   * If the value is 1, it means the event has occurred i.e. uncensored; otherwise censored.
+   * @group param
+   */
   final val censorCol: Param[String] = new Param(this, "censorCol", "censor column name")
 
   /** @group getParam */
@@ -46,14 +61,14 @@ private[regression] trait CoxPhParams extends Params
   setDefault(censorCol -> "censor")
 
   /**
-    * Validates and transforms the input schema with the provided param map.
-    * @param schema input schema
-    * @param fitting whether this is in fitting or prediction
-    * @return output schema
-    */
+   * Validates and transforms the input schema with the provided param map.
+   * @param schema input schema
+   * @param fitting whether this is in fitting or prediction
+   * @return output schema
+   */
   protected def validateAndTransformSchema(
-                                            schema: StructType,
-                                            fitting: Boolean): StructType = {
+    schema: StructType,
+    fitting: Boolean): StructType = {
     SchemaUtils.checkColumnType(schema, $(featuresCol), new VectorUDT)
     if (fitting) {
       SchemaUtils.checkColumnType(schema, $(censorCol), DoubleType)
@@ -65,7 +80,7 @@ private[regression] trait CoxPhParams extends Params
 }
 
 class CoxPh(override val uid: String)
-  extends Estimator[CoxPhModel] with CoxPhParams
+    extends Estimator[CoxPhModel] with CoxPhParams
     with DefaultParamsWritable with Logging {
 
   def this() = this(Identifiable.randomUID("coxPhSurvivalModel"))
@@ -84,20 +99,20 @@ class CoxPh(override val uid: String)
   def setPredictionCol(value: String): this.type = set(predictionCol, value)
 
   /**
-    * Set the maximum number of iterations.
-    * Default is 100.
-    * @group setParam
-    */
+   * Set the maximum number of iterations.
+   * Default is 100.
+   * @group setParam
+   */
   def setMaxIter(value: Int): this.type = set(maxIter, value)
 
   setDefault(maxIter -> 100)
 
   /**
-    * Set the convergence tolerance of iterations.
-    * Smaller value will lead to higher accuracy with the cost of more iterations.
-    * Default is 1E-6.
-    * @group setParam
-    */
+   * Set the convergence tolerance of iterations.
+   * Smaller value will lead to higher accuracy with the cost of more iterations.
+   * Default is 1E-6.
+   * @group setParam
+   */
   def setTol(value: Double): this.type = set(tol, value)
 
   setDefault(tol -> 1E-6)
@@ -147,9 +162,9 @@ class CoxPh(override val uid: String)
   override def copy(extra: ParamMap): CoxPh = defaultCopy(extra)
 
   /**
-    * Extract [[featuresCol]], [[labelCol]] and [[censorCol]] from input dataFrame,
-    * and put it in an RDD of CoxPoint sorted in descending order of time.
-    */
+   * Extract [[featuresCol]], [[labelCol]] and [[censorCol]] from input dataFrame,
+   * and put it in an RDD of CoxPoint sorted in descending order of time.
+   */
   protected[ml] def extractSortedCoxPhPointRdd(dataFrame: DataFrame): RDD[CoxPhPoint] = {
     val rdd = dataFrame.select($(featuresCol), $(labelCol), $(censorCol)).map {
       case Row(features: Vector, time: Double, censor: Double) =>
@@ -159,8 +174,8 @@ class CoxPh(override val uid: String)
     rdd.sortBy(_.time, false)
   }
   /**
-    * Computes a vector storing the mean of each of the columns given in [[featuresCol]]] of the dataFrame
-    */
+   * Computes a vector storing the mean of each of the columns given in [[featuresCol]]] of the dataFrame
+   */
   protected[ml] def computeFeatureMean(dataFrame: DataFrame): Vector = {
     // Computing the mean of the observations
     val instanceRdd: RDD[Instance] = dataFrame.select(col($(featuresCol))).map {
@@ -170,13 +185,13 @@ class CoxPh(override val uid: String)
 
     val meanSummarizer = {
       val seqOp = (c: MultivariateOnlineSummarizer,
-                   instance: Instance) => {
+        instance: Instance) => {
         c.add(instance.features)
         c
       }
 
       val combOp = (c1: MultivariateOnlineSummarizer,
-                    c2: MultivariateOnlineSummarizer) => {
+        c2: MultivariateOnlineSummarizer) => {
         c1.merge(c2)
         c1
       }
@@ -194,12 +209,12 @@ object CoxPh extends DefaultParamsReadable[CoxPh] {
 }
 
 /**
-  * Model produced by [[CoxPh]].
-  */
+ * Model produced by [[CoxPh]].
+ */
 class CoxPhModel(override val uid: String,
                  val beta: Vector,
                  val meanVector: Vector)
-  extends Model[CoxPhModel] with CoxPhParams with MLWritable {
+    extends Model[CoxPhModel] with CoxPhParams with MLWritable {
 
   /** @group setParam */
   def setFeaturesCol(value: String): this.type = set(featuresCol, value)
@@ -274,35 +289,35 @@ object CoxPhModel extends MLReadable[CoxPhModel] {
 }
 
 /**
-  * CoxPhAggregator computes the loss, gradient and informationMatrix for a CoxPh loss function as used in CoxPh survival
-  * analysis for samples in a dense vector in an online fashion.
-  *
-  * Two CoxPhAggregator can be merged together to have a summary of loss, gradient and information matrix of the
-  * corresponding joint dataset.
-  *
-  * Given the values of the covariates x^{'}, for random lifetime t_{i} of subjects i = 1, ..., n, with corresponding
-  * censoring censor_i, the log likelihood loss function under the CoxPh model is given as:
-  * {
-  *   L(\beta)=\sum_{i=1}^n[(\beta.x - log{\sum_{j=1}^Re^{\beta.x})})censor_i]
-  * }
-  * where R defines the risk-set R(t) is the set of all individuals i with t_i> t, i.e. the people who haven't died or been censored yet.
-  *
-  * The gradient vector is computed by taking the partial first order derivative of the above function with respect to beta_1, ..., beta_n
-  *
-  * The gradient vector of size 'k' is thus computed as:
-  *   {
-  *   G(\beta_k)=\sum_{i=1}^n[(x_i_k - (\frac{\sum_{j=1}^Re^{\beta_k.x_j_k}x_j_k}
-  *                    {{\sum_{j=1}^Re^{\beta.x})}}))censor_i]
-  *   }
-  * The information matrix of dimensions k*k is given as :
-  *
-  *   I(a,b) = -\sum_{i=1}^n[\frac{(({\sum_{j=1}^Re^{\beta.x}})({\sum_{j=1}^Rx_j_ax_j_be^{\beta.x}}) -
-  * ({\sum_{j=1}^Rx_j_ae^{\beta.x}})({\sum_{j=1}^Rx_j_be^{\beta.x}}))censor_i}{({\sum_{j=1}^Re^{\beta.x}})^2} ]
-  *
-  * @param parameters
-  */
+ * CoxPhAggregator computes the loss, gradient and informationMatrix for a CoxPh loss function as used in CoxPh survival
+ * analysis for samples in a dense vector in an online fashion.
+ *
+ * Two CoxPhAggregator can be merged together to have a summary of loss, gradient and information matrix of the
+ * corresponding joint dataset.
+ *
+ * Given the values of the covariates x^{'}, for random lifetime t_{i} of subjects i = 1, ..., n, with corresponding
+ * censoring censor_i, the log likelihood loss function under the CoxPh model is given as:
+ * {
+ *   L(\beta)=\sum_{i=1}^n[(\beta.x - log{\sum_{j=1}^Re^{\beta.x})})censor_i]
+ * }
+ * where R defines the risk-set R(t) is the set of all individuals i with t_i> t, i.e. the people who haven't died or been censored yet.
+ *
+ * The gradient vector is computed by taking the partial first order derivative of the above function with respect to beta_1, ..., beta_n
+ *
+ * The gradient vector of size 'k' is thus computed as:
+ *   {
+ *   G(\beta_k)=\sum_{i=1}^n[(x_i_k - (\frac{\sum_{j=1}^Re^{\beta_k.x_j_k}x_j_k}
+ *                    {{\sum_{j=1}^Re^{\beta.x})}}))censor_i]
+ *   }
+ * The information matrix of dimensions k*k is given as :
+ *
+ *   I(a,b) = -\sum_{i=1}^n[\frac{(({\sum_{j=1}^Re^{\beta.x}})({\sum_{j=1}^Rx_j_ax_j_be^{\beta.x}}) -
+ * ({\sum_{j=1}^Rx_j_ae^{\beta.x}})({\sum_{j=1}^Rx_j_be^{\beta.x}}))censor_i}{({\sum_{j=1}^Re^{\beta.x}})^2} ]
+ *
+ * @param parameters
+ */
 private class CoxPhAggregator(parameters: BDV[Double])
-  extends Serializable {
+    extends Serializable {
   private val beta = parameters
   private var totalCnt: Long = 0L
   private var lossSum = 0.0
@@ -315,11 +330,11 @@ private class CoxPhAggregator(parameters: BDV[Double])
   def informationMatrix: breeze.linalg.DenseMatrix[Double] = matrixSum
 
   /**
-    * Add a new training data to this CoxPhAggregator, and update the loss and gradient
-    * of the objective function.
-    * @param data The CoxPhPoint representation for one data point to be added into this aggregator.
-    * @return This CoxPhAggregator object.
-    */
+   * Add a new training data to this CoxPhAggregator, and update the loss and gradient
+   * of the objective function.
+   * @param data The CoxPhPoint representation for one data point to be added into this aggregator.
+   * @return This CoxPhAggregator object.
+   */
   def add(data: CoxPhPointWithMetaData): this.type = {
     val epsilon = math.log(data.sumEBetaX)
     val betaX: Double = beta.dot(data.features.toBreeze)
@@ -334,10 +349,10 @@ private class CoxPhAggregator(parameters: BDV[Double])
   }
 
   /**
-    * Compute the gradient for the given observation
-    * @param data CoxPhPointWithMetaData storing the observation with it's risk set values
-    * @return Breeze DenseVector storing the gradient values
-    */
+   * Compute the gradient for the given observation
+   * @param data CoxPhPointWithMetaData storing the observation with it's risk set values
+   * @return Breeze DenseVector storing the gradient values
+   */
   def computeGradientVector(data: CoxPhPointWithMetaData): BDV[Double] = {
     val gradientVector = BDV.zeros[Double](beta.length)
 
@@ -351,10 +366,10 @@ private class CoxPhAggregator(parameters: BDV[Double])
   }
 
   /**
-    * Compute the information matrix for the given observation
-    * @param data CoxPhPointWithMetaData storing the observation with it's risk set values
-    * @return BreezeDenseMatrix storing the Information Matrix values
-    */
+   * Compute the information matrix for the given observation
+   * @param data CoxPhPointWithMetaData storing the observation with it's risk set values
+   * @return BreezeDenseMatrix storing the Information Matrix values
+   */
   def computeInformationMatrix(data: CoxPhPointWithMetaData): breeze.linalg.DenseMatrix[Double] = {
     val infoMatrix = breeze.linalg.DenseMatrix.zeros[Double](beta.length, beta.length)
 
@@ -374,13 +389,13 @@ private class CoxPhAggregator(parameters: BDV[Double])
   }
 
   /**
-    * Merge another CoxAggregator, and update the loss, gradient and information matrix
-    * of the objective function.
-    * (Note that it's in place merging; as a result, `this` object will be modified.)
-    *
-    * @param other The other CoxPhAggregator to be merged.
-    * @return This CoxPhAggregator object.
-    */
+   * Merge another CoxAggregator, and update the loss, gradient and information matrix
+   * of the objective function.
+   * (Note that it's in place merging; as a result, `this` object will be modified.)
+   *
+   * @param other The other CoxPhAggregator to be merged.
+   * @return This CoxPhAggregator object.
+   */
   def merge(other: CoxPhAggregator): this.type = {
     totalCnt += other.totalCnt
     lossSum += other.lossSum
@@ -391,10 +406,10 @@ private class CoxPhAggregator(parameters: BDV[Double])
 }
 
 /**
-  * CoxPhCostFun implements our distributed version of Newton Raphson for CoxPh cost.
-  * It returns the loss, gradient and information matrix at a particular point (parameters).
-  * It's used in Breeze's convex optimization routines.
-  */
+ * CoxPhCostFun implements our distributed version of Newton Raphson for CoxPh cost.
+ * It returns the loss, gradient and information matrix at a particular point (parameters).
+ * It's used in Breeze's convex optimization routines.
+ */
 private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
 
   def calculate(currentBeta: BDV[Double]): (Double, BDV[Double], breeze.linalg.DenseMatrix[Double]) = {
@@ -413,11 +428,11 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
   }
 
   /**
-    * Computes additional parameters given CoxPhPoint and intial beta to be used by Newton Raphson to estimate new beta
-    * @param coxPhPointRdd Rdd storing the CoxPhPoint containing features, time and censor
-    * @param currentBeta The current value for beta
-    * @return Rdd storing CoxPhPoint and sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX in addition
-    */
+   * Computes additional parameters given CoxPhPoint and intial beta to be used by Newton Raphson to estimate new beta
+   * @param coxPhPointRdd Rdd storing the CoxPhPoint containing features, time and censor
+   * @param currentBeta The current value for beta
+   * @return Rdd storing CoxPhPoint and sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX in addition
+   */
   protected[ml] def extractCoxPhPointsWithMetaData(coxPhPointRdd: RDD[CoxPhPoint], currentBeta: BDV[Double]): RDD[CoxPhPointWithMetaData] = {
 
     val sc = coxPhPointRdd.sparkContext
@@ -435,11 +450,11 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
   }
 
   /**
-    * Returns the sum of each partition for the sumEBetaX, sumXEBetaX, sumXiXjEBetaX values
-    * @param rdd Rdd containing for each observation the, sumEBetaX, sumXEBetaX, sumXiXjEBetaX
-    * @param length The number of co-variates
-    * @return Map storing, for each partition the sumEBetaX, sumXEBetaX, sumXiXjEBetaX values
-    */
+   * Returns the sum of each partition for the sumEBetaX, sumXEBetaX, sumXiXjEBetaX values
+   * @param rdd Rdd containing for each observation the, sumEBetaX, sumXEBetaX, sumXiXjEBetaX
+   * @param length The number of co-variates
+   * @return Map storing, for each partition the sumEBetaX, sumXEBetaX, sumXiXjEBetaX values
+   */
   def computePartitionSum(rdd: RDD[(Double, BDV[Double], breeze.linalg.DenseMatrix[Double])], length: Int): scala.collection.Map[Int, (Double, BDV[Double], breeze.linalg.DenseMatrix[Double])] = {
     import breeze.linalg.DenseVector
     val array = rdd.mapPartitionsWithIndex {
@@ -469,11 +484,11 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
   }
 
   /**
-    * Computes meta data using CoxPhPoint and current beta with one pass over the data
-    * @param sortedData Rdd storing the features, time and censor information sorted in decreasing order on time
-    * @param currentBeta The current beta value
-    * @return Rdd containing the meta data as a tuple with sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX
-    */
+   * Computes meta data using CoxPhPoint and current beta with one pass over the data
+   * @param sortedData Rdd storing the features, time and censor information sorted in decreasing order on time
+   * @param currentBeta The current beta value
+   * @return Rdd containing the meta data as a tuple with sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX
+   */
   def riskSet(sortedData: RDD[CoxPhPoint], currentBeta: BDV[Double]): RDD[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])] = {
     import breeze.linalg.DenseVector
     val metaData = sortedData.mapPartitionsWithIndex {
@@ -507,11 +522,11 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
   }
 
   /**
-    * Computes the sum of sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX across all partitions
-    * @param riskSetRdd Rdd containing the meta data as a tuple with sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX
-    * @param broadcast Broadcast variable containing the sums of each partitions
-    * @return Rdd of the sum of sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX across all partitions
-    */
+   * Computes the sum of sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX across all partitions
+   * @param riskSetRdd Rdd containing the meta data as a tuple with sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX
+   * @param broadcast Broadcast variable containing the sums of each partitions
+   * @return Rdd of the sum of sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX across all partitions
+   */
   def computeFinalR(riskSetRdd: RDD[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])],
                     broadcast: Broadcast[Map[Int, (Double, BDV[Double], breeze.linalg.DenseMatrix[Double])]]): RDD[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])] = {
     riskSetRdd.mapPartitionsWithIndex {
@@ -536,26 +551,26 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
 }
 
 /**
-  * Class that represents the (features, time, censor) of a data point.
-  * @param features List of features for this data point.
-  * @param time Label for this data point.
-  * @param censor Indicator of the event has occurred or not. If the value is 1, it means
-  *               the event has occurred i.e. uncensored; otherwise censored.
-  */
+ * Class that represents the (features, time, censor) of a data point.
+ * @param features List of features for this data point.
+ * @param time Label for this data point.
+ * @param censor Indicator of the event has occurred or not. If the value is 1, it means
+ *               the event has occurred i.e. uncensored; otherwise censored.
+ */
 private[regression] case class CoxPhPoint(features: Vector, time: Double, censor: Double) {
   require(censor == 1.0 || censor == 0.0, "censor of class CoxPhPoint must be 1.0 or 0.0")
 }
 
 /**
-  *
-  * @param features The covariates of the train data
-  * @param time The time of the event
-  * @param censor Value indicating if the event has occured. Can have 2 values: 0 - event did not happen (censored); 1 - event happened (not censored)
-  * @param sumEBetaX Sum of e raised to the dot product of beta and features, for all observations in the risk set of an observation
-  * @param xDotEBetaX Dot product of feature and e raised to the dot product of beta and features
-  * @param eBetaX e raised to dot product of beta and features
-  * @param sumXDotEBetaX Sum of Dot product of feature and e raised to the dot product of beta and features, for all observations in the risk set of an observation
-  */
+ *
+ * @param features The covariates of the train data
+ * @param time The time of the event
+ * @param censor Value indicating if the event has occured. Can have 2 values: 0 - event did not happen (censored); 1 - event happened (not censored)
+ * @param sumEBetaX Sum of e raised to the dot product of beta and features, for all observations in the risk set of an observation
+ * @param xDotEBetaX Dot product of feature and e raised to the dot product of beta and features
+ * @param eBetaX e raised to dot product of beta and features
+ * @param sumXDotEBetaX Sum of Dot product of feature and e raised to the dot product of beta and features, for all observations in the risk set of an observation
+ */
 case class CoxPhPointWithMetaData(features: Vector,
                                   time: Double,
                                   censor: Double,
