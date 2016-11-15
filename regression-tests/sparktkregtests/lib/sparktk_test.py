@@ -33,7 +33,7 @@ global_tc = None
 def find_open_port(bottom, top):
     start_top_bottom = random.randint(1,2)
     start = int(bottom)
-    direction = random.randint(1,20)
+    direction = random.randint(1,100)
     if start_top_bottom == 1:
         direction = direction
         start = (int(bottom) + direction)
@@ -58,7 +58,7 @@ def find_open_port(bottom, top):
     print "bottom: ", bottom, "top : ", top, "direction ", direction, "found ", found_port
     if found_port == 0:
         found_port = start
-        
+
     return found_port
 
 def get_context():
