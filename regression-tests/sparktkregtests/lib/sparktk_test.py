@@ -93,7 +93,7 @@ def get_context():
 
             if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
                 sparktkconf_dict['spark.ui.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
-            
+
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
