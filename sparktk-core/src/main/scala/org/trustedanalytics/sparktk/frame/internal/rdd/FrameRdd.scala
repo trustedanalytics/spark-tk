@@ -394,8 +394,8 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   }
 
   /**
-    * Convert FrameRdd to DataFrame with features of type Vector, time of type double and censor of type double
-    */
+   * Convert FrameRdd to DataFrame with features of type Vector, time of type double and censor of type double
+   */
   def toCoxDataFrame(featureColumnNames: List[String], timeColumn: String, censorColumn: String): DataFrame = {
     val rdd: RDD[(MllibDenseVector, Double, Double)] = this.mapRows(row => {
       val features = row.valuesAsDoubleArray(featureColumnNames)
