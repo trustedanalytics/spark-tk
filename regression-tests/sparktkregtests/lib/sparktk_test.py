@@ -38,7 +38,7 @@ def find_open_port(bottom, top):
         direction = direction
         start = (int(bottom) + direction)
     else:
-        direction = -direction
+        direction = direction
         start = ((int(bottom) + int(top))/2) + direction
     ports = []
 
