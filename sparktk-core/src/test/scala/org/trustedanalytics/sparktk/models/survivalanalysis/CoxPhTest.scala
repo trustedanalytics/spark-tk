@@ -17,8 +17,8 @@ class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
   val schema = new FrameSchema(List(Column("x1", DataTypes.float64), Column("x2", DataTypes.float64),
     Column("time", DataTypes.float64), Column("censor", DataTypes.float64)))
 
-  "LinearRegressionModel train" should {
-    "create a LinearRegressionModel from training" in {
+  "SparktkCoxPhModel train" should {
+    "create a SparktkCoxPhModel from training" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
       val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
