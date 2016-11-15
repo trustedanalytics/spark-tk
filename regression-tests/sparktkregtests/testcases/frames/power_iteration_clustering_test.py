@@ -56,6 +56,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         #check values assigned to each cluster
         actual_assignment = result.frame.to_pandas(
             frame.count()).groupby("cluster")
+        print result.frame.to_pandas(frame.count())
         grouped_assignment = [list(val["id"]) for index, val in actual_assignment]
 
         expected_assignment = [[4, 5, 6], [1, 2, 3], [0]]
