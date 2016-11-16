@@ -35,4 +35,4 @@ export SPARKTK_HOME=$sparktkpackage/
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-py.test --boxed -n100 -v $MAINDIR/regression-tests
+py.test --boxed -n200 -v $MAINDIR/regression-tests
