@@ -41,7 +41,6 @@ def get_context():
                             'spark.dynamicAllocation.maxExecutors': '16',
                             'spark.dynamicAllocation.minExecutors': '1',
                             'spark.executor.cores': '10',
-                            'spark.executor.extrajavaoptions': '-Xmx2688m',
                             'spark.executor.memory': '2g',
                             'spark.shuffle.io.preferDirectBufs': 'false',
                             'spark.shuffle.service.enabled': 'true',
