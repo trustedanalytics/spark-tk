@@ -21,10 +21,14 @@ echo "$NAME DIR=$DIR"
 
 MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
-MAINDIR="$(dirname $MAINDIR)"
 
-scoring_model=$1
+sparktkpackage=$MAINDIR/sparktkinstall
 
-pushd $MAINDIR/scoring/scoring_engine
-./bin/model-scoring.sh -Dtrustedanalytics.scoring-engine.archive-mar=$scoring_model -Dtrustedanalytics.scoring.port=9100 > $MAINDIR/scoring_out.log 2> $MAINDIR/scoring_error.log
-popd
+
+
+export DIR
+echo "combine"
+coverage combine --rcfile=$DIR/pycoverage.ini $MAINDIR/unittests/*.dat $MAINDIR/regression/regression-tests/automation/.coverage
+
+echo "report"
+coverage html -i --rcfile=$DIR/pycoverage.ini -d $MAINDIR/python_combined

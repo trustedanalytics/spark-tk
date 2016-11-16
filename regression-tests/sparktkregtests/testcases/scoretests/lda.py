@@ -15,8 +15,10 @@
 #  limitations under the License.
 #
 
+
 """ test cases for LDA implementation """
 import unittest
+import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -33,11 +35,10 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
                   ('topic', str)]
         self.lda_frame = self.context.frame.import_csv(self.get_file("lda8.csv"), schema=schema)
 
-    def test_lda_model_int64_count(self):
-        """Standard test for the LDA Model code using int64 count."""
-
+    def test_model_scoring(self):
+        """Test lda model scoring"""
         model = self.context.models.clustering.lda.train(self.lda_frame, 'paper', 'word', 'count',
-                              num_topics=5, max_iterations=10, random_seed=0)
+                              num_topics=5, max_iterations=10, seed=0)
 
         test_phrase = ["word-0-0", "word-1-0",
                        "word-2-0", "word-3-0", "word-4-0"]
@@ -47,7 +48,8 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
 
         res = lda_model.predict(test_phrase)["topics_given_doc"]
 
-        with scoring_utils.scorer(model_path) as scorer:
+        with scoring_utils.scorer(
+                model_path, self.id()) as scorer:
             result = scorer.score([{"paper":test_phrase}]).json()
             for i, j in zip(res, result[u"data"][0]["topics_given_doc"]):
                 self.assertAlmostEqual(i, j)

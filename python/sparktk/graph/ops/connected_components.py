@@ -44,12 +44,12 @@ def connected_components(self):
         >>> result = graph.connected_components()
         >>> result.inspect() 
         [#]  id  component
-        ==================
-        [0]   1          1
-        [1]   2          1
-        [2]   3          1
-        [3]   4          4
-        [4]   5          4
+        ===================
+        [0]   1           0
+        [1]   2           0
+        [2]   3           0
+        [3]   4  8589934593
+        [4]   5  8589934593
 
     """
     from sparktk.frame.frame import Frame

@@ -16,7 +16,6 @@
 #
 
 from setup import tc, rm, get_sandbox_path
-from sparktk.dtypes import float32
 
 import logging
 logger = logging.getLogger(__name__)
@@ -26,7 +25,7 @@ logger = logging.getLogger(__name__)
 def test_power_iteration_clustering_001(tc):
     logger.info("create frame")
     rows = [[1,2,1.0],[1,3,0.3],[2,3,0.3],[3,0,0.03],[0,5,0.01],[5,4,0.3],[5,6,1.0],[4,6,0.3]]
-    schema = [('src', int),('dest', int),('similarity', float32)]
+    schema = [('src', int),('dest', int),('similarity', float)]
     frame = tc.frame.create(rows, schema)
 
     assert(frame.count(), 8, "frame should have 8 rows")
@@ -41,7 +40,7 @@ def test_power_iteration_clustering_001(tc):
 def test_power_iteration_clustering_002(tc):
     logger.info("create frame")
     rows = [[1,2,1.0],[1,3,0.3],[2,3,0.3],[3,0,0.03],[0,5,0.01],[5,4,0.3],[5,6,1.0],[4,6,0.3]]
-    schema = [('src', int),('dest', int),('similarity', float32)]
+    schema = [('src', int),('dest', int),('similarity', float)]
     frame = tc.frame.create(rows, schema)
 
     assert(frame.count(), 8, "frame should have 8 rows")

@@ -23,6 +23,7 @@ import atexit
 import glob2
 from pyspark import SparkContext, SparkConf
 from zip import zip_sparktk
+from arguments import require_type
 
 LIB_DIR="dependencies"
 SPARK_ASSEMBLY_SEARCH="**/spark-assembly*.jar"
@@ -42,7 +43,7 @@ def get_source_code_target_dir():
 default_spark_home = '/opt/cloudera/parcels/CDH/lib/spark'
 default_sparktk_home = get_source_code_target_dir()
 default_spark_master = 'local[4]'
-
+default_spark_app_name = 'sparktk'
 
 def set_env(name, value):
     """helper to set env w/ log"""
@@ -204,9 +205,10 @@ def create_sc(master=None,
               spark_home=None,
               sparktk_home=None,
               pyspark_submit_args=None,
-              app_name="sparktk",
+              app_name=None,
               other_libs=None,
-              extra_conf=None,
+              extra_conf_file=None,
+              extra_conf_dict=None,
               use_local_fs=False,
               debug=None):
     """
@@ -224,7 +226,17 @@ def create_sc(master=None,
     :param other_libs: (list) other libraries (actual packages/modules) that are compatible with spark-tk,
                        which need to be added to the spark context.  These libraries must be developed for usage with
                        spark-tk and have particular methods implemented.  (See sparkconf.py _validate_other_libs)
-    :param extra_conf: (dict) dict for any extra spark conf settings, for ex. {"spark.hadoop.fs.default.name": "file:///"}
+    :param extra_conf_file: (str) local file path to a spark conf file to supplement the spark conf
+                            File format is basic key-value pairs per line, like:
+
+                                spark.executor.memory=6g
+                                spark.files.overwrite=true
+
+    (NOTE: if env var $SPARKTK_EXTRA_CONF is set, the file it indicates will be used.)
+
+    :param extra_conf_dict: (dict) dict for any extra spark conf settings,
+                            for ex. {"spark.hadoop.fs.default.name": "file:///"}
+                            these will override any matching settings from extra_conf_file, if provided
     :param use_local_fs: (bool) simpler way to specify using local file system, rather than hdfs or other
     :param debug: (int or str) provide an port address to attach a debugger to the JVM that gets started
     :return: pyspark SparkContext
@@ -235,14 +247,42 @@ def create_sc(master=None,
     # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
     set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))
 
-    if not master:
-        master = default_spark_master
-        logger.info("sparktk.create_sc() master not specified, setting to %s", master)
+    conf = SparkConf()
+    extra = {}
+    if extra_conf_file:
+        logger.info("create_sc() conf_file specified: %s" % extra_conf_file)
+        extra = _parse_spark_conf(extra_conf_file)
+    else:
+        env_extra_conf_file = os.getenv('SPARKTK_EXTRA_CONF', None)
+        if env_extra_conf_file:
+            logger.info("create_sc() using env SPARKTK_EXTRA_CONF for extra conf file: %s" % env_extra_conf_file)
+            extra = _parse_spark_conf(env_extra_conf_file)
 
-    conf = SparkConf().setMaster(master).setAppName(app_name)
-    if extra_conf:
-        for k, v in extra_conf.items():
-            conf = conf.set(k, v)
+    if extra_conf_dict:
+        # extra_conf overrides settings in the conf_file
+        logger.info("create_sc() overriding conf with given extra_conf_dict")
+        extra.update(extra_conf_dict)
+
+    master_in_extra = False
+    app_name_in_extra = False
+    for k, v in extra.items():
+        if k == "spark.master":
+            master_in_extra = True
+        if k == "spark.app.name":
+            app_name_in_extra = True
+        conf.set(k, v)
+
+    if not master and not master_in_extra:
+        master = default_spark_master
+        logger.info("create_sc() master not specified, setting to %s", master)
+    if master:
+        conf.setMaster(master)
+
+    if not app_name and not app_name_in_extra:
+        app_name = default_spark_app_name
+        logger.info("create_sc() app_name not specified, setting to %s", app_name)
+    if app_name:
+        conf.setAppName(app_name)
 
     if use_local_fs:
         conf.set("spark.hadoop.fs.default.name", "file:///")
@@ -268,6 +308,49 @@ def create_sc(master=None,
     sc = SparkContext(conf=conf, pyFiles=py_files)
 
     return sc
+
+def _parse_spark_conf(path):
+    """
+    Parses the file found at the given path and returns a dict of spark conf.
+
+    All values in the dict will be strings, regardless of the presence of quotations in the file; double quotes are
+    stripped from values.  The '#' marks the beginning of a comment, which will be ignored, whether as a line, or
+    the tail end of a line.
+
+    Parameters
+    ----------
+
+    :param path: file path
+    :return: (dict) spark conf
+
+    Example
+    -------
+
+    Suppose Spark conf file 'my.conf':
+
+        spark.driver.cores=1
+        spark.driver.memory="1664m"
+        spark.executor.cores=2
+
+    Then,
+
+        >>> _parse_spark_conf('my.conf')
+        {'spark.driver.cores': '1', 'spark.driver.memory': '1664m', 'spark.executor.cores': '2'}
+
+    """
+    conf = {}
+    with open(path, 'r') as r:
+        for line in r.readlines():
+            comment_start_index = line.find('#')
+            text = line if comment_start_index < 0 else line[:comment_start_index]
+            if text.strip():
+                try:
+                    k, v = text.split('=', 1)
+                except ValueError:
+                    raise RuntimeError("spark conf file %s has a bad line; may be missing an '=': %s" % (path, line))
+                conf[k.strip()] = v.strip().strip('"')
+    return conf
+
 
 def _validate_other_libs(other_libs):
     """
