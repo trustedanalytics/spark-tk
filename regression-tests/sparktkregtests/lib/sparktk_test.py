@@ -19,8 +19,7 @@
 import unittest
 import uuid
 import datetime
-import os, random
-import psutil
+import os
 
 import sparktk as stk
 
@@ -29,39 +28,6 @@ from threading import Lock
 
 lock = Lock()
 global_tc = None
-
-def find_open_port(bottom, top):
-    top=int(top)
-    bottom=int(bottom)
-    start_top_bottom = random.randint(1,2)
-    start = bottom
-    direction = random.randint(1,((top-bottom)/2))
-    if start_top_bottom == 1:
-        direction = direction
-        start = (bottom + direction)
-    else:
-        direction = direction
-        start = ((bottom + top)/2) + direction
-    ports = []
-
-    for i in psutil.net_connections(kind='inet4'):
-        ports.insert(-1, i.laddr[1])
-
-    ports.sort()
-    print direction
-    next_port=start
-    found_port=0
-    while found_port == 0 and next_port >= bottom and next_port <= top:
-        if next_port in ports:
-            next_port = next_port + direction
-        else:
-            found_port = next_port
-
-    print "bottom: ", bottom, "top : ", top, "direction ", direction, "found ", found_port
-    if found_port == 0:
-        found_port = start
-
-    return found_port
 
 def get_context():
     global global_tc
@@ -85,19 +51,18 @@ def get_context():
 
             if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
                 sparktkconf_dict['spark.driver.extraJavaOptions'] =  ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
+                
             if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
                 sparktkconf_dict['spark.executor.extraJavaOptions'] = ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
 
-
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+               sparktkconf_dict['spark.driver.port'] = config.find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
 
             if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
-               sparktkconf_dict['spark.driver.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+                sparktkconf_dict['spark.fileserver.port'] = config.find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
 
             if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
-                sparktkconf_dict['spark.fileserver.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
-
-            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
-                sparktkconf_dict['spark.ui.port'] = find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+                sparktkconf_dict['spark.ui.port'] = config.find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
 
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
