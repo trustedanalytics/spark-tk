@@ -53,7 +53,8 @@ class LDAExample(sparktk_test.SparkTKTestCase):
             doc_results, left_on="doc_id", right_on="doc_id")
         frame = frame.join_left(
             word_results, left_on="word_id", right_on="word_id")
-
+        
+        # similar to calling predict on a model
         frame.dot_product(
             ['lda_results_doc'], ['lda_results_word'], 'lda_score')
 
