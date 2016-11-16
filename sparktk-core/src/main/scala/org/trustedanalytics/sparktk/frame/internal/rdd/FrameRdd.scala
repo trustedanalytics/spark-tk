@@ -402,7 +402,8 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
       (new MllibDenseVector(features), DataTypes.toDouble(row.value(timeColumn)), DataTypes.toDouble(row.value(censorColumn)))
     })
     val rowRdd: RDD[Row] = rdd.map(entry => new GenericRow(Array[Any](entry._1, entry._2, entry._3)))
-    new SQLContext(this.sparkContext).createDataFrame(rowRdd, sparkSchema)
+    val schema = StructType(Seq(StructField("features", new VectorUDT, true), StructField("time", DoubleType, true), StructField("censor", DoubleType, true)))
+    new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
   }
 
   /**
