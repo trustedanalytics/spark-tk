@@ -40,7 +40,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
             covariateColumns: List[String],
             censorColumn: String,
             convergenceTolerance: Double = 1E-6,
-            maxSteps: Int = 100) = {
+            maxSteps: Int = 100): CoxPhTrainReturn= {
     require(frame != null, "frame is required")
     require(timeColumn != null && timeColumn.nonEmpty, "Time column must not be null or empty")
     require(censorColumn != null && censorColumn.nonEmpty, "Censor column must not be null or empty")
@@ -67,6 +67,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
     new CoxPhTrainReturn(coxModel.beta.toArray.toList, coxModel.meanVector.toArray.toList)
 
   }
+
   /**
    * Load method where the work of getting the formatVersion and tkMetadata has already been done
    *

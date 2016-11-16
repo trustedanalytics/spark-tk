@@ -38,7 +38,7 @@ class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
       val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
 
-      model shouldBe a[SparktkCoxPhModel]
+      model shouldBe a[CoxPhTrainReturn]
     }
 
   }
