@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 #  Copyright (c) 2016 Intel Corporation 
 #
@@ -14,7 +15,6 @@
 #  limitations under the License.
 #
 
-
 NAME="[`basename $BASH_SOURCE[0]`]"
 DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
 echo "$NAME DIR=$DIR"
@@ -24,3 +24,11 @@ MAINDIR="$(dirname $MAINDIR)"
 
 sparktkpackage=$MAINDIR/sparktkinstall
 
+
+
+export DIR
+echo "combine"
+coverage combine --rcfile=$DIR/pycoverage.ini $MAINDIR/unittests/*.dat $MAINDIR/regression/regression-tests/automation/.coverage
+
+echo "report"
+coverage html -i --rcfile=$DIR/pycoverage.ini -d $MAINDIR/python_combined

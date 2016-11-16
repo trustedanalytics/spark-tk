@@ -24,7 +24,7 @@ def test_frame_to_pandas_to_frame(tc):
     """
     # Create a frame from a csv file for testing
     path = "../datasets/importcsvtest.csv"
-    frame1 = tc.frame.import_csv(path, header=True, infer_schema=True)
+    frame1 = tc.frame.import_csv(path, header=True)
 
     # bring to data frame and check the columns/types/row count
     df = frame1.to_pandas()
