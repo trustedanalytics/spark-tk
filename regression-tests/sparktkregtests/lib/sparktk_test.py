@@ -31,15 +31,17 @@ lock = Lock()
 global_tc = None
 
 def find_open_port(bottom, top):
+    top=int(top)
+    bottom=int(bottom)
     start_top_bottom = random.randint(1,2)
-    start = int(bottom)
-    direction = random.randint(1,100)
+    start = bottom
+    direction = random.randint(1,((top-bottom)/2))
     if start_top_bottom == 1:
         direction = direction
-        start = (int(bottom) + direction)
+        start = (bottom + direction)
     else:
         direction = direction
-        start = ((int(bottom) + int(top))/2) + direction
+        start = ((bottom + top)/2) + direction
     ports = []
 
     for i in psutil.net_connections(kind='inet4'):
@@ -49,7 +51,7 @@ def find_open_port(bottom, top):
     print direction
     next_port=start
     found_port=0
-    while found_port == 0 and next_port >= int(bottom) and next_port <= int(top) :
+    while found_port == 0 and next_port >= bottom and next_port <= top:
         if next_port in ports:
             next_port = next_port + direction
         else:
