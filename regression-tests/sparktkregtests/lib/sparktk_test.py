@@ -42,7 +42,7 @@ def get_context():
                             'spark.dynamicAllocation.minExecutors': '1',
                             'spark.executor.cores': '10',
                             'spark.executor.memory': '2g',
-                            'spark.shuffle.io.preferDirectBufs': 'false',
+                            'spark.shuffle.io.preferDirectBufs': 'true',
                             'spark.shuffle.service.enabled': 'true',
                             'spark.yarn.am.waitTime': '1000000',
                             'spark.yarn.executor.memoryOverhead': '384',
