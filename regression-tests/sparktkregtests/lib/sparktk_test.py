@@ -34,17 +34,18 @@ def get_context():
     with lock:
         if global_tc is None:
             sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
+                                'spark.driver.maxResultSize': '2g',
                                 'spark.ui.enabled': 'false',
                                 'spark.port.maxRetries': 50,
-                                'spark.driver.maxResultSize': '2g',
                                 'spark.dynamicAllocation.enabled': 'true',
-                                'spark.dynamicAllocation.maxExecutors': '16',
+                                'spark.dynamicAllocation.maxExecutors': '20',
                                 'spark.dynamicAllocation.minExecutors': '1',
-                                'spark.executor.cores': '5',
-                                'spark.executor.memory': '2g',
+                                'spark.executor.cores': '1',
+                                'spark.executor.memory': '3712m',
                                 'spark.shuffle.io.preferDirectBufs': 'true',
                                 'spark.shuffle.service.enabled': 'true',
                                 'spark.yarn.am.waitTime': '1000000',
+                                'spark.yarn.submit.file.replication': 1,
                                 'spark.yarn.executor.memoryOverhead': '384',
                                 'spark.eventLog.enabled': 'false',
                                 'spark.sql.shuffle.partitions': '6'}
