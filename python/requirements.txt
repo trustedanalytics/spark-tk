@@ -4,6 +4,8 @@ numpy
 decorator
 nose
 coverage
+pytest-cov
+teamcity-messages
 python-dateutil
 pytest
 pdoc
