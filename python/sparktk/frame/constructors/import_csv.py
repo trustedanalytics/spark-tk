@@ -21,8 +21,10 @@ from pyspark.sql.types import *
 import sparktk.dtypes as dtypes
 from datetime import datetime
 from sparktk.frame import schema as sparktk_schema
+from sparktk.arguments import require_type
 
-def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None, datetime_format="yyyy-MM-dd'T'HH:mm:ss.SSSX", tc=TkContext.implicit):
+
+def import_csv(path, delimiter=",", header=False, schema=None, datetime_format="yyyy-MM-dd'T'HH:mm:ss.SSSX", tc=TkContext.implicit):
     """
     Creates a frame with data from a csv file.
 
@@ -33,28 +35,26 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
     :param delimiter: (Optional[str]) A string which indicates the separation of data fields.  This is usually a
                       single character and could be a non-visible character, such as a tab. The default delimiter
                       is a comma (,).
-    :param header: (Optional[bool]) Boolean value indicating if the first line of the file will be used to name columns,
-                   and not be included in the data.  The default value is false.
-    :param infer_schema:(Optional[bool]) Boolean value indicating if the column types will be automatically inferred.
-                       It requires one extra pass over the data and is false by default.
-    :param schema: (Optional[List[tuple(str, type)]]) Optionally specify the schema for the dataset.  Number of
-                    columns specified in the schema must match the number of columns in the csv file provided.  If the
-                    value from the csv file cannot be converted to the data type specified by the schema (for example,
-                    if the csv file has a string, and the schema specifies an int), the value will show up as missing
-                    (None) in the frame.
+    :param header: (Optional[bool]) Boolean value indicating if the first line of the file will be used to name columns
+                   (unless a schema is provided), and not be included in the data.  The default value is false.
+    :param schema: (Optional(list[tuple(str, type)] or list[str])) The are different options for specifying a schema:
+
+    * Provide the full schema for the frame as a list of tuples (string column name and data type)
+    * Provide the column names as a list of strings.  Column data types will be inferred, based on thedata.  The column names specified will override column names that are found in the header row.
+    * None, where the schema is automatically inferred based on the data.  Columns are named based on the header, or will be named generically ("C0", "C1", "C2", etc).
+
     :param datetime_format: (str) String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat
                         specified at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
     :return: (Frame) Frame that contains the data from the csv file
 
     Examples
     --------
-    Load a frame from a csv file by specifying the path to the file, delimiter, and options that specify that
-    there is a header and to infer the schema based on the data.
 
+    Load a frame from a csv file by specifying the path to the file, delimiter
 
         >>> file_path = "../datasets/cities.csv"
 
-        >>> frame = tc.frame.import_csv(file_path, "|", header=True, infer_schema=True)
+        >>> frame = tc.frame.import_csv(file_path, "|", header=True)
         -etc-
 
         >>> frame.inspect()
@@ -74,10 +74,21 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         >>> frame.schema
         [('rank', <type 'int'>), ('city', <type 'str'>), ('population_2013', <type 'int'>), ('population_2010', <type 'int'>), ('change', <type 'str'>), ('county', <type 'str'>)]
 
+    The schema parameter can be used to specify a custom schema (column names and data types) or column names (and the
+    data types are inferred based on the data).  Here, we will specify the column names, which will override the
+    header from the csv file.
+
+        >>> column_names = ["Rank", "City", "2013", "2010", "Percent_Change", "County"]
+        >>> frame = tc.frame.import_csv(file_path, "|", header=True, schema=column_names)
+        -etc-
+
+        >>> frame.schema
+        [('Rank', <type 'int'>), ('City', <type 'str'>), ('2013', <type 'int'>), ('2010', <type 'int'>), ('Percent_Change', <type 'str'>), ('County', <type 'str'>)]
+
         <hide>
         >>> file_path = "../datasets/unicode.csv"
         >>> schema = [("a", unicode),("b", unicode),("c",unicode)]
-        >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False, infer_schema=False)
+        >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False)
         -etc-
 
         >>> frame.inspect()
@@ -89,22 +100,31 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
         </hide>
 
     """
+    TkContext.validate(tc)
+    require_type.non_empty_str(path, "path")
+    require_type.non_empty_str(delimiter, "delimiter")
+    require_type(bool, header, "header")
+    require_type(str, datetime_format, "datetime_format")
 
+    infer_schema = True
+    column_names = []   # custom column names
 
     if schema is not None:
-        infer_schema = False   # if a custom schema is provided, don't waste time inferring the schema during load
-        sparktk_schema.validate(schema)
-    if not isinstance(header, bool):
-        raise ValueError("header parameter must be a boolean, but is {0}.".format(type(header)))
-    if not isinstance(infer_schema, bool):
-        raise ValueError("infer_schema parameter must be a boolean, but is {0}.".format(type(infer_schema)))
-    TkContext.validate(tc)
+        if not isinstance(schema, list):
+            raise TypeError("Unsupported type %s for schema parameter." % type(schema))
+        elif all(isinstance(item, basestring) for item in schema):
+            # schema is just column names
+            column_names = schema
+            schema = None
+        else:
+            infer_schema = False   # if a custom schema is provided, don't waste time inferring the schema during load
+            sparktk_schema.validate(schema)
 
     header_str = str(header).lower()
     infer_schema_str = str(infer_schema).lower()
     pyspark_schema = None
 
-    if (not infer_schema) and (schema is not None):
+    if schema is not None:
         fields = []
         for column in schema:
             if dtypes._data_type_to_pyspark_type_table.has_key(column[1]):
@@ -123,12 +143,13 @@ def import_csv(path, delimiter=",", header=False, infer_schema=True, schema=None
     df_schema = []
 
     if schema is None:
-        for column in df.schema.fields:
+        for i, column in enumerate(df.schema.fields):
             try:
                 datatype = dtypes.dtypes.get_primitive_type_from_pyspark_type(type(column.dataType))
             except ValueError:
                 raise TypeError("Unsupported data type ({0}) for column {1}.".format(str(column.dataType), column.name))
-            df_schema.append((column.name, datatype))
+            column_name = column_names[i] if (i < len(column_names)) else column.name
+            df_schema.append((column_name, datatype))
     else:
         df_column_count = len(df.schema.fields)
         custom_column_count = len(schema)

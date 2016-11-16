@@ -34,31 +34,26 @@ def get_context():
     global global_tc
     with lock:
         if global_tc is None:
-		sparktkconf_dict = {'spark.driver.memory': "3712m", 
-					'spark.executor.instances' : '5', 
-					'spark.driver.cores': '1', 
-					'spark.driver.extraJavaOptions': '-Xmx2688m', 
-					'spark.driver.maxPermSize': '512m', 
-					'spark.driver.maxResultSize': '2g', 
-					'spark.dynamicAllocation.enabled': 'true', 
-					'spark.dynamicAllocation.maxExecutors': '116', 
-					'spark.dynamicAllocation.minExecutors': '1', 
-					'spark.executor.cores': '1', 
-					'spark.executor.extrajavaoptions': '-Xmx2688m',
-					'spark.executor.memory': '3200m', 
-					'spark.shuffle.io.preferDirectBufs': 'false', 
-					'spark.shuffle.service.enabled': 'true', 
-					'spark.yarn.am.waitTime': '1000000', 
-					'spark.yarn.driver.memoryOverhead': '384', 
-					'spark.yarn.executor.memoryOverhead': '384',
-					'spark.eventLog.enabled': 'false', 
-					'spark.sql.shuffle.partitions': '6'}
+		sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
+                            'spark.ui.enabled': 'false',
+                            'spark.driver.maxResultSize': '2g',
+                            'spark.dynamicAllocation.enabled': 'true',
+                            'spark.dynamicAllocation.maxExecutors': '16',
+                            'spark.dynamicAllocation.minExecutors': '1',
+                            'spark.executor.cores': '10',
+                            'spark.executor.memory': '2g',
+                            'spark.shuffle.io.preferDirectBufs': 'true',
+                            'spark.shuffle.service.enabled': 'true',
+                            'spark.yarn.am.waitTime': '1000000',
+                            'spark.yarn.executor.memoryOverhead': '384',
+                            'spark.eventLog.enabled': 'false',
+                            'spark.sql.shuffle.partitions': '6'}
                 if config.run_mode:
                     global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
                 else:
                     global_tc = stk.TkContext()
-    return global_tc
+        return global_tc
 
 
 class SparkTKTestCase(unittest.TestCase):

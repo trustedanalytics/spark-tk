@@ -52,8 +52,8 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """CsvFile creation fails with duplicate names, different type."""
         # double num1's same type
         bad = [("num1", int), ("num1", str), ("num2", int)]
-        with self.assertRaisesRegexp(Exception, "more than one char"):
-            self.context.frame.import_csv(self.dataset, bad)
+        with self.assertRaisesRegexp(Exception, "schema has duplicate column names: \[\'num1\'\]"):
+            self.context.frame.import_csv(self.dataset, schema=bad)
 
     def test_given_schema_is_honored(self):
         schema = [("num1", float), ("letter", str), ("num2", int)]
@@ -61,27 +61,24 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         for row in frame.take(frame.count()):
             self.assertEqual(type(row[0]), float)
 
-    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_duplicate_names_same_type(self):
         """CsvFile creation fails with duplicate names, same type."""
         # two num1's with same type
         bad = [("num1", int), ("num1", int), ("num2", int)]
         with self.assertRaisesRegexp(Exception, "duplicate column name"):
-            self.context.frame.import_csv(self.dataset, bad)
+            self.context.frame.import_csv(self.dataset, schema=bad)
 
-    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_type(self):
         """CsvFile cration with a schema of invalid type fails."""
         bad_schema = -77
-        with self.assertRaisesRegexp(Exception, "does not exist"):
-            self.context.frame.import_csv(self.dataset, bad_schema)
+        with self.assertRaisesRegexp(Exception, "Unsupported type <type \'int\'> for schema parameter"):
+            self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
-    @unittest.skip("import_csv invalid schema error message not helpful")
     def test_schema_invalid_format(self):
         """CsvFile creation fails with a malformed schema."""
         bad_schema = [int, int, float, float, str]
-        with self.assertRaisesRegexp(Exception, "invalid schema"):
-            self.context.frame.import_csv(self.dataset, bad_schema)
+        with self.assertRaisesRegexp(Exception, "schema expected to contain tuples, encountered type <type \'type\'>"):
+            self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
     def test_frame_delim_colon(self):
         """Test building a frame with a colon delimiter."""
@@ -163,14 +160,14 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """Test a delimiter of None errors."""
         with self.assertRaisesRegexp(Exception, "delimiter"):
             self.context.frame.import_csv(self.dataset,
-                                          self.schema,
+                                          schema=self.schema,
                                           delimiter=None)
 
     def test_delimiter_empty(self):
         """Test an empty delimiter errors."""
         with self.assertRaisesRegexp(Exception, "delimiter"):
             self.context.frame.import_csv(self.dataset,
-                                          self.schema,
+                                          schema=self.schema,
                                           delimiter="")
 
     def test_header(self):
@@ -199,16 +196,16 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         expected_inferred_schema = [("C0", int), ("C1", str), ("C2", int)]
         self.assertEqual(frame.schema, expected_inferred_schema)
 
-    def test_with_no_specified_or_inferred_schema(self):
-        """Test import_csv with inferredschema false and no schema"""
+    def test_import_csv_raw(self):
+        """Test import_csv_raw where all data is brought in as strings """
         # should default to creating a schema of all strings
-        frame = self.context.frame.import_csv(self.dataset, infer_schema=False)
+        frame = self.context.frame.import_csv_raw(self.dataset)
         expected_schema = [("C0", str), ("C1", str), ("C2", str)]
         self.assertEqual(frame.schema, expected_schema)
 
     def test_with_inferred_schema(self):
         """Test import_csv without a specified schema"""
-        frame = self.context.frame.import_csv(self.dataset, infer_schema=True)
+        frame = self.context.frame.import_csv(self.dataset)
         expected_inferred_schema = [("C0", int), ("C1", str), ("C2", int)]
         self.assertEqual(frame.schema, expected_inferred_schema)
 
@@ -216,7 +213,6 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """Test with inferredschema true and also a defined schema"""
         # should default to using the defined schema
         frame = self.context.frame.import_csv(self.dataset,
-                                              infer_schema=True,
                                               schema=self.schema)
         self.assertEqual(frame.schema, self.schema)
 

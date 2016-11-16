@@ -124,7 +124,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                     (self.base_frame['user'] == user_val)]['rating'].values[0],
                 i['rating'], delta=5.5)
 
-    #@unittest.skip("validate the column is in the frame")
     def test_collaborative_filtering_invalid_user(self):
         """Test collaborative filtering train with invalid user"""
         with self.assertRaisesRegexp(
@@ -134,7 +133,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                 .collaborative_filtering \
                 .train(self.frame, "invalid_user", "item_int", "rating")
 
-    #@unittest.skip("validate the column is in the frame")
     def test_collaborative_filtering_invalid_item(self):
         """Test collaborative filtering train with invalid item"""
         with self.assertRaisesRegexp(
@@ -144,7 +142,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                 .collaborative_filtering \
                 .train(self.frame, "user_int", "invalid_int", "rating")
 
-    #@unittest.skip("validate the column is in the frame")
     def test_collaborative_filtering_invalid_rating(self):
         """Test collaborative filtering with invalid rating"""
         with self.assertRaisesRegexp(
@@ -188,7 +185,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                 self.frame, "user_int", "item_int",
                 "rating", checkpoint_iterations=-15)
 
-    #@unittest.skip("typo with min steps to max steps")
     def test_collaborative_filtering_invalid_max_steps(self):
         """Test collaborative filtering invalid max steps"""
         with self.assertRaisesRegexp(
@@ -199,7 +195,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                 self.frame, "user_int", "item_int",
                 "rating", max_steps=-15)
 
-    #@unittest.skip("regualarization > 1 causes an invalid error message")
     def test_collaborative_filtering_invalid_regularization(self):
         """Test collaborative filtering with invalid regularization"""
         with self.assertRaisesRegexp(
@@ -218,7 +213,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                 self.frame, "user_int", "item_int",
                 "rating", regularization=41.0)
 
-    #@unittest.skip("alpha > 1 causes invalid error message")
     def test_collaborative_filtering_invalid_alpha(self):
         """Test collaborative filtering with invalid alpha"""
         with self.assertRaisesRegexp(
@@ -234,23 +228,21 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating", alpha=41.0)
 
-    @unittest.skip("recommend accepts negative values")
     def test_collaborative_filtering_invalid_recommend_items(self):
         """Test collaborative filtering recommend invalid items"""
         with self.assertRaisesRegexp(
                 Exception,
-                'requirement failed: column invalid_int was not found'):
+                'Found number_of_recommendations = -10.  Expected non-negative integer.'):
             model = self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.recommend(0, -10)
 
-    @unittest.skip("reommend with invalid user fails with bad error message")
     def test_collaborative_filtering_invalid_recommend_value(self):
         """Test collaborative filtering invalid item"""
         with self.assertRaisesRegexp(
                 Exception,
-                'requirement failed: column invalid_int was not found'):
+                'requirement failed: No users found with id = 1000.'):
             model = self.context.models.collaborativefiltering \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
