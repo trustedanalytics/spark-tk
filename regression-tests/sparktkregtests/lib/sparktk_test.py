@@ -38,7 +38,7 @@ def get_context():
                                 'spark.ui.enabled': 'false',
                                 'spark.port.maxRetries': 50,
                                 'spark.dynamicAllocation.enabled': 'true',
-                                'spark.dynamicAllocation.maxExecutors': '20',
+                                'spark.dynamicAllocation.maxExecutors': '24',
                                 'spark.dynamicAllocation.minExecutors': '1',
                                 'spark.executor.cores': '1',
                                 'spark.executor.memory': '3712m',
