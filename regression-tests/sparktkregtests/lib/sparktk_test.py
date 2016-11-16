@@ -37,6 +37,7 @@ def get_context():
             sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
                                 'spark.ui.enabled': 'false',
                                 'spark.driver.maxResultSize': '1g',
+                                'spark.driver.cores': '1',
                                 'spark.dynamicAllocation.enabled': 'true',
                                 'spark.dynamicAllocation.maxExecutors': '16',
                                 'spark.dynamicAllocation.minExecutors': '1',
