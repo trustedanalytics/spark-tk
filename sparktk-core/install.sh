@@ -25,15 +25,19 @@
 EXIT=0
 SPARK_VERSION=1.6.0
 
-if [ -f $SPARK_HOME ]; then
-    echo "Your SPARK_HOME variable isn't set. Please set SPARK_HOME to the root of your spark installation."
-    EXIT=1
+if [ ! -f $SPARK_VERSION_SKIP ]; then
+    echo "Skip spark version check"
 else
-    echo "Verifying Spark version"
-    SPARK_VERSION=$SPARK_VERSION bash -c " $SPARK_HOME/bin/spark-shell --conf spark.master=local -i version.scala 2> /dev/null"
-    if [ $? -ne 0 ]; then
-        echo "SPARK version mismatch. This version of sparktk requires $SPARK_VERSION."
+    if [ -f $SPARK_HOME ]; then
+        echo "Your SPARK_HOME variable isn't set. Please set SPARK_HOME to the root of your spark installation."
         EXIT=1
+    else
+        echo "Verifying Spark version"
+        SPARK_VERSION=$SPARK_VERSION bash -c " $SPARK_HOME/bin/spark-shell --conf spark.master=local -i version.scala 2> /dev/null"
+        if [ $? -ne 0 ]; then
+            echo "SPARK version mismatch. This version of sparktk requires $SPARK_VERSION."
+            EXIT=1
+        fi
     fi
 fi
 
