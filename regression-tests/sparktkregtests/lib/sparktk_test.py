@@ -26,6 +26,7 @@ import sparktk as stk
 import config
 from threading import Lock
 udf_lib_path = os.path.dirname(os.path.abspath(__file__)) + "/udftestlib/"
+udf_files = [udf_lib_path + "udf_remote_utils_direct.py", udf_lib_path + "udf_remote_utils_indirect.py", udf_lib_path + "udf_remote_utils_select.py"] 
 
 lock = Lock()
 global_tc = None
@@ -53,7 +54,7 @@ def get_context():
                     global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
                 else:
-                    global_tc = stk.TkContext(py_files=[udf_lib_path])
+                    global_tc = stk.TkContext(py_files=udf_files)
         return global_tc
 
 
