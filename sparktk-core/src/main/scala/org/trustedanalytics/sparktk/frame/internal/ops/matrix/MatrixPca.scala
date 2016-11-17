@@ -57,10 +57,10 @@ object MatrixPca extends Serializable {
     val matrix = rowWrapper.value(matrixColumn).asInstanceOf[DM]
     val breezeMatrix = MatrixFunctions.asBreeze(matrix)
 
-    val vMatrix = rowWrapper.value(vMatrixColumnName).asInstanceOf[DM]
-    val breezeVMatrix = MatrixFunctions.asBreeze(vMatrix)
+    val vtMatrix = rowWrapper.value(vMatrixColumnName).asInstanceOf[DM]
+    val breezeVtMatrix = MatrixFunctions.asBreeze(vtMatrix)
 
-    val pca = breezeMatrix :* breezeVMatrix
+    val pca = breezeMatrix * breezeVtMatrix.t
     val pcaMatrix = MatrixFunctions.fromBreeze(pca).asInstanceOf[DM]
 
     Row.apply(pcaMatrix)
