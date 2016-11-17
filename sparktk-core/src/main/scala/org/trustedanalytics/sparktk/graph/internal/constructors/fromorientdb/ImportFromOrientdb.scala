@@ -31,11 +31,12 @@ object ImportFromOrientdb {
   /**
    * Import OrientDB graph to spark-tk graph
    *
+   * @param sc: Spark context
    * @param orientConf configuration settings for the OrientDB connection
    * @param dbName the database name
    * @return spark-tk graph
    */
-  def importOrientdbGraph(orientConf: OrientdbConf, dbName: String)(implicit sc: SparkContext): Graph = {
+  def importOrientdbGraph(sc: SparkContext, orientConf: OrientdbConf, dbName: String): Graph = {
     implicit val sqlContext = new SQLContext(sc)
     val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
     val vertexDataFrame = createVertexDataFrame(orientConf, orientGraph, dbName)
