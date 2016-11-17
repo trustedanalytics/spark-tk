@@ -61,10 +61,10 @@ object MatrixSvd extends Serializable {
     val matrixSvdResult = breeze.linalg.svd(breezeMatrix)
 
     val uMatrix = MatrixFunctions.fromBreeze(matrixSvdResult.U).asInstanceOf[DM]
-    val vMatrix = MatrixFunctions.fromBreeze(matrixSvdResult.Vt).asInstanceOf[DM].transpose
+    val vtMatrix = MatrixFunctions.fromBreeze(matrixSvdResult.Vt).asInstanceOf[DM]
     val singularVectors = new DM(1, matrixSvdResult.singularValues.length, matrixSvdResult.singularValues.toArray, false)
 
-    Row.apply(uMatrix, vMatrix, singularVectors)
+    Row.apply(uMatrix, vtMatrix, singularVectors)
   }
 
 }
