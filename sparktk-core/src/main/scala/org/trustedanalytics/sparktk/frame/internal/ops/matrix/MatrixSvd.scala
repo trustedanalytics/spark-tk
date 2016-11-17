@@ -42,7 +42,7 @@ case class MatrixSvd(matrixColumnName: String) extends FrameTransform {
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
     //run the operation
     frame.addColumns(MatrixSvd.matrixSvd(matrixColumnName), Seq(Column("U_" + matrixColumnName, DataTypes.matrix),
-      Column("V_" + matrixColumnName, DataTypes.matrix),
+      Column("Vt_" + matrixColumnName, DataTypes.matrix),
       Column("SingularVectors_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
 
