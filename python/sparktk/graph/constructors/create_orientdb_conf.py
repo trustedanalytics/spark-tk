@@ -24,12 +24,10 @@ def create_orientdb_conf(hostname,
                          db_user_name,
                          db_password,
                          root_password,
-                         db_properties=None,
-                         batch_size=1000,
                          tc=TkContext.implicit):
 
     """
-    Set OrientDB configurations to be passed to export_to_orientdb and import_orientdb_graph APIs.
+    Create OrientDB connection settings to be passed to export_to_orientdb and import_orientdb_graph APIs.
 
     Parameters
     ----------
@@ -39,8 +37,6 @@ def create_orientdb_conf(hostname,
     :param db_user_name: (str) OrientDB database user name
     :param db_password: (str) the database password
     :param root_password: (str) OrientDB server root password
-    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database
-    :param batch_size: (int) batch size for graph ETL to OrientDB database
 
     :return (OrientConf) OrientDB configurations
 
@@ -53,22 +49,14 @@ def create_orientdb_conf(hostname,
 
         >>> root_password = "root"
 
-        >>> db_properties = dict("db.validation","false")
-
-        >>> batch_size = 1000
-
         >>> orient_conf = tc.graph.create_orientdb_config(hostname,
         ...                                               port_number,
         ...                                               "admin",
         ...                                               "admin",
-        ...                                               root_password,
-        ...                                               db_properties,
-        ...                                               batch_size)
+        ...                                               root_password)
 
         >>> orient_conf
-        batch_size    = 1000
         db_password   = admin
-        db_properties = None
         db_user_name  = admin
         hostname      = localhost
         port_number   = 2424
@@ -77,20 +65,18 @@ def create_orientdb_conf(hostname,
 
     """
     TkContext.validate(tc)
-    scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientConfig
-    return OrientConf(tc,
-                      scala_obj.createOrientdbConf(hostname,
+    scala_obj = tc.sc._jvm.org.trustedanalytics.sparktk.graph.internal.ops.orientdb.OrientdbConnection
+    return OrientdbConf(tc,
+                        scala_obj.createOrientdbConf(hostname,
                                                    port_number,
                                                    db_user_name,
                                                    db_password,
-                                                   root_password,
-                                                   tc.jutils.convert.to_scala_option_map(db_properties),
-                                                   batch_size))
+                                                   root_password))
 
 
-class OrientConf(PropertiesObject):
+class OrientdbConf(PropertiesObject):
     """
-    OrientConf holds the configurations for OrientDB export and import APIs in Spark-TK
+    OrientConf holds the connection settings for OrientDB export and import APIs in Spark-TK
     """
     def __init__(self, tc, scala_result):
         self._tc = tc
@@ -100,8 +86,6 @@ class OrientConf(PropertiesObject):
         self._db_user_name = scala_result.dbUserName()
         self._db_password = scala_result.dbPassword()
         self._root_password = scala_result.rootPassword()
-        self._db_properties = self._tc.jutils.convert.scala_option_map_to_python(scala_result.dbProperties())
-        self._batch_size = scala_result.batchSize()
 
     @property
     def hostname(self):
@@ -127,13 +111,3 @@ class OrientConf(PropertiesObject):
     def root_password(self):
         """OrientDB server root password"""
         return self._root_password
-
-    @property
-    def db_properties(self):
-        """Additional parameters to configure OrientDB database"""
-        return self._db_properties
-
-    @property
-    def batch_size(self):
-        """The batch size to be committed to OrientDB database"""
-        return self._batch_size

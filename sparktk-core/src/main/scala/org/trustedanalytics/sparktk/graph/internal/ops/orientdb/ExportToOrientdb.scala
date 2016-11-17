@@ -26,20 +26,35 @@ trait ExportToOrientdbSummarization extends BaseGraph {
    * @param dbName OrientDB database name
    * @param vertexTypeColumnName vertex type column name
    * @param edgeTypeColumnName edge type column name
+   * @param batchSize batch size
+   * @param dbProperties  additional database properties
    * @return summary statistics for the number of exported edges and vertices
    */
-  def exportToOrientdb(orientConf: OrientdbConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
-    execute(ExportToOrientdb(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName))
+  def exportToOrientdb(orientConf: OrientdbConf, dbName: String,
+                       vertexTypeColumnName: Option[String] = None,
+                       edgeTypeColumnName: Option[String] = None,
+                       batchSize: Int = 1000,
+                       dbProperties: Option[Map[String, Any]] = None): ExportOrientdbStats = {
+    execute(ExportToOrientdb(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName, batchSize, dbProperties))
   }
 
 }
 
-case class ExportToOrientdb(orientConf: OrientdbConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None) extends GraphSummarization[ExportToOrientdbReturn] {
+case class ExportToOrientdb(orientConf: OrientdbConf, dbName: String,
+                            vertexTypeColumnName: Option[String] = None,
+                            edgeTypeColumnName: Option[String] = None,
+                            batchSize: Int = 1000,
+                            dbProperties: Option[Map[String, Any]] = None) extends GraphSummarization[ExportOrientdbStats] {
 
-  override def work(state: GraphState): ExportToOrientdbReturn = {
+  override def work(state: GraphState): ExportOrientdbStats = {
 
-    val graphFrameExporter = new GraphFrameFunctions(state)
-    graphFrameExporter.saveToOrientGraph(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName)
+    val importer = new GraphFrameFunctions(state)
+    importer.saveToOrientGraph(orientConf,
+      dbName,
+      vertexTypeColumnName,
+      edgeTypeColumnName,
+      batchSize,
+      dbProperties)
   }
 }
 
@@ -52,4 +67,8 @@ case class ExportToOrientdb(orientConf: OrientdbConf, dbName: String, vertexType
  * @param edgesTypes a dictionary of edge class names and the corresponding statistics of exported edges.
  * @param dbUri the database URI
  */
-case class ExportToOrientdbReturn(exportedVerticesSummary: Map[String, Long], verticesTypes: Map[String, Long], exportedEdgesSummary: Map[String, Long], edgesTypes: Map[String, Long], dbUri: String)
+case class ExportOrientdbStats(exportedVerticesSummary: Map[String, Long],
+                               verticesTypes: Map[String, Long],
+                               exportedEdgesSummary: Map[String, Long],
+                               edgesTypes: Map[String, Long],
+                               dbUri: String)

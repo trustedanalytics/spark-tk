@@ -20,7 +20,13 @@ from sparktk.tkcontext import TkContext
 tc = TkContext.implicit
 
 
-def export_to_orientdb(self, orientdb_conf, db_name, vertex_type_column_name=None, edge_type_column_name=None):
+def export_to_orientdb(self,
+                       orientdb_conf,
+                       db_name,
+                       vertex_type_column_name=None,
+                       edge_type_column_name=None,
+                       batch_size=1000,
+                       db_properties=None):
 
     """
     Export Spark-tk Graph (GraphFrame) to OrientDB API creates OrientDB database with the given database name, URL
@@ -34,6 +40,9 @@ def export_to_orientdb(self, orientdb_conf, db_name, vertex_type_column_name=Non
     :param db_name: (str) OrientDB database name
     :param vertex_type_column_name: (Optional(str)) column name from the vertex data frame specified to be the vertex type
     :param edge_type_column_name: (Optional(str)) column name from the edge data frame specified to be the edge type
+    :param batch_size: (int) batch size for graph ETL to OrientDB database
+    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database
+
 
     Example
     -------
@@ -71,7 +80,9 @@ def export_to_orientdb(self, orientdb_conf, db_name, vertex_type_column_name=Non
         >>> result = sparktk_graph.export_to_orientdb(orient_conf,
         ...                                           db_name,
         ...                                           vertex_type_column_name="gender",
-        ...                                           edge_type_column_name="relationship")
+        ...                                           edge_type_column_name="relationship",
+        ...                                           batch_size = 1000,
+        ...                                           db_properties = dict("db.validation","false"))
 
         >>> result
         db_uri                    = remote:hostname:2424/test_db
@@ -81,16 +92,18 @@ def export_to_orientdb(self, orientdb_conf, db_name, vertex_type_column_name=Non
         vertex_types              = {u'M': 3L, u'F': 3L}
   </skip>
     """
-    return ExportToOrientdbReturn(self._tc,
-                                  self._scala.exportToOrientdb(orientdb_conf._scala,
+    return ExportOrientdbStats(self._tc,
+                               self._scala.exportToOrientdb(orientdb_conf._scala,
                                                                db_name,
                                                                self._tc._jutils.convert.to_scala_option(vertex_type_column_name),
-                                                               self._tc._jutils.convert.to_scala_option(edge_type_column_name)))
+                                                               self._tc._jutils.convert.to_scala_option(edge_type_column_name),
+                                                               batch_size,
+                                                               self._tc._jutils.convert.to_scala_option_map(db_properties)))
 
 
-class ExportToOrientdbReturn(PropertiesObject):
+class ExportOrientdbStats(PropertiesObject):
     """
-    ExportToOrientdbReturn holds the data returned from ExportToOrientDB
+    holds the data returned from exporting a graphframe to OrientDB database
     """
     def __init__(self, tc, scala_result):
         self._tc = tc

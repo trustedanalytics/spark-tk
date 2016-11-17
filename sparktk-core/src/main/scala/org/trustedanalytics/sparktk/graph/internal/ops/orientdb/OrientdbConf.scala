@@ -33,21 +33,18 @@ case class OrientdbConf(hostname: String, portNumber: String, dbUserName: String
   require(dbUserName != null, "the user name is required")
   require(dbPassword != null, "dbPassword is required")
   require(rootPassword != null, "the root password is required")
-  require(batchSize > 0, "batch size should be a positive value")
 }
 
-object OrientConfig {
+object OrientdbConnection {
 
   /**
-   * creates OrientDB database credentials and other database parameters
+   * creates OrientDB database credentials and connection settings
    */
   def createOrientdbConf(hostName: String,
                          portNumber: String,
                          userName: String,
                          password: String,
-                         rootPassword: String,
-                         dbProperties: Option[Map[String, Any]] = None,
-                         batchSize: Int = 1000): OrientdbConf = {
-    OrientdbConf(hostName, portNumber, userName, password, rootPassword, dbProperties, batchSize)
+                         rootPassword: String): OrientdbConf = {
+    OrientdbConf(hostName, portNumber, userName, password, rootPassword)
   }
 }

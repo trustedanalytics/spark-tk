@@ -33,12 +33,14 @@ object OrientdbGraphFactory {
    * create/connect to OrientDB graph
    *
    * @param dbConfigurations OrientDB configurations
+   * @param dbName OrientDB database name
+   * @param dbProperties  additional database properties
    * @return a non transactional OrientDB graph database instance
    */
-  def graphDbConnector(dbConfigurations: OrientdbConf, dbName: String): OrientGraphNoTx = {
+  def graphDbConnector(dbConfigurations: OrientdbConf, dbName: String, dbProperties: Option[Map[String, Any]] = None): OrientGraphNoTx = {
     val dbUrl = getUrl(dbConfigurations, dbName)
     val orientDb: ODatabaseDocumentTx = new ODatabaseDocumentTx(dbUrl)
-    dbConfigurations.dbProperties.foreach(propertyMap => {
+    dbProperties.foreach(propertyMap => {
       propertyMap.foreach { case (key, value) => orientDb.setProperty(key, value) }
     })
     val orientGraphDb = if (dbUrl.startsWith("remote:")) {
