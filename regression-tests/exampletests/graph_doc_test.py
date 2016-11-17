@@ -21,7 +21,6 @@
     THIS TEST IS TO BE MAINTAINED AS A SMOKE TEST FOR THE ML SYSTEM
 """
 import unittest
-import os
 
 import sparktk
 
@@ -44,13 +43,13 @@ class GraphDocTest(unittest.TestCase):
              ["vertex3"],
              ["vertex4"],
              ["vertex5"]],
-             [("id", str)])
+            [("id", str)])
         edge_frame = tc.frame.create(
             [["vertex2", "vertex3"],
              ["vertex2", "vertex1"],
              ["vertex2", "vertex4"],
              ["vertex2", "vertex5"]],
-             [("src", str), ("dst", str)])
+            [("src", str), ("dst", str)])
 
         # The graph is a center vertex on vertex2, with 4 verticess each
         # attached to the center vertex . This is known as a star graph, in
