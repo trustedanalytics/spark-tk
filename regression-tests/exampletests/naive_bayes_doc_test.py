@@ -54,8 +54,8 @@ class ClassifierTest(unittest.TestCase):
         schema.append(("x" + str(numCoeffs), int))
 
         # get all permutations of 0, 1 of length numCoeffs
-        binaryPermutations = list(itertools.product(range(2),
-            repeat=numCoeffs))
+        binaryPermutations = list(
+            itertools.product(range(2), repeat=numCoeffs))
 
         # now we compute the probability for each row
         # and add the probability for each row as a column to the table
@@ -77,9 +77,9 @@ class ClassifierTest(unittest.TestCase):
                 newRow = row
                 randomResult = random.uniform(0, 1)
             if probability >= randomResult:
-                newRow[len(newRow) -1] = 1
+                newRow[len(newRow) - 1] = 1
             else:
-                newRow[len(newRow) -1] = 0
+                newRow[len(newRow) - 1] = 0
             dataRows.append(newRow)
 
         # Finally we create the frame and model
@@ -91,8 +91,8 @@ class ClassifierTest(unittest.TestCase):
         # we train a naive bayes model
         # we give the model lots of information on both data and outcomes
         # in this way it learns which outcome to expect from data
-        nb_model = context.models.classification.naive_bayes.train(frame,
-                "x" + str(numCoeffs -1), obsCols)
+        nb_model = context.models.classification.naive_bayes.train(
+            frame, "x" + str(numCoeffs - 1), obsCols)
         # then we test the model
         # meaning we try to see how it behaves in predicting outcomes
         # from data that it has been trained to recognize patterns in
