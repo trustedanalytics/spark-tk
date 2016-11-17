@@ -69,5 +69,7 @@ fi
 
 export COVERAGE_FILE=$DIR/../../../unit_test_coverage.dat
 py.test --cov-config=$DIR/pycoverage.ini --cov=$SPARKTK_DIR --cov-report=html:$DIR/../../../pytest_unit $TESTS_DIR
+echo "Coverage Report at:"
+echo "$DIR/../../../pytest_unit"
 
 unset IN_UNIT_TESTS

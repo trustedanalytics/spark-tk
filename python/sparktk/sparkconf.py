@@ -184,7 +184,7 @@ def set_env_for_sparktk(spark_home=None,
         driver_class_path_value_index = pieces.index('--driver-class-path') + 1
         pieces[driver_class_path_value_index] = ':'.join([pieces[driver_class_path_value_index], driver_class_path])
     else:
-        pieces = ['--jars', jars, '--driver-class-path', driver_class_path]
+        pieces = pieces + ['--jars', jars, '--driver-class-path', driver_class_path]
 
     pyspark_submit_args = ' '.join(pieces)
 
