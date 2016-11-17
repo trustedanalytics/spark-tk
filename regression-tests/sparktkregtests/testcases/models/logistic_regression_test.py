@@ -319,8 +319,8 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
     def test_logistic_regression_train_count_column(self):
         """test logistic regression train with count"""
         log_model = self.context.models.classification.logistic_regression.train(
-            self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "res", "count")
+            self.binomial_frame,
+            ["vec0", "vec1", "vec2", "vec3", "vec4"], "res", "count")
         self._standard_summary(log_model.training_summary, True)
 
     def _standard_summary(self, summary, coefficients_only):
@@ -414,7 +414,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
                 summary.p_value["vec4"], 0,
                 delta=0.02)
 
-            #covariance matrix obtained from R
+            # covariance matrix obtained from R
             r_cov = [
                 [1.495461e-04, 1.460983e-05, 2.630870e-05,
                  3.369595e-05, 9.938721e-06, 5.580564e-05],
@@ -429,11 +429,11 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
                 [5.580564e-05, 2.206105e-05, 4.022959e-05,
                  5.243129e-05, 1.776645e-05, 9.572358e-05]]
 
-            #covariance matrix as in log_model summary
+            # covariance matrix as in log_model summary
             summ_cov = summary.covariance_matrix.take(
                 summary.covariance_matrix.count())
 
-            #compare all corresponding values in both matrices
+            # compare all corresponding values in both matrices
             for (r_list, summ_list) in zip(r_cov, summ_cov):
                 for (r_val, summ_val) in zip(r_list, summ_list):
                     self.assertAlmostEqual(r_val, summ_val)
