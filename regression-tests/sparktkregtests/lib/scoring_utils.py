@@ -50,7 +50,10 @@ class scorer(object):
         #keep track of cwd for future
         test_dir = os.getcwd()
         os.chdir(run_path)
-
+        print "hdfs path: " + str(self.hdfs_path)
+        print "full command: " + str("./bin/model-scoring.sh" + "-Dtrustedanalytics.scoring-engine.archive-mar=" + self.hdfs_path + 
+            "-Dtrustedanalytics.scoring.port=" + self.port)
+            
         # make a new process group
         self.scoring_process = sp.Popen(
             ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path, 
@@ -80,5 +83,6 @@ class scorer(object):
 
         scoring_host = self.host + ":" + self.port
         submit_string = 'http://'+scoring_host+'/v2/score'
+        print "submit string: " + str(submit_string)
         response = requests.post(submit_string, json={"records":data_val}, headers=headers)
         return response

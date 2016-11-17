@@ -20,6 +20,7 @@ import unittest
 import uuid
 import datetime
 import os
+import daaltk
 
 import sparktk as stk
 
@@ -52,7 +53,7 @@ def get_context():
                     global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
                 else:
-                    global_tc = stk.TkContext()
+                    global_tc = stk.TkContext(other_libs=[daaltk])
         return global_tc
 
 
