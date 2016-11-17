@@ -31,7 +31,7 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
 
             #V matrix from numpy's svd
             U, s, V = svd(row['imagematrix'])
-            expected_pcs = row['imagematrix'] * V.T
+            expected_pcs = row['imagematrix'].dot(V.T)
 
             assert_almost_equal(actual_pcs, expected_pcs,
                                 decimal=4, err_msg="pcs incorrect")

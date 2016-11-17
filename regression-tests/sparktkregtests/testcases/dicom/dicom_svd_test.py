@@ -33,7 +33,7 @@ class SVDDicomTest(sparktk_test.SparkTKTestCase):
             U, s, V = svd(row['imagematrix'])
             
             assert_almost_equal(actual_U, U, decimal=4, err_msg="U incorrect")
-            assert_almost_equal(actual_V, V.T, decimal=4, err_msg="V incorrect")
+            assert_almost_equal(actual_V, V, decimal=4, err_msg="V incorrect")
             assert_almost_equal(
                 actual_s[0], s, decimal=4, err_msg="Singual vectors incorrect")
 
