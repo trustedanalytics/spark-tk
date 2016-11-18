@@ -242,12 +242,6 @@ def create_sc(master=None,
     :return: pyspark SparkContext
     """
 
-    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
-
-    # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
-    set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))
-
-    conf = SparkConf()
     extra = {}
     if extra_conf_file:
         logger.info("create_sc() conf_file specified: %s" % extra_conf_file)
@@ -270,6 +264,16 @@ def create_sc(master=None,
             master_in_extra = True
         if k == "spark.app.name":
             app_name_in_extra = True
+        if k == "spark.driver.memory":
+            pyspark_submit_args = "%s --driver-memory=%s" % (pyspark_submit_args or '', v)
+
+    set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
+
+    # bug/behavior of PYSPARK_SUBMIT_ARGS requires 'pyspark-shell' on the end --check in future spark versions
+    set_env('PYSPARK_SUBMIT_ARGS', ' '.join([os.environ['PYSPARK_SUBMIT_ARGS'], 'pyspark-shell']))
+
+    conf = SparkConf()  # env must be set before creating SparkConf
+    for k, v in extra.items():
         conf.set(k, v)
 
     if not master and not master_in_extra:
