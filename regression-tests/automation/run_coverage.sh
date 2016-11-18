@@ -15,7 +15,14 @@
 #  limitations under the License.
 #
 
-source common.sh
+NAME="[`basename $BASH_SOURCE[0]`]"
+DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
+echo "$NAME DIR=$DIR"
+
+MAINDIR="$(dirname $DIR)"
+MAINDIR="$(dirname $MAINDIR)"
+
+sparktkpackage=$MAINDIR/sparktkinstall
 
 # Remove the sparktk package so it doesn't shadow ours
 sudo pip2.7 uninstall -y sparktk
@@ -33,4 +40,4 @@ echo "spark tk home"
 echo $SPARKTK_HOME
 
 export DIR
-py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:pytest --boxed -n10 --ignore $MAINDIR/regression-tests/sparktkregtests/testcases/scoretests $MAINDIR/regression-tests
+py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:pytest --boxed -n10 $MAINDIR/regression-tests

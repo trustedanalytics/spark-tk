@@ -17,6 +17,7 @@
 
 import random
 
+
 def main():
     # dataset :: [[([(Int,Int)],string)]]
     # flattened1 :: [([(Int,Int)],String)]
@@ -24,11 +25,12 @@ def main():
     testf = open("filetest_kmeansbill.csv", 'w')
     resvals = open("truth_bill.txt", 'w')
 
-    dataset = dataSetGenSuperStream(5, 50, 2*10**7, trainf, testf, resvals)
+    dataSetGenSuperStream(5, 50, 2*10**7, trainf, testf, resvals)
 
     trainf.close()
     testf.close()
     resvals.close()
+
 
 # Dataset generator, not used as part of the automated test
 # This was used to crete the initial datasets
@@ -44,7 +46,7 @@ def dataSetGenSuperStream(nodec, dimc, ptc, train, test, res, dist=(lambda: rand
     # max, min: range limits for generated variations
 
     # vectore = [Int] -> string -> ([Int],String)
-    vector = lambda cent : ([(val, dist()) for val in cent])
+    vector = lambda cent: ([(val, dist()) for val in cent])
     # nodes :: [([Int],String)]
     #nodes = [([100*random.uniform(min, max) for _ in range(dimc)], i) for i in range(nodec)]
     nodes = [([0,0,0,0,0],'0'),
