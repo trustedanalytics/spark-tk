@@ -82,7 +82,7 @@ def export_to_orientdb(self,
         ...                                           vertex_type_column_name="gender",
         ...                                           edge_type_column_name="relationship",
         ...                                           batch_size = 1000,
-        ...                                           db_properties = dict("db.validation","false"))
+        ...                                           db_properties = ({"db.validation":"false"}))
 
         >>> result
         db_uri                    = remote:hostname:2424/test_db

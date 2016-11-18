@@ -74,7 +74,6 @@ class JConvert(object):
             scala_map = None
         else:
             raise ValueError("Expected a dict object, but received: %s" % type(m))
-
         return self.scala.toOption(scala_map)
 
     def to_scala_option(self, item):
