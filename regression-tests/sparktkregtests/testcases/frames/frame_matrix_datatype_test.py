@@ -158,7 +158,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         results = frame.to_pandas(frame.count())
         for i, row in results.iterrows():
             actual_U = row['U_C1']
-            actual_V = row['V_C1']
+            actual_V = row['Vt_C1']
             actual_s = row['SingularVectors_C1']
 
             #expected ouput using numpy's svd
@@ -168,7 +168,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
                 actual_U, U, decimal=4,
                 err_msg="U incorrect")
             numpy.testing.assert_almost_equal(
-                actual_V, V.T, decimal=4,
+                actual_V, V, decimal=4,
                 err_msg="V incorrect")
             numpy.testing.assert_almost_equal(
                 actual_s[0], s, decimal=4,
@@ -181,7 +181,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
             ["C", [[9,10,11],[11,12,13],[13,14,15]]]]
         frame = self.context.frame.create(dataset, self.schema)
         frame.matrix_svd("C1")
-        frame.matrix_pca("C1", "V_C1")
+        frame.matrix_pca("C1", "Vt_C1")
 
         #compare matrix_pca output with numpy's
         results = frame.to_pandas(frame.count())
@@ -190,7 +190,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
 
             #expected ouput using numpy's svd
             U, s, V = numpy.linalg.svd(row['C1'])
-            expected_pcs = row['C1'] * V
+            expected_pcs = row['C1'].dot(V.T)
             numpy.testing.assert_almost_equal(
                 actual_pcs, expected_pcs, decimal=4,
                 err_msg="pcs incorrect")
