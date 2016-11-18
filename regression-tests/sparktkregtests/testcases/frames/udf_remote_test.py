@@ -18,7 +18,9 @@
 """ Test UDF implementation."""
 import unittest
 from sparktkregtests.lib import sparktk_test
-from sparktkregtests.lib.udftestlib import udf_remote_utils_direct, udf_remote_utils_indirect, udf_remote_utils_select
+import udf_remote_utils_direct
+import udf_remote_utils_indirect
+import udf_remote_utils_select
 
 
 class UDFTest(sparktk_test.SparkTKTestCase):
