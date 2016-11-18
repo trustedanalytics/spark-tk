@@ -40,7 +40,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
             covariateColumns: List[String],
             censorColumn: String,
             convergenceTolerance: Double = 1E-6,
-            maxSteps: Int = 100): CoxPhTrainReturn= {
+            maxSteps: Int = 100)= {
     require(frame != null, "frame is required")
     require(timeColumn != null && timeColumn.nonEmpty, "Time column must not be null or empty")
     require(censorColumn != null && censorColumn.nonEmpty, "Censor column must not be null or empty")
@@ -62,11 +62,19 @@ object SparktkCoxPhModel extends TkSaveableObject {
     cox.setCensorCol("censor")
     cox.setMaxIter(arguments.maxSteps)
     cox.setTol(arguments.convergenceTolerance)
-    val coxModel = cox.fit(trainFrame)
+    val coxModel: CoxPhModel = cox.fit(trainFrame)
 
-    new CoxPhTrainReturn(coxModel.beta.toArray.toList, coxModel.meanVector.toArray.toList)
-
+    SparktkCoxPhModel(coxModel,
+      timeColumn,
+      covariateColumns,
+      censorColumn,
+      convergenceTolerance,
+      maxSteps,
+      coxModel.beta.toArray.toList,
+      coxModel.meanVector.toArray.toList
+      )
   }
+
 
   /**
    * Load method where the work of getting the formatVersion and tkMetadata has already been done
@@ -87,7 +95,9 @@ object SparktkCoxPhModel extends TkSaveableObject {
       coxPhMetadata.covariateColumns,
       coxPhMetadata.censorColumn,
       coxPhMetadata.convergenceTolerance,
-      coxPhMetadata.maxSteps)
+      coxPhMetadata.maxSteps,
+      sparkModel.beta.toArray.toList,
+      sparkModel.meanVector.toArray.toList)
   }
 
   /**
@@ -106,11 +116,85 @@ case class SparktkCoxPhModel private[survivalanalysis] (sparkModel: CoxPhModel,
                                                         covariateColumns: List[String],
                                                         censorColumn: String,
                                                         convergenceTolerance: Double,
-                                                        maxSteps: Int) extends Serializable with Model {
+                                                        maxSteps: Int,
+                                                        beta: List[Double],
+                                                        mean: List[Double]) extends Serializable with Model {
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
+  /**
+    * Predict values for a frame using a trained Linear Regression model
+    *
+    * @param frame The frame to predict on
+    * @param observationColumns List of column(s) containing the observations
+    * @param comparisonFrame The frame to compare with
+    * @return returns predicted frame
+    */
+  def predict(frame: Frame, observationColumns: Option [List[String]], comparisonFrame: Option[Frame]): Frame = {
+
+    require(frame != null, "require frame to predict")
+
+    val featureColumns = observationColumns.getOrElse(covariateColumns)
+    val meanVector = if (comparisonFrame.isDefined) {
+      val compareFrame: Frame = comparisonFrame.get
+      new FrameRdd(compareFrame.schema, compareFrame.rdd).columnStatistics(featureColumns).mean
+    }
+    else {
+      sparkModel.meanVector
+    }
+    val hazardRatioColumn = Column("hazard_ratio", DataTypes.float64)
+    val predictFrame = new FrameRdd(frame.schema, frame.rdd).addColumn(hazardRatioColumn, row => {
+      val observation = row.valuesAsDenseVector(featureColumns)
+      sparkModel.predict(observation, meanVector)
+    })
+    new Frame(predictFrame.rdd, predictFrame.schema)
+  }
+  /**
+    * Saves this model to a file
+    *
+    * @param sc active SparkContext
+    * @param path save to path
+    * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
+    */
+  def save(sc: SparkContext, path: String, overwrite: Boolean = false): Unit = {
+
+    if (overwrite)
+      sparkModel.write.overwrite().save(path)
+    else
+      sparkModel.write.save(path)
+    val formatVersion: Int = 1
+    val tkMetadata = CoxPhMetaData(timeColumn,
+      covariateColumns,
+      censorColumn,
+      convergenceTolerance,
+      maxSteps,
+      sparkModel.beta.toArray.toList,
+      sparkModel.meanVector.toArray.toList)
+
+    TkSaveLoad.saveTk(sc, path, SparktkCoxPhModel.formatId, formatVersion, tkMetadata)
+  }
+
+  override def score(row: Array[Any]): Array[Any] = {
+    require(row != null && row.length > 0, "scoring input row must not be null nor empty")
+    val doubleArray = row.map(i => ScoringModelUtils.asDouble(i))
+    val hazard_ratio = sparkModel.predict(new DenseVector(doubleArray), sparkModel.meanVector)
+    row :+ hazard_ratio
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      // The spark linear regression model save will fail, if we don't specify the "overwrite", since the temp
+      // directory has already been created.
+      save(sc, tmpDir.toString, overwrite = true)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[SparktkCoxPhModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
+  }
   def modelMetadata(): ModelMetaData = {
     new ModelMetaData("CoxPH Model", classOf[SparktkCoxPhModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
@@ -129,14 +213,15 @@ case class SparktkCoxPhModel private[survivalanalysis] (sparkModel: CoxPhModel,
     output :+ Field("hazard_ratio", "Double")
   }
 
-  override def score(row: Array[Any]): Array[Any] = ???
 }
 
 case class CoxPhMetaData(timeColumn: String,
                          covariateColumns: List[String],
                          censorColumn: String,
                          convergenceTolerance: Double,
-                         maxSteps: Int) extends Serializable
+                         maxSteps: Int,
+                         beta: List[Double],
+                         mean: List[Double]) extends Serializable
 
 case class CoxPhTrainArgs(frame: Frame,
                           timeColumn: String,
@@ -144,5 +229,3 @@ case class CoxPhTrainArgs(frame: Frame,
                           censorColumn: String,
                           convergenceTolerance: Double,
                           maxSteps: Int)
-
-case class CoxPhTrainReturn(beta: List[Double], mean: List[Double])
