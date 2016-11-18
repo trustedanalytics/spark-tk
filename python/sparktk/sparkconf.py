@@ -257,15 +257,10 @@ def create_sc(master=None,
         logger.info("create_sc() overriding conf with given extra_conf_dict")
         extra.update(extra_conf_dict)
 
-    master_in_extra = False
-    app_name_in_extra = False
-    for k, v in extra.items():
-        if k == "spark.master":
-            master_in_extra = True
-        if k == "spark.app.name":
-            app_name_in_extra = True
-        if k == "spark.driver.memory":
-            pyspark_submit_args = "%s --driver-memory=%s" % (pyspark_submit_args or '', v)
+    master_in_extra = 'spark.master' in extra
+    app_name_in_extra = 'spark.app.name' in extra
+    if 'spark.driver.memory' in extra:
+        pyspark_submit_args = "%s --driver-memory=%s" % (pyspark_submit_args or '', extra['spark.driver.memory'])
 
     set_env_for_sparktk(spark_home, sparktk_home, pyspark_submit_args, other_libs, debug)
 
