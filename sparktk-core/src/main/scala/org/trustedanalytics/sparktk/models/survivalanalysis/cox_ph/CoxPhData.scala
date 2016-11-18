@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.survivalanalysis
+package org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph
 
 import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.CoxPhModel
 

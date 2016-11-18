@@ -13,26 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.survivalanalysis
+package org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph
 
-import breeze.linalg.DenseMatrix
+import java.nio.file.{Files, Path}
+
+import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkContext
-import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{ CoxPh, CoxPhModel }
-import org.apache.spark.sql.{ DataFrame, Row }
+import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{CoxPh, CoxPhModel}
+import org.apache.spark.mllib.linalg.DenseVector
+import org.apache.spark.sql.DataFrame
 import org.json4s.JsonAST.JValue
+import org.trustedanalytics.scoring.interfaces.{Field, Model, ModelMetaData}
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
-import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, RowWrapperFunctions, ScoreAndLabel }
-import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
+import org.trustedanalytics.sparktk.frame.internal.rdd.{FrameRdd, RowWrapperFunctions}
+import org.trustedanalytics.sparktk.models.{ScoringModelUtils, SparkTkModelAdapter}
+import org.trustedanalytics.sparktk.saveload.{SaveLoad, TkSaveLoad, TkSaveableObject}
 
 import scala.language.implicitConversions
-import org.trustedanalytics.scoring.interfaces.{ Field, Model, ModelMetaData }
-import org.apache.spark.mllib.linalg.DenseVector
-import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, SparkTkModelAdapter }
-import java.nio.file.{ Files, Path }
-
-import org.apache.commons.io.FileUtils
 
 object SparktkCoxPhModel extends TkSaveableObject {
   def train(frame: Frame,

@@ -13,12 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.survivalanalysis
+package org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
+import org.trustedanalytics.sparktk.frame.{Column, DataTypes, Frame, FrameSchema}
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
@@ -83,11 +83,9 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
       val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
       val predicted_frame = model.predict(frame, None, None)
       predicted_frame shouldBe a[Frame]
-      val resultArray = predicted_frame.rdd.map(row => {
-        for (i <- 0 until row.length) yield row.getDouble(i)
-      }).collect()
+      val resultArray = predicted_frame.rdd.collect()
 
-      println(resultArray.length)
+      resultArray.length shouldEqual(7)
     }
 
   }
