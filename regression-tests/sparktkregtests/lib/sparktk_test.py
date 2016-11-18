@@ -35,25 +35,25 @@ def get_context():
     global global_tc
     with lock:
         if global_tc is None:
-		sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
-                            'spark.ui.enabled': 'false',
-                            'spark.driver.maxResultSize': '2g',
-                            'spark.dynamicAllocation.enabled': 'true',
-                            'spark.dynamicAllocation.maxExecutors': '16',
-                            'spark.dynamicAllocation.minExecutors': '1',
-                            'spark.executor.cores': '10',
-                            'spark.executor.memory': '2g',
-                            'spark.shuffle.io.preferDirectBufs': 'true',
-                            'spark.shuffle.service.enabled': 'true',
-                            'spark.yarn.am.waitTime': '1000000',
-                            'spark.yarn.executor.memoryOverhead': '384',
-                            'spark.eventLog.enabled': 'false',
-                            'spark.sql.shuffle.partitions': '6'}
-                if config.run_mode:
-                    global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
+            sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
+                                'spark.ui.enabled': 'false',
+                                'spark.driver.maxResultSize': '2g',
+                                'spark.dynamicAllocation.enabled': 'true',
+                                'spark.dynamicAllocation.maxExecutors': '16',
+                                'spark.dynamicAllocation.minExecutors': '1',
+                                'spark.executor.cores': '10',
+                                'spark.executor.memory': '2g',
+                                'spark.shuffle.io.preferDirectBufs': 'true',
+                                'spark.shuffle.service.enabled': 'true',
+                                'spark.yarn.am.waitTime': '1000000',
+                                'spark.yarn.executor.memoryOverhead': '384',
+                                'spark.eventLog.enabled': 'false',
+                                'spark.sql.shuffle.partitions': '6'}
+            if config.run_mode:
+                global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
 
-                else:
-                    global_tc = stk.TkContext(other_libs=[daaltk])
+            else:
+                global_tc = stk.TkContext()
         return global_tc
 
 
