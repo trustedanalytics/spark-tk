@@ -38,7 +38,7 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
 
     def test_PCA(self):
         """Test the output of pca"""
-        self.frame.matrix_pca("imagematrix", "V_imagematrix")
+        self.frame.matrix_pca("imagematrix", "Vt_imagematrix")
 
         results = self.frame.to_pandas(self.frame.count())
 

@@ -43,7 +43,7 @@ class SVDDicomTest(sparktk_test.SparkTKTestCase):
         #compare U,V and s matrices for each image against numpy's output
         for i, row in results.iterrows():
             actual_U = row['U_imagematrix']
-            actual_V = row['V_imagematrix']
+            actual_V = row['Vt_imagematrix']
             actual_s = row['SingularVectors_imagematrix']
 
             #expected ouput using numpy's svd

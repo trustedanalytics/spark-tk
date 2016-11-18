@@ -158,7 +158,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         results = frame.to_pandas(frame.count())
         for i, row in results.iterrows():
             actual_U = row['U_C1']
-            actual_V = row['V_C1']
+            actual_V = row['Vt_C1']
             actual_s = row['SingularVectors_C1']
 
             #expected ouput using numpy's svd
@@ -181,7 +181,7 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
             ["C", [[9,10,11],[11,12,13],[13,14,15]]]]
         frame = self.context.frame.create(dataset, self.schema)
         frame.matrix_svd("C1")
-        frame.matrix_pca("C1", "V_C1")
+        frame.matrix_pca("C1", "Vt_C1")
 
         #compare matrix_pca output with numpy's
         results = frame.to_pandas(frame.count())
