@@ -62,10 +62,10 @@ class SingleSourceShortestPaths private[graphframes](private val graph: GraphFra
 
 object SingleSourceShortestPaths {
 
-  private def run(graph: GraphFrame, landmarks: Seq[Any]): DataFrame = {
+  private def run(graph: GraphFrame, landmarks: Seq[Any]): DataFrame = ???/*{
     val idType = graph.vertices.schema(GraphFrame.ID).dataType
     val longIdToLandmark = landmarks.map(l => GraphXConversions.integralId(graph, l) -> l).toMap
-    val gx = graphxlib.ShortestPaths.run(
+    val gx = graphxlib.SingleSourceShortestPath.run(
       graph.cachedTopologyGraphX,
       longIdToLandmark.keys.toSeq.sorted).mapVertices { case (_, m) => m.toSeq }
     val g = GraphXConversions.fromGraphX(graph, gx, vertexNames = Seq(DISTANCE_ID))
@@ -89,7 +89,7 @@ object SingleSourceShortestPaths {
     val cols = graph.vertices.columns.map(col) :+ distanceCol.as(DISTANCE_ID)
     g.vertices.select(cols: _*)
   }
-
+*/
   private val DISTANCE_ID = "distances"
 
 }
