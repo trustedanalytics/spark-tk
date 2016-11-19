@@ -16,8 +16,9 @@
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.trustedanalytics.sparktk.frame.Frame
-import org.apache.spark.sql.functions.{ sum, array, col, count, explode, struct }
+import org.apache.spark.sql.functions._
 import org.graphframes.GraphFrame
+import org.graphframes.GraphFrame.ID
 import org.apache.spark.sql.DataFrame
 import org.graphframes.lib.AggregateMessages
 
@@ -47,7 +48,44 @@ trait LabelPropagationSummarization extends BaseGraph {
 case class LabelPropagation(maxIterations: Int) extends GraphSummarization[Frame] {
   require(maxIterations > 0, "maxIterations must be a positive value")
 
+  val index = "label"
+  val indexNew = "labelNew"
+
+  // This is the column name spark gives to count
+  val countName = "count"
+  val maxName = "max"
+  val maxValue = "max.MSG"
+
+  val messageName = "MSG"
+
   override def work(state: GraphState): Frame = {
-    new Frame(state.graphFrame.labelPropagation.maxIter(maxIterations).run())
+
+    var graph = GraphFrame(state.graphFrame.vertices.withColumn(index, monotonicallyIncreasingId()), state.graphFrame.edges)
+
+    for (i <- 1 to maxIterations) {
+      val updatedComponent =
+        GraphHelpers.agg(graph, Some(AggregateMessages.dst(index)), Some(AggregateMessages.src(index)))
+          .groupBy(ID, messageName)
+          .count()
+          .groupBy(ID)
+          .agg(max(struct(col(countName),
+            col(messageName))).alias(maxName))
+          .select(col(ID), col(maxValue))
+          .withColumnRenamed(messageName, indexNew)
+
+      val joinedComponent = updatedComponent
+        .join(graph.vertices, graph.vertices(ID) === updatedComponent(ID))
+        .drop(graph.vertices(ID))
+
+      val newVertices = joinedComponent
+        .drop(index)
+        .withColumnRenamed(indexNew, index)
+
+      val unCachedVertices = AggregateMessages.getCachedDataFrame(newVertices)
+
+      graph = GraphFrame(unCachedVertices, state.graphFrame.edges)
+    }
+
+    new Frame(graph.vertices)
   }
 }
