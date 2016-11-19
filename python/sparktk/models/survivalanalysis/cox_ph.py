@@ -1,10 +1,27 @@
+# vim: set encoding=utf-8
+
+#  Copyright (c) 2016 Intel Corporation 
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
 
 
-__all__ = ["train", "load", "coxPhModel"]
+__all__ = ["train", "load", "SparktkCoxPhModel"]
 
 def train(frame,
           time_column,
@@ -12,41 +29,112 @@ def train(frame,
           censor_column,
           convergence_tolerance=1E-6,
           max_steps=100):
+    """
+    Creates a SparktkCoxPhModel by training on the given frame
+
+    Parameters
+    ----------
+
+    :param frame: (Frame) A frame to train the model on
+    :param time_column: (str) Column name containing the time of occurence of each observation.
+    :param covariate_columns: (Seq[str]) List of column(s) containing the covariates.
+    :param censor_column: (str) Column name containing censor value of each observation.
+    :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+    :param max_steps: (int) Parameter for maximum number of steps. Default is 100
+    :return: (SparktkCoxPhModel) A trained coxPh model
+    """
     if frame is None:
         raise ValueError("frame cannot be None")
-    if time_column is None:
+    if time_column is None or not time_column :
         raise ValueError("Time column must not be null or empty")
-    if censor_column is None:
+    if censor_column is None or not censor_column:
         raise ValueError("Censor column must not be null or empty")
-    if censor_column is None:
-        raise ValueError("Censor column must not be null or empty")
+    if covariate_columns is None or not covariate_columns:
+        raise ValueError("Covariate columns must not be null or empty")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
-    scala_observation_columns = tc.jutils.convert.to_scala_vector_string(covariate_columns)
+    scala_covariate_columns = tc.jutils.convert.to_scala_vector_string(covariate_columns)
 
     scala_model = _scala_obj.train(frame._scala,
                                    time_column,
-                                   covariate_columns,
+                                   scala_covariate_columns,
                                    censor_column,
                                    convergence_tolerance,
                                    max_steps)
     return SparktkCoxPhModel(tc, scala_model)
 
+
 def load(path, tc=TkContext.implicit):
-    """load LinearRegressionModel from given path"""
+    """load SparktkCoxPhModel from given path"""
     TkContext.validate(tc)
     return tc.load(path, SparktkCoxPhModel)
 
-def get_scala_obj(tc):
-    """Gets reference to the scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph.SparktkCoxPhModel
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
     return tc.sc._jvm.org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph.SparktkCoxPhModel
+
 
 class SparktkCoxPhModel(PropertiesObject):
+    """
+    CoxPh Model
+
+    Example
+    -------
+    >>> data = [[18,42, 6, 1], [19, 79, 5, 1], [6, 46, 4, 1],[4, 66, 3, 1], [0, 90, 2, 1], [12, 20, 1, 1], [0, 73, 0, 1]]
+    >>> frame = tc.frame.create(data, schema=[("x1", int), ("x2", int), ("time", int), ("censor", int)])
+
+    Consider the following frame with two covariates, a time and a censor column.
+
+    >>> frame.inspect()
+        [#]  x1  x2  time  censor
+        =========================
+        [0]  18  42     6       1
+        [1]  19  79     5       1
+        [2]   6  46     4       1
+        [3]   4  66     3       1
+        [4]   0  90     2       1
+        [5]  12  20     1       1
+        [6]   0  73     0       1
+
+    >>> model = tc.models.survivalanalysis.cox_ph.train(frame, "time", ["x1", "x2"], "censor")
+    <progress>
+
+    >>> model
+        censor_column         = censor
+        convergence_tolerance = 1e-06
+        covariate_columns     = [u'x1', u'x2']
+        max_steps             = 100
+        time_column           = time
+
+    >>> predicted_frame = model.predict(frame)
+    <progress>
+
+    >>> predicted_frame.inspect()
+        [#]  x1  x2  time  censor  hazard_ratio
+        =========================================
+        [0]  18  42     6       1  0.179627832028
+        [1]  19  79     5       1  0.114353154098
+        [2]   6  46     4       1   1.75206822111
+        [3]   4  66     3       1   2.23633388037
+        [4]   0  90     2       1   4.07599759247
+        [5]  12  20     1       1  0.663821540526
+        [6]   0  73     0       1    4.5920362555
+
+    >>> model.save("sandbox/cox_ph_model")
+
+    >>> restored = tc.load("sandbox/cox_ph_model")
+
+    >>> restored.max_steps
+    100
+
+    The trained model can also be exported to a .mar file, to be used with the scoring engine:
+
+        >>> canonical_path = model.export_to_mar("sandbox/coxPhModel.mar")
+
+
+    """
 
     def __init__(self, tc, scala_model):
         self._tc = tc
@@ -60,7 +148,7 @@ class SparktkCoxPhModel(PropertiesObject):
     @property
     def covariate_columns(self):
         """List of column(s) containing the covariate."""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.covatiateColumns())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.covariateColumns())
 
     @property
     def time_column(self):
@@ -82,6 +170,16 @@ class SparktkCoxPhModel(PropertiesObject):
         """The number of training steps until termination"""
         return self._scala.maxSteps()
 
+    @property
+    def mean(self):
+        """The number of training steps until termination"""
+        return  self._tc.jutils.convert.from_scala_seq(self._scala.mean())
+
+    @property
+    def beta(self):
+        """The number of training steps until termination"""
+        return  self._tc.jutils.convert.from_scala_seq(self._scala.beta())
+
     def predict(self, frame, observation_columns=None, comparison_frame=None):
         """
         Predict values for a frame using a trained Linear Regression model
@@ -94,9 +192,10 @@ class SparktkCoxPhModel(PropertiesObject):
         :param comparison_frame: Optional(Frame) Frame to compare against
         :return: (Frame) returns frame with predicted column added
         """
-        c = self.__columns_to_option(observation_columns)
+        observation_columns = self.__columns_to_option(observation_columns)
+        comparison_frame = self.__frame_to_option(comparison_frame)
         from sparktk.frame.frame import Frame
-        return Frame(self._tc, self._scala.predict(frame._scala, c, comparison_frame._scala))
+        return Frame(self._tc, self._scala.predict(frame._scala, observation_columns, comparison_frame))
 
     def __columns_to_option(self, c):
         if c is not None:
