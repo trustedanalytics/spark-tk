@@ -14,4 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+from sparktk import TkContext
+from _soup.cross_validate import cross_validate
+
 
