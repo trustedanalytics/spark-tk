@@ -256,11 +256,11 @@ object CoxPhModel extends MLReadable[CoxPhModel] {
 
   /** [[MLWriter]] instance for [[CoxPhModel]] */
   private[CoxPhModel] class CoxPhModelWriter(instance: CoxPhModel) extends MLWriter with Logging {
-    private case class Data(coefficients: Vector)
+    private case class Data(coefficients: Vector, mean: Vector)
 
     override protected def saveImpl(path: String): Unit = {
       DefaultParamsWriter.saveMetadata(instance, path, sc)
-      val data = Data(instance.beta)
+      val data = Data(instance.beta, instance.meanVector)
       val dataPath = new Path(path, "data").toString
       sqlContext.createDataFrame(Seq(data)).repartition(1).write.parquet(dataPath)
     }
@@ -276,7 +276,7 @@ object CoxPhModel extends MLReadable[CoxPhModel] {
 
       val dataPath = new Path(path, "data").toString
       val data = sqlContext.read.parquet(dataPath)
-        .select("coefficients").head()
+        .select("coefficients", "mean").head()
       val coefficients = data.getAs[Vector](0)
       val mean = data.getAs[Vector](1)
       val model = new CoxPhModel(metadata.uid, coefficients, mean)
