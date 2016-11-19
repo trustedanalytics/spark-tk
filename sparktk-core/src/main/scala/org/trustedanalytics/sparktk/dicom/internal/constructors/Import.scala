@@ -101,9 +101,6 @@ object Import extends Serializable {
    */
   def importDcm(sc: SparkContext, path: String, minPartitions: Int = 2): Dicom = {
 
-    //To read files in subdirectories recursively
-    sc.hadoopConfiguration.set("mapreduce.input.fileinputformat.input.dir.recursive", "true")
-
     val dicomFilesRdd = sc.binaryFiles(path, minPartitions)
 
     val dcmMetadataPixelArrayRDD = dicomFilesRdd.mapPartitions {
