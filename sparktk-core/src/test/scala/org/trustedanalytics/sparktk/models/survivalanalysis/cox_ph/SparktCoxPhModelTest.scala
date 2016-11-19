@@ -18,7 +18,7 @@ package org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.{Column, DataTypes, Frame, FrameSchema}
+import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
@@ -85,7 +85,7 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
       predicted_frame shouldBe a[Frame]
       val resultArray = predicted_frame.rdd.collect()
 
-      resultArray.length shouldEqual(7)
+      resultArray.length shouldEqual (7)
     }
 
   }

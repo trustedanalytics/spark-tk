@@ -15,31 +15,31 @@
  */
 package org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph
 
-import java.nio.file.{Files, Path}
+import java.nio.file.{ Files, Path }
 
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkContext
-import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{CoxPh, CoxPhModel}
+import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{ CoxPh, CoxPhModel }
 import org.apache.spark.mllib.linalg.DenseVector
 import org.apache.spark.sql.DataFrame
 import org.json4s.JsonAST.JValue
-import org.trustedanalytics.scoring.interfaces.{Field, Model, ModelMetaData}
+import org.trustedanalytics.scoring.interfaces.{ Field, Model, ModelMetaData }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
-import org.trustedanalytics.sparktk.frame.internal.rdd.{FrameRdd, RowWrapperFunctions}
-import org.trustedanalytics.sparktk.models.{ScoringModelUtils, SparkTkModelAdapter}
-import org.trustedanalytics.sparktk.saveload.{SaveLoad, TkSaveLoad, TkSaveableObject}
+import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, RowWrapperFunctions }
+import org.trustedanalytics.sparktk.models.{ ScoringModelUtils, SparkTkModelAdapter }
+import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 
 import scala.language.implicitConversions
 
 object SparktkCoxPhModel extends TkSaveableObject {
   def train(frame: Frame,
             timeColumn: String,
-            covariateColumns: List[String],
+            covariateColumns: Seq[String],
             censorColumn: String,
             convergenceTolerance: Double = 1E-6,
-            maxSteps: Int = 100)= {
+            maxSteps: Int = 100) = {
     require(frame != null, "frame is required")
     require(timeColumn != null && timeColumn.nonEmpty, "Time column must not be null or empty")
     require(censorColumn != null && censorColumn.nonEmpty, "Censor column must not be null or empty")
@@ -71,9 +71,8 @@ object SparktkCoxPhModel extends TkSaveableObject {
       maxSteps,
       coxModel.beta.toArray.toList,
       coxModel.meanVector.toArray.toList
-      )
+    )
   }
-
 
   /**
    * Load method where the work of getting the formatVersion and tkMetadata has already been done
@@ -110,27 +109,27 @@ object SparktkCoxPhModel extends TkSaveableObject {
     tc.load(path).asInstanceOf[SparktkCoxPhModel]
   }
 }
-case class SparktkCoxPhModel private[survivalanalysis] (sparkModel: CoxPhModel,
-                                                        timeColumn: String,
-                                                        covariateColumns: List[String],
-                                                        censorColumn: String,
-                                                        convergenceTolerance: Double,
-                                                        maxSteps: Int,
-                                                        beta: List[Double],
-                                                        mean: List[Double]) extends Serializable with Model {
+case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
+                                              timeColumn: String,
+                                              covariateColumns: Seq[String],
+                                              censorColumn: String,
+                                              convergenceTolerance: Double,
+                                              maxSteps: Int,
+                                              beta: List[Double],
+                                              mean: List[Double]) extends Serializable with Model {
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
   /**
-    * Predict values for a frame using a trained Linear Regression model
-    *
-    * @param frame The frame to predict on
-    * @param observationColumns List of column(s) containing the observations
-    * @param comparisonFrame The frame to compare with
-    * @return returns predicted frame
-    */
-  def predict(frame: Frame, observationColumns: Option [List[String]], comparisonFrame: Option[Frame]): Frame = {
+   * Predict values for a frame using a trained Linear Regression model
+   *
+   * @param frame The frame to predict on
+   * @param observationColumns List of column(s) containing the observations
+   * @param comparisonFrame The frame to compare with
+   * @return returns predicted frame
+   */
+  def predict(frame: Frame, observationColumns: Option[Seq[String]], comparisonFrame: Option[Frame]): Frame = {
 
     require(frame != null, "require frame to predict")
 
@@ -150,12 +149,12 @@ case class SparktkCoxPhModel private[survivalanalysis] (sparkModel: CoxPhModel,
     new Frame(predictFrame.rdd, predictFrame.schema)
   }
   /**
-    * Saves this model to a file
-    *
-    * @param sc active SparkContext
-    * @param path save to path
-    * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
-    */
+   * Saves this model to a file
+   *
+   * @param sc active SparkContext
+   * @param path save to path
+   * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
+   */
   def save(sc: SparkContext, path: String, overwrite: Boolean = false): Unit = {
 
     if (overwrite)
@@ -215,7 +214,7 @@ case class SparktkCoxPhModel private[survivalanalysis] (sparkModel: CoxPhModel,
 }
 
 case class CoxPhMetaData(timeColumn: String,
-                         covariateColumns: List[String],
+                         covariateColumns: Seq[String],
                          censorColumn: String,
                          convergenceTolerance: Double,
                          maxSteps: Int,
@@ -224,7 +223,7 @@ case class CoxPhMetaData(timeColumn: String,
 
 case class CoxPhTrainArgs(frame: Frame,
                           timeColumn: String,
-                          covariateColumns: List[String],
+                          covariateColumns: Seq[String],
                           censorColumn: String,
                           convergenceTolerance: Double,
                           maxSteps: Int)
