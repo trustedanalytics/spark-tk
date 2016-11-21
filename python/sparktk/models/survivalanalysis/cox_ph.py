@@ -102,10 +102,12 @@ class SparktkCoxPhModel(PropertiesObject):
     <progress>
 
     >>> model
+        beta                  = [-0.19214283727219947, -0.007012237038116714]
         censor_column         = censor
         convergence_tolerance = 1e-06
         covariate_columns     = [u'x1', u'x2']
         max_steps             = 100
+        mean                  = [8.428571428571429, 59.42857142857143]
         time_column           = time
 
     >>> predicted_frame = model.predict(frame)
