@@ -63,6 +63,19 @@ class JConvert(object):
     def scala_map_to_python(self, m):
         return self.scala.scalaMapToPython(m)
 
+    def scala_option_map_to_python(self, m):
+        python_option = self.from_scala_option(m)
+        return None if not python_option else self.scala_map_to_python(python_option)
+
+    def to_scala_option_map(self, m):
+        if isinstance(m, dict):
+            scala_map = self.to_scala_map(m)
+        elif m is None:
+            scala_map = None
+        else:
+            raise ValueError("Expected a dict object, but received: %s" % type(m))
+        return self.scala.toOption(scala_map)
+
     def to_scala_option(self, item):
         return self.scala.toOption(item)
 
