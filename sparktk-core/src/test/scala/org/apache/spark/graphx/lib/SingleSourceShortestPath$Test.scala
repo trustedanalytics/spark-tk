@@ -1,16 +1,11 @@
 package org.apache.spark.graphx.lib
 
 import org.apache.spark.graphx._
-import org.apache.spark.graphx.util.GraphGenerators
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
-class SingleSourceShortestPath$Test extends TestingSparkContextWordSpec with Matchers {
+class SingleSourceShortestPath$Test extends TestingSparkContextWordSpec{
 
   "Shortest paths" should{
-
 
     "find SPs" in {
       var results:Graph[(Double, List[VertexId]),Double] = null
@@ -24,22 +19,9 @@ class SingleSourceShortestPath$Test extends TestingSparkContextWordSpec with Mat
 
       // define the graph
       val graph = Graph(vRDD,eRDD)
-      // graph vertices
-      //graph.vertices.collect.foreach(println)
-      // (2,ORD)
-      // (1,SFO)
-      // (3,DFW)
-
-      // graph edges
-      //graph.edges.collect.foreach(println)
-
-      // Edge(1,2,1800)
-      // Edge(2,3,800)
-      // Edge(3,1,1400)
-
-      results = SingleSourceShortestPath.run(graph,3,false,Some(Seq(3,1,5,6)),Some(4.0))
+      results = SingleSourceShortestPath.run(graph,1,false,Some(Seq(3)),Some(6.0))
       println(results.vertices.collect.mkString("\n"))
-
+      println(results.edges.collect.mkString("\n"))
       }
 
   }
