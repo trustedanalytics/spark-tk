@@ -88,41 +88,41 @@ class SparktkCoxPhModel(PropertiesObject):
     Consider the following frame with two covariates, a time and a censor column.
 
     >>> frame.inspect()
-        [#]  x1  x2  time  censor
-        =========================
-        [0]  18  42     6       1
-        [1]  19  79     5       1
-        [2]   6  46     4       1
-        [3]   4  66     3       1
-        [4]   0  90     2       1
-        [5]  12  20     1       1
-        [6]   0  73     0       1
+    [#]  x1  x2  time  censor
+    =========================
+    [0]  18  42     6       1
+    [1]  19  79     5       1
+    [2]   6  46     4       1
+    [3]   4  66     3       1
+    [4]   0  90     2       1
+    [5]  12  20     1       1
+    [6]   0  73     0       1
 
     >>> model = tc.models.survivalanalysis.cox_ph.train(frame, "time", ["x1", "x2"], "censor")
     <progress>
 
     >>> model
-        beta                  = [-0.19214283727219947, -0.007012237038116714]
-        censor_column         = censor
-        convergence_tolerance = 1e-06
-        covariate_columns     = [u'x1', u'x2']
-        max_steps             = 100
-        mean                  = [8.428571428571429, 59.42857142857143]
-        time_column           = time
+    beta                  = [-0.19214283727219947, -0.007012237038116714]
+    censor_column         = censor
+    convergence_tolerance = 1e-06
+    covariate_columns     = [u'x1', u'x2']
+    max_steps             = 100
+    mean                  = [8.428571428571429, 59.42857142857143]
+    time_column           = time
 
     >>> predicted_frame = model.predict(frame)
     <progress>
 
     >>> predicted_frame.inspect()
-        [#]  x1  x2  time  censor  hazard_ratio
-        =========================================
-        [0]  18  42     6       1  0.179627832028
-        [1]  19  79     5       1  0.114353154098
-        [2]   6  46     4       1   1.75206822111
-        [3]   4  66     3       1   2.23633388037
-        [4]   0  90     2       1   4.07599759247
-        [5]  12  20     1       1  0.663821540526
-        [6]   0  73     0       1    4.5920362555
+    [#]  x1  x2  time  censor  hazard_ratio
+    =========================================
+    [0]  18  42     6       1  0.179627832028
+    [1]  19  79     5       1  0.114353154098
+    [2]   6  46     4       1   1.75206822111
+    [3]   4  66     3       1   2.23633388037
+    [4]   0  90     2       1   4.07599759247
+    [5]  12  20     1       1  0.663821540526
+    [6]   0  73     0       1    4.5920362555
 
     >>> model.save("sandbox/cox_ph_model")
 
