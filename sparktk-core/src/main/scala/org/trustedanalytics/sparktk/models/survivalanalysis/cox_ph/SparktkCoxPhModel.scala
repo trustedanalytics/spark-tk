@@ -34,6 +34,18 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import scala.language.implicitConversions
 
 object SparktkCoxPhModel extends TkSaveableObject {
+
+  /**
+    * Fits Cox hazard function and creates a model for it.
+    *
+    :param frame: (Frame) A frame to train the model on
+    :param time_column: (str) Column name containing the time of occurence of each observation.
+    :param covariate_columns: (Seq[str]) List of column(s) containing the covariates.
+    :param censor_column: (str) Column name containing censor value of each observation.
+    :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+    :param max_steps: (int) Parameter for maximum number of steps. Default is 100
+    :return: (SparktkCoxPhModel) A trained coxPh model
+    */
   def train(frame: Frame,
             timeColumn: String,
             covariateColumns: Seq[String],
@@ -99,7 +111,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
   }
 
   /**
-   * Load a CoxPhModel from the given path
+   * Load a SparktkCoxPhModel from the given path
    *
    * @param tc TkContext
    * @param path location
@@ -109,6 +121,17 @@ object SparktkCoxPhModel extends TkSaveableObject {
     tc.load(path).asInstanceOf[SparktkCoxPhModel]
   }
 }
+
+/**
+ :param frame: (Frame) A frame to train the model on
+ :param time_column: (str) Column name containing the time of occurence of each observation.
+ :param covariate_columns: (Seq[str]) List of column(s) containing the covariates.
+ :param censor_column: (str) Column name containing censor value of each observation.
+ :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+ :param max_steps: (int) Parameter for maximum number of steps. Default is 100
+ :param beta: (List[Double]) Trained beta values for each column
+ :param mean: (List[Double]) Mean of each column
+ */
 case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
                                               timeColumn: String,
                                               covariateColumns: Seq[String],
@@ -122,7 +145,7 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
   }
 
   /**
-   * Predict values for a frame using a trained Linear Regression model
+   * Predict values for a frame using a trained Cox proportional hazards model
    *
    * @param frame The frame to predict on
    * @param observationColumns List of column(s) containing the observations
