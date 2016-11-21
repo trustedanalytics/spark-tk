@@ -36,9 +36,9 @@ object ImportFromOrientdb {
    * @param dbName the database name
    * @return spark-tk graph
    */
-  def importOrientdbGraph(sc: SparkContext, orientConf: OrientdbConf, dbName: String): Graph = {
+  def importOrientdbGraph(sc: SparkContext, orientConf: OrientdbConf, dbName: String, dbProperties: Option[Map[String, Any]]): Graph = {
     implicit val sqlContext = new SQLContext(sc)
-    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
+    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName, dbProperties)
     val vertexDataFrame = createVertexDataFrame(orientConf, orientGraph, dbName)
     GraphSchema.validateSchemaForVerticesFrame(vertexDataFrame)
     val edgeDataFrame: DataFrame = createEdgeDataFrame(orientConf, orientGraph, dbName)
