@@ -229,7 +229,6 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
-    @unittest.skip("publish model does not exist yet")
     def test_pca_publish(self):
         """ validate publish"""
         # Test set is a lattice of points, a few outliers, large gap.
@@ -247,10 +246,11 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         svm_model = self.context.models.classification.svm.train(training_frame,
                                                                  "model_class",
                                                                  ["x", "y"])
-        path = svm_model.publish()
+        file_name = self.get_name("svm")
+        path = svm_model.export_to_mar(self.get_export_file(file_name))
 
         self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        self.assertIn("svm", path)
 
     def test_biased_line(self):
         """ Verify that SvmModel operates as expected"""

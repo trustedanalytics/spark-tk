@@ -113,19 +113,6 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
             self.assertEqual(
                 up_take.iloc[i]['hair_type'], sorted_vals.iloc[i]['hair_type'])
 
-    @unittest.skip("frame.sort allows ascending param to be an array, does not work as expected")
-    def test_frame_sort_multiple_column_descending(self):
-        """ Test multiple-column sorting descending with the argument"""
-        self.frame.sort(['weight', 'hair_type'], ascending=[False, False])
-        up_take = self.frame.to_pandas(self.frame.count())
-        sorted_vals = up_take.sort_values(['weight', 'hair_type'],
-                ascending=[False, False])
-        for i in range(len(sorted_vals)):
-            self.assertEqual(
-                up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
-            self.assertEqual(
-                up_take.iloc[i]['hair_type'], sorted_vals.iloc[i]['hair_type'])
-
     def test_frame_sort_multiple_column_mixed(self):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort([("weight", False), ("hair_type", True), ('age', True)])

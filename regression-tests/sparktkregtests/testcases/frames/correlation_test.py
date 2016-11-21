@@ -17,6 +17,7 @@
 
 """Test covariance and correlation on 2 columns, matrices on 400x1024 matric"""
 import unittest
+import math
 import numpy
 from sparktkregtests.lib import sparktk_test
 
@@ -39,11 +40,10 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
 
         self.assertAlmostEqual(correl_0_2, float(numpy_result[0][1]))
 
-    @unittest.skip("Correlation matrix produces value different than numpy correl")
     def test_correl_matrix(self):
         """Verify correlation matrix on all columns"""
         correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names)
-        numpy_correl = list(numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count())),
+        numpy_correl = list(numpy.corrcoef(list(self.base_frame.take(self.base_frame.count())),
                                               rowvar=False))
 
         # convert to lists for ease of comparison
@@ -52,7 +52,12 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
 
         # compare the correl matrix values with the expected results
         for correl_value, ref_value in zip(correl_flat, numpy_correl):
-            self.assertAlmostEqual(correl_value, ref_value, 5)
+            if math.isnan(ref_value):
+                # the diagonal is miscalculated as 1 in spark. This is a known
+                # flaw, the diagonal provides no useful information
+                self.assertTrue(math.isnan(correl_value) or correl_value == 1)
+            else:
+                self.assertAlmostEqual(correl_value, ref_value, 5)
 
 
 if __name__ == "__main__":

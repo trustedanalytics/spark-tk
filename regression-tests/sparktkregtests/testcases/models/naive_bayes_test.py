@@ -73,15 +73,16 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(res.f_measure, f_measure)
         self.assertAlmostEqual(res.accuracy, accuracy)
 
-    @unittest.skip("model publish does not yet exist in dev")
     def test_model_publish_bayes(self):
         """Test training intializes theta, pi and labels"""
         model = self.context.models.classification.naive_bayes.train(self.frame,
                                                                      "label",
                                                                      ['f1', 'f2', 'f3'])
-        path = model.publish()
+        file_name = self.get_name("naive_bayes")
+        path = model.export_to_mar(self.get_export_file(file_name))
         self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        self.assertIn("naive_bayes", path)
+
 
     def test_model_test_paramater_initiation(self):
         """Test training intializes theta, pi and labels"""
