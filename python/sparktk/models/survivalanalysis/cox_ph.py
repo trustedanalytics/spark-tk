@@ -102,7 +102,7 @@ class SparktkCoxPhModel(PropertiesObject):
     <progress>
 
     >>> model
-    beta                  = [-0.19214283727219947, -0.007012237038116714]
+    beta                  = [-0.19214283727219952, -0.00701223703811671]
     censor_column         = censor
     convergence_tolerance = 1e-06
     covariate_columns     = [u'x1', u'x2']
