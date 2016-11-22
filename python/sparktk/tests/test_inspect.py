@@ -44,7 +44,7 @@ two_abc_rows = [[1, "sixteen_16_abced", "long"],
                 [2, "tiny", "really really really really long"]]
 
 schema1 = [('i32', dtypes.int32),
-           ('floaties', dtypes.float64),
+           ('floaties', dtypes.float32),
            ('long_column_name_ugh_and_ugh', str),
            ('long_value', str),
            ('s', str)]
@@ -83,8 +83,6 @@ class TestUi(unittest.TestCase):
 
     def test_round(self):
         self.assertEqual("3.14", ui.round_float(3.1415, dtypes.float32, 2))
-        self.assertEqual("6.28", ui.round_float(6.2830, dtypes.float64, 2))
-        self.assertEqual("867.5309000000", ui.round_float(867.5309, dtypes.float64, 10))
         self.assertEqual("867.5309000000", ui.round_float(867.5309, dtypes.float32, 10))
         self.assertEqual("[1.23, 5.68]", ui.round_vector([1.234, 5.6789], 2))
         self.assertEqual("[1.0, 2.0, 3.0]", ui.round_vector([1.234, 2.36789, 3], 0))
@@ -243,7 +241,7 @@ s:unicode                           ='''
         self.assertEqual(expected, result)
 
     def test_inspect_round(self):
-        schema = [('f32', dtypes.float32), ('f64', dtypes.float64), ('v', dtypes.vector(2))]
+        schema = [('f32', dtypes.float32), ('f64', dtypes.float32), ('v', dtypes.vector(2))]
         rows = [[0.1234, 9.87654321, [1.0095, 2.034]],
                 [1234.5, 9876.54321, [99.999, 33.33]]]
         result = repr(ui.RowsInspection(rows, schema, offset=0, format_settings=ui.InspectSettings(wrap=2, round=2)))
