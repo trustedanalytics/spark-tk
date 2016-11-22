@@ -375,7 +375,7 @@ def _get_header_entry_sizes(schema, with_types):
 
 def is_type_float(t):
     tpe = dtypes.dtypes.get_from_type(t)
-    return tpe is dtypes.float32 or isinstance(t, dtypes.vector)
+    return tpe is float or isinstance(t, dtypes.vector)
 
 
 def is_type_unicode(t):
@@ -420,7 +420,7 @@ def round_vector(v, num_digits):
     """provides a rounded, formatted string to represent the vector"""
     if v is None:
         return None
-    return "[%s]" % ", ".join([round_float(f, dtypes.float32, num_digits) for f in v])
+    return "[%s]" % ", ".join([round_float(f, float, num_digits) for f in v])
 
 
 def identity(value):

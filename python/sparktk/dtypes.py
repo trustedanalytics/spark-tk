@@ -21,7 +21,7 @@ definitions for Data Types
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'ignore', 'unknown', 'float32', 'int32', 'int64', 'vector', 'unit', 'datetime', 'matrix']
+__all__ = ['dtypes', 'vector', 'unit', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -29,16 +29,6 @@ import re
 from pyspark.sql import types
 import logging
 logger = logging.getLogger('sparktk')
-
-# alias numpy types
-# todo: bring back the numpy types
-# this is temporary until the serialization gets completely figured out...
-# float32 = np.float32
-# int32 = np.int32
-# int64 = np.int64
-float32 = float
-int32 = int
-int64 = long
 
 from datetime import datetime
 import dateutil.parser as datetime_parser
@@ -135,37 +125,12 @@ class _Vector(object):
 vector = _Vector
 
 
-class _Unit(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-unit = _Unit
-
-
-class _Ignore(object):
-    """Ignore type used for schemas during file import"""
-    pass
-
-ignore = _Ignore
-
-
-class _Unknown(object):
-    """Unknown type used when type is indeterminate"""
-    pass
-
-unknown = _Unknown
-
-
 # map types to their string identifier
 _primitive_type_to_str_table = {
-    #bool: "bool", TODO
-    #bytearray: "bytearray", TODO
-    #dict: "dict", TODO
     float: "float32",
     float: "float64",
-    int32: "int32",
-    int64: "int64",
-    #list: "list", TODO
+    int: "int32",
+    long: "int64",
     unicode: "unicode",
     ignore: "ignore",
     datetime: "datetime",
@@ -196,8 +161,8 @@ _data_type_to_pyspark_type_table = {
 _primitive_str_to_type_table = dict([(s, t) for t, s in _primitive_type_to_str_table.iteritems()])
 
 _primitive_alias_type_to_type_table = {
-    int: int32,
-    long: int64,
+    int: int,
+    long: long,
     str: unicode,
     list: vector,
     np.ndarray: matrix,
@@ -247,9 +212,9 @@ def datetime_constructor(value):
 
 def numpy_to_bson_friendly(obj):
     """take an object and convert it to a type that can be serialized to bson if neccessary."""
-    if isinstance(obj, float32) or isinstance(obj, float):
+    if isinstance(obj, float):
         return float(obj)
-    if isinstance(obj, int32):
+    if isinstance(obj, int):
         return int(obj)
     if isinstance(obj, vector.base_type):
         return obj.tolist()
@@ -307,7 +272,7 @@ class _DataTypes(object):
 
         Examples
         --------
-        >>> dtypes.to_string(float32)
+        >>> dtypes.to_string(float)
         'float32'
         """
         valid_data_type = _DataTypes.get_from_type(data_type)
@@ -368,11 +333,11 @@ class _DataTypes(object):
 
     @staticmethod
     def is_int(data_type):
-        return data_type in [int, int32, int64]
+        return data_type in [int, int, long]
 
     @staticmethod
     def is_float(data_type):
-        return data_type in [float, float32, float]
+        return data_type is float
 
     @staticmethod
     def get_from_type(data_type):
@@ -451,7 +416,7 @@ class _DataTypes(object):
         '4.5'
         >>> dtypes.cast(None, str)
         None
-        >>> dtypes.cast(np.inf, float32)
+        >>> dtypes.cast(np.inf, float)
         None
         """
         if _DataTypes.value_is_missing_value(value):  # Special handling for missing values
