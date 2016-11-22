@@ -22,6 +22,7 @@ import javax.imageio.stream.ImageInputStream
 import javax.imageio.{ ImageIO, ImageReader }
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
@@ -29,9 +30,9 @@ import org.apache.spark.sql.SQLContext
 import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
+import org.dcm4che3.io.DicomInputStream.IncludeBulkData
 import org.dcm4che3.tool.dcm2xml.org.trustedanalytics.sparktk.Dcm2Xml
 
 object Import extends Serializable {
@@ -44,32 +45,37 @@ object Import extends Serializable {
    */
   def getPixeldata(byteArray: Array[Byte]): DenseMatrix = {
 
-    val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
-    val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
+    try {
+      val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+      val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
 
-    //create matrix
-    val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
-    val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
-    val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
-    val iis: ImageInputStream = ImageIO.createImageInputStream(pixeldicomInputStream)
-    readers.setInput(iis, true)
+      //create matrix
+      val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
+      val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
+      val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
+      val iis: ImageInputStream = ImageIO.createImageInputStream(pixeldicomInputStream)
+      readers.setInput(iis, true)
 
-    //pixels data raster
-    val raster: Raster = readers.readRaster(0, param)
+      //pixels data raster
+      val raster: Raster = readers.readRaster(0, param)
 
-    val cols = raster.getWidth
-    val rows = raster.getHeight
+      val cols = raster.getWidth
+      val rows = raster.getHeight
 
-    val data = Array.ofDim[Double](cols, rows)
+      val data = Array.ofDim[Double](cols, rows)
 
-    // Reading pixeldata along with x-axis and y-axis(x, y) but storing the data in 2D array as column-major.
-    // Mllib DenseMatrix stores data as column-major.
-    for (x <- 0 until cols) {
-      for (y <- 0 until rows) {
-        data(x)(y) = raster.getSample(x, y, 0)
+      // Reading pixeldata along with x-axis and y-axis(x, y) but storing the data in 2D array as column-major.
+      // Mllib DenseMatrix stores data as column-major.
+      for (x <- 0 until cols) {
+        for (y <- 0 until rows) {
+          data(x)(y) = raster.getSample(x, y, 0)
+        }
       }
+      new DenseMatrix(rows, cols, data.flatten)
     }
-    new DenseMatrix(rows, cols, data.flatten)
+    catch {
+      case e: Exception => DenseMatrix.zeros(2, 2)
+    }
   }
 
   /**
@@ -79,13 +85,17 @@ object Import extends Serializable {
    * @return String Xml Metadata
    */
   def getMetadataXml(byteArray: Array[Byte]): String = {
-    val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
-    val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
-
-    val dcm2xml = new Dcm2Xml()
-    val myOutputStream = new ByteArrayOutputStream()
-    dcm2xml.convert(metadataDicomInputStream, myOutputStream)
-    myOutputStream.toString()
+    try {
+      val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+      val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
+      val dcm2xml = new Dcm2Xml()
+      val myOutputStream = new ByteArrayOutputStream()
+      dcm2xml.convert(metadataDicomInputStream, myOutputStream)
+      myOutputStream.toString()
+    }
+    catch {
+      case e: Exception => StringUtils.EMPTY
+    }
   }
 
   /**
