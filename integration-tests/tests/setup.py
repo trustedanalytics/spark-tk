@@ -37,6 +37,8 @@ def tc(request):
     global global_tc
     with lock:
         if global_tc is None:
+
+
             from sparktk import TkContext
             from sparktk import create_sc
             from sparktk.tests import utils
@@ -44,7 +46,9 @@ def tc(request):
             #loggers.set("d", "sparktk.sparkconf")
             sc = create_sc(master='local[2]',
                            app_name="pytest-pyspark-local-testing",
-                           extra_conf_dict={"spark.hadoop.fs.default.name": "file:///"})
+                           extra_conf_dict={"spark.hadoop.fs.default.name": "file:///",
+                                            "spark.ui.enabled": 'false' })
+
             request.addfinalizer(lambda: sc.stop())
             global_tc = TkContext(sc)
             global_tc.testing = utils

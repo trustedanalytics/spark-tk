@@ -46,7 +46,7 @@ class LabelPropagationTest extends TestingSparkContextWordSpec with Matchers {
     val graph = buildGraph()
     val propagatedLabels = graph.labelPropagation(10)
     propagatedLabels.schema.columns should equal(List(Column("id", DataTypes.int32), Column("label", DataTypes.int64)))
-    propagatedLabels.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 1)), new GenericRow(Array[Any](3, 3)), new GenericRow(Array[Any](5, 1)), new GenericRow(Array[Any](4, 3))))
+    propagatedLabels.rdd.toArray.toList should equal(List(new GenericRow(Array[Any](1, 3)), new GenericRow(Array[Any](3, 2)), new GenericRow(Array[Any](5, 3)), new GenericRow(Array[Any](4, 2))))
 
   }
 }

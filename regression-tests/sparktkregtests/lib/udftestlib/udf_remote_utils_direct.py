@@ -15,7 +15,7 @@
 #  limitations under the License.
 #
 
-from sparktkregtests.lib.udftestlib import udf_remote_utils_indirect
+import udf_remote_utils_indirect
 
 
 def length(my_str):
