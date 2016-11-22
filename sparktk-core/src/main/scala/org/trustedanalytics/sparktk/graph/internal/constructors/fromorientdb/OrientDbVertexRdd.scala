@@ -21,7 +21,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientDynaElementIterable
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.{ Partition, SparkContext, TaskContext }
-import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphFactory, OrientConf }
+import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphFactory, OrientdbConf }
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -30,11 +30,12 @@ import scala.collection.mutable.ArrayBuffer
  *
  * @param sc Spark context
  * @param dbConfigurations OrientDB database configurations
+ * @param dbName database name
  */
-class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf) extends RDD[Row](sc, Nil) {
+class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientdbConf, dbName: String) extends RDD[Row](sc, Nil) {
 
   override def compute(split: Partition, context: TaskContext): Iterator[Row] = {
-    val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations)
+    val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations, dbName)
     val partition = split.asInstanceOf[OrientDbPartition]
     val vertexBuffer = new ArrayBuffer[Row]()
     val schemaReader = new SchemaReader(graph)
@@ -58,7 +59,7 @@ class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf) extends 
    */
   override protected def getPartitions: Array[Partition] = {
     val partitionBuffer = new ArrayBuffer[OrientDbPartition]()
-    val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations)
+    val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations, dbName)
     val schemaReader = new SchemaReader(graph)
     val vertexTypes = schemaReader.getVertexClasses.getOrElse(Set(graph.getVertexBaseType.getName))
     var partitionIdx = 0

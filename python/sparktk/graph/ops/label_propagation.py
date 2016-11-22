@@ -49,15 +49,15 @@ def label_propagation(self, max_iterations):
 
         >>> graph = tc.graph.create(vertex_frame, edge_frame)
 
-        >>> result = graph.label_propagation(10)
+        >>> result = graph.label_propagation(2)
         >>> result.inspect()
         [#]  id  label
-        ==============
-        [0]   1      1
-        [1]   2      2
-        [2]   3      2
-        [3]   4      2
-        [4]   5      1
+        ===================
+        [0]   1  8589934594
+        [1]   2  8589934593
+        [2]   3  8589934593
+        [3]   4  8589934593
+        [4]   5  8589934594
 
     """
     from sparktk.frame.frame import Frame
