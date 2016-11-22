@@ -52,7 +52,6 @@ object SingleSourceShortestPath {
 
   /**
     * Computes SSSP using GraphX Pregel API
- *
     * @param graph the graph to compute SSSP against
     * @param srcVertexId the source vertex ID
     * @param edgeWeightAttribute enable or disable the inclusion of the edge weights in the SSSP calculations
@@ -70,7 +69,6 @@ object SingleSourceShortestPath {
 
     /**
       * prepares the message to be used in the next iteration (super step)
- *
       * @param edge  the edge
       * @return the destination vertex ID, SSSP and the corresponding path length/cost
       */
@@ -78,7 +76,6 @@ object SingleSourceShortestPath {
       val (newAttr,weight) = updateSp(edge,edgeWeightAttribute)
       val distAtSrc = edge.srcAttr._1
       val distAtDest = edge.dstAttr._1
-      //TODO: check how to separate max path length from weight and how to address them in each case (these conditions need debug)
       if ((maxPathLength.isDefined && distAtSrc == maxPathLength.get) || (target.isDefined && target.get.contains(edge.srcId)) ||
         (distAtSrc > distAtDest - weight)) {
         Iterator.empty
@@ -104,6 +101,5 @@ object SingleSourceShortestPath {
 
       // merge message
       (a, b) => if (a._1 < b._1) a else b)
-
   }
 }

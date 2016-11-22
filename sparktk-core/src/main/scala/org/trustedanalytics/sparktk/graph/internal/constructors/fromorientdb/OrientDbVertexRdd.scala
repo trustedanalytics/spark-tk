@@ -21,7 +21,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientDynaElementIterable
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.{ Partition, SparkContext, TaskContext }
-import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphFactory, OrientConf }
+import org.trustedanalytics.sparktk.graph.internal.ops.orientdb.{ OrientdbGraphFactory, OrientdbConf }
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -32,7 +32,7 @@ import scala.collection.mutable.ArrayBuffer
  * @param dbConfigurations OrientDB database configurations
  * @param dbName database name
  */
-class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientConf, dbName: String) extends RDD[Row](sc, Nil) {
+class OrientDbVertexRdd(sc: SparkContext, dbConfigurations: OrientdbConf, dbName: String) extends RDD[Row](sc, Nil) {
 
   override def compute(split: Partition, context: TaskContext): Iterator[Row] = {
     val graph = OrientdbGraphFactory.graphDbConnector(dbConfigurations, dbName)

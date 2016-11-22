@@ -19,8 +19,6 @@ import org.trustedanalytics.sparktk.graph.internal.GraphState
 
 /**
  * Export graph to OrientDB graph
- *
- * @param state graph frame
  */
 class GraphFrameFunctions(state: GraphState) {
 
@@ -32,9 +30,14 @@ class GraphFrameFunctions(state: GraphState) {
    * @param edgeTypeColumnName edge type column name
    * @return summary statistics for the number of exported edges and vertices
    */
-  def saveToOrientGraph(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
+  def saveToOrientGraph(orientConf: OrientdbConf,
+                        dbName: String,
+                        vertexTypeColumnName: Option[String] = None,
+                        edgeTypeColumnName: Option[String] = None,
+                        batchSize: Int = 1000,
+                        dbProperties: Option[Map[String, Any]] = None): ExportOrientdbStats = {
 
-    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName)
+    val orientGraph = OrientdbGraphFactory.graphDbConnector(orientConf, dbName, dbProperties)
     //export schema
     val schemaWriter = new SchemaWriter
     schemaWriter.vertexSchema(state.graphFrame.vertices, orientGraph, vertexTypeColumnName)
@@ -42,9 +45,9 @@ class GraphFrameFunctions(state: GraphState) {
     orientGraph.shutdown(true, true)
     //export graph
     val vertexFrameWriter = new VertexFrameWriter(state.graphFrame.vertices, orientConf, dbName)
-    val verticesCount = vertexFrameWriter.exportVertexFrame(orientConf.batchSize, vertexTypeColumnName)
+    val verticesCount = vertexFrameWriter.exportVertexFrame(batchSize, vertexTypeColumnName)
     val edgeFrameWriter = new EdgeFrameWriter(state.graphFrame.edges, orientConf, dbName)
-    val edgesCount = edgeFrameWriter.exportEdgeFrame(orientConf.batchSize, edgeTypeColumnName)
+    val edgesCount = edgeFrameWriter.exportEdgeFrame(batchSize, edgeTypeColumnName)
     //collect statistics
     val stats = new Statistics(orientConf, dbName)
     stats.getStats(verticesCount, edgesCount)

@@ -21,55 +21,54 @@ trait ExportToOrientdbSummarization extends BaseGraph {
 
   /**
    * Save GraphFrame to OrientDB graph
-   * @param orientConf OrientDB configurations case class
+   *
+   * @param orientConf OrientDB configuration
    * @param dbName OrientDB database name
    * @param vertexTypeColumnName vertex type column name
    * @param edgeTypeColumnName edge type column name
-   * @return summary statistics for the number of exported edges and vertices
-   */
-  def exportToOrientdb(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None): ExportToOrientdbReturn = {
-    execute(ExportToOrientdb(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName))
-  }
-
-}
-
-case class ExportToOrientdb(orientConf: OrientConf, dbName: String, vertexTypeColumnName: Option[String] = None, edgeTypeColumnName: Option[String] = None) extends GraphSummarization[ExportToOrientdbReturn] {
-
-  override def work(state: GraphState): ExportToOrientdbReturn = {
-
-    val graphFrameExporter = new GraphFrameFunctions(state)
-    graphFrameExporter.saveToOrientGraph(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName)
-  }
-}
-
-object ExportToOrientdb {
-  /**
-   * Set OrientDB database credentials and other database parameters
-   * @param hostName OrientDB docker container hostname
-   * @param portNumber OrientDB port number
-   * @param userName the database user name
-   * @param password the database password
-   * @param rootPassword the root password
    * @param batchSize batch size
    * @param dbProperties  additional database properties
+   * @return summary statistics for the number of exported edges and vertices
    */
-  def setOrientdbConfigurations(hostName: String,
-                                portNumber: String,
-                                userName: String,
-                                password: String,
-                                rootPassword: String,
-                                dbProperties: Option[Map[String, Any]] = None,
-                                batchSize: Int = 1000): OrientConf = {
-    OrientConf(hostName, portNumber, userName, password, rootPassword, dbProperties, batchSize)
+  def exportToOrientdb(orientConf: OrientdbConf, dbName: String,
+                       vertexTypeColumnName: Option[String] = None,
+                       edgeTypeColumnName: Option[String] = None,
+                       batchSize: Int = 1000,
+                       dbProperties: Option[Map[String, Any]] = None): ExportOrientdbStats = {
+    execute(ExportToOrientdb(orientConf, dbName, vertexTypeColumnName, edgeTypeColumnName, batchSize, dbProperties))
+  }
+
+}
+
+case class ExportToOrientdb(orientConf: OrientdbConf, dbName: String,
+                            vertexTypeColumnName: Option[String] = None,
+                            edgeTypeColumnName: Option[String] = None,
+                            batchSize: Int = 1000,
+                            dbProperties: Option[Map[String, Any]] = None) extends GraphSummarization[ExportOrientdbStats] {
+
+  override def work(state: GraphState): ExportOrientdbStats = {
+
+    val importer = new GraphFrameFunctions(state)
+    importer.saveToOrientGraph(orientConf,
+      dbName,
+      vertexTypeColumnName,
+      edgeTypeColumnName,
+      batchSize,
+      dbProperties)
   }
 }
 
 /**
- * Return the output arguments of ExportOrientDbGraphPlugin
+ * Output arguments for exporting graph to OrientDB
+ *
  * @param exportedVerticesSummary a dictionary of the total number of exported vertices and the failure count
  * @param verticesTypes a dictionary of vertex class names and the corresponding statistics of exported vertices
  * @param exportedEdgesSummary a dictionary of the total number of exported edges and the failure count
  * @param edgesTypes a dictionary of edge class names and the corresponding statistics of exported edges.
  * @param dbUri the database URI
  */
-case class ExportToOrientdbReturn(exportedVerticesSummary: Map[String, Long], verticesTypes: Map[String, Long], exportedEdgesSummary: Map[String, Long], edgesTypes: Map[String, Long], dbUri: String)
+case class ExportOrientdbStats(exportedVerticesSummary: Map[String, Long],
+                               verticesTypes: Map[String, Long],
+                               exportedEdgesSummary: Map[String, Long],
+                               edgesTypes: Map[String, Long],
+                               dbUri: String)

@@ -112,7 +112,7 @@ class _RequireType(object):
 
     def non_empty_str(self, value, name, extra_msg=None):
         if not isinstance(value, basestring):
-            raise type_error(str, value, name, extra_msg)
+            raise type_error(str, type(value), name, extra_msg)
         if not value:
             raise value_error("non-empty string", value, name, extra_msg)
 
