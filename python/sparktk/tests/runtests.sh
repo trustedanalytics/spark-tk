@@ -67,8 +67,8 @@ if [ "$1" = "-x" ] ; then
   EXCLUDE_OPTION=--exclude-dir-file=$EXCLUDE_DIRS_FILE
 fi
 
-export COVERAGE_FILE=$DIR/../../../unit_test_coverage.dat
-py.test --cov-config=$DIR/pycoverage.ini --cov=$SPARKTK_DIR --cov-report=html:$DIR/../../../pytest_unit $TESTS_DIR
+export COVERAGE_FILE=$DIR/../../../coverage/unit_test_coverage.dat
+py.test --cov-config=$DIR/pycoverage.ini --cov=$SPARKTK_DIR --cov-report=html:$DIR/../../../coverage/pytest_unit $TESTS_DIR
 echo "Coverage Report at:"
 echo "$DIR/../../../pytest_unit"
 
