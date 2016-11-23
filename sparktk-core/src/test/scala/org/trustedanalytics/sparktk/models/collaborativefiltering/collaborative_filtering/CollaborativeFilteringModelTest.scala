@@ -36,6 +36,54 @@ class CollaborativeFilteringModelTest extends TestingSparkContextWordSpec with M
     new GenericRow(Array[Any](2, 5, .1))
   )
 
+  "CollaborativeFiltering recommend" should {
+    "throw an exception for an invalid user id" in {
+      val rdd = sparkContext.parallelize(data)
+      val frame = new Frame(rdd, schema)
+
+      // train model
+      val trainedModel = CollaborativeFilteringModel.train(frame, "source", "dest", "weight")
+
+      // user id that didn't exist in training
+      val userId = 3
+
+      val ex = intercept[IllegalArgumentException] {
+        trainedModel.recommend(userId, numberOfRecommendations = 1, recommendProducts = true)
+      }
+      assert(ex.getMessage.contains(s"requirement failed: No users found with id = ${userId}."))
+    }
+
+    "throw an exception for an invalid product id" in {
+      val rdd = sparkContext.parallelize(data)
+      val frame = new Frame(rdd, schema)
+
+      // train model
+      val trainedModel = CollaborativeFilteringModel.train(frame, "source", "dest", "weight")
+
+      // product id that didn't exist in in training
+      val productId = 7
+
+      val ex = intercept[IllegalArgumentException] {
+        trainedModel.recommend(productId, numberOfRecommendations = 1, recommendProducts = false)
+      }
+      assert(ex.getMessage.contains(s"requirement failed: No products found with id = ${productId}."))
+    }
+
+    "throw an exception for an invalid number of recommendations" in {
+      val rdd = sparkContext.parallelize(data)
+      val frame = new Frame(rdd, schema)
+
+      // train model
+      val trainedModel = CollaborativeFilteringModel.train(frame, "source", "dest", "weight")
+
+      // Recommend requesting a negative number of recommendations
+      val ex = intercept[IllegalArgumentException] {
+        trainedModel.recommend(1, numberOfRecommendations = -1, recommendProducts = true)
+      }
+      assert(ex.getMessage.contains(s"requirement failed: numberOfRecommendations number be greater than 0."))
+    }
+  }
+
   "CollaborativeFiltering scoring" should {
     "predict rating of a user for a product" in {
       val rdd = sparkContext.parallelize(data)

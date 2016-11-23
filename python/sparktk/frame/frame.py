@@ -29,6 +29,7 @@ from sparktk import TkContext
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
+from sparktk.frame.constructors.import_csv_raw import import_csv_raw
 from sparktk.frame.constructors.import_hbase import import_hbase
 from sparktk.frame.constructors.import_hive import import_hive
 from sparktk.frame.constructors.import_jdbc import import_jdbc
@@ -37,6 +38,7 @@ from sparktk.frame.constructors.import_pandas import import_pandas
 __all__ = ["create",
            "Frame",
            "import_csv",
+           "import_csv_raw",
            "import_hbase",
            "import_hive",
            "import_jdbc",
@@ -253,17 +255,23 @@ class Frame(object):
     @property
     def _is_scala(self):
         """answers whether the current frame is backed by a Scala Frame"""
-        return self._is_scala_frame(self._frame)
+        answer = self._is_scala_frame(self._frame)
+        logger.info("frame._is_scala reference: %s" % answer)
+        return answer
 
     @property
     def _is_python(self):
         """answers whether the current frame is backed by a _PythonFrame"""
-        return not self._is_scala
+        answer =  not self._is_scala_frame(self._frame)
+        logger.info("frame._is_python reference: %s" % answer)
+        return answer
 
     @property
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
+
         if self._is_python:
+            logger.info("frame._scala reference: converting frame backend from Python to Scala")
             # If schema contains matrix dataype,
             # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
             self._frame.rdd = schema_is_coercible(self._frame.rdd, list(self._frame.schema), True)
@@ -271,12 +279,15 @@ class Frame(object):
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
             self._frame = self._create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+        else:
+            logger.info("frame._scala reference: frame already has a scala backend")
         return self._frame
 
     @property
     def _python(self):
         """gets frame backend as _PythonFrame, causes conversion if it is current not"""
         if self._is_scala:
+            logger.info("frame._python reference: converting frame backend from Scala to Python")
             # convert Scala Frame to a PythonFrame"""
             scala_schema = self._frame.schema()
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
@@ -285,6 +296,8 @@ class Frame(object):
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
             map_python_rdd = schema_is_coercible(python_rdd, list(python_schema))
             self._frame = PythonFrame(map_python_rdd, python_schema)
+        else:
+            logger.info("frame._python reference: frame already has a python backend")
         return self._frame
 
     ##########################################################################
@@ -355,7 +368,11 @@ class Frame(object):
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.entropy import entropy
-    from sparktk.frame.ops.export_data import export_to_csv, export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
+    from sparktk.frame.ops.export_to_csv import export_to_csv
+    from sparktk.frame.ops.export_to_jdbc import export_to_jdbc
+    from sparktk.frame.ops.export_to_json import export_to_json
+    from sparktk.frame.ops.export_to_hbase import export_to_hbase
+    from sparktk.frame.ops.export_to_hive import export_to_hive
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.group_by import group_by

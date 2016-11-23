@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,3 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
-
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-MAINDIR="$(dirname $MAINDIR)"
-
-scoring_model=$1
-
-pushd $MAINDIR/scoring/scoring_engine
-./bin/model-scoring.sh -Dtrustedanalytics.scoring-engine.archive-mar=$scoring_model -Dtrustedanalytics.scoring.port=9100 > $MAINDIR/scoring_out.log 2> $MAINDIR/scoring_error.log
-popd

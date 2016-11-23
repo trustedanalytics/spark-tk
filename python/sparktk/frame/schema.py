@@ -123,12 +123,13 @@ def type_coercer(schema):
           jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
 
     """
+    matrix_indices = [i for i in xrange(len(schema)) if type(schema[i][1]) == _Matrix]
+
     def decorator(row):
         import numpy as np
-        for i in xrange(len(schema)):
-            if type(schema[i][1]) == _Matrix:
-                if isinstance(row[i], list):
-                    row[i] = np.array(row[i], dtype=np.float64)
+        for i in matrix_indices:
+            if isinstance(row[i], list):
+                row[i] = np.array(row[i], dtype=np.float64)
         return row
     return decorator
 
@@ -137,18 +138,21 @@ def type_coercer_pymllib(schema):
     """
     When converting from python to scala, function scans the row and converts the ndarray
     to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
-    For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
+    For Serialization to work we have to explicitly call SparkAliases.MLLibSerDe which initializes/registers all required classes
+    (DenseVectorPickler, DenseMatrixPickler, SparseMatrixPickler, SparseVectorPickler) in pythonToScala() method of PythonJavaRdd.scala class
 
     ndarray stores data as row-major where as mllib densematrix stores data as column-major.
-    To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
+    To construct mllib DenseMatrix with row-major we are transposing ndarray to maintain consistency.
     """
+    matrix_indices = [i for i in xrange(len(schema)) if type(schema[i][1]) == _Matrix]
+
     def decorator(row):
-        for i in xrange(len(schema)):
-            if type(schema[i][1]) == _Matrix:
-                shape = row[i].shape
-                arr=row[i].flatten()
-                # By default Mllib DenseMatrix constructs column-major matrix.
-                # Setting isTranposed=True, will construct row-major DenseMatrix
-                row[i] = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
+        for i in matrix_indices:
+            shape = row[i].shape
+            # By default Mllib DenseMatrix constructs column-major matrix.
+            # So Transposing ndarray to maintain consistency
+            arr = row[i].transpose().flatten()
+            row[i] = DenseMatrix(shape[0], shape[1], arr)
         return row
     return decorator
+

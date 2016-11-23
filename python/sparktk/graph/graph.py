@@ -28,10 +28,12 @@ from sparktk.arguments import require_type
 # import constructors for the API's sake (not actually dependencies of the Graph)
 from sparktk.graph.constructors.create import create
 from sparktk.graph.constructors.import_orientdb_graph import import_orientdb_graph
+from sparktk.graph.constructors.create_orientdb_conf import create_orientdb_conf
 
 __all__ = ["create",
            "Graph",
            "import_orientdb_graph",
+           "create_orientdb_conf",
            "load"]
 
 

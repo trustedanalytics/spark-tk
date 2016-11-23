@@ -20,7 +20,6 @@
 """
 import unittest
 from sparktk import TkContext
-from sparktk import dtypes
 
 
 class CumSumTest(unittest.TestCase):

@@ -31,8 +31,6 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         super(FrameMatrixDataTypeTest, self).setUp()
         self.dataset = [["A", [[1,2],[3,4]]], ["B", [[5,6],[7,8]]], ["C", [[9,10],[11,12],[13,14]]]]
         self.schema = [("C0", str), ("C1", matrix)]
-        self.frame = self.context.frame.create(self.dataset,
-                                               schema=self.schema)
 
     def test_frame_create_row_count(self):
         """ Trivial Frame creation. """
@@ -131,7 +129,72 @@ class FrameMatrixDataTypeTest(sparktk_test.SparkTKTestCase):
         # Convert the first 2 elements of the dataset to numpy array and get the fist column
         expected_result = [[numpy.array(item[1])[:,0]] for item in self.dataset[:2]]
         numpy.testing.assert_array_equal(obtained_result, expected_result) 
+
+    def test_covariance_matrix(self):
+        """Test the output of dicom_covariance_matrix"""
+        frame = self.context.frame.create(self.dataset, self.schema)
         
+        frame.matrix_covariance_matrix("C1")
+
+        results = frame.to_pandas(frame.count())
+
+        #compare result
+        for i, row in results.iterrows():
+            actual_cov = row['CovarianceMatrix_C1']
+
+            #expected ouput using numpy's covariance method
+            expected_cov = numpy.cov(row['C1'])
+            
+            numpy.testing.assert_almost_equal(
+                actual_cov, expected_cov,
+                decimal=4, err_msg="cov incorrect")
+
+    def test_matrix_svd(self):
+        """ Test matrix svd operation on the frame"""
+        frame = self.context.frame.create(self.dataset, self.schema)
+        frame.matrix_svd("C1")
+
+        #compare matrix_svd output with numpy's svd
+        results = frame.to_pandas(frame.count())
+        for i, row in results.iterrows():
+            actual_U = row['U_C1']
+            actual_V = row['Vt_C1']
+            actual_s = row['SingularVectors_C1']
+
+            #expected ouput using numpy's svd
+            U, s, V = numpy.linalg.svd(row['C1'])
+            
+            numpy.testing.assert_almost_equal(
+                actual_U, U, decimal=4,
+                err_msg="U incorrect")
+            numpy.testing.assert_almost_equal(
+                actual_V, V, decimal=4,
+                err_msg="V incorrect")
+            numpy.testing.assert_almost_equal(
+                actual_s[0], s, decimal=4,
+                err_msg="Singual vectors incorrect")
+
+    def test_matrix_pcs(self):
+        """ Test matrix pca operation on frame"""
+        dataset = [["A", [[1,2,3],[3,4,5],[2,6,7]]],
+            ["B", [[5,6,7],[7,8,9],[4,3,5]]],
+            ["C", [[9,10,11],[11,12,13],[13,14,15]]]]
+        frame = self.context.frame.create(dataset, self.schema)
+        frame.matrix_svd("C1")
+        frame.matrix_pca("C1", "Vt_C1")
+
+        #compare matrix_pca output with numpy's
+        results = frame.to_pandas(frame.count())
+        for i, row in results.iterrows():
+            actual_pcs = row['PrincipalComponents_C1']
+
+            #expected ouput using numpy's svd
+            U, s, V = numpy.linalg.svd(row['C1'])
+            expected_pcs = row['C1'].dot(V.T)
+            numpy.testing.assert_almost_equal(
+                actual_pcs, expected_pcs, decimal=4,
+                err_msg="pcs incorrect")
+
 if __name__ == "__main__":
     unittest.main()
 

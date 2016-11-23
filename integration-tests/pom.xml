@@ -30,22 +30,6 @@
 
                         <executions>
                             <execution>
-                                <id>chmod-shellscripts</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>chmod</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>runtests.sh</argument>
-                                        <argument>clean.sh</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>integration-tests</id>
                                 <phase>verify</phase>
                                 <goals>
