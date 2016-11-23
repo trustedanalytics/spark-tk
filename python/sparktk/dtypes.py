@@ -21,7 +21,7 @@ definitions for Data Types
 
 # TODO - consider server providing types, similar to commands
 
-__all__ = ['dtypes', 'vector', 'unit', 'datetime', 'matrix']
+__all__ = ['dtypes', 'vector', 'datetime', 'matrix']
 
 import numpy as np
 import json
@@ -132,7 +132,6 @@ _primitive_type_to_str_table = {
     int: "int32",
     long: "int64",
     unicode: "unicode",
-    ignore: "ignore",
     datetime: "datetime",
 }
 
