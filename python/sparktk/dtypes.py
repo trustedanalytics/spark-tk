@@ -127,7 +127,6 @@ vector = _Vector
 
 # map types to their string identifier
 _primitive_type_to_str_table = {
-    float: "float32",
     float: "float64",
     int: "int32",
     long: "int64",
@@ -476,5 +475,3 @@ class _DataTypes(object):
 
 
 dtypes = _DataTypes()
-#valid_data_types = dtypes  # consider for backwards comp
-
