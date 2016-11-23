@@ -93,6 +93,13 @@ class UDFTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(frame_take[a_row][-1], frame_take[a_row][0])
         self.assertEqual(frame_take[b_row][-1], frame_take[b_row][2])
 
+    def test_udf_indirect_missing(self):
+        """Use a function that is missing with udf remote"""
+        with self.assertRaisesRegexp(Exception, "column name must be alpha-numeric"):
+            self.frame.add_columns(lambda row: udf_remote_utils_indirect.not_exist(row.letter) + row.num2,
+                                  ("new column", int))
+            self.frame.count()
+
 
 if __name__ == "__main__":
     unittest.main()
