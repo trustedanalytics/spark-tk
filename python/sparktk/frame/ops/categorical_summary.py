@@ -16,7 +16,7 @@
 #
 
 from sparktk.propobj import PropertiesObject
-from sparktk.frame.ops.inspect import RowsInspection
+from sparktk.frame.ops.inspect import ATable
 
 
 class CategoricalSummaryOutputList(list):
@@ -48,7 +48,7 @@ class CategoricalSummaryOutput(PropertiesObject):
         for level_data in self.levels:
             rows.append([level_data.level, level_data.frequency, level_data.percentage])
         schema=[("level", str), ("frequency", int), ("percentage", float)]
-        rows = RowsInspection(rows, schema, 0)
+        rows = ATable(rows, schema, 0)
 
         return "column_name = \"{0}\"\n{1}".format(self.column_name, rows)
 
