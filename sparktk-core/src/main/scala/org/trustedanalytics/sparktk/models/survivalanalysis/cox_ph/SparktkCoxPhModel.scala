@@ -36,16 +36,15 @@ import scala.language.implicitConversions
 object SparktkCoxPhModel extends TkSaveableObject {
 
   /**
-    * Fits Cox hazard function and creates a model for it.
-    *
-    :param frame: (Frame) A frame to train the model on
-    :param time_column: (str) Column name containing the time of occurence of each observation.
-    :param covariate_columns: (Seq[str]) List of column(s) containing the covariates.
-    :param censor_column: (str) Column name containing censor value of each observation.
-    :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
-    :param max_steps: (int) Parameter for maximum number of steps. Default is 100
-    :return: (SparktkCoxPhModel) A trained coxPh model
-    */
+   * Fits Cox hazard function and creates a model for it.
+   * @param frame: (Frame) A frame to train the model on
+   * @param timeColumn: (str) Column name containing the time of occurence of each observation.
+   * @param covariateColumns: (Seq[str]) List of column(s) containing the covariates.
+   * @param censorColumn: (str) Column name containing censor value of each observation.
+   * @param convergenceTolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+   * @param maxSteps: (int) Parameter for maximum number of steps. Default is 100
+   * @return (SparktkCoxPhModel) A trained coxPh model
+   */
   def train(frame: Frame,
             timeColumn: String,
             covariateColumns: Seq[String],
@@ -55,7 +54,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
     require(frame != null, "frame is required")
     require(timeColumn != null && timeColumn.nonEmpty, "Time column must not be null or empty")
     require(censorColumn != null && censorColumn.nonEmpty, "Censor column must not be null or empty")
-    require(covariateColumns != null && covariateColumns.nonEmpty, "Co-variate columns must not be null or empty")
+    require(covariateColumns != null && covariateColumns.nonEmpty, "Covariate columns must not be null or empty")
     require(maxSteps > 0, "Max steps must be a positive integer")
 
     val arguments = CoxPhTrainArgs(frame,
@@ -115,7 +114,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
    *
    * @param tc TkContext
    * @param path location
-   * @return
+   * @return loaded object
    */
   def load(tc: TkContext, path: String): SparktkCoxPhModel = {
     tc.load(path).asInstanceOf[SparktkCoxPhModel]
@@ -123,14 +122,15 @@ object SparktkCoxPhModel extends TkSaveableObject {
 }
 
 /**
- :param frame: (Frame) A frame to train the model on
- :param time_column: (str) Column name containing the time of occurence of each observation.
- :param covariate_columns: (Seq[str]) List of column(s) containing the covariates.
- :param censor_column: (str) Column name containing censor value of each observation.
- :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
- :param max_steps: (int) Parameter for maximum number of steps. Default is 100
- :param beta: (List[Double]) Trained beta values for each column
- :param mean: (List[Double]) Mean of each column
+ * SparktkCoxPhModel class uses a trained CoxPhModel object to predict, score, etc.
+ * @param sparkModel: Trained CoxPhModel
+ * @param timeColumn: (str) Column name containing the time of occurence of each observation.
+ * @param covariateColumns: (Seq[str]) List of column(s) containing the covariates.
+ * @param censorColumn: (str) Column name containing censor value of each observation.
+ * @param convergenceTolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+ * @param maxSteps: (int) Parameter for maximum number of steps. Default is 100
+ * @param beta: (List[Double]) Trained beta values for each column
+ * @param mean: (List[Double]) Mean of each column
  */
 case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
                                               timeColumn: String,
