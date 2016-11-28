@@ -54,5 +54,5 @@ fi
 #python2.7 -m pytest -s  # -s flag suppress io capture, such that we can see it during this run
 #python2.7 -m pytest -k test_kmeans  # example to run individual test
 #python2.7 -m pytest -k test_docs_python_sparktk_frame_ops_drop_columns_py  # example to run individual doc test
-export COVERAGE_FILE=$DIR/../integration_test_coverage.dat
-py.test --cov-config=$DIR/pycoverage.ini --cov=$DIR/../python --cov-report=html:$DIR/../pytest $@
+export COVERAGE_FILE=$DIR/../coverage/integration_test_coverage.dat
+py.test --cov-config=$DIR/pycoverage.ini --cov=$DIR/../python --cov-report=html:$DIR/../coverage/pytest_integration $@

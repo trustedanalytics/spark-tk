@@ -33,29 +33,31 @@ object OrientdbGraphFactory {
    * create/connect to OrientDB graph
    *
    * @param dbConfigurations OrientDB configurations
+   * @param dbName OrientDB database name
+   * @param dbProperties  additional database properties
    * @return a non transactional OrientDB graph database instance
    */
-  def graphDbConnector(dbConfigurations: OrientConf): OrientGraphNoTx = {
-    val orientDb: ODatabaseDocumentTx = new ODatabaseDocumentTx(dbConfigurations.dbUri)
-
-    dbConfigurations.dbProperties.foreach(propertyMap => {
+  def graphDbConnector(dbConfigurations: OrientdbConf, dbName: String, dbProperties: Option[Map[String, Any]] = None): OrientGraphNoTx = {
+    val dbUrl = getUrl(dbConfigurations, dbName)
+    val orientDb: ODatabaseDocumentTx = new ODatabaseDocumentTx(dbUrl)
+    dbProperties.foreach(propertyMap => {
       propertyMap.foreach { case (key, value) => orientDb.setProperty(key, value) }
     })
-    val orientGraphDb = if (dbConfigurations.dbUri.startsWith("remote:")) {
-      if (!new OServerAdmin(dbConfigurations.dbUri).connect(rootUserName, dbConfigurations.rootPassword).existsDatabase()) {
-        new OServerAdmin(dbConfigurations.dbUri).connect(rootUserName, dbConfigurations.rootPassword).createDatabase("graph", "plocal")
-        openGraphDb(orientDb, dbConfigurations)
+    val orientGraphDb = if (dbUrl.startsWith("remote:")) {
+      if (!new OServerAdmin(dbUrl).connect(rootUserName, dbConfigurations.rootPassword).existsDatabase()) {
+        new OServerAdmin(dbUrl).connect(rootUserName, dbConfigurations.rootPassword).createDatabase("graph", "plocal")
+        openGraphDb(orientDb, dbConfigurations, dbUrl)
       }
       else {
-        new OServerAdmin(dbConfigurations.dbUri).connect(rootUserName, dbConfigurations.rootPassword)
-        openGraphDb(orientDb, dbConfigurations)
+        new OServerAdmin(dbUrl).connect(rootUserName, dbConfigurations.rootPassword)
+        openGraphDb(orientDb, dbConfigurations, dbUrl)
       }
     }
     else if (!orientDb.exists()) {
-      createGraphDb(dbConfigurations)
+      createGraphDb(dbConfigurations, dbUrl)
     }
     else {
-      openGraphDb(orientDb, dbConfigurations)
+      openGraphDb(orientDb, dbConfigurations, dbUrl)
     }
     orientGraphDb.declareIntent(new OIntentMassiveInsert())
     orientGraphDb
@@ -67,17 +69,16 @@ object OrientdbGraphFactory {
    * @param dbConfigurations OrientDB configurations
    * @return a non transactional Orient graph database instance
    */
-  def createGraphDb(dbConfigurations: OrientConf): OrientGraphNoTx = {
-
+  def createGraphDb(dbConfigurations: OrientdbConf, dbUrl: String): OrientGraphNoTx = {
     val graph = Try {
-      val factory = new OrientGraphFactory(dbConfigurations.dbUri, dbConfigurations.dbUserName, dbConfigurations.dbPassword)
+      val factory = new OrientGraphFactory(dbUrl, dbConfigurations.dbUserName, dbConfigurations.dbPassword)
       factory.declareIntent(new OIntentMassiveInsert())
       factory.getDatabase.getMetadata.getSecurity.authenticate(dbConfigurations.dbUserName, dbConfigurations.dbPassword)
       factory.getNoTx
     } match {
       case Success(orientGraph) => orientGraph
       case Failure(ex) =>
-        throw new RuntimeException(s"Unable to create database: ${dbConfigurations.dbUri}, ${ex.getMessage}")
+        throw new RuntimeException(s"Unable to create database: $dbUrl, ${ex.getMessage}")
     }
     graph
   }
@@ -88,15 +89,27 @@ object OrientdbGraphFactory {
    * @param dbConfigurations OrientDB configurations
    * @return a non transactional Orient graph database instance
    */
-  private def openGraphDb(orientDb: ODatabaseDocumentTx, dbConfigurations: OrientConf): OrientGraphNoTx = {
+  private def openGraphDb(orientDb: ODatabaseDocumentTx, dbConfigurations: OrientdbConf, dbUrl: String): OrientGraphNoTx = {
     Try {
       val db: ODatabaseDocumentTx = orientDb.open(dbConfigurations.dbUserName, dbConfigurations.dbPassword)
       db
     } match {
       case Success(db) => new OrientGraphNoTx(db)
       case Failure(ex) =>
-        throw new scala.RuntimeException(s"Unable to open database: ${dbConfigurations.dbUri}, ${ex.getMessage}")
+        throw new scala.RuntimeException(s"Unable to open database: $dbUrl, ${ex.getMessage}")
     }
+  }
+
+  /**
+   * create the database URL
+   *
+   * @param orientConf OrientDB configurations
+   * @param dbName OrientDB database name
+   * @return full database URL
+   */
+  def getUrl(orientConf: OrientdbConf, dbName: String): String = {
+    val dbUrl = s"remote:${orientConf.hostname}:${orientConf.portNumber}/" + dbName
+    dbUrl
   }
 
 }
