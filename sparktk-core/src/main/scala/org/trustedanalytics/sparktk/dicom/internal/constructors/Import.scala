@@ -113,22 +113,41 @@ object Import extends Serializable {
 
     val dicomFilesRdd = sc.binaryFiles(path, minPartitions)
 
-    val dcmMetadataPixelArrayRDD = dicomFilesRdd.mapPartitions {
+    //    val dcmMetadataPixelArrayRDD = dicomFilesRdd.mapPartitions {
+    //
+    //      case iter => for {
+    //
+    //        (filePath, fileData) <- iter
+    //
+    //        // Open PortableDataStream to retrieve the bytes
+    //        fileInputStream = fileData.open()
+    //        byteArray = IOUtils.toByteArray(fileInputStream)
+    //
+    //        //Create the metadata xml
+    //        metadata = getMetadataXml(byteArray)
+    //        //Create a dense matrix for pixel array
+    //        pixeldata = getPixeldata(byteArray)
+    //        //Metadata
+    //      } yield (metadata, pixeldata)
+    //    }.zipWithIndex()
 
-      case iter => for {
+    val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {
 
-        (filePath, fileData) <- iter
-
+      case (filePath, fileData) => {
         // Open PortableDataStream to retrieve the bytes
-        fileInputStream = fileData.open()
-        byteArray = IOUtils.toByteArray(fileInputStream)
+        val fileInputStream = fileData.open()
+        val byteArray = IOUtils.toByteArray(fileInputStream)
 
         //Create the metadata xml
-        metadata = getMetadataXml(byteArray)
+        val metadata = getMetadataXml(byteArray)
         //Create a dense matrix for pixel array
-        pixeldata = getPixeldata(byteArray)
-        //Metadata
-      } yield (metadata, pixeldata)
+        val pixeldata = getPixeldata(byteArray)
+
+        //Close the PortableDataStream
+        fileInputStream.close()
+
+        (metadata, pixeldata)
+      }
     }.zipWithIndex()
 
     dcmMetadataPixelArrayRDD.cache()
