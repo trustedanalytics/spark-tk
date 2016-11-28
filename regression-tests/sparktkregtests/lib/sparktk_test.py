@@ -40,7 +40,7 @@ def get_context():
                                 'spark.dynamicAllocation.enabled': 'true',
                                 'spark.dynamicAllocation.maxExecutors': '24',
                                 'spark.dynamicAllocation.minExecutors': '1',
-                                'spark.executor.cores': '4',
+                                'spark.executor.cores': '10',
                                 'spark.executor.memory': '3712m',
                                 'spark.shuffle.io.preferDirectBufs': 'true',
                                 'spark.shuffle.service.enabled': 'true',
