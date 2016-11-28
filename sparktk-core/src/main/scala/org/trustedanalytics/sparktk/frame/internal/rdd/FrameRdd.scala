@@ -28,13 +28,7 @@ import org.trustedanalytics.sparktk.frame.internal.{ FrameState, RowWrapper }
 import scala.collection.immutable.{ Vector => ScalaVector }
 import scala.language.implicitConversions
 
-//import org.apache.spark.atk.graph.EdgeWrapper
-//import org.apache.spark.atk.graph.VertexWrapper
-//import org.apache.spark.frame.ordering.FrameOrderingUtils
-//import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.stat.{ MultivariateStatisticalSummary, Statistics }
-//import org.apache.spark.atk.graph.{ EdgeWrapper, VertexWrapper }
-//import org.apache.spark.frame.ordering.FrameOrderingUtils
 import org.apache.spark.mllib.linalg.distributed.IndexedRow
 import org.apache.spark.mllib.linalg.{ DenseVector => MllibDenseVector, DenseMatrix, Vector, Vectors, VectorUDT }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd.toLabeledPointRDD
@@ -43,30 +37,6 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.types.{ ArrayType, BooleanType, ByteType, DateType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType, TimestampType }
 import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.apache.spark.{ Partition, TaskContext }
-//import org.trustedanalytics.atk.domain.schema.Column
-//import org.trustedanalytics.atk.domain.schema.DataTypes
-//import org.trustedanalytics.atk.domain.schema.DataTypes.DataType
-//import org.trustedanalytics.atk.domain.schema.DataTypes._
-//import org.trustedanalytics.atk.domain.schema.DataTypes.float32
-//import org.trustedanalytics.atk.domain.schema.DataTypes.float64
-//import org.trustedanalytics.atk.domain.schema.DataTypes.int32
-//import org.trustedanalytics.atk.domain.schema.DataTypes.int64
-//import org.trustedanalytics.atk.domain.schema.FrameSchema
-//import org.trustedanalytics.atk.domain.schema.GraphSchema
-//import org.trustedanalytics.atk.domain.schema.Schema
-//import org.trustedanalytics.atk.domain.schema._
-//import org.trustedanalytics.atk.engine.frame.MiscFrameFunctions
-//import org.trustedanalytics.atk.engine.frame.RowWrapper
-//import org.trustedanalytics.atk.engine.frame.plugins.ScoreAndLabel
-//import org.trustedanalytics.atk.engine.frame.plugins.ScoreAndLabel
-//import org.trustedanalytics.atk.engine.frame.{ MiscFrameFunctions, RowWrapper }
-//import org.trustedanalytics.atk.engine.graph.plugins.EdgeHolder
-//import org.trustedanalytics.atk.engine.graph.plugins.EdgeSchemaAggregator
-//import org.trustedanalytics.atk.engine.graph.plugins.VertexSchemaAggregator
-//import org.trustedanalytics.atk.engine.graph.plugins.{ VertexSchemaAggregator, EdgeSchemaAggregator, EdgeHolder }
-//import org.trustedanalytics.atk.graphbuilder.elements.GBEdge
-//import org.trustedanalytics.atk.graphbuilder.elements.GBVertex
-//import org.trustedanalytics.atk.graphbuilder.elements.{ GBEdge, GBVertex }
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
@@ -129,27 +99,6 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   }
 
   /**
-   * Convert FrameRdd into RDD[Vector] format required by MLLib
-   *
-   * @param featureColumnNames Names of the frame's column(s) to be used
-   * @return RDD of (org.apache.spark.mllib)Vector
-   */
-  def toDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
-    this.mapRows(row => {
-      val array = row.valuesAsArray(featureColumnNames, flattenInputs = true)
-      val b = array.map(i => DataTypes.toDouble(i))
-      Vectors.dense(b)
-    })
-  }
-
-  def toDenseVectorRdd(columns: Seq[String], weights: Option[Seq[Double]]): RDD[Vector] = {
-    weights match {
-      case Some(w) => toDenseVectorRddWithWeights(columns, w)
-      case None => toDenseVectorRdd(columns)
-    }
-  }
-
-  /**
    * Compute MLLib's MultivariateStatisticalSummary from FrameRdd
    *
    * @param columnNames Names of the frame's column(s) whose column statistics are to be computed
@@ -172,6 +121,27 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     vectorRdd.map(i => {
       Vectors.dense((new DenseVector(i.toArray) - new DenseVector(columnMeans.toArray)).toArray)
     })
+  }
+
+  /**
+   * Convert FrameRdd into RDD[Vector] format required by MLLib
+   *
+   * @param featureColumnNames Names of the frame's column(s) to be used
+   * @return RDD of (org.apache.spark.mllib)Vector
+   */
+  def toDenseVectorRdd(featureColumnNames: Seq[String]): RDD[Vector] = {
+    this.mapRows(row => {
+      val array = row.valuesAsArray(featureColumnNames, flattenInputs = true)
+      val b = array.map(i => DataTypes.toDouble(i))
+      Vectors.dense(b)
+    })
+  }
+
+  def toDenseVectorRdd(columns: Seq[String], weights: Option[Seq[Double]]): RDD[Vector] = {
+    weights match {
+      case Some(w) => toDenseVectorRddWithWeights(columns, w)
+      case None => toDenseVectorRdd(columns)
+    }
   }
 
   /**
@@ -283,8 +253,8 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
     new FrameRdd(frameSchema.copySubsetWithRename(columnNamesWithRename), mapRows(row => row.valuesAsRow(preservedOrderColumnNames)))
   }
 
-  /* Please see documentation. Zip works if 2 SchemaRDDs have the same number of partitions
-     and same number of elements in  each partition */
+  /* Please see documentation. Zip works if 2 SchemaRDDs have the same number of partitions and same number of elements
+  in  each partition */
   def zipFrameRdd(frameRdd: FrameRdd): FrameRdd = {
     new FrameRdd(frameSchema.addColumns(frameRdd.frameSchema.columns), this.zip(frameRdd).map { case (a, b) => Row.merge(a, b) })
   }

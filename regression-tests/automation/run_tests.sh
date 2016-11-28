@@ -22,12 +22,17 @@ echo "$NAME DIR=$DIR"
 MAINDIR="$(dirname $DIR)"
 MAINDIR="$(dirname $MAINDIR)"
 
+sparktkpackage=$MAINDIR/sparktkinstall
 
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:/usr/lib/python2.7/site-packages/:$MAINDIR/graphframes:$PYTHONPATH
 
-export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
+echo "Python path"
+export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
+echo $PYTHONPATH
+
+#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
+export SPARKTK_HOME=$sparktkpackage/
 
 echo "spark tk home"
 echo $SPARKTK_HOME
 
-py.test --boxed -n6 $MAINDIR/regression-tests
+py.test --boxed -n48 -v $MAINDIR/regression-tests

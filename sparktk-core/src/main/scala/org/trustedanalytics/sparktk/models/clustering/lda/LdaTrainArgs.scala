@@ -47,7 +47,7 @@ import org.trustedanalytics.sparktk.frame.Frame
  *                  result in more computation but lead to more specific topics.
  *                  Valid value range is all positive int.
  *                  Default is 10.
- * @param randomSeed An optional random seed.
+ * @param seed An optional random seed.
  *                   The random seed is used to initialize the pseudorandom number generator
  *                   used in the LDA model. Setting the random seed to the same value every
  *                   time the model is trained, allows LDA to generate the same topic distribution
@@ -66,7 +66,7 @@ case class LdaTrainArgs(frame: Frame,
                         alpha: Option[List[Double]] = None,
                         beta: Float = 1.1f,
                         numTopics: Int = 10,
-                        randomSeed: Option[Long] = None,
+                        seed: Option[Long] = None,
                         checkPointInterval: Int = 10) {
 
   require(frame != null, "frame is required")

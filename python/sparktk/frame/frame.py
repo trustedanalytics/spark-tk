@@ -19,15 +19,17 @@ from pyspark.rdd import RDD
 from pyspark.sql import DataFrame
 
 from sparktk.frame.pyframe import PythonFrame
-from sparktk.frame.schema import schema_to_python, schema_to_scala
+from sparktk.frame.schema import schema_to_python, schema_to_scala, schema_is_coercible
 from sparktk import dtypes
 import logging
 logger = logging.getLogger('sparktk')
 from sparktk.propobj import PropertiesObject
+from sparktk import TkContext
 
 # import constructors for the API's sake (not actually dependencies of the Frame class)
 from sparktk.frame.constructors.create import create
 from sparktk.frame.constructors.import_csv import import_csv
+from sparktk.frame.constructors.import_csv_raw import import_csv_raw
 from sparktk.frame.constructors.import_hbase import import_hbase
 from sparktk.frame.constructors.import_hive import import_hive
 from sparktk.frame.constructors.import_jdbc import import_jdbc
@@ -36,24 +38,28 @@ from sparktk.frame.constructors.import_pandas import import_pandas
 __all__ = ["create",
            "Frame",
            "import_csv",
+           "import_csv_raw",
            "import_hbase",
            "import_hive",
            "import_jdbc",
-           "import_pandas"]
+           "import_pandas",
+           "load"]
+
 
 class Frame(object):
     
     def __init__(self, tc, source, schema=None, validate_schema=False):
+        """(Private constructor -- use tc.frame.create or other methods available from the TkContext)"""
         self._tc = tc
         if self._is_scala_frame(source):
             self._frame = source
-        elif self.is_scala_rdd(source):
+        elif self._is_scala_rdd(source):
             scala_schema = schema_to_scala(tc.sc, schema)
-            self._frame = self.create_scala_frame(tc.sc, source, scala_schema)
-        elif self.is_scala_dataframe(source):
-            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source)
+            self._frame = self._create_scala_frame(tc.sc, source, scala_schema)
+        elif self._is_scala_dataframe(source):
+            self._frame = self._create_scala_frame_from_scala_dataframe(tc.sc, source)
         elif isinstance(source, DataFrame):
-            self._frame = self.create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
+            self._frame = self._create_scala_frame_from_scala_dataframe(tc.sc, source._jdf)
         elif isinstance(source, PythonFrame):
             self._frame = source
         else:
@@ -102,7 +108,7 @@ class Frame(object):
                 logger.debug("%s values were unable to be parsed to the schema's data type." % validate_schema_result.bad_value_count)
 
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
-            map_source = MatrixCoercion.schema_is_coercible(source, list(schema))
+            map_source = schema_is_coercible(source, list(schema))
             self._frame = PythonFrame(map_source, schema)
 
     def _merge_types(self, type_list_a, type_list_b):
@@ -214,12 +220,12 @@ class Frame(object):
             raise TypeError("Unable to validate schema, because the pyrdd provided is not an RDD.")
 
     @staticmethod
-    def create_scala_frame(sc, scala_rdd, scala_schema):
+    def _create_scala_frame(sc, scala_rdd, scala_schema):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_rdd, scala_schema, False)
 
     @staticmethod
-    def create_scala_frame_from_scala_dataframe(sc, scala_dataframe):
+    def _create_scala_frame_from_scala_dataframe(sc, scala_dataframe):
         """call constructor in JVM"""
         return sc._jvm.org.trustedanalytics.sparktk.frame.Frame(scala_dataframe)
 
@@ -232,55 +238,66 @@ class Frame(object):
         """converts a PythonFrame to a Scala Frame"""
         scala_schema = schema_to_scala(self._tc.sc, python_frame.schema)
         scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.rdd.PythonJavaRdd.pythonToScala(python_frame.rdd._jrdd, scala_schema)
-        return self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+        return self._create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
 
     def _is_scala_frame(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.Frame)
 
-    def is_scala_rdd(self, item):
+    def _is_scala_rdd(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.rdd.RDD)
 
-    def is_scala_dataframe(self, item):
+    def _is_scala_dataframe(self, item):
         return self._tc._jutils.is_jvm_instance_of(item, self._tc.sc._jvm.org.apache.spark.sql.DataFrame)
 
-    def is_python_rdd(self, item):
+    def _is_python_rdd(self, item):
         return isinstance(item, RDD)
 
     @property
     def _is_scala(self):
         """answers whether the current frame is backed by a Scala Frame"""
-        return self._is_scala_frame(self._frame)
+        answer = self._is_scala_frame(self._frame)
+        logger.info("frame._is_scala reference: %s" % answer)
+        return answer
 
     @property
     def _is_python(self):
         """answers whether the current frame is backed by a _PythonFrame"""
-        return not self._is_scala
+        answer =  not self._is_scala_frame(self._frame)
+        logger.info("frame._is_python reference: %s" % answer)
+        return answer
 
     @property
     def _scala(self):
         """gets frame backend as Scala Frame, causes conversion if it is current not"""
+
         if self._is_python:
+            logger.info("frame._scala reference: converting frame backend from Python to Scala")
             # If schema contains matrix dataype,
             # then apply type_coercer_pymlib to convert ndarray to pymlib DenseMatrix for serialization purpose at java
-            self._frame.rdd = MatrixCoercion.schema_is_coercible(self._frame.rdd, list(self._frame.schema), True)
+            self._frame.rdd = schema_is_coercible(self._frame.rdd, list(self._frame.schema), True)
             # convert PythonFrame to a Scala Frame"""
             scala_schema = schema_to_scala(self._tc.sc, self._frame.schema)
             scala_rdd = self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.pythonToScala(self._frame.rdd._jrdd, scala_schema)
-            self._frame = self.create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+            self._frame = self._create_scala_frame(self._tc.sc, scala_rdd, scala_schema)
+        else:
+            logger.info("frame._scala reference: frame already has a scala backend")
         return self._frame
 
     @property
     def _python(self):
         """gets frame backend as _PythonFrame, causes conversion if it is current not"""
         if self._is_scala:
+            logger.info("frame._python reference: converting frame backend from Scala to Python")
             # convert Scala Frame to a PythonFrame"""
             scala_schema = self._frame.schema()
             java_rdd =  self._tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.rdd.PythonJavaRdd.scalaToPython(self._frame.rdd())
             python_schema = schema_to_python(self._tc.sc, scala_schema)
             python_rdd = RDD(java_rdd, self._tc.sc)
             # If schema contains matrix datatype, then apply type_coercer to convert list[list] to numpy ndarray
-            map_python_rdd = MatrixCoercion.schema_is_coercible(python_rdd, list(python_schema))
+            map_python_rdd = schema_is_coercible(python_rdd, list(python_schema))
             self._frame = PythonFrame(map_python_rdd, python_schema)
+        else:
+            logger.info("frame._python reference: frame already has a python backend")
         return self._frame
 
     ##########################################################################
@@ -293,14 +310,15 @@ class Frame(object):
         return self._python.rdd
 
     @property
+    def dataframe(self):
+        """pyspark DataFrame (causes conversion through Scala)"""
+        return DataFrame(self._scala.dataframe(), self._tc.sql_context)
+
+    @property
     def schema(self):
         if self._is_scala:
             return schema_to_python(self._tc.sc, self._frame.schema())  # need ()'s on schema because it's a def in scala
         return self._frame.schema
-
-    @property
-    def dataframe(self):
-        return DataFrame(self._scala.dataframe(), self._tc.sql_context)
 
     @property
     def column_names(self):
@@ -322,12 +340,6 @@ class Frame(object):
 
         """
         return [name for name, data_type in self.schema]
-
-    def append_csv_file(self, file_name, schema, separator=','):
-        self._scala.appendCsvFile(file_name, schema_to_scala(self._tc.sc, schema), separator)
-
-    def export_to_csv(self, file_name):
-        self._scala.exportToCsv(file_name)
 
     # Frame Operations
 
@@ -356,7 +368,11 @@ class Frame(object):
     from sparktk.frame.ops.drop_rows import drop_rows
     from sparktk.frame.ops.ecdf import ecdf
     from sparktk.frame.ops.entropy import entropy
-    from sparktk.frame.ops.export_data import export_to_jdbc, export_to_json, export_to_hbase, export_to_hive
+    from sparktk.frame.ops.export_to_csv import export_to_csv
+    from sparktk.frame.ops.export_to_jdbc import export_to_jdbc
+    from sparktk.frame.ops.export_to_json import export_to_json
+    from sparktk.frame.ops.export_to_hbase import export_to_hbase
+    from sparktk.frame.ops.export_to_hive import export_to_hive
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.group_by import group_by
@@ -393,6 +409,12 @@ class Frame(object):
     from sparktk.frame.ops.unflatten_columns import unflatten_columns
 
 
+def load(path, tc=TkContext.implicit):
+    """load Frame from given path"""
+    TkContext.validate(tc)
+    return tc.load(path, Frame)
+
+
 class SchemaValidationReturn(PropertiesObject):
     """
     Return value from schema validation that includes the rdd of validated values and the number of bad values
@@ -418,76 +440,3 @@ class SchemaValidationReturn(PropertiesObject):
         return self._bad_value_count
 
 
-class MatrixCoercion(object):
-    @staticmethod
-    def schema_is_coercible(source, python_schema, in_scala=False):
-        """
-        check whether python schema is coercible or not.
-        Like if schema contains matrix datatype, convert list[list] to numpy ndarray
-        """
-        flag = False
-        for schema in python_schema:
-            if type(schema[1]) == dtypes._Matrix:
-                flag = True
-                break
-
-        if flag:
-            if in_scala:
-                map_source = source.map(MatrixCoercion.type_coercer_pymllib(python_schema))
-            else:
-                map_source = source.map(MatrixCoercion.type_coercer(python_schema))
-        else:
-            map_source = source
-
-        return map_source
-
-    @staticmethod
-    def type_coercer(schema):
-        """
-        When creating a new frame(python frame created) or converting frame from scala to python frame,
-        the function scans a row and performs below
-            * when creating a new frame(python frame created) - if it finds list[list](which represents matrix) as column value,
-              converts it to numpy ndarray
-            * when Converting frame from scala to python frame - (scala converts DenseMatrix--> JList[JList[Double]](in JConvert.scala),
-              jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
-
-        """
-        def decorator(row):
-            result = []
-            import numpy as np
-            for i in xrange(len(schema)):
-                if type(schema[i][1]) == dtypes._Matrix:
-                    if isinstance(row[i], list):
-                        result.append(np.array(row[i], dtype=np.float64))
-                    else:
-                        result.append(row[i])
-                else:
-                    result.append(row[i])
-            return result
-        return decorator
-
-    @staticmethod
-    def type_coercer_pymllib(schema):
-        """
-        When converting from python to scala, function scans the row and converts the ndarray
-        to python mllib DenseMatrix. so that autopicklers understands how to serialize from pyspark mllib DenseMatrix to Scala MLlib DenseMatrix.
-        For Serialization to work we have to explicitly call SparkAliases.getSparkMLLibSerDe in pythonToScala() method of PythonJavaRdd.scala class
-
-        ndarray stores data as row-major where as mllib densematrix stores data as column-major.
-        To construct mllib DenseMatrix with row-major we are setting isTransposed=True.
-        """
-        def decorator(row):
-            result = []
-            from pyspark.mllib.linalg import DenseMatrix
-            for i in xrange(len(schema)):
-                if type(schema[i][1]) == dtypes._Matrix:
-                    shape = row[i].shape
-                    arr=row[i].flatten()
-                    # By default Mllib DenseMatrix constructs column-major matrix.
-                    # Setting isTranposed=True, will construct row-major DenseMatrix
-                    dm = DenseMatrix(shape[0], shape[1], arr, isTransposed=True)
-                    result.append(dm)
-                else:
-                    result.append(row[i])
-            return result
-        return decorator

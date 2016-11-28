@@ -100,7 +100,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
     A simple call for 3 equal-width bins gives:
 
         >>> hist = frame.histogram("b", num_bins=3)
-        <progress>
+
         >>> hist.cutoffs
         [1.0, 3.6666666666666665, 6.333333333333333, 9.0]
 
@@ -110,10 +110,9 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
         >>> hist.density
         [0.6, 0.0, 0.4]
 
-    Switching to equal depth gives\:
+    Switching to equal depth gives:
 
         >>> hist = frame.histogram("b", num_bins=3, bin_type='equaldepth')
-        <progress>
 
         >>> hist.cutoffs
         [1.0, 2.0, 7.0, 9.0]
@@ -132,7 +131,7 @@ def histogram(self, column_name, num_bins=None, weight_column_name=None, bin_typ
         >>> plt.bar(hist,cutoffs[:1], hist.hist, width=hist.cutoffs[1] - hist.cutoffs[0])
     </skip>
 
-    Plot hist as a bar chart using matplotlib\:
+    Plot hist as a bar chart using matplotlib:
 
     <skip>
         >>> import matplotlib.pyplot as plt

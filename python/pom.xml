@@ -69,9 +69,9 @@
         <profile>
             <id>docs</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+
                 <property>
-                    <name>!NEVERSETME</name>
+                    <name>env.DOCS</name>
                 </property>
             </activation>
             <build>
@@ -97,7 +97,41 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>python-package</id>
+            <activation>
 
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>python-package</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <!--<workingDirectory>${basedir}/sparktk/doc/</workingDirectory>-->
+                                    <arguments>
+                                        <argument>setup.py</argument>
+                                        <argument>sdist</argument>
+                                    </arguments>
+
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
     <build>
         <plugins>

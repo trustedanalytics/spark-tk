@@ -106,8 +106,7 @@ def add_columns(self, func, schema):
         [3]  Judy          0.54  Ju
 
 
-    Let's add a name based on tenure percentage of age.  We know we're only going to use
-    columns 'name' and 'of_age'.
+    Let's add a name based on tenure percentage of age.
 
         >>> frame.add_columns(lambda row: percentage_of_string(row.name, row.of_age),
         ...                   ('tenured_name_age', unicode))

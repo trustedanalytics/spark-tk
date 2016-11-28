@@ -52,3 +52,9 @@ testgraphs
 virtpy
 *.zip
 /zinc-0.3.7
+*.log
+**/metastore_db*
+**/*egg-info*
+scoring
+graphframes
+*.coverage*

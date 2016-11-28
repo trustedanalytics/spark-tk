@@ -21,7 +21,7 @@ from sparktk import dtypes
 def test_import_csv(tc):
     path = "../datasets/importcsvtest.csv"
     # Test with inferred schema
-    f = tc.frame.import_csv(path, header=True, infer_schema=True)
+    f = tc.frame.import_csv(path, header=True)
     assert(f.count() == 10)
     assert(len(f.schema) == 4)
     assert(f.schema == [("string_column", str),
@@ -34,12 +34,11 @@ def test_import_csv(tc):
     assert(len(f.schema) == 5)
     assert(f._is_scala)
 
-
 def test_import_csv_with_custom_schema(tc):
     path = "../datasets/cities.csv"
     try:
         # Test with bad schema (incorrect number of columns)
-        f = tc.frame.import_csv(path, "|", header=True, infer_schema=False, schema=[("a", int),("b", str)])
+        f = tc.frame.import_csv(path, "|", header=True, schema=[("a", int),("b", str)])
         f.take(f.count())
         raise RuntimeError("Expected SparkException from import_csv due to incorrect number of columns in custom schema.")
     except:
@@ -47,7 +46,7 @@ def test_import_csv_with_custom_schema(tc):
 
     # Test with good schema
     schema = [("a",int),("b",str),("c",int),("d",int),("e",str),("f",str)]
-    f = tc.frame.import_csv(path, "|", header=True, infer_schema=False, schema=schema)
+    f = tc.frame.import_csv(path, "|", header=True, schema=schema)
     assert(f.count() == 20)
     assert(f.schema == schema)
 
@@ -60,64 +59,46 @@ def test_import_csv_with_custom_schema_parse_error(tc):
     assert(rows[2] == ["blue",100, None])         # bad float
     assert(rows[3] == ["purple",None, 3.33333])   # bad integer
 
-
 def test_import_csv_with_no_header(tc):
     path = "../datasets/noheader.csv"
     # Test with no header and inferred schema
-    f = tc.frame.import_csv(path, header=False, infer_schema=True)
+    f = tc.frame.import_csv(path, header=False)
     assert(f.count() == 10)
     assert(len(f.schema) == 4)
     assert(f.schema == [('C0', str), ('C1', int), ('C2', float), ('C3', dtypes.datetime)])
 
+def test_import_csv_with_column_names(tc):
+    path = "../datasets/noheader.csv"
+    # Test with no header and inferred schema
+    column_names = ["a","b","c","d"]
+    f = tc.frame.import_csv(path, header=False, schema=column_names)
+    assert(f.count() == 10)
+    assert(len(f.schema) == 4)
+    assert(f.schema == [('a', str), ('b', int), ('c', float), ('d', dtypes.datetime)])
 
 def test_import_csv_with_invalid_header(tc):
     path = "../datasets/cities.csv"
     try:
         # Test with non-boolean header value
         tc.frame.import_csv(path, "|", header=5)
-        raise RuntimeError("Expected ValueError from import_csv due to invalid (int) header parameter data type.")
-    except ValueError:
-        pass
-    except:
-        raise RuntimeError("Expected ValueError from import_csv due to invalid (int) header parameter data type.")
+        raise RuntimeError("Expected TypeError from import_csv due to invalid (int) header parameter data type.")
+    except TypeError as e:
+        assert("Value for header is of type <type 'int'>.  Expected type <type 'bool'>." in str(e))
 
     try:
         # Test with non-boolean header value
         tc.frame.import_csv(path, "|", header="true")
-        raise RuntimeError("Expected ValueError from import_csv due to invalid (string) header parameter data type.")
-    except ValueError:
-        pass
-    except:
-        raise RuntimeError("Expected ValueError from import_csv due to invalid (string) header parameter data type.")
-
-
-def test_import_csv_with_invalid_infer_schema(tc):
-    path = "../datasets/cities.csv"
-    try:
-        # Test with non-boolean infer_schema value
-        tc.frame.import_csv(path, "|", infer_schema=5)
-        raise RuntimeError( "Expected ValueError from import_csv due to invalid (int) infer_schema parameter data type.")
-    except ValueError:
-        pass
-    except:
-        raise RuntimeError( "Expected ValueError from import_csv due to invalid (int) infer_schema parameter data type.")
-
-    try:
-        # Test with non-boolean infer_schema value
-        tc.frame.import_csv(path, "|", infer_schema="true")
-        raise RuntimeError("Expected ValueError from import_csv due to invalid (string) infer_schema parameter data type.")
-    except ValueError:
-        pass
-    except:
-        raise RuntimeError("Expected ValueError from import_csv due to invalid (string) infer_schema parameter data type.")
+        raise RuntimeError("Expected TypeError from import_csv due to invalid (string) header parameter data type.")
+    except TypeError as e:
+        assert("Value for header is of type <type 'str'>.  Expected type <type 'bool'>." in str(e))
 
 def test_import_with_unsupported_type(tc):
     path = "../datasets/unsupported_types.csv"
 
     try:
-        # Try creating a frame from a csv using infer_schema.  This csv has a boolean type, which we don't support,
+        # Try creating a frame from a csv and infer the schema.  This csv has a boolean type, which we don't support,
         # so this should fail.
-        tc.frame.import_csv(path, ",", infer_schema=True)
+        tc.frame.import_csv(path, ",")
         raise RuntimeError("Expected TypeError for unsupported type found when inferring schema (boolean).")
     except TypeError:
         pass
@@ -125,7 +106,7 @@ def test_import_with_unsupported_type(tc):
     schema = [("id", int), ("name", str), ("bool", bool), ("day", str)]
     try:
         # Instead of inferring the schema, specify the schema that uses a boolean column.  This should still fail
-        tc.frame.import_csv(path, ",", infer_schema=False, schema=schema)
+        tc.frame.import_csv(path, ",", schema=schema)
         raise RuntimeError("Expected TypeError for unsupported type in the schema (bool).")
     except TypeError:
         pass
@@ -133,7 +114,7 @@ def test_import_with_unsupported_type(tc):
     schema = [("id", int), ("name", str), ("bool", str), ("day", str)]
 
     # Specify the boolean column as a string instead.  This should pass
-    frame = tc.frame.import_csv(path, ",", infer_schema=False, schema=schema)
+    frame = tc.frame.import_csv(path, ",", schema=schema)
     assert(frame.count() == 5)
     assert(frame.schema == schema)
 
@@ -172,6 +153,31 @@ def test_import_csv_with_duplicate_coluns(tc):
               ("datetime", dtypes.datetime)]
     try:
         # Try to create a frame from csv, using a schema that has duplicate column names
-        tc.frame.import_csv(path, schema=schema, header=True, infer_schema=False)
+        tc.frame.import_csv(path, schema=schema, header=True)
     except Exception as e:
         assert("schema has duplicate column names: ['numeric']" in str(e))
+
+def test_import_csv_datetime_format(tc):
+    path = "../datasets/datetimes.csv"
+
+    # Load with the date format that matches column a
+    f = tc.frame.import_csv(path, schema=[("a",dtypes.datetime),("b",str)], datetime_format="yyyy-MM-ddX")
+
+    expected = ["2015-01-03T00:00:00.000000Z","2015-04-12T00:00:00.000000Z"]
+    actual_data = f.take(f.count())
+
+    for row, expected_str in zip(actual_data, expected):
+        assert(isinstance(row[0], long))    # 'a' datetime column should be a long (number of ms since epoch)
+        assert(dtypes.ms_to_datetime_str(row[0]) == expected_str)
+        assert(isinstance(row[1], basestring))     # column 'b' should be a str
+
+    # Load with the date format that matches column b
+    f = tc.frame.import_csv(path, schema=[("a",str),("b",dtypes.datetime)], datetime_format="MM-dd-yyyy kk:mm X")
+
+    expected = ["2015-01-02T11:30:00.000000Z","2015-04-12T04:25:00.000000Z"]
+    actual_data = f.take(f.count())
+
+    for row, expected_str in zip(actual_data, expected):
+        assert(isinstance(row[0], basestring))     # column 'a' should be a str
+        assert(isinstance(row[1], long))    # column 'b' should be a long (number of ms since epoch)
+        assert(dtypes.ms_to_datetime_str(row[1]) == expected_str)

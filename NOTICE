@@ -1,6 +1,17 @@
+trustedanalytics.org
+Copyright 2016 and onwards trustedanalytics.org
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+
+
+
+
 Data Citation
 
 Holger R. Roth, Amal Farag, Evrim B. Turkbey, Le Lu, Jiamin Liu, and Ronald M. Summers. (2016). Data From Pancreas-CT. The Cancer Imaging Archive. http://doi.org/10.7937/K9/TCIA.2016.tNB1kqBU
 
 integration-tests/datasets/dicom_uncompressed
+regression-tests/datasets/dicom_uncompressed
 

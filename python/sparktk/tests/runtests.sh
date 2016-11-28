@@ -22,9 +22,15 @@
 
 # '-x' to exclude dirs from coverage, requires nose-exclude to be installed
 
+NAME="[`basename $0`]"
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+echo "$NAME DIR=$DIR"
+echo "$NAME cd $DIR"
+cd $DIR
+
 export IN_UNIT_TESTS='true'
 
-TESTS_DIR="$( cd "$( dirname "$BASH_SOURCE[0]}" )" && pwd )"
+TESTS_DIR=$DIR
 SPARKTK_DIR=`dirname $TESTS_DIR`
 PYTHON_DIR=`dirname $SPARKTK_DIR`
 
@@ -40,11 +46,6 @@ export PYTHONPATH=$PYTHONPATH:$PYTHON_DIR
 # them through python. If there is no output then the module exists.
 if [[ -e $(python2.7 -c "import sparktk") ]]; then
     echo "sparktk cannot be found"
-    exit 1
-fi
-
-if [[ -e $(python2.7 -c "import nose") ]]; then
-    echo "Nosetests is not installed into your python virtual environment please install nose."
     exit 1
 fi
 
@@ -66,31 +67,9 @@ if [ "$1" = "-x" ] ; then
   EXCLUDE_OPTION=--exclude-dir-file=$EXCLUDE_DIRS_FILE
 fi
 
-
-nosetests $TESTS_DIR --with-coverage --cover-package=sparktk --cover-erase --cover-inclusive --cover-html --with-xunit  --xunit-file=$PYTHON_DIR/nosetests.xml $EXCLUDE_OPTION
-
-success=$?
-
-COVERAGE_ARCHIVE=$PYTHON_DIR/python-coverage.zip
-
-rm *.log 2> /dev/null
-rm -rf $COVERAGE_ARCHIVE
-zip -rq $COVERAGE_ARCHIVE .
-
-RESULT_FILE=$PYTHON_DIR/nosetests.xml
-COVERAGE_HTML=$PYTHON_DIR/cover/index.html
-
-echo
-echo Output File: $RESULT_FILE
-echo Coverage Archive: $COVERAGE_ARCHIVE
-echo Coverage HTML: file://$COVERAGE_HTML
-echo
+export COVERAGE_FILE=$DIR/../../../coverage/unit_test_coverage.dat
+py.test --cov-config=$DIR/pycoverage.ini --cov=$SPARKTK_DIR --cov-report=html:$DIR/../../../coverage/pytest_unit $TESTS_DIR
+echo "Coverage Report at:"
+echo "$DIR/../../../pytest_unit"
 
 unset IN_UNIT_TESTS
-
-if [[ $success == 0 ]] ; then
-   echo "Python Tests Successful"
-   exit 0
-fi
-echo "Python Tests Unsuccessful"
-exit 1

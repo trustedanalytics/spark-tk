@@ -158,12 +158,13 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted class for each observation
+   * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the SvmModel
+   *                By default, we predict the labels over columns the SvmModel was trained on
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
+  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (columns.isDefined) {
       require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
@@ -175,8 +176,11 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
       val prediction = sparkModel.predict(point).toInt
       Row.apply(prediction)
     }
+    val predictSchema = frame.schema.addColumn(Column("predicted_label", DataTypes.int32))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
 
-    frame.addColumns(predictMapper, Seq(Column("predicted_label", DataTypes.int32)))
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -259,7 +263,7 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
    * @return metadata about the model
    */
   def modelMetadata(): ModelMetaData = {
-    //todo provide a for the user to populate the custom metadata fields
+    //todo provide an API for the user to populate the custom metadata fields
     new ModelMetaData("SVM with SGD Model", classOf[SvmModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
@@ -272,7 +276,7 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[SvmModel].getName, tmpDir)
     }
     finally {

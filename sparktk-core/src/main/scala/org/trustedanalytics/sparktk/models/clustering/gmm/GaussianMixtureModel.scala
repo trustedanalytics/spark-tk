@@ -29,7 +29,7 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.sparktk.models.MatrixImplicits._
 import java.io.{ FileOutputStream, File }
-import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.{ DenseVector, Vectors }
 import org.apache.commons.io.{ IOUtils, FileUtils }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, TkSearchPath, ScoringModelUtils }
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
@@ -150,12 +150,14 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
   }
 
   /**
+   * Predicts the labels for the observation columns in the input frame
    * @param frame frame whose cluster assignments are to be predicted
    * @param observationColumns Column(s) containing the observations whose clusters are to be predicted. By default,
    *                           we predict the clusters over columns the GMMModel was trained on. The columns are
    *                           scaled using the same values used when training the model
+   * @return New frame containing the original frame's columns and a column with the predicted label
    */
-  def predict(frame: Frame, observationColumns: Option[Seq[String]] = None): Unit = {
+  def predict(frame: Frame, observationColumns: Option[Seq[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
       require(observationColumns.get.length == observationColumns.get.length, "Number of columns for train and predict should be same")
@@ -175,7 +177,8 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
       val cluster = value._2._1
       Row.merge(row, cluster)
     }
-    frame.init(resultRdd, frame.schema.copy(columns = frame.schema.columns ++ Seq(Column("predicted_cluster", DataTypes.int32))))
+    val predictSchema = frame.schema.addColumn(Column("predicted_cluster", DataTypes.int32))
+    new Frame(resultRdd, predictSchema)
   }
 
   /**
@@ -197,12 +200,11 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
    * @return the row along with its prediction
    */
   def score(row: Array[Any]): Array[Any] = {
-    //    val x: Array[Double] = new Array[Double](row.length)
-    //    row.zipWithIndex.foreach {
-    //      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
-    //    }
-    //    row :+ sparkModel.predict(Vectors.dense(x))
-    throw new NotImplementedError()
+    require(row != null)
+    require(row.length == observationColumns.length,
+      s"The number of scoring inputs (${row.length}) should be equal to the number of observation columns (${observationColumns.length}).")
+
+    row :+ sparkModel.predict(new DenseVector(row.map(i => ScoringModelUtils.asDouble(i))))
   }
 
   /**
@@ -241,7 +243,7 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, "file://" + tmpDir.toString)
+      save(sc, tmpDir.toString)
       ScoringModelUtils.saveToMar(marSavePath, classOf[GaussianMixtureModel].getName, tmpDir)
     }
     finally {

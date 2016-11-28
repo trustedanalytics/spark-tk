@@ -50,11 +50,6 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
 
   val epsilon = 1e-6
 
-  /** assertion that two doubles are almost equal */
-  def assertAlmostEqual(x: Double, y: Double, tolerance: Double = 1e-6): Unit = {
-    assert(Math.abs(x - y) < tolerance, s"${x} should equal ${y}+-${tolerance}")
-  }
-
   /** assertion that most likely topic is given by index */
   def assertLikelyTopic(v: Vector[Double], topicIndex: Int): Unit = {
     assert(v.indexOf(v.max) == topicIndex, s"topic should equal ${topicIndex}")
@@ -87,7 +82,7 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rows, edgeSchema)
 
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count",
-        numTopics = 2, maxIterations = 10, alpha = Some(List(1.3d, 1.3d)), beta = 1.6f, randomSeed = Some(25))
+        numTopics = 2, maxIterations = 10, alpha = Some(List(1.3d, 1.3d)), beta = 1.6f, seed = Some(25))
       val ldaRunner = LdaTrainFunctions.initializeLdaRunner(trainArgs)
 
       assert(ldaRunner.getK == 2)
@@ -102,7 +97,7 @@ class LdaModelTrainTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rows, edgeSchema)
 
       val trainArgs = LdaTrainArgs(frame, "document", "word", "word_count",
-        numTopics = 2, maxIterations = 10, randomSeed = Some(25))
+        numTopics = 2, maxIterations = 10, seed = Some(25))
       val ldaModel = LdaTrainFunctions.trainLdaModel(trainArgs)
 
       val topicsGivenDoc = ldaModel.getTopicsGivenDocFrame.map(row => {

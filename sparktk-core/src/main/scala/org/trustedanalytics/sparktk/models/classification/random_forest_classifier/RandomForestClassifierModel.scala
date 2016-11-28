@@ -28,9 +28,13 @@ import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ C
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
-
+import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
+import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
+import org.apache.spark.mllib.linalg.Vectors
+import java.nio.file.{ Files, Path }
+import org.apache.commons.io.FileUtils
 
 object RandomForestClassifierModel extends TkSaveableObject {
 
@@ -177,19 +181,23 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
                                                                           maxBins: Int,
                                                                           seed: Int,
                                                                           categoricalFeaturesInfo: Option[Map[Int, Int]],
-                                                                          featureSubsetCategory: Option[String]) extends Serializable {
+                                                                          featureSubsetCategory: Option[String]) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
 
   /**
-   * Adds a column to the frame which indicates the predicted class for each observation
+   * Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame revision
+   * with existing columns and a new predicted label’s column.
+   *
    * @param frame - frame to add predictions to
    * @param columns Column(s) containing the observations whose labels are to be predicted.
    *                By default, we predict the labels over columns the RandomForestClassifierModel
+   * @return A new frame consisting of the existing columns of the frame and a new column with predicted label
+   *         for each observation.
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Unit = {
+  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (columns.isDefined) {
       require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
@@ -203,7 +211,11 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
       Row.apply(prediction)
     }
 
-    frame.addColumns(predictMapper, Seq(Column("predicted_class", DataTypes.int32)))
+    val predictSchema = frame.schema.addColumn(Column("predicted_class", DataTypes.int32))
+    val wrapper = new RowWrapper(predictSchema)
+    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+
+    new Frame(predictRdd, predictSchema)
   }
 
   /**
@@ -257,6 +269,45 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
       categoricalFeaturesInfo,
       featureSubsetCategory)
     TkSaveLoad.saveTk(sc, path, RandomForestClassifierModel.formatId, formatVersion, tkMetadata)
+  }
+
+  override def score(data: Array[Any]): Array[Any] = {
+    require(data != null && data.length > 0, "scoring data array should not be null nor empty")
+    val x: Array[Double] = new Array[Double](data.length)
+    data.zipWithIndex.foreach {
+      case (value: Any, index: Int) => x(index) = ScoringModelUtils.asDouble(value)
+    }
+    data :+ sparkModel.predict(Vectors.dense(x))
+  }
+
+  override def modelMetadata(): ModelMetaData = {
+    new ModelMetaData("Random Forest Classifier Model", classOf[RandomForestClassifierModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+  }
+
+  override def input(): Array[Field] = {
+    val obsCols = observationColumns
+    var input = Array[Field]()
+    obsCols.foreach { name =>
+      input = input :+ Field(name, "Double")
+    }
+    input
+  }
+
+  override def output(): Array[Field] = {
+    var output = input()
+    output :+ Field("PredictedClass", "Double")
+  }
+
+  def exportToMar(sc: SparkContext, marSavePath: String): String = {
+    var tmpDir: Path = null
+    try {
+      tmpDir = Files.createTempDirectory("sparktk-scoring-model")
+      save(sc, tmpDir.toString)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestClassifierModel].getName, tmpDir)
+    }
+    finally {
+      sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
+    }
   }
 }
 

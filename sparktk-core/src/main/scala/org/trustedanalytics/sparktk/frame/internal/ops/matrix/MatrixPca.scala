@@ -23,24 +23,24 @@ import breeze.linalg.{ DenseMatrix => BDM, Matrix => BM }
 
 trait MatrixPcaTransform extends BaseFrame {
 
-  def matrixPca(matrixColumnName: String, vMatrixColumnName: String): Unit = {
-    execute(MatrixPca(matrixColumnName, vMatrixColumnName))
+  def matrixPca(matrixColumnName: String, vtMatrixColumnName: String): Unit = {
+    execute(MatrixPca(matrixColumnName, vtMatrixColumnName))
   }
 }
 
-case class MatrixPca(matrixColumnName: String, vMatrixColumnName: String) extends FrameTransform {
+case class MatrixPca(matrixColumnName: String, vtMatrixColumnName: String) extends FrameTransform {
 
   require(matrixColumnName != null, "Matrix column mame cannot be null")
-  require(vMatrixColumnName != null, "VMatrix column name cannot be null")
+  require(vtMatrixColumnName != null, "VtMatrix column name cannot be null")
 
   override def work(state: FrameState): FrameState = {
 
     val frame = new Frame(state.rdd, state.schema)
 
     frame.schema.requireColumnIsType(matrixColumnName, DataTypes.matrix)
-    frame.schema.requireColumnIsType(vMatrixColumnName, DataTypes.matrix)
+    frame.schema.requireColumnIsType(vtMatrixColumnName, DataTypes.matrix)
 
-    frame.addColumns(MatrixPca.matrixPca(matrixColumnName, vMatrixColumnName), Seq(Column("PrincipalComponents_" + matrixColumnName, DataTypes.matrix)))
+    frame.addColumns(MatrixPca.matrixPca(matrixColumnName, vtMatrixColumnName), Seq(Column("PrincipalComponents_" + matrixColumnName, DataTypes.matrix)))
     FrameState(frame.rdd, frame.schema)
   }
 
@@ -57,10 +57,10 @@ object MatrixPca extends Serializable {
     val matrix = rowWrapper.value(matrixColumn).asInstanceOf[DM]
     val breezeMatrix = MatrixFunctions.asBreeze(matrix)
 
-    val vMatrix = rowWrapper.value(vMatrixColumnName).asInstanceOf[DM]
-    val breezeVMatrix = MatrixFunctions.asBreeze(vMatrix)
+    val vtMatrix = rowWrapper.value(vMatrixColumnName).asInstanceOf[DM]
+    val breezeVtMatrix = MatrixFunctions.asBreeze(vtMatrix)
 
-    val pca = breezeMatrix :* breezeVMatrix
+    val pca = breezeMatrix * breezeVtMatrix.t
     val pcaMatrix = MatrixFunctions.fromBreeze(pca).asInstanceOf[DM]
 
     Row.apply(pcaMatrix)
