@@ -16,10 +16,9 @@
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.apache.spark.sql.DataFrame
-import org.trustedanalytics.sparktk.graph.internal.{BaseGraph, GraphState, GraphSummarization}
+import org.trustedanalytics.sparktk.graph.internal.{ BaseGraph, GraphState, GraphSummarization }
 
 trait SingleSourceShortestPathSummarization extends BaseGraph {
-
 
   def singleSourceShortestPath(landmarks: Seq[Any], weightPropertyName: Option[String]): DataFrame = {
     execute[DataFrame](SingleSourceShortestPath(landmarks, weightPropertyName))

@@ -16,10 +16,9 @@
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.apache.spark.sql.DataFrame
-import org.trustedanalytics.sparktk.graph.internal.{BaseGraph, GraphState, GraphSummarization}
+import org.trustedanalytics.sparktk.graph.internal.{ BaseGraph, GraphState, GraphSummarization }
 
 trait ShortestPathSummarization extends BaseGraph {
-
 
   def shortestPath(landmarks: Seq[Any]): DataFrame = {
     execute[DataFrame](ShortestPath(landmarks))
@@ -33,5 +32,4 @@ case class ShortestPath(landmarks: Seq[Any]) extends GraphSummarization[DataFram
   }
 
 }
-
 

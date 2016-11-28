@@ -1,28 +1,26 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+/**
+ *  Copyright (c) 2016 Intel Corporation 
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.graphframes.lib
 
 import java.util
 
-import org.apache.spark.graphx.{lib => graphxlib}
-import org.apache.spark.sql.functions.{callUDF, col}
-import org.apache.spark.sql.types.{IntegerType, MapType}
-import org.apache.spark.sql.{Column, DataFrame, Row}
+import org.apache.spark.graphx.{ lib => graphxlib }
+import org.apache.spark.sql.functions.{ callUDF, col }
+import org.apache.spark.sql.types.{ IntegerType, MapType }
+import org.apache.spark.sql.{ Column, DataFrame, Row }
 import org.graphframes.GraphFrame
 
 import scala.collection.JavaConverters._
@@ -36,7 +34,7 @@ import scala.collection.JavaConverters._
  *  - distances (`MapType[vertex ID type, IntegerType]`): For each vertex v, a map containing
  *    the shortest-path distance to each reachable landmark vertex.
  */
-class SingleSourceShortestPaths private[graphframes](private val graph: GraphFrame) extends Arguments {
+class SingleSourceShortestPaths private[graphframes] (private val graph: GraphFrame) extends Arguments {
   private var lmarks: Option[Seq[Any]] = None
 
   /**
@@ -62,7 +60,7 @@ class SingleSourceShortestPaths private[graphframes](private val graph: GraphFra
 
 object SingleSourceShortestPaths {
 
-  private def run(graph: GraphFrame, landmarks: Seq[Any]): DataFrame = ???/*{
+  private def run(graph: GraphFrame, landmarks: Seq[Any]): DataFrame = ??? /*{
     val idType = graph.vertices.schema(GraphFrame.ID).dataType
     val longIdToLandmark = landmarks.map(l => GraphXConversions.integralId(graph, l) -> l).toMap
     val gx = graphxlib.SingleSourceShortestPath.run(
