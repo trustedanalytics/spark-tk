@@ -218,3 +218,30 @@ def validate_call(function, arguments):
             raise ValueError("call to function %s(%s) is missing the following required arguments: %s" % (function.__name__, signature, ', '.join(missing_args)))
 
 
+def find_arguments(function, arguments, ignore_self=True):
+    """
+    Examines the given function and pulls the needed arguments out of the given dict
+
+    Requires that the arguments have value for the required arguments of the function.
+    Also looks through the optional arguments and fills them if provided.
+
+    :param function:  function in question
+    :param arguments:  arg name and value pairs
+    :return: a new dictionary which can be used to call the function as a **kwargs arugment
+    """
+    require_type(dict, arguments, "arguments")
+    args, kwargs, varargs, varkwargs = get_args_spec_from_function(function)
+    found = {}
+    if ignore_self and 'self' in args:
+        args.remove('self')
+    for a in args:
+        try:
+            value = arguments[a]
+        except KeyError:
+            signature = get_args_text_from_function(function)
+            raise ValueError("function %s(%s) needs argument '%s' which is not found in the given arguments: %s" % (function.__name__, signature, a, ', '.join(arguments.keys())))
+        found[a] = value
+    for k, v in kwargs:
+        if k in arguments:
+            found[k] = arguments[k]
+    return found

@@ -381,7 +381,7 @@ class LogisticRegressionModel(PropertiesObject):
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
-    def test(self, frame, label_column, observation_columns_test):
+    def test(self, frame, label_column, observation_columns=None):
         """
         Get the predictions for observations in a test frame
 
@@ -390,14 +390,16 @@ class LogisticRegressionModel(PropertiesObject):
 
         :param frame: (Frame) Frame whose labels are to be predicted.
         :param label_column: (str) Column containing the actual label for each observation.
-        :param observation_columns_test: (None or list[str]) Column(s) containing the observations whose labels are to
+        :param observation_columns: (None or list[str]) Column(s) containing the observations whose labels are to
                                          be predicted and tested. Default is to test over the columns the SVM model was
                                         trained on.
         :return: (ClassificationMetricsValue) Object with binary classification metrics
         """
-        scala_classification_metrics_object = self._scala.test(frame._scala, label_column,
-                                                               self._tc.jutils.convert.to_scala_option_list_string(
-                                                               observation_columns_test))
+        from sparktk.arguments import affirm_type
+        observation_columns = affirm_type.list_of_str(observation_columns, "observation_columns")
+        scala_classification_metrics_object = self._scala.test(frame._scala,
+                                                               label_column,
+                                                               self._tc.jutils.convert.to_scala_option_list_string(observation_columns))
         return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
 
     def save(self, path):
