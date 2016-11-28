@@ -40,4 +40,4 @@ echo "spark tk home"
 echo $SPARKTK_HOME
 
 export DIR
-py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:pytest --boxed -n10 $MAINDIR/regression-tests
+py.test --cov=$DIR/../../python/sparktk --cov-config=$DIR/pycoverage.ini --cov-report=html:$MAINDIR/coverage/pytest_regression --boxed -n10 $MAINDIR/regression-tests

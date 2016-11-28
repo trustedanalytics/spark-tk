@@ -57,3 +57,4 @@ virtpy
 **/*egg-info*
 scoring
 graphframes
+*.coverage*
