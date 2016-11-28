@@ -15,7 +15,7 @@
  */
 package org.apache.spark.ml.regression.org.trustedanalytics.sparktk
 
-import breeze.linalg.{ DenseVector => BDV }
+import breeze.linalg.{ DenseMatrix => BreezeDenseMatrix, MatrixSingularException, DenseVector => BDV }
 import breeze.optimize.{ CachedDiffFunction, DiffFunction, LBFGS => BreezeLBFGS }
 import org.apache.hadoop.fs.Path
 import org.apache.spark.annotation.Since
@@ -117,34 +117,52 @@ class CoxPh(override val uid: String)
 
   setDefault(tol -> 1E-6)
 
+  /**
+   * Computes beta vector for given iteration
+   * @param currentInformationMatrix: (BreezeDenseMatrix[Double]) Information matrix of current update
+   * @param currentGradient: (BDV[Double]) Gradient vector of current update
+   * @param previousBeta: (BDV[Double])Beta vector from previous update
+   * @param iteration: (Int) Current iteration number
+   * @return beta vector of current update
+   */
+  def computeBeta(currentInformationMatrix: BreezeDenseMatrix[Double],
+                  currentGradient: BDV[Double],
+                  previousBeta: BDV[Double],
+                  iteration: Int) = {
+    try {
+      val realMatrix = breeze.linalg.pinv(currentInformationMatrix)
+      val gradientTimesMatrixInverse: BreezeDenseMatrix[Double] = currentGradient.toDenseMatrix * realMatrix
+      val updatedBetaAsMatrix: BreezeDenseMatrix[Double] = previousBeta.toDenseMatrix - gradientTimesMatrixInverse
+      updatedBetaAsMatrix.toDenseVector
+    }
+    catch {
+      case e: MatrixSingularException => throw new MatrixSingularException("Singular Matrix formed, cannot be inverted at iteration:" + iteration)
+    }
+  }
+
+  /**
+   * Fits a model to input data
+   * @param dataFrame: DataFrame containing covariates, censor and time
+   * @return trained CoxPhModel with beta and mean vectors
+   */
   override def fit(dataFrame: DataFrame): CoxPhModel = {
     val numFeatures = dataFrame.select($(featuresCol)).take(1)(0).getAs[Vector](0).size
 
     val meanVector = computeFeatureMean(dataFrame)
-    import breeze.linalg._
     val coxPhPointRdd = extractSortedCoxPhPointRdd(dataFrame)
 
     val handlePersistence = dataFrame.rdd.getStorageLevel == StorageLevel.NONE
     if (handlePersistence) coxPhPointRdd.persist(StorageLevel.MEMORY_AND_DISK)
     val costFun = new CoxPhCostFun(coxPhPointRdd)
 
-    var previousBeta = DenseVector.zeros[Double](numFeatures)
+    var previousBeta = BDV.zeros[Double](numFeatures)
     var previousLoss = 1E-3
     var iterations: Int = 0
     var epsilon: Double = scala.Double.PositiveInfinity
 
     while (iterations < $(maxIter) && (epsilon > $(tol))) {
       val (currentLoss, currentGradient, currentInformationMatrix) = costFun.calculate(previousBeta)
-
-      try {
-        val realMatrix = breeze.linalg.pinv(currentInformationMatrix)
-        val gradientTimesMatrixInverse: DenseMatrix[Double] = currentGradient.toDenseMatrix * realMatrix
-        val updatedBetaAsMatrix: DenseMatrix[Double] = previousBeta.toDenseMatrix - gradientTimesMatrixInverse
-        previousBeta = updatedBetaAsMatrix.toDenseVector
-      }
-      catch {
-        case e: MatrixSingularException => throw new MatrixSingularException("Singular Matrix formed, cannot be inverted at iteration:" + iterations)
-      }
+      previousBeta = computeBeta(currentInformationMatrix, currentGradient, previousBeta, iterations)
       epsilon = math.abs(currentLoss - previousLoss)
       previousLoss = currentLoss
       iterations += 1
@@ -320,14 +338,14 @@ private class CoxPhAggregator(parameters: BDV[Double])
     extends Serializable {
   private val beta = parameters
   private var totalCnt: Long = 0L
-  private var lossSum = 0.0
+  private var lossSum = 0d
   private var gradientBetaSum = BDV.zeros[Double](beta.length)
-  private var matrixSum = breeze.linalg.DenseMatrix.zeros[Double](beta.length, beta.length)
+  private var matrixSum = BreezeDenseMatrix.zeros[Double](beta.length, beta.length)
 
   def count: Long = totalCnt
   def loss: Double = lossSum
   def gradient: BDV[Double] = gradientBetaSum
-  def informationMatrix: breeze.linalg.DenseMatrix[Double] = matrixSum
+  def informationMatrix: BreezeDenseMatrix[Double] = matrixSum
 
   /**
    * Add a new training data to this CoxPhAggregator, and update the loss and gradient
@@ -370,8 +388,8 @@ private class CoxPhAggregator(parameters: BDV[Double])
    * @param data CoxPhPointWithMetaData storing the observation with it's risk set values
    * @return BreezeDenseMatrix storing the Information Matrix values
    */
-  def computeInformationMatrix(data: CoxPhPointWithMetaData): breeze.linalg.DenseMatrix[Double] = {
-    val infoMatrix = breeze.linalg.DenseMatrix.zeros[Double](beta.length, beta.length)
+  def computeInformationMatrix(data: CoxPhPointWithMetaData): BreezeDenseMatrix[Double] = {
+    val infoMatrix = BreezeDenseMatrix.zeros[Double](beta.length, beta.length)
 
     for (i <- 0 to beta.length - 1) {
       for (j <- 0 to beta.length - 1) {
@@ -412,7 +430,7 @@ private class CoxPhAggregator(parameters: BDV[Double])
  */
 private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
 
-  def calculate(currentBeta: BDV[Double]): (Double, BDV[Double], breeze.linalg.DenseMatrix[Double]) = {
+  def calculate(currentBeta: BDV[Double]): (Double, BDV[Double], BreezeDenseMatrix[Double]) = {
 
     val coxPhPointWithCumSumAndBetaX = extractCoxPhPointsWithMetaData(coxPhPointRdd, currentBeta)
     val coxPhAggregator = coxPhPointWithCumSumAndBetaX.treeAggregate(new CoxPhAggregator(currentBeta))(
@@ -444,7 +462,10 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
     val broadCastCumulativeSum = sc.broadcast(cumulativeSum)
     val finalRisk = computeFinalR(riskSetRdd, broadCastCumulativeSum)
 
-    val updatedCoxPhPoint = coxPhPointRdd.zip(finalRisk).map { case (a, (sumR, xR, r, sumS, sumT)) => CoxPhPointWithMetaData(a.features, a.time, a.censor, sumR, xR, r, sumS, sumT) }
+    val updatedCoxPhPoint = coxPhPointRdd.zip(finalRisk).map {
+      case (a, (sumR, xR, r, sumS, sumT)) =>
+        CoxPhPointWithMetaData(a.features, a.time, a.censor, sumR, xR, r, sumS, sumT)
+    }
 
     updatedCoxPhPoint
   }
@@ -455,13 +476,13 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
    * @param length The number of co-variates
    * @return Map storing, for each partition the sumEBetaX, sumXEBetaX, sumXiXjEBetaX values
    */
-  def computePartitionSum(rdd: RDD[(Double, BDV[Double], breeze.linalg.DenseMatrix[Double])], length: Int): scala.collection.Map[Int, (Double, BDV[Double], breeze.linalg.DenseMatrix[Double])] = {
-    import breeze.linalg.DenseVector
+  def computePartitionSum(rdd: RDD[(Double, BDV[Double], BreezeDenseMatrix[Double])],
+                          length: Int): scala.collection.Map[Int, (Double, BDV[Double], BreezeDenseMatrix[Double])] = {
     val array = rdd.mapPartitionsWithIndex {
       case (index, iterator) => {
-        var sumEBetaX = 0.0
-        var sumXEBetaX = DenseVector.zeros[Double](length)
-        var sumXiXjEBetaX = breeze.linalg.DenseMatrix.zeros[Double](length, length)
+        var sumEBetaX = 0d
+        var sumXEBetaX = BDV.zeros[Double](length)
+        var sumXiXjEBetaX = BreezeDenseMatrix.zeros[Double](length, length)
         while (iterator.hasNext) {
           val (partialSumEBetaX, partialSumXEBetaX, partialSumXiXjEBetaX) = iterator.next()
           sumEBetaX = partialSumEBetaX
@@ -473,7 +494,7 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
       }
     }.collect()
 
-    val initTuple = (0, (0d, BDV.zeros[Double](length), breeze.linalg.DenseMatrix.zeros[Double](length, length)))
+    val initTuple = (0, (0d, BDV.zeros[Double](length), BreezeDenseMatrix.zeros[Double](length, length)))
     val cumSum = array.scanLeft(initTuple)((x, y) => {
       val (xIndex, (xSumR, xSumS, xSumT)) = x
       val (yIndex, (ySumR, ySumS, ySumT)) = y
@@ -489,20 +510,19 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
    * @param currentBeta The current beta value
    * @return Rdd containing the meta data as a tuple with sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX
    */
-  def riskSet(sortedData: RDD[CoxPhPoint], currentBeta: BDV[Double]): RDD[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])] = {
-    import breeze.linalg.DenseVector
+  def riskSet(sortedData: RDD[CoxPhPoint], currentBeta: BDV[Double]): RDD[(Double, BDV[Double], Double, BDV[Double], BreezeDenseMatrix[Double])] = {
     val metaData = sortedData.mapPartitionsWithIndex {
       case (i, iter) =>
-        var sumEBetaX: Double = 0.0
-        var sumXiEBetaX = DenseVector.zeros[Double](currentBeta.length)
-        var sumXiXjEBetaX = breeze.linalg.DenseMatrix.zeros[Double](currentBeta.length, currentBeta.length)
+        var sumEBetaX = 0d
+        var sumXiEBetaX = BDV.zeros[Double](currentBeta.length)
+        var sumXiXjEBetaX = BreezeDenseMatrix.zeros[Double](currentBeta.length, currentBeta.length)
 
-        val featureBuf = new ArrayBuffer[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])]()
+        val featureBuf = new ArrayBuffer[(Double, BDV[Double], Double, BDV[Double], BreezeDenseMatrix[Double])]()
         while (iter.hasNext) {
           val x: BDV[Double] = new BDV(iter.next().features.toArray)
           val eBetaX = math.exp(currentBeta.dot(x))
 
-          val xiXjEBetaX = breeze.linalg.DenseMatrix.zeros[Double](currentBeta.length, currentBeta.length)
+          val xiXjEBetaX = BreezeDenseMatrix.zeros[Double](currentBeta.length, currentBeta.length)
           val xiEBetaX = x * eBetaX
           for (i <- 0 to currentBeta.length - 1) {
             for (j <- 0 to currentBeta.length - 1)
@@ -527,14 +547,14 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
    * @param broadcast Broadcast variable containing the sums of each partitions
    * @return Rdd of the sum of sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX across all partitions
    */
-  def computeFinalR(riskSetRdd: RDD[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])],
-                    broadcast: Broadcast[Map[Int, (Double, BDV[Double], breeze.linalg.DenseMatrix[Double])]]): RDD[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])] = {
+  def computeFinalR(riskSetRdd: RDD[(Double, BDV[Double], Double, BDV[Double], BreezeDenseMatrix[Double])],
+                    broadcast: Broadcast[Map[Int, (Double, BDV[Double], BreezeDenseMatrix[Double])]]): RDD[(Double, BDV[Double], Double, BDV[Double], BreezeDenseMatrix[Double])] = {
     riskSetRdd.mapPartitionsWithIndex {
       case (i, iter) =>
         val prevSumEBetaX = broadcast.value.getOrElse(i, throw new IllegalArgumentException("Previous sum e^beta.x not computed."))._1
         val prevSumXEBetaX = broadcast.value.getOrElse(i, throw new IllegalArgumentException("Previous sum x.e^beta.x not computed."))._2
         val prevSumXiXjEBetaX = broadcast.value.getOrElse(i, throw new IllegalArgumentException("Previous sum xi.xj.e^beta.x not computed"))._3
-        val featureBuf = new ArrayBuffer[(Double, BDV[Double], Double, BDV[Double], breeze.linalg.DenseMatrix[Double])]()
+        val featureBuf = new ArrayBuffer[(Double, BDV[Double], Double, BDV[Double], BreezeDenseMatrix[Double])]()
         while (iter.hasNext) {
           val (sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX) = iter.next()
           val updatedSumEBetaX = sumEBetaX + prevSumEBetaX
@@ -578,5 +598,5 @@ case class CoxPhPointWithMetaData(features: Vector,
                                   xDotEBetaX: BDV[Double],
                                   eBetaX: Double,
                                   sumXDotEBetaX: BDV[Double],
-                                  sumXiXjEBetaX: breeze.linalg.DenseMatrix[Double])
+                                  sumXiXjEBetaX: BreezeDenseMatrix[Double])
 

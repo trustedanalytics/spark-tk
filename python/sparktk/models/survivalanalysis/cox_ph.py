@@ -17,8 +17,10 @@
 
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
+from sparktk.arguments import affirm_type, require_type
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
+
 
 
 __all__ = ["train", "load", "SparktkCoxPhModel"]
@@ -39,18 +41,17 @@ def train(frame,
     :param time_column: (str) Column name containing the time of occurence of each observation.
     :param covariate_columns: (Seq[str]) List of column(s) containing the covariates.
     :param censor_column: (str) Column name containing censor value of each observation.
-    :param convergence_tolerance: (str) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+    :param convergence_tolerance: (float) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
     :param max_steps: (int) Parameter for maximum number of steps. Default is 100
     :return: (SparktkCoxPhModel) A trained coxPh model
     """
-    if frame is None:
-        raise ValueError("frame cannot be None")
-    if time_column is None or not time_column :
-        raise ValueError("Time column must not be null or empty")
-    if censor_column is None or not censor_column:
-        raise ValueError("Censor column must not be null or empty")
-    if covariate_columns is None or not covariate_columns:
-        raise ValueError("Covariate columns must not be null or empty")
+    from sparktk.frame.frame import Frame
+    require_type(Frame, frame, "frame cannot be None")
+    require_type.non_empty_str(time_column, "time_column")
+    require_type.non_empty_str(censor_column, "censor_column")
+    require_type(float, convergence_tolerance, "convergence_tolerance should be float")
+    require_type.non_negative_int(max_steps, "max_steps")
+    affirm_type.list_of_str(covariate_columns)
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
@@ -82,60 +83,58 @@ class SparktkCoxPhModel(PropertiesObject):
 
     Example
     -------
-    >>> data = [[18,42, 6, 1], [19, 79, 5, 1], [6, 46, 4, 1],[4, 66, 3, 1], [0, 90, 2, 1], [12, 20, 1, 1], [0, 73, 0, 1]]
-    >>> frame = tc.frame.create(data, schema=[("x1", int), ("x2", int), ("time", int), ("censor", int)])
+        >>> data = [[18,42, 6, 1], [19, 79, 5, 1], [6, 46, 4, 1],[4, 66, 3, 1], [0, 90, 2, 1], [12, 20, 1, 1], [0, 73, 0, 1]]
+        >>> frame = tc.frame.create(data, schema=[("x1", int), ("x2", int), ("time", int), ("censor", int)])
 
-    Consider the following frame with two covariates, a time and a censor column.
+        Consider the following frame with two covariates, a time and a censor column.
 
-    >>> frame.inspect()
-    [#]  x1  x2  time  censor
-    =========================
-    [0]  18  42     6       1
-    [1]  19  79     5       1
-    [2]   6  46     4       1
-    [3]   4  66     3       1
-    [4]   0  90     2       1
-    [5]  12  20     1       1
-    [6]   0  73     0       1
+        >>> frame.inspect()
+        [#]  x1  x2  time  censor
+        =========================
+        [0]  18  42     6       1
+        [1]  19  79     5       1
+        [2]   6  46     4       1
+        [3]   4  66     3       1
+        [4]   0  90     2       1
+        [5]  12  20     1       1
+        [6]   0  73     0       1
 
-    >>> model = tc.models.survivalanalysis.cox_ph.train(frame, "time", ["x1", "x2"], "censor")
-    <progress>
+        >>> model = tc.models.survivalanalysis.cox_ph.train(frame, "time", ["x1", "x2"], "censor")
+        <progress>
 
-    >>> model
-    beta                  = [-0.19214283727219952, -0.00701223703811671]
-    censor_column         = censor
-    convergence_tolerance = 1e-06
-    covariate_columns     = [u'x1', u'x2']
-    max_steps             = 100
-    mean                  = [8.428571428571429, 59.42857142857143]
-    time_column           = time
+        >>> model
+        beta                  = [-0.19214283727219952, -0.00701223703811671]
+        censor_column         = censor
+        convergence_tolerance = 1e-06
+        covariate_columns     = [u'x1', u'x2']
+        max_steps             = 100
+        mean                  = [8.428571428571429, 59.42857142857143]
+        time_column           = time
 
-    >>> predicted_frame = model.predict(frame)
-    <progress>
+        >>> predicted_frame = model.predict(frame)
+        <progress>
 
-    >>> predicted_frame.inspect()
-    [#]  x1  x2  time  censor  hazard_ratio
-    =========================================
-    [0]  18  42     6       1  0.179627832028
-    [1]  19  79     5       1  0.114353154098
-    [2]   6  46     4       1   1.75206822111
-    [3]   4  66     3       1   2.23633388037
-    [4]   0  90     2       1   4.07599759247
-    [5]  12  20     1       1  0.663821540526
-    [6]   0  73     0       1    4.5920362555
+        >>> predicted_frame.inspect()
+        [#]  x1  x2  time  censor  hazard_ratio
+        =========================================
+        [0]  18  42     6       1  0.179627832028
+        [1]  19  79     5       1  0.114353154098
+        [2]   6  46     4       1   1.75206822111
+        [3]   4  66     3       1   2.23633388037
+        [4]   0  90     2       1   4.07599759247
+        [5]  12  20     1       1  0.663821540526
+        [6]   0  73     0       1    4.5920362555
 
-    >>> model.save("sandbox/cox_ph_model")
+        >>> model.save("sandbox/cox_ph_model")
 
-    >>> restored = tc.load("sandbox/cox_ph_model")
+        >>> restored = tc.load("sandbox/cox_ph_model")
 
-    >>> restored.max_steps
-    100
+        >>> restored.max_steps
+        100
 
     The trained model can also be exported to a .mar file, to be used with the scoring engine:
 
         >>> canonical_path = model.export_to_mar("sandbox/coxPhModel.mar")
-
-
     """
 
     def __init__(self, tc, scala_model):
@@ -174,24 +173,24 @@ class SparktkCoxPhModel(PropertiesObject):
 
     @property
     def mean(self):
-        """The number of training steps until termination"""
+        """Mean of each column"""
         return  self._tc.jutils.convert.from_scala_seq(self._scala.mean())
 
     @property
     def beta(self):
-        """The number of training steps until termination"""
+        """Trained beta values for each covariate"""
         return  self._tc.jutils.convert.from_scala_seq(self._scala.beta())
 
     def predict(self, frame, observation_columns=None, comparison_frame=None):
         """
-        Predict values for a frame using a trained Linear Regression model
+        Predict values for a frame using a trained CoxPH model
 
         Parameters
         ----------
 
         :param frame: (Frame) The frame to predict on
-        :param observation_columns: Optional(List[str]) List of column(s) containing the observations
-        :param comparison_frame: Optional(Frame) Frame to compare against
+        :param observation_columns: Optional(List[str]) List of column(s) containing the observations. Default is list of covariate columns
+        :param comparison_frame: Optional(Frame) Frame to compare against. Default is the training frame
         :return: (Frame) returns frame with predicted column added
         """
         observation_columns = self.__columns_to_option(observation_columns)
