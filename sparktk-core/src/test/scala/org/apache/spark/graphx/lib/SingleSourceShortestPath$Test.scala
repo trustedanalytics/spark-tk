@@ -16,6 +16,7 @@
 package org.apache.spark.graphx.lib
 
 import org.apache.spark.graphx._
+import org.apache.spark.graphx.lib.SingleSourceShortestPath.ShortestPathType
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class SingleSourceShortestPath$Test extends TestingSparkContextWordSpec {
@@ -23,7 +24,7 @@ class SingleSourceShortestPath$Test extends TestingSparkContextWordSpec {
   "Shortest paths" should {
 
     "find SPs" in {
-      var results: Graph[(Double, List[VertexId]), Double] = null
+      var results: Graph[ShortestPathType, Double] = null
       // create vertices RDD with ID and Name
       val vertices = Array((1L, ("SFO")), (2L, ("ORD")), (3L, ("DFW")), (4L, ("PDX")), (5L, ("LAX")), (6L, ("LLL")), (7L, ("IAF")))
       val vRDD = sparkContext.parallelize(vertices)
