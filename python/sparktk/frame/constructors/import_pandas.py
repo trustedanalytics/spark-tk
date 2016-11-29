@@ -164,7 +164,6 @@ _pandas_type_to_type_table = {
     "object": str,
     "int64": long,
     "int32": int,
-    "float64": float,
     "float32": float,
     "uint8": int,
 }

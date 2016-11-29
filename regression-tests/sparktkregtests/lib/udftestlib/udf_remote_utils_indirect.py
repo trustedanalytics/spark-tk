@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +15,22 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
-
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-
-sparktkpackage=$MAINDIR/sparktkinstall
+import math
 
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:$MAINDIR/regression-tests/sparktkregtests/lib/udftestlib:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
+# Compute diagonal distance, given orthogonal sides
+def distance(row):
+    return math.sqrt(float(row["num1"]) ** 2 + float(row["num2"]) ** 2)
 
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
 
-echo "spark tk home"
-echo $SPARKTK_HOME
+# Select value from indicated column
+def selector(row):
+    if row["letter"] == 'b':
+        return row["num2"]
+    else:
+        return row["num1"]
 
-py.test --boxed -n48 -v $MAINDIR/regression-tests
+
+def length(mystr):
+    """trivial utility"""
+    return len(mystr)
