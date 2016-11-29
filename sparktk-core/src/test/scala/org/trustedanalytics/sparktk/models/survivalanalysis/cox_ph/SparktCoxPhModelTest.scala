@@ -87,7 +87,6 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
 
       resultArray.length shouldEqual (7)
     }
-
   }
 
   "SparktkCoxPhModel score" should {
