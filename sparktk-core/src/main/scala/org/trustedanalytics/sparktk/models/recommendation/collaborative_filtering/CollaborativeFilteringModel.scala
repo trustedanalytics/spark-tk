@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering
+package org.trustedanalytics.sparktk.models.recommendation.collaborative_filtering
 
 import java.io.{ FileOutputStream, File }
 import java.nio.file.{ Files, Path }
@@ -379,16 +379,16 @@ case class CollaborativeFilteringModel(sourceColumnName: String,
  * @param targetRMSE target RMSE
  * @param rank rank
  */
-case class CollaborativeFilteringMetaData private[collaborativefiltering] (sourceColumnName: String,
-                                                                           destColumnName: String,
-                                                                           weightColumnName: String,
-                                                                           maxSteps: Int,
-                                                                           regularization: Float,
-                                                                           alpha: Double,
-                                                                           numFactors: Int,
-                                                                           useImplicit: Boolean,
-                                                                           numUserBlocks: Int,
-                                                                           numItemBlock: Int,
-                                                                           checkpointIterations: Int,
-                                                                           targetRMSE: Double,
-                                                                           rank: Int) extends Serializable
+case class CollaborativeFilteringMetaData private[recommendation] (sourceColumnName: String,
+                                                                   destColumnName: String,
+                                                                   weightColumnName: String,
+                                                                   maxSteps: Int,
+                                                                   regularization: Float,
+                                                                   alpha: Double,
+                                                                   numFactors: Int,
+                                                                   useImplicit: Boolean,
+                                                                   numUserBlocks: Int,
+                                                                   numItemBlock: Int,
+                                                                   checkpointIterations: Int,
+                                                                   targetRMSE: Double,
+                                                                   rank: Int) extends Serializable
