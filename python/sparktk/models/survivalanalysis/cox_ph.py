@@ -83,6 +83,7 @@ class SparktkCoxPhModel(PropertiesObject):
 
     Example
     -------
+
         >>> data = [[18,42, 6, 1], [19, 79, 5, 1], [6, 46, 4, 1],[4, 66, 3, 1], [0, 90, 2, 1], [12, 20, 1, 1], [0, 73, 0, 1]]
         >>> frame = tc.frame.create(data, schema=[("x1", int), ("x2", int), ("time", int), ("censor", int)])
 
@@ -135,6 +136,12 @@ class SparktkCoxPhModel(PropertiesObject):
     The trained model can also be exported to a .mar file, to be used with the scoring engine:
 
         >>> canonical_path = model.export_to_mar("sandbox/coxPhModel.mar")
+
+    <hide>
+        >>> import os
+        >>> assert(os.path.isfile(canonical_path))
+    </hide>
+
     """
 
     def __init__(self, tc, scala_model):
