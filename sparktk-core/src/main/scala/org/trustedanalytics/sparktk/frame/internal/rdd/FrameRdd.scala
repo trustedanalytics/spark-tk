@@ -394,8 +394,12 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   }
 
   /**
-   * Convert FrameRdd to DataFrame with features of type Vector, time of type double and censor of type double
-   */
+    * Convert FrameRdd to DataFrame with features of type Vector, time of type double and censor of type double
+    * @param featureColumnNames: (Seq[String]) List of covariate column names
+    * @param timeColumn: (String) Name of column containing time
+    * @param censorColumn (String) Name of column containing censor values
+    * @return DataFrame with features, time and censor 
+    */
   def toCoxDataFrame(featureColumnNames: Seq[String], timeColumn: String, censorColumn: String): DataFrame = {
     val rdd: RDD[(MllibDenseVector, Double, Double)] = this.mapRows(row => {
       val features = row.valuesAsDoubleArray(featureColumnNames)

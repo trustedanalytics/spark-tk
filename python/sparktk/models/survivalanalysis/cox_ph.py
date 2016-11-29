@@ -79,15 +79,12 @@ def get_scala_obj(tc):
 
 class SparktkCoxPhModel(PropertiesObject):
     """
-    CoxPh Model
+    A trained CoxPhModel
 
     Example
     -------
-
         >>> data = [[18,42, 6, 1], [19, 79, 5, 1], [6, 46, 4, 1],[4, 66, 3, 1], [0, 90, 2, 1], [12, 20, 1, 1], [0, 73, 0, 1]]
         >>> frame = tc.frame.create(data, schema=[("x1", int), ("x2", int), ("time", int), ("censor", int)])
-
-        Consider the following frame with two covariates, a time and a censor column.
 
         >>> frame.inspect()
         [#]  x1  x2  time  censor
@@ -101,7 +98,6 @@ class SparktkCoxPhModel(PropertiesObject):
         [6]   0  73     0       1
 
         >>> model = tc.models.survivalanalysis.cox_ph.train(frame, "time", ["x1", "x2"], "censor")
-        <progress>
 
         >>> model
         beta                  = [-0.19214283727219952, -0.00701223703811671]
@@ -113,7 +109,6 @@ class SparktkCoxPhModel(PropertiesObject):
         time_column           = time
 
         >>> predicted_frame = model.predict(frame)
-        <progress>
 
         >>> predicted_frame.inspect()
         [#]  x1  x2  time  censor  hazard_ratio
@@ -130,12 +125,12 @@ class SparktkCoxPhModel(PropertiesObject):
 
         >>> restored = tc.load("sandbox/cox_ph_model")
 
-        >>> restored.max_steps
-        100
+        >>> restored.max_steps == 100
+        True
 
     The trained model can also be exported to a .mar file, to be used with the scoring engine:
 
-        >>> canonical_path = model.export_to_mar("sandbox/coxPhModel.mar")
+        >>> canonical_path = model.export_to_mar("sandbox/cox_ph_model.mar")
 
     <hide>
         >>> import os
