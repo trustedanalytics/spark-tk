@@ -20,8 +20,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.arguments import affirm_type, require_type
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
-
-
+import os
 
 __all__ = ["train", "load", "SparktkCoxPhModel"]
 
@@ -51,7 +50,7 @@ def train(frame,
     require_type.non_empty_str(censor_column, "censor_column")
     require_type(float, convergence_tolerance, "convergence_tolerance should be float")
     require_type.non_negative_int(max_steps, "max_steps")
-    affirm_type.list_of_str(covariate_columns)
+    affirm_type.list_of_str(covariate_columns, "covariate_columns")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
@@ -131,11 +130,6 @@ class SparktkCoxPhModel(PropertiesObject):
     The trained model can also be exported to a .mar file, to be used with the scoring engine:
 
         >>> canonical_path = model.export_to_mar("sandbox/cox_ph_model.mar")
-
-    <hide>
-        >>> import os
-        >>> assert(os.path.isfile(canonical_path))
-    </hide>
 
     """
 

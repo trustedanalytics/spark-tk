@@ -236,6 +236,16 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
 
 }
 
+/**
+ * CoxPhMetaData contains metadata of the trained model
+ * @param timeColumn: (str) Column name containing the time of occurence of each observation.
+ * @param covariateColumns: (Seq[str]) List of column(s) containing the covariates.
+ * @param censorColumn: (str) Column name containing censor value of each observation.
+ * @param convergenceTolerance: (float) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+ * @param maxSteps: (int) Parameter for maximum number of steps. Default is 100
+ * @param beta: (List[Double]) List of trained beta values for each covariate
+ * @param mean: (List[Double]) List of means of each covariate column
+ */
 case class CoxPhMetaData(timeColumn: String,
                          covariateColumns: Seq[String],
                          censorColumn: String,
@@ -243,6 +253,16 @@ case class CoxPhMetaData(timeColumn: String,
                          maxSteps: Int,
                          beta: List[Double],
                          mean: List[Double]) extends Serializable
+
+/**
+ * CoxPhTrainArgs contains parameters for train method
+ * @param frame: (Frame) A frame to train the model on
+ * @param timeColumn: (str) Column name containing the time of occurence of each observation.
+ * @param covariateColumns: (Seq[str]) List of column(s) containing the covariates.
+ * @param censorColumn: (str) Column name containing censor value of each observation.
+ * @param convergenceTolerance: (float) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
+ * @param maxSteps: (int) Parameter for maximum number of steps. Default is 100
+ */
 
 case class CoxPhTrainArgs(frame: Frame,
                           timeColumn: String,
