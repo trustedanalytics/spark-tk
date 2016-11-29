@@ -55,7 +55,12 @@ private[regression] trait CoxPhParams extends Params
    */
   final val censorCol: Param[String] = new Param(this, "censorCol", "censor column name")
 
-  /** @group getParam */
+  /**
+   * Method to return censor column
+   * If set, returns the user defined censor column name
+   * Default is "censor"
+   *  @group getParam
+   */
   def getCensorCol: String = $(censorCol)
 
   setDefault(censorCol -> "censor")
@@ -156,14 +161,20 @@ class CoxPh(override val uid: String)
     val costFun = new CoxPhCostFun(coxPhPointRdd)
 
     var previousBeta = BDV.zeros[Double](numFeatures)
-    var previousLoss = 1E-3
+    var previousLoss = scala.Double.NegativeInfinity
     var iterations: Int = 0
     var epsilon: Double = scala.Double.PositiveInfinity
 
     while (iterations < $(maxIter) && (epsilon > $(tol))) {
       val (currentLoss, currentGradient, currentInformationMatrix) = costFun.calculate(previousBeta)
       previousBeta = computeBeta(currentInformationMatrix, currentGradient, previousBeta, iterations)
-      epsilon = math.abs(currentLoss - previousLoss)
+
+      if (previousLoss == scala.Double.PositiveInfinity) {
+        epsilon = math.abs(currentLoss)
+      }
+      else {
+        epsilon = math.abs(currentLoss - previousLoss)
+      }
       previousLoss = currentLoss
       iterations += 1
     }
@@ -375,10 +386,12 @@ private class CoxPhAggregator(parameters: BDV[Double])
     val gradientVector = BDV.zeros[Double](beta.length)
 
     for (i <- 0 to beta.length - 1) {
-      if (data.sumEBetaX != 0.0)
+      try {
         gradientVector(i) = data.features(i) - data.sumXDotEBetaX(i) / data.sumEBetaX
-      else
-        gradientVector(i) = 0.0
+      }
+      catch {
+        case e: MatrixSingularException => throw new MatrixSingularException("Singular Matrix formed, divide by zero error while computing gradient")
+      }
     }
     gradientVector
   }
@@ -456,7 +469,10 @@ private class CoxPhCostFun(coxPhPointRdd: RDD[CoxPhPoint]) {
     val sc = coxPhPointRdd.sparkContext
     val riskSetRdd = riskSet(coxPhPointRdd, currentBeta)
 
-    val rRdd = riskSetRdd.map(x => (x._1, x._4, x._5))
+    val rRdd = riskSetRdd.map {
+      case (sumEBetaX, xEBetaX, eBetaX, sumXEBetaX, sumXiXjEBetaX) =>
+        (sumEBetaX, sumXEBetaX, sumXiXjEBetaX)
+    }
 
     val cumulativeSum = computePartitionSum(rRdd, currentBeta.length)
     val broadCastCumulativeSum = sc.broadcast(cumulativeSum)
@@ -599,4 +615,3 @@ case class CoxPhPointWithMetaData(features: Vector,
                                   eBetaX: Double,
                                   sumXDotEBetaX: BDV[Double],
                                   sumXiXjEBetaX: BreezeDenseMatrix[Double])
-

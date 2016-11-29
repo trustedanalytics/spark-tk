@@ -20,6 +20,7 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
+import org.trustedanalytics.sparktk.TkContext
 
 class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
   val rows: Array[Row] = Array(new GenericRow(Array[Any](18, 42, 6, 1)),
@@ -111,6 +112,30 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
         case prediction: Double => assertAlmostEqual(prediction, hazard_ratio, 0.001)
         case _ => throw new RuntimeException(s"Expected prediction to be a Double but is ${scoreResult(2).getClass.getSimpleName}")
       }
+    }
+  }
+
+  "SparktkCoxPhModel save" should {
+    "save the SparktkCoxPhModel model" in {
+      val rdd = sparkContext.parallelize(rows)
+      val frame = new Frame(rdd, schema)
+      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+
+      model.save(sparkContext, "sandbox/coxph_load_test", overwrite = true)
+      val tc = new TkContext(sparkContext)
+      val restored_model = tc.load("sandbox/coxph_load_test")
+      restored_model shouldBe a[SparktkCoxPhModel]
+    }
+  }
+
+  "SparktkCoxPhModel exportToMar" should {
+    "export the SparktkCoxPhModel model and return model path" in {
+      val rdd = sparkContext.parallelize(rows)
+      val frame = new Frame(rdd, schema)
+      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+
+      val model_path = model.exportToMar(sparkContext, "sandbox/coxph_load_test.mar")
+      model_path shouldBe a[String]
     }
   }
 }
