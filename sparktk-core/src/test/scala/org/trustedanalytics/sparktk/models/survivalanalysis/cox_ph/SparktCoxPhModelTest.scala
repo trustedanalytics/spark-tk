@@ -15,6 +15,7 @@
  */
 package org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph
 
+import org.apache.commons.io.FileUtils
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
@@ -121,10 +122,13 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
       val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
 
-      model.save(sparkContext, "sandbox/coxph_load_test", overwrite = true)
+      val modelpath = "sandbox/coxph_load_test"
+      model.save(sparkContext, modelpath)
       val tc = new TkContext(sparkContext)
-      val restored_model = tc.load("sandbox/coxph_load_test")
+      val restored_model = tc.load(modelpath)
       restored_model shouldBe a[SparktkCoxPhModel]
+      FileUtils.deleteQuietly(new java.io.File(modelpath))
+
     }
   }
 

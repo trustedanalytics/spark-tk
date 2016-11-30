@@ -87,7 +87,6 @@ object SparktkCoxPhModel extends TkSaveableObject {
 
   /**
    * Load method where the work of getting the formatVersion and tkMetadata has already been done
-   *
    * @param sc            active spark context
    * @param path          the source path
    * @param formatVersion the version of the format for the tk metadata that should be recorded.
@@ -111,7 +110,6 @@ object SparktkCoxPhModel extends TkSaveableObject {
 
   /**
    * Load a SparktkCoxPhModel from the given path
-   *
    * @param tc TkContext
    * @param path location
    * @return loaded object
@@ -146,7 +144,6 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
 
   /**
    * Predict values for a frame using a trained Cox proportional hazards model
-   *
    * @param frame The frame to predict on
    * @param observationColumns List of column(s) containing the observations
    * @param comparisonFrame The frame to compare with
@@ -173,7 +170,6 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
   }
   /**
    * Saves this model to a file
-   *
    * @param sc active SparkContext
    * @param path save to path
    * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
@@ -196,6 +192,11 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
     TkSaveLoad.saveTk(sc, path, SparktkCoxPhModel.formatId, formatVersion, tkMetadata)
   }
 
+  /**
+   * Scores the input array against the trained model
+   * @param row: (Array[Any]) Array of input data that needs to be scored
+   * @return hazard ratio score
+   */
   override def score(row: Array[Any]): Array[Any] = {
     require(row != null && row.length > 0, "scoring input row must not be null nor empty")
     val doubleArray = row.map(i => ScoringModelUtils.asDouble(i))
@@ -203,12 +204,16 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
     row :+ hazard_ratio
   }
 
+  /**
+   * Exports the model to the given path on hdfs
+   * @param sc: SparkContext
+   * @param marSavePath: hdfs path where the model needs to be exported
+   * @return hdfs path where the model was exported
+   */
   def exportToMar(sc: SparkContext, marSavePath: String): String = {
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      // The spark linear regression model save will fail, if we don't specify the "overwrite", since the temp
-      // directory has already been created.
       save(sc, tmpDir.toString, overwrite = true)
       ScoringModelUtils.saveToMar(marSavePath, classOf[SparktkCoxPhModel].getName, tmpDir)
     }
@@ -216,6 +221,10 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
     }
   }
+
+  /**
+   * @return Metadata of the current model
+   */
   def modelMetadata(): ModelMetaData = {
     new ModelMetaData("CoxPH Model", classOf[SparktkCoxPhModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
