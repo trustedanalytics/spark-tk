@@ -16,9 +16,9 @@
 #
 
 
-JAVA_PATH=$(find `pwd`/$SOURCE_DIR/ -name "sparktk-core*.zip")
-PIP_PATH=$(find `pwd`/$SOURCE_DIR/python/ -name "sparktk-*.tar.gz")
-LICENSES_PATH=$(find `pwd`/$SOURCE_DIR/python/ -name "sparktk-*.tar.gz")
+JAVA_PATH=$(find $SOURCE_DIR/sparktk-core/ -name "sparktk-core*.zip")
+PIP_PATH=$(find $SOURCE_DIR/python/ -name "sparktk-*.tar.gz")
+LICENSES_PATH=$(find `pwd` -name "licenses*.zip")
 
 echo java_path $JAVA_PATH
 echo pip_path $PIP_PATH
