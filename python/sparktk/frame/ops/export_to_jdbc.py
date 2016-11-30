@@ -75,6 +75,8 @@ def export_to_jdbc(self, connection_url, table_name):
     Sparktk does not come with any JDBC drivers.  A driver compatible with the JDBC data sink must be supplied when
     creating the TkContext instance:
 
+        <skip>
         >>> tc = sparktk.TkContext(pyspark_submit_args='--jars myJDBCDriver.jar')
+        </skip>
     """
     self._scala.exportToJdbc(connection_url, table_name)

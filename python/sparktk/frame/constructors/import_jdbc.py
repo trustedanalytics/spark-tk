@@ -66,8 +66,9 @@ def import_jdbc(connection_url, table_name, tc=TkContext.implicit):
     Sparktk does not come with any JDBC drivers.  A driver compatible with the JDBC data source must be supplied when
     creating the TkContext instance:
 
+        <skip>
         >>> tc = sparktk.TkContext(pyspark_submit_args='--jars myJDBCDriver.jar')
-
+        </skip>
 
     """
     if not isinstance(connection_url, basestring):
