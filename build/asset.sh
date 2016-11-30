@@ -24,6 +24,8 @@ echo java_path $JAVA_PATH
 echo pip_path $PIP_PATH
 echo license_path $LICENSES_PATH
 
+echo $BASE_DIR/asset.sh sparktk-java $JAVA_PATH
 $BASE_DIR/asset.sh sparktk-java $JAVA_PATH
+echo $BASE_DIR/asset.sh sparktk-pip $PIP_PATH
 $BASE_DIR/asset.sh sparktk-pip $PIP_PATH
 #$BASE_DIR/asset.sh licenses $LICENSES_PATH
