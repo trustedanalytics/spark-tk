@@ -24,14 +24,16 @@ def import_orientdb_graph(orient_conf, db_name, db_properties=None, tc=TkContext
 
     Parameters
     ----------
+
     :param orient_conf: (OrientConf) configuration settings for the OrientDB database
     :param db_name: (str) the database name
-    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database
+    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database, for more OrientDB
+                            database properties options. See http://orientdb.com/docs/2.1/Configuration.html
 
     Example
     -------
 
-       >>> v = tc.frame.create([("a", "Alice", 34,"F"),
+        >>> v = tc.frame.create([("a", "Alice", 34,"F"),
         ...     ("b", "Bob", 36,"M"),
         ...     ("c", "Charlie", 30,"M"),
         ...     ("d", "David", 29,"M"),
@@ -72,31 +74,31 @@ def import_orientdb_graph(orient_conf, db_name, db_properties=None, tc=TkContext
 
         >>> imported_gf.graphframe.vertices.show()
 
-+-------+------+---+---+
-|   name|gender| id|age|
-+-------+------+---+---+
-|    Bob|     M|  b| 36|
-|  David|     M|  d| 29|
-|Charlie|     M|  c| 30|
-|  Alice|     F|  a| 34|
-| Esther|     F|  e| 32|
-|  Fanny|     F|  f| 36|
-+-------+------+---+---+
+        +-------+------+---+---+
+        |   name|gender| id|age|
+        +-------+------+---+---+
+        |    Bob|     M|  b| 36|
+        |  David|     M|  d| 29|
+        |Charlie|     M|  c| 30|
+        |  Alice|     F|  a| 34|
+        | Esther|     F|  e| 32|
+        |  Fanny|     F|  f| 36|
+        +-------+------+---+---+
 
         >>> imported_gf.graphframe.edges.show()
 
-+---+------------+---+
-|dst|relationship|src|
-+---+------------+---+
-|  f|      follow|  e|
-|  b|      follow|  c|
-|  c|      follow|  b|
-|  c|      follow|  f|
-|  b|      friend|  a|
-|  a|      friend|  d|
-|  d|      friend|  e|
-|  e|      friend|  a|
-+---+------------+---+
+        +---+------------+---+
+        |dst|relationship|src|
+        +---+------------+---+
+        |  f|      follow|  e|
+        |  b|      follow|  c|
+        |  c|      follow|  b|
+        |  c|      follow|  f|
+        |  b|      friend|  a|
+        |  a|      friend|  d|
+        |  d|      friend|  e|
+        |  e|      friend|  a|
+        +---+------------+---+
 
   </skip>
     """
