@@ -5,7 +5,7 @@ import org.apache.hadoop.io.{BytesWritable, NullWritable}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.Matchers
 import org.tensorflow.example._
-import org.tensorflow.hadoop.io.TFRecordFileOutputFormat
+import org.tensorflow.hadoop.io.{TFRecordFileInputFormat, TFRecordFileOutputFormat}
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class TestProtoBuf extends TestingSparkContextWordSpec with Matchers {
@@ -13,10 +13,7 @@ class TestProtoBuf extends TestingSparkContextWordSpec with Matchers {
   "TestProtoBuf" should {
     "Test creating a TF record for .txt file" in {
       val inputPath = "/home/kvadla/spark-tk/spark-tk/integration-tests/datasets/tap.txt"
-      val outputPath = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output.tfr"
-
-      //val sparkConf = new SparkConf().setAppName("TFRecord Demo")
-      //val sc = new SparkContext(sparkConf)
+      val outputPath = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output12.tfr"
 
       val features = sparkContext.textFile(inputPath).map(line => {
         val text = BytesList.newBuilder().addValue(ByteString.copyFrom(line.getBytes)).build()
@@ -30,6 +27,13 @@ class TestProtoBuf extends TestingSparkContextWordSpec with Matchers {
       })
 
       features.saveAsNewAPIHadoopFile[TFRecordFileOutputFormat](outputPath)
+    }
+
+    "read test tf" in {
+      val path = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output12.tfr"
+      val rdd = sparkContext.newAPIHadoopFile(path, classOf[TFRecordFileInputFormat], classOf[BytesWritable], classOf[NullWritable])
+      rdd
+
     }
   }
 }
