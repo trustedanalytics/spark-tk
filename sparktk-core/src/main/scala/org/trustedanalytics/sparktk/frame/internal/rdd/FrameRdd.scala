@@ -394,6 +394,23 @@ class FrameRdd(val frameSchema: Schema, val prev: RDD[Row])
   }
 
   /**
+   * Convert FrameRdd to DataFrame with features of type Vector, time of type double and censor of type double
+   * @param featureColumnNames: (Seq[String]) List of covariate column names
+   * @param timeColumn: (String) Name of column containing time
+   * @param censorColumn (String) Name of column containing censor values
+   * @return DataFrame with features, time and censor
+   */
+  def toCoxDataFrame(featureColumnNames: Seq[String], timeColumn: String, censorColumn: String): DataFrame = {
+    val rdd: RDD[(MllibDenseVector, Double, Double)] = this.mapRows(row => {
+      val features = row.valuesAsDoubleArray(featureColumnNames)
+      (new MllibDenseVector(features), DataTypes.toDouble(row.value(timeColumn)), DataTypes.toDouble(row.value(censorColumn)))
+    })
+    val rowRdd: RDD[Row] = rdd.map(entry => new GenericRow(Array[Any](entry._1, entry._2, entry._3)))
+    val schema = StructType(Seq(StructField("features", new VectorUDT, true), StructField("time", DoubleType, true), StructField("censor", DoubleType, true)))
+    new SQLContext(this.sparkContext).createDataFrame(rowRdd, schema)
+  }
+
+  /**
    * Convert Vertex or Edge Frames to plain data frames
    */
   def toPlainFrame: FrameRdd = {
