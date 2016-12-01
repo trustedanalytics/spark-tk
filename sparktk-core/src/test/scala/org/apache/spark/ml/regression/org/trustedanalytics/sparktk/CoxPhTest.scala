@@ -29,6 +29,7 @@ import org.trustedanalytics.sparktk.testutils.MatcherUtils._
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
+  val tolerance: Double = 1E-6
 
   val sortedCoxPointArray = Array(new CoxPhPoint(new DenseVector(Array(18d, 42d)), 6d, 1d),
     new CoxPhPoint(new DenseVector(Array(19d, 79d)), 5d, 1d),
@@ -53,7 +54,8 @@ class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
 
   "computeGradientVector" should {
     "compute correct Gradient vector" in {
-      val data = new CoxPhPointWithMetaData(new DenseVector(Array(4d, 66d)), 3d, 1d, 4d, BDV(4d, 66d), 1d, BDV(47d, 233d), new BDM(2, 2, Array(737d, 2797d, 2797d, 14477d)))
+      val data = new CoxPhPointWithMetaData(new DenseVector(Array(4d, 66d)), 3d, 1d, 4d,
+        BDV(4d, 66d), 1d, BDV(47d, 233d), new BDM(2, 2, Array(737d, 2797d, 2797d, 14477d)))
       val estimatedGradientVector = BDV(-7.75, 7.75)
 
       val coxAgg = new CoxPhAggregator(BDV(0.0, 0.0))
@@ -87,14 +89,14 @@ class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
       val coxCostFun = new CoxPhCostFun(coxRdd)
       val (loss, gradient, informationMatrix) = coxCostFun.calculate(currentBeta)
 
-      loss shouldBe estimatedLoss +- 1e-6
+      loss shouldBe estimatedLoss +- tolerance
       gradient.toArray should equalWithTolerance(estimatedGradient.toArray)
       informationMatrix.toArray should equalWithTolerance(estimatedInformationMatrix.toArray)
     }
   }
 
   "coxPh fit" should {
-    "train on mulivariate data" in {
+    "train on multivariate data" in {
       val data = Array((new DenseVector(Array(18d, 42d)), 6d, 1d),
         (new DenseVector(Array(19d, 79d)), 5d, 1d),
         (new DenseVector(Array(6d, 46d)), 4d, 1d),
@@ -132,8 +134,8 @@ class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
       cox.setCensorCol("censor")
       val coxModel: CoxPhModel = cox.fit(univariateDF)
 
-      coxModel.beta(0) shouldBe -0.1787289380664636 +- 1E-4
-      coxModel.meanVector(0) shouldBe 8.428571428571429 +- 1E-4
+      coxModel.beta(0) shouldBe -0.1787289380664636 +- tolerance
+      coxModel.meanVector(0) shouldBe 8.428571428571429 +- tolerance
     }
   }
 
@@ -171,7 +173,7 @@ class CoxPhTest extends TestingSparkContextWordSpec with Matchers {
    * @param actualArray: (Array[CoxPhPointWithMetaData]) Actual ouput of CostFun
    * @param tolerance: (Double) Precision
    */
-  def coxPhPointsEqualWithTolerance(actualArray: Array[CoxPhPointWithMetaData], tolerance: Double = 1E-5) = {
+  def coxPhPointsEqualWithTolerance(actualArray: Array[CoxPhPointWithMetaData], tolerance: Double = 1E-6) = {
     val estimatedCoxMetaDataArray = Array(
       new CoxPhPointWithMetaData(new DenseVector(Array(18d, 42d)), 6d, 1d, 1d, BDV(18d, 42d), 1d, BDV(18d, 42d), new BDM(2, 2, Array(324.0, 756.0, 756.0, 1764.0))),
       new CoxPhPointWithMetaData(new DenseVector(Array(19d, 79d)), 5d, 1d, 2d, BDV(19d, 79d), 1d, BDV(37d, 121d), new BDM(2, 2, Array(685d, 2257d, 2257d, 8005d))),

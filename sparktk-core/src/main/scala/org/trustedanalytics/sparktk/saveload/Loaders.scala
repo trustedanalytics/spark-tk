@@ -35,7 +35,7 @@ import org.trustedanalytics.sparktk.models.timeseries.arx.ArxModel
 import org.trustedanalytics.sparktk.models.timeseries.max.MaxModel
 import org.trustedanalytics.sparktk.models.regression.random_forest_regressor.RandomForestRegressorModel
 import org.trustedanalytics.sparktk.models.regression.linear_regression.LinearRegressionModel
-import org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph.SparktkCoxPhModel
+import org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph.CoxProportionalHazardsModel
 
 object Loaders {
 
@@ -91,7 +91,7 @@ object Loaders {
       RandomForestClassifierModel,
       RandomForestRegressorModel,
       SvmModel,
-      SparktkCoxPhModel)
+      CoxProportionalHazardsModel)
     entries.map(e => e.formatId -> e.loadTkSaveableObject _).toMap
   }
 

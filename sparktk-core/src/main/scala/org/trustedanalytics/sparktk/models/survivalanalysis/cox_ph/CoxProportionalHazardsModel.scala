@@ -20,8 +20,11 @@ import java.nio.file.{ Files, Path }
 import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{ CoxPh, CoxPhModel }
-import org.apache.spark.mllib.linalg.DenseVector
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.mllib.linalg.{ DenseVector, VectorUDT }
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.catalyst.expressions.GenericRow
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
+import org.apache.spark.sql.types.{ DoubleType, StructField, StructType }
 import org.json4s.JsonAST.JValue
 import org.trustedanalytics.scoring.interfaces.{ Field, Model, ModelMetaData }
 import org.trustedanalytics.sparktk.TkContext
@@ -33,7 +36,7 @@ import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableO
 
 import scala.language.implicitConversions
 
-object SparktkCoxPhModel extends TkSaveableObject {
+object CoxProportionalHazardsModel extends TkSaveableObject {
 
   /**
    * Fits Cox hazard function and creates a model for it.
@@ -65,7 +68,8 @@ object SparktkCoxPhModel extends TkSaveableObject {
       maxSteps)
 
     // Use DataFrames to run the coxPh
-    val trainFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toCoxDataFrame(covariateColumns, timeColumn, censorColumn)
+    val rdd: FrameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val trainFrame = toCoxDataFrame(rdd, covariateColumns, timeColumn, censorColumn)
     val cox = new CoxPh()
     cox.setLabelCol("time")
     cox.setFeaturesCol("features")
@@ -74,7 +78,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
     cox.setTol(arguments.convergenceTolerance)
     val coxModel: CoxPhModel = cox.fit(trainFrame)
 
-    SparktkCoxPhModel(coxModel,
+    CoxProportionalHazardsModel(coxModel,
       timeColumn,
       covariateColumns,
       censorColumn,
@@ -83,6 +87,26 @@ object SparktkCoxPhModel extends TkSaveableObject {
       coxModel.beta.toArray.toList,
       coxModel.meanVector.toArray.toList
     )
+  }
+
+  /**
+   * Convert FrameRdd to DataFrame with features of type Vector, time of type double and censor of type double
+   * @param featureColumnNames: (Seq[String]) List of covariate column names
+   * @param timeColumn: (String) Name of column containing time
+   * @param censorColumn (String) Name of column containing censor values
+   * @return DataFrame with features, time and censor
+   */
+  def toCoxDataFrame(frameRDD: FrameRdd, featureColumnNames: Seq[String], timeColumn: String, censorColumn: String): DataFrame = {
+    val rdd: RDD[(DenseVector, Double, Double)] = frameRDD.mapRows(row => {
+      val features = row.valuesAsDoubleArray(featureColumnNames)
+      (new DenseVector(features),
+        DataTypes.toDouble(row.value(timeColumn)),
+        DataTypes.toDouble(row.value(censorColumn)))
+    })
+    val rowRdd: RDD[Row] = rdd.map(entry => new GenericRow(Array[Any](entry._1, entry._2, entry._3)))
+    val schema = StructType(Seq(StructField("features", new VectorUDT, true),
+      StructField("time", DoubleType, true), StructField("censor", DoubleType, true)))
+    new SQLContext(frameRDD.sparkContext).createDataFrame(rowRdd, schema)
   }
 
   /**
@@ -98,7 +122,7 @@ object SparktkCoxPhModel extends TkSaveableObject {
     val coxPhMetadata: CoxPhMetaData = SaveLoad.extractFromJValue[CoxPhMetaData](tkMetadata)
     val sparkModel: CoxPhModel = CoxPhModel.read.load(path)
 
-    SparktkCoxPhModel(sparkModel,
+    CoxProportionalHazardsModel(sparkModel,
       coxPhMetadata.timeColumn,
       coxPhMetadata.covariateColumns,
       coxPhMetadata.censorColumn,
@@ -114,8 +138,8 @@ object SparktkCoxPhModel extends TkSaveableObject {
    * @param path location
    * @return loaded object
    */
-  def load(tc: TkContext, path: String): SparktkCoxPhModel = {
-    tc.load(path).asInstanceOf[SparktkCoxPhModel]
+  def load(tc: TkContext, path: String): CoxProportionalHazardsModel = {
+    tc.load(path).asInstanceOf[CoxProportionalHazardsModel]
   }
 }
 
@@ -130,14 +154,14 @@ object SparktkCoxPhModel extends TkSaveableObject {
  * @param beta: (List[Double]) Trained beta values for each column
  * @param mean: (List[Double]) Mean of each column
  */
-case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
-                                              timeColumn: String,
-                                              covariateColumns: Seq[String],
-                                              censorColumn: String,
-                                              convergenceTolerance: Double,
-                                              maxSteps: Int,
-                                              beta: List[Double],
-                                              mean: List[Double]) extends Serializable with Model {
+case class CoxProportionalHazardsModel private[cox_ph] (sparkModel: CoxPhModel,
+                                                        timeColumn: String,
+                                                        covariateColumns: Seq[String],
+                                                        censorColumn: String,
+                                                        convergenceTolerance: Double,
+                                                        maxSteps: Int,
+                                                        beta: List[Double],
+                                                        mean: List[Double]) extends Serializable with Model {
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
   }
@@ -189,7 +213,7 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
       sparkModel.beta.toArray.toList,
       sparkModel.meanVector.toArray.toList)
 
-    TkSaveLoad.saveTk(sc, path, SparktkCoxPhModel.formatId, formatVersion, tkMetadata)
+    TkSaveLoad.saveTk(sc, path, CoxProportionalHazardsModel.formatId, formatVersion, tkMetadata)
   }
 
   /**
@@ -215,7 +239,7 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString, overwrite = true)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[SparktkCoxPhModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(marSavePath, classOf[CoxProportionalHazardsModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
@@ -226,7 +250,7 @@ case class SparktkCoxPhModel private[cox_ph] (sparkModel: CoxPhModel,
    * @return Metadata of the current model
    */
   def modelMetadata(): ModelMetaData = {
-    new ModelMetaData("CoxPH Model", classOf[SparktkCoxPhModel].getName, classOf[SparkTkModelAdapter].getName, Map())
+    new ModelMetaData("CoxPH Model", classOf[CoxProportionalHazardsModel].getName, classOf[SparkTkModelAdapter].getName, Map())
   }
 
   override def input(): Array[Field] = {

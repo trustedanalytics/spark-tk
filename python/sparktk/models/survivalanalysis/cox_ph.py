@@ -20,9 +20,8 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.arguments import affirm_type, require_type
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
-import os
 
-__all__ = ["train", "load", "SparktkCoxPhModel"]
+__all__ = ["train", "load", "CoxProportionalHazardsModel"]
 
 def train(frame,
           time_column,
@@ -31,7 +30,7 @@ def train(frame,
           convergence_tolerance=1E-6,
           max_steps=100):
     """
-    Creates a SparktkCoxPhModel by training on the given frame
+    Creates a CoxProportionalHazardsModel by training on the given frame
 
     Parameters
     ----------
@@ -42,7 +41,7 @@ def train(frame,
     :param censor_column: (str) Column name containing censor value of each observation.
     :param convergence_tolerance: (float) Parameter for the convergence tolerance for iterative algorithms. Default is 1E-6
     :param max_steps: (int) Parameter for maximum number of steps. Default is 100
-    :return: (SparktkCoxPhModel) A trained coxPh model
+    :return: (CoxProportionalHazardsModel) A trained coxPh model
     """
     from sparktk.frame.frame import Frame
     require_type(Frame, frame, "frame cannot be None")
@@ -62,23 +61,23 @@ def train(frame,
                                    censor_column,
                                    convergence_tolerance,
                                    max_steps)
-    return SparktkCoxPhModel(tc, scala_model)
+    return CoxProportionalHazardsModel(tc, scala_model)
 
 
 def load(path, tc=TkContext.implicit):
-    """load SparktkCoxPhModel from given path"""
+    """load CoxProportionalHazardsModel from given path"""
     TkContext.validate(tc)
-    return tc.load(path, SparktkCoxPhModel)
+    return tc.load(path, CoxProportionalHazardsModel)
 
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph.SparktkCoxPhModel
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.survivalanalysis.cox_ph.CoxProportionalHazardsModel
 
 
-class SparktkCoxPhModel(PropertiesObject):
+class CoxProportionalHazardsModel(PropertiesObject):
     """
-    A trained CoxPhModel
+    A trained CoxProportionalHazardsModel
 
     Example
     -------
@@ -140,7 +139,7 @@ class SparktkCoxPhModel(PropertiesObject):
 
     @staticmethod
     def _from_scala(tc, scala_model):
-        return SparktkCoxPhModel(tc, scala_model)
+        return CoxProportionalHazardsModel(tc, scala_model)
 
     @property
     def covariate_columns(self):

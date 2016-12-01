@@ -23,7 +23,7 @@ import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchem
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.sparktk.TkContext
 
-class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
+class CoxProportionalHazardsModelTest extends TestingSparkContextWordSpec with Matchers {
   val rows: Array[Row] = Array(new GenericRow(Array[Any](18, 42, 6, 1)),
     new GenericRow(Array[Any](19, 79, 5, 1)),
     new GenericRow(Array[Any](6, 46, 4, 1)),
@@ -34,19 +34,19 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
   val schema = new FrameSchema(List(Column("x1", DataTypes.float64), Column("x2", DataTypes.float64),
     Column("time", DataTypes.float64), Column("censor", DataTypes.float64)))
 
-  "SparktkCoxPhModel train" should {
-    "create a SparktkCoxPhModel from training" in {
+  "CoxProportionalHazardsModel train" should {
+    "create a CoxProportionalHazardsModel from training" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
-      model shouldBe a[SparktkCoxPhModel]
+      val model = CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "censor")
+      model shouldBe a[CoxProportionalHazardsModel]
     }
     "throw an IllegalArgumentException for empty covariatesColumn during train" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
 
       intercept[IllegalArgumentException] {
-        SparktkCoxPhModel.train(frame, "time", List(), "censor")
+        CoxProportionalHazardsModel.train(frame, "time", List(), "censor")
       }
     }
 
@@ -55,7 +55,7 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
 
       intercept[IllegalArgumentException] {
-        SparktkCoxPhModel.train(frame, "", List("x1", "x2"), "censor")
+        CoxProportionalHazardsModel.train(frame, "", List("x1", "x2"), "censor")
       }
     }
 
@@ -64,17 +64,17 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
 
       intercept[IllegalArgumentException] {
-        SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "")
+        CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "")
       }
     }
 
   }
 
-  "SparktkCoxPhModel predict" should {
+  "CoxProportionalHazardsModel predict" should {
     "return a predict frame when comparison frame provided" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+      val model = CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "censor")
       val pred_out = model.predict(frame, Some(List("x1", "x2")), Some(frame))
       pred_out shouldBe a[Frame]
     }
@@ -82,7 +82,7 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
     "return a predict frame when comparison frame not provided" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+      val model = CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "censor")
       val predicted_frame = model.predict(frame, None, None)
       predicted_frame shouldBe a[Frame]
       val resultArray = predicted_frame.rdd.collect()
@@ -91,11 +91,11 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
     }
   }
 
-  "SparktkCoxPhModel score" should {
+  "CoxProportionalHazardsModel score" should {
     "return predictions when calling the coxPh model score" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+      val model = CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "censor")
 
       // Test values, just grabbed from the first row the of the training frame
       val x1 = 18
@@ -116,27 +116,27 @@ class SparktCoxPhModelTest extends TestingSparkContextWordSpec with Matchers {
     }
   }
 
-  "SparktkCoxPhModel save" should {
-    "save the SparktkCoxPhModel model" in {
+  "CoxProportionalHazardsModel save" should {
+    "save the CoxProportionalHazardsModel model" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+      val model = CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "censor")
 
       val modelpath = "sandbox/coxph_load_test"
       model.save(sparkContext, modelpath)
       val tc = new TkContext(sparkContext)
       val restored_model = tc.load(modelpath)
-      restored_model shouldBe a[SparktkCoxPhModel]
+      restored_model shouldBe a[CoxProportionalHazardsModel]
       FileUtils.deleteQuietly(new java.io.File(modelpath))
 
     }
   }
 
-  "SparktkCoxPhModel exportToMar" should {
-    "export the SparktkCoxPhModel model and return model path" in {
+  "CoxProportionalHazardsModel exportToMar" should {
+    "export the CoxProportionalHazardsModel model and return model path" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = SparktkCoxPhModel.train(frame, "time", List("x1", "x2"), "censor")
+      val model = CoxProportionalHazardsModel.train(frame, "time", List("x1", "x2"), "censor")
 
       val model_path = model.exportToMar(sparkContext, "sandbox/coxph_load_test.mar")
       model_path shouldBe a[String]

@@ -165,7 +165,7 @@ class CoxPh(override val uid: String)
     val costFun = new CoxPhCostFun(coxPhPointRdd)
 
     var previousBeta = BDV.zeros[Double](numFeatures)
-    var previousLoss = scala.Double.NegativeInfinity
+    var previousLoss = scala.Double.PositiveInfinity
     var iterations: Int = 0
     var epsilon: Double = scala.Double.PositiveInfinity
 
