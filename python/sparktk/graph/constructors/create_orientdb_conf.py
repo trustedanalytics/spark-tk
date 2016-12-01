@@ -38,7 +38,7 @@ def create_orientdb_conf(hostname,
     :param db_password: (str) the database password
     :param root_password: (str) OrientDB server root password
 
-    :return (OrientConf) OrientDB configurations
+    :return (OrientConf) OrientDB connection settings
 
     Example
     -------
