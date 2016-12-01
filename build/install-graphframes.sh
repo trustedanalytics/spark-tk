@@ -15,24 +15,8 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
 
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-
-sparktkpackage=$MAINDIR/sparktkinstall
-
-
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:$MAINDIR/regression-tests/sparktkregtests/lib/udftestlib:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
-
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
-
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n48 -v $MAINDIR/regression-tests
+wget $GRAHPFRAMES -O $BASE_DIR/graphframes.jar
+unzip -o $BASE_DIR/graphframes.jar "graphframes/*" $BASE_DIR/
+ls -la $BASE_DIR/graphframes
+cp -Rv $BASE_DIR/graphframes $PYTHON_ENV_DIR/local/lib/python2.7/site-packages/

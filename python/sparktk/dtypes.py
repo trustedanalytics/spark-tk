@@ -111,6 +111,27 @@ class _Vector(object):
             return array
         return constructor
 
+    @staticmethod
+    def get_atable_formatter(self, num_digits=None, truncate=None):
+        if num_digits:
+            return _Vector.get_inspect_rounder(num_digits)
+
+        def format_vector(v):
+            if v is None:
+                return None
+            return "[%s]" % ", ".join(["None" if np.isnan(f) else str(f) for f in v])
+        return format_vector
+
+    @staticmethod
+    def get_atable_rounder(num_digits):
+        template = "%%.%df" % num_digits
+
+        def format_rounded_vector(v):
+            if v is None:
+                return None
+            return "[%s]" % ", ".join(["None" if np.isnan(f) else (template % f) for f in v])
+        return format_rounded_vector
+
     @property
     def is_complex_type(self):
         return True

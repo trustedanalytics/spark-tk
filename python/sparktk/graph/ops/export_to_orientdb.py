@@ -41,7 +41,8 @@ def export_to_orientdb(self,
     :param vertex_type_column_name: (Optional(str)) column name from the vertex data frame specified to be the vertex type
     :param edge_type_column_name: (Optional(str)) column name from the edge data frame specified to be the edge type
     :param batch_size: (int) batch size for graph ETL to OrientDB database
-    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database
+    :param db_properties: (Optional(dict(str,any))) additional properties for OrientDB database, for more OrientDB
+                            database properties options. See http://orientdb.com/docs/2.1/Configuration.html
 
 
     Example

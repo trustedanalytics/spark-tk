@@ -15,24 +15,17 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
 
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
+JAVA_PATH=$(find $BASE_DIR/$SOURCE_DIR/sparktk-core/ -name "sparktk-core*.zip")
+PIP_PATH=$(find $BASE_DIR/$SOURCE_DIR/python/ -name "sparktk-*.tar.gz")
+LICENSES_PATH=$(find `pwd` -name "licenses*.zip")
 
-sparktkpackage=$MAINDIR/sparktkinstall
+echo java_path $JAVA_PATH
+echo pip_path $PIP_PATH
+echo license_path $LICENSES_PATH
 
-
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:$MAINDIR/regression-tests/sparktkregtests/lib/udftestlib:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
-
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
-
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n48 -v $MAINDIR/regression-tests
+echo $BASE_DIR/asset.sh sparktk-java $JAVA_PATH
+$BASE_DIR/asset.sh sparktk-java $JAVA_PATH
+echo $BASE_DIR/asset.sh sparktk-pip $PIP_PATH
+$BASE_DIR/asset.sh sparktk-pip $PIP_PATH
+#$BASE_DIR/asset.sh licenses $LICENSES_PATH

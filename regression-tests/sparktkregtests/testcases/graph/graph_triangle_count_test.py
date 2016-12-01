@@ -26,7 +26,6 @@ from sparktkregtests.lib import sparktk_test
 
 class TriangleCount(sparktk_test.SparkTKTestCase):
 
-    @unittest.skip("DPNG-11961")
     def test_triangle_counts(self):
         """Build frames and graphs to exercise"""
         super(TriangleCount, self).setUp()
