@@ -84,6 +84,10 @@ private[regression] trait CoxPhParams extends Params
   }
 }
 
+/**
+  *Cox Proportional Hazards Model is a class of survival analysis models
+  * It analyses the effect of covariates (single or multi) on survival
+  */
 class CoxPh(override val uid: String)
     extends Estimator[CoxPhModel] with CoxPhParams
     with DefaultParamsWritable with Logging {
