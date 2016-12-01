@@ -211,7 +211,11 @@ def add_module_element_properties(cls, path, package_name, implicit_kwargs):
 
 def wrap_for_implicit_kwargs(function, implicit_kwargs):
     """possibly wraps the function in a decorator which will implicitly fill in kwargs when called"""
-    logger.debug("wrap_for_implicit_kwargs(function=%s, implicit_kwargs=%s", function.__name__, implicit_kwargs)
+    if not inspect.isfunction(function):
+        logger.debug("wrap_for_implicit_kwargs(function=%s, implicit_kwargs=%s) 'function' arg is not a true function, so it is being returned untouched", function, implicit_kwargs)
+        return function
+
+    logger.debug("wrap_for_implicit_kwargs(function=%s, implicit_kwargs=%s)", function.__name__, implicit_kwargs)
     args, varargs, varkwargs, defaults = inspect.getargspec(function)
     logger.debug("argspec = (args=%s,varargs=%s,varkwargs=%s,defaults=%s)", args, varargs, varkwargs, defaults)
     kwarg_index_value_pairs = [(i, implicit_kwargs[key]) for i, key in enumerate(args)
