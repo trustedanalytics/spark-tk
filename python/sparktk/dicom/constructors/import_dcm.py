@@ -16,6 +16,7 @@
 #
 
 from sparktk.tkcontext import TkContext
+from sparktk.arguments import require_type
 
 
 def import_dcm(dicom_dir_path, min_partitions=2, tc=TkContext.implicit):
@@ -26,7 +27,7 @@ def import_dcm(dicom_dir_path, min_partitions=2, tc=TkContext.implicit):
     ----------
 
     :param dicom_dir_path: (str) Local/HDFS path of the dcm file(s)
-    :param min_partitions: (int) minimun partitions to use for import dcm
+    :param min_partitions: (int) Minimum no.of HDFS partitions to use for import dcm
     :return: (Dicom) returns a dicom object with metadata and pixeldata frames
 
 
@@ -68,12 +69,10 @@ def import_dcm(dicom_dir_path, min_partitions=2, tc=TkContext.implicit):
         </skip>
 
     """
-    if not isinstance(dicom_dir_path, basestring):
-        raise ValueError("dicom_dir_path parameter must be a string, but is {0}.".format(type(dicom_dir_path)))
 
-    if not isinstance(min_partitions, int):
-        raise ValueError("min_partitions parameter must be a integer, but found {0}.".format(type(min_partitions)))
-
+    require_type.non_empty_str(dicom_dir_path, "dicom_dir_path")
+    require_type.non_negative_int(min_partitions, "min_partitions")
+    
     TkContext.validate(tc)
 
     scala_dicom = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDcm(tc.jutils.get_scala_sc(), dicom_dir_path, min_partitions)
