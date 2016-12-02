@@ -16,4 +16,3 @@
 #
 
 from sparktk.models._selection.cross_validate import cross_validate
-
