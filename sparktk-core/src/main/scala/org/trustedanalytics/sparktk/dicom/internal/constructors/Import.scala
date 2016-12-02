@@ -45,37 +45,32 @@ object Import extends Serializable {
    */
   def getPixeldata(byteArray: Array[Byte]): DenseMatrix = {
 
-    try {
-      val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
-      val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
+    val pixeldataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+    val pixeldicomInputStream = new DicomInputStream(pixeldataInputStream)
 
-      //create matrix
-      val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
-      val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
-      val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
-      val iis: ImageInputStream = ImageIO.createImageInputStream(pixeldicomInputStream)
-      readers.setInput(iis, true)
+    //create matrix
+    val iter: Iterator[ImageReader] = ImageIO.getImageReadersByFormatName("DICOM")
+    val readers: DicomImageReader = iter.next.asInstanceOf[DicomImageReader]
+    val param: DicomImageReadParam = readers.getDefaultReadParam.asInstanceOf[DicomImageReadParam]
+    val iis: ImageInputStream = ImageIO.createImageInputStream(pixeldicomInputStream)
+    readers.setInput(iis, true)
 
-      //pixels data raster
-      val raster: Raster = readers.readRaster(0, param)
+    //pixels data raster
+    val raster: Raster = readers.readRaster(0, param)
 
-      val cols = raster.getWidth
-      val rows = raster.getHeight
+    val cols = raster.getWidth
+    val rows = raster.getHeight
 
-      val data = Array.ofDim[Double](cols, rows)
+    val data = Array.ofDim[Double](cols, rows)
 
-      // Reading pixeldata along with x-axis and y-axis(x, y) but storing the data in 2D array as column-major.
-      // Mllib DenseMatrix stores data as column-major.
-      for (x <- 0 until cols) {
-        for (y <- 0 until rows) {
-          data(x)(y) = raster.getSample(x, y, 0)
-        }
+    // Reading pixeldata along with x-axis and y-axis(x, y) but storing the data in 2D array as column-major.
+    // Mllib DenseMatrix stores data as column-major.
+    for (x <- 0 until cols) {
+      for (y <- 0 until rows) {
+        data(x)(y) = raster.getSample(x, y, 0)
       }
-      new DenseMatrix(rows, cols, data.flatten)
     }
-    catch {
-      case e: Exception => DenseMatrix.zeros(2, 2)
-    }
+    new DenseMatrix(rows, cols, data.flatten)
   }
 
   /**
@@ -85,17 +80,12 @@ object Import extends Serializable {
    * @return String Xml Metadata
    */
   def getMetadataXml(byteArray: Array[Byte]): String = {
-    try {
-      val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
-      val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
-      val dcm2xml = new Dcm2Xml()
-      val myOutputStream = new ByteArrayOutputStream()
-      dcm2xml.convert(metadataDicomInputStream, myOutputStream)
-      myOutputStream.toString()
-    }
-    catch {
-      case e: Exception => StringUtils.EMPTY
-    }
+    val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
+    val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
+    val dcm2xml = new Dcm2Xml()
+    val myOutputStream = new ByteArrayOutputStream()
+    dcm2xml.convert(metadataDicomInputStream, myOutputStream)
+    myOutputStream.toString()
   }
 
   /**
@@ -112,24 +102,6 @@ object Import extends Serializable {
   def importDcm(sc: SparkContext, path: String, minPartitions: Int = 2): Dicom = {
 
     val dicomFilesRdd = sc.binaryFiles(path, minPartitions)
-
-    //    val dcmMetadataPixelArrayRDD = dicomFilesRdd.mapPartitions {
-    //
-    //      case iter => for {
-    //
-    //        (filePath, fileData) <- iter
-    //
-    //        // Open PortableDataStream to retrieve the bytes
-    //        fileInputStream = fileData.open()
-    //        byteArray = IOUtils.toByteArray(fileInputStream)
-    //
-    //        //Create the metadata xml
-    //        metadata = getMetadataXml(byteArray)
-    //        //Create a dense matrix for pixel array
-    //        pixeldata = getPixeldata(byteArray)
-    //        //Metadata
-    //      } yield (metadata, pixeldata)
-    //    }.zipWithIndex()
 
     val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {
 
