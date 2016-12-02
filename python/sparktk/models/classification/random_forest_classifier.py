@@ -20,6 +20,8 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
+from sparktk.frame.frame import Frame
+from sparktk.arguments import affirm_type
 import os
 
 __all__ = ["train", "load", "RandomForestClassifierModel"]
@@ -145,7 +147,7 @@ class RandomForestClassifierModel(PropertiesObject):
         [4]      0  44.3117586448  3.3458963222                0
         [5]      0  34.6334526911  3.6429838715                0
 
-        >>> test_metrics = model.test(frame, ['Dim_1','Dim_2'])
+        >>> test_metrics = model.test(frame, "Class", ['Dim_1','Dim_2'])
 
         >>> test_metrics
         accuracy         = 1.0
@@ -193,12 +195,12 @@ class RandomForestClassifierModel(PropertiesObject):
     @property
     def label_column(self):
         """column containing the label used for model training"""
-        return self._scala.labelColumn()
+        return self._scala.labelColumnName()
 
     @property
     def observation_columns(self):
         """observation columns used for model training"""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
 
     @property
     def num_classes(self):
@@ -243,7 +245,7 @@ class RandomForestClassifierModel(PropertiesObject):
         """feature subset category of the trained model"""
         return self._tc.jutils.convert.from_scala_option(self._scala.featureSubsetCategory())
 
-    def predict(self, frame, columns=None):
+    def predict(self, frame, observation_columns=None):
         """
         Predict the labels for a test frame using trained Random Forest Classifier model, and create a new frame
         revision with existing columns and a new predicted label's column.
@@ -258,11 +260,10 @@ class RandomForestClassifierModel(PropertiesObject):
         :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted
                  label for each observation.
         """
-        c = self.__columns_to_option(columns)
-        from sparktk.frame.frame import Frame
-        return Frame(self._tc, self._scala.predict(frame._scala, c))
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns))
+        return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
-    def test(self, frame, columns=None):
+    def test(self, frame, label_column, observation_columns=None):
         """
         Predict test frame labels and return metrics.
 
@@ -270,7 +271,8 @@ class RandomForestClassifierModel(PropertiesObject):
         ----------
 
         :param frame: (Frame) The frame whose labels are to be predicted
-        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
+        :param label_column: (str) Column containing the name of the label
+        :param observation_columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
                        By default, we predict the labels over columns the RandomForest was trained on.
         :return: (ClassificationMetricsValue) Binary classification metrics comprised of:
                 accuracy (double)
@@ -284,8 +286,16 @@ class RandomForestClassifierModel(PropertiesObject):
                 recall (double)
                 The proportion of positive instances that are correctly identified.
         """
-        c = self.__columns_to_option(columns)
-        return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
+        columns_list = self.__get_observation_columns(observation_columns)
+        return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala,
+                                                                     label_column,
+                                                                     self._tc.jutils.convert.to_scala_option_list_string(columns_list)))
+
+    def __get_observation_columns(self, observation_columns):
+        if observation_columns is None:
+            return observation_columns
+        else:
+            return affirm_type.list_of_str(observation_columns, "observation_columns")
 
     def __columns_to_option(self, c):
         if c is not None:

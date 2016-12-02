@@ -46,7 +46,7 @@ object NaiveBayesModel extends TkSaveableObject {
    */
   def train(frame: Frame,
             labelColumn: String,
-            observationColumns: Seq[String],
+            observationColumns: List[String],
             lambdaParameter: Double = 1.0): NaiveBayesModel = {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
@@ -60,7 +60,7 @@ object NaiveBayesModel extends TkSaveableObject {
     naiveBayes.setLambda(lambdaParameter)
 
     val naiveBayesModel = naiveBayes.run(labeledTrainRdd)
-    NaiveBayesModel(naiveBayesModel, labelColumn, observationColumns, lambdaParameter)
+    NaiveBayesModel(naiveBayesModel, observationColumns, labelColumn, lambdaParameter)
   }
 
   def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
@@ -69,7 +69,7 @@ object NaiveBayesModel extends TkSaveableObject {
     val m: NaiveBayesModelTkMetaData = SaveLoad.extractFromJValue[NaiveBayesModelTkMetaData](tkMetadata)
     val sparkModel = SparkNaiveBayesModel.load(sc, path)
 
-    NaiveBayesModel(sparkModel, m.labelColumn, m.observationColumns, m.lambdaParameter)
+    NaiveBayesModel(sparkModel, m.observationColumnNames, m.labelColumnName, m.lambdaParameter)
   }
 
   /**
@@ -86,13 +86,13 @@ object NaiveBayesModel extends TkSaveableObject {
 /**
  * NaiveBayesModel
  * @param sparkModel Trained MLLib's Naive Bayes model
- * @param labelColumn Label column for trained model
- * @param observationColumns Handle to the observation columns of the data frame
+ * @param observationColumnNames Handle to the observation columns of the data frame
+ * @param labelColumnName Label column for trained model
  * @param lambdaParameter Smoothing parameter used during model training
  */
 case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesModel,
-                                                 labelColumn: String,
-                                                 observationColumns: Seq[String],
+                                                 observationColumnNames: List[String],
+                                                 labelColumnName: String,
                                                  lambdaParameter: Double) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
@@ -102,17 +102,17 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   /**
    * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
-   * @param columns Column(s) containing the observations whose labels are to be predicted.
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
    *                By default, we predict the labels over columns the NaiveBayesModel was trained on
    * @return New frame containing the original frame's columns and a column with the predicted label
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
-    if (columns.isDefined) {
-      require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and predict should be same")
     }
 
-    val naiveBayesColumns = columns.getOrElse(observationColumns)
+    val naiveBayesColumns = observationColumns.getOrElse(observationColumnNames)
     val predictMapper: RowWrapper => Row = row => {
       val point = row.toDenseVector(naiveBayesColumns)
       val prediction = sparkModel.predict(point)
@@ -129,16 +129,17 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    * Get the predictions for observations in a test frame
    *
    * @param frame Frame to test the NaiveBayes model
-   * @param columns Column(s) containing the observations whose labels are to be predicted.
+   * @param labelColumn Name of the column containing the true labels
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
    *                By default, we predict the labels over columns the NaiveBayesModel
    * @return ClassificationMetricValue describing the test metrics
    */
-  def test(frame: Frame, columns: Option[List[String]]): ClassificationMetricValue = {
+  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]] = None): ClassificationMetricValue = {
 
-    if (columns.isDefined) {
-      require(columns.get.length == observationColumns.length, "Number of columns for train and test should be same")
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and test should be same")
     }
-    val naiveBayesColumns = columns.getOrElse(observationColumns)
+    val naiveBayesColumns = observationColumns.getOrElse(observationColumnNames)
 
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
@@ -161,7 +162,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
-    val tkMetadata = NaiveBayesModelTkMetaData(labelColumn, observationColumns, lambdaParameter)
+    val tkMetadata = NaiveBayesModelTkMetaData(observationColumnNames, labelColumnName, lambdaParameter)
     TkSaveLoad.saveTk(sc, path, NaiveBayesModel.formatId, formatVersion, tkMetadata)
   }
 
@@ -183,7 +184,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    */
   def input(): Array[Field] = {
     var input = Array[Field]()
-    observationColumns.foreach { name =>
+    observationColumnNames.foreach { name =>
       input = input :+ Field(name, "Double")
     }
     input
@@ -226,8 +227,10 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
 
 /**
  * TK Metadata that will be stored as part of the model
- * @param labelColumn Label column for trained model
- * @param observationColumns Handle to the observation columns of the data frame
+ * @param observationColumnNames Handle to the observation columns of the data frame
+ * @param labelColumnName Label column for trained model
  * @param lambdaParameter Smoothing parameter used during model training
  */
-case class NaiveBayesModelTkMetaData(labelColumn: String, observationColumns: Seq[String], lambdaParameter: Double) extends Serializable
+case class NaiveBayesModelTkMetaData(observationColumnNames: List[String],
+                                     labelColumnName: String,
+                                     lambdaParameter: Double) extends Serializable

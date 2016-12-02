@@ -20,7 +20,7 @@ from sparktk.models.logistic_regression_summary_table import LogisticRegressionS
 from sparktk.loggers import log_load
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
-
+from sparktk.arguments import affirm_type
 
 log_load(__name__)
 del log_load
@@ -100,7 +100,7 @@ def train(frame,
     if isinstance(observation_columns, basestring):
         observation_columns = [observation_columns]
 
-    scala_observation_columns = tc.jutils.convert.to_scala_vector_string(observation_columns)
+    scala_observation_columns = tc.jutils.convert.to_scala_list_string(observation_columns)
     scala_frequency_column = tc.jutils.convert.to_scala_option(frequency_column)
 
     if not isinstance(compute_covariance, bool):
@@ -270,12 +270,12 @@ class LogisticRegressionModel(PropertiesObject):
     @property
     def observation_columns(self):
         """Column(s) containing the observations."""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
 
     @property
     def label_column(self):
         """Column name containing the label for each observation."""
-        return self._scala.labelColumn()
+        return self._scala.labelColumnName()
 
     @property
     def frequency_column(self):
@@ -361,7 +361,7 @@ class LogisticRegressionModel(PropertiesObject):
         """Logistic regression summary table"""
         return LogisticRegressionSummaryTable(self._tc, self._scala.trainingSummary())
 
-    def predict(self, frame, observation_columns_predict):
+    def predict(self, frame, observation_columns=None):
         """
         Predict labels for data points using trained logistic regression model.
 
@@ -373,11 +373,11 @@ class LogisticRegressionModel(PropertiesObject):
 
         :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
                               over which the model is trained.
-        :param observation_columns_predict: (None or list[str]) Column(s) containing the observations whose labels are
+        :param observation_columns: (None or list[str]) Column(s) containing the observations whose labels are
                                             to be predicted. Default is the labels the model was trained on.
         :return: (Frame) Frame containing the original frame's columns and a column with the predicted label.
         """
-        columns_option = self._tc.jutils.convert.to_scala_option_list_string(observation_columns_predict)
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns))
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
@@ -395,12 +395,18 @@ class LogisticRegressionModel(PropertiesObject):
                                         trained on.
         :return: (ClassificationMetricsValue) Object with binary classification metrics
         """
-        from sparktk.arguments import affirm_type
-        observation_columns = affirm_type.list_of_str(observation_columns, "observation_columns")
+        columns_list = self.__get_observation_columns(observation_columns)
         scala_classification_metrics_object = self._scala.test(frame._scala,
                                                                label_column,
-                                                               self._tc.jutils.convert.to_scala_option_list_string(observation_columns))
+                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list))
         return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
+
+    def __get_observation_columns(self, observation_columns):
+        if observation_columns is None:
+            return observation_columns
+        else:
+            return affirm_type.list_of_str(observation_columns, "observation_columns")
+
 
     def save(self, path):
         """

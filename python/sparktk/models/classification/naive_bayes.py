@@ -20,6 +20,7 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
+from sparktk.arguments import affirm_type
 
 __all__ = ["train", "load", "NaiveBayesModel"]
 
@@ -108,7 +109,7 @@ class NaiveBayesModel(PropertiesObject):
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
 
-        >>> metrics = model.test(frame)
+        >>> metrics = model.test(frame, "predicted_class", ["Dim_1", "Dim_2"])
 
         >>> metrics.precision
         1.0
@@ -147,18 +148,15 @@ class NaiveBayesModel(PropertiesObject):
 
     @property
     def label_column(self):
-        return self._scala.labelColumn()
+        return self._scala.labelColumnName()
 
     @property
     def observation_columns(self):
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
 
     @property
     def lambda_parameter(self):
         return self._scala.lambdaParameter()
-
-
-
 
 
     def predict(self, future_periods = 0, ts = None):
@@ -187,10 +185,7 @@ class NaiveBayesModel(PropertiesObject):
         return list(self._tc.jutils.convert.from_scala_seq(self._scala.predict(future_periods, ts_predict_values)))
 
 
-
-
-
-    def predict(self, frame, columns=None):
+    def predict(self, frame, observation_columns=None):
         """
         Predicts the labels for the observation columns in the given input frame. Creates a new frame
         with the existing columns and a new predicted column.
@@ -202,13 +197,23 @@ class NaiveBayesModel(PropertiesObject):
         :param c: (List[str]) Names of the observation columns.
         :return: (Frame) A new frame containing the original frame's columns and a prediction column
         """
-        c = self.__columns_to_option(columns)
+        c = self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns))
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, c))
 
-    def test(self, frame, columns=None):
-        c = self.__columns_to_option(columns)
-        return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
+    def test(self, frame, label_column, observation_columns=None):
+        """test the frame given the trained model"""
+        columns_list = self.__get_observation_columns(observation_columns)
+        scala_classification_metrics_object = self._scala.test(frame._scala,
+                                                               label_column,
+                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list))
+        return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
+
+    def __get_observation_columns(self, observation_columns):
+        if observation_columns is None:
+            return observation_columns
+        else:
+            return affirm_type.list_of_str(observation_columns, "observation_columns")
 
     def __columns_to_option(self, c):
         if c is not None:

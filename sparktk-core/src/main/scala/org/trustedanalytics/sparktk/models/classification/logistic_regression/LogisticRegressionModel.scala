@@ -302,18 +302,18 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * existing columns and a new predicted label's column.
    *
    * @param frame                     A frame whose labels are to be predicted. By default, predict is run on the same columns over which the model is trained.
-   * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
    * @return Frame containing the original frame's columns and a column with the predicted label.
    */
-  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]]): Frame = {
     require(frame != null, "frame is required")
 
     //Running MLLib
-    if (observationColumnsPredict.isDefined) {
-      require(observationColumnNames.length == observationColumnsPredict.get.length,
+    if (observationColumns.isDefined) {
+      require(observationColumnNames.length == observationColumns.get.length,
         "Number of columns for train and predict should be same")
     }
-    val logRegColumns = observationColumnsPredict.getOrElse(observationColumnNames)
+    val logRegColumns = observationColumns.getOrElse(observationColumnNames)
 
     //predicting a label for the observation columns
     val predictColumn = Column(frame.schema.getNewColumnName("predicted_label"), DataTypes.int32)
@@ -387,7 +387,7 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    *         The proportion of positive instances that are correctly identified.
    * //
    */
-  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]]): ClassificationMetricValue = {
+  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]] = None): ClassificationMetricValue = {
     if (observationColumns.isDefined) {
       require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and test should be same")
     }

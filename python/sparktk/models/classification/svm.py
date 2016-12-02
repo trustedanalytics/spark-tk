@@ -20,6 +20,8 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
+from sparktk.frame.frame import Frame
+from sparktk.arguments import affirm_type
 
 __all__ = ["train", "load", "SvmModel"]
 
@@ -64,9 +66,10 @@ def train(frame,
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
+    obs_columns = affirm_type.list_of_str(observation_columns, "observation_columns")
     scala_model = _scala_obj.train(frame._scala,
                                    label_column,
-                                   tc.jutils.convert.to_scala_list_string(observation_columns),
+                                   tc.jutils.convert.to_scala_list_string(obs_columns),
                                    intercept,
                                    num_iterations,
                                    step_size,
@@ -138,7 +141,7 @@ class SvmModel(PropertiesObject):
         [9]   48.0  0                    0
 
 
-        >>> test_metrics = model.test(predicted_frame)
+        >>> test_metrics = model.test(predicted_frame, "label", ["data"])
 
         >>> test_metrics
         accuracy         = 1.0
@@ -201,12 +204,12 @@ class SvmModel(PropertiesObject):
     @property
     def label_column(self):
         """column containing the label used during model training"""
-        return self._scala.labelColumn()
+        return self._scala.labelColumnName()
 
     @property
     def observation_columns(self):
         """columns containing the observation values used during model training"""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
 
     @property
     def intercept(self):
@@ -238,26 +241,34 @@ class SvmModel(PropertiesObject):
         """minimum batch fraction used to train the model"""
         return self._scala.miniBatchFraction()
 
-    def predict(self, frame, columns=None):
+    def predict(self, frame, observation_columns=None):
         """
-       Predicts the labels for the observation columns in the given input frame. Creates a new frame
-       with the existing columns and a new predicted column.
+        Predicts the labels for the observation columns in the given input frame. Creates a new frame
+        with the existing columns and a new predicted column.
 
-       Parameters
+        Parameters
        ----------
 
-       :param frame: (Frame) Frame used for predicting the values
-       :param c: (List[str]) Names of the observation columns.
-       :return: (Frame) A new frame containing the original frame's columns and a prediction column
-       """
-        c = self.__columns_to_option(columns)
-        from sparktk.frame.frame import Frame
-        return Frame(self._tc, self._scala.predict(frame._scala, c))
+        :param frame: (Frame) Frame used for predicting the values
+        :param observation_columns: (List[str]) Names of the observation columns.
+        :return: (Frame) A new frame containing the original frame's columns and a prediction column
+        """
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns))
 
-    def test(self, frame, columns=None):
+        return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
+
+    def test(self, frame, label_column, observation_columns=None):
         """test the frame given the trained model"""
-        c = self.__columns_to_option(columns)
-        return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
+
+        scala_classification_metrics_object = self._scala.test(frame._scala, label_column,
+                self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns)))
+        return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
+
+    def __get_observation_columns(self, observation_columns):
+        if observation_columns is None:
+            return observation_columns
+        else:
+            return affirm_type.list_of_str(observation_columns, "observation_columns")
 
     def __columns_to_option(self, c):
         if c is not None:
