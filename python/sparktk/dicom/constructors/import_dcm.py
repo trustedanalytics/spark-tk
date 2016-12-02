@@ -72,7 +72,7 @@ def import_dcm(dicom_dir_path, min_partitions=2, tc=TkContext.implicit):
 
     require_type.non_empty_str(dicom_dir_path, "dicom_dir_path")
     require_type.non_negative_int(min_partitions, "min_partitions")
-    
+
     TkContext.validate(tc)
 
     scala_dicom = tc.sc._jvm.org.trustedanalytics.sparktk.dicom.internal.constructors.Import.importDcm(tc.jutils.get_scala_sc(), dicom_dir_path, min_partitions)
