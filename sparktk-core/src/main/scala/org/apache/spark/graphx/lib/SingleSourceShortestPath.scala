@@ -57,6 +57,10 @@ object SingleSourceShortestPath {
                             targets: Option[Seq[VertexId]] = None,
                             maxPathLength: Option[Double] = None): Graph[PathCalculation, Double] = {
 
+    require(srcVertexId != None, "Source vertex ID is required to calculate the single source shortest path")
+    if (targets.isDefined) {
+      require(!targets.get.contains(srcVertexId), s"The vertex ID $srcVertexId cannot be a source vertex and a target vertex at the same time")
+    }
     /**
      * prepares the message to be used in the next iteration (super step)
      *
@@ -65,7 +69,8 @@ object SingleSourceShortestPath {
      */
     def sendMessage(edge: EdgeTriplet[PathCalculation, Double]): Iterator[(VertexId, PathCalculation)] = {
       val (newShortestPath, weight) = updateShortestPath(edge)
-      if ((maxPathLength.isDefined && edge.srcAttr.cost >= maxPathLength.get) || (targets.isDefined && targets.get.contains(edge.srcId)) ||
+      if ((maxPathLength.isDefined && edge.srcAttr.cost >= maxPathLength.get) ||
+        (targets.isDefined && targets.get.contains(edge.srcId)) ||
         (edge.srcAttr.cost > edge.dstAttr.cost - weight)) {
         Iterator.empty
       }
@@ -76,7 +81,11 @@ object SingleSourceShortestPath {
 
     //Initial graph
     val ShortestPathGraph = graph.mapVertices((id, _) => {
-      if (id == srcVertexId) PathCalculation(0.0, List[VertexId](srcVertexId)) else PathCalculation(Double.PositiveInfinity, List[VertexId]())
+      if (id == srcVertexId){
+        PathCalculation(0.0, List[VertexId](srcVertexId))
+      } else {
+        PathCalculation(Double.PositiveInfinity, List[VertexId]())
+      }
     }).mapEdges(e => getEdgeWeight match {
       case Some(func) => func(e.attr)
       case _ => 1.0
@@ -84,19 +93,30 @@ object SingleSourceShortestPath {
 
     val initialMessage = PathCalculation(Double.PositiveInfinity, List[VertexId]())
 
-    Pregel(ShortestPathGraph, initialMessage, Int.MaxValue, EdgeDirection.Out)(
+    val ssspGraph = Pregel(ShortestPathGraph, initialMessage, Int.MaxValue, EdgeDirection.Out)(
       // vertex program
-      (id, oldShortestPath, newShortestPath) => if (oldShortestPath.cost < newShortestPath.cost) oldShortestPath else newShortestPath,
+      (id, oldShortestPath, newShortestPath) => {if(oldShortestPath.cost < newShortestPath.cost)
+                                                  oldShortestPath
+                                                else
+                                                  newShortestPath},
       // send message
       sendMessage,
       // merge message
       (a: PathCalculation, b: PathCalculation) => if (a.cost < b.cost) a else b)
+    val finalGraph: Graph[PathCalculation, Double] = if (targets.isDefined) {
+      //ssspGraph.filter()
+      ssspGraph
+    }else{
+      ssspGraph
+    }
+    finalGraph
   }
 }
 
 /**
  * The single source shortest path attribute to be stored at the shortest path graph vertices
- * @param cost the shortest path cost/distance
+  *
+  * @param cost the shortest path cost/distance
  * @param path the shortest path
  */
 case class PathCalculation(cost: Double, path: List[VertexId])
