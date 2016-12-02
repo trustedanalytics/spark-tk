@@ -192,10 +192,7 @@ def set_env_for_sparktk(spark_home=None,
 
     if debug:
         print "Adding args for remote java debugger"
-        try:
-            address = int(debug)
-        except:
-            address = 5005  # default
+        address = debug if isinstance(debug, int) else 5005  # default
         details = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address
         set_env('SPARK_JAVA_OPTS', details)
 
