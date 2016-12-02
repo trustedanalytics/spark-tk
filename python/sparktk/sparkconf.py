@@ -20,7 +20,6 @@
 import os
 import shutil
 import atexit
-import glob2
 from pyspark import SparkContext, SparkConf
 from zip import zip_sparktk
 from arguments import require_type
@@ -84,6 +83,7 @@ def get_spark_dirs():
     except KeyError:
         raise RuntimeError("Missing value for environment variable SPARK_HOME.")
 
+    import glob2
     spark_assembly_search = glob2.glob(os.path.join(spark_home,SPARK_ASSEMBLY_SEARCH))
     if len(spark_assembly_search) > 0:
         spark_assembly = os.path.dirname(spark_assembly_search[0])
@@ -192,10 +192,7 @@ def set_env_for_sparktk(spark_home=None,
 
     if debug:
         print "Adding args for remote java debugger"
-        try:
-            address = int(debug)
-        except:
-            address = 5005  # default
+        address = debug if isinstance(debug, int) else 5005  # default
         details = '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=%s' % address
         set_env('SPARK_JAVA_OPTS', details)
 

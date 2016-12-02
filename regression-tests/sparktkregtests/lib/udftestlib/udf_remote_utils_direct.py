@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +15,22 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
-
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
-
-sparktkpackage=$MAINDIR/sparktkinstall
+import udf_remote_utils_indirect
 
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:$MAINDIR/regression-tests/sparktkregtests/lib/udftestlib:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
+def length(my_str):
+    return udf_remote_utils_indirect.length(my_str)
 
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
 
-echo "spark tk home"
-echo $SPARKTK_HOME
+def row_build(row):
+    return length(row.letter)
 
-py.test --boxed -n48 -v $MAINDIR/regression-tests
+
+def add_select_col(frame):
+
+    import udf_remote_utils_indirect
+
+    # When the interface is done, this will append utils_indirect.
+    # ia.udf.install(['udf_remote_utils_indirect.py'])
+    frame.add_columns(
+        udf_remote_utils_indirect.selector, ('other_column', int))

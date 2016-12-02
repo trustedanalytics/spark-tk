@@ -118,7 +118,7 @@ class _RequireType(object):
 
     def non_negative_int(self, value, name, extra_msg=None):
         if not isinstance(value, int):
-            raise type_error(int, value, name, extra_msg)
+            raise type_error(int, type(value), name, extra_msg)
         if value < 0:
             raise value_error("non-negative integer", value, name, extra_msg)
 

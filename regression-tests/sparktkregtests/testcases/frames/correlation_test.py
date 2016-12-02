@@ -19,6 +19,7 @@
 import unittest
 import numpy
 from sparktkregtests.lib import sparktk_test
+import math
 
 
 class CorrelationTest(sparktk_test.SparkTKTestCase):
@@ -28,6 +29,7 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
         super(CorrelationTest, self).setUp()
         data_in = self.get_file("covariance_correlation.csv")
         self.base_frame = self.context.frame.import_csv(data_in)
+        self.count = self.base_frame.count()
 
     def test_correl(self):
         """Test correlation between 2 columns"""
@@ -39,20 +41,21 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
 
         self.assertAlmostEqual(correl_0_2, float(numpy_result[0][1]))
 
-    @unittest.skip("Correlation matrix produces value different than numpy correl")
     def test_correl_matrix(self):
         """Verify correlation matrix on all columns"""
-        correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names)
-        numpy_correl = list(numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count())),
-                                              rowvar=False))
-
-        # convert to lists for ease of comparison
-        correl_flat = list(numpy.array(correl_matrix.take(correl_matrix.count())).flat)
-        numpy_correl = list(numpy.array(numpy_correl).flat)
+        correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names).take(self.count)
+        numpy_correl = numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count())),
+                                              rowvar=False)
 
         # compare the correl matrix values with the expected results
-        for correl_value, ref_value in zip(correl_flat, numpy_correl):
-            self.assertAlmostEqual(correl_value, ref_value, 5)
+        for i in range(0, len(correl_matrix)):
+            for j in range(0, len(correl_matrix[0])):
+                if i == j:
+                    self.assertEqual(correl_matrix[i][j], 1)
+                elif numpy_correl[i][j] is numpy.ma.masked:
+                    self.assertTrue(math.isnan(correl_matrix[i][j]))
+                else:
+                    self.assertAlmostEqual(correl_matrix[i][j], numpy_correl[i][j])
 
 
 if __name__ == "__main__":
