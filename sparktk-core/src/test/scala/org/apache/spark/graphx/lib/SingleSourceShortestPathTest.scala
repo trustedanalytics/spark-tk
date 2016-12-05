@@ -84,11 +84,11 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
 
     "calculate the single source shortest path with target nodes" in {
       var singleSourceShotestPathGraph: Graph[PathCalculation, Double] = null
-      singleSourceShotestPathGraph = SingleSourceShortestPath.run(graph, 1, None, Some(Seq(7, 3, 4)), None)
+      singleSourceShotestPathGraph = SingleSourceShortestPath.run(graph, 1, None, Some(Seq(2, 3, 4)), None)
       singleSourceShotestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2.0, List(1, 2, 4))),
         (1, PathCalculation(0.0, List(1))),
         (3, PathCalculation(2.0, List(1, 2, 3))),
-        (7, PathCalculation(1.0, List(1, 7))))
+        (2, PathCalculation(1.0, List(1, 2))))
     }
   }
 
