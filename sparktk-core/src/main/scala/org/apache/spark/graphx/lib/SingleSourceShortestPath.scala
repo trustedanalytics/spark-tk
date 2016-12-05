@@ -57,7 +57,7 @@ object SingleSourceShortestPath {
                             targets: Option[Seq[VertexId]] = None,
                             maxPathLength: Option[Double] = None): Graph[PathCalculation, Double] = {
 
-    require(srcVertexId != None, "Source vertex ID is required to calculate the single source shortest path")
+    require(srcVertexId.toString != null, "Source vertex ID is required to calculate the single source shortest path")
     if (targets.isDefined) {
       require(!targets.get.contains(srcVertexId), s"The vertex ID $srcVertexId cannot be a source vertex and a target vertex at the same time")
     }
@@ -81,9 +81,10 @@ object SingleSourceShortestPath {
 
     //Initial graph
     val ShortestPathGraph = graph.mapVertices((id, _) => {
-      if (id == srcVertexId){
+      if (id == srcVertexId) {
         PathCalculation(0.0, List[VertexId](srcVertexId))
-      } else {
+      }
+      else {
         PathCalculation(Double.PositiveInfinity, List[VertexId]())
       }
     }).mapEdges(e => getEdgeWeight match {
@@ -95,18 +96,21 @@ object SingleSourceShortestPath {
 
     val ssspGraph = Pregel(ShortestPathGraph, initialMessage, Int.MaxValue, EdgeDirection.Out)(
       // vertex program
-      (id, oldShortestPath, newShortestPath) => {if(oldShortestPath.cost < newShortestPath.cost)
-                                                  oldShortestPath
-                                                else
-                                                  newShortestPath},
+      (id, oldShortestPath, newShortestPath) => {
+        if (oldShortestPath.cost < newShortestPath.cost)
+          oldShortestPath
+        else
+          newShortestPath
+      },
       // send message
       sendMessage,
       // merge message
       (a: PathCalculation, b: PathCalculation) => if (a.cost < b.cost) a else b)
     // filter out the single source shortest path graph based on the given target nodes
     val finalGraph: Graph[PathCalculation, Double] = if (targets.isDefined) {
-      ssspGraph.subgraph(vpred = (id,shoretestPath) => targets.get.contains(id) || srcVertexId == id)
-    }else{
+      ssspGraph.subgraph(vpred = (id, shoretestPath) => targets.get.contains(id) || srcVertexId == id)
+    }
+    else {
       ssspGraph
     }
     finalGraph
@@ -115,8 +119,8 @@ object SingleSourceShortestPath {
 
 /**
  * The single source shortest path attribute to be stored at the shortest path graph vertices
-  *
-  * @param cost the shortest path cost/distance
+ *
+ * @param cost the shortest path cost/distance
  * @param path the shortest path
  */
 case class PathCalculation(cost: Double, path: List[VertexId])
