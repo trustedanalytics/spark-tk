@@ -103,9 +103,9 @@ object SingleSourceShortestPath {
       sendMessage,
       // merge message
       (a: PathCalculation, b: PathCalculation) => if (a.cost < b.cost) a else b)
+    // filter out the single source shortest path graph based on the given target nodes
     val finalGraph: Graph[PathCalculation, Double] = if (targets.isDefined) {
-      //ssspGraph.filter()
-      ssspGraph
+      ssspGraph.subgraph(vpred = (id,shoretestPath) => targets.get.contains(id) || srcVertexId == id)
     }else{
       ssspGraph
     }
