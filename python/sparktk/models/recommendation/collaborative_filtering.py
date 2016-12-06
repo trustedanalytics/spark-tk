@@ -102,7 +102,7 @@ def load(path, tc=TkContext.implicit):
 
 def get_scala_obj(tc):
     """Gets reference to the scala object"""
-    return tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering.CollaborativeFilteringModel
+    return tc.sc._jvm.org.trustedanalytics.sparktk.models.recommendation.collaborative_filtering.CollaborativeFilteringModel
 
 
 def scala_collaborative_filtering_recommend_return_to_python(self, recommend_return):
@@ -111,7 +111,7 @@ def scala_collaborative_filtering_recommend_return_to_python(self, recommend_ret
     :param recommend_return: scala recommend return result
     :return: return python list of tuples('user', 'product', 'rating')
     """
-    scala_list_return = self._tc.sc._jvm.org.trustedanalytics.sparktk.models.collaborativefiltering.CollaborativeFilteringModel.scalaCollaborativeFilteringRecommendReturnToPython(
+    scala_list_return = self._tc.sc._jvm.org.trustedanalytics.sparktk.models.recommendation.collaborative_filtering.CollaborativeFilteringModel.scalaCollaborativeFilteringRecommendReturnToPython(
             recommend_return)
     python_list = [RecommendReturnTuple(user=recommend_list[0], product=recommend_list[1], rating=recommend_list[2])
                    for recommend_list in scala_list_return]
@@ -144,7 +144,7 @@ class CollaborativeFilteringModel(PropertiesObject):
         >>> predict_frame = tc.frame.create(rows_predict, schema_predict)
         <progress>
 
-        >>> model = tc.models.collaborativefiltering.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
+        >>> model = tc.models.recommendation.collaborative_filtering.train(frame, 'source', 'dest', 'weight')
         <progress>
 
         >>> predict_result = model.predict(predict_frame, 'source', 'dest')

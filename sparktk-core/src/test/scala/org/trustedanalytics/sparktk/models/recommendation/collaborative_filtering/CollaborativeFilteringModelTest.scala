@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.trustedanalytics.sparktk.models.collaborativefiltering.collaborative_filtering
+package org.trustedanalytics.sparktk.models.recommendation.collaborative_filtering
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow

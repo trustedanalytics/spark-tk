@@ -23,7 +23,6 @@ from sparktkregtests.lib import sparktk_test
 
 class LbpGraphx(sparktk_test.SparkTKTestCase):
 
-    @unittest.skip("DPNG-11910")
     def test_label_propagation(self):
         """label propagation on plus sign, deterministic, not conververgent"""
         vertex_frame = self.context.frame.create(
@@ -41,24 +40,25 @@ class LbpGraphx(sparktk_test.SparkTKTestCase):
                           [("src", str), ("dst", str)])
 
         graph = self.context.graph.create(vertex_frame, edge_frame)
+        baseline = { 4: [u'vertex4', u'vertex5', u'vertex1', u'vertex3'],
+                     1: [u'vertex2']}
 
-        community = graph.label_propagation(10)
 
-        communities = community.take(5)
-        self.assertItemsEqual([["vertex1", 0],
-                               ["vertex2", 1],
-                               ["vertex3", 0],
-                               ["vertex4", 0],
-                               ["vertex5", 0]], communities)
+        community = graph.label_propagation(3)
+        communities = community.to_pandas(5).groupby("label")
+
+        self.assertEqual(2, len(communities))
+        for (label, group) in communities:
+            group_vals = list(group['id'])
+            self.assertItemsEqual(group_vals, baseline[len(group_vals)])
 
         community = graph.label_propagation(11)
+        communities = community.to_pandas(5).groupby("label")
 
-        communities = community.take(5)
-        self.assertItemsEqual([["vertex1", 1],
-                               ["vertex2", 0],
-                               ["vertex3", 1],
-                               ["vertex4", 1],
-                               ["vertex5", 1]], communities)
+        self.assertEqual(2, len(communities))
+        for (label, group) in communities:
+            group_vals = list(group['id'])
+            self.assertItemsEqual(group_vals, baseline[len(group_vals)])
 
 
 if __name__ == '__main__':
