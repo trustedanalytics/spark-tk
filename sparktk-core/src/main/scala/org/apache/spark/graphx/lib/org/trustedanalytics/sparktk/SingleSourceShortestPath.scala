@@ -19,10 +19,10 @@ import org.apache.spark.graphx._
 import scala.reflect.ClassTag
 
 /**
- * Computes the Single Source Shortest Paths (SSSP)to the given graph starting from the given vertex ID,
+ * Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
  * it returns a graph where each vertex attribute contains the shortest path to this vertex and the corresponding cost.
- * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters are provided
- * to constraint the computations for large graph sizes such as the maximum path length.
+ * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters, e.g., maximum path length, are provided
+ * to constraint the computations for large graphs.
  */
 object SingleSourceShortestPath {
 
@@ -44,9 +44,9 @@ object SingleSourceShortestPath {
    *
    * @param graph the graph to compute SSSP against
    * @param srcVertexId the source vertex ID
-   * @param getEdgeWeight a user-defined function that enables the inclusion of the edge weights in the SSSP
-   *                      calculations and converts the edge attribute type to Double.
-   * @param maxPathLength the maximum path length or the maximum cost to limit the SSSP computations
+   * @param getEdgeWeight optional user-defined function that enables the inclusion of the edge weights in the SSSP
+   *                      calculations by converting the edge attribute type to Double.
+   * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
    * @tparam VD vertex attribute that is used here to store the SSSP attributes
    * @tparam ED the edge attribute that is used here as the edge weight
    * @return the SSSP graph
@@ -65,7 +65,7 @@ object SingleSourceShortestPath {
     def sendMessage(edge: EdgeTriplet[PathCalculation, Double]): Iterator[(VertexId, PathCalculation)] = {
       val (newShortestPath, weight) = updateShortestPath(edge)
       if ((maxPathLength.isDefined && edge.srcAttr.cost >= maxPathLength.get) ||
-        (edge.srcAttr.cost > edge.dstAttr.cost - weight)) {
+        (edge.srcAttr.cost + weight > edge.dstAttr.cost)) {
         Iterator.empty
       }
       else {
