@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.spark.graphx.lib
+package org.apache.spark.graphx.lib.org.trustedanalytics.sparktk
 
 import org.apache.spark.graphx._
 import org.scalatest.Matchers
@@ -22,7 +22,7 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matchers {
 
   "Single source shoretst path" should {
-    def graph: Graph[String, Double] = {
+    def getGraph: Graph[String, Double] = {
       // create vertices RDD with ID and Name
       val vertices = Array((1L, "SFO"),
         (2L, "ORD"),
@@ -48,7 +48,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
 
     "calculate the single source shortest path" in {
       var singleSourceShotestPathGraph: Graph[PathCalculation, Double] = null
-      singleSourceShotestPathGraph = SingleSourceShortestPath.run(graph, 1)
+      singleSourceShotestPathGraph = SingleSourceShortestPath.run(getGraph, 1)
       singleSourceShotestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2.0, List(1, 2, 4))),
         (1, PathCalculation(0.0, List(1))),
         (6, PathCalculation(1.0, List(1, 6))),
@@ -60,7 +60,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
 
     "calculate the single source shortest paths with edge weights included" in {
       var singleSourceShotestPathGraph: Graph[PathCalculation, Double] = null
-      singleSourceShotestPathGraph = SingleSourceShortestPath.run(graph, 1, Some((x: Double) => x))
+      singleSourceShotestPathGraph = SingleSourceShortestPath.run(getGraph, 1, Some((x: Double) => x))
       singleSourceShotestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2700.0, List(1, 2, 4))),
         (1, PathCalculation(0.0, List(1))),
         (6, PathCalculation(500.0, List(1, 6))),
@@ -72,7 +72,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
 
     "calculate the single source shortest paths with maximum path length constraint" in {
       var singleSourceShotestPathGraph: Graph[PathCalculation, Double] = null
-      singleSourceShotestPathGraph = SingleSourceShortestPath.run(graph, 1, None, None, Some(2))
+      singleSourceShotestPathGraph = SingleSourceShortestPath.run(getGraph, 1, None, Some(2))
       singleSourceShotestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2.0, List(1, 2, 4))),
         (1, PathCalculation(0.0, List(1))),
         (6, PathCalculation(1.0, List(1, 6))),
@@ -81,15 +81,5 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
         (5, PathCalculation(Double.PositiveInfinity, List())),
         (2, PathCalculation(1.0, List(1, 2))))
     }
-
-    "calculate the single source shortest path with target nodes" in {
-      var singleSourceShotestPathGraph: Graph[PathCalculation, Double] = null
-      singleSourceShotestPathGraph = SingleSourceShortestPath.run(graph, 1, None, Some(Seq(2, 3, 4)), None)
-      singleSourceShotestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2.0, List(1, 2, 4))),
-        (1, PathCalculation(0.0, List(1))),
-        (3, PathCalculation(2.0, List(1, 2, 3))),
-        (2, PathCalculation(1.0, List(1, 2))))
-    }
   }
-
 }

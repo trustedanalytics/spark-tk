@@ -13,25 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.spark.graphx.lib
+package org.apache.spark.graphx.lib.org.trustedanalytics.sparktk
 
 import org.apache.spark.graphx._
-
 import scala.reflect.ClassTag
 
 /**
- * Computes Single Source Shortest Paths(SSSP) to the given graph starting for the given vertex ID, returning a graph where each
- * vertex attribute is a map containing the shortest-path distance to each reachable vertex.
- * some optional parameters are provided to constraint the computations for large graph sizes,
+ * Computes the Single Source Shortest Paths (SSSP)to the given graph starting from the given vertex ID,
+ * it returns a graph where each vertex attribute contains the shortest path to this vertex and the corresponding cost.
+ * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters are provided
+ * to constraint the computations for large graph sizes such as the maximum path length.
  */
 object SingleSourceShortestPath {
 
   /**
-   * Updates the SSSP attribute in each iteration before sending messages to the next super step active vertices,
-   * it calculates the new path length or cost in case the edge weight attribute is taken into considerations.
+   * Updates the SSSP attribute in each iteration before sending messages to the next super-step active vertices,
+   * it calculates the shortest path and the new path length or cost in case the edge weight is considered.
    *
    * @param edge the graph edge
-   * @return SSSP attribute which includes the destination vertex ID, the SSS path vertices and the corresponding SSS path length/cost
+   * @return SSSP attribute which contains the shortest path and the corresponding cost
    */
   private def updateShortestPath(edge: EdgeTriplet[PathCalculation, Double]): (PathCalculation, Double) = {
     val newPath = edge.srcAttr.path :+ edge.dstId
@@ -44,28 +44,23 @@ object SingleSourceShortestPath {
    *
    * @param graph the graph to compute SSSP against
    * @param srcVertexId the source vertex ID
-   * @param getEdgeWeight enable or disable the inclusion of the edge weights in the SSSP calculations
-   * @param targets destination vertices to limit the SSSP computations
-   * @param maxPathLength the maximum path length parameter to limit the SSSP computations
+   * @param getEdgeWeight a user-defined function that enables the inclusion of the edge weights in the SSSP
+   *                      calculations and converts the edge attribute type to Double.
+   * @param maxPathLength the maximum path length or the maximum cost to limit the SSSP computations
    * @tparam VD vertex attribute that is used here to store the SSSP attributes
-   * @tparam ED the edge
-   * @return SSSP graph
+   * @tparam ED the edge attribute that is used here as the edge weight
+   * @return the SSSP graph
    */
   def run[VD, ED: ClassTag](graph: Graph[VD, ED],
                             srcVertexId: Long,
                             getEdgeWeight: Option[ED => Double] = None,
-                            targets: Option[Seq[VertexId]] = None,
                             maxPathLength: Option[Double] = None): Graph[PathCalculation, Double] = {
-
     require(srcVertexId.toString != null, "Source vertex ID is required to calculate the single source shortest path")
-    if (targets.isDefined) {
-      require(!targets.get.contains(srcVertexId), s"The vertex ID $srcVertexId cannot be a source vertex and a target vertex at the same time")
-    }
     /**
-     * prepares the message to be used in the next iteration (super step)
+     * Prepares the message to be used in the next iteration
      *
      * @param edge  the edge
-     * @return the destination vertex ID, SSSP and the corresponding path length/cost
+     * @return the destination vertex ID, SSSP and the corresponding path cost
      */
     def sendMessage(edge: EdgeTriplet[PathCalculation, Double]): Iterator[(VertexId, PathCalculation)] = {
       val (newShortestPath, weight) = updateShortestPath(edge)
@@ -77,7 +72,6 @@ object SingleSourceShortestPath {
         Iterator((edge.dstId, newShortestPath))
       }
     }
-
     //Initial graph
     val ShortestPathGraph = graph.mapVertices((id, _) => {
       if (id == srcVertexId) {
@@ -90,10 +84,9 @@ object SingleSourceShortestPath {
       case Some(func) => func(e.attr)
       case _ => 1.0
     })
-
+    //Initial message
     val initialMessage = PathCalculation(Double.PositiveInfinity, List[VertexId]())
-
-    val ssspGraph = Pregel(ShortestPathGraph, initialMessage, Int.MaxValue, EdgeDirection.Out)(
+    Pregel(ShortestPathGraph, initialMessage, Int.MaxValue, EdgeDirection.Out)(
       // vertex program
       (id, oldShortestPath, newShortestPath) => {
         if (oldShortestPath.cost < newShortestPath.cost)
@@ -105,21 +98,13 @@ object SingleSourceShortestPath {
       sendMessage,
       // merge message
       (a: PathCalculation, b: PathCalculation) => if (a.cost < b.cost) a else b)
-    // filter out the single source shortest path graph based on the given target nodes
-    val finalGraph: Graph[PathCalculation, Double] = if (targets.isDefined) {
-      ssspGraph.subgraph(vpred = (id, shoretestPath) => targets.get.contains(id) || srcVertexId == id)
-    }
-    else {
-      ssspGraph
-    }
-    finalGraph
   }
 }
 
 /**
  * The single source shortest path attribute to be stored at the shortest path graph vertices
  *
- * @param cost the shortest path cost/distance
+ * @param cost the shortest path cost/length
  * @param path the shortest path
  */
 case class PathCalculation(cost: Double, path: List[VertexId])
