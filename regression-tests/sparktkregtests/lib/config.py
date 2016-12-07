@@ -24,6 +24,7 @@ dataset_directory = os.path.join(qa_root, "datasets")
 hdfs_namenode = os.getenv("CDH_MASTER", "localhost")
 user = os.getenv("USER", "hadoop")
 run_mode = True if os.getenv("RUN_MODE", "yarn_client") == "yarn_client" else False
+on_tap = False if os.getenv("SPARKTK_TAP", "0") == "0" else True
 hostname = os.getenv("HOSTNAME")
 
 # HDFS paths, need to be set NOT using os.join since HDFS doesn't use the system
