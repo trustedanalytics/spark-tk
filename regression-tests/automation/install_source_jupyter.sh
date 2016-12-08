@@ -44,9 +44,3 @@ unset SPARK_HOME
 #install python dependencies
 echo "INSTALLING PYTHON DYPENDENCIES"
 pip2.7 install $MAINDIR/sparktk-core/python/sparktk-*.tar.gz
-#popd
-#popd
-#create a symlink to regression-test/sparkregtest
-#pushd "/opt/anaconda2/lib/python2.7/site-packages"
-#ls -sfn /home/vcap/jupyter/sparktk_test/regression-tests/sparktkregtests/ . > ignore
-#popd

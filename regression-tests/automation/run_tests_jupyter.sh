@@ -19,10 +19,6 @@
 export SPARK_HOME="/usr/local/spark"
 export SPARKTK_HOME="/home/vcap/jupyter/sparktk_test/sparktk-core/"
 
-run_path="/home/vcap/jupyter/sparktk_test/regression-tests/sparktkregtests/testcases/frames"
+run_path="/home/vcap/jupyter/sparktk_test/regression-tests/sparktkregtests/testcases"
 
-pushd $run_path
-
-py.test -vv $run_path/boxcox_test.py
-
-popd
+py.test -vv $run_path/frames/boxcox_test.py
