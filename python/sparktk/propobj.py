@@ -40,8 +40,22 @@ class PropertiesObject(object):
         return dict([(k, v) for k, v in self.__dict__.items() if not k.startswith('_')])
 
     def _properties(self):
-        class_items = self.__class__.__dict__.iteritems()
+        class_items = self._get_all_class_items().items()
         return dict([(k, getattr(self, k)) for k, v in class_items if isinstance(v, property)])
+
+    def _get_all_class_items(self):
+        """Walk the class hierarchy and get all the classes' items"""
+        import inspect
+        mro = inspect.getmro(self.__class__)
+        classes = []
+        for c in mro:
+            if c is PropertiesObject:
+                break
+            classes.append(c)
+        items = {}
+        for c in reversed(classes):  # reverse to honor inheritance overrides
+            items.update(c.__dict__.iteritems())
+        return items
 
     @staticmethod
     def _pad_right(s, target_len):
