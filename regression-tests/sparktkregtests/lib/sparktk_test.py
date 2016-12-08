@@ -16,6 +16,7 @@
 #
 
 """Setup up tests for regression """
+
 import unittest
 import uuid
 import datetime
@@ -25,6 +26,8 @@ import sparktk as stk
 
 import config
 from threading import Lock
+udf_lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"udftestlib")
+udf_files = [os.path.join(udf_lib_path, f) for f in os.listdir(udf_lib_path)]
 
 lock = Lock()
 global_tc = None
@@ -49,10 +52,10 @@ def get_context():
                                 'spark.eventLog.enabled': 'false',
                                 'spark.sql.shuffle.partitions': '6'}
             if config.run_mode:
-                global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict)
-
+                global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict, py_files=udf_files)
             else:
-                global_tc = stk.TkContext()
+                global_tc = stk.TkContext(py_files=udf_files)
+
         return global_tc
 
 

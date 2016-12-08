@@ -120,7 +120,7 @@ def type_coercer(schema):
         * when creating a new frame(python frame created) - if it finds list[list](which represents matrix) as column value,
           converts it to numpy ndarray
         * when Converting frame from scala to python frame - (scala converts DenseMatrix--> JList[JList[Double]](in JConvert.scala),
-          jconvert.py converts JList[JList[Double]] --> list[list[float64]]), converts list[list] to ndarray
+          jconvert.py converts JList[JList[Double]] --> list[list[float]]), converts list[list] to ndarray
 
     """
     matrix_indices = [i for i in xrange(len(schema)) if type(schema[i][1]) == _Matrix]

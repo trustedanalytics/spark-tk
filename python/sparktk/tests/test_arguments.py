@@ -18,6 +18,7 @@
 import unittest
 
 from sparktk.arguments import affirm_type, require_type, implicit
+import sparktk.arguments as arguments
 
 
 class TestAffirmType(unittest.TestCase):
@@ -179,6 +180,134 @@ class TestRequireType(unittest.TestCase):
             self.assertTrue(msg.endswith(extra_message), "message should have ended with '%s', but got '%s'" % (extra_message, msg))
         else:
             self.fail("A ValueError should have been raised")
+
+def f0():
+    pass
+
+def f1(a, b):
+    pass
+
+def f2(a, b=4):
+    pass
+
+def f3(a=True, _b=3.14):
+    pass
+
+def f4(a, **bonus):
+    pass
+
+def f5(a, *variable):
+    pass
+
+def f6(*one, **two):
+    pass
+
+def f7(a, b, *c, **d):
+    pass
+
+def f8(uno, dos=2, tres=3, **otro):
+    pass
+
+def fself(self, surf, turf=100):
+    pass
+
+
+class TestReflection(unittest.TestCase):
+
+    def test_is_private_name(self):
+        self.assertTrue(arguments.is_name_private("_secret"))
+        self.assertFalse(arguments.is_name_private("nice"))
+        self.assertFalse(arguments.is_name_private("_public_underscore", public=["_public_underscore"]))
+        self.assertTrue(arguments.is_name_private("_public_whoops", public= ["_public", "_popular"]))
+
+    def test_default_value_to_str(self):
+        self.assertEqual('None', str(arguments.default_value_to_str(None)))
+        self.assertEqual('5', str(arguments.default_value_to_str(5)))
+        self.assertEqual('False', str(arguments.default_value_to_str(False)))
+        self.assertEqual("'Soup of the Day'", str(arguments.default_value_to_str('Soup of the Day')))
+
+    def test_get_args_spec_from_function(self):
+        self.assertEqual(([], [], None, None), arguments.get_args_spec_from_function(f0))
+        self.assertEqual((['a', 'b'], [], None, None), arguments.get_args_spec_from_function(f1))
+        self.assertEqual((['a'], [('b', 4)], None, None), arguments.get_args_spec_from_function(f2))
+        self.assertEqual(([], [('a', True), ('_b', 3.14)], None, None), arguments.get_args_spec_from_function(f3))
+        self.assertEqual(([], [('a', True)], None, None), arguments.get_args_spec_from_function(f3, ignore_private_args=True))
+        self.assertEqual((['a'], [], None, 'bonus'), arguments.get_args_spec_from_function(f4))
+        self.assertEqual((['a'], [], 'variable', None), arguments.get_args_spec_from_function(f5))
+        self.assertEqual(([], [], 'one','two'), arguments.get_args_spec_from_function(f6))
+        self.assertEqual((['a', 'b'], [], 'c', 'd'), arguments.get_args_spec_from_function(f7))
+        self.assertEqual((['uno'], [('dos', 2), ('tres', 3)], None, 'otro'), arguments.get_args_spec_from_function(f8))
+        self.assertEqual((['self', 'surf'], [('turf', 100)], None, None), arguments.get_args_spec_from_function(fself))
+        self.assertEqual((['surf'], [('turf', 100)], None, None), arguments.get_args_spec_from_function(fself, ignore_self=True))
+
+    def test_get_args_text_from_function(self):
+        self.assertEqual("", arguments.get_args_text_from_function(f0))
+        self.assertEqual("a, b", arguments.get_args_text_from_function(f1))
+        self.assertEqual("a, b=4", arguments.get_args_text_from_function(f2))
+        self.assertEqual("a=True, _b=3.14", arguments.get_args_text_from_function(f3))
+        self.assertEqual("a=True", arguments.get_args_text_from_function(f3, ignore_private_args=True))
+        self.assertEqual("a, **bonus", arguments.get_args_text_from_function(f4))
+        self.assertEqual("a, *variable", arguments.get_args_text_from_function(f5))
+        self.assertEqual("*one, **two", arguments.get_args_text_from_function(f6))
+        self.assertEqual("a, b, *c, **d", arguments.get_args_text_from_function(f7))
+        self.assertEqual("uno, dos=2, tres=3, **otro", arguments.get_args_text_from_function(f8))
+        self.assertEqual("self, surf, turf=100", arguments.get_args_text_from_function(fself))
+        self.assertEqual("surf, turf=100", arguments.get_args_text_from_function(fself, ignore_self=True))
+
+    def test_validate_call(self):
+        arguments.validate_call(f0, {})
+        arguments.validate_call(f1, {'a': 3, 'b': 4})
+        arguments.validate_call(f2, {'a': True})
+        arguments.validate_call(f2, {'a': True, 'b': 99})
+        arguments.validate_call(f3, {'a': False, '_b': 8.2})
+        arguments.validate_call(f4, {'other': 1 , 'a': False, 'whatever': 34})
+        arguments.validate_call(f8, {'uno': 1})
+        arguments.validate_call(f8, {'ocho': 8, 'uno': 1})
+
+    def test_validate_call_neg(self):
+        def unknown_args(function, parameters, unexpected_args_str):
+            try:
+                arguments.validate_call(function, parameters)
+            except ValueError as e:
+                self.assertTrue("included one or more unknown args named: %s" % unexpected_args_str in str(e), str(e))
+            else:
+                self.fail("Negative test failure: expected ValueError when validating function %s called with args: %s"
+                          % (function.__name__, parameters))
+
+        def missing_args(function, parameters, missing_args_str):
+            try:
+                arguments.validate_call(function, parameters)
+            except ValueError as e:
+                self.assertTrue("is missing the following required arguments: %s" % missing_args_str in str(e), str(e))
+            else:
+                self.fail("Negative test failure: expected ValueError when validating function %s called with args: %s"
+                          % (function.__name__, parameters))
+
+        unknown_args(f0, {'a': 'barrel'}, 'a')
+        unknown_args(f1, {'b': 4, 'c': 5}, 'c')
+        missing_args(f1, {'b': 4}, 'a')
+        missing_args(f2, {'b': 4}, 'a')
+        unknown_args(f3, {'c': 4, 'b': 5}, 'c')
+        missing_args(f4, {}, 'a')
+        missing_args(f4, {'x': 89}, 'a')
+        missing_args(f8, {'x': 89}, 'uno')
+
+    def test_validate_call_neg_varargs(self):
+        try:
+            arguments.validate_call(f5, {})
+        except ValueError as e:
+            self.assertEqual("function f5(a, *variable) cannot be validated against a dict of parameters because of the '*variable' in its signature",
+                             str(e))
+        else:
+            self.fail("Negative test failure: expected ValueError when validating function with varargs")
+
+        try:
+            arguments.validate_call(f7, {'x': 'junk'})
+        except ValueError as e:
+            self.assertEqual("function f7(a, b, *c, **d) cannot be validated against a dict of parameters because of the '*c' in its signature",
+                             str(e))
+        else:
+            self.fail("Negative test failure: expected ValueError when validating function with varargs")
 
 
 if __name__ == '__main__':

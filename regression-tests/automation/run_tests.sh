@@ -26,7 +26,7 @@ sparktkpackage=$MAINDIR/sparktkinstall
 
 
 echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
+export PYTHONPATH=$MAINDIR/regression-tests:$MAINDIR/regression-tests/sparktkregtests/lib/udftestlib:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
 echo $PYTHONPATH
 
 #export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/

@@ -102,9 +102,13 @@ def init_lazy_loader_class(cls, path, package_name, implicit_kwargs):
         children = os.listdir(path)
         for child_name in children:
             child_path = os.path.join(path, child_name)
-            if os.path.isdir(child_path):
+            if child_name[0] != '_' and os.path.isdir(child_path):
                 add_loader_property(cls, child_name, child_path, package_name, implicit_kwargs)
-            elif os.path.isfile(child_path) and child_path.endswith('.py') and not child_name.startswith('_'):
+            elif child_name == "__init__.py" and os.path.isfile(child_path):
+                # load any methods found in the (sub)package's __init__.py
+                logger.debug("LazyLoader looking at __init__.py at %s (%s)", child_path, path)
+                add_module_element_properties(cls, os.path.join(path, child_name), package_name, implicit_kwargs)
+            elif child_name[0] != '_' and child_path.endswith('.py') and os.path.isfile(child_path):
                 add_loader_property(cls, child_name[:-3], child_path, package_name, implicit_kwargs)
             else:
                 logger.debug("LazyLoader skipping %s", child_path)
@@ -207,7 +211,11 @@ def add_module_element_properties(cls, path, package_name, implicit_kwargs):
 
 def wrap_for_implicit_kwargs(function, implicit_kwargs):
     """possibly wraps the function in a decorator which will implicitly fill in kwargs when called"""
-    logger.debug("wrap_for_implicit_kwargs(function=%s, implicit_kwargs=%s", function.__name__, implicit_kwargs)
+    if not inspect.isfunction(function):
+        logger.debug("wrap_for_implicit_kwargs(function=%s, implicit_kwargs=%s) 'function' arg is not a true function, so it is being returned untouched", function, implicit_kwargs)
+        return function
+
+    logger.debug("wrap_for_implicit_kwargs(function=%s, implicit_kwargs=%s)", function.__name__, implicit_kwargs)
     args, varargs, varkwargs, defaults = inspect.getargspec(function)
     logger.debug("argspec = (args=%s,varargs=%s,varkwargs=%s,defaults=%s)", args, varargs, varkwargs, defaults)
     kwarg_index_value_pairs = [(i, implicit_kwargs[key]) for i, key in enumerate(args)
