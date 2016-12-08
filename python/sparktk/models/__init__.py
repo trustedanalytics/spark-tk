@@ -16,3 +16,4 @@
 #
 
 from sparktk.models._selection.cross_validate import cross_validate
+from sparktk.models._selection.grid_search import grid_search
