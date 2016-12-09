@@ -53,7 +53,9 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
         [8]     9      1
         [9]    10      1
 
-        >>> grid_result=tc.models.grid_search(frame, frame,
+        >>> from sparktk.models._selection.grid_search import grid_values
+
+        >>> grid_result = tc.models.grid_search(frame, frame,
         ...                                   tc.models.classification.svm,
         ...                                   {"observation_columns":"data",
         ...                                    "label_column":"label",

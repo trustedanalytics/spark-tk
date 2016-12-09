@@ -53,6 +53,8 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
         [8]     9      1
         [9]    10      1
 
+        >>> from sparktk.models._selection.grid_search import grid_values
+
         >>> result = tc.models.cross_validate(frame,
         ...                                   tc.models.classification.svm,
         ...                                   {"observation_columns":"data",
