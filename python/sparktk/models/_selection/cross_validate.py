@@ -32,7 +32,7 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
     :param num_folds: Number of folds to run the cross-validator on
     :param verbose: Flag indicating if the results of each fold are to be viewed. Default is set to False
     :param tc: spark-tk context
-    :return:
+    :return: Summary of model's performance
 
     Example
     -------

@@ -55,68 +55,63 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
 
         >>> from sparktk.models._selection.grid_search import grid_values
 
-        >>> grid_result = tc.models.grid_search(frame, frame,
-        ...                                   tc.models.classification.svm,
-        ...                                   {"observation_columns":"data",
-        ...                                    "label_column":"label",
-        ...                                    "num_iterations": grid_values(1,2,3,4,5)
-        ...                                   })
+        >>> grid_result = tc.models.grid_search(frame,
+        ...                                     frame,
+        ...                                     tc.models.classification.svm,
+        ...                                     {"observation_columns":"data",
+        ...                                      "label_column":"label",
+        ...                                      "num_iterations": grid_values(2, 10),
+        ...                                      "step_size": 0.01})
 
         >>> grid_result
-        GridPoint(descriptor={'num_iterations': 1, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.0, recall=0.0, f_measure=0.0,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              5
-        Actual_Neg              0              5)
-        GridPoint(descriptor={'num_iterations': 2, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
-        Actual_Neg              5              0)
-        GridPoint(descriptor={'num_iterations': 3, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
-        Actual_Neg              5              0)
-        GridPoint(descriptor={'num_iterations': 4, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.4, precision=0.0, recall=0.0, f_measure=0.0,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              5
-        Actual_Neg              1              4)
-        GridPoint(descriptor={'num_iterations': 5, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              5              0
-        Actual_Neg              5              0)
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
 
         >>> grid_result.find_best()
-        GridPoint(descriptor={'num_iterations': 1, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.0, recall=0.0, f_measure=0.0,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              5
-        Actual_Neg              0              5)
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
 
         >>> grid_result.grid_points
-        [GridPoint(descriptor={'num_iterations': 1, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.0, recall=0.0, f_measure=0.0,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              5
-        Actual_Neg              0              5),
-         GridPoint(descriptor={'num_iterations': 2, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
+        [GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
-        Actual_Neg              5              0),
-         GridPoint(descriptor={'num_iterations': 3, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0),
+         GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
-        Actual_Neg              5              0),
-         GridPoint(descriptor={'num_iterations': 4, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.4, precision=0.0, recall=0.0, f_measure=0.0,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              5
-        Actual_Neg              1              4),
-         GridPoint(descriptor={'num_iterations': 5, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
-        Actual_Pos              5              0
-        Actual_Neg              5              0)]
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)]
 
         >>> grid_result.grid_points[1]
-        GridPoint(descriptor={'num_iterations': 2, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy=0.5, precision=0.5, recall=1.0, f_measure=0.666666666667,
-        confusion_matrix=            Predicted_Pos  Predicted_Neg
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
-        Actual_Neg              5              0)
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
 
     """
 
