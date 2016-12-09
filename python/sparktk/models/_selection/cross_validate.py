@@ -64,6 +64,7 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
         ...                                    num_folds=3,
         ...                                    verbose=True)
 
+        <skip>
         >>> result
         GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
         confusion_matrix =             Predicted_Pos  Predicted_Neg
@@ -138,7 +139,7 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
         f_measure        = 0.472222222222
         precision        = 0.366666666667
         recall           = 0.666666666667)
-
+    </skip>
     """
     TkContext.validate(tc)
     arguments.require_type(Frame, frame, "frame")

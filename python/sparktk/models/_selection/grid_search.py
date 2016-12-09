@@ -63,6 +63,7 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
         ...                                      "num_iterations": grid_values(2, 10),
         ...                                      "step_size": 0.01})
 
+        <skip>
         >>> grid_result
         GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
@@ -112,7 +113,7 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0)
-
+        </skip>
     """
 
     #validate input
