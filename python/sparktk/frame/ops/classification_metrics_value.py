@@ -93,6 +93,3 @@ class ClassificationMetricsValue(PropertiesObject):
     @staticmethod
     def get_context(self):
         return self._tc
-    #
-    def __repr__(self):
-        return "accuracy=%s, precision=%s, recall=%s, f_measure=%s, \nconfusion_matrix=%s" % (self.accuracy, self.precision, self.recall, self.f_measure, self.confusion_matrix)

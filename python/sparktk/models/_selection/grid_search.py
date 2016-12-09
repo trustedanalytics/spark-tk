@@ -31,8 +31,8 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
     :param test_frame: The frame to test the model on
     :param model_type: The model reference
     :param descriptor: Dictionary of model parameters and their value/values in list of type grid_values
-    :param tc: spark-tk contecxt
-    :return:
+    :param tc: spark-tk context
+    :return: Summary of metrics for different combinations of the grid and the best performing parameter combination
 
     Example
     -------
@@ -116,13 +116,6 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
         Actual_Pos              5              0
         Actual_Neg              5              0)
 
-
-
-
-
-
-
-
     """
 
     #validate input
@@ -145,8 +138,8 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
         metrics = model.test(**test_args)
         grid_points.append(GridPoint(descriptor=descriptor, metrics=metrics))
         count += 1  # sanity count
-
     return GridSearchResults(grid_points)
+
 
 class MetricsCompare(object):
 
@@ -204,8 +197,8 @@ count = 0
 def expand_descriptors(dictionaries):
     """
 
-    :param dictionaries:
-    :return:
+    :param dictionaries: Parameters for the model
+    :return: Expanded list of parameters for the model
     """
     if not isinstance(dictionaries, list):
         raise ValueError("descriptors was not a list but: %s" % dictionaries)
@@ -240,9 +233,9 @@ class GridSearchResults(object):
 
     def find_best(self, metrics_compare=None):
         """
-
-        :param metrics_compare:
-        :return:
+        Method to compare the list of all GridPoints and return the one with best accuracy
+        :param metrics_compare: List of GridPoints to compare
+        :return: The GridPoint with best accuracy
         """
         comparator = metrics_compare or self.metrics_compare
         if not self.grid_points:

@@ -25,14 +25,118 @@ from grid_search import grid_values, expand_descriptors, grid_search, GridPoint,
 
 def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc=TkContext.implicit):
     """
-
-    :param frame:
-    :param model_type:
-    :param descriptor:
-    :param num_folds:
-    :param verbose:
-    :param tc:
+    Computes k-fold cross validation on model with the given frame and parameter values
+    :param frame: The frame to perform cross-validation on
+    :param model_type: The model reference
+    :param descriptor: Dictionary of model parameters and their value/values in list of type grid_values
+    :param num_folds: Number of folds to run the cross-validator on
+    :param verbose: Flag indicating if the results of each fold are to be viewed. Default is set to False
+    :param tc: spark-tk context
     :return:
+
+    Example
+    -------
+
+        >>> frame = tc.frame.create([[1,0],[2,0],[3,0],[4,0],[5,0],[6,1],[7,1],[8,1],[9,1],[10,1]],[("data", float),("label",int)])
+
+        >>> frame.inspect()
+        [#]  data  label
+        ================
+        [0]     1      0
+        [1]     2      0
+        [2]     3      0
+        [3]     4      0
+        [4]     5      0
+        [5]     6      1
+        [6]     7      1
+        [7]     8      1
+        [8]     9      1
+        [9]    10      1
+
+        >>> result = tc.models.cross_validate(frame,
+        ...                                   tc.models.classification.svm,
+        ...                                   {"observation_columns":"data",
+        ...                                    "label_column":"label",
+        ...                                    "num_iterations": grid_values(2, 10),
+        ...                                    "step_size": 0.01},
+        ...                                    num_folds=3,
+        ...                                    verbose=True)
+
+        >>> result
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.472222222222
+        precision        = 0.366666666667
+        recall           = 0.666666666667)
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.472222222222
+        precision        = 0.366666666667
+        recall           = 0.666666666667)
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              2              0
+        Actual_Neg              2              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              2              0
+        Actual_Neg              2              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              0              0
+        Actual_Neg              1              0
+        f_measure        = 0.0
+        precision        = 0.0
+        recall           = 0.0)
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              0              0
+        Actual_Neg              1              0
+        f_measure        = 0.0
+        precision        = 0.0
+        recall           = 0.0)
+        Averages:
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.472222222222
+        precision        = 0.366666666667
+        recall           = 0.666666666667)
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.472222222222
+        precision        = 0.366666666667
+        recall           = 0.666666666667)
+
+        >>> result.averages
+        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.472222222222
+        precision        = 0.366666666667
+        recall           = 0.666666666667)
+        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.472222222222
+        precision        = 0.366666666667
+        recall           = 0.666666666667)
+
     """
     TkContext.validate(tc)
     arguments.require_type(Frame, frame, "frame")
@@ -56,11 +160,11 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
 
 def split_data(frame, num_folds, tc=TkContext.implicit):
     """
-
-    :param frame:
-    :param num_folds:
-    :param tc:
-    :return:
+    Randomly split data based on num_folds specified. Implementation logic borrowed from pyspark.
+    :param frame: The frame to be split into train and validation frames
+    :param num_folds: Number of folds to be split into
+    :param tc: spark-tk context
+    :return: validation frame and train frame for each fold
     """
     from pyspark.sql.functions import rand
     df = frame.dataframe
