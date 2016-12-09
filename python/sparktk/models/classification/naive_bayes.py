@@ -109,7 +109,7 @@ class NaiveBayesModel(PropertiesObject):
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
 
-        >>> metrics = model.test(frame, "predicted_class", ["Dim_1", "Dim_2"])
+        >>> metrics = model.test(frame, "Class", ["Dim_1", "Dim_2"])
 
         >>> metrics.precision
         1.0
