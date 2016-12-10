@@ -13,19 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.graphframes.lib.org.trustedanalytics.sparktk
+package org.trustedanalytics.sparktk.graph.internal.ops
 
-import org.apache.spark.sql.{ Row, SQLContext }
-import org.graphframes._
+
+import org.apache.spark.sql.{SQLContext, Row}
 import org.scalatest.Matchers
+import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matchers {
 
   "Single source shortest path" should {
     //create Graph of friends in a social network.
-    def getGraph: GraphFrame = {
-      val sqlContext: SQLContext = new SQLContext(sparkContext)
+    def getGraph: Graph = {
+      val sqlContext= new SQLContext(sparkContext)
       // Vertex DataFrame
       val v = sqlContext.createDataFrame(List(
         ("a", "Alice", 34),
@@ -46,24 +47,25 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
         ("d", "a", "friend", 10),
         ("a", "e", "friend", 3)
       )).toDF("src", "dst", "relationship", "distance")
-      // Create a GraphFrame
-      GraphFrame(v, e)
+      // create sparktk graph
+      new Graph(v,e)
     }
+
     "calculate the single source shortest path" in {
-      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGraph, "a")
-      singleSourceShortestPathFrame.collect.head shouldBe Row("b", 1.0, "Set(a, b)")
+      val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a")
+      singleSourceShortestPathFrame.collect().head shouldBe Row("b", 1.0, "Set(a, b)")
     }
 
     "calculate the single source shortest paths with edge weights" in {
-      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGraph, "a", Some("distance"))
-      println(singleSourceShortestPathFrame.collect.mkString("\n"))
-      singleSourceShortestPathFrame.collect.head shouldBe Row("b", 12.0, "Set(a, b)")
+      val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a", Some("distance"))
+      println(singleSourceShortestPathFrame.collect().mkString("\n"))
+      singleSourceShortestPathFrame.collect().head shouldBe Row("b", 12.0, "Set(a, b)")
 
     }
 
     "calculate the single source shortest paths with maximum path length constraint" in {
-      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGraph, "a", None, Some(2))
-      singleSourceShortestPathFrame.collect shouldBe Array(Row("b", 1.0, "Set(a, b)"),
+      val singleSourceShortestPathFrame =getGraph.singleSourceShortestPath("a", None, Some(2))
+      singleSourceShortestPathFrame.collect() shouldBe Array(Row("b", 1.0, "Set(a, b)"),
         Row("d", 2.0, "Set(a, e, d)"),
         Row("f", 2.0, "Set(a, e, f)"),
         Row("a", 0.0, "Set(a)"),

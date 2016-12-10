@@ -16,6 +16,7 @@
 package org.apache.spark.graphx.lib.org.trustedanalytics.sparktk
 
 import org.apache.spark.graphx._
+
 import scala.reflect.ClassTag
 
 /**

@@ -37,7 +37,8 @@ class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
     with SaveSummarization
     with TriangleCountSummarization
     with VertexCountSummarization
-    with WeightedDegreeSummarization {
+    with WeightedDegreeSummarization
+    with SingleSourceShortestPathSummarization {
 
   def this(verticesFrame: DataFrame, edgesFrame: DataFrame) = {
     this(GraphFrame(verticesFrame, edgesFrame))
