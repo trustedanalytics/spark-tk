@@ -15,8 +15,7 @@
  */
 package org.trustedanalytics.sparktk.graph.internal.ops
 
-
-import org.apache.spark.sql.{SQLContext, Row}
+import org.apache.spark.sql.{ SQLContext, Row }
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
@@ -26,7 +25,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
   "Single source shortest path" should {
     //create Graph of friends in a social network.
     def getGraph: Graph = {
-      val sqlContext= new SQLContext(sparkContext)
+      val sqlContext = new SQLContext(sparkContext)
       // Vertex DataFrame
       val v = sqlContext.createDataFrame(List(
         ("a", "Alice", 34),
@@ -48,7 +47,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
         ("a", "e", "friend", 3)
       )).toDF("src", "dst", "relationship", "distance")
       // create sparktk graph
-      new Graph(v,e)
+      new Graph(v, e)
     }
 
     "calculate the single source shortest path" in {
@@ -64,7 +63,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
     }
 
     "calculate the single source shortest paths with maximum path length constraint" in {
-      val singleSourceShortestPathFrame =getGraph.singleSourceShortestPath("a", None, Some(2))
+      val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a", None, Some(2))
       singleSourceShortestPathFrame.collect() shouldBe Array(Row("b", 1.0, "Set(a, b)"),
         Row("d", 2.0, "Set(a, e, d)"),
         Row("f", 2.0, "Set(a, e, f)"),

@@ -25,7 +25,7 @@ import scala.collection.mutable.ArrayBuffer
 
 /**
  * Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
- * it returns the target vertexID, he shortest path from the source vertex and the corresponding cost.
+ * it returns the target vertexID, the shortest path from the source vertex and the corresponding cost.
  * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters, e.g., maximum path length, are provided
  * to constraint the computations for large graphs.
  */
@@ -39,7 +39,7 @@ object SingleSourceShortestPath {
    * @param srcVertexId source vertex ID
    * @param edgePropName optional edge column name to be used as edge weight
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
-   * @return vertices dataframe with two additional nodes for the shortest path and the cost
+   * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
    */
   def run(graph: GraphFrame, srcVertexId: Any,
           edgePropName: Option[String] = None,

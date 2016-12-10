@@ -16,34 +16,34 @@
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.trustedanalytics.sparktk.frame.Frame
-import org.trustedanalytics.sparktk.graph.internal.{BaseGraph, GraphSummarization, GraphState}
-import org.graphframes.lib.org.trustedanalytics.{sparktk => graphframeslib}
+import org.trustedanalytics.sparktk.graph.internal.{ BaseGraph, GraphSummarization, GraphState }
+import org.graphframes.lib.org.trustedanalytics.{ sparktk => graphframeslib }
 
 trait SingleSourceShortestPathSummarization extends BaseGraph {
 
   /**
-    * Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
-    * it returns the target vertexID, he shortest path from the source vertex and the corresponding cost.
-    * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters, e.g., maximum path length, are provided
-    * to constraint the computations for large graphs.
-    *
-    * @param srcVertexId source vertex ID
-    * @param edgePropName optional edge column name to be used as edge weight
-    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
-    * @return vertices dataframe with two additional nodes for the shortest path and the cost
-    */
+   * Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
+   * it returns the target vertexID, the shortest path from the source vertex and the corresponding cost.
+   * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters, e.g., maximum path length, are provided
+   * to constraint the computations for large graphs.
+   *
+   * @param srcVertexId source vertex ID
+   * @param edgePropName optional edge column name to be used as edge weight
+   * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
+   * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
+   */
   def singleSourceShortestPath(srcVertexId: Any,
                                edgePropName: Option[String] = None,
                                maxPathLength: Option[Double] = None): Frame = {
-    execute[Frame](SingleSourceShortestPath(srcVertexId,edgePropName,maxPathLength))
+    execute[Frame](SingleSourceShortestPath(srcVertexId, edgePropName, maxPathLength))
   }
 }
 case class SingleSourceShortestPath(srcVertexId: Any,
                                     edgePropName: Option[String] = None,
                                     maxPathLength: Option[Double] = None) extends GraphSummarization[Frame] {
 
-  override def work(state: GraphState): Frame ={
-    new Frame(graphframeslib.SingleSourceShortestPath.run(state.graphFrame,srcVertexId,edgePropName,maxPathLength))
+  override def work(state: GraphState): Frame = {
+    new Frame(graphframeslib.SingleSourceShortestPath.run(state.graphFrame, srcVertexId, edgePropName, maxPathLength))
   }
 }
 
