@@ -24,7 +24,6 @@ from sparktk.frame.frame import Frame
 from sparktk import arguments
 
 
-#def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.implicit):
 def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implicit):
     """
     Implements grid search by training the specified model on all combinations of descriptor and testing on test frame
@@ -54,7 +53,7 @@ def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implic
         [8]     9      1
         [9]    10      1
 
-        >>> from sparktk.models._selection.grid_search import grid_values
+        >>> from sparktk.models import grid_values
 
         >>> grid_result = tc.models.grid_search(frame, frame,
         ...                                    [(tc.models.classification.svm,
@@ -156,12 +155,9 @@ def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implic
 
     arguments.require_type(Frame, train_frame, "frame")
     arguments.require_type(Frame, test_frame, "frame")
-    #train_method = getattr(model_type, "train")
 
     grid_points = []
-    #descriptors = expand_descriptors([descriptor])
     for descriptor in descriptors:
-
         train_method = getattr(descriptor.model_type, "train")
         list_of_kwargs =  expand_kwarg_grids([descriptor.kwargs])
         for kwargs in list_of_kwargs:
@@ -224,7 +220,6 @@ class Metrics(ClassificationMetricsValue):
 
 
 GridValues = namedtuple('GridValues', ['args'])
-#TrainDescriptor = namedtuple('TrainDescriptor', ['model_type', 'kwargs'])
 
 class TrainDescriptor(object):
 
@@ -250,7 +245,7 @@ count = 0
 
 def expand_kwarg_grids(dictionaries):
     """
-
+    Method to expand the dictionary of arguments
     :param dictionaries: Parameters for the model
     :return: Expanded list of parameters for the model
     """
@@ -326,5 +321,3 @@ class GridSearchResults(object):
     def _divide_metrics(self, denominator):
         for point in self.grid_points:
             point.metrics._divide(denominator)
-
-

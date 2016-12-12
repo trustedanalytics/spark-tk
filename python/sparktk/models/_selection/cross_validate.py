@@ -53,7 +53,7 @@ def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkCo
         [8]     9      1
         [9]    10      1
 
-        >>> from sparktk.models._selection.grid_search import grid_values
+        >>> from sparktk.models import grid_values
 
         >>> result = tc.models.cross_validate(frame,
         ...                                   [(tc.models.classification.svm,
@@ -69,6 +69,7 @@ def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkCo
         ...                                   num_folds=2,
         ...                                   verbose=True)
 
+        <skip>
         >>> result
         GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
@@ -185,7 +186,7 @@ def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkCo
         f_measure        = 1.0
         precision        = 1.0
         recall           = 1.0)
-
+        </skip>
     """
     TkContext.validate(tc)
     arguments.require_type(Frame, frame, "frame")
