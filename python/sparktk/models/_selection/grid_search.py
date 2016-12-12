@@ -24,7 +24,8 @@ from sparktk.frame.frame import Frame
 from sparktk import arguments
 
 
-def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.implicit):
+#def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.implicit):
+def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implicit):
     """
     Implements grid search by training the specified model on all combinations of descriptor and testing on test frame
     :param train_frame: The frame to train the model on
@@ -55,87 +56,126 @@ def grid_search(train_frame, test_frame, model_type, descriptor, tc= TkContext.i
 
         >>> from sparktk.models._selection.grid_search import grid_values
 
-        >>> grid_result = tc.models.grid_search(frame,
-        ...                                     frame,
-        ...                                     tc.models.classification.svm,
+        >>> grid_result = tc.models.grid_search(frame, frame,
+        ...                                    [(tc.models.classification.svm,
         ...                                     {"observation_columns":"data",
         ...                                      "label_column":"label",
         ...                                      "num_iterations": grid_values(2, 10),
-        ...                                      "step_size": 0.01})
+        ...                                      "step_size": 0.01}),
+        ...                                     (tc.models.classification.logistic_regression,
+        ...                                     {"observation_columns":"data",
+        ...                                      "label_column":"label",
+        ...                                      "num_iterations": grid_values(2, 10),
+        ...                                      "step_size": 0.01})])
 
-        <skip>
         >>> grid_result
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0)
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
         f_measure        = 0.666666666667
         precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              0              5
+        f_measure        = 1.0
+        precision        = 1.0
         recall           = 1.0)
 
         >>> grid_result.find_best()
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
-        Actual_Neg              5              0
-        f_measure        = 0.666666666667
-        precision        = 0.5
+        Actual_Neg              0              5
+        f_measure        = 1.0
+        precision        = 1.0
         recall           = 1.0)
 
         >>> grid_result.grid_points
-        [GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        [GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0),
-         GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+         GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
         f_measure        = 0.666666666667
         precision        = 0.5
+        recall           = 1.0),
+         GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0),
+         GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              0              5
+        f_measure        = 1.0
+        precision        = 1.0
         recall           = 1.0)]
 
         >>> grid_result.grid_points[1]
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0)
-        </skip>
+
     """
 
     #validate input
     TkContext.validate(tc)
+    if not isinstance(train_descriptors, list):
+        train_descriptors = [train_descriptors]
+    descriptors = [TrainDescriptor(x[0], x[1]) for x in train_descriptors if not isinstance(x, TrainDescriptor)]
+
     arguments.require_type(Frame, train_frame, "frame")
     arguments.require_type(Frame, test_frame, "frame")
-    train_method = getattr(model_type, "train")
+    #train_method = getattr(model_type, "train")
 
     grid_points = []
-    descriptors = expand_descriptors([descriptor])
+    #descriptors = expand_descriptors([descriptor])
     for descriptor in descriptors:
-        train_args = dict(descriptor)
-        train_args['frame'] = train_frame
-        validate_call(train_method, train_args, ignore_self=True)
-        model = model_type.train(**train_args)
-        global count
-        test_args = dict(descriptor)
-        test_args['frame'] = test_frame
-        test_args = extract_call(model.test, test_args, ignore_self=True)
-        metrics = model.test(**test_args)
-        grid_points.append(GridPoint(descriptor=descriptor, metrics=metrics))
-        count += 1  # sanity count
+
+        train_method = getattr(descriptor.model_type, "train")
+        list_of_kwargs =  expand_kwarg_grids([descriptor.kwargs])
+        for kwargs in list_of_kwargs:
+            train_kwargs = dict(kwargs)
+            train_kwargs['frame'] = train_frame
+            validate_call(train_method, train_kwargs, ignore_self=True)
+            model = descriptor.model_type.train(**train_kwargs)
+            global count
+            test_kwargs = dict(kwargs)
+            test_kwargs['frame'] = test_frame
+            test_kwargs = extract_call(model.test, test_kwargs, ignore_self=True)
+            metrics = model.test(**test_kwargs)
+            grid_points.append(GridPoint(descriptor=TrainDescriptor(descriptor.model_type, train_kwargs), metrics=metrics))
+            count += 1  # sanity count
     return GridSearchResults(grid_points)
 
 
@@ -184,6 +224,22 @@ class Metrics(ClassificationMetricsValue):
 
 
 GridValues = namedtuple('GridValues', ['args'])
+#TrainDescriptor = namedtuple('TrainDescriptor', ['model_type', 'kwargs'])
+
+class TrainDescriptor(object):
+
+    def __init__(self, model_type, kwargs):
+        self.model_type = model_type
+        self.kwargs = kwargs
+
+    def __repr__(self):
+        kw = dict(self.kwargs)
+        del kw['frame']
+        try:
+            mt = self.model_type.__name__
+        except:
+            mt = str(self.model_type)
+        return "%s: %s" % (mt, kw)
 
 
 def grid_values(*args):
@@ -192,7 +248,7 @@ def grid_values(*args):
 count = 0
 
 
-def expand_descriptors(dictionaries):
+def expand_kwarg_grids(dictionaries):
     """
 
     :param dictionaries: Parameters for the model
@@ -210,7 +266,7 @@ def expand_descriptors(dictionaries):
                     new_dictionaries.append(d)
                 break
     if new_dictionaries:
-        return expand_descriptors(new_dictionaries)
+        return expand_kwarg_grids(new_dictionaries)
     return dictionaries
 
 GridPoint = namedtuple("GridPoint", ["descriptor", "metrics"])
@@ -245,21 +301,25 @@ class GridSearchResults(object):
         return best
 
     @staticmethod
-    def _validate_descriptors_are_equal(a, b):
-        if len(a) != len(b):
-            raise ValueError("Descriptors are of different length")
-        for k, v in a.items():
-            if k not in b:
+    def _validate_descriptors_are_equal(a, b, ignore_args=None):
+        if ignore_args is None:
+            ignore_args = []
+        if a.model_type != b.model_type:
+            raise ValueError("Descriptors have different model types: %s vs %s" % (a.model_type, b.model_type))
+        if len(a.kwargs) != len(b.kwargs):
+            raise ValueError("Descriptors have kwargs of different length")
+        for k, v in a.kwargs.items():
+            if k not in b.kwargs:
                 raise ValueError("Descriptors a != b because b is missing value for '%s'", k)
-            if b[k] != v:
-                raise ValueError("Descriptors a != b because of different values for '%s': %s != %s", k, v, b[k])
+            if k not in ignore_args and b.kwargs[k] != v:
+                raise ValueError("Descriptors a != b because of different values for '%s': %s != %s" % (k, v, b.kwargs[k]))
 
     def _accumulate_matching_points(self, points):
         if len(self.grid_points) != len(points):
             raise ValueError("Expected list of points of len %s, got %s" % (len(self.grid_points), len(points)))
 
         for index in xrange(len(self.grid_points)):
-            self._validate_descriptors_are_equal(self.grid_points[index].descriptor, points[index].descriptor)
+            self._validate_descriptors_are_equal(self.grid_points[index].descriptor, points[index].descriptor, ["frame"])
             m = Metrics._create_metric_sum(self.grid_points[index].metrics, points[index].metrics)
             self.grid_points[index] = GridPoint(self.grid_points[index].descriptor, m)
 

@@ -20,10 +20,10 @@ from sparktk import TkContext
 from collections import namedtuple
 from sparktk.frame.frame import Frame
 from sparktk import arguments
-from grid_search import grid_values, expand_descriptors, grid_search, GridPoint, GridSearchResults
+from grid_search import grid_values, expand_kwarg_grids, grid_search, GridPoint, GridSearchResults
 
 
-def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc=TkContext.implicit):
+def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkContext.implicit):
     """
     Computes k-fold cross validation on model with the given frame and parameter values
     :param frame: The frame to perform cross-validation on
@@ -56,90 +56,136 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
         >>> from sparktk.models._selection.grid_search import grid_values
 
         >>> result = tc.models.cross_validate(frame,
-        ...                                   tc.models.classification.svm,
-        ...                                   {"observation_columns":"data",
-        ...                                    "label_column":"label",
-        ...                                    "num_iterations": grid_values(2, 10),
-        ...                                    "step_size": 0.01},
-        ...                                    num_folds=3,
-        ...                                    verbose=True)
+        ...                                   [(tc.models.classification.svm,
+        ...                                     {"observation_columns":"data",
+        ...                                      "label_column":"label",
+        ...                                      "num_iterations": grid_values(2, 10),
+        ...                                      "step_size": 0.01}),
+        ...                                    (tc.models.classification.logistic_regression,
+        ...                                     {"observation_columns":"data",
+        ...                                      "label_column":"label",
+        ...                                      "num_iterations": grid_values(2, 10),
+        ...                                      "step_size": 0.01})],
+        ...                                   num_folds=2,
+        ...                                   verbose=True)
 
-        <skip>
         >>> result
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
-        f_measure        = 0.472222222222
-        precision        = 0.366666666667
-        recall           = 0.666666666667)
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
-        f_measure        = 0.472222222222
-        precision        = 0.366666666667
-        recall           = 0.666666666667)
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              0              5
+        f_measure        = 1.0
+        precision        = 1.0
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              2              0
         Actual_Neg              2              0
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0)
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              2              0
         Actual_Neg              2              0
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0)
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.0
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              0
-        Actual_Neg              1              0
-        f_measure        = 0.0
-        precision        = 0.0
-        recall           = 0.0)
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.0
+        Actual_Pos              2              0
+        Actual_Neg              2              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
         confusion_matrix =             Predicted_Pos  Predicted_Neg
-        Actual_Pos              0              0
-        Actual_Neg              1              0
-        f_measure        = 0.0
-        precision        = 0.0
-        recall           = 0.0)
-        Averages:
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
-        confusion_matrix =             Predicted_Pos  Predicted_Neg
-        Actual_Pos              5              0
-        Actual_Neg              5              0
-        f_measure        = 0.472222222222
-        precision        = 0.366666666667
-        recall           = 0.666666666667)
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        Actual_Pos              2              0
+        Actual_Neg              0              2
+        f_measure        = 1.0
+        precision        = 1.0
+        recall           = 1.0)
+        ******Averages: ******
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
-        f_measure        = 0.472222222222
-        precision        = 0.366666666667
-        recall           = 0.666666666667)
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              0              5
+        f_measure        = 1.0
+        precision        = 1.0
+        recall           = 1.0)
 
         >>> result.averages
-        GridPoint(descriptor={'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
-        f_measure        = 0.472222222222
-        precision        = 0.366666666667
-        recall           = 0.666666666667)
-        GridPoint(descriptor={'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.366666666667
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
         Actual_Neg              5              0
-        f_measure        = 0.472222222222
-        precision        = 0.366666666667
-        recall           = 0.666666666667)
-    </skip>
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              5              0
+        f_measure        = 0.666666666667
+        precision        = 0.5
+        recall           = 1.0)
+        GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
+        confusion_matrix =             Predicted_Pos  Predicted_Neg
+        Actual_Pos              5              0
+        Actual_Neg              0              5
+        f_measure        = 1.0
+        precision        = 1.0
+        recall           = 1.0)
+
     """
     TkContext.validate(tc)
     arguments.require_type(Frame, frame, "frame")
@@ -147,7 +193,7 @@ def cross_validate(frame, model_type, descriptor, num_folds=3, verbose=False, tc
     all_grid_search_results = []
     grid_search_results_accumulator = None
     for validate_frame, train_frame in split_data(frame, num_folds , tc):
-        scores = grid_search(train_frame, validate_frame, model_type, descriptor , tc)
+        scores = grid_search(train_frame, validate_frame, train_descriptors, tc)
         if grid_search_results_accumulator is None:
             grid_search_results_accumulator = scores
         else:
@@ -200,6 +246,6 @@ class CrossValidateClassificationResults(object):
     def __repr__(self):
         result = self._get_all_str() if self.verbose else ''
         return result + """
-Averages:
+******Averages: ******
 %s""" % self.averages
 

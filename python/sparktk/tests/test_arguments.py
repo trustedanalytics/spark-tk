@@ -309,21 +309,6 @@ class TestReflection(unittest.TestCase):
         else:
             self.fail("Negative test failure: expected ValueError when validating function with varargs")
 
-    def test_find_arguments(self):
-        self.assertEqual({}, arguments.find_arguments(f0, {'a': 1}))
-        self.assertEqual({'a':1, 'b':2}, arguments.find_arguments(f1, {'a': 1, 'b': 2, 'c': 3}))
-        self.assertEqual({'a':1, 'b':2}, arguments.find_arguments(f2, {'a': 1, 'b': 2, 'c': 3}))
-        self.assertEqual({'uno':1, 'tres':33}, arguments.find_arguments(f8, {'uno': 1, 'tres': 33, 'junk': 3}))
-
-    def test_find_arguments_neg(self):
-        try:
-            arguments.find_arguments(f1, {'b':4})
-        except ValueError as e:
-            self.assertEqual("function f1(a, b) needs argument 'a' which is not found in the given arguments: b",
-                         str(e))
-        else:
-            self.fail("Negative test failure: expected ValueError when missing required argument")
-
 
 if __name__ == '__main__':
     unittest.main()
