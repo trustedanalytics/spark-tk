@@ -22,6 +22,7 @@ import javax.imageio.stream.ImageInputStream
 import javax.imageio.{ ImageIO, ImageReader }
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
 import org.apache.spark.rdd.RDD
@@ -29,9 +30,9 @@ import org.apache.spark.sql.SQLContext
 import org.trustedanalytics.sparktk.dicom.Dicom
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-
 import org.dcm4che3.imageio.plugins.dcm.{ DicomImageReadParam, DicomImageReader }
 import org.dcm4che3.io.DicomInputStream
+import org.dcm4che3.io.DicomInputStream.IncludeBulkData
 import org.dcm4che3.tool.dcm2xml.org.trustedanalytics.sparktk.Dcm2Xml
 
 object Import extends Serializable {
@@ -81,7 +82,6 @@ object Import extends Serializable {
   def getMetadataXml(byteArray: Array[Byte]): String = {
     val metadataInputStream = new DataInputStream(new ByteArrayInputStream(byteArray))
     val metadataDicomInputStream = new DicomInputStream(metadataInputStream)
-
     val dcm2xml = new Dcm2Xml()
     val myOutputStream = new ByteArrayOutputStream()
     dcm2xml.convert(metadataDicomInputStream, myOutputStream)
@@ -99,26 +99,27 @@ object Import extends Serializable {
    * @param path Full path to the DICOM files directory
    * @return Dicom object with MetadataFrame and PixeldataFrame
    */
-  def importDcm(sc: SparkContext, path: String): Dicom = {
+  def importDcm(sc: SparkContext, path: String, minPartitions: Int = 2): Dicom = {
 
-    val dicomFilesRdd = sc.binaryFiles(path)
+    val dicomFilesRdd = sc.binaryFiles(path, minPartitions)
 
-    val dcmMetadataPixelArrayRDD = dicomFilesRdd.mapPartitions {
+    val dcmMetadataPixelArrayRDD = dicomFilesRdd.map {
 
-      case iter => for {
-
-        (filePath, fileData) <- iter
-
+      case (filePath, fileData) => {
         // Open PortableDataStream to retrieve the bytes
-        fileInputStream = fileData.open()
-        byteArray = IOUtils.toByteArray(fileInputStream)
+        val fileInputStream = fileData.open()
+        val byteArray = IOUtils.toByteArray(fileInputStream)
 
         //Create the metadata xml
-        metadata = getMetadataXml(byteArray)
+        val metadata = getMetadataXml(byteArray)
         //Create a dense matrix for pixel array
-        pixeldata = getPixeldata(byteArray)
-        //Metadata
-      } yield (metadata, pixeldata)
+        val pixeldata = getPixeldata(byteArray)
+
+        //Close the PortableDataStream
+        fileInputStream.close()
+
+        (metadata, pixeldata)
+      }
     }.zipWithIndex()
 
     dcmMetadataPixelArrayRDD.cache()
