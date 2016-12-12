@@ -57,9 +57,3 @@ def test_cross_validate(tc):
     logger.info("finding the number of models evaluated")
     averages = result.averages
     assert(len(averages.grid_points) == 4 )
-    logger.info("finding the best model and its parameters")
-    best = averages.find_best().metrics
-    assert(best.accuracy == 1.0)
-    assert(best.recall == 1.0)
-    assert(best.precision == 1.0)
-    assert(best.f_measure == 1.0)
