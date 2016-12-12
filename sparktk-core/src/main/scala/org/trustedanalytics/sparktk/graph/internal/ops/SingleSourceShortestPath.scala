@@ -22,10 +22,10 @@ import org.graphframes.lib.org.trustedanalytics.{ sparktk => graphframeslib }
 trait SingleSourceShortestPathSummarization extends BaseGraph {
 
   /**
-   * Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
-   * it returns the target vertexID, the shortest path from the source vertex and the corresponding cost.
-   * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters, e.g., maximum path length, are provided
-   * to constraint the computations for large graphs.
+   * Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex in the graph.
+   * The algorithm returns the shortest path from the source vertex and the corresponding cost.
+   * This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
+   * Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
    *
    * @param srcVertexId source vertex ID
    * @param edgePropName optional edge column name to be used as edge weight

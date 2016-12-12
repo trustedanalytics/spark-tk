@@ -22,17 +22,17 @@ tc = TkContext.implicit
 def single_source_shortest_path(self, src_vertex_id, edge_prop_name, max_path_length):
     """
 
-    Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
-    returns the target vertexID, he shortest path from the source vertex and the corresponding cost.
-    this implementation utilizes a distributed version of Dijkstra-based shortest path algorithm.
-    Some optional parameters, e.g., maximum path length, are provided to constraint the computations for large graphs.
+    Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex
+    in the graph. The algorithm returns the shortest path from the source vertex and the corresponding cost.
+    This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
+    Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
 
     Parameters
     ----------
 
     :param src_vertex_id: (Any) source vertex ID
     :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
-    :param max_path_length (Optional(double))optional maximum path length or cost to limit the SSSP computations
+    :param max_path_length: (Optional(double))optional maximum path length or cost to limit the SSSP computations
     :return: (Frame) the target vertexID, he shortest path from the source vertex and the corresponding cost
 
 
@@ -61,7 +61,7 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name, max_path_le
 <skip>
         >>> result = graph.single_source_shortest_path("a")
 
-         >>> result.inspect() 
+         >>> result.inspect()
 </skip>
 
     """

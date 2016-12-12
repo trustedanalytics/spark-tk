@@ -24,15 +24,15 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * Computes the Single Source Shortest Paths (SSSP)for the given graph starting from the given vertex ID,
- * it returns the target vertexID, the shortest path from the source vertex and the corresponding cost.
- * It utilizes a distributed version of Dijkstra-based shortest path algorithm. Some optional parameters, e.g., maximum path length, are provided
- * to constraint the computations for large graphs.
+  * Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex in the graph.
+  * The algorithm returns the shortest path from the source vertex and the corresponding cost.
+  * This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
+  * Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
  */
 object SingleSourceShortestPath {
 
   /**
-   * Computes the single source shortest path for the given graph frame using Graphx-based single source shortest path
+   * Computes the single source shortest path for the graph frame using Graphx-based single source shortest path
    * algorithm
    *
    * @param graph the graph to compute SSSP against
@@ -41,7 +41,8 @@ object SingleSourceShortestPath {
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
    * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
    */
-  def run(graph: GraphFrame, srcVertexId: Any,
+  def run(graph: GraphFrame,
+          srcVertexId: Any,
           edgePropName: Option[String] = None,
           maxPathLength: Option[Double] = None): DataFrame = {
     // get the vertex IDs map for the given graph frame
@@ -97,7 +98,7 @@ object SingleSourceShortestPath {
     val idType = vertices.schema(GraphFrame.ID).dataType
     // split the single source shortest path cost and path into two columns
     val shortestPathRdd = vertices.map {
-      case Row(id: Any, Row(cost: Double, path: mutable.WrappedArray[Long])) =>
+      case Row(id: Any, Row(cost: Double, path: Array[Long])) =>
         Row(id, cost, path.map(id => vertexIdsMap(id)).toSet.toString())
     }
     val schema = new StructType(Array(new StructField(GraphFrame.ID, idType),

@@ -35,10 +35,10 @@ class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
     with LoopyBeliefPropagationSummarization
     with PageRankSummarization
     with SaveSummarization
+    with SingleSourceShortestPathSummarization
     with TriangleCountSummarization
     with VertexCountSummarization
-    with WeightedDegreeSummarization
-    with SingleSourceShortestPathSummarization {
+    with WeightedDegreeSummarization {
 
   def this(verticesFrame: DataFrame, edgesFrame: DataFrame) = {
     this(GraphFrame(verticesFrame, edgesFrame))
