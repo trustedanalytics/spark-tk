@@ -40,12 +40,12 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
     Examples
     --------
 
-        >>> v = tc.frame.create([("a", "Alice", 34, "F"),
-        ...     ("b", "Bob", 36, "M"),
-        ...     ("c", "Charlie", 30, "M"),
-        ...     ("d", "David", 29, "M"),
-        ...     ("e", "Esther", 32, "F"),
-        ...     ("f", "Fanny", 36, "F")
+        >>> v = tc.frame.create([("a", "Alice", 34, "female"),
+        ...     ("b", "Bob", 36, "male"),
+        ...     ("c", "Charlie", 30, "male"),
+        ...     ("d", "David", 29, "male"),
+        ...     ("e", "Esther", 32, "female"),
+        ...     ("f", "Fanny", 36, "female")
         ...     ], ["id", "name", "age", "gender"])
 
         >>> e = tc.frame.create([("a", "b", "friend", 3),
