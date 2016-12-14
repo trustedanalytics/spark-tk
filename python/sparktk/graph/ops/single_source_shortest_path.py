@@ -58,19 +58,19 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
         ...     ], ["src", "dst", "relationship","distance"])
 
         >>> graph = tc.graph.create(v, e)
-<skip>
+
         >>> result = graph.single_source_shortest_path("a")
 
          >>> result.inspect()
-        [#]  id  cost  path
-        ===========================
-        [0]  a    0.0  Set(a)
-        [1]  b    1.0  Set(a, b)
-        [2]  d    2.0  Set(a, e, d)
-        [3]  e    1.0  Set(a, e)
-        [4]  c    2.0  Set(a, b, c)
-        [5]  f    2.0  Set(a, e, f)
-</skip>
+        [#]  id  name     age  gender  cost  path
+        ==========================================================
+        [0]  a   Alice     34  female   0.0  WrappedArray(a)
+        [1]  b   Bob       36  male     1.0  WrappedArray(a, b)
+        [2]  d   David     29  male     2.0  WrappedArray(a, e, d)
+        [3]  e   Esther    32  female   1.0  WrappedArray(a, e)
+        [4]  c   Charlie   30  male     2.0  WrappedArray(a, b, c)
+        [5]  f   Fanny     36  female   2.0  WrappedArray(a, e, f)
+
 
     """
     from sparktk.frame.frame import Frame
