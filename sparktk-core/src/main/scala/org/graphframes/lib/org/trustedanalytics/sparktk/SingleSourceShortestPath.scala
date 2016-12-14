@@ -62,7 +62,7 @@ object SingleSourceShortestPath {
    */
   def getSingleSourceShortestPathFrame(ssspGraphFrame: GraphFrame): DataFrame = {
     val costUdf = udf { (row: Row) => row.getDouble(0) }
-    val pathUdf = udf { (row: Row) => row.getSeq[String](1).toString() }
+    val pathUdf = udf { (row: Row) => "[" + row.getSeq[String](1).map(s => s).mkString(", ") + "]" }
     val costDataFrame = ssspGraphFrame.vertices.withColumn(SSSP_COST, costUdf(col(SSSP_RESULTS)))
     costDataFrame.withColumn(SSSP_PATH, pathUdf(col(SSSP_RESULTS))).drop(SSSP_RESULTS)
   }

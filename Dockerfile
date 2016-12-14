@@ -19,6 +19,8 @@ RUN apt-get -q clean && \
       bzip2 \
       gcc \
       gfortran \
+      libxml2-dev 
+      libxslt1-dev
       python-qt4 \
       python-dev \
       wget \
