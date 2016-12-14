@@ -30,21 +30,22 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
     Parameters
     ----------
 
-    :param src_vertex_id:  source vertex ID
+    :param src_vertex_id: (any) source vertex ID
     :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
     :param max_path_length: (Optional(float))optional maximum path length or cost to limit the SSSP computations
+
     :return: (Frame) the target vertexID, he shortest path from the source vertex and the corresponding cost
 
 
     Examples
     --------
 
-         >>> v = tc.frame.create([("a", "Alice", 34, "F"),
+        >>> v = tc.frame.create([("a", "Alice", 34, "F"),
         ...     ("b", "Bob", 36, "M"),
         ...     ("c", "Charlie", 30, "M"),
         ...     ("d", "David", 29, "M"),
         ...     ("e", "Esther", 32, "F"),
-        ...     ("f", "Fanny", 36, "F"),
+        ...     ("f", "Fanny", 36, "F")
         ...     ], ["id", "name", "age", "gender"])
 
         >>> e = tc.frame.create([("a", "b", "friend", 3),
@@ -61,7 +62,7 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
 
         >>> result = graph.single_source_shortest_path("a")
 
-         >>> result.inspect()
+        >>> result.inspect()
         [#]  id  name     age  gender  cost  path
         ==========================================================
         [0]  a   Alice     34  female   0.0  WrappedArray(a)
