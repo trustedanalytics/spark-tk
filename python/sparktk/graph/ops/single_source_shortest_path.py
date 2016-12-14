@@ -19,7 +19,7 @@ from sparktk.tkcontext import TkContext
 tc = TkContext.implicit
 
 
-def single_source_shortest_path(self, src_vertex_id, edge_prop_name, max_path_length):
+def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_path_length=None):
     """
 
     Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex
@@ -30,9 +30,9 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name, max_path_le
     Parameters
     ----------
 
-    :param src_vertex_id: (Any) source vertex ID
+    :param src_vertex_id:  source vertex ID
     :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
-    :param max_path_length: (Optional(double))optional maximum path length or cost to limit the SSSP computations
+    :param max_path_length: (Optional(float))optional maximum path length or cost to limit the SSSP computations
     :return: (Frame) the target vertexID, he shortest path from the source vertex and the corresponding cost
 
 
@@ -62,11 +62,19 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name, max_path_le
         >>> result = graph.single_source_shortest_path("a")
 
          >>> result.inspect()
+        [#]  id  cost  path
+        ===========================
+        [0]  a    0.0  Set(a)
+        [1]  b    1.0  Set(a, b)
+        [2]  d    2.0  Set(a, e, d)
+        [3]  e    1.0  Set(a, e)
+        [4]  c    2.0  Set(a, b, c)
+        [5]  f    2.0  Set(a, e, f)
 </skip>
 
     """
     from sparktk.frame.frame import Frame
-    return Frame(self._tc, self._scala.single_source_shortest_path(self,
-                                                                   src_vertex_id,
-                                                                   self._tc._jutils.convert.to_scala_option(edge_prop_name),
-                                                                   self._tc._jutils.convert.to_scala_option(max_path_length)))
+    return Frame(self._tc,
+                 self._scala.singleSourceShortestPath(src_vertex_id,
+                                                      self._tc.jutils.convert.to_scala_option(edge_prop_name),
+                                                      self._tc.jutils.convert.to_scala_option(max_path_length)))

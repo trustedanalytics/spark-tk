@@ -30,7 +30,7 @@ trait SingleSourceShortestPathSummarization extends BaseGraph {
    * @param srcVertexId source vertex ID
    * @param edgePropName optional edge column name to be used as edge weight
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
-   * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
+   * @return frame with the shortest path and corresponding cost from the source vertex to each target vertex ID.
    */
   def singleSourceShortestPath(srcVertexId: Any,
                                edgePropName: Option[String] = None,

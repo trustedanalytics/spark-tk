@@ -52,25 +52,24 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
 
     "calculate the single source shortest path" in {
       val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a")
-      singleSourceShortestPathFrame.collect().head shouldBe Row("b", 1.0, "Set(a, b)")
+      singleSourceShortestPathFrame.collect().head shouldBe Row("b", "Bob", 36, 1.0, "WrappedArray(a, b)")
     }
 
     "calculate the single source shortest paths with edge weights" in {
       val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a", Some("distance"))
-      println(singleSourceShortestPathFrame.collect().mkString("\n"))
-      singleSourceShortestPathFrame.collect().head shouldBe Row("b", 12.0, "Set(a, b)")
+      singleSourceShortestPathFrame.collect().head shouldBe Row("b", "Bob", 36, 12.0, "WrappedArray(a, b)")
 
     }
 
     "calculate the single source shortest paths with maximum path length constraint" in {
       val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a", None, Some(2))
-      singleSourceShortestPathFrame.collect() shouldBe Array(Row("b", 1.0, "Set(a, b)"),
-        Row("d", 2.0, "Set(a, e, d)"),
-        Row("f", 2.0, "Set(a, e, f)"),
-        Row("a", 0.0, "Set(a)"),
-        Row("c", 2.0, "Set(a, b, c)"),
-        Row("e", 1.0, "Set(a, e)"),
-        Row("g", Double.PositiveInfinity, "Set()"))
+      singleSourceShortestPathFrame.collect() shouldBe Array(Row("b", "Bob", 36, 1.0, "WrappedArray(a, b)"),
+        Row("d", "David", 29, 2.0, "WrappedArray(a, e, d)"),
+        Row("f", "Fanny", 36, 2.0, "WrappedArray(a, e, f)"),
+        Row("a", "Alice", 34, 0.0, "WrappedArray(a)"),
+        Row("c", "Charlie", 30, 2.0, "WrappedArray(a, b, c)"),
+        Row("e", "Esther", 32, 1.0, "WrappedArray(a, e)"),
+        Row("g", "Gabby", 60, Double.PositiveInfinity, "WrappedArray()"))
     }
   }
 }

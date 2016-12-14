@@ -18,16 +18,15 @@ package org.graphframes.lib.org.trustedanalytics.sparktk
 import org.apache.spark.graphx.lib.org.trustedanalytics._
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{ Row, DataFrame }
+import org.apache.spark.sql.functions.{ udf, col }
 import org.graphframes.GraphFrame
 import org.graphframes.lib.GraphXConversions
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 /**
-  * Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex in the graph.
-  * The algorithm returns the shortest path from the source vertex and the corresponding cost.
-  * This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
-  * Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
+ * Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex in the graph.
+ * The algorithm returns the shortest path from the source vertex and the corresponding cost.
+ * This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
+ * Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
  */
 object SingleSourceShortestPath {
 
@@ -35,76 +34,62 @@ object SingleSourceShortestPath {
    * Computes the single source shortest path for the graph frame using Graphx-based single source shortest path
    * algorithm
    *
-   * @param graph the graph to compute SSSP against
+   * @param graph graph to compute SSSP against
    * @param srcVertexId source vertex ID
    * @param edgePropName optional edge column name to be used as edge weight
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
-   * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
+   * @return dataframe with the shortest path and corresponding cost from the source vertex to each target vertex ID.
    */
   def run(graph: GraphFrame,
           srcVertexId: Any,
           edgePropName: Option[String] = None,
           maxPathLength: Option[Double] = None): DataFrame = {
-    // get the vertex IDs map for the given graph frame
-    val vertexIdsMap = convertVertexIds(graph)
-    val gf = GraphFrame(graph.vertices.select(GraphFrame.ID), graph.edges)
-    // calculate the single source shortest path
-    val graphxSsspGraph =
-      if (edgePropName.isDefined) {
-        val edgeWeightType = graph.edges.schema(edgePropName.get).dataType
-        require(edgeWeightType.isInstanceOf[NumericType], "The edge weight type should be numeric")
-        val graphxGraph = gf.toGraphX.mapEdges(e => e.attr.getAs[Int](edgePropName.get))
-        sparktk.SingleSourceShortestPath.run(graphxGraph,
-          GraphXConversions.integralId(graph, srcVertexId),
-          Some((x: Int) => x.toDouble),
-          maxPathLength)
-      }
-      else {
-        sparktk.SingleSourceShortestPath.run(gf.toGraphX,
-          GraphXConversions.integralId(graph, srcVertexId),
-          None,
-          maxPathLength)
-      }
-    // convert the single source shortest path graph to a graph frame
-    val g = GraphXConversions.fromGraphX(gf, graphxSsspGraph, vertexNames = Seq(SSSP_RESULTS))
-    getSingleSourceShortestPathResults(g.vertices, vertexIdsMap)
+    val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgePropName)
+    val origVertexIdFunc = (x: Row) => x.getAs[String](GraphFrame.ID)
+    val ssspGraphx = sparktk.SingleSourceShortestPath.run(graph.toGraphX,
+      GraphXConversions.integralId(graph, srcVertexId),
+      edgeWeightFunc,
+      maxPathLength, origVertexIdFunc)
+    val ssspGraphFrame = GraphXConversions.fromGraphX(graph, ssspGraphx, Seq(SSSP_RESULTS))
+    getSingleSourceShortestPathFrame(ssspGraphFrame)
   }
+
   /**
-   * Store the given graph frame vertex IDs and its corresponding IDs in Graphx
    *
-   * @param graphFrame graph frame
-   * @return vertex IDs for the graphx and the graphframes graphs
+   * @param ssspGraphFrame graph with the single source shortest path calulations
+   * @return dataframe with the original vertices columns, in addition to the shortest path and
+   *         corresponding cost from the source vertex to each target vertex ID.
    */
-  def convertVertexIds(graphFrame: GraphFrame): Map[Long, Any] = {
-    var vertexIdsMap = mutable.Map[Long, Any]()
-    val idBuffer = new ArrayBuffer[Any]()
-    val idIterator = graphFrame.vertices.mapPartitions({ iter =>
-      while (iter.hasNext) {
-        idBuffer += iter.next.getAs[Any](GraphFrame.ID)
-      }
-      idBuffer.toIterator
-    })
-    idIterator.collect.foreach(id => vertexIdsMap += (GraphXConversions.integralId(graphFrame, id) -> id))
-    vertexIdsMap.toMap
+  def getSingleSourceShortestPathFrame(ssspGraphFrame: GraphFrame): DataFrame = {
+    val costUdf = udf { (row: Row) => row.getDouble(0) }
+    val pathUdf = udf { (row: Row) => row.getSeq[String](1).toString() }
+    val costDataFrame = ssspGraphFrame.vertices.withColumn(SSSP_COST, costUdf(col(SSSP_RESULTS)))
+    costDataFrame.withColumn(SSSP_PATH, pathUdf(col(SSSP_RESULTS))).drop(SSSP_RESULTS)
   }
+
   /**
-   * Get the single source shortest path results, the target vertex ID, and its cost and shortest path
-   *
-   * @param vertices  the single source shortest path vertices
-   * @return single source shortest path results
+   * Get the edge weight function that enables the inclusion of the edge weights in the SSSP
+   * calculations by converting the edge attribute type to Double
+   * @param graph graph to compute SSSP against
+   * @param edgePropName column name for the edge weight
+   * @return edge weight function
    */
-  def getSingleSourceShortestPathResults(vertices: DataFrame, vertexIdsMap: Map[Long, Any]): DataFrame = {
-    // get the vertex type
-    val idType = vertices.schema(GraphFrame.ID).dataType
-    // split the single source shortest path cost and path into two columns
-    val shortestPathRdd = vertices.map {
-      case Row(id: Any, Row(cost: Double, path: Array[Long])) =>
-        Row(id, cost, path.map(id => vertexIdsMap(id)).toSet.toString())
+  def getEdgeWeightFunc(graph: GraphFrame, edgePropName: Option[String]): Option[(Row) => Double] = {
+    val edgeWeightFunc = if (edgePropName.isDefined) {
+      val edgeWeightType = graph.edges.schema(edgePropName.get).dataType
+      require(edgeWeightType.isInstanceOf[NumericType], "The edge weight type should be numeric")
+      Some((row: Row) => row.getAs[Any](edgePropName.get) match {
+        case x: Int => x.toDouble
+        case x: Long => x.toDouble
+        case x: Short => x.toDouble
+        case x: Byte => x.toDouble
+        case _ => throw new scala.ClassCastException(s"the edge weight type cannot be $edgeWeightType")
+      })
     }
-    val schema = new StructType(Array(new StructField(GraphFrame.ID, idType),
-      new StructField(SSSP_COST, DoubleType),
-      new StructField(SSSP_PATH, StringType)))
-    vertices.sqlContext.createDataFrame(shortestPathRdd, schema)
+    else {
+      None
+    }
+    edgeWeightFunc
   }
   private val SSSP_RESULTS = "results"
   private val SSSP_COST = "cost"
