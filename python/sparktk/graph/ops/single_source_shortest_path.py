@@ -66,11 +66,11 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
         [#]  id  name     age  gender  cost  path
         ====================================================
         [0]  a   Alice     34  female   0.0  [a]
-        [1]  d   David     29  male    18.0  [a, e, d]
-        [2]  b   Bob       36  male     3.0  [a, b]
-        [3]  e   Esther    32  female  10.0  [a, e]
-        [4]  c   Charlie   30  male    15.0  [a, b, c]
-        [5]  f   Fanny     36  female  14.0  [a, e, f]
+        [1]  d   David     29  male     2.0  [a, e, d]
+        [2]  b   Bob       36  male     1.0  [a, b]
+        [3]  e   Esther    32  female   1.0  [a, e]
+        [4]  c   Charlie   30  male     2.0  [a, b, c]
+        [5]  f   Fanny     36  female   2.0  [a, e, f]
 
     """
     from sparktk.frame.frame import Frame
