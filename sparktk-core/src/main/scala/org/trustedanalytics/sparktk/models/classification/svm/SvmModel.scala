@@ -44,8 +44,8 @@ object SvmModel extends TkSaveableObject {
    * Train a SVM with SGD Model using the observation column and label column of a frame.
    *
    * @param frame The frame containing the data to train on
-   * @param labelColumn Column containing the label for each observation
    * @param observationColumns Column(s) containing the observations
+   * @param labelColumn Column containing the label for each observation
    * @param intercept Flag indicating if the algorithm adds an intercept. Default is true
    * @param numIterations Number of iterations for SGD. Default is 100
    * @param stepSize Initial step size for SGD optimizer for the first step. Default is 1.0
@@ -55,8 +55,8 @@ object SvmModel extends TkSaveableObject {
    */
 
   def train(frame: Frame,
-            labelColumn: String,
             observationColumns: List[String],
+            labelColumn: String,
             intercept: Boolean = true,
             numIterations: Int = 100,
             stepSize: Double = 1d,
@@ -135,8 +135,8 @@ object SvmModel extends TkSaveableObject {
 /**
  * SvmModel
  * @param sparkModel Trained MLLib's Naive Bayes model
- * @param labelColumnName Label column for trained model
- * @param observationColumnNames Handle to the observation columns of the data frame
+ * @param observationColumns Handle to the observation columns of the data frame
+ * @param labelColumn Label column for trained model
  * @param intercept Flag indicating if the algorithm adds an intercept
  * @param numIterations Number of iterations for SGD
  * @param stepSize Initial step size for SGD optimizer for the first step
@@ -145,8 +145,8 @@ object SvmModel extends TkSaveableObject {
  * @param miniBatchFraction Set fraction of data to be used for each SGD iteration. corresponding to deterministic/classical gradient descent
  */
 case class SvmModel private[svm] (sparkModel: SparkSvmModel,
-                                  observationColumnNames: List[String],
-                                  labelColumnName: String,
+                                  observationColumns: List[String],
+                                  labelColumn: String,
                                   intercept: Boolean,
                                   numIterations: Int,
                                   stepSize: Double,
@@ -162,18 +162,18 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
    * Predicts the labels for the observation columns in the input frame
    * @param frame - frame to add predictions to
    * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the SvmModel was trained on
+   *                By default, the same observation column names from training are used
    * @return New frame containing the original frame's columns and a column with the predicted label
    */
   def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and predict should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
+    val observations = observationColumns.getOrElse(this.observationColumns)
 
-    val svmColumns = observationColumns.getOrElse(observationColumnNames)
     val predictMapper: RowWrapper => Row = row => {
-      val point = row.toDenseVector(svmColumns)
+      val point = row.toDenseVector(observations)
       val prediction = sparkModel.predict(point).toInt
       Row.apply(prediction)
     }
@@ -189,20 +189,23 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
    *
    * @param frame Frame to test the Svm model
    * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the SvmModel
+   *                By default, the same observation column names from training are used
+   * @param labelColumn Column containing the label for each observation
+   *                By default, the same label column name from training is used
    * @return ClassificationMetricValue describing the test metrics
    */
-  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]]): ClassificationMetricValue = {
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None): ClassificationMetricValue = {
 
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and test should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val svmColumns = observationColumns.getOrElse(observationColumnNames)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
 
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(svmColumns, labelColumn)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })
@@ -220,8 +223,8 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
-    val tkMetadata = SvmModelTkMetaData(observationColumnNames,
-      labelColumnName,
+    val tkMetadata = SvmModelTkMetaData(observationColumns,
+      labelColumn,
       intercept,
       numIterations,
       stepSize,
@@ -246,7 +249,7 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
    */
   def input(): Array[Field] = {
     var input = Array[Field]()
-    observationColumnNames.foreach { name =>
+    observationColumns.foreach { name =>
       input = input :+ Field(name, "Double")
     }
     input
@@ -289,8 +292,8 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
 
 /**
  * TK Metadata that will be stored as part of the model
- * @param labelColumnName Label column for trained model
  * @param observationColumnNames Handle to the observation columns of the data frame
+ * @param labelColumnName Label column for trained model
  * @param intercept Flag indicating if the algorithm adds an intercept
  * @param numIterations Number of iterations for SGD
  * @param stepSize Initial step size for SGD optimizer for the first step

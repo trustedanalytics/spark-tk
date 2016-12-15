@@ -61,8 +61,10 @@ class _AffirmType(object):
     Raises ValueError otherwise
     """
 
-    def list_of_str(self, value, name, extra_msg=None, length=None):
+    def list_of_str(self, value, name, extra_msg=None, length=None, allow_none=False):
         """Note: converts str to list of str"""
+        if value is None:
+            return self._allow_none(value, name, extra_msg, allow_none)
         if isinstance(value, basestring):
             return [value]
         if length is not None and len(value) != length:
@@ -73,7 +75,9 @@ class _AffirmType(object):
             raise value_error("str or list of str", value, name, extra_msg)
         return value
 
-    def list_of_float(self, value, name, extra_msg=None, length=None):
+    def list_of_float(self, value, name, extra_msg=None, length=None, allow_none=False):
+        if value is None:
+            return self._allow_none(value, name, extra_msg, allow_none)
         values = value if isinstance(value, list) else [value]
         if length is not None and len(values) != length:
             raise value_error("list of float of length %s" % length, value, name, extra_msg)
@@ -82,6 +86,15 @@ class _AffirmType(object):
         except ValueError:
             raise value_error("list of float", value, name, extra_msg)
         return x
+
+    @staticmethod
+    def _allow_none(value, name, extra_msg, allow_none):
+        """private none-checker, reduces boilerplate code, called on value is None"""
+        if allow_none:
+            return value
+        if value is not None:  # sanity check for programmer's usage
+            raise RuntimeError("Internal error: _allow_none always expects value is None, but it is not")
+        raise value_error("a non-None value", value, name, extra_msg)
 
 
 affirm_type = _AffirmType()  # singleton instance of the _AffirmType class

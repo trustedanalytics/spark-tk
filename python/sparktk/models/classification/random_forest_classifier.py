@@ -27,8 +27,8 @@ import os
 __all__ = ["train", "load", "RandomForestClassifierModel"]
 
 def train(frame,
-          label_column,
           observation_columns,
+          label_column,
           num_classes = 2,
           num_trees = 1,
           impurity = "gini",
@@ -44,8 +44,8 @@ def train(frame,
     ----------
 
     :param frame: (Frame) frame frame of training data
-    :param label_column: (str) Column name containing the label for each observation
     :param observation_columns: (list(str)) Column(s) containing the observations
+    :param label_column: (str) Column name containing the label for each observation
     :param num_classes: (int) Number of classes for classification. Default is 2
     :param num_trees: (int) Number of tress in the random forest. Default is 1
     :param impurity: (str) Criterion used for information gain calculation. Supported values "gini" or "entropy".
@@ -81,8 +81,8 @@ def train(frame,
     _scala_obj = get_scala_obj(tc)
     seed = int(os.urandom(2).encode('hex'), 16) if seed is None else seed
     scala_model = _scala_obj.train(frame._scala,
-                                   label_column,
                                    tc.jutils.convert.to_scala_list_string(observation_columns),
+                                   label_column,
                                    num_classes,
                                    num_trees,
                                    impurity,
@@ -133,7 +133,7 @@ class RandomForestClassifierModel(PropertiesObject):
         [4]      0  44.3117586448  3.3458963222
         [5]      0  34.6334526911  3.6429838715
 
-        >>> model = tc.models.classification.random_forest_classifier.train(frame, 'Class', ['Dim_1', 'Dim_2'], num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
+        >>> model = tc.models.classification.random_forest_classifier.train(frame, ['Dim_1', 'Dim_2'], 'Class', num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
 
         >>> predicted_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
@@ -147,7 +147,7 @@ class RandomForestClassifierModel(PropertiesObject):
         [4]      0  44.3117586448  3.3458963222                0
         [5]      0  34.6334526911  3.6429838715                0
 
-        >>> test_metrics = model.test(frame, "Class", ['Dim_1','Dim_2'])
+        >>> test_metrics = model.test(frame, ['Dim_1','Dim_2'], 'Class')
 
         >>> test_metrics
         accuracy         = 1.0
@@ -195,12 +195,12 @@ class RandomForestClassifierModel(PropertiesObject):
     @property
     def label_column(self):
         """column containing the label used for model training"""
-        return self._scala.labelColumnName()
+        return self._scala.labelColumn()
 
     @property
     def observation_columns(self):
         """observation columns used for model training"""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
 
     @property
     def num_classes(self):
@@ -255,15 +255,16 @@ class RandomForestClassifierModel(PropertiesObject):
 
         :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
                       over which the model is trained.
-        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
-                        By default, we predict the labels over columns the RandomForestModel was trained on.
+        :param observation_columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
+                                    By default, the same observation column names from training are used
         :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted
                  label for each observation.
         """
-        columns_option = self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns))
+        columns_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(columns_list)
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
-    def test(self, frame, label_column, observation_columns=None):
+    def test(self, frame, observation_columns=None, label_column=None):
         """
         Predict test frame labels and return metrics.
 
@@ -271,9 +272,10 @@ class RandomForestClassifierModel(PropertiesObject):
         ----------
 
         :param frame: (Frame) The frame whose labels are to be predicted
-        :param label_column: (str) Column containing the name of the label
         :param observation_columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
-                       By default, we predict the labels over columns the RandomForest was trained on.
+                                    By default, the same observation column names from training are used
+        :param label_column: (str) Column containing the name of the label
+                                    By default, the same label column name from training is used
         :return: (ClassificationMetricsValue) Binary classification metrics comprised of:
                 accuracy (double)
                 The proportion of predictions that are correctly identified
@@ -286,21 +288,10 @@ class RandomForestClassifierModel(PropertiesObject):
                 recall (double)
                 The proportion of positive instances that are correctly identified.
         """
-        columns_list = self.__get_observation_columns(observation_columns)
+        columns_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
         return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala,
-                                                                     label_column,
-                                                                     self._tc.jutils.convert.to_scala_option_list_string(columns_list)))
-
-    def __get_observation_columns(self, observation_columns):
-        if observation_columns is None:
-            return observation_columns
-        else:
-            return affirm_type.list_of_str(observation_columns, "observation_columns")
-
-    def __columns_to_option(self, c):
-        if c is not None:
-            c = self._tc.jutils.convert.to_scala_list_string(c)
-        return self._tc.jutils.convert.to_scala_option(c)
+                                                                     self._tc.jutils.convert.to_scala_option_list_string(columns_list),
+                                                                     self._tc.jutils.convert.to_scala_option(label_column)))
 
     def save(self, path):
         """
