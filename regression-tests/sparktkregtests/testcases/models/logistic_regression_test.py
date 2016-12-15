@@ -103,8 +103,9 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "Invalid column name blah provided"):
             test_result = log_model.test(
-                self.binomial_frame, 'res',
-                ["vec0", "vec1", "blah", "vec3", "vec4"])
+                self.binomial_frame,
+                ["vec0", "vec1", "blah", "vec3", "vec4"],
+                'res')
 
     def test_label_column_type_train(self):
         """test invalid label column type name in train"""
@@ -264,8 +265,8 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res")
         values = log_model.test(
-            self.binomial_frame, "res",
-            ["vec0", "vec1", "vec2", "vec3", "vec4"])
+            self.binomial_frame,
+            ["vec0", "vec1", "vec2", "vec3", "vec4"], "res")
 
         tp_f = self.binomial_frame.copy()
         tp_f.filter(lambda x: x['res'] == 1 and x['actual'] == 1)
