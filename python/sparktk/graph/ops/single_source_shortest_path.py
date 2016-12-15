@@ -64,7 +64,7 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
 
         >>> result.inspect()
         [#]  id  name     age  gender  cost  path
-        ====================================================
+        ==============================================
         [0]  a   Alice     34  female   0.0  [a]
         [1]  d   David     29  male     2.0  [a, e, d]
         [2]  b   Bob       36  male     1.0  [a, b]
