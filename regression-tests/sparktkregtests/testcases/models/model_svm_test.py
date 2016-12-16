@@ -396,7 +396,7 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
     def test_null_column(self):
         """Try a null data column"""
-        with self.assertRaisesRegexp(Exception, "Invalid column name"):
+        with self.assertRaisesRegexp(Exception, "Found observation_columns = ['x', None].  Expected str or list of str."):
             self.context.models.classification.svm.train(self.training_frame,
                                                          ["x", None],
                                                          "model_class")
