@@ -3,8 +3,9 @@
 
 # spark-tk
 
-**spark-tk** is a library which enhances the Spark experience by providing a rich, easy-to-use API for Python and
-Scala.  It adds new machine learning capabilities and other operations, like working with DICOM images for example.
+**spark-tk** is a library which enhances the Spark experience by providing [a rich, easy-to-use API for Python and
+Scala](http://trustedanalytics.github.io/spark-tk/).  It adds new machine learning capabilities and other operations,
+like working with DICOM images for example.
 
 
 ## Overview
@@ -55,6 +56,11 @@ persist models by using the model save and load methods.
 Spark-tk includes support for ingesting and processing DICOM images in a distributed environment.  DICOM is the
 international standard for medical images and related information (ISO 12052).  Sparktk provides queries, filters, and
 analytics on collections of these images.
+
+
+### Documentation
+
+API Reference pages for Python and Scala are located [here](http://trustedanalytics.github.io/spark-tk/).
 
 
 ## Example:

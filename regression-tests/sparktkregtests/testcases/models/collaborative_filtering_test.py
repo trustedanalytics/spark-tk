@@ -46,7 +46,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
 
     def test_collaborative_filtering_recommend(self):
         """Test collaborative filtering and recommend"""
-        model = self.context.models.collaborativefiltering \
+        model = self.context.models.recommendation \
             .collaborative_filtering \
             .train(self.frame, "user_int", "item_int", "rating", max_steps=15)
         recommend = model.recommend(0, 40)
@@ -61,7 +61,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
 
     def test_collaborative_filtering_model_parameters(self):
         """Test collaborative filtering model parameters"""
-        model = self.context.models.collaborativefiltering \
+        model = self.context.models.recommendation \
             .collaborative_filtering \
             .train(self.frame,
                    "user_int",
@@ -92,7 +92,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
 
     def test_als_collaborative_filtering_many_steps(self):
         """ Test collaborative filtering with many steps"""
-        model = self.context.models.collaborativefiltering \
+        model = self.context.models.recommendation \
             .collaborative_filtering \
             .train(self.frame, "user_int", "item_int", "rating", max_steps=125)
         recommend = model.recommend(0, 40)
@@ -107,7 +107,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
 
     def test_collaborative_filtering_predict(self):
         """Test collaborative filtering and predict"""
-        model = self.context.models.collaborativefiltering \
+        model = self.context.models.recommendation \
             .collaborative_filtering \
             .train(self.frame, "user_int", "item_int", "rating", max_steps=15)
         scores = model.predict(
@@ -128,7 +128,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: column invalid_user was not found'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering \
                 .train(self.frame, "invalid_user", "item_int", "rating")
 
@@ -137,7 +137,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: column invalid_int was not found'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering \
                 .train(self.frame, "user_int", "invalid_int", "rating")
 
@@ -146,7 +146,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: column invalid_rating was not found'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering \
                 .train(self.frame, "user_int", "item_int", "invalid_rating")
 
@@ -155,7 +155,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: target RMSE must be a positive value'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", target_rmse=-15.0)
@@ -163,7 +163,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
     def test_collaborative_filtering_invalid_num_item_blocks(self):
         """Test collaborative filtering with invalid num_item_blocks"""
         with self.assertRaisesRegexp( Exception, 'Found num_item_blocks = -15.  Expected non-negative integer.'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", num_item_blocks=-15)
@@ -171,7 +171,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
     def test_collaborative_filtering_invalid_num_user_blocks(self):
         """Test collaborative filtering with invalid num_user_blocks"""
         with self.assertRaisesRegexp(Exception, 'Found num_user_blocks = -15.  Expected non-negative integer.'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", num_user_blocks=-15)
@@ -179,7 +179,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
     def test_collaborative_filtering_invalid_checkpoint_iterations(self):
         """Test collaborative filtering with invalid checkpoint_iterations"""
         with self.assertRaisesRegexp(Exception, 'Found checkpoint_iterations = -15.  Expected non-negative integer.'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", checkpoint_iterations=-15)
@@ -189,7 +189,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'Found max_steps = -15.  Expected non-negative integer.'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", max_steps=-15)
@@ -199,7 +199,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 '\'regularization\' parameter must have a value between 0 and 1'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", regularization=-1.0)
@@ -207,7 +207,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 '\'regularization\' parameter must have a value between 0 and 1'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int",
                 "rating", regularization=41.0)
@@ -217,13 +217,13 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 '\'alpha\' parameter must have a value between 0 and 1'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating", alpha=-1.0)
 
         with self.assertRaisesRegexp(
                 Exception, '\'alpha\' parameter must have a value between 0 and 1'):
-            self.context.models.collaborativefiltering \
+            self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating", alpha=41.0)
 
@@ -232,7 +232,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'Found number_of_recommendations = -10.  Expected non-negative integer.'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.recommend(0, -10)
@@ -242,7 +242,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: No users found with id = 1000.'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.recommend(1000, 10)
@@ -252,7 +252,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: column invalid_source was not found'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.predict(
@@ -263,7 +263,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 'requirement failed: column invalid_item was not found'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.predict(
@@ -273,7 +273,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering predict with invalid output user"""
         with self.assertRaisesRegexp(
                 Exception, 'requirement failed: column name can\'t be empty'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.predict(
@@ -284,7 +284,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering predict with invalid output product"""
         with self.assertRaisesRegexp(
                 Exception, 'requirement failed: column name can\'t be empty'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.predict(
@@ -295,7 +295,7 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         """Test collaborative filtering predict with invalid output rating"""
         with self.assertRaisesRegexp(
                 Exception, 'requirement failed: column name can\'t be empty'):
-            model = self.context.models.collaborativefiltering \
+            model = self.context.models.recommendation \
                 .collaborative_filtering.train(
                 self.frame, "user_int", "item_int", "rating")
             model.predict(
