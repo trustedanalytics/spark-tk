@@ -396,10 +396,14 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
     def test_null_column(self):
         """Try a null data column"""
-        with self.assertRaisesRegexp(Exception, "Found observation_columns = ['x', None].  Expected str or list of str."):
+        try:
             self.context.models.classification.svm.train(self.training_frame,
                                                          ["x", None],
                                                          "model_class")
+        except Exception as e:
+            assert str(e).contains("Found observation_columns = ['x', None].  Expected str or list of str.")
+        else:
+            raise RuntimeError("Expected exception not raised")
 
     def test_bad_data(self):
         """ Verify that invalid models raise exceptions.  """
