@@ -71,7 +71,7 @@ class TestLazyLoader(unittest.TestCase):
         loader = ll.get_lazy_loader(dummy, "tests")  # use the sparktk tests subpackage
         self.assertTrue(isinstance(loader, ll.LazyLoader))
         # see if it has a property for this module
-        self.assertEqual('SparktkTestsTest_lazyloaderLazyLoader', type(loader.test_lazyloader).__name__)
+        self.assertEqual('SparktkTestsTestLazyloaderLazyLoader', type(loader.test_lazyloader).__name__)
         # see if we can call the module level multiply method
         self.assertEqual(loader.test_lazyloader.multiply_for_lazy_loader(3, 4), 12)
         # see if class is the same class as if we imported it directly
@@ -89,7 +89,7 @@ class TestLazyLoader(unittest.TestCase):
         loader = ll.get_lazy_loader(dummy, "tests", implicit_kwargs={'base': base10})  # specify implicit value
         self.assertTrue(isinstance(loader, ll.LazyLoader))
         # see if it has a property for this module
-        self.assertEqual('SparktkTestsTest_lazyloaderLazyLoader', type(loader.test_lazyloader).__name__)
+        self.assertEqual('SparktkTestsTestLazyloaderLazyLoader', type(loader.test_lazyloader).__name__)
         # see if we can call the module level multiply method
         self.assertEqual(loader.test_lazyloader.multiply_with_implicit_kwarg(5, 7), "base10(35)")
 

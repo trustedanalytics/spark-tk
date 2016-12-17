@@ -36,7 +36,7 @@ class SvmModelTest extends TestingSparkContextWordSpec with Matchers {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
 
-      val svmModel = SvmModel.train(frame, "label", List("obs1", "obs2"))
+      val svmModel = SvmModel.train(frame, List("obs1", "obs2"), "label")
 
       svmModel shouldBe a[SvmModel]
     }
@@ -47,7 +47,7 @@ class SvmModelTest extends TestingSparkContextWordSpec with Matchers {
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
 
-        val svmModel = SvmModel.train(frame, "label", List())
+        val svmModel = SvmModel.train(frame, List(), "label")
       }
     }
 
@@ -57,7 +57,7 @@ class SvmModelTest extends TestingSparkContextWordSpec with Matchers {
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
 
-        val svmModel = SvmModel.train(frame, "", List("obs1", "obs2"))
+        val svmModel = SvmModel.train(frame, List("obs1", "obs2"), "")
       }
     }
   }
