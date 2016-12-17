@@ -401,7 +401,7 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                          ["x", None],
                                                          "model_class")
         except Exception as e:
-            assert str(e).contains("Found observation_columns = ['x', None].  Expected str or list of str.")
+            assert "Found observation_columns = ['x', None].  Expected str or list of str." in str(e)
         else:
             raise RuntimeError("Expected exception not raised")
 
