@@ -34,6 +34,7 @@ from sparktk.frame.constructors.import_hbase import import_hbase
 from sparktk.frame.constructors.import_hive import import_hive
 from sparktk.frame.constructors.import_jdbc import import_jdbc
 from sparktk.frame.constructors.import_pandas import import_pandas
+from sparktk.frame.constructors.import_tensorflow import import_tensorflow
 
 __all__ = ["create",
            "Frame",
@@ -43,6 +44,7 @@ __all__ = ["create",
            "import_hive",
            "import_jdbc",
            "import_pandas",
+           "import_tensorflow",
            "load"]
 
 
@@ -373,6 +375,7 @@ class Frame(object):
     from sparktk.frame.ops.export_to_json import export_to_json
     from sparktk.frame.ops.export_to_hbase import export_to_hbase
     from sparktk.frame.ops.export_to_hive import export_to_hive
+    from sparktk.frame.ops.export_to_tensorflow import export_to_tensorflow
     from sparktk.frame.ops.filter import filter
     from sparktk.frame.ops.flatten_columns import flatten_columns
     from sparktk.frame.ops.group_by import group_by

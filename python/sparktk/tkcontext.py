@@ -366,6 +366,13 @@ class TkContext(object):
         """
         return get_lazy_loader(self, "dicom", implicit_kwargs={'tc': self}).dicom  # .dicom to account for extra 'dicom' in name vis-a-vis scala
 
+
+    @property
+    def tensorflow(self):
+        """
+        """
+        return get_lazy_loader(self, "tensorflow", implicit_kwargs={'tc': self}).tensorflow
+
     @property
     def models(self):
         """
