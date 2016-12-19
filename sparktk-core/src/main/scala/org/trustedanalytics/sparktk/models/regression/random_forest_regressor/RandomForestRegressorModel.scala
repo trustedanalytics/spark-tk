@@ -224,7 +224,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    * @param observationColumnsTest List of column(s) containing the observations
    * @return linear regression metrics
    *         The data returned is composed of the following:
-   *         'explainedVarianceScore' : double
+   *         'explainedVariance' : double
    *         The explained variance regression score whose best possible value is 1.
    *         'meanAbsoluteError' : double
    *         The risk function corresponding to the expected value of the absolute error loss or l1-norm loss

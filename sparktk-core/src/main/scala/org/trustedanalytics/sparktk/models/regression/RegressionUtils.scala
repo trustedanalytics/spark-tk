@@ -24,13 +24,13 @@ import org.trustedanalytics.sparktk.frame.DataTypes
 
 /**
  * Return value from Linear Regression test
- * @param explainedVarianceScore The explained variance score whose best possible value is 1.0,
+ * @param explainedVariance The explained variance
  * @param meanAbsoluteError The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
  * @param meanSquaredError The risk function corresponding to the expected value of the squared error loss or quadratic loss
  * @param r2 The coefficient of determination
  * @param rootMeanSquaredError The square root of the mean squared error
  */
-case class RegressionTestMetrics(explainedVarianceScore: Double,
+case class RegressionTestMetrics(explainedVariance: Double,
                                  meanAbsoluteError: Double,
                                  meanSquaredError: Double,
                                  r2: Double,
@@ -61,54 +61,13 @@ object RegressionUtils extends Serializable {
     })
 
     val metrics = new RegressionMetrics(predictionAndValueRdd)
-    val explainedVarianceScore = getExplainedVarianceScore(predictionAndValueRdd)
+
     RegressionTestMetrics(
-      explainedVarianceScore,
+      metrics.explainedVariance,
       metrics.meanAbsoluteError,
       metrics.meanSquaredError,
       metrics.r2,
       metrics.rootMeanSquaredError
     )
-  }
-
-  /**
-   * Get explained variance regression score
-   * .
-   * Explained variance score = 1 - (variance(label-prediction)/variance(label))
-   * The best possible score is 1.
-   * @param predictFrame Frame with predicted and labeled data
-   * @param predictionColumn Name of prediction column
-   * @param valueColumn Name of value column
-   * @return Explained variance score
-   */
-  def getExplainedVarianceScore(predictFrame: DataFrame,
-                                predictionColumn: String,
-                                valueColumn: String): Double = {
-    val predictionAndValueRdd = predictFrame.select(predictionColumn, valueColumn).map(row => {
-      val prediction = DataTypes.toDouble(row.get(0))
-      val value = DataTypes.toDouble(row.get(1))
-      (prediction, value)
-    })
-    getExplainedVarianceScore(predictionAndValueRdd)
-  }
-
-  /**
-   * Get explained variance regression score
-   * .
-   * Explained variance score = 1 - (variance(label-prediction)/variance(label))
-   * The best possible score is 1.
-   * @param predictionAndLabelRdd RDD of predicted and label values
-   * @return Explained variance score
-   */
-  def getExplainedVarianceScore(predictionAndLabelRdd: RDD[(Double, Double)]): Double = {
-    val summary = predictionAndLabelRdd.aggregate(new MultivariateOnlineSummarizer())(
-      (summary, predLabel) => {
-        val (prediction, label) = predLabel
-        summary.add(Vectors.dense(label, label - prediction))
-      },
-      (sum1, sum2) => sum1.merge(sum2))
-    val variance = summary.variance
-    val score = 1d - (variance(1) / variance(0))
-    score
   }
 }

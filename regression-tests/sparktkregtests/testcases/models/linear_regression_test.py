@@ -58,7 +58,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(
             model.mean_absolute_error, output.mean_absolute_error)
         self.assertAlmostEqual(
-            model.explained_variance_score, output.explained_variance_score)
+            model.explained_variance, output.explained_variance)
 
     def test_model_predict_output(self):
         """Test output format of predict"""

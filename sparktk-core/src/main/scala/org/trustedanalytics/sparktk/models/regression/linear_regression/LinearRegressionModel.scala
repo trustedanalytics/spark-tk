@@ -93,7 +93,7 @@ object LinearRegressionModel extends TkSaveableObject {
       observationColumns,
       linRegModel.intercept,
       linRegModel.coefficients.toArray.toSeq,
-      getExplainedVarianceScore(linRegModel.transform(trainDataFrame), predictionColumn, valueColumn),
+      linRegModel.summary.explainedVariance,
       linRegModel.summary.meanAbsoluteError,
       linRegModel.summary.meanSquaredError,
       linRegModel.summary.objectiveHistory.toSeq,
@@ -112,7 +112,7 @@ object LinearRegressionModel extends TkSaveableObject {
       linRegModel.observationColumns,
       linRegModel.intercept,
       linRegModel.weights,
-      linRegModel.explainedVarianceScore,
+      linRegModel.explainedVariance,
       linRegModel.meanAbsoluteError,
       linRegModel.meanSquaredError,
       linRegModel.objectiveHistory,
@@ -140,7 +140,7 @@ object LinearRegressionModel extends TkSaveableObject {
  * @param observationColumnsTrain Frame's column(s) storing the observations
  * @param intercept The intercept of the trained model
  * @param weights Weights of the trained model
- * @param explainedVarianceScore The explained variance regression score whose best possible value is 1.
+ * @param explainedVariance The explained variance regression score
  * @param meanAbsoluteError The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
  * @param meanSquaredError The risk function corresponding to the expected value of the squared error loss or quadratic loss
  * @param objectiveHistory Objective function(scaled loss + regularization) at each iteration
@@ -153,7 +153,7 @@ case class LinearRegressionModel(valueColumn: String,
                                  observationColumnsTrain: Seq[String],
                                  intercept: Double,
                                  weights: Seq[Double],
-                                 explainedVarianceScore: Double,
+                                 explainedVariance: Double,
                                  meanAbsoluteError: Double,
                                  meanSquaredError: Double,
                                  objectiveHistory: Seq[Double],
@@ -176,8 +176,8 @@ case class LinearRegressionModel(valueColumn: String,
    * @param observationColumnsTest List of column(s) containing the observations
    * @return linear regression metrics
    *         The data returned is composed of the following:
-   *         'explainedVarianceScore' : double
-   *         The explained variance regression score whose best possible value is 1.
+   *         'explainedVariance' : double
+   *         The explained variance regression score
    *         'meanAbsoluteError' : double
    *         The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
    *         'meanSquaredError': double
@@ -245,7 +245,7 @@ case class LinearRegressionModel(valueColumn: String,
       observationColumnsTrain,
       intercept,
       weights.toArray,
-      explainedVarianceScore,
+      explainedVariance,
       meanAbsoluteError,
       meanSquaredError,
       objectiveHistory.toArray,
@@ -305,7 +305,7 @@ case class LinearRegressionModel(valueColumn: String,
  * @param observationColumns Frame's column(s) storing the observations
  * @param intercept The intercept of the trained model
  * @param weights Weights of the trained model
- * @param explainedVarianceScore The explained variance regression score
+ * @param explainedVariance The explained variance regression score
  * @param meanAbsoluteError The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
  * @param meanSquaredError The risk function corresponding to the expected value of the squared error loss or quadratic loss
  * @param objectiveHistory Objective function(scaled loss + regularization) at each iteration
@@ -317,7 +317,7 @@ case class LinearRegressionModelMetaData(valueColumn: String,
                                          observationColumns: Seq[String],
                                          intercept: Double,
                                          weights: Array[Double],
-                                         explainedVarianceScore: Double,
+                                         explainedVariance: Double,
                                          meanAbsoluteError: Double,
                                          meanSquaredError: Double,
                                          objectiveHistory: Array[Double],

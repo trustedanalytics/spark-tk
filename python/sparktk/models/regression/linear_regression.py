@@ -113,7 +113,7 @@ class LinearRegressionModel(PropertiesObject):
         <progress>
 
         >>> model
-        explained_variance_score= 0.987374330661
+        explained_variance      = 49.2759280303
         intercept               = -0.0327272727273
         iterations              = 1
         mean_absolute_error     = 0.529939393939
@@ -129,7 +129,7 @@ class LinearRegressionModel(PropertiesObject):
         <progress>
 
         >>> linear_regression_test_return
-        explained_variance_score= 0.987374330661
+        explained_variance      = 49.2759280303
         mean_absolute_error     = 0.529939393939
         mean_squared_error      = 0.630096969697
         r2                      = 0.987374330661
@@ -209,9 +209,9 @@ class LinearRegressionModel(PropertiesObject):
         return self._tc.jutils.convert.from_scala_seq(self._scala.weights())
 
     @property
-    def explained_variance_score(self):
-        """The explained variance regression score whose best possible score is 1"""
-        return self._scala.explainedVarianceScore()
+    def explained_variance(self):
+        """The explained variance regression score"""
+        return self._scala.explainedVariance()
 
     @property
     def mean_absolute_error(self):

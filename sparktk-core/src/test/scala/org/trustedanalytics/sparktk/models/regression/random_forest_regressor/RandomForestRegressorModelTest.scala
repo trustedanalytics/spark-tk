@@ -89,7 +89,6 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
 
       metrics shouldBe a[RegressionTestMetrics]
       metrics.r2 should equal(1.0)
-      metrics.explainedVarianceScore should equal(1.0)
       metrics.meanSquaredError should equal(0)
     }
 

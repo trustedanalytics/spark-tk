@@ -148,7 +148,7 @@ class RandomForestRegressorModel(PropertiesObject):
         <progress>
 
         >>> random_forest_test_return
-        explained_variance_score = 1.0
+        explained_variance = 1.0
         mean_absolute_error      = 0.0
         mean_squared_error       = 0.0
         r2                       = 1.0
