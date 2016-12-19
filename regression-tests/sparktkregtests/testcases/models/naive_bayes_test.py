@@ -76,8 +76,8 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
     def test_model_publish_bayes(self):
         """Test training intializes theta, pi and labels"""
         model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     "label",
-                                                                     ['f1', 'f2', 'f3'])
+                                                                     ['f1', 'f2', 'f3'],
+                                                                     "label")
         file_name = self.get_name("naive_bayes")
         path = model.export_to_mar(self.get_export_file(file_name))
         self.assertIn("hdfs", path)

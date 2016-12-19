@@ -244,8 +244,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         training_frame = self.lattice2frame(train_lattice)
 
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["x", "y"])
+                                                                 ["x", "y"],
+                                                                 "model_class")
         file_name = self.get_name("svm")
         path = svm_model.export_to_mar(self.get_export_file(file_name))
 
