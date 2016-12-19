@@ -21,10 +21,10 @@ import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.PredictorParam
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.shared._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.SchemaUtils
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo, BoostingStrategy => OldBoostingStrategy, Strategy => OldStrategy}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{Entropy => OldEntropy, Gini => OldGini, Impurity => OldImpurity, Variance => OldVariance}
-import org.apache.spark.mllib.tree.loss.{AbsoluteError => OldAbsoluteError, LogLoss => OldLogLoss, Loss => OldLoss, SquaredError => OldSquaredError}
-import org.apache.spark.sql.types.{DataType, DoubleType, StructType}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo, BoostingStrategy => OldBoostingStrategy, Strategy => OldStrategy }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{ Entropy => OldEntropy, Gini => OldGini, Impurity => OldImpurity, Variance => OldVariance }
+import org.apache.spark.mllib.tree.loss.{ AbsoluteError => OldAbsoluteError, LogLoss => OldLogLoss, Loss => OldLoss, SquaredError => OldSquaredError }
+import org.apache.spark.sql.types.{ DataType, DoubleType, StructType }
 
 import scala.util.Try
 
@@ -34,7 +34,7 @@ import scala.util.Try
  * Note: Marked as private and DeveloperApi since this may be made public in the future.
  */
 private[ml] trait DecisionTreeParams extends PredictorParams
-  with HasCheckpointInterval with HasSeed {
+    with HasCheckpointInterval with HasSeed {
 
   /**
    * Maximum depth of the tree (>= 0).
@@ -183,11 +183,11 @@ private[ml] trait DecisionTreeParams extends PredictorParams
 
   /** (private[ml]) Create a Strategy instance to use with the old API. */
   private[ml] def getOldStrategy(
-      categoricalFeatures: Map[Int, Int],
-      numClasses: Int,
-      oldAlgo: OldAlgo.Algo,
-      oldImpurity: OldImpurity,
-      subsamplingRate: Double): OldStrategy = {
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int,
+    oldAlgo: OldAlgo.Algo,
+    oldImpurity: OldImpurity,
+    subsamplingRate: Double): OldStrategy = {
     val strategy = OldStrategy.defaultStrategy(oldAlgo)
     strategy.impurity = oldImpurity
     strategy.checkpointInterval = getCheckpointInterval
@@ -299,16 +299,17 @@ private[ml] object TreeRegressorParams {
 }
 
 private[ml] trait DecisionTreeRegressorParams extends DecisionTreeParams
-  with TreeRegressorParams with HasVarianceCol {
+    with TreeRegressorParams with HasVarianceCol {
 
   override protected def validateAndTransformSchema(
-      schema: StructType,
-      fitting: Boolean,
-      featuresDataType: DataType): StructType = {
+    schema: StructType,
+    fitting: Boolean,
+    featuresDataType: DataType): StructType = {
     val newSchema = super.validateAndTransformSchema(schema, fitting, featuresDataType)
     if (isDefined(varianceCol) && $(varianceCol).nonEmpty) {
       SchemaUtils.appendColumn(newSchema, $(varianceCol), DoubleType)
-    } else {
+    }
+    else {
       newSchema
     }
   }
@@ -347,10 +348,10 @@ private[ml] trait TreeEnsembleParams extends DecisionTreeParams {
    * NOTE: The caller should set impurity and seed.
    */
   private[ml] def getOldStrategy(
-      categoricalFeatures: Map[Int, Int],
-      numClasses: Int,
-      oldAlgo: OldAlgo.Algo,
-      oldImpurity: OldImpurity): OldStrategy = {
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int,
+    oldAlgo: OldAlgo.Algo,
+    oldImpurity: OldImpurity): OldStrategy = {
     super.getOldStrategy(categoricalFeatures, numClasses, oldAlgo, oldImpurity, getSubsamplingRate)
   }
 }
@@ -418,8 +419,8 @@ private[ml] trait RandomForestParams extends TreeEnsembleParams {
       s", (0.0-1.0], [1-n].",
     (value: String) =>
       RandomForestParams.supportedFeatureSubsetStrategies.contains(value.toLowerCase)
-      || Try(value.toInt).filter(_ > 0).isSuccess
-      || Try(value.toDouble).filter(_ > 0).filter(_ <= 1.0).isSuccess)
+        || Try(value.toInt).filter(_ > 0).isSuccess
+        || Try(value.toDouble).filter(_ > 0).filter(_ <= 1.0).isSuccess)
 
   setDefault(featureSubsetStrategy -> "auto")
 
@@ -495,8 +496,8 @@ private[ml] trait GBTParams extends TreeEnsembleParams with HasMaxIter {
 
   /** (private[ml]) Create a BoostingStrategy instance to use with the old API. */
   private[ml] def getOldBoostingStrategy(
-      categoricalFeatures: Map[Int, Int],
-      oldAlgo: OldAlgo.Algo): OldBoostingStrategy = {
+    categoricalFeatures: Map[Int, Int],
+    oldAlgo: OldAlgo.Algo): OldBoostingStrategy = {
     val strategy = super.getOldStrategy(categoricalFeatures, numClasses = 2, oldAlgo, OldVariance)
     // NOTE: The old API does not support "seed" so we ignore it.
     new OldBoostingStrategy(strategy, getOldLossType, getMaxIter, getStepSize)

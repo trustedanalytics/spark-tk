@@ -22,12 +22,12 @@ import org.apache.spark.ml.evaluation.Evaluator
 import org.apache.spark.ml.feature.Instance
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.TreeTests
 import org.apache.spark.ml.param.ParamMap
-import org.apache.spark.ml.recommendation.{ALS, ALSModel}
-import org.apache.spark.ml.{Estimator, Model}
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.ml.recommendation.{ ALS, ALSModel }
+import org.apache.spark.ml.{ Estimator, Model }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 
 object MLTestingUtils extends SparkFunSuite {
   def checkCopy(model: Model[_]): Unit = {
@@ -38,12 +38,13 @@ object MLTestingUtils extends SparkFunSuite {
   }
 
   def checkNumericTypes[M <: Model[M], T <: Estimator[M]](
-      estimator: T,
-      sqlContext: SQLContext,
-      isClassification: Boolean = true)(check: (M, M) => Unit): Unit = {
+    estimator: T,
+    sqlContext: SQLContext,
+    isClassification: Boolean = true)(check: (M, M) => Unit): Unit = {
     val dfs = if (isClassification) {
       genClassifDFWithNumericLabelCol(sqlContext)
-    } else {
+    }
+    else {
       genRegressionDFWithNumericLabelCol(sqlContext)
     }
     val expected = estimator.fit(dfs(DoubleType))
@@ -63,12 +64,10 @@ object MLTestingUtils extends SparkFunSuite {
   }
 
   def checkNumericTypesALS(
-      estimator: ALS,
-      sqlContext: SQLContext,
-      column: String,
-      baseType: NumericType)
-      (check: (ALSModel, ALSModel) => Unit)
-      (check2: (ALSModel, ALSModel, DataFrame) => Unit): Unit = {
+    estimator: ALS,
+    sqlContext: SQLContext,
+    column: String,
+    baseType: NumericType)(check: (ALSModel, ALSModel) => Unit)(check2: (ALSModel, ALSModel, DataFrame) => Unit): Unit = {
     val dfs = genRatingsDFWithNumericCols(sqlContext, column)
     val expected = estimator.fit(dfs(baseType))
     val actuals = dfs.keys.filter(_ != baseType).map(t => (t, estimator.fit(dfs(t))))
@@ -103,9 +102,9 @@ object MLTestingUtils extends SparkFunSuite {
   }
 
   def genClassifDFWithNumericLabelCol(
-      sqlContext: SQLContext,
-      labelColName: String = "label",
-      featuresColName: String = "features"): Map[NumericType, DataFrame] = {
+    sqlContext: SQLContext,
+    labelColName: String = "label",
+    featuresColName: String = "features"): Map[NumericType, DataFrame] = {
     val df = sqlContext.createDataFrame(Seq(
       (0, Vectors.dense(0, 2, 3)),
       (1, Vectors.dense(0, 3, 1)),
@@ -117,16 +116,16 @@ object MLTestingUtils extends SparkFunSuite {
     val types =
       Seq(ShortType, LongType, IntegerType, FloatType, ByteType, DoubleType, DecimalType(10, 0))
     types.map { t =>
-        val castDF = df.select(col(labelColName).cast(t), col(featuresColName))
-        t -> TreeTests.setMetadata(castDF, 2, labelColName, featuresColName)
-      }.toMap
+      val castDF = df.select(col(labelColName).cast(t), col(featuresColName))
+      t -> TreeTests.setMetadata(castDF, 2, labelColName, featuresColName)
+    }.toMap
   }
 
   def genRegressionDFWithNumericLabelCol(
-      sqlContext: SQLContext,
-      labelColName: String = "label",
-      featuresColName: String = "features",
-      censorColName: String = "censor"): Map[NumericType, DataFrame] = {
+    sqlContext: SQLContext,
+    labelColName: String = "label",
+    featuresColName: String = "features",
+    censorColName: String = "censor"): Map[NumericType, DataFrame] = {
     val df = sqlContext.createDataFrame(Seq(
       (0, Vectors.dense(0)),
       (1, Vectors.dense(1)),
@@ -138,15 +137,15 @@ object MLTestingUtils extends SparkFunSuite {
     val types =
       Seq(ShortType, LongType, IntegerType, FloatType, ByteType, DoubleType, DecimalType(10, 0))
     types.map { t =>
-        val castDF = df.select(col(labelColName).cast(t), col(featuresColName))
-        t -> TreeTests.setMetadata(castDF, 0, labelColName, featuresColName)
-          .withColumn(censorColName, lit(0.0))
-      }.toMap
+      val castDF = df.select(col(labelColName).cast(t), col(featuresColName))
+      t -> TreeTests.setMetadata(castDF, 0, labelColName, featuresColName)
+        .withColumn(censorColName, lit(0.0))
+    }.toMap
   }
 
   def genRatingsDFWithNumericCols(
-      sqlContext: SQLContext,
-      column: String): Map[NumericType, DataFrame] = {
+    sqlContext: SQLContext,
+    column: String): Map[NumericType, DataFrame] = {
     val df = sqlContext.createDataFrame(Seq(
       (0, 10, 1.0),
       (1, 20, 2.0),
@@ -165,9 +164,9 @@ object MLTestingUtils extends SparkFunSuite {
   }
 
   def genEvaluatorDFWithNumericLabelCol(
-      sqlContext: SQLContext,
-      labelColName: String = "label",
-      predictionColName: String = "prediction"): Map[NumericType, DataFrame] = {
+    sqlContext: SQLContext,
+    labelColName: String = "label",
+    predictionColName: String = "prediction"): Map[NumericType, DataFrame] = {
     val df = sqlContext.createDataFrame(Seq(
       (0, 0d),
       (1, 1d),
@@ -184,15 +183,16 @@ object MLTestingUtils extends SparkFunSuite {
   }
 
   def genClassificationInstancesWithWeightedOutliers(
-      sqlContext :SQLContext,
-      numClasses: Int,
-      numInstances: Int): DataFrame = {
+    sqlContext: SQLContext,
+    numClasses: Int,
+    numInstances: Int): DataFrame = {
     val data = Array.tabulate[Instance](numInstances) { i =>
       val feature = i % numClasses
       if (i < numInstances / 3) {
         // give large weights to minority of data with 1 to 1 mapping feature to label
         Instance(feature, 1.0, Vectors.dense(feature))
-      } else {
+      }
+      else {
         // give small weights to majority of data points with reverse mapping
         Instance(numClasses - feature - 1, 0.01, Vectors.dense(feature))
       }
@@ -204,10 +204,10 @@ object MLTestingUtils extends SparkFunSuite {
   }
 
   def genEquivalentOversampledAndWeightedInstances(
-      data: DataFrame,
-      labelCol: String,
-      featuresCol: String,
-      seed: Long): (DataFrame, DataFrame) = {
+    data: DataFrame,
+    labelCol: String,
+    featuresCol: String,
+    seed: Long): (DataFrame, DataFrame) = {
     import data.sqlContext.implicits._
     val rng = scala.util.Random
     rng.setSeed(seed)

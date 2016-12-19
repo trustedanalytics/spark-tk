@@ -17,7 +17,7 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity
 
-import org.apache.spark.annotation.{DeveloperApi, Experimental, Since}
+import org.apache.spark.annotation.{ DeveloperApi, Experimental, Since }
 
 /**
  * :: Experimental ::
@@ -37,7 +37,7 @@ object Variance extends Impurity {
   @Since("1.1.0")
   @DeveloperApi
   override def calculate(counts: Array[Double], totalCount: Double): Double =
-     throw new UnsupportedOperationException("Variance.calculate")
+    throw new UnsupportedOperationException("Variance.calculate")
 
   /**
    * :: DeveloperApi ::
@@ -72,7 +72,7 @@ object Variance extends Impurity {
  * Note: Instances of this class do not hold the data; they operate on views of the data.
  */
 private[spark] class VarianceAggregator()
-  extends ImpurityAggregator(statsSize = 3) with Serializable {
+    extends ImpurityAggregator(statsSize = 3) with Serializable {
 
   /**
    * Update stats for one (node, feature, bin) with the given label.
@@ -106,7 +106,7 @@ private[spark] class VarianceCalculator(stats: Array[Double]) extends ImpurityCa
 
   require(stats.size == 3,
     s"VarianceCalculator requires sufficient statistics array stats to be of length 3," +
-    s" but was given array of length ${stats.size}.")
+      s" but was given array of length ${stats.size}.")
 
   /**
    * Make a deep copy of this [[ImpurityCalculator]].
@@ -128,7 +128,8 @@ private[spark] class VarianceCalculator(stats: Array[Double]) extends ImpurityCa
    */
   def predict: Double = if (count == 0) {
     0
-  } else {
+  }
+  else {
     stats(1) / count
   }
 

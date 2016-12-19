@@ -19,20 +19,15 @@ import org.apache.spark.SparkContext
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.ml.regression.org.trustedanalytics.sparktk.{ LinearRegressionData, TkLinearRegressionModel }
-import org.apache.spark.mllib.evaluation.RegressionMetrics
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.Row
 import org.apache.spark.sql.functions._
 
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame._
+import org.trustedanalytics.sparktk.models.regression.RegressionUtils._
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegressionModel }
-import scala.collection.mutable.ListBuffer
-import org.trustedanalytics.sparktk.frame.DataTypes.DataType
 import org.apache.commons.lang.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
 import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
@@ -43,9 +38,6 @@ import java.nio.file.{ Files, Path }
 import org.apache.commons.io.FileUtils
 
 object LinearRegressionModel extends TkSaveableObject {
-
-  val predictionColumn = "predicted_value"
-  val featuresName = "features"
 
   /**
    * Run Spark Ml's LinearRegression on the training frame and create a Model for it.
@@ -101,7 +93,7 @@ object LinearRegressionModel extends TkSaveableObject {
       observationColumns,
       linRegModel.intercept,
       linRegModel.coefficients.toArray.toSeq,
-      linRegModel.summary.explainedVariance,
+      getExplainedVarianceScore(linRegModel.transform(trainDataFrame), predictionColumn, valueColumn),
       linRegModel.summary.meanAbsoluteError,
       linRegModel.summary.meanSquaredError,
       linRegModel.summary.objectiveHistory.toSeq,
@@ -120,7 +112,7 @@ object LinearRegressionModel extends TkSaveableObject {
       linRegModel.observationColumns,
       linRegModel.intercept,
       linRegModel.weights,
-      linRegModel.explainedVariance,
+      linRegModel.explainedVarianceScore,
       linRegModel.meanAbsoluteError,
       linRegModel.meanSquaredError,
       linRegModel.objectiveHistory,
@@ -148,7 +140,7 @@ object LinearRegressionModel extends TkSaveableObject {
  * @param observationColumnsTrain Frame's column(s) storing the observations
  * @param intercept The intercept of the trained model
  * @param weights Weights of the trained model
- * @param explainedVariance The explained variance regression score
+ * @param explainedVarianceScore The explained variance regression score whose best possible value is 1.
  * @param meanAbsoluteError The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
  * @param meanSquaredError The risk function corresponding to the expected value of the squared error loss or quadratic loss
  * @param objectiveHistory Objective function(scaled loss + regularization) at each iteration
@@ -161,7 +153,7 @@ case class LinearRegressionModel(valueColumn: String,
                                  observationColumnsTrain: Seq[String],
                                  intercept: Double,
                                  weights: Seq[Double],
-                                 explainedVariance: Double,
+                                 explainedVarianceScore: Double,
                                  meanAbsoluteError: Double,
                                  meanSquaredError: Double,
                                  objectiveHistory: Seq[Double],
@@ -184,8 +176,8 @@ case class LinearRegressionModel(valueColumn: String,
    * @param observationColumnsTest List of column(s) containing the observations
    * @return linear regression metrics
    *         The data returned is composed of the following:
-   *         'explainedVariance' : double
-   *         The explained variance regression score
+   *         'explainedVarianceScore' : double
+   *         The explained variance regression score whose best possible value is 1.
    *         'meanAbsoluteError' : double
    *         The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
    *         'meanSquaredError': double
@@ -210,11 +202,8 @@ case class LinearRegressionModel(valueColumn: String,
     sparkModel.setFeaturesCol(featuresName)
     sparkModel.setPredictionCol(predictionColumn)
 
-    val fullPrediction: DataFrame = sparkModel.transform(testDataFrame)
-    val predictionLabelRdd = fullPrediction.select(predictionColumn, valueColumn).map(row => (row.getDouble(0), row.getDouble(1)))
-    val metrics = new RegressionMetrics(predictionLabelRdd)
-
-    LinearRegressionTestMetrics(metrics.explainedVariance, metrics.meanAbsoluteError, metrics.meanSquaredError, metrics.r2, metrics.rootMeanSquaredError)
+    val predictFrame: DataFrame = sparkModel.transform(testDataFrame)
+    getRegressionMetrics(predictFrame, predictionColumn, valueColumn)
   }
 
   /**
@@ -256,7 +245,7 @@ case class LinearRegressionModel(valueColumn: String,
       observationColumnsTrain,
       intercept,
       weights.toArray,
-      explainedVariance,
+      explainedVarianceScore,
       meanAbsoluteError,
       meanSquaredError,
       objectiveHistory.toArray,
@@ -316,7 +305,7 @@ case class LinearRegressionModel(valueColumn: String,
  * @param observationColumns Frame's column(s) storing the observations
  * @param intercept The intercept of the trained model
  * @param weights Weights of the trained model
- * @param explainedVariance The explained variance regression score
+ * @param explainedVarianceScore The explained variance regression score
  * @param meanAbsoluteError The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
  * @param meanSquaredError The risk function corresponding to the expected value of the squared error loss or quadratic loss
  * @param objectiveHistory Objective function(scaled loss + regularization) at each iteration
@@ -328,7 +317,7 @@ case class LinearRegressionModelMetaData(valueColumn: String,
                                          observationColumns: Seq[String],
                                          intercept: Double,
                                          weights: Array[Double],
-                                         explainedVariance: Double,
+                                         explainedVarianceScore: Double,
                                          meanAbsoluteError: Double,
                                          meanSquaredError: Double,
                                          objectiveHistory: Array[Double],
@@ -336,16 +325,3 @@ case class LinearRegressionModelMetaData(valueColumn: String,
                                          rootMeanSquaredError: Double,
                                          iterations: Int) extends Serializable
 
-/**
- * Return value from Linear Regression test
- * @param explainedVariance The explained variance regression score
- * @param meanAbsoluteError The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
- * @param meanSquaredError The risk function corresponding to the expected value of the squared error loss or quadratic loss
- * @param r2 The coefficient of determination
- * @param rootMeanSquaredError The square root of the mean squared error
- */
-case class LinearRegressionTestMetrics(explainedVariance: Double,
-                                       meanAbsoluteError: Double,
-                                       meanSquaredError: Double,
-                                       r2: Double,
-                                       rootMeanSquaredError: Double)

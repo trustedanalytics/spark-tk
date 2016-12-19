@@ -20,8 +20,8 @@ package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree
 import org.apache.spark.Logging
 import org.apache.spark.annotation.Since
 import org.apache.spark.api.java.JavaRDD
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.{RandomForest => NewRandomForest}
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.{DecisionTreeModel => NewDTModel, RandomForestParams => NewRFParams}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.{ RandomForest => NewRandomForest }
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.{ DecisionTreeModel => NewDTModel, RandomForestParams => NewRFParams }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
 import org.apache.spark.mllib.tree.configuration.QuantileStrategy._
@@ -33,7 +33,6 @@ import org.apache.spark.util.Utils
 
 import scala.collection.JavaConverters._
 import scala.util.Try
-
 
 /**
  * A class that implements a <a href="http://en.wikipedia.org/wiki/Random_forest">Random Forest</a>
@@ -68,12 +67,12 @@ import scala.util.Try
  *                                use n features.
  * @param seed Random seed for bootstrapping and choosing feature subsets.
  */
-private class RandomForest (
-    private val strategy: Strategy,
-    private val numTrees: Int,
-    featureSubsetStrategy: String,
-    private val seed: Int)
-  extends Serializable with Logging {
+private class RandomForest(
+  private val strategy: Strategy,
+  private val numTrees: Int,
+  featureSubsetStrategy: String,
+  private val seed: Int)
+    extends Serializable with Logging {
 
   strategy.assertValid()
   require(numTrees > 0, s"RandomForest requires numTrees > 0, but was given numTrees = $numTrees.")
@@ -81,8 +80,8 @@ private class RandomForest (
     || Try(featureSubsetStrategy.toInt).filter(_ > 0).isSuccess
     || Try(featureSubsetStrategy.toDouble).filter(_ > 0).filter(_ <= 1.0).isSuccess,
     s"RandomForest given invalid featureSubsetStrategy: $featureSubsetStrategy." +
-    s" Supported values: ${NewRFParams.supportedFeatureSubsetStrategies.mkString(", ")}," +
-    s" (0.0-1.0], [1-n].")
+      s" Supported values: ${NewRFParams.supportedFeatureSubsetStrategies.mkString(", ")}," +
+      s" (0.0-1.0], [1-n].")
 
   /**
    * Method to train a decision tree model over an RDD
@@ -118,11 +117,11 @@ object RandomForest extends Serializable with Logging {
    */
   @Since("1.2.0")
   def trainClassifier(
-      input: RDD[LabeledPoint],
-      strategy: Strategy,
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      seed: Int): RandomForestModel = {
+    input: RDD[LabeledPoint],
+    strategy: Strategy,
+    numTrees: Int,
+    featureSubsetStrategy: String,
+    seed: Int): RandomForestModel = {
     require(strategy.algo == Classification,
       s"RandomForest.trainClassifier given Strategy with invalid algo: ${strategy.algo}")
     val rf = new RandomForest(strategy, numTrees, featureSubsetStrategy, seed)
@@ -156,15 +155,15 @@ object RandomForest extends Serializable with Logging {
    */
   @Since("1.2.0")
   def trainClassifier(
-      input: RDD[LabeledPoint],
-      numClasses: Int,
-      categoricalFeaturesInfo: Map[Int, Int],
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int,
-      seed: Int = Utils.random.nextInt()): RandomForestModel = {
+    input: RDD[LabeledPoint],
+    numClasses: Int,
+    categoricalFeaturesInfo: Map[Int, Int],
+    numTrees: Int,
+    featureSubsetStrategy: String,
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int,
+    seed: Int = Utils.random.nextInt()): RandomForestModel = {
     val impurityType = Impurities.fromString(impurity)
     val strategy = new Strategy(Classification, impurityType, maxDepth,
       numClasses, maxBins, Sort, categoricalFeaturesInfo)
@@ -176,15 +175,15 @@ object RandomForest extends Serializable with Logging {
    */
   @Since("1.2.0")
   def trainClassifier(
-      input: JavaRDD[LabeledPoint],
-      numClasses: Int,
-      categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int,
-      seed: Int): RandomForestModel = {
+    input: JavaRDD[LabeledPoint],
+    numClasses: Int,
+    categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
+    numTrees: Int,
+    featureSubsetStrategy: String,
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int,
+    seed: Int): RandomForestModel = {
     trainClassifier(input.rdd, numClasses,
       categoricalFeaturesInfo.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, seed)
@@ -207,11 +206,11 @@ object RandomForest extends Serializable with Logging {
    */
   @Since("1.2.0")
   def trainRegressor(
-      input: RDD[LabeledPoint],
-      strategy: Strategy,
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      seed: Int): RandomForestModel = {
+    input: RDD[LabeledPoint],
+    strategy: Strategy,
+    numTrees: Int,
+    featureSubsetStrategy: String,
+    seed: Int): RandomForestModel = {
     require(strategy.algo == Regression,
       s"RandomForest.trainRegressor given Strategy with invalid algo: ${strategy.algo}")
     val rf = new RandomForest(strategy, numTrees, featureSubsetStrategy, seed)
@@ -244,14 +243,14 @@ object RandomForest extends Serializable with Logging {
    */
   @Since("1.2.0")
   def trainRegressor(
-      input: RDD[LabeledPoint],
-      categoricalFeaturesInfo: Map[Int, Int],
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int,
-      seed: Int = Utils.random.nextInt()): RandomForestModel = {
+    input: RDD[LabeledPoint],
+    categoricalFeaturesInfo: Map[Int, Int],
+    numTrees: Int,
+    featureSubsetStrategy: String,
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int,
+    seed: Int = Utils.random.nextInt()): RandomForestModel = {
     val impurityType = Impurities.fromString(impurity)
     val strategy = new Strategy(Regression, impurityType, maxDepth,
       0, maxBins, Sort, categoricalFeaturesInfo)
@@ -263,14 +262,14 @@ object RandomForest extends Serializable with Logging {
    */
   @Since("1.2.0")
   def trainRegressor(
-      input: JavaRDD[LabeledPoint],
-      categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
-      numTrees: Int,
-      featureSubsetStrategy: String,
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int,
-      seed: Int): RandomForestModel = {
+    input: JavaRDD[LabeledPoint],
+    categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
+    numTrees: Int,
+    featureSubsetStrategy: String,
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int,
+    seed: Int): RandomForestModel = {
     trainRegressor(input.rdd,
       categoricalFeaturesInfo.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins, seed)

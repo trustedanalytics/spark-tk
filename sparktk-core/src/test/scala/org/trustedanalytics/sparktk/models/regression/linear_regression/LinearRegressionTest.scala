@@ -19,8 +19,8 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
+import org.trustedanalytics.sparktk.models.regression.RegressionTestMetrics
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
-import org.apache.spark.mllib.evaluation.RegressionMetrics
 
 class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
@@ -54,8 +54,9 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
       val model = LinearRegressionModel.train(frame, "label", List("obs1"))
       val metrics = model.test(frame, "label", None)
 
-      metrics shouldBe a[LinearRegressionTestMetrics]
+      metrics shouldBe a[RegressionTestMetrics]
       metrics.r2 should equal(1.0)
+      metrics.explainedVarianceScore should equal(1.0)
       metrics.meanSquaredError should equal(0)
     }
 

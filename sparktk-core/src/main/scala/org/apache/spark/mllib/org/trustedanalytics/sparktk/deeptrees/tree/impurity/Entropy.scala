@@ -17,7 +17,7 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity
 
-import org.apache.spark.annotation.{DeveloperApi, Experimental, Since}
+import org.apache.spark.annotation.{ DeveloperApi, Experimental, Since }
 
 /**
  * :: Experimental ::
@@ -86,7 +86,7 @@ object Entropy extends Impurity {
  * @param numClasses  Number of classes for label.
  */
 private[spark] class EntropyAggregator(numClasses: Int)
-  extends ImpurityAggregator(numClasses) with Serializable {
+    extends ImpurityAggregator(numClasses) with Serializable {
 
   /**
    * Update stats for one (node, feature, bin) with the given label.
@@ -144,7 +144,8 @@ private[spark] class EntropyCalculator(stats: Array[Double]) extends ImpurityCal
    */
   def predict: Double = if (count == 0) {
     0
-  } else {
+  }
+  else {
     indexOfLargestArrayElement(stats)
   }
 
@@ -159,7 +160,8 @@ private[spark] class EntropyCalculator(stats: Array[Double]) extends ImpurityCal
     val cnt = count
     if (cnt == 0) {
       0
-    } else {
+    }
+    else {
       stats(lbl) / cnt
     }
   }

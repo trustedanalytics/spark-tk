@@ -16,15 +16,19 @@
 package org.trustedanalytics.sparktk.models.regression.random_forest_regressor
 
 import org.apache.spark.SparkContext
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.mllib.evaluation.RegressionMetrics
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.tree.RandomForest
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
-import org.apache.spark.mllib.tree.model.{ RandomForestModel => SparkRandomForestModel }
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.regression.{ RandomForestRegressor => SparkDeepRandomForestRegressor }
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.regression.{ RandomForestRegressionModel => SparkDeepRandomRegressionModel }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, FrameRdd }
+import org.trustedanalytics.sparktk.models.regression.RegressionUtils._
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
@@ -91,17 +95,23 @@ object RandomForestRegressorModel extends TkSaveableObject {
     val randomForestCategoricalFeaturesInfo = categoricalFeaturesInfo.getOrElse(Map[Int, Int]())
 
     //create RDD from the frame
+    val sqlContext = SQLContext.getOrCreate(frame.rdd.sparkContext)
+    import sqlContext.implicits._
     val labeledTrainRdd: RDD[LabeledPoint] = FrameRdd.toLabeledPointRDD(new FrameRdd(frame.schema, frame.rdd),
       valueColumn,
       observationColumns)
-    val randomForestModel = RandomForest.trainRegressor(labeledTrainRdd,
-      randomForestCategoricalFeaturesInfo,
-      numTrees,
-      randomForestFeatureSubsetCategories,
-      impurity,
-      maxDepth,
-      maxBins,
-      seed)
+    val labeledTrainFrame = labeledTrainRdd.toDF()
+    val randomForestRegressor = new SparkDeepRandomForestRegressor()
+      .setNumTrees(numTrees)
+      .setFeatureSubsetStrategy(randomForestFeatureSubsetCategories)
+      .setImpurity(impurity)
+      .setMaxDepth(maxDepth)
+      .setMaxBins(maxBins)
+      .setSeed(seed)
+      //.setMinInstancesPerNode(3)
+      .setSubsamplingRate(1.0)
+      .setCacheNodeIds(true) //Enable cache to speed up training
+    val randomForestModel = randomForestRegressor.fit(labeledTrainFrame)
 
     RandomForestRegressorModel(randomForestModel,
       valueColumn,
@@ -129,7 +139,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
 
     validateFormatVersion(formatVersion, 1)
     val m: RandomForestRegressorModelTkMetaData = SaveLoad.extractFromJValue[RandomForestRegressorModelTkMetaData](tkMetadata)
-    val sparkModel = SparkRandomForestModel.load(sc, path)
+    val sparkModel = SparkDeepRandomRegressionModel.load(path)
 
     RandomForestRegressorModel(sparkModel,
       m.valueColumn,
@@ -161,7 +171,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
  *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
  *                              ; if num_trees > 1, set to "onethird"
  */
-case class RandomForestRegressorModel private[random_forest_regressor] (sparkModel: SparkRandomForestModel,
+case class RandomForestRegressorModel private[random_forest_regressor] (sparkModel: SparkDeepRandomRegressionModel,
                                                                         valueColumn: String,
                                                                         observationColumns: List[String],
                                                                         numTrees: Int,
@@ -184,30 +194,63 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    *
    * @param frame - A frame whose labels are to be predicted. By default, predict is run on the same columns over which
    *              the model is trained.
-   * @param columns Column(s) containing the observations whose labels are to be predicted.
+   * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted.
    *                By default, we predict the labels over columns the RandomForestRegressorModel
    * @return A new frame consisting of the existing columns of the frame and a new column with predicted value for
    *         each observation.
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
+  def predict(frame: Frame, observationColumnsPredict: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
-    if (columns.isDefined) {
-      require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
+    if (observationColumnsPredict.isDefined) {
+      require(observationColumnsPredict.get.length == observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = columns.getOrElse(observationColumns)
-    //predicting a label for the observation columns
-    val predictMapper: RowWrapper => Row = row => {
-      val point = row.toDenseVector(rfColumns)
-      val prediction = sparkModel.predict(point)
-      Row.apply(prediction)
+    val rfColumns = observationColumnsPredict.getOrElse(observationColumns)
+    val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
+    val testFrame = assembler.transform(frame.dataframe)
+
+    sparkModel.setFeaturesCol(featuresName)
+    sparkModel.setPredictionCol(predictionColumn)
+    val predictFrame = sparkModel.transform(testFrame)
+
+    new Frame(predictFrame.drop(col(featuresName)))
+  }
+
+  /**
+   * Get the predictions for observations in a test frame
+   *
+   * @param frame                  Frame to test the linear regression model on
+   * @param valueColumn            Column name containing the value of each observation
+   * @param observationColumnsTest List of column(s) containing the observations
+   * @return linear regression metrics
+   *         The data returned is composed of the following:
+   *         'explainedVarianceScore' : double
+   *         The explained variance regression score whose best possible value is 1.
+   *         'meanAbsoluteError' : double
+   *         The risk function corresponding to the expected value of the absolute error loss or l1-norm loss
+   *         'meanSquaredError': double
+   *         The risk function corresponding to the expected value of the squared error loss or quadratic loss
+   *         'r2' : double
+   *         The coefficient of determination
+   *         'rootMeanSquaredError' : double
+   *         The square root of the mean squared error
+   *         'rootMeanSquaredError' : double
+   *         The square root of the mean squared error
+   */
+  def test(frame: Frame, valueColumn: String, observationColumnsTest: Option[List[String]] = None) = {
+    if (observationColumnsTest.isDefined) {
+      require(observationColumnsTest.get.length == observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val predictSchema = frame.schema.addColumn(Column("predicted_value", DataTypes.float64))
-    val wrapper = new RowWrapper(predictSchema)
-    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+    val rfColumns = observationColumnsTest.getOrElse(observationColumns)
+    val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
+    val testFrame = assembler.transform(frame.dataframe)
 
-    new Frame(predictRdd, predictSchema)
+    sparkModel.setFeaturesCol(featuresName)
+    sparkModel.setPredictionCol(predictionColumn)
+    val predictFrame = sparkModel.transform(testFrame)
+
+    getRegressionMetrics(predictFrame, predictionColumn, valueColumn)
   }
 
   /**
@@ -216,7 +259,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    * @param path save to path
    */
   def save(sc: SparkContext, path: String): Unit = {
-    sparkModel.save(sc, path)
+    sparkModel.save(path)
     val formatVersion: Int = 1
     val tkMetadata = RandomForestRegressorModelTkMetaData(valueColumn,
       observationColumns,

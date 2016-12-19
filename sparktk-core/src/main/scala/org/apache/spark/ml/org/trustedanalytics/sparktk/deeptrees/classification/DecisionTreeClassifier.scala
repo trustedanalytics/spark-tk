@@ -25,15 +25,14 @@ import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.RandomForest
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util._
 import org.apache.spark.ml.util.Identifiable
-import org.apache.spark.mllib.linalg.{DenseVector, SparseVector, Vector, Vectors}
+import org.apache.spark.mllib.linalg.{ DenseVector, SparseVector, Vector, Vectors }
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo, Strategy => OldStrategy}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{DecisionTreeModel => OldDecisionTreeModel}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo, Strategy => OldStrategy }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ DecisionTreeModel => OldDecisionTreeModel }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.json4s.JsonDSL._
-import org.json4s.{DefaultFormats, JObject}
-
+import org.json4s.{ DefaultFormats, JObject }
 
 /**
  * Decision tree learning algorithm (http://en.wikipedia.org/wiki/Decision_tree_learning)
@@ -43,9 +42,9 @@ import org.json4s.{DefaultFormats, JObject}
  */
 @Since("1.4.0")
 class DecisionTreeClassifier @Since("1.4.0") (
-    @Since("1.4.0") override val uid: String)
-  extends ProbabilisticClassifier[Vector, DecisionTreeClassifier, DecisionTreeClassificationModel]
-  with DecisionTreeClassifierParams with DefaultParamsWritable {
+  @Since("1.4.0") override val uid: String)
+    extends ProbabilisticClassifier[Vector, DecisionTreeClassifier, DecisionTreeClassificationModel]
+    with DecisionTreeClassifierParams with DefaultParamsWritable {
 
   @Since("1.4.0")
   def this() = this(Identifiable.randomUID("dtc"))
@@ -110,7 +109,6 @@ class DecisionTreeClassifier @Since("1.4.0") (
     val oldDataset: RDD[LabeledPoint] = extractLabeledPoints(dataset, numClasses)
     val strategy = getOldStrategy(categoricalFeatures, numClasses)
 
-
     val trees = RandomForest.run(oldDataset, strategy, numTrees = 1, featureSubsetStrategy = "all",
       seed = $(seed), parentUID = Some(uid))
 
@@ -120,7 +118,7 @@ class DecisionTreeClassifier @Since("1.4.0") (
 
   /** (private[ml]) Train a decision tree on an RDD */
   private[ml] def train(data: RDD[LabeledPoint],
-      oldStrategy: OldStrategy): DecisionTreeClassificationModel = {
+                        oldStrategy: OldStrategy): DecisionTreeClassificationModel = {
     val trees = RandomForest.run(data, oldStrategy, numTrees = 1, featureSubsetStrategy = "all",
       seed = 0L, parentUID = Some(uid))
 
@@ -130,8 +128,8 @@ class DecisionTreeClassifier @Since("1.4.0") (
 
   /** (private[ml]) Create a Strategy instance to use with the old API. */
   private[ml] def getOldStrategy(
-      categoricalFeatures: Map[Int, Int],
-      numClasses: Int): OldStrategy = {
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int): OldStrategy = {
     super.getOldStrategy(categoricalFeatures, numClasses, OldAlgo.Classification, getOldImpurity,
       subsamplingRate = 1.0)
   }
@@ -157,12 +155,12 @@ object DecisionTreeClassifier extends DefaultParamsReadable[DecisionTreeClassifi
  */
 @Since("1.4.0")
 class DecisionTreeClassificationModel private[ml] (
-    @Since("1.4.0")override val uid: String,
-    @Since("1.4.0")override val rootNode: Node,
-    @Since("1.6.0")override val numFeatures: Int,
-    @Since("1.5.0")override val numClasses: Int)
-  extends ProbabilisticClassificationModel[Vector, DecisionTreeClassificationModel]
-  with DecisionTreeModel with DecisionTreeClassifierParams with MLWritable with Serializable {
+  @Since("1.4.0") override val uid: String,
+  @Since("1.4.0") override val rootNode: Node,
+  @Since("1.6.0") override val numFeatures: Int,
+  @Since("1.5.0") override val numClasses: Int)
+    extends ProbabilisticClassificationModel[Vector, DecisionTreeClassificationModel]
+    with DecisionTreeModel with DecisionTreeClassifierParams with MLWritable with Serializable {
 
   require(rootNode != null,
     "DecisionTreeClassificationModel given null rootNode, but it requires a non-null rootNode.")
@@ -174,7 +172,7 @@ class DecisionTreeClassificationModel private[ml] (
   private[ml] def this(rootNode: Node, numFeatures: Int, numClasses: Int) =
     this(Identifiable.randomUID("dtc"), rootNode, numFeatures, numClasses)
 
-  override protected def predict(features: Vector): Double = {
+  override def predict(features: Vector): Double = {
     rootNode.predictImpl(features).prediction
   }
 
@@ -243,9 +241,8 @@ object DecisionTreeClassificationModel extends MLReadable[DecisionTreeClassifica
   @Since("2.0.0")
   override def load(path: String): DecisionTreeClassificationModel = super.load(path)
 
-  private[DecisionTreeClassificationModel]
-  class DecisionTreeClassificationModelWriter(instance: DecisionTreeClassificationModel)
-    extends MLWriter {
+  private[DecisionTreeClassificationModel] class DecisionTreeClassificationModelWriter(instance: DecisionTreeClassificationModel)
+      extends MLWriter {
 
     override protected def saveImpl(path: String): Unit = {
       val extraMetadata: JObject = Map(
@@ -259,7 +256,7 @@ object DecisionTreeClassificationModel extends MLReadable[DecisionTreeClassifica
   }
 
   private class DecisionTreeClassificationModelReader
-    extends MLReader[DecisionTreeClassificationModel] {
+      extends MLReader[DecisionTreeClassificationModel] {
     import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.DecisionTreeModelReadWrite._
     /** Checked against metadata when loading model */
     private val className = classOf[DecisionTreeClassificationModel].getName
@@ -278,10 +275,10 @@ object DecisionTreeClassificationModel extends MLReadable[DecisionTreeClassifica
 
   /** Convert a model from the old API */
   private[ml] def fromOld(
-      oldModel: OldDecisionTreeModel,
-      parent: DecisionTreeClassifier,
-      categoricalFeatures: Map[Int, Int],
-      numFeatures: Int = -1): DecisionTreeClassificationModel = {
+    oldModel: OldDecisionTreeModel,
+    parent: DecisionTreeClassifier,
+    categoricalFeatures: Map[Int, Int],
+    numFeatures: Int = -1): DecisionTreeClassificationModel = {
     require(oldModel.algo == OldAlgo.Classification,
       s"Cannot convert non-classification DecisionTreeModel (old API) to" +
         s" DecisionTreeClassificationModel (new API).  Algo is: ${oldModel.algo}")

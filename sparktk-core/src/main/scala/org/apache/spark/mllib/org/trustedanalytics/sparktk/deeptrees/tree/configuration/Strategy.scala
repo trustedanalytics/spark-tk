@@ -20,7 +20,7 @@ package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.confi
 import org.apache.spark.annotation.Since
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
 import org.apache.spark.mllib.tree.configuration.QuantileStrategy._
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{Entropy, Gini, Impurity, Variance}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{ Entropy, Gini, Impurity, Variance }
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
@@ -68,19 +68,19 @@ import scala.collection.JavaConverters._
  */
 @Since("1.0.0")
 class Strategy @Since("1.3.0") (
-    @Since("1.0.0") @BeanProperty var algo: Algo,
-    @Since("1.0.0") @BeanProperty var impurity: Impurity,
-    @Since("1.0.0") @BeanProperty var maxDepth: Int,
-    @Since("1.2.0") @BeanProperty var numClasses: Int = 2,
-    @Since("1.0.0") @BeanProperty var maxBins: Int = 32,
-    @Since("1.0.0") @BeanProperty var quantileCalculationStrategy: QuantileStrategy = Sort,
-    @Since("1.0.0") @BeanProperty var categoricalFeaturesInfo: Map[Int, Int] = Map[Int, Int](),
-    @Since("1.2.0") @BeanProperty var minInstancesPerNode: Int = 1,
-    @Since("1.2.0") @BeanProperty var minInfoGain: Double = 0.0,
-    @Since("1.0.0") @BeanProperty var maxMemoryInMB: Int = 256,
-    @Since("1.2.0") @BeanProperty var subsamplingRate: Double = 1,
-    @Since("1.2.0") @BeanProperty var useNodeIdCache: Boolean = false,
-    @Since("1.2.0") @BeanProperty var checkpointInterval: Int = 10) extends Serializable {
+    @Since("1.0.0")@BeanProperty var algo: Algo,
+    @Since("1.0.0")@BeanProperty var impurity: Impurity,
+    @Since("1.0.0")@BeanProperty var maxDepth: Int,
+    @Since("1.2.0")@BeanProperty var numClasses: Int = 2,
+    @Since("1.0.0")@BeanProperty var maxBins: Int = 32,
+    @Since("1.0.0")@BeanProperty var quantileCalculationStrategy: QuantileStrategy = Sort,
+    @Since("1.0.0")@BeanProperty var categoricalFeaturesInfo: Map[Int, Int] = Map[Int, Int](),
+    @Since("1.2.0")@BeanProperty var minInstancesPerNode: Int = 1,
+    @Since("1.2.0")@BeanProperty var minInfoGain: Double = 0.0,
+    @Since("1.0.0")@BeanProperty var maxMemoryInMB: Int = 256,
+    @Since("1.2.0")@BeanProperty var subsamplingRate: Double = 1,
+    @Since("1.2.0")@BeanProperty var useNodeIdCache: Boolean = false,
+    @Since("1.2.0")@BeanProperty var checkpointInterval: Int = 10) extends Serializable {
 
   /**
    */
@@ -101,12 +101,12 @@ class Strategy @Since("1.3.0") (
    */
   @Since("1.1.0")
   def this(
-      algo: Algo,
-      impurity: Impurity,
-      maxDepth: Int,
-      numClasses: Int,
-      maxBins: Int,
-      categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer]) {
+    algo: Algo,
+    impurity: Impurity,
+    maxDepth: Int,
+    numClasses: Int,
+    maxBins: Int,
+    categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer]) {
     this(algo, impurity, maxDepth, numClasses, maxBins, Sort,
       categoricalFeaturesInfo.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap)
   }
@@ -125,7 +125,7 @@ class Strategy @Since("1.3.0") (
    */
   @Since("1.2.0")
   def setCategoricalFeaturesInfo(
-      categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer]): Unit = {
+    categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer]): Unit = {
     this.categoricalFeaturesInfo =
       categoricalFeaturesInfo.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap
   }
@@ -139,18 +139,18 @@ class Strategy @Since("1.3.0") (
       case Classification =>
         require(numClasses >= 2,
           s"DecisionTree Strategy for Classification must have numClasses >= 2," +
-          s" but numClasses = $numClasses.")
+            s" but numClasses = $numClasses.")
         require(Set(Gini, Entropy).contains(impurity),
           s"DecisionTree Strategy given invalid impurity for Classification: $impurity." +
-          s"  Valid settings: Gini, Entropy")
+            s"  Valid settings: Gini, Entropy")
       case Regression =>
         require(impurity == Variance,
           s"DecisionTree Strategy given invalid impurity for Regression: $impurity." +
-          s"  Valid settings: Variance")
+            s"  Valid settings: Variance")
       case _ =>
         throw new IllegalArgumentException(
           s"DecisionTree Strategy given invalid algo parameter: $algo." +
-          s"  Valid settings are: Classification, Regression.")
+            s"  Valid settings are: Classification, Regression.")
     }
     require(maxDepth >= 0, s"DecisionTree Strategy given invalid maxDepth parameter: $maxDepth." +
       s"  Valid values are integers >= 0.")
@@ -162,7 +162,7 @@ class Strategy @Since("1.3.0") (
       s"DecisionTree Strategy requires maxMemoryInMB <= 10240, but was given $maxMemoryInMB")
     require(subsamplingRate > 0 && subsamplingRate <= 1,
       s"DecisionTree Strategy requires subsamplingRate <=1 and >0, but was given " +
-      s"$subsamplingRate")
+        s"$subsamplingRate")
   }
 
   /**

@@ -74,10 +74,10 @@ private[spark] class DecisionTreeMetadata(
    */
   def numSplits(featureIndex: Int): Int = if (isUnordered(featureIndex)) {
     numBins(featureIndex)
-  } else {
+  }
+  else {
     numBins(featureIndex) - 1
   }
-
 
   /**
    * Set number of splits for a continuous feature.
@@ -104,10 +104,10 @@ private[spark] object DecisionTreeMetadata extends Logging {
    * as well as the number of splits and bins for each feature.
    */
   def buildMetadata(
-      input: RDD[LabeledPoint],
-      strategy: Strategy,
-      numTrees: Int,
-      featureSubsetStrategy: String): DecisionTreeMetadata = {
+    input: RDD[LabeledPoint],
+    strategy: Strategy,
+    numTrees: Int,
+    featureSubsetStrategy: String): DecisionTreeMetadata = {
 
     val numFeatures = input.map(_.features.size).take(1).headOption.getOrElse {
       throw new IllegalArgumentException(s"DecisionTree requires size of input RDD > 0, " +
@@ -134,9 +134,9 @@ private[spark] object DecisionTreeMetadata extends Logging {
         strategy.categoricalFeaturesInfo.find(_._2 == maxCategoriesPerFeature).get._1
       require(maxCategoriesPerFeature <= maxPossibleBins,
         s"DecisionTree requires maxBins (= $maxPossibleBins) to be at least as large as the " +
-        s"number of values in each categorical feature, but categorical feature $maxCategory " +
-        s"has $maxCategoriesPerFeature values. Considering remove this and other categorical " +
-        "features with a large number of values, or add more training examples.")
+          s"number of values in each categorical feature, but categorical feature $maxCategory " +
+          s"has $maxCategoriesPerFeature values. Considering remove this and other categorical " +
+          "features with a large number of values, or add more training examples.")
     }
 
     val unorderedFeatures = new mutable.HashSet[Int]()
@@ -145,29 +145,33 @@ private[spark] object DecisionTreeMetadata extends Logging {
       // Multiclass classification
       val maxCategoriesForUnorderedFeature =
         ((math.log(maxPossibleBins / 2 + 1) / math.log(2.0)) + 1).floor.toInt
-      strategy.categoricalFeaturesInfo.foreach { case (featureIndex, numCategories) =>
-        // Hack: If a categorical feature has only 1 category, we treat it as continuous.
-        // TODO(SPARK-9957): Handle this properly by filtering out those features.
-        if (numCategories > 1) {
-          // Decide if some categorical features should be treated as unordered features,
-          //  which require 2 * ((1 << numCategories - 1) - 1) bins.
-          // We do this check with log values to prevent overflows in case numCategories is large.
-          // The next check is equivalent to: 2 * ((1 << numCategories - 1) - 1) <= maxBins
-          if (numCategories <= maxCategoriesForUnorderedFeature) {
-            unorderedFeatures.add(featureIndex)
-            numBins(featureIndex) = numUnorderedBins(numCategories)
-          } else {
+      strategy.categoricalFeaturesInfo.foreach {
+        case (featureIndex, numCategories) =>
+          // Hack: If a categorical feature has only 1 category, we treat it as continuous.
+          // TODO(SPARK-9957): Handle this properly by filtering out those features.
+          if (numCategories > 1) {
+            // Decide if some categorical features should be treated as unordered features,
+            //  which require 2 * ((1 << numCategories - 1) - 1) bins.
+            // We do this check with log values to prevent overflows in case numCategories is large.
+            // The next check is equivalent to: 2 * ((1 << numCategories - 1) - 1) <= maxBins
+            if (numCategories <= maxCategoriesForUnorderedFeature) {
+              unorderedFeatures.add(featureIndex)
+              numBins(featureIndex) = numUnorderedBins(numCategories)
+            }
+            else {
+              numBins(featureIndex) = numCategories
+            }
+          }
+      }
+    }
+    else {
+      // Binary classification or regression
+      strategy.categoricalFeaturesInfo.foreach {
+        case (featureIndex, numCategories) =>
+          // If a categorical feature has only 1 category, we treat it as continuous: SPARK-9957
+          if (numCategories > 1) {
             numBins(featureIndex) = numCategories
           }
-        }
-      }
-    } else {
-      // Binary classification or regression
-      strategy.categoricalFeaturesInfo.foreach { case (featureIndex, numCategories) =>
-        // If a categorical feature has only 1 category, we treat it as continuous: SPARK-9957
-        if (numCategories > 1) {
-          numBins(featureIndex) = numCategories
-        }
       }
     }
 
@@ -176,10 +180,12 @@ private[spark] object DecisionTreeMetadata extends Logging {
       case "auto" =>
         if (numTrees == 1) {
           "all"
-        } else {
+        }
+        else {
           if (strategy.algo == Classification) {
             "sqrt"
-          } else {
+          }
+          else {
             "onethird"
           }
         }
@@ -214,12 +220,12 @@ private[spark] object DecisionTreeMetadata extends Logging {
    * Version of [[DecisionTreeMetadata#buildMetadata]] for DecisionTree.
    */
   def buildMetadata(
-      input: RDD[LabeledPoint],
-      strategy: Strategy): DecisionTreeMetadata = {
+    input: RDD[LabeledPoint],
+    strategy: Strategy): DecisionTreeMetadata = {
     buildMetadata(input, strategy, numTrees = 1, featureSubsetStrategy = "all")
   }
 
-    /**
+  /**
    * Given the arity of a categorical feature (arity = number of categories),
    * return the number of bins for the feature if it is to be treated as an unordered feature.
    * There is 1 split for every partitioning of categories into 2 disjoint, non-empty sets;

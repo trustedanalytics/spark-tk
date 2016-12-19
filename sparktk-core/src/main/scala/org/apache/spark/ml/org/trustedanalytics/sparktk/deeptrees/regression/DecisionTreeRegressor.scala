@@ -23,18 +23,17 @@ import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.RandomForest
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util._
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.{PredictionModel, Predictor}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.{ PredictionModel, Predictor }
 import org.apache.spark.ml.util.Identifiable
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo, Strategy => OldStrategy}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{DecisionTreeModel => OldDecisionTreeModel}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo, Strategy => OldStrategy }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ DecisionTreeModel => OldDecisionTreeModel }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.json4s.JsonDSL._
-import org.json4s.{DefaultFormats, JObject}
-
+import org.json4s.{ DefaultFormats, JObject }
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Decision_tree_learning">Decision tree</a>
@@ -43,8 +42,8 @@ import org.json4s.{DefaultFormats, JObject}
  */
 @Since("1.4.0")
 class DecisionTreeRegressor @Since("1.4.0") (@Since("1.4.0") override val uid: String)
-  extends Predictor[Vector, DecisionTreeRegressor, DecisionTreeRegressionModel]
-  with DecisionTreeRegressorParams with DefaultParamsWritable {
+    extends Predictor[Vector, DecisionTreeRegressor, DecisionTreeRegressionModel]
+    with DecisionTreeRegressorParams with DefaultParamsWritable {
 
   @Since("1.4.0")
   def this() = this(Identifiable.randomUID("dtr"))
@@ -113,7 +112,7 @@ class DecisionTreeRegressor @Since("1.4.0") (@Since("1.4.0") override val uid: S
 
   /** (private[ml]) Train a decision tree on an RDD */
   private[ml] def train(data: RDD[LabeledPoint],
-      oldStrategy: OldStrategy): DecisionTreeRegressionModel = {
+                        oldStrategy: OldStrategy): DecisionTreeRegressionModel = {
 
     val trees = RandomForest.run(data, oldStrategy, numTrees = 1, featureSubsetStrategy = "all",
       seed = $(seed), parentUID = Some(uid))
@@ -149,11 +148,11 @@ object DecisionTreeRegressor extends DefaultParamsReadable[DecisionTreeRegressor
  */
 @Since("1.4.0")
 class DecisionTreeRegressionModel private[ml] (
-    override val uid: String,
-    override val rootNode: Node,
-    override val numFeatures: Int)
-  extends PredictionModel[Vector, DecisionTreeRegressionModel]
-  with DecisionTreeModel with DecisionTreeRegressorParams with MLWritable with Serializable {
+  override val uid: String,
+  override val rootNode: Node,
+  override val numFeatures: Int)
+    extends PredictionModel[Vector, DecisionTreeRegressionModel]
+    with DecisionTreeModel with DecisionTreeRegressorParams with MLWritable with Serializable {
 
   /** @group setParam */
   def setVarianceCol(value: String): this.type = set(varianceCol, value)
@@ -168,7 +167,7 @@ class DecisionTreeRegressionModel private[ml] (
   private[ml] def this(rootNode: Node, numFeatures: Int) =
     this(Identifiable.randomUID("dtr"), rootNode, numFeatures)
 
-  override protected def predict(features: Vector): Double = {
+  override def predict(features: Vector): Double = {
     rootNode.predictImpl(features).prediction
   }
 
@@ -245,9 +244,8 @@ object DecisionTreeRegressionModel extends MLReadable[DecisionTreeRegressionMode
   @Since("2.0.0")
   override def load(path: String): DecisionTreeRegressionModel = super.load(path)
 
-  private[DecisionTreeRegressionModel]
-  class DecisionTreeRegressionModelWriter(instance: DecisionTreeRegressionModel)
-    extends MLWriter {
+  private[DecisionTreeRegressionModel] class DecisionTreeRegressionModelWriter(instance: DecisionTreeRegressionModel)
+      extends MLWriter {
 
     override protected def saveImpl(path: String): Unit = {
       val extraMetadata: JObject = Map(
@@ -260,7 +258,7 @@ object DecisionTreeRegressionModel extends MLReadable[DecisionTreeRegressionMode
   }
 
   private class DecisionTreeRegressionModelReader
-    extends MLReader[DecisionTreeRegressionModel] {
+      extends MLReader[DecisionTreeRegressionModel] {
     import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.DecisionTreeModelReadWrite._
     /** Checked against metadata when loading model */
     private val className = classOf[DecisionTreeRegressionModel].getName
@@ -278,10 +276,10 @@ object DecisionTreeRegressionModel extends MLReadable[DecisionTreeRegressionMode
 
   /** Convert a model from the old API */
   private[ml] def fromOld(
-      oldModel: OldDecisionTreeModel,
-      parent: DecisionTreeRegressor,
-      categoricalFeatures: Map[Int, Int],
-      numFeatures: Int = -1): DecisionTreeRegressionModel = {
+    oldModel: OldDecisionTreeModel,
+    parent: DecisionTreeRegressor,
+    categoricalFeatures: Map[Int, Int],
+    numFeatures: Int = -1): DecisionTreeRegressionModel = {
     require(oldModel.algo == OldAlgo.Regression,
       s"Cannot convert non-regression DecisionTreeModel (old API) to" +
         s" DecisionTreeRegressionModel (new API).  Algo is: ${oldModel.algo}")

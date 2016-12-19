@@ -18,7 +18,7 @@
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model
 
 import org.apache.spark.Logging
-import org.apache.spark.annotation.{DeveloperApi, Since}
+import org.apache.spark.annotation.{ DeveloperApi, Since }
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.tree.configuration.FeatureType._
 
@@ -83,20 +83,24 @@ class Node @Since("1.2.0") (
    * @return predicted value
    */
   @Since("1.1.0")
-  def predict(features: Vector) : Double = {
+  def predict(features: Vector): Double = {
     if (isLeaf) {
       predict.predict
-    } else {
+    }
+    else {
       if (split.get.featureType == Continuous) {
         if (features(split.get.feature) <= split.get.threshold) {
           leftNode.get.predict(features)
-        } else {
+        }
+        else {
           rightNode.get.predict(features)
         }
-      } else {
+      }
+      else {
         if (split.get.categories.contains(features(split.get.feature))) {
           leftNode.get.predict(features)
-        } else {
+        }
+        else {
           rightNode.get.predict(features)
         }
       }
@@ -109,12 +113,14 @@ class Node @Since("1.2.0") (
   private[tree] def deepCopy(): Node = {
     val leftNodeCopy = if (leftNode.isEmpty) {
       None
-    } else {
+    }
+    else {
       Some(leftNode.get.deepCopy())
     }
     val rightNodeCopy = if (rightNode.isEmpty) {
       None
-    } else {
+    }
+    else {
       Some(rightNode.get.deepCopy())
     }
     new Node(id, predict, impurity, isLeaf, split, leftNodeCopy, rightNodeCopy, stats)
@@ -126,7 +132,8 @@ class Node @Since("1.2.0") (
    */
   private[tree] def numDescendants: Int = if (isLeaf) {
     0
-  } else {
+  }
+  else {
     2 + leftNode.get.numDescendants + rightNode.get.numDescendants
   }
 
@@ -136,7 +143,8 @@ class Node @Since("1.2.0") (
    */
   private[tree] def subtreeDepth: Int = if (isLeaf) {
     0
-  } else {
+  }
+  else {
     1 + math.max(leftNode.get.subtreeDepth, rightNode.get.subtreeDepth)
   }
 
@@ -150,12 +158,14 @@ class Node @Since("1.2.0") (
       split.featureType match {
         case Continuous => if (left) {
           s"(feature ${split.feature} <= ${split.threshold})"
-        } else {
+        }
+        else {
           s"(feature ${split.feature} > ${split.threshold})"
         }
         case Categorical => if (left) {
           s"(feature ${split.feature} in ${split.categories.mkString("{", ",", "}")})"
-        } else {
+        }
+        else {
           s"(feature ${split.feature} not in ${split.categories.mkString("{", ",", "}")})"
         }
       }
@@ -163,7 +173,8 @@ class Node @Since("1.2.0") (
     val prefix: String = " " * indentFactor
     if (isLeaf) {
       prefix + s"Predict: ${predict.predict}\n"
-    } else {
+    }
+    else {
       prefix + s"If ${splitToString(split.get, left = true)}\n" +
         leftNode.get.subtreeToString(indentFactor + 1) +
         prefix + s"Else ${splitToString(split.get, left = false)}\n" +
@@ -198,10 +209,10 @@ private[spark] object Node {
    * @return new node instance
    */
   def apply(
-      nodeIndex: Int,
-      predict: Predict,
-      impurity: Double,
-      isLeaf: Boolean): Node = {
+    nodeIndex: Int,
+    predict: Predict,
+    impurity: Double,
+    isLeaf: Boolean): Node = {
     new Node(nodeIndex, predict, impurity, isLeaf, None, None, None, None)
   }
 
@@ -225,7 +236,8 @@ private[spark] object Node {
    */
   def indexToLevel(nodeIndex: Int): Int = if (nodeIndex == 0) {
     throw new IllegalArgumentException(s"0 is not a valid node index.")
-  } else {
+  }
+  else {
     java.lang.Integer.numberOfTrailingZeros(java.lang.Integer.highestOneBit(nodeIndex))
   }
 
@@ -257,7 +269,8 @@ private[spark] object Node {
     while (levelsToGo > 0) {
       if ((nodeIndex & (1 << levelsToGo - 1)) == 0) {
         tmpNode = tmpNode.leftNode.get
-      } else {
+      }
+      else {
         tmpNode = tmpNode.rightNode.get
       }
       levelsToGo -= 1

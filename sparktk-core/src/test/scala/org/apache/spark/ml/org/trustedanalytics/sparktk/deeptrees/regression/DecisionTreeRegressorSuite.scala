@@ -20,14 +20,14 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.regression
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.TreeTests
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util._
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{DecisionTree => OldDecisionTree, DecisionTreeSuite => OldDecisionTreeSuite}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{ DecisionTree => OldDecisionTree, DecisionTreeSuite => OldDecisionTreeSuite }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.{ DataFrame, Row }
 import TestingUtils._
 
 class DecisionTreeRegressorSuite
-  extends SparkFunSuite with MLlibTestSparkContext with DefaultReadWriteTest {
+    extends SparkFunSuite with MLlibTestSparkContext with DefaultReadWriteTest {
 
   import DecisionTreeRegressorSuite.compareAPIs
 
@@ -88,10 +88,11 @@ class DecisionTreeRegressorSuite
       .select(model.getFeaturesCol, model.getVarianceCol)
       .collect()
 
-    predictions.foreach { case Row(features: Vector, variance: Double) =>
-      val expectedVariance = model.rootNode.predictImpl(features).impurityStats.calculate()
-      assert(variance === expectedVariance,
-        s"Expected variance $expectedVariance but got $variance.")
+    predictions.foreach {
+      case Row(features: Vector, variance: Double) =>
+        val expectedVariance = model.rootNode.predictImpl(features).impurityStats.calculate()
+        assert(variance === expectedVariance,
+          s"Expected variance $expectedVariance but got $variance.")
     }
 
     val varianceData: RDD[LabeledPoint] = TreeTests.varianceData(sc)
@@ -109,8 +110,9 @@ class DecisionTreeRegressorSuite
     // data point in the left node is 0.667 and for each data point in the right node
     // is 2.667
     val expectedVariances = Array(0.667, 0.667, 0.667, 2.667, 2.667, 2.667)
-    calculatedVariances.zip(expectedVariances).foreach { case (actual, expected) =>
-      assert(actual ~== expected absTol 1e-3)
+    calculatedVariances.zip(expectedVariances).foreach {
+      case (actual, expected) =>
+        assert(actual ~== expected absTol 1e-3)
     }
   }
 
@@ -148,8 +150,8 @@ class DecisionTreeRegressorSuite
 
   test("read/write") {
     def checkModelData(
-                        model: DecisionTreeRegressionModel,
-                        model2: DecisionTreeRegressionModel): Unit = {
+      model: DecisionTreeRegressionModel,
+      model2: DecisionTreeRegressionModel): Unit = {
       TreeTests.checkEqual(model, model2)
       assert(model.numFeatures === model2.numFeatures)
     }
@@ -182,9 +184,9 @@ private[ml] object DecisionTreeRegressorSuite extends SparkFunSuite {
    * Convert the old tree to the new format, compare them, and fail if they are not exactly equal.
    */
   def compareAPIs(
-                   data: RDD[LabeledPoint],
-                   dt: DecisionTreeRegressor,
-                   categoricalFeatures: Map[Int, Int]): Unit = {
+    data: RDD[LabeledPoint],
+    dt: DecisionTreeRegressor,
+    categoricalFeatures: Map[Int, Int]): Unit = {
     val numFeatures = data.first().features.size
     val oldStrategy = dt.getOldStrategy(categoricalFeatures)
     val oldTree = OldDecisionTree.train(data, oldStrategy)

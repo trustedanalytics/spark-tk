@@ -17,10 +17,10 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param
 
-import org.apache.spark.mllib.linalg.{DenseVector, SparseVector, Vector, Vectors}
+import org.apache.spark.mllib.linalg.{ DenseVector, SparseVector, Vector, Vectors }
 import org.json4s.DefaultFormats
 import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods.{compact, parse => parseJson, render}
+import org.json4s.jackson.JsonMethods.{ compact, parse => parseJson, render }
 
 private[ml] object JsonVectorConverter {
 
@@ -61,5 +61,4 @@ private[ml] object JsonVectorConverter {
     }
   }
 }
-
 

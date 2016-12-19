@@ -19,21 +19,21 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classificatio
 
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.ParamsSuite
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.TreeTests
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MLTestingUtils, DefaultReadWriteTest, MLlibTestSparkContext, SparkFunSuite}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MLTestingUtils, DefaultReadWriteTest, MLlibTestSparkContext, SparkFunSuite }
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.LeafNode
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.EnsembleTestHelper
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{RandomForest => OldRandomForest}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{ RandomForest => OldRandomForest }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{ DataFrame, SQLContext }
 
 /**
  * Test suite for [[RandomForestClassifier]].
  */
 class RandomForestClassifierSuite
-  extends SparkFunSuite with MLlibTestSparkContext with DefaultReadWriteTest {
+    extends SparkFunSuite with MLlibTestSparkContext with DefaultReadWriteTest {
 
   import RandomForestClassifierSuite.compareAPIs
   //import testImplicits._
@@ -119,7 +119,7 @@ class RandomForestClassifierSuite
       .setSeed(123)
     compareAPIs(rdd, rf1, categoricalFeatures, numClasses)
 
-    val rf2 = rf1//.setSubsamplingRate(0.5)
+    val rf2 = rf1 //.setSubsamplingRate(0.5)
     compareAPIs(rdd, rf2, categoricalFeatures, numClasses)
   }
 
@@ -171,8 +171,8 @@ class RandomForestClassifierSuite
 
   test("read/write") {
     def checkModelData(
-                        model: RandomForestClassificationModel,
-                        model2: RandomForestClassificationModel): Unit = {
+      model: RandomForestClassificationModel,
+      model2: RandomForestClassificationModel): Unit = {
       TreeTests.checkEqual(model, model2)
       assert(model.numFeatures === model2.numFeatures)
       assert(model.numClasses === model2.numClasses)
@@ -196,10 +196,10 @@ private object RandomForestClassifierSuite extends SparkFunSuite {
    * Convert the old model to the new format, compare them, and fail if they are not exactly equal.
    */
   def compareAPIs(
-                   data: RDD[LabeledPoint],
-                   rf: RandomForestClassifier,
-                   categoricalFeatures: Map[Int, Int],
-                   numClasses: Int): Unit = {
+    data: RDD[LabeledPoint],
+    rf: RandomForestClassifier,
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int): Unit = {
     val numFeatures = data.first().features.size
     val oldStrategy =
       rf.getOldStrategy(categoricalFeatures, numClasses, OldAlgo.Classification, rf.getOldImpurity)

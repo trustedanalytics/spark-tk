@@ -23,18 +23,17 @@ import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.RandomForest
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.DefaultParamsReader.Metadata
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util._
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.{PredictionModel, Predictor}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.{ PredictionModel, Predictor }
 import org.apache.spark.ml.util.Identifiable
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{RandomForestModel => OldRandomForestModel}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ RandomForestModel => OldRandomForestModel }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.json4s.JsonDSL._
-import org.json4s.{DefaultFormats, JObject}
-
+import org.json4s.{ DefaultFormats, JObject }
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Random_forest">Random Forest</a>
@@ -43,8 +42,8 @@ import org.json4s.{DefaultFormats, JObject}
  */
 @Since("1.4.0")
 class RandomForestRegressor @Since("1.4.0") (@Since("1.4.0") override val uid: String)
-  extends Predictor[Vector, RandomForestRegressor, RandomForestRegressionModel]
-  with RandomForestRegressorParams with DefaultParamsWritable {
+    extends Predictor[Vector, RandomForestRegressor, RandomForestRegressionModel]
+    with RandomForestRegressorParams with DefaultParamsWritable {
 
   @Since("1.4.0")
   def this() = this(Identifiable.randomUID("rfr"))
@@ -135,7 +134,7 @@ class RandomForestRegressor @Since("1.4.0") (@Since("1.4.0") override val uid: S
 }
 
 @Since("1.4.0")
-object RandomForestRegressor extends DefaultParamsReadable[RandomForestRegressor]{
+object RandomForestRegressor extends DefaultParamsReadable[RandomForestRegressor] {
   /** Accessor for supported impurity settings: variance */
   @Since("1.4.0")
   final val supportedImpurities: Array[String] = TreeRegressorParams.supportedImpurities
@@ -159,12 +158,12 @@ object RandomForestRegressor extends DefaultParamsReadable[RandomForestRegressor
  */
 @Since("1.4.0")
 class RandomForestRegressionModel private[ml] (
-    override val uid: String,
-    private val _trees: Array[DecisionTreeRegressionModel],
-    override val numFeatures: Int)
-  extends PredictionModel[Vector, RandomForestRegressionModel]
-  with RandomForestRegressorParams with TreeEnsembleModel[DecisionTreeRegressionModel]
-  with MLWritable with Serializable {
+  override val uid: String,
+  private val _trees: Array[DecisionTreeRegressionModel],
+  override val numFeatures: Int)
+    extends PredictionModel[Vector, RandomForestRegressionModel]
+    with RandomForestRegressorParams with TreeEnsembleModel[DecisionTreeRegressionModel]
+    with MLWritable with Serializable {
 
   require(_trees.nonEmpty, "RandomForestRegressionModel requires at least 1 tree.")
 
@@ -193,7 +192,7 @@ class RandomForestRegressionModel private[ml] (
     dataset.withColumn($(predictionCol), predictUDF(col($(featuresCol))))
   }
 
-  override protected def predict(features: Vector): Double = {
+  override def predict(features: Vector): Double = {
     // TODO: When we add a generic Bagging class, handle transform there.  SPARK-7128
     // Predict average of tree predictions.
     // Ignore the weights since all are 1.0 for now.
@@ -242,9 +241,8 @@ object RandomForestRegressionModel extends MLReadable[RandomForestRegressionMode
   @Since("2.0.0")
   override def load(path: String): RandomForestRegressionModel = super.load(path)
 
-  private[RandomForestRegressionModel]
-  class RandomForestRegressionModelWriter(instance: RandomForestRegressionModel)
-    extends MLWriter {
+  private[RandomForestRegressionModel] class RandomForestRegressionModelWriter(instance: RandomForestRegressionModel)
+      extends MLWriter {
 
     override protected def saveImpl(path: String): Unit = {
       val extraMetadata: JObject = Map(
@@ -267,11 +265,12 @@ object RandomForestRegressionModel extends MLReadable[RandomForestRegressionMode
       val numFeatures = (metadata.metadata \ "numFeatures").extract[Int]
       val numTrees = (metadata.metadata \ "numTrees").extract[Int]
 
-      val trees: Array[DecisionTreeRegressionModel] = treesData.map { case (treeMetadata, root) =>
-        val tree =
-          new DecisionTreeRegressionModel(treeMetadata.uid, root, numFeatures)
-        DefaultParamsReader.getAndSetParams(tree, treeMetadata)
-        tree
+      val trees: Array[DecisionTreeRegressionModel] = treesData.map {
+        case (treeMetadata, root) =>
+          val tree =
+            new DecisionTreeRegressionModel(treeMetadata.uid, root, numFeatures)
+          DefaultParamsReader.getAndSetParams(tree, treeMetadata)
+          tree
       }
       require(numTrees == trees.length, s"RandomForestRegressionModel.load expected $numTrees" +
         s" trees based on metadata but found ${trees.length} trees.")
@@ -284,10 +283,10 @@ object RandomForestRegressionModel extends MLReadable[RandomForestRegressionMode
 
   /** Convert a model from the old API */
   private[ml] def fromOld(
-      oldModel: OldRandomForestModel,
-      parent: RandomForestRegressor,
-      categoricalFeatures: Map[Int, Int],
-      numFeatures: Int = -1): RandomForestRegressionModel = {
+    oldModel: OldRandomForestModel,
+    parent: RandomForestRegressor,
+    categoricalFeatures: Map[Int, Int],
+    numFeatures: Int = -1): RandomForestRegressionModel = {
     require(oldModel.algo == OldAlgo.Regression, "Cannot convert RandomForestModel" +
       s" with algo=${oldModel.algo} (old API) to RandomForestRegressionModel (new API).")
     val newTrees = oldModel.trees.map { tree =>

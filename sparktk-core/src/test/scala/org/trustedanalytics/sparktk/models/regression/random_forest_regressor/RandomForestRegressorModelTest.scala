@@ -19,6 +19,8 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
+import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
+import org.trustedanalytics.sparktk.models.regression.RegressionTestMetrics
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Matchers {
@@ -61,7 +63,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
     "return predictions when calling score method" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val model = RandomForestClassifierModel.train(frame, "label", List("obs1", "obs2"), 2, 1, "gini", 4, 100, 10, None, None)
 
       // Test data for scoring
       val inputArray = Array[Any](16.8973559126, 2.6933495054)
@@ -76,6 +78,19 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
         case prediction: Double => assert(prediction == expectedPredict)
         case _ => throw new RuntimeException(s"Expected prediction to be a Double but is ${scoreResult(1).getClass.getSimpleName}")
       }
+    }
+
+    "test should return a regression metric" in {
+
+      val rdd = sparkContext.parallelize(labeledPoint)
+      val frame = new Frame(rdd, schema)
+      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val metrics = model.test(frame, "label", None)
+
+      metrics shouldBe a[RegressionTestMetrics]
+      metrics.r2 should equal(1.0)
+      metrics.explainedVarianceScore should equal(1.0)
+      metrics.meanSquaredError should equal(0)
     }
 
     "throw IllegalArgumentExceptions for invalid scoring parameters" in {

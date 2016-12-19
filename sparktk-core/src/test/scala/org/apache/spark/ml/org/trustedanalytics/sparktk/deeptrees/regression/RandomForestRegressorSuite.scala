@@ -18,11 +18,11 @@
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.regression
 
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.TreeTests
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{DefaultReadWriteTest, MLlibTestSparkContext, SparkFunSuite}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ DefaultReadWriteTest, MLlibTestSparkContext, SparkFunSuite }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.EnsembleTestHelper
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{RandomForest => OldRandomForest}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{ RandomForest => OldRandomForest }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 
@@ -30,7 +30,7 @@ import org.apache.spark.sql.DataFrame
  * Test suite for [[RandomForestRegressor]].
  */
 class RandomForestRegressorSuite extends SparkFunSuite with MLlibTestSparkContext
-with DefaultReadWriteTest{
+    with DefaultReadWriteTest {
 
   import RandomForestRegressorSuite.compareAPIs
 
@@ -94,15 +94,14 @@ with DefaultReadWriteTest{
     assert(importances.toArray.forall(_ >= 0.0))
   }
 
-
   /////////////////////////////////////////////////////////////////////////////
   // Tests of model save/load
   /////////////////////////////////////////////////////////////////////////////
 
   test("read/write") {
     def checkModelData(
-                        model: RandomForestRegressionModel,
-                        model2: RandomForestRegressionModel): Unit = {
+      model: RandomForestRegressionModel,
+      model2: RandomForestRegressionModel): Unit = {
       TreeTests.checkEqual(model, model2)
       assert(model.numFeatures === model2.numFeatures)
     }
@@ -125,9 +124,9 @@ private object RandomForestRegressorSuite extends SparkFunSuite {
    * Convert the old model to the new format, compare them, and fail if they are not exactly equal.
    */
   def compareAPIs(
-                   data: RDD[LabeledPoint],
-                   rf: RandomForestRegressor,
-                   categoricalFeatures: Map[Int, Int]): Unit = {
+    data: RDD[LabeledPoint],
+    rf: RandomForestRegressor,
+    categoricalFeatures: Map[Int, Int]): Unit = {
     val numFeatures = data.first().features.size
     val oldStrategy =
       rf.getOldStrategy(categoricalFeatures, numClasses = 0, OldAlgo.Regression, rf.getOldImpurity)

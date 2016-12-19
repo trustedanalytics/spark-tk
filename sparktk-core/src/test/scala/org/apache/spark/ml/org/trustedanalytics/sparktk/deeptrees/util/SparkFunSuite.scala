@@ -20,13 +20,13 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 // scalastyle:off
 
 import org.apache.spark.Logging
-import org.scalatest.{FunSuite, Outcome}
+import org.scalatest.{ FunSuite, Outcome }
 
 /**
  * Base abstract class for all unit tests in Spark for handling common functionality.
  */
 private[spark] abstract class SparkFunSuite extends FunSuite with Logging {
-// scalastyle:on
+  // scalastyle:on
 
   /**
    * Log the suite name and the test name before and after each test.
@@ -42,7 +42,8 @@ private[spark] abstract class SparkFunSuite extends FunSuite with Logging {
     try {
       logInfo(s"\n\n===== TEST OUTPUT FOR $shortSuiteName: '$testName' =====\n")
       test()
-    } finally {
+    }
+    finally {
       logInfo(s"\n\n===== FINISHED $shortSuiteName: '$testName' =====\n")
     }
   }

@@ -17,6 +17,7 @@
 
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
+from sparktk.models.regression.regression_test_metrics import RegressionTestMetrics
 from sparktk import TkContext
 import os
 
@@ -143,6 +144,16 @@ class RandomForestRegressorModel(PropertiesObject):
         [4]      0  44.3117586448  3.3458963222                0.0
         [5]      0  34.6334526911  3.6429838715                0.0
 
+        >>> random_forest_test_return = model.test(frame, 'Class')
+        <progress>
+
+        >>> random_forest_test_return
+        explained_variance_score = 1.0
+        mean_absolute_error      = 0.0
+        mean_squared_error       = 0.0
+        r2                       = 1.0
+        root_mean_squared_error  = 0.0
+
         >>> model.save("sandbox/randomforestregressor")
 
         >>> restored = tc.load("sandbox/randomforestregressor")
@@ -246,6 +257,21 @@ class RandomForestRegressorModel(PropertiesObject):
         c = self.__columns_to_option(columns)
         from sparktk.frame.frame import Frame
         return Frame(self._tc,self._scala.predict(frame._scala, c))
+
+    def test(self, frame, value_column, observation_columns=None):
+        """
+        Test the frame given the trained model
+
+        Parameters
+        ----------
+
+        :param frame: (Frame) The frame to predict on
+        :param value_column: (String) Column name containing the value for each observation
+        :param observation_columns: Optional(List[str]) List of column(s) containing the observations
+        :return: (RegressionTestMetrics) RegressionTestMetrics object consisting of results from model test
+        """
+        obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
+        return RegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
 
     def __columns_to_option(self, c):
         if c is not None:

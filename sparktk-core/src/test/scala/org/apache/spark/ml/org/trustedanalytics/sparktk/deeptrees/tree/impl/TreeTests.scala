@@ -19,17 +19,17 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl
 
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaRDD
-import org.apache.spark.ml.attribute.{AttributeGroup, NominalAttribute, NumericAttribute}
+import org.apache.spark.ml.attribute.{ AttributeGroup, NominalAttribute, NumericAttribute }
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree._
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MLlibTestSparkContext, SparkFunSuite}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MLlibTestSparkContext, SparkFunSuite }
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{ DataFrame, SQLContext }
 
 import scala.collection.JavaConverters._
 
-private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
+private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext {
 
   /**
    * Convert the given data to a DataFrame, and set the features and label metadata.
@@ -40,9 +40,9 @@ private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
    * @return DataFrame with metadata
    */
   def setMetadata(
-                   data: RDD[LabeledPoint],
-                   categoricalFeatures: Map[Int, Int],
-                   numClasses: Int): DataFrame = {
+    data: RDD[LabeledPoint],
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int): DataFrame = {
     val sqlContext = SQLContext.getOrCreate(sc)
     import sqlContext.implicits._
 
@@ -51,14 +51,16 @@ private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
     val featuresAttributes = Range(0, numFeatures).map { feature =>
       if (categoricalFeatures.contains(feature)) {
         NominalAttribute.defaultAttr.withIndex(feature).withNumValues(categoricalFeatures(feature))
-      } else {
+      }
+      else {
         NumericAttribute.defaultAttr.withIndex(feature)
       }
     }.toArray
     val featuresMetadata = new AttributeGroup("features", featuresAttributes).toMetadata()
     val labelAttribute = if (numClasses == 0) {
       NumericAttribute.defaultAttr.withName("label")
-    } else {
+    }
+    else {
       NominalAttribute.defaultAttr.withName("label").withNumValues(numClasses)
     }
     val labelMetadata = labelAttribute.toMetadata()
@@ -68,9 +70,9 @@ private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
 
   /** Java-friendly version of [[setMetadata()]] */
   def setMetadata(
-                   data: JavaRDD[LabeledPoint],
-                   categoricalFeatures: java.util.Map[java.lang.Integer, java.lang.Integer],
-                   numClasses: Int): DataFrame = {
+    data: JavaRDD[LabeledPoint],
+    categoricalFeatures: java.util.Map[java.lang.Integer, java.lang.Integer],
+    numClasses: Int): DataFrame = {
     setMetadata(data.rdd, categoricalFeatures.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap,
       numClasses)
   }
@@ -85,13 +87,14 @@ private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
    * @return DataFrame with metadata
    */
   def setMetadata(
-                   data: DataFrame,
-                   numClasses: Int,
-                   labelColName: String,
-                   featuresColName: String): DataFrame = {
+    data: DataFrame,
+    numClasses: Int,
+    labelColName: String,
+    featuresColName: String): DataFrame = {
     val labelAttribute = if (numClasses == 0) {
       NumericAttribute.defaultAttr.withName(labelColName)
-    } else {
+    }
+    else {
       NominalAttribute.defaultAttr.withName(labelColName).withNumValues(numClasses)
     }
     val labelMetadata = labelAttribute.toMetadata()
@@ -107,7 +110,8 @@ private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
   def checkEqual(a: DecisionTreeModel, b: DecisionTreeModel): Unit = {
     try {
       checkEqual(a.rootNode, b.rootNode)
-    } catch {
+    }
+    catch {
       case ex: Exception =>
         throw new AssertionError("checkEqual failed since the two trees were not identical.\n" +
           "TREE A:\n" + a.toDebugString + "\n" +
@@ -140,11 +144,13 @@ private[ml] object TreeTests extends SparkFunSuite with MLlibTestSparkContext{
    */
   def checkEqual[M <: DecisionTreeModel](a: TreeEnsembleModel[M], b: TreeEnsembleModel[M]): Unit = {
     try {
-      a.trees.zip(b.trees).foreach { case (treeA, treeB) =>
-        TreeTests.checkEqual(treeA, treeB)
+      a.trees.zip(b.trees).foreach {
+        case (treeA, treeB) =>
+          TreeTests.checkEqual(treeA, treeB)
       }
       assert(a.treeWeights === b.treeWeights)
-    } catch {
+    }
+    catch {
       case ex: Exception => throw new AssertionError(
         "checkEqual failed since the two tree ensembles were not identical")
     }

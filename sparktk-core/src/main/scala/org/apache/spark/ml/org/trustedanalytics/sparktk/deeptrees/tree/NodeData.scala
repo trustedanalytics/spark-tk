@@ -29,14 +29,15 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree
  *                       For continuous feature, -1.
  */
 private[spark] case class SplitData(
-                      featureIndex: Int,
-                      leftCategoriesOrThreshold: Array[Double],
-                      numCategories: Int) {
+    featureIndex: Int,
+    leftCategoriesOrThreshold: Array[Double],
+    numCategories: Int) {
 
   def getSplit: Split = {
     if (numCategories != -1) {
       new CategoricalSplit(featureIndex, leftCategoriesOrThreshold, numCategories)
-    } else {
+    }
+    else {
       assert(leftCategoriesOrThreshold.length == 1, s"DecisionTree split data expected" +
         s" 1 threshold for ContinuousSplit, but found thresholds: " +
         leftCategoriesOrThreshold.mkString(", "))
@@ -67,14 +68,14 @@ private[spark] object SplitData {
  * @param split  Split info, or arbitrary value if leaf node.
  */
 private[spark] case class NodeData(
-                     id: Int,
-                     prediction: Double,
-                     impurity: Double,
-                     impurityStats: Array[Double],
-                     gain: Double,
-                     leftChild: Int,
-                     rightChild: Int,
-                     split: SplitData)
+  id: Int,
+  prediction: Double,
+  impurity: Double,
+  impurityStats: Array[Double],
+  gain: Double,
+  leftChild: Int,
+  rightChild: Int,
+  split: SplitData)
 
 private[spark] object NodeData {
   /**
@@ -108,8 +109,8 @@ private[spark] object NodeData {
  * @param nodeData  Data for this node
  */
 private[spark] case class EnsembleNodeData(
-                             treeID: Int,
-                             nodeData: NodeData)
+  treeID: Int,
+  nodeData: NodeData)
 
 private[spark] object EnsembleNodeData {
   /**

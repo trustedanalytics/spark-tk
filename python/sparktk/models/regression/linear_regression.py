@@ -18,7 +18,7 @@
 from sparktk.loggers import log_load; log_load(__name__); del log_load
 
 from sparktk.propobj import PropertiesObject
-from sparktk.models.regression.linear_regression_test_metrics import LinearRegressionTestMetrics
+from sparktk.models.regression.regression_test_metrics import RegressionTestMetrics
 from sparktk import TkContext
 
 
@@ -113,7 +113,7 @@ class LinearRegressionModel(PropertiesObject):
         <progress>
 
         >>> model
-        explained_variance      = 49.2759280303
+        explained_variance_score= 0.987374330661
         intercept               = -0.0327272727273
         iterations              = 1
         mean_absolute_error     = 0.529939393939
@@ -129,7 +129,7 @@ class LinearRegressionModel(PropertiesObject):
         <progress>
 
         >>> linear_regression_test_return
-        explained_variance      = 49.2759280303
+        explained_variance_score= 0.987374330661
         mean_absolute_error     = 0.529939393939
         mean_squared_error      = 0.630096969697
         r2                      = 0.987374330661
@@ -209,9 +209,9 @@ class LinearRegressionModel(PropertiesObject):
         return self._tc.jutils.convert.from_scala_seq(self._scala.weights())
 
     @property
-    def explained_variance(self):
-        """The explained variance regression score"""
-        return self._scala.explainedVariance()
+    def explained_variance_score(self):
+        """The explained variance regression score whose best possible score is 1"""
+        return self._scala.explainedVarianceScore()
 
     @property
     def mean_absolute_error(self):
@@ -267,10 +267,10 @@ class LinearRegressionModel(PropertiesObject):
         :param frame: (Frame) The frame to predict on
         :param value_column: (String) Column name containing the value for each observation
         :param observation_columns: Optional(List[str]) List of column(s) containing the observations
-        :return: (LinearRegressionTestMetrics) LinearRegressionTestMetrics object consisting of results from model test
+        :return: (RegressionTestMetrics) RegressionTestMetrics object consisting of results from model test
         """
         obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
-        return LinearRegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
+        return RegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
 
     def save(self, path):
         """

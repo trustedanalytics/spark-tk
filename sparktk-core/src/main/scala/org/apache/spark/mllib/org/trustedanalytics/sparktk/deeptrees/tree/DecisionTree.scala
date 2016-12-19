@@ -30,7 +30,6 @@ import org.apache.spark.rdd.RDD
 
 import scala.collection.JavaConverters._
 
-
 /**
  * A class which implements a decision tree learning algorithm for classification and regression.
  * It supports both continuous and categorical features.
@@ -42,7 +41,7 @@ import scala.collection.JavaConverters._
  */
 @Since("1.0.0")
 class DecisionTree private[spark] (private val strategy: Strategy, private val seed: Int)
-  extends Serializable with Logging {
+    extends Serializable with Logging {
 
   /**
    * @param strategy The configuration parameters for the tree algorithm which specify the type
@@ -111,10 +110,10 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.0.0")
   def train(
-      input: RDD[LabeledPoint],
-      algo: Algo,
-      impurity: Impurity,
-      maxDepth: Int): DecisionTreeModel = {
+    input: RDD[LabeledPoint],
+    algo: Algo,
+    impurity: Impurity,
+    maxDepth: Int): DecisionTreeModel = {
     val strategy = new Strategy(algo, impurity, maxDepth)
     new DecisionTree(strategy).run(input)
   }
@@ -139,11 +138,11 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.2.0")
   def train(
-      input: RDD[LabeledPoint],
-      algo: Algo,
-      impurity: Impurity,
-      maxDepth: Int,
-      numClasses: Int): DecisionTreeModel = {
+    input: RDD[LabeledPoint],
+    algo: Algo,
+    impurity: Impurity,
+    maxDepth: Int,
+    numClasses: Int): DecisionTreeModel = {
     val strategy = new Strategy(algo, impurity, maxDepth, numClasses)
     new DecisionTree(strategy).run(input)
   }
@@ -173,14 +172,14 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.0.0")
   def train(
-      input: RDD[LabeledPoint],
-      algo: Algo,
-      impurity: Impurity,
-      maxDepth: Int,
-      numClasses: Int,
-      maxBins: Int,
-      quantileCalculationStrategy: QuantileStrategy,
-      categoricalFeaturesInfo: Map[Int, Int]): DecisionTreeModel = {
+    input: RDD[LabeledPoint],
+    algo: Algo,
+    impurity: Impurity,
+    maxDepth: Int,
+    numClasses: Int,
+    maxBins: Int,
+    quantileCalculationStrategy: QuantileStrategy,
+    categoricalFeaturesInfo: Map[Int, Int]): DecisionTreeModel = {
     val strategy = new Strategy(algo, impurity, maxDepth, numClasses, maxBins,
       quantileCalculationStrategy, categoricalFeaturesInfo)
     new DecisionTree(strategy).run(input)
@@ -206,12 +205,12 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.1.0")
   def trainClassifier(
-      input: RDD[LabeledPoint],
-      numClasses: Int,
-      categoricalFeaturesInfo: Map[Int, Int],
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int): DecisionTreeModel = {
+    input: RDD[LabeledPoint],
+    numClasses: Int,
+    categoricalFeaturesInfo: Map[Int, Int],
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int): DecisionTreeModel = {
     val impurityType = Impurities.fromString(impurity)
     train(input, Classification, impurityType, maxDepth, numClasses, maxBins, Sort,
       categoricalFeaturesInfo)
@@ -222,12 +221,12 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.1.0")
   def trainClassifier(
-      input: JavaRDD[LabeledPoint],
-      numClasses: Int,
-      categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int): DecisionTreeModel = {
+    input: JavaRDD[LabeledPoint],
+    numClasses: Int,
+    categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int): DecisionTreeModel = {
     trainClassifier(input.rdd, numClasses,
       categoricalFeaturesInfo.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap,
       impurity, maxDepth, maxBins)
@@ -252,11 +251,11 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.1.0")
   def trainRegressor(
-      input: RDD[LabeledPoint],
-      categoricalFeaturesInfo: Map[Int, Int],
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int): DecisionTreeModel = {
+    input: RDD[LabeledPoint],
+    categoricalFeaturesInfo: Map[Int, Int],
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int): DecisionTreeModel = {
     val impurityType = Impurities.fromString(impurity)
     train(input, Regression, impurityType, maxDepth, 0, maxBins, Sort, categoricalFeaturesInfo)
   }
@@ -266,11 +265,11 @@ object DecisionTree extends Serializable with Logging {
    */
   @Since("1.1.0")
   def trainRegressor(
-      input: JavaRDD[LabeledPoint],
-      categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
-      impurity: String,
-      maxDepth: Int,
-      maxBins: Int): DecisionTreeModel = {
+    input: JavaRDD[LabeledPoint],
+    categoricalFeaturesInfo: java.util.Map[java.lang.Integer, java.lang.Integer],
+    impurity: String,
+    maxDepth: Int,
+    maxBins: Int): DecisionTreeModel = {
     trainRegressor(input.rdd,
       categoricalFeaturesInfo.asInstanceOf[java.util.Map[Int, Int]].asScala.toMap,
       impurity, maxDepth, maxBins)

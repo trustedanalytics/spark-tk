@@ -21,10 +21,10 @@ import org.apache.hadoop.fs.Path
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.Param
 import org.apache.spark.ml.param.Params
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.DefaultParamsReader.Metadata
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{DefaultParamsReader, DefaultParamsWriter}
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ DefaultParamsReader, DefaultParamsWriter }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.ImpurityCalculator
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{DecisionTreeModel => OldDecisionTreeModel}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ DecisionTreeModel => OldDecisionTreeModel }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.util.collection.OpenHashMap
@@ -110,8 +110,9 @@ private[ml] trait TreeEnsembleModel[M <: DecisionTreeModel] {
   /** Full description of model */
   def toDebugString: String = {
     val header = toString + "\n"
-    header + trees.zip(treeWeights).zipWithIndex.map { case ((tree, weight), treeIndex) =>
-      s"  Tree $treeIndex (weight $weight):\n" + tree.rootNode.subtreeToString(4)
+    header + trees.zip(treeWeights).zipWithIndex.map {
+      case ((tree, weight), treeIndex) =>
+        s"  Tree $treeIndex (weight $weight):\n" + tree.rootNode.subtreeToString(4)
     }.fold("")(_ + _)
   }
 
@@ -156,9 +157,10 @@ private[ml] object TreeEnsembleModel {
       // TODO: In the future, also support normalizing by tree.rootNode.impurityStats.count?
       val treeNorm = importances.map(_._2).sum
       if (treeNorm != 0) {
-        importances.foreach { case (idx, impt) =>
-          val normImpt = impt / treeNorm
-          totalImportances.changeValue(idx, normImpt, _ + normImpt)
+        importances.foreach {
+          case (idx, impt) =>
+            val normImpt = impt / treeNorm
+            totalImportances.changeValue(idx, normImpt, _ + normImpt)
         }
       }
     }
@@ -167,7 +169,8 @@ private[ml] object TreeEnsembleModel {
     // Construct vector
     val d = if (numFeatures != -1) {
       numFeatures
-    } else {
+    }
+    else {
       // Find max feature index used in trees
       val maxFeatureIndex = trees.map(_.maxSplitFeatureIndex()).max
       maxFeatureIndex + 1
@@ -197,7 +200,7 @@ private[ml] object TreeEnsembleModel {
    *                     If -1, then numFeatures is set based on the max feature index in all trees.
    * @return  Feature importance values, of length numFeatures.
    */
-  def featureImportances[M <: DecisionTreeModel : ClassTag](tree: M, numFeatures: Int): Vector = {
+  def featureImportances[M <: DecisionTreeModel: ClassTag](tree: M, numFeatures: Int): Vector = {
     featureImportances(Array(tree), numFeatures)
   }
 
@@ -209,8 +212,8 @@ private[ml] object TreeEnsembleModel {
    * @param importances  Aggregate feature importances, modified by this method
    */
   def computeFeatureImportance(
-      node: Node,
-      importances: OpenHashMap[Int, Double]): Unit = {
+    node: Node,
+    importances: OpenHashMap[Int, Double]): Unit = {
     node match {
       case n: InternalNode =>
         val feature = n.split.featureIndex
@@ -241,16 +244,14 @@ private[ml] object TreeEnsembleModel {
 /** Helper classes for tree model persistence */
 object DecisionTreeModelReadWrite {
 
-
-
   /**
    * Load a decision tree from a file.
    * @return  Root node of reconstructed tree
    */
   def loadTreeNodes(
-      path: String,
-      metadata: DefaultParamsReader.Metadata,
-      sqlContext: SQLContext): Node = {
+    path: String,
+    metadata: DefaultParamsReader.Metadata,
+    sqlContext: SQLContext): Node = {
     import sqlContext.implicits._
     implicit val format = DefaultFormats
 
@@ -282,17 +283,19 @@ object DecisionTreeModelReadWrite {
     // We fill `finalNodes` in reverse order.  Since node IDs are assigned via a pre-order
     // traversal, this guarantees that child nodes will be built before parent nodes.
     val finalNodes = new Array[Node](nodes.length)
-    nodes.reverseIterator.foreach { case n: NodeData =>
-      val impurityStats = ImpurityCalculator.getCalculator(impurityType, n.impurityStats)
-      val node = if (n.leftChild != -1) {
-        val leftChild = finalNodes(n.leftChild)
-        val rightChild = finalNodes(n.rightChild)
-        new InternalNode(n.prediction, n.impurity, n.gain, leftChild, rightChild,
-          n.split.getSplit, impurityStats)
-      } else {
-        new LeafNode(n.prediction, n.impurity, impurityStats)
-      }
-      finalNodes(n.id) = node
+    nodes.reverseIterator.foreach {
+      case n: NodeData =>
+        val impurityStats = ImpurityCalculator.getCalculator(impurityType, n.impurityStats)
+        val node = if (n.leftChild != -1) {
+          val leftChild = finalNodes(n.leftChild)
+          val rightChild = finalNodes(n.rightChild)
+          new InternalNode(n.prediction, n.impurity, n.gain, leftChild, rightChild,
+            n.split.getSplit, impurityStats)
+        }
+        else {
+          new LeafNode(n.prediction, n.impurity, impurityStats)
+        }
+        finalNodes(n.id) = node
     }
     // Return the root node
     finalNodes.head
@@ -309,10 +312,10 @@ private[ml] object EnsembleModelReadWrite {
    * @param extraMetadata  Metadata such as numFeatures, numClasses, numTrees.
    */
   def saveImpl[M <: Params with TreeEnsembleModel[_ <: DecisionTreeModel]](
-      instance: M,
-      path: String,
-      sql: SQLContext,
-      extraMetadata: JObject): Unit = {
+    instance: M,
+    path: String,
+    sql: SQLContext,
+    extraMetadata: JObject): Unit = {
     DefaultParamsWriter.saveMetadata(instance, path, sql.sparkContext, Some(extraMetadata))
     val treesMetadataWeights: Array[(Int, String, Double)] = instance.trees.zipWithIndex.map {
       case (tree, treeID) =>
@@ -341,10 +344,10 @@ private[ml] object EnsembleModelReadWrite {
    * @see `saveImpl` for how the model was saved
    */
   def loadImpl(
-      path: String,
-      sql: SQLContext,
-      className: String,
-      treeClassName: String): (Metadata, Array[(Metadata, Node)], Array[Double]) = {
+    path: String,
+    sql: SQLContext,
+    className: String,
+    treeClassName: String): (Metadata, Array[(Metadata, Node)], Array[Double]) = {
     import sql.implicits._
     implicit val format = DefaultFormats
     val metadata = DefaultParamsReader.loadMetadata(path, sql.sparkContext, className)
@@ -358,9 +361,9 @@ private[ml] object EnsembleModelReadWrite {
     val treesMetadataPath = new Path(path, "treesMetadata").toString
     val treesMetadataRDD: RDD[(Int, (Metadata, Double))] = sql.read.parquet(treesMetadataPath)
       .select("treeID", "metadata", "weights").as[(Int, String, Double)].rdd.map {
-      case (treeID: Int, json: String, weights: Double) =>
-        treeID -> (DefaultParamsReader.parseMetadata(json, treeClassName), weights)
-    }
+        case (treeID: Int, json: String, weights: Double) =>
+          treeID -> (DefaultParamsReader.parseMetadata(json, treeClassName), weights)
+      }
 
     val treesMetadataWeights = treesMetadataRDD.sortByKey().values.collect()
     val treesMetadata = treesMetadataWeights.map(_._1)

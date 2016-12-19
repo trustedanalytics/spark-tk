@@ -17,8 +17,7 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 
-import org.apache.spark.sql.types.{DataType, NumericType, StructField, StructType}
-
+import org.apache.spark.sql.types.{ DataType, NumericType, StructField, StructType }
 
 /**
  * Utils for handling schemas.
@@ -33,10 +32,10 @@ private[spark] object SchemaUtils {
    * @param dataType  required column data type
    */
   def checkColumnType(
-      schema: StructType,
-      colName: String,
-      dataType: DataType,
-      msg: String = ""): Unit = {
+    schema: StructType,
+    colName: String,
+    dataType: DataType,
+    msg: String = ""): Unit = {
     val actualDataType = schema(colName).dataType
     val message = if (msg != null && msg.trim.length > 0) " " + msg else ""
     require(actualDataType.equals(dataType),
@@ -49,10 +48,10 @@ private[spark] object SchemaUtils {
    * @param dataTypes  required column data types
    */
   def checkColumnTypes(
-      schema: StructType,
-      colName: String,
-      dataTypes: Seq[DataType],
-      msg: String = ""): Unit = {
+    schema: StructType,
+    colName: String,
+    dataTypes: Seq[DataType],
+    msg: String = ""): Unit = {
     val actualDataType = schema(colName).dataType
     val message = if (msg != null && msg.trim.length > 0) " " + msg else ""
     require(dataTypes.exists(actualDataType.equals),
@@ -65,9 +64,9 @@ private[spark] object SchemaUtils {
    * @param colName  column name
    */
   def checkNumericType(
-      schema: StructType,
-      colName: String,
-      msg: String = ""): Unit = {
+    schema: StructType,
+    colName: String,
+    msg: String = ""): Unit = {
     val actualDataType = schema(colName).dataType
     val message = if (msg != null && msg.trim.length > 0) " " + msg else ""
     require(actualDataType.isInstanceOf[NumericType], s"Column $colName must be of type " +
@@ -83,10 +82,10 @@ private[spark] object SchemaUtils {
    * @return new schema with the input column appended
    */
   def appendColumn(
-      schema: StructType,
-      colName: String,
-      dataType: DataType,
-      nullable: Boolean = false): StructType = {
+    schema: StructType,
+    colName: String,
+    dataType: DataType,
+    nullable: Boolean = false): StructType = {
     if (colName.isEmpty) return schema
     appendColumn(schema, StructField(colName, dataType, nullable))
   }

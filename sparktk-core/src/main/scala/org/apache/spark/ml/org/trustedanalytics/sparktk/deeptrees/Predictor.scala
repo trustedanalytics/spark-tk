@@ -17,23 +17,23 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees
 
-import org.apache.spark.annotation.{DeveloperApi, Since}
-import org.apache.spark.ml.{Model, Estimator}
+import org.apache.spark.annotation.{ DeveloperApi, Since }
+import org.apache.spark.ml.{ Model, Estimator }
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.shared._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.SchemaUtils
-import org.apache.spark.mllib.linalg.{Vector, VectorUDT}
+import org.apache.spark.mllib.linalg.{ Vector, VectorUDT }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{DataType, DoubleType, StructType}
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.types.{ DataType, DoubleType, StructType }
+import org.apache.spark.sql.{ DataFrame, Row }
 
 /**
  * (private[ml])  Trait for parameters for prediction (regression and classification).
  */
 private[ml] trait PredictorParams extends Params
-  with HasLabelCol with HasFeaturesCol with HasPredictionCol {
+    with HasLabelCol with HasFeaturesCol with HasPredictionCol {
 
   /**
    * Validates and transforms the input schema with the provided param map.
@@ -45,9 +45,9 @@ private[ml] trait PredictorParams extends Params
    * @return output schema
    */
   protected def validateAndTransformSchema(
-      schema: StructType,
-      fitting: Boolean,
-      featuresDataType: DataType): StructType = {
+    schema: StructType,
+    fitting: Boolean,
+    featuresDataType: DataType): StructType = {
     // TODO: Support casting Array[Double] and Array[Float] to Vector when FeaturesType = Vector
     SchemaUtils.checkColumnType(schema, $(featuresCol), featuresDataType)
     if (fitting) {
@@ -70,11 +70,8 @@ private[ml] trait PredictorParams extends Params
  *            parameter to specify the concrete type for the corresponding model.
  */
 @DeveloperApi
-abstract class Predictor[
-    FeaturesType,
-    Learner <: Predictor[FeaturesType, Learner, M],
-    M <: PredictionModel[FeaturesType, M]]
-  extends Estimator[M] with PredictorParams {
+abstract class Predictor[FeaturesType, Learner <: Predictor[FeaturesType, Learner, M], M <: PredictionModel[FeaturesType, M]]
+    extends Estimator[M] with PredictorParams {
 
   /** @group setParam */
   def setLabelCol(value: String): Learner = set(labelCol, value).asInstanceOf[Learner]
@@ -144,7 +141,7 @@ abstract class Predictor[
  */
 @DeveloperApi
 abstract class PredictionModel[FeaturesType, M <: PredictionModel[FeaturesType, M]]
-  extends Model[M] with PredictorParams {
+    extends Model[M] with PredictorParams {
 
   /** @group setParam */
   def setFeaturesCol(value: String): M = set(featuresCol, value).asInstanceOf[M]
@@ -181,7 +178,8 @@ abstract class PredictionModel[FeaturesType, M <: PredictionModel[FeaturesType, 
     transformSchema(dataset.schema, logging = true)
     if ($(predictionCol).nonEmpty) {
       transformImpl(dataset)
-    } else {
+    }
+    else {
       this.logWarning(s"$uid: Predictor.transform() was called as NOOP" +
         " since no output columns were set.")
       dataset
@@ -199,5 +197,5 @@ abstract class PredictionModel[FeaturesType, M <: PredictionModel[FeaturesType, 
    * Predict label for the given features.
    * This internal method is used to implement [[transform()]] and output [[predictionCol]].
    */
-  protected def predict(features: FeaturesType): Double
+  def predict(features: FeaturesType): Double
 }

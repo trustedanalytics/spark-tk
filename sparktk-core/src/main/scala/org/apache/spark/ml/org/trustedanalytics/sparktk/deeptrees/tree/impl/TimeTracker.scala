@@ -17,7 +17,7 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl
 
-import scala.collection.mutable.{HashMap => MutableHashMap}
+import scala.collection.mutable.{ HashMap => MutableHashMap }
 
 /**
  * Time tracker implementation which holds labeled timers.
@@ -53,7 +53,8 @@ private[spark] class TimeTracker extends Serializable {
     starts.remove(timerLabel)
     if (totals.contains(timerLabel)) {
       totals(timerLabel) += elapsed
-    } else {
+    }
+    else {
       totals(timerLabel) = elapsed
     }
     elapsed / 1e9
@@ -63,8 +64,9 @@ private[spark] class TimeTracker extends Serializable {
    * Print all timing results in seconds.
    */
   override def toString: String = {
-    totals.map { case (label, elapsed) =>
+    totals.map {
+      case (label, elapsed) =>
         s"  $label: ${elapsed / 1e9}"
-      }.mkString("\n")
+    }.mkString("\n")
   }
 }

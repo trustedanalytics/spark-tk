@@ -17,11 +17,11 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 
-import java.io.{File, IOException}
+import java.io.{ File, IOException }
 
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.util.Identifiable
-import org.apache.spark.ml.{Estimator, Model}
+import org.apache.spark.ml.{ Estimator, Model }
 import org.apache.spark.sql.DataFrame
 import org.scalatest.Suite
 
@@ -37,8 +37,8 @@ trait DefaultReadWriteTest extends TempDirectory { self: Suite =>
    * @return  Instance loaded from file
    */
   def testDefaultReadWrite[T <: Params with MLWritable](
-      instance: T,
-      testParams: Boolean = true): T = {
+    instance: T,
+    testParams: Boolean = true): T = {
     val uid = instance.uid
     val subdirName = Identifiable.randomUID("test")
 
@@ -63,7 +63,8 @@ trait DefaultReadWriteTest extends TempDirectory { self: Suite =>
             case (value, newValue) =>
               assert(value === newValue, s"Values do not match on param ${p.name}.")
           }
-        } else {
+        }
+        else {
           assert(!newInstance.isDefined(p), s"Param ${p.name} shouldn't be defined.")
         }
       }
@@ -90,30 +91,32 @@ trait DefaultReadWriteTest extends TempDirectory { self: Suite =>
    * @tparam E  Type of [[Estimator]]
    * @tparam M  Type of [[Model]] produced by estimator
    */
-  def testEstimatorAndModelReadWrite[
-    E <: Estimator[M] with MLWritable, M <: Model[M] with MLWritable](
-      estimator: E,
-      dataset: DataFrame,
-      testParams: Map[String, Any],
-      checkModelData: (M, M) => Unit): Unit = {
+  def testEstimatorAndModelReadWrite[E <: Estimator[M] with MLWritable, M <: Model[M] with MLWritable](
+    estimator: E,
+    dataset: DataFrame,
+    testParams: Map[String, Any],
+    checkModelData: (M, M) => Unit): Unit = {
     // Set some Params to make sure set Params are serialized.
-    testParams.foreach { case (p, v) =>
-      estimator.set(estimator.getParam(p), v)
+    testParams.foreach {
+      case (p, v) =>
+        estimator.set(estimator.getParam(p), v)
     }
     val model = estimator.fit(dataset)
 
     // Test Estimator save/load
     val estimator2 = testDefaultReadWrite(estimator)
-    testParams.foreach { case (p, v) =>
-      val param = estimator.getParam(p)
-      assert(estimator.get(param).get === estimator2.get(param).get)
+    testParams.foreach {
+      case (p, v) =>
+        val param = estimator.getParam(p)
+        assert(estimator.get(param).get === estimator2.get(param).get)
     }
 
     // Test Model save/load
     val model2 = testDefaultReadWrite(model)
-    testParams.foreach { case (p, v) =>
-      val param = model.getParam(p)
-      assert(model.get(param).get === model2.get(param).get)
+    testParams.foreach {
+      case (p, v) =>
+        val param = model.getParam(p)
+        assert(model.get(param).get === model2.get(param).get)
     }
   }
 }
@@ -155,7 +158,7 @@ object MyParams extends MLReadable[MyParams] {
 }
 
 class DefaultReadWriteSuite extends SparkFunSuite with MLlibTestSparkContext
-  with DefaultReadWriteTest {
+    with DefaultReadWriteTest {
 
   test("default read/write") {
     val myParams = new MyParams("my_params")

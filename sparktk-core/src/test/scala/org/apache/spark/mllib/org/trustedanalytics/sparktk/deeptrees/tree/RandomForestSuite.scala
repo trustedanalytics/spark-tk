@@ -17,15 +17,14 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree
 
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MLlibTestSparkContext, SparkFunSuite}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MLlibTestSparkContext, SparkFunSuite }
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Strategy
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{Gini, Variance}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{ Gini, Variance }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.RandomForestModel
 import org.apache.spark.util.Utils
-
 
 /**
  * Test suite for [[RandomForest]].
@@ -147,10 +146,12 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
         model.save(sc, path)
         val sameModel = RandomForestModel.load(sc, path)
         assert(model.algo == sameModel.algo)
-        model.trees.zip(sameModel.trees).foreach { case (treeA, treeB) =>
-          DecisionTreeSuite.checkEqual(treeA, treeB)
+        model.trees.zip(sameModel.trees).foreach {
+          case (treeA, treeB) =>
+            DecisionTreeSuite.checkEqual(treeA, treeB)
         }
-      } finally {
+      }
+      finally {
         Utils.deleteRecursively(tempDir)
       }
     }

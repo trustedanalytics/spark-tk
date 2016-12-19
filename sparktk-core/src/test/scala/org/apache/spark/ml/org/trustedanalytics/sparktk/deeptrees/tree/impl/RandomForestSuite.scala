@@ -19,13 +19,13 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl
 
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classification.DecisionTreeClassificationModel
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree._
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{TestingUtils, MLlibTestSparkContext, SparkFunSuite}
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ TestingUtils, MLlibTestSparkContext, SparkFunSuite }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo, Strategy => OldStrategy}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo, Strategy => OldStrategy }
 import org.apache.spark.mllib.tree.configuration.QuantileStrategy
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{Entropy, Gini, GiniCalculator}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{DecisionTreeSuite => OldDTSuite, EnsembleTestHelper}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{ Entropy, Gini, GiniCalculator }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{ DecisionTreeSuite => OldDTSuite, EnsembleTestHelper }
 import org.apache.spark.util.collection.OpenHashMap
 import TestingUtils._
 import scala.collection.mutable
@@ -164,12 +164,12 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
     val data = Array.fill(5)(lp)
     val rdd = sc.parallelize(data)
     val strategy = new OldStrategy(
-          OldAlgo.Classification,
-          Gini,
-          maxDepth = 2,
-          numClasses = 2,
-          maxBins = 100,
-          categoricalFeaturesInfo = Map(0 -> 1, 1 -> 5))
+      OldAlgo.Classification,
+      Gini,
+      maxDepth = 2,
+      numClasses = 2,
+      maxBins = 100,
+      categoricalFeaturesInfo = Map(0 -> 1, 1 -> 5))
     val Array(tree) = RandomForest.run(rdd, strategy, 1, "all", 42L)
     assert(tree.rootNode.impurity === -1.0)
     assert(tree.depth === 0)
@@ -205,7 +205,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       assert(s.isInstanceOf[CategoricalSplit])
       val s0 = s.asInstanceOf[CategoricalSplit]
       assert(s0.leftCategories === leftCategories)
-      assert(s0.numCategories === 3)  // for this unit test
+      assert(s0.numCategories === 3) // for this unit test
     }
     // Feature 0
     checkCategoricalSplit(splits(0)(0), 0, Array(0.0))
@@ -427,9 +427,9 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
 
     // Select feature subset for top nodes.  Return true if OK.
     def checkFeatureSubsetStrategy(
-        numTrees: Int,
-        featureSubsetStrategy: String,
-        numFeaturesPerNode: Int): Unit = {
+      numTrees: Int,
+      featureSubsetStrategy: String,
+      numFeaturesPerNode: Int): Unit = {
       val seeds = Array(123, 5354, 230, 349867, 23987)
       val maxMemoryUsage: Long = 128 * 1024L * 1024L
       val metadata =
@@ -446,7 +446,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
         }
         val rng = new scala.util.Random(seed = seed)
         val (nodesForGroup: Map[Int, Array[LearningNode]],
-        treeToNodeToIndexInfo: Map[Int, Map[Int, RandomForest.NodeIndexInfo]]) =
+          treeToNodeToIndexInfo: Map[Int, Map[Int, RandomForest.NodeIndexInfo]]) =
           RandomForest.selectNodesToSplit(nodeStack, maxMemoryUsage, metadata, rng)
 
         assert(nodesForGroup.size === numTrees, failString)
@@ -456,7 +456,8 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
           // featureSubset values should all be None
           assert(treeToNodeToIndexInfo.values.forall(_.values.forall(_.featureSubset.isEmpty)),
             failString)
-        } else {
+        }
+        else {
           // Check number of features.
           assert(treeToNodeToIndexInfo.values.forall(_.values.forall(
             _.featureSubset.get.length === numFeaturesPerNode)), failString)
@@ -485,7 +486,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
 
     val invalidStrategies = Array("-.1", "-.10", "-0.10", ".0", "0.0", "1.1", "0")
     for (invalidStrategy <- invalidStrategies) {
-      intercept[IllegalArgumentException]{
+      intercept[IllegalArgumentException] {
         val metadata =
           DecisionTreeMetadata.buildMetadata(rdd, strategy, numTrees = 1, invalidStrategy)
       }
@@ -508,7 +509,7 @@ class RandomForestSuite extends SparkFunSuite with MLlibTestSparkContext {
       checkFeatureSubsetStrategy(numTrees = 2, strategy, expected)
     }
     for (invalidStrategy <- invalidStrategies) {
-      intercept[IllegalArgumentException]{
+      intercept[IllegalArgumentException] {
         val metadata =
           DecisionTreeMetadata.buildMetadata(rdd, strategy, numTrees = 2, invalidStrategy)
       }

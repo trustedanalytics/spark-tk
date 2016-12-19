@@ -19,7 +19,7 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree
 
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.ImpurityCalculator
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ImpurityStats, InformationGainStats => OldInformationGainStats, Node => OldNode, Predict => OldPredict}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ ImpurityStats, InformationGainStats => OldInformationGainStats, Node => OldNode, Predict => OldPredict }
 
 /**
  * Decision tree node interface.
@@ -90,10 +90,12 @@ private[ml] object Node {
       //       statistics here.
       new LeafNode(prediction = oldNode.predict.predict,
         impurity = oldNode.impurity, impurityStats = null)
-    } else {
+    }
+    else {
       val gain = if (oldNode.stats.nonEmpty) {
         oldNode.stats.get.gain
-      } else {
+      }
+      else {
         0.0
       }
       new InternalNode(prediction = oldNode.predict.predict, impurity = oldNode.impurity,
@@ -169,7 +171,8 @@ class InternalNode private[ml] (
   override private[ml] def predictImpl(features: Vector): LeafNode = {
     if (split.shouldGoLeft(features)) {
       leftChild.predictImpl(features)
-    } else {
+    }
+    else {
       rightChild.predictImpl(features)
     }
   }
@@ -226,14 +229,16 @@ private object InternalNode {
       case contSplit: ContinuousSplit =>
         if (left) {
           s"$featureStr <= ${contSplit.threshold}"
-        } else {
+        }
+        else {
           s"$featureStr > ${contSplit.threshold}"
         }
       case catSplit: CategoricalSplit =>
         val categoriesStr = catSplit.leftCategories.mkString("{", ",", "}")
         if (left) {
           s"$featureStr in $categoriesStr"
-        } else {
+        }
+        else {
           s"$featureStr not in $categoriesStr"
         }
     }
@@ -276,11 +281,13 @@ private[tree] class LearningNode(
         "Unknown error during Decision Tree learning.  Could not convert LearningNode to Node.")
       new InternalNode(stats.impurityCalculator.predict, stats.impurity, stats.gain,
         leftChild.get.toNode, rightChild.get.toNode, split.get, stats.impurityCalculator)
-    } else {
+    }
+    else {
       if (stats.valid) {
         new LeafNode(stats.impurityCalculator.predict, stats.impurity,
           stats.impurityCalculator)
-      } else {
+      }
+      else {
         // Here we want to keep same behavior with the old mllib.DecisionTreeModel
         new LeafNode(stats.impurityCalculator.predict, -1.0, stats.impurityCalculator)
       }
@@ -305,7 +312,8 @@ private[tree] class LearningNode(
   def predictImpl(binnedFeatures: Array[Int], splits: Array[Array[Split]]): Int = {
     if (this.isLeaf || this.split.isEmpty) {
       this.id
-    } else {
+    }
+    else {
       val split = this.split.get
       val featureIndex = split.featureIndex
       val splitLeft = split.shouldGoLeft(binnedFeatures(featureIndex), splits(featureIndex))
@@ -326,10 +334,10 @@ private[tree] object LearningNode {
 
   /** Create a node with some of its fields set. */
   def apply(
-      id: Int,
-      isLeaf: Boolean,
-      stats: ImpurityStats,
-      level: Int = 0): LearningNode = {
+    id: Int,
+    isLeaf: Boolean,
+    stats: ImpurityStats,
+    level: Int = 0): LearningNode = {
     new LearningNode(id, None, None, None, false, stats, level)
   }
 

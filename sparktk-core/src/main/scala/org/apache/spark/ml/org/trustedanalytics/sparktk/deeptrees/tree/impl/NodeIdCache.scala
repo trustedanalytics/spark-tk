@@ -27,7 +27,6 @@ import org.apache.spark.storage.StorageLevel
 
 import scala.collection.mutable
 
-
 /**
  * This is used by the node id cache to find the child id that a data point would belong to.
  * @param split Split information.
@@ -47,7 +46,8 @@ private[tree] case class NodeIndexUpdater(split: Split, nodeIndex: Int,
   def updateNodeIndex(binnedFeature: Int, splits: Array[Split]): Int = {
     if (split.shouldGoLeft(binnedFeature, splits)) {
       leftChildIndex
-    } else {
+    }
+    else {
       rightChildIndex
     }
   }
@@ -64,8 +64,8 @@ private[tree] case class NodeIndexUpdater(split: Split, nodeIndex: Int,
  *                           (how often should the cache be checkpointed.).
  */
 private[spark] class NodeIdCache(
-  var nodeIdsForInstances: RDD[Array[Int]],
-  val checkpointInterval: Int) extends Logging {
+    var nodeIdsForInstances: RDD[Array[Int]],
+    val checkpointInterval: Int) extends Logging {
 
   // Keep a reference to a previous node Ids for instances.
   // Because we will keep on re-persisting updated node Ids,
@@ -92,29 +92,30 @@ private[spark] class NodeIdCache(
    * @param splits  Split information needed to find child node indices.
    */
   def updateNodeIndices(
-      data: RDD[BaggedPoint[TreePoint]],
-      nodeIdUpdaters: Array[mutable.Map[Int, NodeIndexUpdater]],
-      splits: Array[Array[Split]]): Unit = {
+    data: RDD[BaggedPoint[TreePoint]],
+    nodeIdUpdaters: Array[mutable.Map[Int, NodeIndexUpdater]],
+    splits: Array[Array[Split]]): Unit = {
     if (prevNodeIdsForInstances != null) {
       // Unpersist the previous one if one exists.
       prevNodeIdsForInstances.unpersist()
     }
 
     prevNodeIdsForInstances = nodeIdsForInstances
-    nodeIdsForInstances = data.zip(nodeIdsForInstances).map { case (point, ids) =>
-      var treeId = 0
-      while (treeId < nodeIdUpdaters.length) {
-        val nodeIdUpdater = nodeIdUpdaters(treeId).getOrElse(ids(treeId), null)
-        if (nodeIdUpdater != null) {
-          val featureIndex = nodeIdUpdater.split.featureIndex
-          val newNodeIndex = nodeIdUpdater.updateNodeIndex(
-            binnedFeature = point.datum.binnedFeatures(featureIndex),
-            splits = splits(featureIndex))
-          ids(treeId) = newNodeIndex
+    nodeIdsForInstances = data.zip(nodeIdsForInstances).map {
+      case (point, ids) =>
+        var treeId = 0
+        while (treeId < nodeIdUpdaters.length) {
+          val nodeIdUpdater = nodeIdUpdaters(treeId).getOrElse(ids(treeId), null)
+          if (nodeIdUpdater != null) {
+            val featureIndex = nodeIdUpdater.split.featureIndex
+            val newNodeIndex = nodeIdUpdater.updateNodeIndex(
+              binnedFeature = point.datum.binnedFeatures(featureIndex),
+              splits = splits(featureIndex))
+            ids(treeId) = newNodeIndex
+          }
+          treeId += 1
         }
-        treeId += 1
-      }
-      ids
+        ids
     }
 
     // Keep on persisting new ones.
@@ -135,12 +136,14 @@ private[spark] class NodeIdCache(
             val path = new Path(old.getCheckpointFile.get)
             val fs = path.getFileSystem(hadoopConf)
             fs.delete(path, true)
-          } catch {
+          }
+          catch {
             case e: IOException =>
               logError("Decision Tree learning using cacheNodeIds failed to remove checkpoint" +
                 s" file: ${old.getCheckpointFile.get}")
           }
-        } else {
+        }
+        else {
           canDelete = false
         }
       }
@@ -161,7 +164,8 @@ private[spark] class NodeIdCache(
           val path = new Path(old.getCheckpointFile.get)
           val fs = path.getFileSystem(hadoopConf)
           fs.delete(path, true)
-        } catch {
+        }
+        catch {
           case e: IOException =>
             logError("Decision Tree learning using cacheNodeIds failed to remove checkpoint" +
               s" file: ${old.getCheckpointFile.get}")
@@ -183,13 +187,13 @@ private[spark] class NodeIdCache(
  * @param rootNodeIndex Index for the root node
  */
 private[spark] case class NodeIndexAssigner(rootNodeIndex: Int) {
-  private var maxNodeIndex : Int = rootNodeIndex
+  private var maxNodeIndex: Int = rootNodeIndex
 
   /**
    * Assign next node index by incrementing the maximum node index for tree
    * @return Next node index
    */
-  def nextIndex() : Int = {
+  def nextIndex(): Int = {
     assert(maxNodeIndex < Int.MaxValue, "Node indexer cannot allocate ids that exceed MAXINT")
     maxNodeIndex = maxNodeIndex + 1
     maxNodeIndex
@@ -207,14 +211,13 @@ private[spark] object NodeIdCache {
    * @return A node Id cache containing an RDD of initial root node Indices.
    */
   def init(
-      data: RDD[BaggedPoint[TreePoint]],
-      numTrees: Int,
-      checkpointInterval: Int,
-      initVal: Int = 1): NodeIdCache = {
+    data: RDD[BaggedPoint[TreePoint]],
+    numTrees: Int,
+    checkpointInterval: Int,
+    initVal: Int = 1): NodeIdCache = {
     new NodeIdCache(
       data.map(_ => Array.fill[Int](numTrees)(initVal)),
       checkpointInterval)
   }
 }
-
 

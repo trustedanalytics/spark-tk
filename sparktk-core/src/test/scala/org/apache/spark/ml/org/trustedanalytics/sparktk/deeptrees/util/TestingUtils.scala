@@ -17,7 +17,7 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 
-import org.apache.spark.mllib.linalg.{Matrix, Vector}
+import org.apache.spark.mllib.linalg.{ Matrix, Vector }
 import org.scalatest.exceptions.TestFailedException
 
 object TestingUtils {
@@ -36,10 +36,12 @@ object TestingUtils {
     val diff = math.abs(x - y)
     if (x == y) {
       true
-    } else if (absX < Double.MinPositiveValue || absY < Double.MinPositiveValue) {
+    }
+    else if (absX < Double.MinPositiveValue || absY < Double.MinPositiveValue) {
       throw new TestFailedException(
         s"$x or $y is extremely close to zero, so the relative tolerance is meaningless.", 0)
-    } else {
+    }
+    else {
       diff < eps * math.min(absX, absY)
     }
   }
@@ -170,7 +172,7 @@ object TestingUtils {
   }
 
   case class CompareMatrixRightSide(
-     fun: (Matrix, Matrix, Double) => Boolean, y: Matrix, eps: Double, method: String)
+    fun: (Matrix, Matrix, Double) => Boolean, y: Matrix, eps: Double, method: String)
 
   /**
    * Implicit class for comparing two matrices using relative tolerance or absolute tolerance.

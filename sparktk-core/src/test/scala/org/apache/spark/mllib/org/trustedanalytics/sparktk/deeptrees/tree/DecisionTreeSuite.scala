@@ -18,18 +18,17 @@
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree
 
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.DecisionTreeMetadata
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MLlibTestSparkContext, SparkFunSuite}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MLlibTestSparkContext, SparkFunSuite }
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
 import org.apache.spark.mllib.tree.configuration.FeatureType._
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Strategy
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{Entropy, Gini, Variance}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.{ Entropy, Gini, Variance }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model._
 import org.apache.spark.util.Utils
 
 import scala.collection.JavaConverters._
-
 
 class DecisionTreeSuite extends SparkFunSuite with MLlibTestSparkContext {
 
@@ -323,7 +322,7 @@ class DecisionTreeSuite extends SparkFunSuite with MLlibTestSparkContext {
   }
 
   test("Multiclass classification tree with 10-ary (ordered) categorical features," +
-      " with just enough bins") {
+    " with just enough bins") {
     val arr = DecisionTreeSuite.generateCategoricalDataPointsForMulticlassForOrderedFeatures()
     val rdd = sc.parallelize(arr)
     val strategy = new Strategy(algo = Classification, impurity = Gini, maxDepth = 4,
@@ -424,7 +423,8 @@ class DecisionTreeSuite extends SparkFunSuite with MLlibTestSparkContext {
         model.save(sc, path)
         val sameModel = DecisionTreeModel.load(sc, path)
         DecisionTreeSuite.checkEqual(model, sameModel)
-      } finally {
+      }
+      finally {
         Utils.deleteRecursively(tempDir)
       }
     }
@@ -434,12 +434,13 @@ class DecisionTreeSuite extends SparkFunSuite with MLlibTestSparkContext {
 object DecisionTreeSuite extends SparkFunSuite {
 
   def validateClassifier(
-      model: DecisionTreeModel,
-      input: Seq[LabeledPoint],
-      requiredAccuracy: Double) {
+    model: DecisionTreeModel,
+    input: Seq[LabeledPoint],
+    requiredAccuracy: Double) {
     val predictions = input.map(x => model.predict(x.features))
-    val numOffPredictions = predictions.zip(input).count { case (prediction, expected) =>
-      prediction != expected.label
+    val numOffPredictions = predictions.zip(input).count {
+      case (prediction, expected) =>
+        prediction != expected.label
     }
     val accuracy = (input.length - numOffPredictions).toDouble / input.length
     assert(accuracy >= requiredAccuracy,
@@ -447,13 +448,14 @@ object DecisionTreeSuite extends SparkFunSuite {
   }
 
   def validateRegressor(
-      model: DecisionTreeModel,
-      input: Seq[LabeledPoint],
-      requiredMSE: Double) {
+    model: DecisionTreeModel,
+    input: Seq[LabeledPoint],
+    requiredMSE: Double) {
     val predictions = input.map(x => model.predict(x.features))
-    val squaredError = predictions.zip(input).map { case (prediction, expected) =>
-      val err = prediction - expected.label
-      err * err
+    val squaredError = predictions.zip(input).map {
+      case (prediction, expected) =>
+        val err = prediction - expected.label
+        err * err
     }.sum
     val mse = squaredError / input.length
     assert(mse <= requiredMSE, s"validateRegressor calculated MSE $mse but required $requiredMSE.")
@@ -482,11 +484,14 @@ object DecisionTreeSuite extends SparkFunSuite {
     for (i <- 0 until 1000) {
       val label = if (i < 100) {
         0.0
-      } else if (i < 500) {
+      }
+      else if (i < 500) {
         1.0
-      } else if (i < 900) {
+      }
+      else if (i < 900) {
         0.0
-      } else {
+      }
+      else {
         1.0
       }
       arr(i) = new LabeledPoint(label, Vectors.dense(i.toDouble, 1000.0 - i))
@@ -499,7 +504,8 @@ object DecisionTreeSuite extends SparkFunSuite {
     for (i <- 0 until 1000) {
       if (i < 600) {
         arr(i) = new LabeledPoint(1.0, Vectors.dense(0.0, 1.0))
-      } else {
+      }
+      else {
         arr(i) = new LabeledPoint(0.0, Vectors.dense(1.0, 0.0))
       }
     }
@@ -515,9 +521,11 @@ object DecisionTreeSuite extends SparkFunSuite {
     for (i <- 0 until 3000) {
       if (i < 1000) {
         arr(i) = new LabeledPoint(2.0, Vectors.dense(2.0, 2.0))
-      } else if (i < 2000) {
+      }
+      else if (i < 2000) {
         arr(i) = new LabeledPoint(1.0, Vectors.dense(1.0, 2.0))
-      } else {
+      }
+      else {
         arr(i) = new LabeledPoint(2.0, Vectors.dense(2.0, 2.0))
       }
     }
@@ -529,22 +537,24 @@ object DecisionTreeSuite extends SparkFunSuite {
     for (i <- 0 until 3000) {
       if (i < 2000) {
         arr(i) = new LabeledPoint(2.0, Vectors.dense(2.0, i))
-      } else {
+      }
+      else {
         arr(i) = new LabeledPoint(1.0, Vectors.dense(2.0, i))
       }
     }
     arr
   }
 
-  def generateCategoricalDataPointsForMulticlassForOrderedFeatures():
-    Array[LabeledPoint] = {
+  def generateCategoricalDataPointsForMulticlassForOrderedFeatures(): Array[LabeledPoint] = {
     val arr = new Array[LabeledPoint](3000)
     for (i <- 0 until 3000) {
       if (i < 1000) {
         arr(i) = new LabeledPoint(2.0, Vectors.dense(2.0, 2.0))
-      } else if (i < 2000) {
+      }
+      else if (i < 2000) {
         arr(i) = new LabeledPoint(1.0, Vectors.dense(1.0, 2.0))
-      } else {
+      }
+      else {
         arr(i) = new LabeledPoint(1.0, Vectors.dense(2.0, 2.0))
       }
     }
@@ -604,7 +614,8 @@ object DecisionTreeSuite extends SparkFunSuite {
     try {
       assert(a.algo === b.algo)
       checkEqual(a.topNode, b.topNode)
-    } catch {
+    }
+    catch {
       case ex: Exception =>
         throw new AssertionError("checkEqual failed since the two trees were not identical.\n" +
           "TREE A:\n" + a.toDebugString + "\n" +
@@ -628,7 +639,7 @@ object DecisionTreeSuite extends SparkFunSuite {
       case (Some(aStats), Some(bStats)) => assert(aStats.gain === bStats.gain)
       case (None, None) =>
       case _ => throw new AssertionError(
-          s"Only one instance has stats defined. (a.stats: ${a.stats}, b.stats: ${b.stats})")
+        s"Only one instance has stats defined. (a.stats: ${a.stats}, b.stats: ${b.stats})")
     }
     (a.leftNode, b.leftNode) match {
       case (Some(aNode), Some(bNode)) => checkEqual(aNode, bNode)

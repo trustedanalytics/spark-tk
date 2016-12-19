@@ -24,15 +24,15 @@ import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.Rand
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.DefaultParamsReader.Metadata
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util._
 import org.apache.spark.ml.util.Identifiable
-import org.apache.spark.mllib.linalg.{DenseVector, SparseVector, Vector, Vectors}
+import org.apache.spark.mllib.linalg.{ DenseVector, SparseVector, Vector, Vectors }
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{Algo => OldAlgo}
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{RandomForestModel => OldRandomForestModel}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.{ Algo => OldAlgo }
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.{ RandomForestModel => OldRandomForestModel }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.json4s.JsonDSL._
-import org.json4s.{DefaultFormats, JObject}
+import org.json4s.{ DefaultFormats, JObject }
 
 /**
  * <a href="http://en.wikipedia.org/wiki/Random_forest">Random Forest</a> learning algorithm for
@@ -42,9 +42,9 @@ import org.json4s.{DefaultFormats, JObject}
  */
 @Since("1.4.0")
 class RandomForestClassifier @Since("1.4.0") (
-    @Since("1.4.0") override val uid: String)
-  extends ProbabilisticClassifier[Vector, RandomForestClassifier, RandomForestClassificationModel]
-  with RandomForestClassifierParams with DefaultParamsWritable {
+  @Since("1.4.0") override val uid: String)
+    extends ProbabilisticClassifier[Vector, RandomForestClassifier, RandomForestClassificationModel]
+    with RandomForestClassifierParams with DefaultParamsWritable {
 
   @Since("1.4.0")
   def this() = this(Identifiable.randomUID("rfc"))
@@ -167,13 +167,13 @@ object RandomForestClassifier extends DefaultParamsReadable[RandomForestClassifi
  */
 @Since("1.4.0")
 class RandomForestClassificationModel private[ml] (
-    @Since("1.5.0") override val uid: String,
-    private val _trees: Array[DecisionTreeClassificationModel],
-    @Since("1.6.0") override val numFeatures: Int,
-    @Since("1.5.0") override val numClasses: Int)
-  extends ProbabilisticClassificationModel[Vector, RandomForestClassificationModel]
-  with RandomForestClassifierParams with TreeEnsembleModel[DecisionTreeClassificationModel]
-  with MLWritable with Serializable {
+  @Since("1.5.0") override val uid: String,
+  private val _trees: Array[DecisionTreeClassificationModel],
+  @Since("1.6.0") override val numFeatures: Int,
+  @Since("1.5.0") override val numClasses: Int)
+    extends ProbabilisticClassificationModel[Vector, RandomForestClassificationModel]
+    with RandomForestClassifierParams with TreeEnsembleModel[DecisionTreeClassificationModel]
+    with MLWritable with Serializable {
 
   require(_trees.nonEmpty, "RandomForestClassificationModel requires at least 1 tree.")
 
@@ -183,9 +183,9 @@ class RandomForestClassificationModel private[ml] (
    * @param trees  Component trees
    */
   private[ml] def this(
-      trees: Array[DecisionTreeClassificationModel],
-      numFeatures: Int,
-      numClasses: Int) =
+    trees: Array[DecisionTreeClassificationModel],
+    numFeatures: Int,
+    numClasses: Int) =
     this(Identifiable.randomUID("rfc"), trees, numFeatures, numClasses)
 
   @Since("1.4.0")
@@ -279,9 +279,8 @@ object RandomForestClassificationModel extends MLReadable[RandomForestClassifica
   @Since("2.0.0")
   override def load(path: String): RandomForestClassificationModel = super.load(path)
 
-  private[RandomForestClassificationModel]
-  class RandomForestClassificationModelWriter(instance: RandomForestClassificationModel)
-    extends MLWriter {
+  private[RandomForestClassificationModel] class RandomForestClassificationModelWriter(instance: RandomForestClassificationModel)
+      extends MLWriter {
 
     override protected def saveImpl(path: String): Unit = {
       // Note: numTrees is not currently used, but could be nice to store for fast querying.
@@ -294,7 +293,7 @@ object RandomForestClassificationModel extends MLReadable[RandomForestClassifica
   }
 
   private class RandomForestClassificationModelReader
-    extends MLReader[RandomForestClassificationModel] {
+      extends MLReader[RandomForestClassificationModel] {
 
     /** Checked against metadata when loading model */
     private val className = classOf[RandomForestClassificationModel].getName
@@ -326,11 +325,11 @@ object RandomForestClassificationModel extends MLReadable[RandomForestClassifica
 
   /** Convert a model from the old API */
   private[ml] def fromOld(
-      oldModel: OldRandomForestModel,
-      parent: RandomForestClassifier,
-      categoricalFeatures: Map[Int, Int],
-      numClasses: Int,
-      numFeatures: Int = -1): RandomForestClassificationModel = {
+    oldModel: OldRandomForestModel,
+    parent: RandomForestClassifier,
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int,
+    numFeatures: Int = -1): RandomForestClassificationModel = {
     require(oldModel.algo == OldAlgo.Classification, "Cannot convert RandomForestModel" +
       s" with algo=${oldModel.algo} (old API) to RandomForestClassificationModel (new API).")
     val newTrees = oldModel.trees.map { tree =>

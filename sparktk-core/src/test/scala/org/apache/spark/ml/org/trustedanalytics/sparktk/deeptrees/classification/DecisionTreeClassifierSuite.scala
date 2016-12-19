@@ -19,16 +19,16 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classificatio
 
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.ParamsSuite
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl.TreeTests
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.{CategoricalSplit, InternalNode, LeafNode}
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MLTestingUtils, DefaultReadWriteTest, MLlibTestSparkContext, SparkFunSuite}
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.{ CategoricalSplit, InternalNode, LeafNode }
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MLTestingUtils, DefaultReadWriteTest, MLlibTestSparkContext, SparkFunSuite }
+import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{DecisionTree => OldDecisionTree, DecisionTreeSuite => OldDecisionTreeSuite}
+import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.{ DecisionTree => OldDecisionTree, DecisionTreeSuite => OldDecisionTreeSuite }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 
 class DecisionTreeClassifierSuite
-  extends SparkFunSuite with MLlibTestSparkContext with DefaultReadWriteTest {
+    extends SparkFunSuite with MLlibTestSparkContext with DefaultReadWriteTest {
 
   import DecisionTreeClassifierSuite.compareAPIs
   //import testImplicits._
@@ -252,12 +252,13 @@ class DecisionTreeClassifierSuite
       .select(newTree.getPredictionCol, newTree.getRawPredictionCol, newTree.getProbabilityCol)
       .collect()
 
-    predictions.foreach { case Row(pred: Double, rawPred: Vector, probPred: Vector) =>
-      assert(pred === rawPred.argmax,
-        s"Expected prediction $pred but calculated ${rawPred.argmax} from rawPrediction.")
-      val sum = rawPred.toArray.sum
-      assert(Vectors.dense(rawPred.toArray.map(_ / sum)) === probPred,
-        "probability prediction mismatch")
+    predictions.foreach {
+      case Row(pred: Double, rawPred: Vector, probPred: Vector) =>
+        assert(pred === rawPred.argmax,
+          s"Expected prediction $pred but calculated ${rawPred.argmax} from rawPrediction.")
+        val sum = rawPred.toArray.sum
+        assert(Vectors.dense(rawPred.toArray.map(_ / sum)) === probPred,
+          "probability prediction mismatch")
     }
   }
 
@@ -355,8 +356,8 @@ class DecisionTreeClassifierSuite
 
   test("read/write") {
     def checkModelData(
-                        model: DecisionTreeClassificationModel,
-                        model2: DecisionTreeClassificationModel): Unit = {
+      model: DecisionTreeClassificationModel,
+      model2: DecisionTreeClassificationModel): Unit = {
       TreeTests.checkEqual(model, model2)
       assert(model.numFeatures === model2.numFeatures)
       assert(model.numClasses === model2.numClasses)
@@ -390,10 +391,10 @@ private[ml] object DecisionTreeClassifierSuite extends SparkFunSuite {
    * Convert the old tree to the new format, compare them, and fail if they are not exactly equal.
    */
   def compareAPIs(
-                   data: RDD[LabeledPoint],
-                   dt: DecisionTreeClassifier,
-                   categoricalFeatures: Map[Int, Int],
-                   numClasses: Int): Unit = {
+    data: RDD[LabeledPoint],
+    dt: DecisionTreeClassifier,
+    categoricalFeatures: Map[Int, Int],
+    numClasses: Int): Unit = {
     val numFeatures = data.first().features.size
     val oldStrategy = dt.getOldStrategy(categoricalFeatures, numClasses)
     val oldTree = OldDecisionTree.train(data, oldStrategy)

@@ -17,7 +17,7 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model
 
-import org.apache.spark.annotation.{DeveloperApi, Since}
+import org.apache.spark.annotation.{ DeveloperApi, Since }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity.ImpurityCalculator
 
 /**
@@ -48,11 +48,11 @@ class InformationGainStats(
   override def equals(o: Any): Boolean = o match {
     case other: InformationGainStats =>
       gain == other.gain &&
-      impurity == other.impurity &&
-      leftImpurity == other.leftImpurity &&
-      rightImpurity == other.rightImpurity &&
-      leftPredict == other.leftPredict &&
-      rightPredict == other.rightPredict
+        impurity == other.impurity &&
+        leftImpurity == other.leftImpurity &&
+        rightImpurity == other.rightImpurity &&
+        leftPredict == other.leftPredict &&
+        rightPredict == other.rightPredict
 
     case _ => false
   }
@@ -105,13 +105,15 @@ private[spark] class ImpurityStats(
 
   def leftImpurity: Double = if (leftImpurityCalculator != null) {
     leftImpurityCalculator.calculate()
-  } else {
+  }
+  else {
     -1.0
   }
 
   def rightImpurity: Double = if (rightImpurityCalculator != null) {
     rightImpurityCalculator.calculate()
-  } else {
+  }
+  else {
     -1.0
   }
 }

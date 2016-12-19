@@ -19,7 +19,7 @@ package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.confi
 
 import org.apache.spark.annotation.Since
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
-import org.apache.spark.mllib.tree.loss.{LogLoss, Loss, SquaredError}
+import org.apache.spark.mllib.tree.loss.{ LogLoss, Loss, SquaredError }
 
 import scala.beans.BeanProperty
 
@@ -48,12 +48,12 @@ import scala.beans.BeanProperty
 @Since("1.2.0")
 case class BoostingStrategy @Since("1.4.0") (
     // Required boosting parameters
-    @Since("1.2.0") @BeanProperty var treeStrategy: Strategy,
-    @Since("1.2.0") @BeanProperty var loss: Loss,
+    @Since("1.2.0")@BeanProperty var treeStrategy: Strategy,
+    @Since("1.2.0")@BeanProperty var loss: Loss,
     // Optional boosting parameters
-    @Since("1.2.0") @BeanProperty var numIterations: Int = 100,
-    @Since("1.2.0") @BeanProperty var learningRate: Double = 0.1,
-    @Since("1.4.0") @BeanProperty var validationTol: Double = 0.001) extends Serializable {
+    @Since("1.2.0")@BeanProperty var numIterations: Int = 100,
+    @Since("1.2.0")@BeanProperty var learningRate: Double = 0.1,
+    @Since("1.4.0")@BeanProperty var validationTol: Double = 0.001) extends Serializable {
 
   /**
    * Check validity of parameters.
@@ -65,7 +65,7 @@ case class BoostingStrategy @Since("1.4.0") (
         require(treeStrategy.numClasses == 2,
           "Only binary classification is supported for boosting.")
       case Regression =>
-        // nothing
+      // nothing
       case _ =>
         throw new IllegalArgumentException(
           s"BoostingStrategy given invalid algo parameter: ${treeStrategy.algo}." +

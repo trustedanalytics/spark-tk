@@ -20,25 +20,24 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classificatio
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.shared._
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.SchemaUtils
-import org.apache.spark.mllib.linalg.{DenseVector, Vector, VectorUDT}
+import org.apache.spark.mllib.linalg.{ DenseVector, Vector, VectorUDT }
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{DataType, StructType}
+import org.apache.spark.sql.types.{ DataType, StructType }
 
 /**
  * (private[classification])  Params for probabilistic classification.
  */
 private[classification] trait ProbabilisticClassifierParams
-  extends ClassifierParams with HasProbabilityCol with HasThresholds {
+    extends ClassifierParams with HasProbabilityCol with HasThresholds {
   override protected def validateAndTransformSchema(
-      schema: StructType,
-      fitting: Boolean,
-      featuresDataType: DataType): StructType = {
+    schema: StructType,
+    fitting: Boolean,
+    featuresDataType: DataType): StructType = {
     val parentSchema = super.validateAndTransformSchema(schema, fitting, featuresDataType)
     SchemaUtils.appendColumn(parentSchema, $(probabilityCol), new VectorUDT)
   }
 }
-
 
 /**
  * :: DeveloperApi ::
@@ -50,11 +49,8 @@ private[classification] trait ProbabilisticClassifierParams
  * @tparam M  Concrete Model type
  */
 @DeveloperApi
-abstract class ProbabilisticClassifier[
-    FeaturesType,
-    E <: ProbabilisticClassifier[FeaturesType, E, M],
-    M <: ProbabilisticClassificationModel[FeaturesType, M]]
-  extends Classifier[FeaturesType, E, M] with ProbabilisticClassifierParams {
+abstract class ProbabilisticClassifier[FeaturesType, E <: ProbabilisticClassifier[FeaturesType, E, M], M <: ProbabilisticClassificationModel[FeaturesType, M]]
+    extends Classifier[FeaturesType, E, M] with ProbabilisticClassifierParams {
 
   /** @group setParam */
   def setProbabilityCol(value: String): E = set(probabilityCol, value).asInstanceOf[E]
@@ -62,7 +58,6 @@ abstract class ProbabilisticClassifier[
   /** @group setParam */
   def setThresholds(value: Array[Double]): E = set(thresholds, value).asInstanceOf[E]
 }
-
 
 /**
  * :: DeveloperApi ::
@@ -74,10 +69,8 @@ abstract class ProbabilisticClassifier[
  * @tparam M  Concrete Model type
  */
 @DeveloperApi
-abstract class ProbabilisticClassificationModel[
-    FeaturesType,
-    M <: ProbabilisticClassificationModel[FeaturesType, M]]
-  extends ClassificationModel[FeaturesType, M] with ProbabilisticClassifierParams {
+abstract class ProbabilisticClassificationModel[FeaturesType, M <: ProbabilisticClassificationModel[FeaturesType, M]]
+    extends ClassificationModel[FeaturesType, M] with ProbabilisticClassifierParams {
 
   /** @group setParam */
   def setProbabilityCol(value: String): M = set(probabilityCol, value).asInstanceOf[M]
@@ -122,7 +115,8 @@ abstract class ProbabilisticClassificationModel[
     if ($(probabilityCol).nonEmpty) {
       val probUDF = if ($(rawPredictionCol).nonEmpty) {
         udf(raw2probability _).apply(col($(rawPredictionCol)))
-      } else {
+      }
+      else {
         val probabilityUDF = udf { (features: Any) =>
           predictProbability(features.asInstanceOf[FeaturesType])
         }
@@ -134,9 +128,11 @@ abstract class ProbabilisticClassificationModel[
     if ($(predictionCol).nonEmpty) {
       val predUDF = if ($(rawPredictionCol).nonEmpty) {
         udf(raw2prediction _).apply(col($(rawPredictionCol)))
-      } else if ($(probabilityCol).nonEmpty) {
+      }
+      else if ($(probabilityCol).nonEmpty) {
         udf(probability2prediction _).apply(col($(probabilityCol)))
-      } else {
+      }
+      else {
         val predictUDF = udf { (features: Any) =>
           predict(features.asInstanceOf[FeaturesType])
         }
@@ -173,7 +169,8 @@ abstract class ProbabilisticClassificationModel[
   override protected def raw2prediction(rawPrediction: Vector): Double = {
     if (!isDefined(thresholds)) {
       rawPrediction.argmax
-    } else {
+    }
+    else {
       probability2prediction(raw2probability(rawPrediction))
     }
   }
@@ -199,7 +196,8 @@ abstract class ProbabilisticClassificationModel[
   protected def probability2prediction(probability: Vector): Double = {
     if (!isDefined(thresholds)) {
       probability.argmax
-    } else {
+    }
+    else {
       val thresholds = getThresholds
       var argMax = 0
       var max = Double.NegativeInfinity

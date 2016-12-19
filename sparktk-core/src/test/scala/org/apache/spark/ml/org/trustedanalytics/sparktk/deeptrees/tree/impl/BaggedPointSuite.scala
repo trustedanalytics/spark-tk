@@ -17,13 +17,13 @@
 
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree.impl
 
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MLlibTestSparkContext, SparkFunSuite}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MLlibTestSparkContext, SparkFunSuite }
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.EnsembleTestHelper
 
 /**
  * Test suite for [[BaggedPoint]].
  */
-class BaggedPointSuite extends SparkFunSuite with MLlibTestSparkContext  {
+class BaggedPointSuite extends SparkFunSuite with MLlibTestSparkContext {
 
   test("BaggedPoint RDD: without subsampling") {
     val arr = EnsembleTestHelper.generateOrderedLabeledPoints(1, 1000)

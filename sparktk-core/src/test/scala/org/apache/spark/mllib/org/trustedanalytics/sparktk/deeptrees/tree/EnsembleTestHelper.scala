@@ -32,11 +32,11 @@ object EnsembleTestHelper {
    * @param data  Every element of the data should be an i.i.d. sample from some distribution.
    */
   def testRandomArrays(
-      data: Array[Array[Double]],
-      numCols: Int,
-      expectedMean: Double,
-      expectedStddev: Double,
-      epsilon: Double) {
+    data: Array[Array[Double]],
+    numCols: Int,
+    expectedMean: Double,
+    expectedStddev: Double,
+    epsilon: Double) {
     val values = new mutable.ArrayBuffer[Double]()
     data.foreach { row =>
       assert(row.size == numCols)
@@ -48,12 +48,13 @@ object EnsembleTestHelper {
   }
 
   def validateClassifier(
-      model: TreeEnsembleModel,
-      input: Seq[LabeledPoint],
-      requiredAccuracy: Double) {
+    model: TreeEnsembleModel,
+    input: Seq[LabeledPoint],
+    requiredAccuracy: Double) {
     val predictions = input.map(x => model.predict(x.features))
-    val numOffPredictions = predictions.zip(input).count { case (prediction, expected) =>
-      prediction != expected.label
+    val numOffPredictions = predictions.zip(input).count {
+      case (prediction, expected) =>
+        prediction != expected.label
     }
     val accuracy = (input.length - numOffPredictions).toDouble / input.length
     assert(accuracy >= requiredAccuracy,
@@ -64,13 +65,14 @@ object EnsembleTestHelper {
    * Validates a tree ensemble model for regression.
    */
   def validateRegressor(
-      model: TreeEnsembleModel,
-      input: Seq[LabeledPoint],
-      required: Double,
-      metricName: String = "mse") {
+    model: TreeEnsembleModel,
+    input: Seq[LabeledPoint],
+    required: Double,
+    metricName: String = "mse") {
     val predictions = input.map(x => model.predict(x.features))
-    val errors = predictions.zip(input).map { case (prediction, point) =>
-      point.label - prediction
+    val errors = predictions.zip(input).map {
+      case (prediction, point) =>
+        point.label - prediction
     }
     val metric = metricName match {
       case "mse" =>
@@ -88,11 +90,14 @@ object EnsembleTestHelper {
     for (i <- 0 until numInstances) {
       val label = if (i < numInstances / 10) {
         0.0
-      } else if (i < numInstances / 2) {
+      }
+      else if (i < numInstances / 2) {
         1.0
-      } else if (i < numInstances * 0.9) {
+      }
+      else if (i < numInstances * 0.9) {
         0.0
-      } else {
+      }
+      else {
         1.0
       }
       val features = Array.fill[Double](numFeatures)(i.toDouble)

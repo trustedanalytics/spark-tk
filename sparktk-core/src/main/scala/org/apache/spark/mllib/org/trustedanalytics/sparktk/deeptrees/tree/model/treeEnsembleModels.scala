@@ -17,18 +17,18 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model
 
-import com.github.fommil.netlib.BLAS.{getInstance => blas}
+import com.github.fommil.netlib.BLAS.{ getInstance => blas }
 import org.apache.spark.annotation.Since
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.EnsembleCombiningStrategy._
-import org.apache.spark.mllib.util.{Loader, Saveable}
+import org.apache.spark.mllib.util.{ Loader, Saveable }
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.util.Utils
-import org.apache.spark.{Logging, SparkContext}
+import org.apache.spark.{ Logging, SparkContext }
 import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
@@ -43,11 +43,11 @@ import scala.collection.mutable
  */
 @Since("1.2.0")
 class RandomForestModel @Since("1.2.0") (
-    @Since("1.2.0") override val algo: Algo,
-    @Since("1.2.0") override val trees: Array[DecisionTreeModel])
-  extends TreeEnsembleModel(algo, trees, Array.fill(trees.length)(1.0),
-    combiningStrategy = if (algo == Classification) Vote else Average)
-  with Saveable {
+  @Since("1.2.0") override val algo: Algo,
+  @Since("1.2.0") override val trees: Array[DecisionTreeModel])
+    extends TreeEnsembleModel(algo, trees, Array.fill(trees.length)(1.0),
+      combiningStrategy = if (algo == Classification) Vote else Average)
+    with Saveable {
 
   require(trees.forall(_.algo == algo))
 
@@ -101,10 +101,6 @@ object RandomForestModel extends Loader[RandomForestModel] {
 
 }
 
-
-
-
-
 /**
  * Represents a tree ensemble model.
  *
@@ -139,9 +135,10 @@ private[tree] sealed class TreeEnsembleModel(
    */
   private def predictByVoting(features: Vector): Double = {
     val votes = mutable.Map.empty[Int, Double]
-    trees.view.zip(treeWeights).foreach { case (tree, weight) =>
-      val prediction = tree.predict(features).toInt
-      votes(prediction) = votes.getOrElse(prediction, 0.0) + weight
+    trees.view.zip(treeWeights).foreach {
+      case (tree, weight) =>
+        val prediction = tree.predict(features).toInt
+        votes(prediction) = votes.getOrElse(prediction, 0.0) + weight
     }
     votes.maxBy(_._2)._1
   }
@@ -205,8 +202,9 @@ private[tree] sealed class TreeEnsembleModel(
    */
   def toDebugString: String = {
     val header = toString + "\n"
-    header + trees.zipWithIndex.map { case (tree, treeIndex) =>
-      s"  Tree $treeIndex:\n" + tree.topNode.subtreeToString(4)
+    header + trees.zipWithIndex.map {
+      case (tree, treeIndex) =>
+        s"  Tree $treeIndex:\n" + tree.topNode.subtreeToString(4)
     }.fold("")(_ + _)
   }
 
@@ -225,15 +223,15 @@ private[tree] object TreeEnsembleModel extends Logging {
 
   object SaveLoadV1_0 {
 
-    import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.DecisionTreeModel.SaveLoadV1_0.{NodeData, constructTrees}
+    import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.model.DecisionTreeModel.SaveLoadV1_0.{ NodeData, constructTrees }
 
     def thisFormatVersion: String = "1.0"
 
     case class Metadata(
-        algo: String,
-        treeAlgo: String,
-        combiningStrategy: String,
-        treeWeights: Array[Double])
+      algo: String,
+      treeAlgo: String,
+      combiningStrategy: String,
+      treeWeights: Array[Double])
 
     /**
      * Model data for model import/export.
@@ -261,7 +259,8 @@ private[tree] object TreeEnsembleModel extends Logging {
             s" driver memory (${driverMemory}m)." +
             s"  If failure occurs, try setting driver-memory ${memThreshold}m (or larger).")
         }
-      } else {
+      }
+      else {
         if (sc.executorMemory <= memThreshold) {
           logWarning(s"$className.save() was called, but it may fail because of too little" +
             s" executor memory (${sc.executorMemory}m)." +
@@ -279,8 +278,9 @@ private[tree] object TreeEnsembleModel extends Logging {
       sc.parallelize(Seq(metadata), 1).saveAsTextFile(Loader.metadataPath(path))
 
       // Create Parquet data.
-      val dataRDD = sc.parallelize(model.trees.zipWithIndex).flatMap { case (tree, treeId) =>
-        tree.topNode.subtreeIterator.toSeq.map(node => NodeData(treeId, node))
+      val dataRDD = sc.parallelize(model.trees.zipWithIndex).flatMap {
+        case (tree, treeId) =>
+          tree.topNode.subtreeIterator.toSeq.map(node => NodeData(treeId, node))
       }.toDF()
       dataRDD.write.parquet(Loader.dataPath(path))
     }
@@ -300,9 +300,9 @@ private[tree] object TreeEnsembleModel extends Logging {
      *                 algorithm).
      */
     def loadTrees(
-        sc: SparkContext,
-        path: String,
-        treeAlgo: String): Array[DecisionTreeModel] = {
+      sc: SparkContext,
+      path: String,
+      treeAlgo: String): Array[DecisionTreeModel] = {
       val datapath = Loader.dataPath(path)
       val sqlContext = SQLContext.getOrCreate(sc)
       val nodes = sqlContext.read.parquet(datapath).map(NodeData.apply)

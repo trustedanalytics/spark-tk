@@ -20,11 +20,10 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 //import org.json4s.JsonDSL._
-import org.apache.spark.annotation.{DeveloperApi, Experimental}
+import org.apache.spark.annotation.{ DeveloperApi, Experimental }
 import org.apache.spark.ml.util.Identifiable
-import org.apache.spark.mllib.linalg.{DenseVector, SparseVector, Vector, Vectors}
-import org.json4s.jackson.JsonMethods.{parse => parseJson}
-
+import org.apache.spark.mllib.linalg.{ DenseVector, SparseVector, Vector, Vectors }
+import org.json4s.jackson.JsonMethods.{ parse => parseJson }
 
 private[ml] object Param {
 
@@ -45,6 +44,4 @@ private[ml] object Param {
     }
   }
 }
-
-
 

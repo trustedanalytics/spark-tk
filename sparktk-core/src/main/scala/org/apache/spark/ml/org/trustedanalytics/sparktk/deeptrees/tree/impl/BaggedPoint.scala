@@ -54,28 +54,30 @@ private[spark] object BaggedPoint {
    * @param seed Random seed.
    * @return BaggedPoint dataset representation.
    */
-  def convertToBaggedRDD[Datum] (
-      input: RDD[Datum],
-      subsamplingRate: Double,
-      numSubsamples: Int,
-      withReplacement: Boolean,
-      seed: Long = Utils.random.nextLong()): RDD[BaggedPoint[Datum]] = {
+  def convertToBaggedRDD[Datum](
+    input: RDD[Datum],
+    subsamplingRate: Double,
+    numSubsamples: Int,
+    withReplacement: Boolean,
+    seed: Long = Utils.random.nextLong()): RDD[BaggedPoint[Datum]] = {
     if (withReplacement) {
       convertToBaggedRDDSamplingWithReplacement(input, subsamplingRate, numSubsamples, seed)
-    } else {
+    }
+    else {
       if (numSubsamples == 1 && subsamplingRate == 1.0) {
         convertToBaggedRDDWithoutSampling(input)
-      } else {
+      }
+      else {
         convertToBaggedRDDSamplingWithoutReplacement(input, subsamplingRate, numSubsamples, seed)
       }
     }
   }
 
-  private def convertToBaggedRDDSamplingWithoutReplacement[Datum] (
-      input: RDD[Datum],
-      subsamplingRate: Double,
-      numSubsamples: Int,
-      seed: Long): RDD[BaggedPoint[Datum]] = {
+  private def convertToBaggedRDDSamplingWithoutReplacement[Datum](
+    input: RDD[Datum],
+    subsamplingRate: Double,
+    numSubsamples: Int,
+    seed: Long): RDD[BaggedPoint[Datum]] = {
     input.mapPartitionsWithIndex { (partitionIndex, instances) =>
       // Use random seed = seed + partitionIndex + 1 to make generation reproducible.
       val rng = new XORShiftRandom
@@ -95,11 +97,11 @@ private[spark] object BaggedPoint {
     }
   }
 
-  private def convertToBaggedRDDSamplingWithReplacement[Datum] (
-      input: RDD[Datum],
-      subsample: Double,
-      numSubsamples: Int,
-      seed: Long): RDD[BaggedPoint[Datum]] = {
+  private def convertToBaggedRDDSamplingWithReplacement[Datum](
+    input: RDD[Datum],
+    subsample: Double,
+    numSubsamples: Int,
+    seed: Long): RDD[BaggedPoint[Datum]] = {
     input.mapPartitionsWithIndex { (partitionIndex, instances) =>
       // Use random seed = seed + partitionIndex + 1 to make generation reproducible.
       val poisson = new PoissonDistribution(subsample)
@@ -116,8 +118,8 @@ private[spark] object BaggedPoint {
     }
   }
 
-  private def convertToBaggedRDDWithoutSampling[Datum] (
-      input: RDD[Datum]): RDD[BaggedPoint[Datum]] = {
+  private def convertToBaggedRDDWithoutSampling[Datum](
+    input: RDD[Datum]): RDD[BaggedPoint[Datum]] = {
     input.map(datum => new BaggedPoint(datum, Array(1.0)))
   }
 

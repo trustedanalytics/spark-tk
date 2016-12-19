@@ -18,8 +18,8 @@
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 
 import org.apache.spark.sql.SQLContext
-import org.apache.spark.{SparkConf, SparkContext}
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.apache.spark.{ SparkConf, SparkContext }
+import org.scalatest.{ BeforeAndAfterAll, Suite }
 
 trait MLlibTestSparkContext extends BeforeAndAfterAll { self: Suite =>
   @transient var sc: SparkContext = _

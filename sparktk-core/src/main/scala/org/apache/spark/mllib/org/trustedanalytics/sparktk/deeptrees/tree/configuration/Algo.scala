@@ -17,7 +17,7 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration
 
-import org.apache.spark.annotation.{Experimental, Since}
+import org.apache.spark.annotation.{ Experimental, Since }
 
 /**
  * :: Experimental ::

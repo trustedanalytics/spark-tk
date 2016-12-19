@@ -23,11 +23,11 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo._
 import org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.configuration.Algo
 import org.apache.spark.mllib.tree.configuration.FeatureType
-import org.apache.spark.mllib.util.{Loader, Saveable}
+import org.apache.spark.mllib.util.{ Loader, Saveable }
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+import org.apache.spark.sql.{ DataFrame, Row, SQLContext }
 import org.apache.spark.util.Utils
-import org.apache.spark.{Logging, SparkContext}
+import org.apache.spark.{ Logging, SparkContext }
 import org.json4s.JsonDSL._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
@@ -173,15 +173,15 @@ object DecisionTreeModel extends Loader[DecisionTreeModel] with Logging {
 
     /** Model data for model import/export */
     case class NodeData(
-        treeId: Int,
-        nodeId: Int,
-        predict: PredictData,
-        impurity: Double,
-        isLeaf: Boolean,
-        split: Option[SplitData],
-        leftNodeId: Option[Int],
-        rightNodeId: Option[Int],
-        infoGain: Option[Double])
+      treeId: Int,
+      nodeId: Int,
+      predict: PredictData,
+      impurity: Double,
+      isLeaf: Boolean,
+      split: Option[SplitData],
+      leftNodeId: Option[Int],
+      rightNodeId: Option[Int],
+      infoGain: Option[Double])
 
     object NodeData {
       def apply(treeId: Int, n: Node): NodeData = {
@@ -218,7 +218,8 @@ object DecisionTreeModel extends Loader[DecisionTreeModel] with Logging {
             s" driver memory (${driverMemory}m)." +
             s"  If failure occurs, try setting driver-memory ${memThreshold}m (or larger).")
         }
-      } else {
+      }
+      else {
         if (sc.executorMemory <= memThreshold) {
           logWarning(s"$thisClassName.save() was called, but it may fail because of too little" +
             s" executor memory (${sc.executorMemory}m)." +
@@ -263,8 +264,9 @@ object DecisionTreeModel extends Loader[DecisionTreeModel] with Logging {
         .groupBy(_.treeId)
         .mapValues(_.toArray)
         .collect()
-        .map { case (treeId, data) =>
-          (treeId, constructTree(data))
+        .map {
+          case (treeId, data) =>
+            (treeId, constructTree(data))
         }.sortBy(_._1)
       val numTrees = trees.size
       val treeIndices = trees.map(_._1).toSeq
@@ -298,7 +300,8 @@ object DecisionTreeModel extends Loader[DecisionTreeModel] with Logging {
       val node =
         if (data.isLeaf) {
           Node(data.nodeId, data.predict.toPredict, data.impurity, data.isLeaf)
-        } else {
+        }
+        else {
           val leftNode = constructNode(data.leftNodeId.get, dataMap, nodes)
           val rightNode = constructNode(data.rightNodeId.get, dataMap, nodes)
           val stats = new InformationGainStats(data.infoGain.get, data.impurity, leftNode.impurity,
@@ -329,8 +332,8 @@ object DecisionTreeModel extends Loader[DecisionTreeModel] with Logging {
         SaveLoadV1_0.load(sc, path, algo, numNodes)
       case _ => throw new Exception(
         s"DecisionTreeModel.load did not recognize model with (className, format version):" +
-        s"($loadedClassName, $version).  Supported:\n" +
-        s"  ($classNameV1_0, 1.0)")
+          s"($loadedClassName, $version).  Supported:\n" +
+          s"  ($classNameV1_0, 1.0)")
     }
   }
 }

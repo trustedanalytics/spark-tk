@@ -17,7 +17,7 @@
 
 package org.apache.spark.mllib.org.trustedanalytics.sparktk.deeptrees.tree.impurity
 
-import org.apache.spark.annotation.{DeveloperApi, Since}
+import org.apache.spark.annotation.{ DeveloperApi, Since }
 
 /**
  * Trait for calculating information gain.
@@ -130,7 +130,7 @@ private[spark] abstract class ImpurityCalculator(val stats: Array[Double]) exten
   def subtract(other: ImpurityCalculator): ImpurityCalculator = {
     require(stats.length == other.stats.length,
       s"Two ImpurityCalculator instances cannot be subtracted with different counts sizes." +
-      s"  Sizes are ${stats.length} and ${other.stats.length}.")
+        s"  Sizes are ${stats.length} and ${other.stats.length}.")
     var i = 0
     val len = other.stats.length
     while (i < len) {
@@ -164,7 +164,8 @@ private[spark] abstract class ImpurityCalculator(val stats: Array[Double]) exten
       case ((maxIndex, maxValue, currentIndex), currentValue) =>
         if (currentValue > maxValue) {
           (currentIndex, currentValue, currentIndex + 1)
-        } else {
+        }
+        else {
           (maxIndex, maxValue, currentIndex + 1)
         }
     }

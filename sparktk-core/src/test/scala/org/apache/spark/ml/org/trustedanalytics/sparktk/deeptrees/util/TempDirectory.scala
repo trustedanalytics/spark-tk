@@ -20,7 +20,7 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 import java.io.File
 
 import org.apache.spark.util.Utils
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.scalatest.{ BeforeAndAfterAll, Suite }
 
 /**
  * Trait that creates a temporary directory before all tests and deletes it after all.

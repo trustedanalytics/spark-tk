@@ -20,26 +20,25 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classificatio
 import org.apache.spark.SparkException
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.param.shared.HasRawPredictionCol
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{MetadataUtils, SchemaUtils}
-import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.{PredictionModel, Predictor, PredictorParams}
-import org.apache.spark.mllib.linalg.{Vector, VectorUDT}
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util.{ MetadataUtils, SchemaUtils }
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.{ PredictionModel, Predictor, PredictorParams }
+import org.apache.spark.mllib.linalg.{ Vector, VectorUDT }
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{DataType, StructType}
-import org.apache.spark.sql.{DataFrame, Row}
-
+import org.apache.spark.sql.types.{ DataType, StructType }
+import org.apache.spark.sql.{ DataFrame, Row }
 
 /**
  * (private[spark]) Params for classification.
  */
 private[spark] trait ClassifierParams
-  extends PredictorParams with HasRawPredictionCol {
+    extends PredictorParams with HasRawPredictionCol {
 
   override protected def validateAndTransformSchema(
-      schema: StructType,
-      fitting: Boolean,
-      featuresDataType: DataType): StructType = {
+    schema: StructType,
+    fitting: Boolean,
+    featuresDataType: DataType): StructType = {
     val parentSchema = super.validateAndTransformSchema(schema, fitting, featuresDataType)
     SchemaUtils.appendColumn(parentSchema, $(rawPredictionCol), new VectorUDT)
   }
@@ -56,11 +55,8 @@ private[spark] trait ClassifierParams
  * @tparam M  Concrete Model type
  */
 @DeveloperApi
-abstract class Classifier[
-    FeaturesType,
-    E <: Classifier[FeaturesType, E, M],
-    M <: ClassificationModel[FeaturesType, M]]
-  extends Predictor[FeaturesType, E, M] with ClassifierParams {
+abstract class Classifier[FeaturesType, E <: Classifier[FeaturesType, E, M], M <: ClassificationModel[FeaturesType, M]]
+    extends Predictor[FeaturesType, E, M] with ClassifierParams {
 
   /** @group setParam */
   def setRawPredictionCol(value: String): E = set(rawPredictionCol, value).asInstanceOf[E]
@@ -140,7 +136,7 @@ abstract class Classifier[
  */
 @DeveloperApi
 abstract class ClassificationModel[FeaturesType, M <: ClassificationModel[FeaturesType, M]]
-  extends PredictionModel[FeaturesType, M] with ClassifierParams {
+    extends PredictionModel[FeaturesType, M] with ClassifierParams {
 
   /** @group setParam */
   def setRawPredictionCol(value: String): M = set(rawPredictionCol, value).asInstanceOf[M]
@@ -174,7 +170,8 @@ abstract class ClassificationModel[FeaturesType, M <: ClassificationModel[Featur
     if (getPredictionCol != "") {
       val predUDF = if (getRawPredictionCol != "") {
         udf(raw2prediction _).apply(col(getRawPredictionCol))
-      } else {
+      }
+      else {
         val predictUDF = udf { (features: Any) =>
           predict(features.asInstanceOf[FeaturesType])
         }
@@ -198,7 +195,7 @@ abstract class ClassificationModel[FeaturesType, M <: ClassificationModel[Featur
    * This default implementation for classification predicts the index of the maximum value
    * from [[predictRaw()]].
    */
-  override protected def predict(features: FeaturesType): Double = {
+  override def predict(features: FeaturesType): Double = {
     raw2prediction(predictRaw(features))
   }
 
