@@ -23,6 +23,7 @@ RUN apt-get -q clean && \
       libxslt1-dev \
       python-libxml2 \
       python-qt4 \
+      python-lxml \
       python-dev \
       wget \
       zip \
