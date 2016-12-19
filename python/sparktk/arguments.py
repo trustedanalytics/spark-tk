@@ -15,6 +15,8 @@
 #  limitations under the License.
 #
 
+
+
 """
 Type checking for arguments, including the implicit argument
 """
@@ -59,8 +61,10 @@ class _AffirmType(object):
     Raises ValueError otherwise
     """
 
-    def list_of_str(self, value, name, extra_msg=None, length=None):
+    def list_of_str(self, value, name, extra_msg=None, length=None, allow_none=False):
         """Note: converts str to list of str"""
+        if value is None:
+            return self._allow_none(value, name, extra_msg, allow_none)
         if isinstance(value, basestring):
             return [value]
         if length is not None and len(value) != length:
@@ -71,7 +75,9 @@ class _AffirmType(object):
             raise value_error("str or list of str", value, name, extra_msg)
         return value
 
-    def list_of_float(self, value, name, extra_msg=None, length=None):
+    def list_of_float(self, value, name, extra_msg=None, length=None, allow_none=False):
+        if value is None:
+            return self._allow_none(value, name, extra_msg, allow_none)
         values = value if isinstance(value, list) else [value]
         if length is not None and len(values) != length:
             raise value_error("list of float of length %s" % length, value, name, extra_msg)
@@ -80,6 +86,15 @@ class _AffirmType(object):
         except ValueError:
             raise value_error("list of float", value, name, extra_msg)
         return x
+
+    @staticmethod
+    def _allow_none(value, name, extra_msg, allow_none):
+        """private none-checker, reduces boilerplate code, called on value is None"""
+        if allow_none:
+            return value
+        if value is not None:  # sanity check for programmer's usage
+            raise RuntimeError("Internal error: _allow_none always expects value is None, but it is not")
+        raise value_error("a non-None value", value, name, extra_msg)
 
 
 affirm_type = _AffirmType()  # singleton instance of the _AffirmType class
@@ -104,7 +119,7 @@ class _RequireType(object):
     def __call__(self, required_type, value, name, extra_msg=None):
         if value is implicit:
             implicit.error(name)
-        if (required_type is not None and not isinstance(value, required_type))\
+        if (required_type is not None and not isinstance(value, required_type)) \
                 or (required_type is None and value is not None):
             raise type_error(required_type, type(value), name, extra_msg)
 
@@ -118,7 +133,7 @@ class _RequireType(object):
 
     def non_negative_int(self, value, name, extra_msg=None):
         if not isinstance(value, int):
-            raise type_error(int, type(value), name, extra_msg)
+            raise type_error(int, value, name, extra_msg)
         if value < 0:
             raise value_error("non-negative integer", value, name, extra_msg)
 
@@ -187,11 +202,11 @@ def get_args_text_from_function(function, ignore_self=False, ignore_private_args
     return text
 
 
-def validate_call(function, arguments):
+def validate_call(function, arguments, ignore_self=False):
     """Validates the a dict of arguments can be used to call the given function"""
 
     require_type(dict, arguments, "arguments")
-    args, kwargs, varargs, varkwargs = get_args_spec_from_function(function)
+    args, kwargs, varargs, varkwargs = get_args_spec_from_function(function, ignore_self=ignore_self)
     if varargs:
         signature = get_args_text_from_function(function)
         raise ValueError("function %s(%s) cannot be validated against a dict of parameters because of the '*%s' in its signature"
@@ -217,4 +232,41 @@ def validate_call(function, arguments):
         else:
             raise ValueError("call to function %s(%s) is missing the following required arguments: %s" % (function.__name__, signature, ', '.join(missing_args)))
 
+def extract_call(function, arguments, ignore_self=False):
+    """Validates the a dict of arguments can be used to call the given function"""
+
+    require_type(dict, arguments, "arguments")
+    args, kwargs, varargs, varkwargs = get_args_spec_from_function(function, ignore_self=ignore_self)
+    if varargs:
+        signature = get_args_text_from_function(function)
+        raise ValueError("function %s(%s) cannot be validated against a dict of parameters because of the '*%s' in its signature"
+                         % (function.__name__, signature, varargs))
+
+    missing_args = list(args)
+    invalid_args = []
+    call_kwargs = {}
+
+    valid_kwarg_names = [name for name, default_val in kwargs]
+
+    for name in arguments:
+        if name in args:
+            missing_args.remove(name)
+            call_kwargs[name] = arguments[name]
+        elif name in valid_kwarg_names:
+            call_kwargs[name] = arguments[name]
+        else:
+            if varkwargs:
+                print "adding %s" % name
+                call_kwargs[name] = arguments[name]
+
+    if missing_args or invalid_args:
+        signature = get_args_text_from_function(function)
+        # todo - add Levenshtein distance calc's and helpful messages
+        if invalid_args:
+            raise ValueError("call to function %s(%s) included one or more unknown args named: %s" % (function.__name__, signature, ', '.join(invalid_args)))
+        else:
+            raise ValueError("call to function %s(%s) is missing the following required arguments: %s" % (function.__name__, signature, ', '.join(missing_args)))
+
+    #print "call_kwargs=%s" % call_kwargs
+    return call_kwargs
 
