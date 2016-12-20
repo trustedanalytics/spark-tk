@@ -35,8 +35,8 @@ class scorer(object):
         # set port
         config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "port.ini"))
+            config.root, "regression-tests",
+            "sparktkregtests", "lib", "port.ini"))
         config.read(filepath)
         self.port = config.get('port', port_id)
         self.scoring_process = None
@@ -44,10 +44,7 @@ class scorer(object):
     def __enter__(self):
         """Activate the Server"""
         # change current working directory to point at scoring_engine dir
-        run_path = os.path.abspath(os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-                os.path.realpath(__file__))))),
-            "scoring", "scoring_engine"))
+        run_path = os.path.abspath(os.path.join(config.root, "scoring", "scoring_engine"))
 
         # keep track of cwd for future
         test_dir = os.getcwd()
