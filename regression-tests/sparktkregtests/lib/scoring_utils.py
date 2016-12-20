@@ -32,6 +32,10 @@ class scorer(object):
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
+
+    def __enter__(self):
+        """Activate the Server"""
+        # change current working directory to point at scoring_engine dir
         # set port
         port_config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
@@ -45,28 +49,23 @@ class scorer(object):
         # change current working directory to point at scoring_engine dir
         run_path = os.path.abspath(os.path.join(config.root, "scoring", "scoring_engine"))
 
-        # keep track of cwd for future
-        test_dir = os.getcwd()
-        os.chdir(run_path)
-
         # make a new process group
         self.scoring_process = sp.Popen(
             ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
              "-Dtrustedanalytics.scoring.port=%s" % self.port],
             preexec_fn=os.setsid)
 
-        # restore cwd
-        os.chdir(test_dir)
-
         # wait for server to start
         time.sleep(20)
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, exc_type, exc_value, traceback):
         """Teardown the server"""
         # Get the process group to kill all of the suprocesses
         pgrp = os.getpgid(self.scoring_process.pid)
         os.killpg(pgrp, signal.SIGKILL)
+
+        return False
 
     def score(self, data_val):
         """score the json set data_val"""
