@@ -32,7 +32,6 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
     new GenericRow(Array[Any](0, 44.3117586448, 3.3458963222)))
   val schema = new FrameSchema(List(Column("label", DataTypes.int32), Column("obs1", DataTypes.float64), Column("obs2", DataTypes.float64)))
 
-
   "RandomForestRegressorModel" should {
     "create a RandomForestRegressorModel" in {
 

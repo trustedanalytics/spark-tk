@@ -30,7 +30,7 @@ private[spark] class DTStatsAggregator(
     featureSubset: Option[Array[Int]]) extends Serializable {
 
   /**
-   * [[ImpurityAggregator]] instance specifying the impurity type.
+   * SparkRandomForestRegressionModelImpurityAggregator instance specifying the impurity type.
    */
   val impurityAggregator: ImpurityAggregator = metadata.impurity match {
     case Gini => new GiniAggregator(metadata.numClasses)
@@ -57,7 +57,7 @@ private[spark] class DTStatsAggregator(
   }
 
   /**
-   * Offset for each feature for calculating indices into the [[allStats]] array.
+   * Offset for each feature for calculating indices into the SparkRandomForestRegressionModelallStats array.
    */
   private val featureOffsets: Array[Int] = {
     numBins.scanLeft(0)((total, nBins) => total + statsSize * nBins)
@@ -84,17 +84,17 @@ private[spark] class DTStatsAggregator(
   private val parentStats: Array[Double] = new Array[Double](statsSize)
 
   /**
-   * Get an [[ImpurityCalculator]] for a given (node, feature, bin).
+   * Get an SparkRandomForestRegressionModelImpurityCalculator for a given (node, feature, bin).
    *
    * @param featureOffset  This is a pre-computed (node, feature) offset
-   *                           from [[getFeatureOffset]].
+   *                           from SparkRandomForestRegressionModelgetFeatureOffset.
    */
   def getImpurityCalculator(featureOffset: Int, binIndex: Int): ImpurityCalculator = {
     impurityAggregator.getCalculator(allStats, featureOffset + binIndex * statsSize)
   }
 
   /**
-   * Get an [[ImpurityCalculator]] for the parent node.
+   * Get an SparkRandomForestRegressionModelImpurityCalculator for the parent node.
    */
   def getParentImpurityCalculator(): ImpurityCalculator = {
     impurityAggregator.getCalculator(parentStats, 0)
@@ -116,11 +116,11 @@ private[spark] class DTStatsAggregator(
   }
 
   /**
-   * Faster version of [[update]].
+   * Faster version of SparkRandomForestRegressionModelupdate.
    * Update the stats for a given (feature, bin), using the given label.
    *
    * @param featureOffset  This is a pre-computed feature offset
-   *                           from [[getFeatureOffset]].
+   *                           from SparkRandomForestRegressionModelgetFeatureOffset.
    */
   def featureUpdate(
     featureOffset: Int,
@@ -132,7 +132,7 @@ private[spark] class DTStatsAggregator(
   }
 
   /**
-   * Pre-compute feature offset for use with [[featureUpdate]].
+   * Pre-compute feature offset for use with SparkRandomForestRegressionModelfeatureUpdate.
    * For ordered features only.
    */
   def getFeatureOffset(featureIndex: Int): Int = featureOffsets(featureIndex)
@@ -141,7 +141,7 @@ private[spark] class DTStatsAggregator(
    * For a given feature, merge the stats for two bins.
    *
    * @param featureOffset  This is a pre-computed feature offset
-   *                           from [[getFeatureOffset]].
+   *                           from SparkRandomForestRegressionModelgetFeatureOffset.
    * @param binIndex  The other bin is merged into this bin.
    * @param otherBinIndex  This bin is not modified.
    */

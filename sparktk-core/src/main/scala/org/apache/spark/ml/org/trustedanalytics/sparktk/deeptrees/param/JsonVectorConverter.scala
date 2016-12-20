@@ -25,7 +25,7 @@ import org.json4s.jackson.JsonMethods.{ compact, parse => parseJson, render }
 private[ml] object JsonVectorConverter {
 
   /**
-   * Parses the JSON representation of a vector into a [[Vector]].
+   * Parses the JSON representation of a vector into a SparkRandomForestRegressionModelVector.
    */
   def fromJson(json: String): Vector = {
     implicit val formats = DefaultFormats

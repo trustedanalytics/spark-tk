@@ -24,7 +24,7 @@ import org.apache.spark.mllib.tree.loss.{ LogLoss, Loss, SquaredError }
 import scala.beans.BeanProperty
 
 /**
- * Configuration options for [[org.apache.spark.mllib.tree.GradientBoostedTrees]].
+ * Configuration options for org.apache.spark.mllib.tree.GradientBoostedTrees.
  *
  * @param treeStrategy Parameters for the tree algorithm. We support regression and binary
  *                     classification for boosting. Impurity setting will be ignored.
@@ -43,7 +43,7 @@ import scala.beans.BeanProperty
  *                      of validation error is compared to absolute tolerance which is
  *                      validationTol * 0.01.
  *                      Ignored when
- *                      [[org.apache.spark.mllib.tree.GradientBoostedTrees.run()]] is used.
+ *                      org.apache.spark.mllib.tree.GradientBoostedTrees.run() is used.
  */
 @Since("1.2.0")
 case class BoostingStrategy @Since("1.4.0") (
@@ -92,8 +92,8 @@ object BoostingStrategy {
   /**
    * Returns default configuration for the boosting algorithm
    * @param algo Learning goal.  Supported:
-   *             [[org.apache.spark.mllib.tree.configuration.Algo.Classification]],
-   *             [[org.apache.spark.mllib.tree.configuration.Algo.Regression]]
+   *             org.apache.spark.mllib.tree.configuration.Algo.Classification,
+   *             org.apache.spark.mllib.tree.configuration.Algo.Regression
    * @return Configuration for boosting algorithm
    */
   @Since("1.3.0")

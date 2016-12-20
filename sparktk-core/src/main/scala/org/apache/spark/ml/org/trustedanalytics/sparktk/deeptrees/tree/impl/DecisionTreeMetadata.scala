@@ -99,7 +99,7 @@ private[spark] class DecisionTreeMetadata(
 private[spark] object DecisionTreeMetadata extends Logging {
 
   /**
-   * Construct a [[DecisionTreeMetadata]] instance for this dataset and parameters.
+   * Construct a SparkRandomForestRegressionModelDecisionTreeMetadata instance for this dataset and parameters.
    * This computes which categorical features will be ordered vs. unordered,
    * as well as the number of splits and bins for each feature.
    */
@@ -217,7 +217,7 @@ private[spark] object DecisionTreeMetadata extends Logging {
   }
 
   /**
-   * Version of [[DecisionTreeMetadata#buildMetadata]] for DecisionTree.
+   * Version of SparkRandomForestRegressionModelDecisionTreeMetadata#buildMetadata for DecisionTree.
    */
   def buildMetadata(
     input: RDD[LabeledPoint],

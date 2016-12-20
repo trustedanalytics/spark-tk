@@ -86,7 +86,7 @@ private class RandomForest(
   /**
    * Method to train a decision tree model over an RDD
    *
-   * @param input Training data: RDD of [[org.apache.spark.mllib.regression.LabeledPoint]].
+   * @param input Training data: RDD of org.apache.spark.mllib.regression.LabeledPoint.
    * @return RandomForestModel that can be used for prediction.
    */
   def run(input: RDD[LabeledPoint]): RandomForestModel = {
@@ -103,7 +103,7 @@ object RandomForest extends Serializable with Logging {
   /**
    * Method to train a decision tree model for binary or multiclass classification.
    *
-   * @param input Training dataset: RDD of [[org.apache.spark.mllib.regression.LabeledPoint]].
+   * @param input Training dataset: RDD of org.apache.spark.mllib.regression.LabeledPoint.
    *              Labels should take values {0, 1, ..., numClasses-1}.
    * @param strategy Parameters for training each tree in the forest.
    * @param numTrees Number of trees in the random forest.
@@ -131,7 +131,7 @@ object RandomForest extends Serializable with Logging {
   /**
    * Method to train a decision tree model for binary or multiclass classification.
    *
-   * @param input Training dataset: RDD of [[org.apache.spark.mllib.regression.LabeledPoint]].
+   * @param input Training dataset: RDD of org.apache.spark.mllib.regression.LabeledPoint.
    *              Labels should take values {0, 1, ..., numClasses-1}.
    * @param numClasses Number of classes for classification.
    * @param categoricalFeaturesInfo Map storing arity of categorical features. An entry (n to k)
@@ -171,7 +171,7 @@ object RandomForest extends Serializable with Logging {
   }
 
   /**
-   * Java-friendly API for [[org.apache.spark.mllib.tree.RandomForest$#trainClassifier]]
+   * Java-friendly API for org.apache.spark.mllib.tree.RandomForest$#trainClassifier
    */
   @Since("1.2.0")
   def trainClassifier(
@@ -192,7 +192,7 @@ object RandomForest extends Serializable with Logging {
   /**
    * Method to train a decision tree model for regression.
    *
-   * @param input Training dataset: RDD of [[org.apache.spark.mllib.regression.LabeledPoint]].
+   * @param input Training dataset: RDD of org.apache.spark.mllib.regression.LabeledPoint.
    *              Labels are real numbers.
    * @param strategy Parameters for training each tree in the forest.
    * @param numTrees Number of trees in the random forest.
@@ -220,7 +220,7 @@ object RandomForest extends Serializable with Logging {
   /**
    * Method to train a decision tree model for regression.
    *
-   * @param input Training dataset: RDD of [[org.apache.spark.mllib.regression.LabeledPoint]].
+   * @param input Training dataset: RDD of org.apache.spark.mllib.regression.LabeledPoint.
    *              Labels are real numbers.
    * @param categoricalFeaturesInfo Map storing arity of categorical features. An entry (n to k)
    *                                indicates that feature n is categorical with k categories
@@ -258,7 +258,7 @@ object RandomForest extends Serializable with Logging {
   }
 
   /**
-   * Java-friendly API for [[org.apache.spark.mllib.tree.RandomForest$#trainRegressor]]
+   * Java-friendly API for org.apache.spark.mllib.tree.RandomForest$#trainRegressor
    */
   @Since("1.2.0")
   def trainRegressor(

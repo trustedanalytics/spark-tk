@@ -218,7 +218,7 @@ class InternalNode private[ml] (
 private object InternalNode {
 
   /**
-   * Helper method for [[Node.subtreeToString()]].
+   * Helper method for SparkRandomForestRegressionModelNode.subtreeToString().
    * @param split  Split to print
    * @param left  Indicates whether this is the part of the split going to the left,
    *              or that going to the right.
@@ -257,7 +257,7 @@ private object InternalNode {
  *  - an internal node, with all values set
  *
  * @param id  We currently use the same indexing as the old implementation in
- *            [[org.apache.spark.mllib.tree.model.Node]], but this will change later.
+ *            SparkRandomForestRegressionModelorg.apache.spark.mllib.tree.model.Node, but this will change later.
  * @param isLeaf  Indicates whether this node will definitely be a leaf in the learned tree,
  *                so that we do not need to consider splitting it further.
  * @param stats  Impurity statistics for this node.
@@ -273,7 +273,7 @@ private[tree] class LearningNode(
     var level: Int = 0) extends Serializable {
 
   /**
-   * Convert this [[LearningNode]] to a regular [[Node]], and recurse on any children.
+   * Convert this SparkRandomForestRegressionModelLearningNode to a regular SparkRandomForestRegressionModelNode, and recurse on any children.
    */
   def toNode: Node = {
     if (leftChild.nonEmpty) {
@@ -307,7 +307,7 @@ private[tree] class LearningNode(
    *         Note: This is the global node index, i.e., the index used in the tree.
    *         This index is different from the index used during training a particular
    *         group of nodes on one call to
-   *         [[org.apache.spark.ml.tree.impl.RandomForest.findBestSplits()]].
+   *         SparkRandomForestRegressionModelorg.apache.spark.ml.tree.impl.RandomForest.findBestSplits().
    */
   def predictImpl(binnedFeatures: Array[Int], splits: Array[Array[Split]]): Int = {
     if (this.isLeaf || this.split.isEmpty) {

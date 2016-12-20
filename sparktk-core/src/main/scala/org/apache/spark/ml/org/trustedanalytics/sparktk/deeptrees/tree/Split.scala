@@ -84,7 +84,7 @@ class CategoricalSplit private[ml] (
    */
   private val isLeft: Boolean = _leftCategories.length <= numCategories / 2
 
-  /** Set of categories determining the splitting rule, along with [[isLeft]]. */
+  /** Set of categories determining the splitting rule, along with SparkRandomForestRegressionModelisLeft. */
   private val categories: Set[Double] = {
     if (isLeft) {
       _leftCategories.toSet

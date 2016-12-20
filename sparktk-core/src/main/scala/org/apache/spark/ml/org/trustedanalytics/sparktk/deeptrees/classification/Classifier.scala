@@ -50,7 +50,7 @@ private[spark] trait ClassifierParams
  * Single-label binary or multiclass classification.
  * Classes are indexed {0, 1, ..., numClasses - 1}.
  *
- * @tparam FeaturesType  Type of input features.  E.g., [[Vector]]
+ * @tparam FeaturesType  Type of input features.  E.g., SparkRandomForestRegressionModelVector
  * @tparam E  Concrete Estimator type
  * @tparam M  Concrete Model type
  */
@@ -64,11 +64,11 @@ abstract class Classifier[FeaturesType, E <: Classifier[FeaturesType, E, M], M <
   // TODO: defaultEvaluator (follow-up PR)
 
   /**
-   * Extract [[labelCol]] and [[featuresCol]] from the given dataset,
+   * Extract SparkRandomForestRegressionModellabelCol and SparkRandomForestRegressionModelfeaturesCol from the given dataset,
    * and put it in an RDD with strong types.
    *
-   * @param dataset  DataFrame with columns for labels ([[org.apache.spark.sql.types.NumericType]])
-   *                 and features ([[Vector]]).
+   * @param dataset  DataFrame with columns for labels (SparkRandomForestRegressionModelorg.apache.spark.sql.types.NumericType)
+   *                 and features (SparkRandomForestRegressionModelVector).
    * @param numClasses  Number of classes label can take.  Labels must be integers in the range
    *                    [0, numClasses).
    * @throws SparkException  if any label is not an integer >= 0
@@ -91,9 +91,9 @@ abstract class Classifier[FeaturesType, E <: Classifier[FeaturesType, E, M], M <
    * by finding the maximum label value.
    *
    * Label validation (ensuring all labels are integers >= 0) needs to be handled elsewhere,
-   * such as in [[extractLabeledPoints()]].
+   * such as in SparkRandomForestRegressionModelextractLabeledPoints().
    *
-   * @param dataset  Dataset which contains a column [[labelCol]]
+   * @param dataset  Dataset which contains a column SparkRandomForestRegressionModellabelCol
    * @param maxNumClasses  Maximum number of classes allowed when inferred from data.  If numClasses
    *                       is specified in the metadata, then maxNumClasses is ignored.
    * @return  number of classes
@@ -128,7 +128,7 @@ abstract class Classifier[FeaturesType, E <: Classifier[FeaturesType, E, M], M <
 /**
  * :: DeveloperApi ::
  *
- * Model produced by a [[Classifier]].
+ * Model produced by a SparkRandomForestRegressionModelClassifier.
  * Classes are indexed {0, 1, ..., numClasses - 1}.
  *
  * @tparam FeaturesType  Type of input features.  E.g., `Vector`
@@ -145,10 +145,10 @@ abstract class ClassificationModel[FeaturesType, M <: ClassificationModel[Featur
   def numClasses: Int
 
   /**
-   * Transforms dataset by reading from [[featuresCol]], and appending new columns as specified by
+   * Transforms dataset by reading from SparkRandomForestRegressionModelfeaturesCol, and appending new columns as specified by
    * parameters:
-   *  - predicted labels as [[predictionCol]] of type [[Double]]
-   *  - raw predictions (confidences) as [[rawPredictionCol]] of type `Vector`.
+   *  - predicted labels as SparkRandomForestRegressionModelpredictionCol of type SparkRandomForestRegressionModelDouble
+   *  - raw predictions (confidences) as SparkRandomForestRegressionModelrawPredictionCol of type `Vector`.
    *
    * @param dataset input dataset
    * @return transformed dataset
@@ -190,10 +190,10 @@ abstract class ClassificationModel[FeaturesType, M <: ClassificationModel[Featur
 
   /**
    * Predict label for the given features.
-   * This internal method is used to implement [[transform()]] and output [[predictionCol]].
+   * This internal method is used to implement SparkRandomForestRegressionModeltransform() and output SparkRandomForestRegressionModelpredictionCol.
    *
    * This default implementation for classification predicts the index of the maximum value
-   * from [[predictRaw()]].
+   * from SparkRandomForestRegressionModelpredictRaw().
    */
   override def predict(features: FeaturesType): Double = {
     raw2prediction(predictRaw(features))
@@ -203,7 +203,7 @@ abstract class ClassificationModel[FeaturesType, M <: ClassificationModel[Featur
    * Raw prediction for each possible label.
    * The meaning of a "raw" prediction may vary between algorithms, but it intuitively gives
    * a measure of confidence in each possible label (where larger = more confident).
-   * This internal method is used to implement [[transform()]] and output [[rawPredictionCol]].
+   * This internal method is used to implement SparkRandomForestRegressionModeltransform() and output SparkRandomForestRegressionModelrawPredictionCol.
    *
    * @return  vector where element i is the raw prediction for label i.
    *          This raw prediction may be any real number, where a larger value indicates greater

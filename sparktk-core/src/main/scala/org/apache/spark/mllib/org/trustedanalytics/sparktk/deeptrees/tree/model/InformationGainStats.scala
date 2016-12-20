@@ -70,7 +70,7 @@ class InformationGainStats(
 
 private[spark] object InformationGainStats {
   /**
-   * An [[org.apache.spark.mllib.tree.model.InformationGainStats]] object to
+   * An org.apache.spark.mllib.tree.model.InformationGainStats object to
    * denote that current split doesn't satisfies minimum info gain or
    * minimum number of instances per node.
    */
@@ -121,7 +121,7 @@ private[spark] class ImpurityStats(
 private[spark] object ImpurityStats {
 
   /**
-   * Return an [[org.apache.spark.mllib.tree.model.ImpurityStats]] object to
+   * Return an org.apache.spark.mllib.tree.model.ImpurityStats object to
    * denote that current split doesn't satisfies minimum info gain or
    * minimum number of instances per node.
    */
@@ -131,7 +131,7 @@ private[spark] object ImpurityStats {
   }
 
   /**
-   * Return an [[org.apache.spark.mllib.tree.model.ImpurityStats]] object
+   * Return an org.apache.spark.mllib.tree.model.ImpurityStats object
    * that only 'impurity' and 'impurityCalculator' are defined.
    */
   def getEmptyImpurityStats(impurityCalculator: ImpurityCalculator): ImpurityStats = {

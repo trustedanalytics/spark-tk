@@ -18,9 +18,9 @@
 package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.tree
 
 /**
- * Info for a [[org.apache.spark.ml.tree.Split]]
+ * Info for a SparkRandomForestRegressionModelorg.apache.spark.ml.tree.Split
  *
- * Migrated class from [[DecisionTreeModelReadWrite]] due to scoping issues
+ * Migrated class from SparkRandomForestRegressionModelDecisionTreeModelReadWrite due to scoping issues
  *
  * @param featureIndex  Index of feature split on
  * @param leftCategoriesOrThreshold  For categorical feature, set of leftCategories.
@@ -56,9 +56,9 @@ private[spark] object SplitData {
 }
 
 /**
- * Info for a [[Node]]
+ * Info for a SparkRandomForestRegressionModelNode
  *
- * Migrated class from [[DecisionTreeModelReadWrite]] due to scoping issues
+ * Migrated class from SparkRandomForestRegressionModelDecisionTreeModelReadWrite due to scoping issues
  *
  * @param id  Index used for tree reconstruction.  Indices follow a pre-order traversal.
  * @param impurityStats  Stats array.  Impurity type is stored in metadata.
@@ -79,7 +79,7 @@ private[spark] case class NodeData(
 
 private[spark] object NodeData {
   /**
-   * Create [[NodeData]] instances for this node and all children.
+   * Create SparkRandomForestRegressionModelNodeData instances for this node and all children.
    *
    * @param id  Current ID.  IDs are assigned via a pre-order traversal.
    * @return (sequence of nodes in pre-order traversal order, largest ID in subtree)
@@ -101,9 +101,9 @@ private[spark] object NodeData {
 }
 
 /**
- * Info for one [[Node]private[spark] ] in a tree ensemble
+ * Info for one SparkRandomForestRegressionModelNode]private[spark] ] in a tree ensemble
  *
- * Migrated class from [[DecisionTreeModelReadWrite]] due to scoping issues
+ * Migrated class from SparkRandomForestRegressionModelDecisionTreeModelReadWrite due to scoping issues
  *
  * @param treeID  Tree index
  * @param nodeData  Data for this node
@@ -114,7 +114,7 @@ private[spark] case class EnsembleNodeData(
 
 private[spark] object EnsembleNodeData {
   /**
-   * Create [[EnsembleNodeData]] instances for the given tree.
+   * Create SparkRandomForestRegressionModelEnsembleNodeData instances for the given tree.
    *
    * @return Sequence of nodes for this tree
    */

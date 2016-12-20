@@ -31,7 +31,7 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.util.Utils
 
 /**
- * Trait for [[MLWriter]] and [[MLReader]].
+ * Trait for SparkRandomForestRegressionModelMLWriter and SparkRandomForestRegressionModelMLReader.
  */
 private[util] sealed trait BaseReadWrite {
   private var optionSQLContext: Option[SQLContext] = None
@@ -55,7 +55,7 @@ private[util] sealed trait BaseReadWrite {
     optionSQLContext.get
   }
 
-  /** Returns the [[SparkContext]] underlying [[sqlContext]] */
+  /** Returns the SparkRandomForestRegressionModelSparkContext underlying SparkRandomForestRegressionModelsqlContext */
   protected final def sc: SparkContext = sqlContext.sparkContext
 }
 
@@ -93,7 +93,7 @@ abstract class MLWriter extends BaseReadWrite with Logging {
   }
 
   /**
-   * [[save()]] handles overwriting and then calls this method.  Subclasses should override this
+   * SparkRandomForestRegressionModelsave() handles overwriting and then calls this method.  Subclasses should override this
    * method to implement the actual saving of the instance.
    */
   @Since("1.6.0")
@@ -113,13 +113,13 @@ abstract class MLWriter extends BaseReadWrite with Logging {
 }
 
 /**
- * Trait for classes that provide [[MLWriter]].
+ * Trait for classes that provide SparkRandomForestRegressionModelMLWriter.
  */
 @Since("1.6.0")
 trait MLWritable {
 
   /**
-   * Returns an [[MLWriter]] instance for this ML instance.
+   * Returns an SparkRandomForestRegressionModelMLWriter instance for this ML instance.
    */
   @Since("1.6.0")
   def write: MLWriter
@@ -156,7 +156,7 @@ abstract class MLReader[T] extends BaseReadWrite {
 }
 
 /**
- * Trait for objects that provide [[MLReader]].
+ * Trait for objects that provide SparkRandomForestRegressionModelMLReader.
  * @tparam T ML instance type
  */
 @Experimental
@@ -164,7 +164,7 @@ abstract class MLReader[T] extends BaseReadWrite {
 trait MLReadable[T] {
 
   /**
-   * Returns an [[MLReader]] instance for this class.
+   * Returns an SparkRandomForestRegressionModelMLReader instance for this class.
    */
   @Since("1.6.0")
   def read: MLReader[T]
@@ -184,7 +184,7 @@ private[ml] trait DefaultParamsReadable[T] extends MLReadable[T] {
 }
 
 /**
- * Default [[MLWriter]] implementation for transformers and estimators that contain basic
+ * Default SparkRandomForestRegressionModelMLWriter implementation for transformers and estimators that contain basic
  * (json4s-serializable) params and no data. This will not handle more complex params or types with
  * data (e.g., models with coefficients).
  * @param instance object to save
@@ -208,8 +208,8 @@ private[ml] object DefaultParamsWriter {
    *  - (optionally, extra metadata)
    * @param extraMetadata  Extra metadata to be saved at same level as uid, paramMap, etc.
    * @param paramMap  If given, this is saved in the "paramMap" field.
-   *                  Otherwise, all [[org.apache.spark.ml.param.Param]]s are encoded using
-   *                  [[org.apache.spark.ml.param.Param.jsonEncode()]].
+   *                  Otherwise, all SparkRandomForestRegressionModelorg.apache.spark.ml.param.Params are encoded using
+   *                  SparkRandomForestRegressionModelorg.apache.spark.ml.param.Param.jsonEncode().
    */
   def saveMetadata(
     instance: Params,
@@ -241,10 +241,10 @@ private[ml] object DefaultParamsWriter {
   }
 
   /**
-   * Helper for [[saveMetadata()]] which extracts the JSON to save.
+   * Helper for SparkRandomForestRegressionModelsaveMetadata() which extracts the JSON to save.
    * This is useful for ensemble models which need to save metadata for many sub-models.
    *
-   * @see [[saveMetadata()]] for details on what this includes.
+   * @see SparkRandomForestRegressionModelsaveMetadata() for details on what this includes.
    */
   def getMetadataToSave(
     instance: Params,
@@ -275,7 +275,7 @@ private[ml] object DefaultParamsWriter {
 }
 
 /**
- * Default [[MLReader]] implementation for transformers and estimators that contain basic
+ * Default SparkRandomForestRegressionModelMLReader implementation for transformers and estimators that contain basic
  * (json4s-serializable) params and no data. This will not handle more complex params or types with
  * data (e.g., models with coefficients).
  * @tparam T ML instance type
@@ -297,7 +297,7 @@ private[ml] object DefaultParamsReader {
 
   /**
    * All info from metadata file.
-   * @param params  paramMap, as a [[JValue]]
+   * @param params  paramMap, as a SparkRandomForestRegressionModelJValue
    * @param metadata  All metadata, including the other fields
    * @param metadataJson  Full metadata file String (for debugging)
    */
@@ -311,7 +311,7 @@ private[ml] object DefaultParamsReader {
       metadataJson: String) {
 
     /**
-     * Get the JSON value of the [[org.apache.spark.ml.param.Param]] of the given name.
+     * Get the JSON value of the SparkRandomForestRegressionModelorg.apache.spark.ml.param.Param of the given name.
      * This can be useful for getting a Param value before an instance of `Params`
      * is available.
      */
@@ -358,8 +358,8 @@ private[ml] object DefaultParamsReader {
   }
 
   /**
-   * Parse metadata JSON string produced by [[DefaultParamsWriter.getMetadataToSave()]].
-   * This is a helper function for [[loadMetadata()]].
+   * Parse metadata JSON string produced by SparkRandomForestRegressionModelDefaultParamsWriter.getMetadataToSave().
+   * This is a helper function for SparkRandomForestRegressionModelloadMetadata().
    *
    * @param metadataStr  JSON string of metadata
    * @param expectedClassName  If non empty, this is checked against the loaded metadata.
@@ -384,7 +384,7 @@ private[ml] object DefaultParamsReader {
 
   /**
    * Extract Params from metadata, and set them in the instance.
-   * This works if all Params implement [[org.apache.spark.ml.param.Param.jsonDecode()]].
+   * This works if all Params implement SparkRandomForestRegressionModelorg.apache.spark.ml.param.Param.jsonDecode().
    */
   def getAndSetParams(instance: Params, metadata: Metadata): Unit = {
     implicit val format = DefaultFormats
@@ -403,8 +403,8 @@ private[ml] object DefaultParamsReader {
   }
 
   /**
-   * Load a [[Params]] instance from the given path, and return it.
-   * This assumes the instance implements [[MLReadable]].
+   * Load a SparkRandomForestRegressionModelParams instance from the given path, and return it.
+   * This assumes the instance implements SparkRandomForestRegressionModelMLReadable.
    */
   def loadParamsInstance[T](path: String, sc: SparkContext): T = {
     val metadata = DefaultParamsReader.loadMetadata(path, sc)

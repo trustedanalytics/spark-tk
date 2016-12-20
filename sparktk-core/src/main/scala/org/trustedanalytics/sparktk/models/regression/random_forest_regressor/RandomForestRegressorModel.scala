@@ -16,7 +16,7 @@
 package org.trustedanalytics.sparktk.models.regression.random_forest_regressor
 
 import org.apache.spark.SparkContext
-import org.apache.spark.ml.attribute.{AttributeGroup, NumericAttribute, NominalAttribute}
+import org.apache.spark.ml.attribute.{ AttributeGroup, NumericAttribute, NominalAttribute }
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
@@ -32,7 +32,7 @@ import org.trustedanalytics.sparktk.models.regression.RegressionUtils._
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
-import org.trustedanalytics.sparktk.models.{FrameImplicits, SparkTkModelAdapter, ScoringModelUtils}
+import org.trustedanalytics.sparktk.models.{ FrameImplicits, SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 import org.apache.spark.mllib.linalg.Vectors
@@ -95,7 +95,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
       List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory.get),
       "feature subset category can be either None or one of the values: auto, all, sqrt, log2, onethird")
     require(minInstancesPerNode.isEmpty || minInstancesPerNode.get > 0, "minInstancesPerNode must be greater than 0")
-    require(subSamplingRate.isEmpty || (subSamplingRate.get > 0 && subSamplingRate.get <=1),
+    require(subSamplingRate.isEmpty || (subSamplingRate.get > 0 && subSamplingRate.get <= 1),
       "subSamplingRate must be in range (0, 1]")
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
@@ -275,7 +275,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    *
    * @return Map of feature names and importances.
    */
-  def featureImportances() : Map[String, Double] = {
+  def featureImportances(): Map[String, Double] = {
     val featureImportances = sparkModel.featureImportances
     observationColumns.zip(featureImportances.toArray).toMap
   }

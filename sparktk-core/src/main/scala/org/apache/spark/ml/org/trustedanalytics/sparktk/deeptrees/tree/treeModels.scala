@@ -94,7 +94,7 @@ private[ml] trait TreeEnsembleModel[M <: DecisionTreeModel] {
   /** Trees in this ensemble. Warning: These have null parent Estimators. */
   def trees: Array[M]
 
-  /** Weights for each tree, zippable with [[trees]] */
+  /** Weights for each tree, zippable with SparkRandomForestRegressionModeltrees */
   def treeWeights: Array[Double]
 
   /** Weights used by the python wrappers. */

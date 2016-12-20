@@ -1,10 +1,9 @@
 package org.trustedanalytics.sparktk.models
 
-import org.apache.spark.ml.attribute.{AttributeGroup, NumericAttribute, NominalAttribute}
+import org.apache.spark.ml.attribute.{ AttributeGroup, NumericAttribute, NominalAttribute }
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.sql.DataFrame
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-
 
 class FrameFunctions(self: FrameRdd) extends Serializable {
 
@@ -21,9 +20,9 @@ class FrameFunctions(self: FrameRdd) extends Serializable {
    */
   def toLabeledDataFrame(labelColumnName: String,
                          featureColumnNames: List[String],
-                         outputFeatureVectorName : String,
+                         outputFeatureVectorName: String,
                          categoricalFeatures: Option[Map[String, Int]] = None,
-                         labelNumClasses : Option[Int] = None) : DataFrame = {
+                         labelNumClasses: Option[Int] = None): DataFrame = {
     require(labelColumnName != null, "label column name must not be null")
     require(featureColumnNames != null, "feature column names must not be null")
     require(outputFeatureVectorName != null, "output feature vector name must not be null")
@@ -41,7 +40,8 @@ class FrameFunctions(self: FrameRdd) extends Serializable {
       if (categoricalFeaturesMap.contains(featureName)) {
         NominalAttribute.defaultAttr.withIndex(featureIndex)
           .withNumValues(categoricalFeaturesMap(featureName))
-      } else {
+      }
+      else {
         NumericAttribute.defaultAttr.withIndex(featureIndex)
       }
     }.toArray

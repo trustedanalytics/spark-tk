@@ -22,7 +22,7 @@ import org.apache.spark.annotation.{ DeveloperApi, Since }
 /**
  * Trait for calculating information gain.
  * This trait is used for
- *  (a) setting the impurity parameter in [[org.apache.spark.mllib.tree.configuration.Strategy]]
+ *  (a) setting the impurity parameter in org.apache.spark.mllib.tree.configuration.Strategy
  *  (b) calculating impurity values from sufficient statistics.
  */
 @Since("1.0.0")
@@ -82,7 +82,7 @@ private[spark] abstract class ImpurityAggregator(val statsSize: Int) extends Ser
   def update(allStats: Array[Double], offset: Int, label: Double, instanceWeight: Double): Unit
 
   /**
-   * Get an [[ImpurityCalculator]] for a (node, feature, bin).
+   * Get an ImpurityCalculator for a (node, feature, bin).
    * @param allStats  Flat stats array, with stats for this (node, feature, bin) contiguous.
    * @param offset    Start index of stats for this (node, feature, bin).
    */
@@ -91,14 +91,14 @@ private[spark] abstract class ImpurityAggregator(val statsSize: Int) extends Ser
 
 /**
  * Stores statistics for one (node, feature, bin) for calculating impurity.
- * Unlike [[ImpurityAggregator]], this class stores its own data and is for a specific
+ * Unlike ImpurityAggregator, this class stores its own data and is for a specific
  * (node, feature, bin).
  * @param stats  Array of sufficient statistics for a (node, feature, bin).
  */
 private[spark] abstract class ImpurityCalculator(val stats: Array[Double]) extends Serializable {
 
   /**
-   * Make a deep copy of this [[ImpurityCalculator]].
+   * Make a deep copy of this ImpurityCalculator.
    */
   def copy: ImpurityCalculator
 
@@ -151,7 +151,7 @@ private[spark] abstract class ImpurityCalculator(val stats: Array[Double]) exten
   def predict: Double
 
   /**
-   * Probability of the label given by [[predict]], or -1 if no probability is available.
+   * Probability of the label given by predict, or -1 if no probability is available.
    */
   def prob(label: Double): Double = -1
 
@@ -181,7 +181,7 @@ private[spark] abstract class ImpurityCalculator(val stats: Array[Double]) exten
 private[spark] object ImpurityCalculator {
 
   /**
-   * Create an [[ImpurityCalculator]] instance of the given impurity type and with
+   * Create an ImpurityCalculator instance of the given impurity type and with
    * the given stats.
    */
   def getCalculator(impurity: String, stats: Array[Double]): ImpurityCalculator = {

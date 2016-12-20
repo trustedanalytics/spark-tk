@@ -81,7 +81,7 @@ class RandomForestClassifier @Since("1.4.0") (
    * Specifies how often to checkpoint the cached node IDs.
    * E.g. 10 means that the cache will get checkpointed every 10 iterations.
    * This is only used if cacheNodeIds is true and if the checkpoint directory is set in
-   * [[org.apache.spark.SparkContext]].
+   * SparkRandomForestRegressionModelorg.apache.spark.SparkContext.
    * Must be >= 1.
    * (default = 10)
    * @group setParam

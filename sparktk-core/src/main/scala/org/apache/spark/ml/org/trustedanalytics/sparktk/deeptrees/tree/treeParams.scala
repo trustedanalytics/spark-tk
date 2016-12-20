@@ -457,7 +457,7 @@ private[ml] trait GBTParams extends TreeEnsembleParams with HasMaxIter {
   /* TODO: Add this doc when we add this param.  SPARK-7132
    * Threshold for stopping early when runWithValidation is used.
    * If the error rate on the validation input changes by less than the validationTol,
-   * then learning will stop early (before [[numIterations]]).
+   * then learning will stop early (before SparkRandomForestRegressionModelnumIterations).
    * This parameter is ignored when run is used.
    * (default = 1e-5)
    * @group param

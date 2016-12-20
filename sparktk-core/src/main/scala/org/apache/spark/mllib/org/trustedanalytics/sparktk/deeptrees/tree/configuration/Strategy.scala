@@ -28,12 +28,12 @@ import scala.collection.JavaConverters._
 /**
  * Stores all the configuration options for tree construction
  * @param algo  Learning goal.  Supported:
- *              [[org.apache.spark.mllib.tree.configuration.Algo.Classification]],
- *              [[org.apache.spark.mllib.tree.configuration.Algo.Regression]]
+ *              org.apache.spark.mllib.tree.configuration.Algo.Classification,
+ *              org.apache.spark.mllib.tree.configuration.Algo.Regression
  * @param impurity Criterion used for information gain calculation.
- *                 Supported for Classification: [[org.apache.spark.mllib.tree.impurity.Gini]],
- *                  [[org.apache.spark.mllib.tree.impurity.Entropy]].
- *                 Supported for Regression: [[org.apache.spark.mllib.tree.impurity.Variance]].
+ *                 Supported for Classification: org.apache.spark.mllib.tree.impurity.Gini,
+ *                  org.apache.spark.mllib.tree.impurity.Entropy.
+ *                 Supported for Regression: org.apache.spark.mllib.tree.impurity.Variance.
  * @param maxDepth Maximum depth of the tree.
  *                 E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.
  * @param numClasses Number of classes for classification.
@@ -43,7 +43,7 @@ import scala.collection.JavaConverters._
  *                for choosing how to split on features at each node.
  *                More bins give higher granularity.
  * @param quantileCalculationStrategy Algorithm for calculating quantiles.  Supported:
- *                             [[org.apache.spark.mllib.tree.configuration.QuantileStrategy.Sort]]
+ *                             org.apache.spark.mllib.tree.configuration.QuantileStrategy.Sort
  * @param categoricalFeaturesInfo A map storing information about the categorical variables and the
  *                                number of discrete values they take. For example, an entry (n ->
  *                                k) implies the feature n is categorical with k categories 0,
@@ -64,7 +64,7 @@ import scala.collection.JavaConverters._
  * @param checkpointInterval How often to checkpoint when the node Id cache gets updated.
  *                           E.g. 10 means that the cache will get checkpointed every 10 updates. If
  *                           the checkpoint directory is not set in
- *                           [[org.apache.spark.SparkContext]], this setting is ignored.
+ *                           org.apache.spark.SparkContext, this setting is ignored.
  */
 @Since("1.0.0")
 class Strategy @Since("1.3.0") (
@@ -97,7 +97,7 @@ class Strategy @Since("1.3.0") (
   }
 
   /**
-   * Java-friendly constructor for [[org.apache.spark.mllib.tree.configuration.Strategy]]
+   * Java-friendly constructor for org.apache.spark.mllib.tree.configuration.Strategy
    */
   @Since("1.1.0")
   def this(
@@ -180,7 +180,7 @@ class Strategy @Since("1.3.0") (
 object Strategy {
 
   /**
-   * Construct a default set of parameters for [[org.apache.spark.mllib.tree.DecisionTree]]
+   * Construct a default set of parameters for org.apache.spark.mllib.tree.DecisionTree
    * @param algo  "Classification" or "Regression"
    */
   @Since("1.2.0")
@@ -189,7 +189,7 @@ object Strategy {
   }
 
   /**
-   * Construct a default set of parameters for [[org.apache.spark.mllib.tree.DecisionTree]]
+   * Construct a default set of parameters for org.apache.spark.mllib.tree.DecisionTree
    * @param algo Algo.Classification or Algo.Regression
    */
   @Since("1.3.0")

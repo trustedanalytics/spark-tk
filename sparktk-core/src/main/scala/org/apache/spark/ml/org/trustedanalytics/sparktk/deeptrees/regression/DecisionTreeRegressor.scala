@@ -77,7 +77,7 @@ class DecisionTreeRegressor @Since("1.4.0") (@Since("1.4.0") override val uid: S
    * Specifies how often to checkpoint the cached node IDs.
    * E.g. 10 means that the cache will get checkpointed every 10 iterations.
    * This is only used if cacheNodeIds is true and if the checkpoint directory is set in
-   * [[org.apache.spark.SparkContext]].
+   * SparkRandomForestRegressionModelorg.apache.spark.SparkContext.
    * Must be >= 1.
    * (default = 10)
    * @group setParam
@@ -218,7 +218,7 @@ class DecisionTreeRegressionModel private[ml] (
    *   - Normalize importances for tree to sum to 1.
    *
    * @note Feature importance for single decision trees can have high variance due to
-   * correlated predictor variables. Consider using a [[RandomForestRegressor]]
+   * correlated predictor variables. Consider using a SparkRandomForestRegressionModelRandomForestRegressor
    * to determine feature importance instead.
    */
   @Since("2.0.0")

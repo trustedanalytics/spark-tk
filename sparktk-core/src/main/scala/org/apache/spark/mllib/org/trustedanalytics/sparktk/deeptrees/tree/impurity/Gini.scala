@@ -22,7 +22,7 @@ import org.apache.spark.annotation.{ DeveloperApi, Experimental, Since }
 /**
  * :: Experimental ::
  * Class for calculating the
- * [[http://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity Gini impurity]]
+ * http://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity Gini impurity
  * during binary classification.
  */
 @Since("1.0.0")
@@ -102,7 +102,7 @@ private[spark] class GiniAggregator(numClasses: Int)
   }
 
   /**
-   * Get an [[ImpurityCalculator]] for a (node, feature, bin).
+   * Get an ImpurityCalculator for a (node, feature, bin).
    * @param allStats  Flat stats array, with stats for this (node, feature, bin) contiguous.
    * @param offset    Start index of stats for this (node, feature, bin).
    */
@@ -114,14 +114,14 @@ private[spark] class GiniAggregator(numClasses: Int)
 
 /**
  * Stores statistics for one (node, feature, bin) for calculating impurity.
- * Unlike [[GiniAggregator]], this class stores its own data and is for a specific
+ * Unlike GiniAggregator, this class stores its own data and is for a specific
  * (node, feature, bin).
  * @param stats  Array of sufficient statistics for a (node, feature, bin).
  */
 private[spark] class GiniCalculator(stats: Array[Double]) extends ImpurityCalculator(stats) {
 
   /**
-   * Make a deep copy of this [[ImpurityCalculator]].
+   * Make a deep copy of this ImpurityCalculator.
    */
   def copy: GiniCalculator = new GiniCalculator(stats.clone())
 
@@ -146,7 +146,7 @@ private[spark] class GiniCalculator(stats: Array[Double]) extends ImpurityCalcul
   }
 
   /**
-   * Probability of the label given by [[predict]].
+   * Probability of the label given by predict.
    */
   override def prob(label: Double): Double = {
     val lbl = label.toInt

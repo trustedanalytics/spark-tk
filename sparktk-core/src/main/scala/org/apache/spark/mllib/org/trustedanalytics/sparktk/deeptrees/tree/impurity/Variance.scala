@@ -86,7 +86,7 @@ private[spark] class VarianceAggregator()
   }
 
   /**
-   * Get an [[ImpurityCalculator]] for a (node, feature, bin).
+   * Get an ImpurityCalculator for a (node, feature, bin).
    * @param allStats  Flat stats array, with stats for this (node, feature, bin) contiguous.
    * @param offset    Start index of stats for this (node, feature, bin).
    */
@@ -98,7 +98,7 @@ private[spark] class VarianceAggregator()
 
 /**
  * Stores statistics for one (node, feature, bin) for calculating impurity.
- * Unlike [[GiniAggregator]], this class stores its own data and is for a specific
+ * Unlike GiniAggregator, this class stores its own data and is for a specific
  * (node, feature, bin).
  * @param stats  Array of sufficient statistics for a (node, feature, bin).
  */
@@ -109,7 +109,7 @@ private[spark] class VarianceCalculator(stats: Array[Double]) extends ImpurityCa
       s" but was given array of length ${stats.size}.")
 
   /**
-   * Make a deep copy of this [[ImpurityCalculator]].
+   * Make a deep copy of this ImpurityCalculator.
    */
   def copy: VarianceCalculator = new VarianceCalculator(stats.clone())
 

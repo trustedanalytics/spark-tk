@@ -41,7 +41,7 @@ private[ml] trait PredictorParams extends Params
    * @param schema input schema
    * @param fitting whether this is in fitting
    * @param featuresDataType  SQL DataType for FeaturesType.
-   *                          E.g., [[org.apache.spark.mllib.linalg.VectorUDT]] for vector features.
+   *                          E.g., SparkRandomForestRegressionModelorg.apache.spark.mllib.linalg.VectorUDT for vector features.
    * @return output schema
    */
   protected def validateAndTransformSchema(
@@ -63,10 +63,10 @@ private[ml] trait PredictorParams extends Params
  * labels and will automatically cast it to DoubleType in `fit()`.
  *
  * @tparam FeaturesType  Type of features.
- *                       E.g., [[org.apache.spark.mllib.linalg.VectorUDT]] for vector features.
+ *                       E.g., SparkRandomForestRegressionModelorg.apache.spark.mllib.linalg.VectorUDT for vector features.
  * @tparam Learner  Specialization of this class.  If you subclass this type, use this type
  *                  parameter to specify the concrete type.
- * @tparam M  Specialization of [[PredictionModel]].  If you subclass this type, use this type
+ * @tparam M  Specialization of SparkRandomForestRegressionModelPredictionModel.  If you subclass this type, use this type
  *            parameter to specify the concrete type for the corresponding model.
  */
 @DeveloperApi
@@ -98,7 +98,7 @@ abstract class Predictor[FeaturesType, Learner <: Predictor[FeaturesType, Learne
 
   /**
    * Train a model using the given dataset and parameters.
-   * Developers can implement this instead of [[fit()]] to avoid dealing with schema validation
+   * Developers can implement this instead of SparkRandomForestRegressionModelfit() to avoid dealing with schema validation
    * and copying parameters into the model.
    *
    * @param dataset  Training dataset
@@ -109,7 +109,7 @@ abstract class Predictor[FeaturesType, Learner <: Predictor[FeaturesType, Learne
   /**
    * Returns the SQL DataType corresponding to the FeaturesType type parameter.
    *
-   * This is used by [[validateAndTransformSchema()]].
+   * This is used by SparkRandomForestRegressionModelvalidateAndTransformSchema().
    * This workaround is needed since SQL has different APIs for Scala and Java.
    *
    * The default value is VectorUDT, but it may be overridden if FeaturesType is not Vector.
@@ -121,7 +121,7 @@ abstract class Predictor[FeaturesType, Learner <: Predictor[FeaturesType, Learne
   }
 
   /**
-   * Extract [[labelCol]] and [[featuresCol]] from the given dataset,
+   * Extract SparkRandomForestRegressionModellabelCol and SparkRandomForestRegressionModelfeaturesCol from the given dataset,
    * and put it in an RDD with strong types.
    */
   protected def extractLabeledPoints(dataset: DataFrame): RDD[LabeledPoint] = {
@@ -135,8 +135,8 @@ abstract class Predictor[FeaturesType, Learner <: Predictor[FeaturesType, Learne
  * Abstraction for a model for prediction tasks (regression and classification).
  *
  * @tparam FeaturesType  Type of features.
- *                       E.g., [[org.apache.spark.mllib.linalg.VectorUDT]] for vector features.
- * @tparam M  Specialization of [[PredictionModel]].  If you subclass this type, use this type
+ *                       E.g., SparkRandomForestRegressionModelorg.apache.spark.mllib.linalg.VectorUDT for vector features.
+ * @tparam M  Specialization of SparkRandomForestRegressionModelPredictionModel.  If you subclass this type, use this type
  *            parameter to specify the concrete type for the corresponding model.
  */
 @DeveloperApi
@@ -156,7 +156,7 @@ abstract class PredictionModel[FeaturesType, M <: PredictionModel[FeaturesType, 
   /**
    * Returns the SQL DataType corresponding to the FeaturesType type parameter.
    *
-   * This is used by [[validateAndTransformSchema()]].
+   * This is used by SparkRandomForestRegressionModelvalidateAndTransformSchema().
    * This workaround is needed since SQL has different APIs for Scala and Java.
    *
    * The default value is VectorUDT, but it may be overridden if FeaturesType is not Vector.
@@ -168,11 +168,11 @@ abstract class PredictionModel[FeaturesType, M <: PredictionModel[FeaturesType, 
   }
 
   /**
-   * Transforms dataset by reading from [[featuresCol]], calling `predict`, and storing
-   * the predictions as a new column [[predictionCol]].
+   * Transforms dataset by reading from SparkRandomForestRegressionModelfeaturesCol, calling `predict`, and storing
+   * the predictions as a new column SparkRandomForestRegressionModelpredictionCol.
    *
    * @param dataset input dataset
-   * @return transformed dataset with [[predictionCol]] of type [[Double]]
+   * @return transformed dataset with SparkRandomForestRegressionModelpredictionCol of type SparkRandomForestRegressionModelDouble
    */
   override def transform(dataset: DataFrame): DataFrame = {
     transformSchema(dataset.schema, logging = true)
@@ -195,7 +195,7 @@ abstract class PredictionModel[FeaturesType, M <: PredictionModel[FeaturesType, 
 
   /**
    * Predict label for the given features.
-   * This internal method is used to implement [[transform()]] and output [[predictionCol]].
+   * This internal method is used to implement SparkRandomForestRegressionModeltransform() and output SparkRandomForestRegressionModelpredictionCol.
    */
   def predict(features: FeaturesType): Double
 }

@@ -15,7 +15,7 @@
  */
 package org.trustedanalytics.sparktk.models
 
-import org.apache.spark.ml.attribute.{NominalAttribute, NumericAttribute, AttributeGroup}
+import org.apache.spark.ml.attribute.{ NominalAttribute, NumericAttribute, AttributeGroup }
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.sql.Row
