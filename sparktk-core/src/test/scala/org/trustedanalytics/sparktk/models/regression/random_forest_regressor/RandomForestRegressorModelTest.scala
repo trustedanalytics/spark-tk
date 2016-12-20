@@ -32,14 +32,39 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
     new GenericRow(Array[Any](0, 44.3117586448, 3.3458963222)))
   val schema = new FrameSchema(List(Column("label", DataTypes.int32), Column("obs1", DataTypes.float64), Column("obs2", DataTypes.float64)))
 
+
   "RandomForestRegressorModel" should {
     "create a RandomForestRegressorModel" in {
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
       val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val featureImp = model.featureImportances()
 
       model shouldBe a[RandomForestRegressorModel]
+      assert(featureImp.size == 2)
+      assert(featureImp("obs1") > featureImp("obs2"))
+    }
+
+    "create a RandomForestRegressorModel with some categorical features" in {
+      val rows: Array[Row] = Array(
+        new GenericRow(Array[Any](1, 19.8446136104, 0)),
+        new GenericRow(Array[Any](1, 16.8973559126, 0)),
+        new GenericRow(Array[Any](0, 44.3117586448, 1)),
+        new GenericRow(Array[Any](0, 34.6334526911, 1)))
+      val frameSchema = new FrameSchema(List(Column("label", DataTypes.int32), Column("continuous_obs", DataTypes.float64),
+        Column("categorical_obs", DataTypes.int32)))
+
+      val rdd = sparkContext.parallelize(rows)
+      val frame = new Frame(rdd, frameSchema)
+      val featureCategories = Map("categorical_obs" -> 2)
+      val model = RandomForestRegressorModel.train(frame, "label", List("continuous_obs", "categorical_obs"),
+        1, "variance", 4, 100, 10, Some(featureCategories), None)
+      val featureImp = model.featureImportances()
+
+      model shouldBe a[RandomForestRegressorModel]
+      assert(featureImp.size == 2)
+      assert(featureImp("continuous_obs") > featureImp("categorical_obs"))
     }
 
     "throw an IllegalArgumentException for empty observationColumns" in {
