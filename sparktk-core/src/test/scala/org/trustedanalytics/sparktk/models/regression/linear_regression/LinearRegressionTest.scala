@@ -40,7 +40,7 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
       model shouldBe a[LinearRegressionModel]
       model.valueColumn should equal("label")
-      model.observationColumnsTrain should equal(List("obs1"))
+      model.observationColumns should equal(List("obs1"))
       model.intercept should equal(0.0)
       model.weights should equal(List(1.0))
       model.r2 should equal(1.0)

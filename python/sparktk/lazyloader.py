@@ -85,12 +85,14 @@ def get_lazy_loader(instance, name, parent_path=None, package_name='sparktk', im
 
 def create_lazy_loader(path, package_name, implicit_kwargs):
     """Creates a lazy loader access object for the given path, usually an absolute path"""
+    module_name = get_module_name(path, package_name)
     class_name = ''.join([piece.capitalize()
-                          for piece in get_module_name(path, package_name).split('.')]) + LazyLoader.__name__
+                          for piece in module_name.replace('_', '.').split('.')]) + LazyLoader.__name__
     logger.debug("create_lazy_loader(path=%s, package_name=%s, implicit_kwargs=%s) --> class_name=%s", path, package_name, implicit_kwargs, class_name)
     lazy_loader_class = create_class_type(class_name, baseclass=LazyLoader)
     init_lazy_loader_class(lazy_loader_class, path, package_name, implicit_kwargs)
     instance = lazy_loader_class()
+    instance.__name__ = module_name
     return instance
 
 

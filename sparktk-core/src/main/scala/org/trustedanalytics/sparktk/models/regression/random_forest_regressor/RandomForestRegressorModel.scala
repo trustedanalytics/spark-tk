@@ -16,12 +16,8 @@
 package org.trustedanalytics.sparktk.models.regression.random_forest_regressor
 
 import org.apache.spark.SparkContext
-import org.apache.spark.ml.attribute.{ AttributeGroup, NumericAttribute, NominalAttribute }
 import org.apache.spark.ml.feature.VectorAssembler
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.SQLContext
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.regression.{ RandomForestRegressor => SparkDeepRandomForestRegressor }
 import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.regression.{ RandomForestRegressionModel => SparkDeepRandomRegressionModel }
 import org.trustedanalytics.sparktk.TkContext
@@ -212,18 +208,18 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    *
    * @param frame - A frame whose labels are to be predicted. By default, predict is run on the same columns over which
    *              the model is trained.
-   * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted.
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
    *                By default, we predict the labels over columns the RandomForestRegressorModel
    * @return A new frame consisting of the existing columns of the frame and a new column with predicted value for
    *         each observation.
    */
-  def predict(frame: Frame, observationColumnsPredict: Option[List[String]] = None): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
-    if (observationColumnsPredict.isDefined) {
-      require(observationColumnsPredict.get.length == observationColumns.length, "Number of columns for train and predict should be same")
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = observationColumnsPredict.getOrElse(observationColumns)
+    val rfColumns = observationColumns.getOrElse(this.observationColumns)
     val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 
@@ -239,7 +235,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    *
    * @param frame                  Frame to test the random forest regression model on
    * @param valueColumn            Column name containing the value of each observation
-   * @param observationColumnsTest List of column(s) containing the observations
+   * @param observationColumns List of column(s) containing the observations
    * @return regression metrics
    *         The data returned is composed of the following:
    *         'explainedVariance' : double
@@ -255,12 +251,12 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    *         'rootMeanSquaredError' : double
    *         The square root of the mean squared error
    */
-  def test(frame: Frame, valueColumn: String, observationColumnsTest: Option[List[String]] = None) = {
-    if (observationColumnsTest.isDefined) {
-      require(observationColumnsTest.get.length == observationColumns.length, "Number of columns for train and predict should be same")
+  def test(frame: Frame, valueColumn: String, observationColumns: Option[List[String]] = None) = {
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = observationColumnsTest.getOrElse(observationColumns)
+    val rfColumns = observationColumns.getOrElse(this.observationColumns)
     val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 

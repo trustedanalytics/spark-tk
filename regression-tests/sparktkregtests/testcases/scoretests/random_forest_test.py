@@ -37,7 +37,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_class_scoring(self):
         """Test random forest classifier scoring model"""
         rfmodel = self.context.models.classification.random_forest_classifier.train(
-            self.frame, "class", ["feat1", "feat2"], seed=0)
+            self.frame, ["feat1", "feat2"], "class", seed=0)
         
         result_frame = rfmodel.predict(self.frame)
         preddf = result_frame.to_pandas(result_frame.count())

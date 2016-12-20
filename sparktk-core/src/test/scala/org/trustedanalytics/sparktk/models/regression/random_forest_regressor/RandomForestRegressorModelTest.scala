@@ -19,7 +19,6 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
-import org.trustedanalytics.sparktk.models.classification.random_forest_classifier.RandomForestClassifierModel
 import org.trustedanalytics.sparktk.models.regression.RegressionTestMetrics
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
@@ -87,7 +86,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
     "return predictions when calling score method" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestClassifierModel.train(frame, "label", List("obs1", "obs2"), 2, 1, "gini", 4, 100, 10, None, None)
+      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
 
       // Test data for scoring
       val inputArray = Array[Any](16.8973559126, 2.6933495054)

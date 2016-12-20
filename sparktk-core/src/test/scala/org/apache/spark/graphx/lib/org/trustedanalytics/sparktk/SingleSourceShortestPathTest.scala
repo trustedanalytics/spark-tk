@@ -16,6 +16,7 @@
 package org.apache.spark.graphx.lib.org.trustedanalytics.sparktk
 
 import org.apache.spark.graphx._
+import org.apache.spark.sql.Row
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
@@ -47,36 +48,12 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
     }
 
     "calculate the single source shortest path" in {
-      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1)
-      singleSourceShortestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2.0, List(1, 2, 4))),
-        (1, PathCalculation(0.0, List(1))),
-        (6, PathCalculation(1.0, List(1, 6))),
-        (3, PathCalculation(2.0, List(1, 2, 3))),
-        (7, PathCalculation(1.0, List(1, 7))),
-        (5, PathCalculation(3.0, List(1, 2, 3, 5))),
-        (2, PathCalculation(1.0, List(1, 2))))
+      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, None, None, (x: String) => x)
+      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2.0, List("SFO", "ORD", "PDX"), "PDX"))
     }
-
     "calculate the single source shortest paths with edge weights" in {
-      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, Some((x: Double) => x))
-      singleSourceShortestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2700.0, List(1, 2, 4))),
-        (1, PathCalculation(0.0, List(1))),
-        (6, PathCalculation(500.0, List(1, 6))),
-        (3, PathCalculation(2600.0, List(1, 2, 3))),
-        (7, PathCalculation(1100.0, List(1, 7))),
-        (5, PathCalculation(3300.0, List(1, 2, 3, 5))),
-        (2, PathCalculation(1800.0, List(1, 2))))
-    }
-
-    "calculate the single source shortest paths with maximum path length constraint" in {
-      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, None, Some(2))
-      singleSourceShortestPathGraph.vertices.collect shouldBe Array((4, PathCalculation(2.0, List(1, 2, 4))),
-        (1, PathCalculation(0.0, List(1))),
-        (6, PathCalculation(1.0, List(1, 6))),
-        (3, PathCalculation(2.0, List(1, 2, 3))),
-        (7, PathCalculation(1.0, List(1, 7))),
-        (5, PathCalculation(Double.PositiveInfinity, List())),
-        (2, PathCalculation(1.0, List(1, 2))))
+      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, Some((x: Double) => x), None, (t: String) => t)
+      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2700.0, List("SFO", "ORD", "PDX"), "PDX"))
     }
   }
 }

@@ -36,7 +36,7 @@ def test_naive_bayes(tc):
     logger.info(f.inspect())
 
     logger.info("training the model on the frame")
-    model = tc.models.classification.naive_bayes.train(f, 'Class', ['Dim_1', 'Dim_2', 'Dim_3'])
+    model = tc.models.classification.naive_bayes.train(f, ['Dim_1', 'Dim_2', 'Dim_3'], 'Class')
     logger.info("predicting the class using the model and the frame")
     predicted_frame = model.predict(f)
     assert(set(predicted_frame.column_names) == set(['Class', 'Dim_1', 'Dim_2', 'Dim_3','predicted_class']))

@@ -137,7 +137,7 @@ object LinearRegressionModel extends TkSaveableObject {
 /**
  *
  * @param valueColumn Frame's column storing the value of the observation
- * @param observationColumnsTrain Frame's column(s) storing the observations
+ * @param observationColumns Frame's column(s) storing the observations
  * @param intercept The intercept of the trained model
  * @param weights Weights of the trained model
  * @param explainedVariance The explained variance regression score
@@ -150,7 +150,7 @@ object LinearRegressionModel extends TkSaveableObject {
  * @param sparkModel spark ml linear regression model
  */
 case class LinearRegressionModel(valueColumn: String,
-                                 observationColumnsTrain: Seq[String],
+                                 observationColumns: Seq[String],
                                  intercept: Double,
                                  weights: Seq[Double],
                                  explainedVariance: Double,
@@ -163,7 +163,7 @@ case class LinearRegressionModel(valueColumn: String,
                                  sparkModel: SparkLinearRegressionModel) extends Serializable with Model {
 
   // TkLinearRegressionModel, used to accessing protected methods in the Spark LinearRegressionModel
-  lazy val tkLinearRegModel = new TkLinearRegressionModel(LinearRegressionData(sparkModel, observationColumnsTrain, valueColumn))
+  lazy val tkLinearRegModel = new TkLinearRegressionModel(LinearRegressionData(sparkModel, observationColumns, valueColumn))
 
   val predictionColumn = "predicted_value"
   val featuresName = "features"
@@ -173,7 +173,7 @@ case class LinearRegressionModel(valueColumn: String,
    *
    * @param frame                  Frame to test the linear regression model on
    * @param valueColumn            Column name containing the value of each observation
-   * @param observationColumnsTest List of column(s) containing the observations
+   * @param observationColumns List of column(s) containing the observations
    * @return linear regression metrics
    *         The data returned is composed of the following:
    *         'explainedVariance' : double
@@ -187,15 +187,15 @@ case class LinearRegressionModel(valueColumn: String,
    *         'rootMeanSquaredError' : double
    *         The square root of the mean squared error
    */
-  def test(frame: Frame, valueColumn: String, observationColumnsTest: Option[List[String]]) = {
-    if (observationColumnsTest.isDefined) {
-      require(observationColumnsTrain.length == observationColumnsTest.get.length, "Number of columns for train and test should be same")
+  def test(frame: Frame, valueColumn: String, observationColumns: Option[List[String]]) = {
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
 
     val testFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
-    val observationColumns = observationColumnsTest.getOrElse(observationColumnsTrain)
+    val lrColumns = observationColumns.getOrElse(this.observationColumns)
 
-    val trainVectors = new VectorAssembler().setInputCols(observationColumns.toArray).setOutputCol(featuresName)
+    val trainVectors = new VectorAssembler().setInputCols(lrColumns.toArray).setOutputCol(featuresName)
 
     val testDataFrame: DataFrame = trainVectors.transform(testFrame)
 
@@ -218,7 +218,7 @@ case class LinearRegressionModel(valueColumn: String,
     require(frame != null, "require frame to predict")
 
     val predictFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
-    val trainVectors = new VectorAssembler().setInputCols(observationColumns.getOrElse(observationColumnsTrain.toList).toArray).setOutputCol(featuresName)
+    val trainVectors = new VectorAssembler().setInputCols(observationColumns.getOrElse(this.observationColumns.toList).toArray).setOutputCol(featuresName)
 
     val predictDataFrame: DataFrame = trainVectors.transform(predictFrame)
 
@@ -242,7 +242,7 @@ case class LinearRegressionModel(valueColumn: String,
       sparkModel.write.save(path)
     val formatVersion: Int = 1
     val tkMetadata = LinearRegressionModelMetaData(valueColumn,
-      observationColumnsTrain,
+      observationColumns,
       intercept,
       weights.toArray,
       explainedVariance,
@@ -272,7 +272,7 @@ case class LinearRegressionModel(valueColumn: String,
   }
 
   override def input(): Array[Field] = {
-    val obsCols = observationColumnsTrain
+    val obsCols = observationColumns
     var input = Array[Field]()
     obsCols.foreach { name =>
       input = input :+ Field(name, "Double")

@@ -51,15 +51,6 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         for _, row in labels.iterrows():
             self.assertEqual(row["actual"], row["predicted_label"])
 
-    def test_bad_predict_frame_type(self):
-        """test invalid frame on predict"""
-        log_model = self.context.models.classification.logistic_regression.train(
-            self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
-            'res', num_classes=2)
-        with self.assertRaisesRegexp(
-                Exception, "predict\(\) takes exactly 3 arguments"):
-            log_model.predict(7)
-
     def test_bad_predict_observation(self):
         """test invalid observations on predict"""
         log_model = self.context.models.classification.logistic_regression.train(
@@ -67,7 +58,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
             'res', num_classes=2)
         with self.assertRaisesRegexp(
                 Exception,
-                ".*Integer cannot be cast to .*LinearSeqOptimized"):
+                "Value for observation_columns is of type <type 'int'>.  Expected type str or list of str."):
             log_model.predict(self.binomial_frame, 7)
 
     def test_bad_predict_observation_value(self):
@@ -103,8 +94,9 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "Invalid column name blah provided"):
             test_result = log_model.test(
-                self.binomial_frame, 'res',
-                ["vec0", "vec1", "blah", "vec3", "vec4"])
+                self.binomial_frame,
+                ["vec0", "vec1", "blah", "vec3", "vec4"],
+                'res')
 
     def test_label_column_type_train(self):
         """test invalid label column type name in train"""
@@ -264,8 +256,8 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res")
         values = log_model.test(
-            self.binomial_frame, "res",
-            ["vec0", "vec1", "vec2", "vec3", "vec4"])
+            self.binomial_frame,
+            ["vec0", "vec1", "vec2", "vec3", "vec4"], "res")
 
         tp_f = self.binomial_frame.copy()
         tp_f.filter(lambda x: x['res'] == 1 and x['actual'] == 1)
