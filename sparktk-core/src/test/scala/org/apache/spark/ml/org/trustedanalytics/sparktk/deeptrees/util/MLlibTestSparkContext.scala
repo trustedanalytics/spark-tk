@@ -18,29 +18,19 @@ package org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.util
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{ SparkConf, SparkContext }
 import org.scalatest.{ BeforeAndAfterAll, Suite }
+import org.trustedanalytics.sparktk.testutils.TestingSparkContext
 
 trait MLlibTestSparkContext extends BeforeAndAfterAll { self: Suite =>
-  @transient var sc: SparkContext = _
-  @transient var sqlContext: SQLContext = _
+  var sc: SparkContext = null
+  var sqlContext: SQLContext = _
 
   override def beforeAll() {
-    super.beforeAll()
-    val conf = new SparkConf()
-      .setMaster("local[2]")
-      .setAppName("MLlibUnitTest")
-    sc = new SparkContext(conf)
-    SQLContext.clearActive()
-    sqlContext = new SQLContext(sc)
-    SQLContext.setActive(sqlContext)
+    sc = TestingSparkContext.sparkContext
+    sqlContext = SQLContext.getOrCreate(sc)
   }
 
   override def afterAll() {
-    sqlContext = null
-    SQLContext.clearActive()
-    if (sc != null) {
-      sc.stop()
-    }
+    TestingSparkContext.cleanUp()
     sc = null
-    super.afterAll()
   }
 }
