@@ -49,7 +49,7 @@ def train(frame,
     :param max_depth: (int) Maximum depth of the tree. Default is 4
     :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100
     :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
-    :param categorical_features_info: (Optional(Dict(str -> int)) Arity of categorical features. Entry (name -> k) indicates that feature 'name' is categorical
+    :param categorical_features_info: (Optional(Dict(str:int)) Arity of categorical features. Entry (name -> k) indicates that feature 'name' is categorical
                                    with 'k' categories indexed from 0:{0,1,...,k-1}
     :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.
                                  Supported values "auto","all","sqrt","log2","onethird".
@@ -154,7 +154,7 @@ class RandomForestRegressorModel(PropertiesObject):
         <progress>
 
         >>> random_forest_test_return
-        explained_variance = 1.0
+        explained_variance       = 0.25
         mean_absolute_error      = 0.0
         mean_squared_error       = 0.0
         r2                       = 1.0

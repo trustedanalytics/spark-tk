@@ -34,7 +34,10 @@ def train(frame,
           max_bins = 100,
           seed = None,
           categorical_features_info = None,
-          feature_subset_category = None):
+          feature_subset_category = None,
+          min_instances_per_node = None,
+          sub_sampling_rate = None
+          ):
     """
     Creates a Random Forest Classifier Model by training on the given frame
 
@@ -51,12 +54,14 @@ def train(frame,
     :param max_depth: (int) Maximum depth of the tree. Default is 4
     :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100
     :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
-    :param categorical_features_info: (Optional(Dict(Int:Int))) Arity of categorical features. Entry (n-> k) indicates
-                                      that feature 'n' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
+    :param categorical_features_info: (Optional(Dict(str:int))) Arity of categorical features. Entry (name-> k) indicates
+                                      that feature 'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
     :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.
                                  Supported values "auto","all","sqrt","log2","onethird".
                                  If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
                                  ; if num_trees > 1, set to "sqrt"
+    :param min_instances_per_node: (Optional(int)) Minimum number of instances each child must have after split. Default is 1
+    :param sub_sampling_rate: (Optional(double)) Fraction of the training data used for learning each decision tree. Default is 1.0
 
     :return: (RandomForestClassifierModel) The trained random forest classifier model
 
@@ -88,7 +93,9 @@ def train(frame,
                                    max_bins,
                                    seed,
                                    __get_categorical_features_info(tc, categorical_features_info),
-                                   tc.jutils.convert.to_scala_option(feature_subset_category))
+                                   tc.jutils.convert.to_scala_option(feature_subset_category),
+                                   tc.jutils.convert.to_scala_option(min_instances_per_node),
+                                   tc.jutils.convert.to_scala_option(sub_sampling_rate))
 
     return RandomForestClassifierModel(tc, scala_model)
 
@@ -242,6 +249,23 @@ class RandomForestClassifierModel(PropertiesObject):
     def feature_subset_category(self):
         """feature subset category of the trained model"""
         return self._tc.jutils.convert.from_scala_option(self._scala.featureSubsetCategory())
+
+    @property
+    def min_instances_per_node(self):
+        """minimum number of instances per node of the trained model"""
+        return self._tc.jutils.convert.from_scala_option(self._scala.minInstancesPerNode())
+
+    @property
+    def sub_sampling_rate(self):
+        """sub sampling rate of the trained model"""
+        return self._tc.jutils.convert.from_scala_option(self._scala.subSamplingRate())
+
+    def feature_importances(self):
+        """
+        Feature importances for trained model. Higher values indicate more important features.
+        :return: (Dict(str -> int)) A dictionary of feature names and importances
+        """
+        return self._tc.jutils.convert.scala_map_to_python(self._scala.featureImportances())
 
     def predict(self, frame, columns=None):
         """

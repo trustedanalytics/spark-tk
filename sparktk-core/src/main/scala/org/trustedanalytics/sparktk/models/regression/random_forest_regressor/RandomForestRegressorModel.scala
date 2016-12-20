@@ -55,6 +55,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
   }
 
   /**
+   * Train a RandomForestRegressorModel
    * @param frame The frame containing the data to train on
    * @param valueColumn Column name containing the value for each observation
    * @param observationColumns Column(s) containing the observations
@@ -236,10 +237,10 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
   /**
    * Get the predictions for observations in a test frame
    *
-   * @param frame                  Frame to test the linear regression model on
+   * @param frame                  Frame to test the random forest regression model on
    * @param valueColumn            Column name containing the value of each observation
    * @param observationColumnsTest List of column(s) containing the observations
-   * @return linear regression metrics
+   * @return regression metrics
    *         The data returned is composed of the following:
    *         'explainedVariance' : double
    *         The explained variance regression score.
