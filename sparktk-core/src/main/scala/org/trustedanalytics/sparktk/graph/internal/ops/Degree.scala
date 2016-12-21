@@ -52,6 +52,6 @@ case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
     }
     val degrees = state.graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
 
-    new Frame(state.graphFrame.vertices.join(degrees, col(outputName), "left").na.fill(0.0, Array(outputName)))
+    new Frame(state.graphFrame.vertices.join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left").drop(degrees(GraphFrame.ID)).na.fill(0.0, Array(outputName)))
   }
 }

@@ -59,6 +59,6 @@ case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeigh
       case "undirected" => (AggregateMessages.edge(edgeWeight), AggregateMessages.edge(edgeWeight))
     }
     val weightedDegrees = graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
-    new Frame(weightedDegrees)
+    new Frame(state.graphFrame.vertices.join(weightedDegrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(weightedDegrees(GraphFrame.ID)), "left").drop(weightedDegrees(GraphFrame.ID)).na.fill(0.0, Array(outputName)))
   }
 }
