@@ -92,6 +92,29 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
 	#validate accuracy metric of one of the models
 	self.assertEquals(grid_points[2].metrics.accuracy, 0.8745)
 
+    def test_multiple_models(self):
+        """Test output of grid search on muliple classifiers"""
+        grid_result = self.context.models.grid_search(
+            self.frame, self.frame,
+            [(self.context.models.classification.svm,
+            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
+            "label_column":"res",
+            "num_iterations": 5,
+            "step_size": 0.01}),
+            (self.context.models.classification.logistic_regression,
+            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
+            "label_column":"res",
+            "num_iterations": 15,
+            "step_size": 0.001}),
+            (self.context.models.classification.random_forest_classifier,
+            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
+            "label_column":"res",
+            "num_classes": 2,
+            "num_trees": 1})])
+
+        #validate number of models in the grid
+        self.assertEqual(len(grid_result.grid_points), 3)
+
     def test_find_best(self):
         """Test find best in grid_search"""
         grid_result = self.context.models.grid_search(
@@ -177,4 +200,3 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
 
 if __name__=="__main__":
     unittest.main()
-
