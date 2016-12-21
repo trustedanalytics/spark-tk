@@ -35,8 +35,7 @@ class scorer(object):
         # set port
         port_config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
-            config.root, "regression-tests",
-            "sparktkregtests", "lib", "port.ini"))
+            config.root, "regression-tests", "sparktkregtests", "lib", "port.ini"))
         port_config.read(filepath)
         self.port = port_config.get('port', port_id)
         self.scoring_process = None
