@@ -281,9 +281,13 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    * Saves this model to a file
    * @param sc active SparkContext
    * @param path save to path
+   * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
    */
-  def save(sc: SparkContext, path: String): Unit = {
-    sparkModel.save(path)
+  def save(sc: SparkContext, path: String, overwrite: Boolean = false): Unit = {
+    if (overwrite)
+      sparkModel.write.overwrite().save(path)
+    else
+      sparkModel.write.save(path)
     val formatVersion: Int = 1
     val tkMetadata = RandomForestRegressorModelTkMetaData(valueColumn,
       observationColumns,
@@ -330,7 +334,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, tmpDir.toString)
+      save(sc, tmpDir.toString, overwrite = true)
       ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestRegressorModel].getName, tmpDir)
     }
     finally {

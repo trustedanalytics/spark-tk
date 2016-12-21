@@ -196,7 +196,7 @@ class LinearRegressionModel(PropertiesObject):
     @property
     def observation_columns(self):
         """List of column(s) containing the observations."""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnsTrain())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
 
     @property
     def intercept(self):

@@ -227,12 +227,16 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     }
 
     val rfColumns = observationColumns.getOrElse(this.observationColumns)
+    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val trainFrame = frameRdd.toLabeledDataFrame(labelColumn, rfColumns,
+      featuresName, labelNumClasses = Some(numClasses))
     val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 
     sparkModel.setFeaturesCol(featuresName)
     sparkModel.setPredictionCol("predicted_class")
-    val predictFrame = sparkModel.transform(testFrame)
+    val toIntUdf = udf { s: Double => s.toInt }
+    val predictFrame = sparkModel.transform(testFrame).withColumn("predicted_class", toIntUdf(col("predicted_class")))
 
     new Frame(predictFrame.drop(col(featuresName)))
   }
@@ -286,9 +290,13 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
    * Saves this model to a file
    * @param sc active SparkContext
    * @param path save to path
+   * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
    */
-  def save(sc: SparkContext, path: String): Unit = {
-    sparkModel.save(path)
+  def save(sc: SparkContext, path: String, overwrite: Boolean = false): Unit = {
+    if (overwrite)
+      sparkModel.write.overwrite().save(path)
+    else
+      sparkModel.write.save(path)
     val formatVersion: Int = 1
     val tkMetadata = RandomForestClassifierModelTkMetaData(observationColumns,
       labelColumn,
@@ -336,7 +344,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, tmpDir.toString)
+      save(sc, tmpDir.toString, overwrite = true)
       ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestClassifierModel].getName, tmpDir)
     }
     finally {

@@ -327,7 +327,7 @@ class RandomForestClassifierModel(PropertiesObject):
         :param path: (str) Path to save
         """
 
-        self._scala.save(self._tc._scala_sc, path)
+        self._scala.save(self._tc._scala_sc, path, False)
 
     def export_to_mar(self, path):
         """
