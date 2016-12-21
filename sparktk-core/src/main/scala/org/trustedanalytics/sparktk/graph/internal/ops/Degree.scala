@@ -51,6 +51,7 @@ case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
       case "undirected" => (lit(1), lit(1))
     }
     val degrees = state.graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
-    new Frame(degrees)
+
+    new Frame(state.graphFrame.vertices.join(degrees, col(outputName), "left").na.fill(0.0, Array(outputName)))
   }
 }
