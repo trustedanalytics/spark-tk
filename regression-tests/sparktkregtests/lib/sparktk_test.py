@@ -26,7 +26,7 @@ import sparktk as stk
 
 import config
 from threading import Lock
-udf_lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"udftestlib")
+udf_lib_path = os.path.join(config.root, "regression-tests", "sparktkregtests", "lib" ,"udftestlib")
 udf_files = [os.path.join(udf_lib_path, f) for f in os.listdir(udf_lib_path)]
 
 lock = Lock()
