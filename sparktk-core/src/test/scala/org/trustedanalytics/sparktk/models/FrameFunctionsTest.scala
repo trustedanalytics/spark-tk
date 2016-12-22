@@ -36,11 +36,11 @@ class FrameFunctionsTest extends TestingSparkContextWordSpec with Matchers {
 
       val frameRDD = new FrameRdd(schema, sparkContext.parallelize(rows))
       val labelCol = "has_diabetes"
-      val featureCols = List("age", "weight", "gender")
+      val observationCols = List("age", "weight", "gender")
       val categoricalFeatures = Map("gender" -> 2)
 
       // Convert to labeled frame with categorical label
-      val dfWithCategoricalLabel = frameRDD.toLabeledDataFrame(labelCol, featureCols,
+      val dfWithCategoricalLabel = frameRDD.toLabeledDataFrame(observationCols, labelCol,
         "features", Some(categoricalFeatures), Some(2))
 
       val dfSchema = dfWithCategoricalLabel.schema
@@ -67,10 +67,10 @@ class FrameFunctionsTest extends TestingSparkContextWordSpec with Matchers {
 
       val frameRDD = new FrameRdd(schema, sparkContext.parallelize(rows))
       val labelCol = "has_diabetes"
-      val featureCols = List("age", "weight", "gender")
+      val observationCols = List("age", "weight", "gender")
 
       // Convert to labeled frame with continuous features and label
-      val dfWithContinuousLabel = frameRDD.toLabeledDataFrame(labelCol, featureCols, "features")
+      val dfWithContinuousLabel = frameRDD.toLabeledDataFrame(observationCols, labelCol, "features")
 
       val dfSchema = dfWithContinuousLabel.schema
       val contFeatureMetadata = AttributeGroup.fromStructField(dfSchema("features"))

@@ -36,7 +36,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val model = RandomForestRegressorModel.train(frame, List("obs1", "obs2"), "label", 1, "variance", 4, 100, 10, None, None)
       val featureImp = model.featureImportances()
 
       model shouldBe a[RandomForestRegressorModel]
@@ -56,7 +56,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, frameSchema)
       val featureCategories = Map("categorical_obs" -> 2)
-      val model = RandomForestRegressorModel.train(frame, "label", List("continuous_obs", "categorical_obs"),
+      val model = RandomForestRegressorModel.train(frame, List("continuous_obs", "categorical_obs"), "label",
         1, "variance", 4, 100, 10, Some(featureCategories), None)
       val featureImp = model.featureImportances()
 
@@ -70,7 +70,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
 
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
-        val model = RandomForestRegressorModel.train(frame, "label", List(), 1, "variance", 4, 100, 10, None, None)
+        val model = RandomForestRegressorModel.train(frame, List(), "label", 1, "variance", 4, 100, 10, None, None)
       }
     }
 
@@ -79,14 +79,14 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
 
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
-        val model = RandomForestRegressorModel.train(frame, "", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+        val model = RandomForestRegressorModel.train(frame, List("obs1", "obs2"), "", 1, "variance", 4, 100, 10, None, None)
       }
     }
 
     "return predictions when calling score method" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val model = RandomForestRegressorModel.train(frame, List("obs1", "obs2"), "label", 1, "variance", 4, 100, 10, None, None)
 
       // Test data for scoring
       val inputArray = Array[Any](16.8973559126, 2.6933495054)
@@ -107,7 +107,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
 
-      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val model = RandomForestRegressorModel.train(frame, List("obs1", "obs2"), "label", 1, "variance", 4, 100, 10, None, None)
       val predictFrame = model.predict(frame)
       val labelIndex = predictFrame.schema.columnIndex("label")
       val predictIndex = predictFrame.schema.columnIndex("predicted_value")
@@ -121,8 +121,8 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
-      val metrics = model.test(frame, "label", None)
+      val model = RandomForestRegressorModel.train(frame, List("obs1", "obs2"), "label", 1, "variance", 4, 100, 10, None, None)
+      val metrics = model.test(frame)
 
       metrics shouldBe a[RegressionTestMetrics]
       metrics.r2 should equal(1.0)
@@ -132,7 +132,7 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
     "throw IllegalArgumentExceptions for invalid scoring parameters" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val model = RandomForestRegressorModel.train(frame, List("obs1", "obs2"), "label", 1, "variance", 4, 100, 10, None, None)
 
       intercept[IllegalArgumentException] {
         model.score(null)

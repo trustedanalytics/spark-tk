@@ -108,7 +108,7 @@ object RandomForestClassifierModel extends TkSaveableObject {
 
     //create RDD from the frame
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val trainFrame = frameRdd.toLabeledDataFrame(labelColumn, observationColumns,
+    val trainFrame = frameRdd.toLabeledDataFrame(observationColumns, labelColumn,
       featuresName, categoricalFeaturesInfo, Some(numClasses))
 
     val randomForestClassifier = new SparkDeepRandomForestClassifier()
@@ -228,12 +228,12 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
       require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = observationColumns.getOrElse(this.observationColumns)
-    frame.schema.validateColumnsExist(rfColumns)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    frame.schema.validateColumnsExist(observations)
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val trainFrame = frameRdd.toLabeledDataFrame(labelColumn, rfColumns,
+    val trainFrame = frameRdd.toLabeledDataFrame(observations, labelColumn,
       featuresName, labelNumClasses = Some(numClasses))
-    val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
+    val assembler = new VectorAssembler().setInputCols(observations.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 
     sparkModel.setFeaturesCol(featuresName)
@@ -259,13 +259,13 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     if (observationColumns.isDefined) {
       require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val rfColumns = observationColumns.getOrElse(this.observationColumns)
+    val observations = observationColumns.getOrElse(this.observationColumns)
     val label = labelColumn.getOrElse(this.labelColumn)
-    frame.schema.validateColumnsExist(rfColumns :+ label)
+    frame.schema.validateColumnsExist(observations :+ label)
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(rfColumns, label)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })

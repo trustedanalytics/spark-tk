@@ -53,8 +53,8 @@ object RandomForestRegressorModel extends TkSaveableObject {
   /**
    * Train a RandomForestRegressorModel
    * @param frame The frame containing the data to train on
-   * @param valueColumn Column name containing the value for each observation
    * @param observationColumns Column(s) containing the observations
+   * @param labelColumn Column name containing the label for each observation
    * @param numTrees Number of tress in the random forest. Default is 1
    * @param impurity Criterion used for information gain calculation. Default supported value is "variance"
    * @param maxDepth Maximum depth of the tree. Default is 4
@@ -70,8 +70,8 @@ object RandomForestRegressorModel extends TkSaveableObject {
    * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
    */
   def train(frame: Frame,
-            valueColumn: String,
             observationColumns: List[String],
+            labelColumn: String,
             numTrees: Int = 1,
             impurity: String = "variance",
             maxDepth: Int = 4,
@@ -83,7 +83,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
             subSamplingRate: Option[Double] = Some(1.0)): RandomForestRegressorModel = {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
-    require(StringUtils.isNotEmpty(valueColumn), "valueColumn must not be null nor empty")
+    require(StringUtils.isNotEmpty(labelColumn), "labelColumn must not be null nor empty")
     require(numTrees > 0, "numTrees must be greater than 0")
     require(maxDepth >= 0, "maxDepth must be non negative")
     require(StringUtils.equals(impurity, "variance"), "Only variance is a supported value for impurity " +
@@ -95,7 +95,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
     require(subSamplingRate.isEmpty || (subSamplingRate.get > 0 && subSamplingRate.get <= 1),
       "subSamplingRate must be in range (0, 1]")
     require(maxBins > 0, "maxBins must be greater than 0")
-    frame.schema.validateColumnsExist(observationColumns :+ valueColumn)
+    frame.schema.validateColumnsExist(observationColumns :+ labelColumn)
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
     val randomForestMinInstancesPerNode = minInstancesPerNode.getOrElse(1)
@@ -103,7 +103,7 @@ object RandomForestRegressorModel extends TkSaveableObject {
 
     //create RDD from the frame
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
-    val trainFrame = frameRdd.toLabeledDataFrame(valueColumn, observationColumns,
+    val trainFrame = frameRdd.toLabeledDataFrame(observationColumns, labelColumn,
       featuresName, categoricalFeaturesInfo)
 
     val randomForestRegressor = new SparkDeepRandomForestRegressor()
@@ -115,14 +115,14 @@ object RandomForestRegressorModel extends TkSaveableObject {
       .setSeed(seed)
       .setMinInstancesPerNode(randomForestMinInstancesPerNode)
       .setSubsamplingRate(randomForestSubSamplingRate)
-      .setLabelCol(valueColumn)
+      .setLabelCol(labelColumn)
       .setFeaturesCol(featuresName)
       .setCacheNodeIds(true) //Enable cache to speed up training
     val randomForestModel = randomForestRegressor.fit(trainFrame)
 
     RandomForestRegressorModel(randomForestModel,
-      valueColumn,
       observationColumns,
+      labelColumn,
       numTrees,
       impurity,
       maxDepth,
@@ -151,8 +151,8 @@ object RandomForestRegressorModel extends TkSaveableObject {
     val sparkModel = SparkDeepRandomRegressionModel.load(path)
 
     RandomForestRegressorModel(sparkModel,
-      m.valueColumn,
       m.observationColumns,
+      m.labelColumn,
       m.numTrees,
       m.impurity,
       m.maxDepth,
@@ -169,8 +169,8 @@ object RandomForestRegressorModel extends TkSaveableObject {
 /**
  * RandomForestRegressorModel
  * @param sparkModel Trained MLLib's RandomForestRegressor model
- * @param valueColumn Column name containing the value for each observation
  * @param observationColumns Column(s) containing the observations
+ * @param labelColumn Column name containing the label for each observation
  * @param numTrees Number of tress in the random forest. Default is 1
  * @param impurity Criterion used for information gain calculation. Default is "variance"
  * @param maxDepth Maximum depth of the tree. Default is 4
@@ -186,8 +186,8 @@ object RandomForestRegressorModel extends TkSaveableObject {
  * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
  */
 case class RandomForestRegressorModel private[random_forest_regressor] (sparkModel: SparkDeepRandomRegressionModel,
-                                                                        valueColumn: String,
                                                                         observationColumns: List[String],
+                                                                        labelColumn: String,
                                                                         numTrees: Int,
                                                                         impurity: String,
                                                                         maxDepth: Int,
@@ -221,9 +221,9 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
       require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = observationColumns.getOrElse(this.observationColumns)
-    frame.schema.validateColumnsExist(rfColumns)
-    val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
+    val observations = observationColumns.getOrElse(this.observationColumns).toArray
+    frame.schema.validateColumnsExist(observations)
+    val assembler = new VectorAssembler().setInputCols(observations).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 
     sparkModel.setFeaturesCol(featuresName)
@@ -237,8 +237,8 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    * Get the predictions for observations in a test frame
    *
    * @param frame                  Frame to test the random forest regression model on
-   * @param valueColumn            Column name containing the value of each observation
    * @param observationColumns List of column(s) containing the observations
+   * @param labelColumn            Column name containing the label of each observation
    * @return regression metrics
    *         The data returned is composed of the following:
    *         'explainedVariance' : double
@@ -254,21 +254,22 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
    *         'rootMeanSquaredError' : double
    *         The square root of the mean squared error
    */
-  def test(frame: Frame, valueColumn: String, observationColumns: Option[List[String]] = None) = {
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None) = {
     if (observationColumns.isDefined) {
       require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = observationColumns.getOrElse(this.observationColumns)
-    frame.schema.validateColumnsExist(rfColumns :+ valueColumn)
-    val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
+    frame.schema.validateColumnsExist(observations :+ label)
+    val assembler = new VectorAssembler().setInputCols(observations.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 
     sparkModel.setFeaturesCol(featuresName)
     sparkModel.setPredictionCol(predictionColumn)
     val predictFrame = sparkModel.transform(testFrame)
 
-    getRegressionMetrics(predictFrame, predictionColumn, valueColumn)
+    getRegressionMetrics(predictFrame, predictionColumn, label)
   }
 
   /**
@@ -293,8 +294,8 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     else
       sparkModel.write.save(path)
     val formatVersion: Int = 1
-    val tkMetadata = RandomForestRegressorModelTkMetaData(valueColumn,
-      observationColumns,
+    val tkMetadata = RandomForestRegressorModelTkMetaData(observationColumns,
+      labelColumn,
       numTrees,
       impurity,
       maxDepth,
@@ -349,8 +350,8 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
 
 /**
  * TK Metadata that will be stored as part of the model
- * @param valueColumn Column name containing the value for each observation
  * @param observationColumns Column(s) containing the observations
+ * @param labelColumn Column name containing the label for each observation
  * @param numTrees Number of tress in the random forest
  * @param impurity Criterion used for information gain calculation. Default supported value is "variance"
  * @param maxDepth Maximum depth of the tree. Default is 4
@@ -362,8 +363,8 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
  * @param minInstancesPerNode Minimum number of instances each child must have after split. Default is 1
  * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
  */
-case class RandomForestRegressorModelTkMetaData(valueColumn: String,
-                                                observationColumns: List[String],
+case class RandomForestRegressorModelTkMetaData(observationColumns: List[String],
+                                                labelColumn: String,
                                                 numTrees: Int,
                                                 impurity: String,
                                                 maxDepth: Int,

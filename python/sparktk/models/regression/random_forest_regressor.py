@@ -24,8 +24,8 @@ import os
 __all__ = ["train", "load", "RandomForestRegressorModel"]
 
 def train(frame,
-          value_column,
           observation_columns,
+          label_column,
           num_trees = 1,
           impurity = "variance",
           max_depth = 4,
@@ -42,8 +42,8 @@ def train(frame,
     ----------
 
     :param frame: (Frame) frame frame of training data
-    :param value_column: (str) Column name containing the value for each observation
     :param observation_columns: (list(str)) Column(s) containing the observations
+    :param label_column: (str) Column name containing the label for each observation
     :param num_trees: (int) Number of tress in the random forest. Default is 1
     :param impurity: (str) Criterion used for information gain calculation. Default value is "variance".
     :param max_depth: (int) Maximum depth of the tree. Default is 4
@@ -76,8 +76,8 @@ def train(frame,
     _scala_obj = get_scala_obj(tc)
     seed = int(os.urandom(2).encode('hex'), 16) if seed is None else seed
     scala_model = _scala_obj.train(frame._scala,
-                                   value_column,
                                    tc.jutils.convert.to_scala_list_string(observation_columns),
+                                   label_column,
                                    num_trees,
                                    impurity,
                                    max_depth,
@@ -131,8 +131,8 @@ class RandomForestRegressorModel(PropertiesObject):
         [5]      0  34.6334526911  3.6429838715
 
         >>> model = tc.models.regression.random_forest_regressor.train(frame,
-        ...                                                                'Class',
         ...                                                                ['Dim_1', 'Dim_2'],
+        ...                                                                'Class',
         ...                                                                num_trees=1,
         ...                                                                impurity="variance",
         ...                                                                max_depth=4,
@@ -153,7 +153,7 @@ class RandomForestRegressorModel(PropertiesObject):
         [4]      0  44.3117586448  3.3458963222                0.0
         [5]      0  34.6334526911  3.6429838715                0.0
 
-        >>> random_forest_test_return = model.test(frame, 'Class')
+        >>> random_forest_test_return = model.test(frame, label_column='Class')
         <progress>
 
         >>> random_forest_test_return
@@ -198,9 +198,9 @@ class RandomForestRegressorModel(PropertiesObject):
         return RandomForestRegressorModel(tc, scala_model)
 
     @property
-    def value_column(self):
-        """column containing the values used for model training"""
-        return self._scala.valueColumn()
+    def label_column(self):
+        """column containing the labels used for model training"""
+        return self._scala.labelColumn()
 
     @property
     def observation_columns(self):
@@ -262,7 +262,7 @@ class RandomForestRegressorModel(PropertiesObject):
         """
         return self._tc.jutils.convert.scala_map_to_python(self._scala.featureImportances())
 
-    def predict(self, frame, columns=None):
+    def predict(self, frame, observation_columns=None):
         """
         Predict the values for the data points.
 
@@ -274,17 +274,17 @@ class RandomForestRegressorModel(PropertiesObject):
 
         :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
                       over which the model is trained.
-        :param columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
+        :param observation_columns: (Optional(list[str])) Column(s) containing the observations whose labels are to be predicted.
                         By default, we predict the labels over columns the Random Forest model was trained on.
         :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted
                  value for each observation.
         """
 
-        c = self.__columns_to_option(columns)
+        c = self.__columns_to_option(observation_columns)
         from sparktk.frame.frame import Frame
         return Frame(self._tc,self._scala.predict(frame._scala, c))
 
-    def test(self, frame, value_column, observation_columns=None):
+    def test(self, frame, observation_columns=None, label_column=None):
         """
         Test the frame given the trained model
 
@@ -292,12 +292,13 @@ class RandomForestRegressorModel(PropertiesObject):
         ----------
 
         :param frame: (Frame) The frame to predict on
-        :param value_column: (String) Column name containing the value for each observation
         :param observation_columns: Optional(List[str]) List of column(s) containing the observations
+        :param label_column: Optional(String) Column name containing the label for each observation
         :return: (RegressionTestMetrics) RegressionTestMetrics object consisting of results from model test
         """
         obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
-        return RegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
+        label = self._tc.jutils.convert.to_scala_option(label_column)
+        return RegressionTestMetrics(self._scala.test(frame._scala, obs, label))
 
     def __columns_to_option(self, c):
         if c is not None:
