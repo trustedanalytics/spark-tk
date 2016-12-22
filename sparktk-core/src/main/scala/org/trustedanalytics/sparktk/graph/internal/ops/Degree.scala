@@ -40,7 +40,10 @@ trait DegreeSummarization extends BaseGraph {
 }
 
 case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
-  require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
+  require(degreeOption == "in" ||
+    degreeOption == "out" ||
+    degreeOption == "undirected",
+    "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 
   val outputName = "degree"
 
@@ -50,8 +53,21 @@ case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
       case "out" => (lit(0), lit(1))
       case "undirected" => (lit(1), lit(1))
     }
-    val degrees = state.graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
+    val degrees = state.graphFrame
+      .aggregateMessages
+      .sendToDst(dstMsg)
+      .sendToSrc(srcMsg)
+      .agg(sum(AggregateMessages.msg)
+        .as(outputName))
 
-    new Frame(state.graphFrame.vertices.join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left").drop(degrees(GraphFrame.ID)).na.fill(0.0, Array(outputName)))
+    // Join the isolated vertices into the return frame, set their degree to 0
+    // This is working around an anomolous property of the message sending system that
+    // isolated vertices(i.e. vertices with no edges) can not be sent, or send, messages
+    // which causes them to be dropped from the frame
+    val degreesWithIsolatedVertices = state.graphFrame.vertices
+      .join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left")
+      .drop(degrees(GraphFrame.ID))
+      .na.fill(0.0, Array(outputName))
+    new Frame(degreesWithIsolatedVertices)
   }
 }
