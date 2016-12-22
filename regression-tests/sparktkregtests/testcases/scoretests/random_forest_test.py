@@ -29,7 +29,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Build the required frame"""
         super(RandomForest, self).setUp()
 
-        schema = [("feat1", int), ("feat2", int), ("class", str)]
+        schema = [("feat1", int), ("feat2", int), ("class", int)]
         filename = self.get_file("rand_forest_class.csv")
 
         self.frame = self.context.frame.import_csv(filename, schema=schema)
