@@ -26,7 +26,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Build the required frame"""
         super(RandomForest, self).setUp()
 
-        schema = [("feat1", int), ("feat2", int), ("class", str)]
+        schema = [("feat1", int), ("feat2", int), ("class", int)]
         filename = self.get_file("rand_forest_class.csv")
 
         self.frame = self.context.frame.import_csv(filename, schema=schema)
@@ -49,7 +49,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         result_frame = model.predict(self.frame)
         preddf = result_frame.to_pandas(self.frame.count())
         for index, row in preddf.iterrows():
-            self.assertEqual(row['class'], str(row['predicted_class']))
+            self.assertEqual(row['class'], row['predicted_class'])
 
     def test_classifier_test(self):
         """Test test() method"""
@@ -100,7 +100,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_negative_max_bins(self):
         """Negative test for max_bins < 0"""
         with self.assertRaisesRegexp(
-                Exception, ".*invalid maxBins parameter.*"):
+                Exception, "maxBins must be greater than 0"):
             model = self.context.models.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", max_bins=-1)
 
@@ -108,7 +108,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Test for max_bins = 0; should throw exception"""
         with self.assertRaisesRegexp(
                 Exception,
-                "DecisionTree Strategy given invalid maxBins parameter"):
+                "maxBins must be greater than 0"):
             model = self.context.models.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", max_bins=0)
 

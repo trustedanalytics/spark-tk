@@ -138,6 +138,9 @@ class RandomForestRegressorModel(PropertiesObject):
         ...                                                                max_depth=4,
         ...                                                                max_bins=100)
 
+        >>> model.feature_importances()
+        {u'Dim_1': 1.0, u'Dim_2': 0.0}
+
         >>> predict_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
         >>> predict_frame.inspect()

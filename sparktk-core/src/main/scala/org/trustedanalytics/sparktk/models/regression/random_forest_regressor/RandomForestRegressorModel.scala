@@ -94,6 +94,8 @@ object RandomForestRegressorModel extends TkSaveableObject {
     require(minInstancesPerNode.isEmpty || minInstancesPerNode.get > 0, "minInstancesPerNode must be greater than 0")
     require(subSamplingRate.isEmpty || (subSamplingRate.get > 0 && subSamplingRate.get <= 1),
       "subSamplingRate must be in range (0, 1]")
+    require(maxBins > 0, "maxBins must be greater than 0")
+    frame.schema.validateColumnsExist(observationColumns :+ valueColumn)
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
     val randomForestMinInstancesPerNode = minInstancesPerNode.getOrElse(1)
@@ -220,6 +222,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     }
 
     val rfColumns = observationColumns.getOrElse(this.observationColumns)
+    frame.schema.validateColumnsExist(rfColumns)
     val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 
@@ -257,6 +260,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     }
 
     val rfColumns = observationColumns.getOrElse(this.observationColumns)
+    frame.schema.validateColumnsExist(rfColumns :+ valueColumn)
     val assembler = new VectorAssembler().setInputCols(rfColumns.toArray).setOutputCol(featuresName)
     val testFrame = assembler.transform(frame.dataframe)
 

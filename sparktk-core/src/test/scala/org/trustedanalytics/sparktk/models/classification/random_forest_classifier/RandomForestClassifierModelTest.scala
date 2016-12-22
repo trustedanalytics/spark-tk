@@ -18,6 +18,7 @@ package org.trustedanalytics.sparktk.models.classification.random_forest_classif
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
+import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ClassificationMetricValue, BinaryClassificationMetrics}
 import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
@@ -63,6 +64,41 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       model shouldBe a[RandomForestClassifierModel]
       assert(featureImp.size == 2)
       assert(featureImp("continuous_obs") > featureImp("categorical_obs"))
+    }
+
+    "predict should return predicted classes" in {
+      val rdd = sparkContext.parallelize(labeledPoint)
+      val frame = new Frame(rdd, schema)
+
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val predictFrame = model.predict(frame)
+      val labelIndex = predictFrame.schema.columnIndex("label")
+      val predictIndex = predictFrame.schema.columnIndex("predicted_class")
+
+      predictFrame.collect().foreach(row => {
+        assert(row.getInt(labelIndex) == row.getInt(predictIndex))
+      })
+    }
+
+    "test should return a classification metric" in {
+      val rdd = sparkContext.parallelize(labeledPoint)
+      val frame = new Frame(rdd, schema)
+
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val metrics = model.test(frame)
+      val confusionMatrix = metrics.confusionMatrix
+
+      metrics shouldBe a[ClassificationMetricValue]
+      assert(metrics.accuracy == 1.0)
+      assert(metrics.fMeasure == 1.0)
+      assert(metrics.precision == 1.0)
+      assert(metrics.recall == 1.0)
+      assert(confusionMatrix.numRows == 2)
+      assert(confusionMatrix.numColumns == 2)
+      assert(confusionMatrix.get("pos", "pos") == 2)
+      assert(confusionMatrix.get("pos", "neg") == 0)
+      assert(confusionMatrix.get("neg", "pos") == 0)
+      assert(confusionMatrix.get("neg", "neg") == 2)
     }
 
     "throw an IllegalArgumentException for empty observationColumns" in {

@@ -103,6 +103,20 @@ class RandomForestRegressorModelTest extends TestingSparkContextWordSpec with Ma
       }
     }
 
+    "predict should return predicted values" in {
+      val rdd = sparkContext.parallelize(labeledPoint)
+      val frame = new Frame(rdd, schema)
+
+      val model = RandomForestRegressorModel.train(frame, "label", List("obs1", "obs2"), 1, "variance", 4, 100, 10, None, None)
+      val predictFrame = model.predict(frame)
+      val labelIndex = predictFrame.schema.columnIndex("label")
+      val predictIndex = predictFrame.schema.columnIndex("predicted_value")
+
+      predictFrame.collect().foreach(row => {
+        assert(row.getInt(labelIndex).toDouble == row.getDouble(predictIndex))
+      })
+    }
+
     "test should return a regression metric" in {
 
       val rdd = sparkContext.parallelize(labeledPoint)

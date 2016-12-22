@@ -81,7 +81,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_negative_max_bins(self):
         """Negative test for max_bins < 0"""
         with self.assertRaisesRegexp(
-                Exception, ".*invalid maxBins parameter.*"):
+                Exception, "maxBins must be greater than 0"):
             model = self.context.models.regression.random_forest_regressor.train(
                 self.frame, "class", ["feat1", "feat2"], max_bins=-1)
 
@@ -89,7 +89,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Test for max_bins = 0; should not throw exception"""
         with self.assertRaisesRegexp(
                 Exception,
-                "DecisionTree Strategy given invalid maxBins parameter"):
+                "maxBins must be greater than 0"):
             model = self.context.models.regression.random_forest_regressor.train(
                 self.frame, "class", ["feat1", "feat2"], max_bins=0)
 

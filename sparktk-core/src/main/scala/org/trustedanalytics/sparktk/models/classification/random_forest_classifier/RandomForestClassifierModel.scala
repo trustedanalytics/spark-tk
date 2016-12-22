@@ -99,6 +99,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
     require(minInstancesPerNode.isEmpty || minInstancesPerNode.get > 0, "minInstancesPerNode must be greater than 0")
     require(subSamplingRate.isEmpty || (subSamplingRate.get > 0 && subSamplingRate.get <= 1),
       "subSamplingRate must be in range (0, 1]")
+    require(maxBins > 0, "maxBins must be greater than 0")
+    frame.schema.validateColumnsExist(observationColumns :+ labelColumn)
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
     val randomForestMinInstancesPerNode = minInstancesPerNode.getOrElse(1)
@@ -227,6 +229,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     }
 
     val rfColumns = observationColumns.getOrElse(this.observationColumns)
+    frame.schema.validateColumnsExist(rfColumns)
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val trainFrame = frameRdd.toLabeledDataFrame(labelColumn, rfColumns,
       featuresName, labelNumClasses = Some(numClasses))
@@ -256,13 +259,13 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     if (observationColumns.isDefined) {
       require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val observations = observationColumns.getOrElse(this.observationColumns)
+    val rfColumns = observationColumns.getOrElse(this.observationColumns)
     val label = labelColumn.getOrElse(this.labelColumn)
-
+    frame.schema.validateColumnsExist(rfColumns :+ label)
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
+      val labeledPoint = row.valuesAsLabeledPoint(rfColumns, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })

@@ -142,6 +142,9 @@ class RandomForestClassifierModel(PropertiesObject):
 
         >>> model = tc.models.classification.random_forest_classifier.train(frame, ['Dim_1', 'Dim_2'], 'Class', num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
 
+        >>> model.feature_importances()
+        {u'Dim_1': 1.0, u'Dim_2': 0.0}
+
         >>> predicted_frame = model.predict(frame, ['Dim_1', 'Dim_2'])
 
         >>> predicted_frame.inspect()
