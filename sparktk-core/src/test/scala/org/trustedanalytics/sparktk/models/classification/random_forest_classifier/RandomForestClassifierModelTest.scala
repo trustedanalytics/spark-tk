@@ -18,7 +18,7 @@ package org.trustedanalytics.sparktk.models.classification.random_forest_classif
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ClassificationMetricValue, BinaryClassificationMetrics}
+import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricValue, BinaryClassificationMetrics }
 import org.trustedanalytics.sparktk.frame.{ Frame, DataTypes, Column, FrameSchema }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 

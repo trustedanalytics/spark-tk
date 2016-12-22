@@ -26,8 +26,8 @@ from sparktk import TkContext
 __all__ = ["train", "load", "LinearRegressionModel"]
 
 def train(frame,
-          value_column,
           observation_columns,
+          label_column,
           elastic_net_parameter=0.0,
           fit_intercept=True,
           max_iterations=100,
@@ -41,8 +41,8 @@ def train(frame,
     ----------
 
     :param frame: (Frame) A frame to train the model on
-    :param value_column: (str) Column name containing the value for each observation.
     :param observation_columns: (List[str]) List of column(s) containing the observations.
+    :param label_column: (str) Column name containing the label for each observation.
     :param elastic_net_parameter: (double) Parameter for the ElasticNet mixing. Default is 0.0
     :param fit_intercept: (bool) Parameter for whether to fit an intercept term. Default is true
     :param max_iterations: (int) Parameter for maximum number of iterations. Default is 100
@@ -62,8 +62,8 @@ def train(frame,
     if not isinstance(standardization, bool):
         raise ValueError("standardization must be a bool, received %s" % type(standardization))
     scala_model = _scala_obj.train(frame._scala,
-                                   value_column,
                                    scala_observation_columns,
+                                   label_column,
                                    elastic_net_parameter,
                                    fit_intercept,
                                    max_iterations,
@@ -109,23 +109,23 @@ class LinearRegressionModel(PropertiesObject):
         [8]   8   18.5
         [9]   9   23.5
 
-        >>> model = tc.models.regression.linear_regression.train(frame,'y',['x1'])
+        >>> model = tc.models.regression.linear_regression.train(frame,['x1'],'y')
         <progress>
 
         >>> model
         explained_variance      = 49.2759280303
         intercept               = -0.0327272727273
         iterations              = 1
+        label_column            = y
         mean_absolute_error     = 0.529939393939
         mean_squared_error      = 0.630096969697
         objective_history       = [0.0]
         observation_columns     = [u'x1']
         r2                      = 0.987374330661
         root_mean_squared_error = 0.793786476136
-        value_column            = y
         weights                 = [2.4439393939393925]
 
-        >>> linear_regression_test_return = model.test(frame, 'y')
+        >>> linear_regression_test_return = model.test(frame, label_column='y')
         <progress>
 
         >>> linear_regression_test_return
@@ -156,7 +156,7 @@ class LinearRegressionModel(PropertiesObject):
 
         >>> restored = tc.load("sandbox/linear_regression_model")
 
-        >>> restored.value_column == model.value_column
+        >>> restored.label_column == model.label_column
         True
 
         >>> restored.intercept == model.intercept
@@ -165,7 +165,7 @@ class LinearRegressionModel(PropertiesObject):
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
 
-        >>> restored.test(frame, 'y').r2
+        >>> restored.test(frame, label_column='y').r2
         0.987374330660537
 
     The trained model can also be exported to a .mar file, to be used with the scoring engine:
@@ -189,9 +189,9 @@ class LinearRegressionModel(PropertiesObject):
         return LinearRegressionModel(tc, scala_model)
 
     @property
-    def value_column(self):
-        """Column name containing the value for each observation."""
-        return self._scala.valueColumn()
+    def label_column(self):
+        """Column name containing the label for each observation."""
+        return self._scala.labelColumn()
 
     @property
     def observation_columns(self):
@@ -257,7 +257,7 @@ class LinearRegressionModel(PropertiesObject):
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, self._tc.jutils.convert.to_scala_option_list_string(observation_columns)))
 
-    def test(self, frame, value_column, observation_columns=None):
+    def test(self, frame, observation_columns=None, label_column=None):
         """
         Test the frame given the trained model
 
@@ -265,12 +265,13 @@ class LinearRegressionModel(PropertiesObject):
         ----------
 
         :param frame: (Frame) The frame to predict on
-        :param value_column: (String) Column name containing the value for each observation
         :param observation_columns: Optional(List[str]) List of column(s) containing the observations
+        :param label_column: Optional(String) Column name containing the label for each observation
         :return: (RegressionTestMetrics) RegressionTestMetrics object consisting of results from model test
         """
         obs = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
-        return RegressionTestMetrics(self._scala.test(frame._scala, value_column, obs))
+        label = self._tc.jutils.convert.to_scala_option(label_column)
+        return RegressionTestMetrics(self._scala.test(frame._scala, obs, label))
 
     def save(self, path):
         """

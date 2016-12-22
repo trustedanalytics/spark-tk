@@ -167,7 +167,7 @@ class RandomForestRegressorModel(PropertiesObject):
 
         >>> restored = tc.load("sandbox/randomforestregressor")
 
-        >>> restored.value_column == model.value_column
+        >>> restored.label_column == model.label_column
         True
 
         >>> restored.seed == model.seed

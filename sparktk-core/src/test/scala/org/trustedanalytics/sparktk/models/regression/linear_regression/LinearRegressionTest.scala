@@ -36,10 +36,10 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "label", List("obs1"))
+      val model = LinearRegressionModel.train(frame, List("obs1"), "label")
 
       model shouldBe a[LinearRegressionModel]
-      model.valueColumn should equal("label")
+      model.labelColumn should equal("label")
       model.observationColumns should equal(List("obs1"))
       model.intercept should equal(0.0)
       model.weights should equal(List(1.0))
@@ -51,8 +51,8 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "label", List("obs1"))
-      val metrics = model.test(frame, "label", None)
+      val model = LinearRegressionModel.train(frame, List("obs1"), "label")
+      val metrics = model.test(frame)
 
       metrics shouldBe a[RegressionTestMetrics]
       metrics.r2 should equal(1.0)
@@ -63,9 +63,9 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "label", List("obs1"))
+      val model = LinearRegressionModel.train(frame, List("obs1"), "label")
 
-      val predictFrame = model.predict(frame, None)
+      val predictFrame = model.predict(frame)
       predictFrame.schema.columns should equal(List(Column("label", DataTypes.float64), Column("obs1", DataTypes.float64), Column("predicted_value", DataTypes.float64)))
       predictFrame.rdd.toArray.toList should equal(List(
         new GenericRow(Array[Any](1.0, 1.0, 1.0)),
@@ -76,7 +76,7 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
     "throw an exception for null frame" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(null, "label", List("obs1"))
+      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(null, List("obs1"), "label")
       thrown.getMessage should equal("requirement failed: frame is required")
     }
 
@@ -84,9 +84,9 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "label", List("obs1"))
+      val model = LinearRegressionModel.train(frame, List("obs1"), "label")
 
-      val thrown = the[IllegalArgumentException] thrownBy model.predict(null, None)
+      val thrown = the[IllegalArgumentException] thrownBy model.predict(null)
       thrown.getMessage should equal("requirement failed: require frame to predict")
     }
 
@@ -94,37 +94,37 @@ class LinearRegressionTest extends TestingSparkContextWordSpec with Matchers {
 
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "label", List("obs1"))
+      val model = LinearRegressionModel.train(frame, List("obs1"), "label")
 
-      val thrown = the[IllegalArgumentException] thrownBy model.test(null, "label", Some(List("obs1", "obs2")))
+      val thrown = the[IllegalArgumentException] thrownBy model.test(null, Some(List("obs1", "obs2")), Some("label"))
       thrown.getMessage should equal("requirement failed: Number of columns for train and test should be same")
     }
 
-    "throw an exception for null value column" in {
+    "throw an exception for null label column" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, null, List("obs1"))
-      thrown.getMessage should equal("requirement failed: valueColumn must not be null nor empty")
+      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, List("obs1"), null)
+      thrown.getMessage should equal("requirement failed: labelColumn must not be null nor empty")
     }
 
     "throw an exception for null observation column" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, "label", null)
+      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, null, "label")
       thrown.getMessage should equal("requirement failed: observationColumn must not be null nor empty")
     }
 
     "throw an exception for max iterations < 0" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, "label", List("obs1"), maxIterations = (-1))
+      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, List("obs1"), "label", maxIterations = (-1))
       thrown.getMessage should equal("requirement failed: numIterations must be a positive value")
     }
 
     "throw an exception for reg param < 0" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, "label", List("obs1"), regParam = (-1.0))
+      val thrown = the[IllegalArgumentException] thrownBy LinearRegressionModel.train(frame, List("obs1"), "label", regParam = (-1.0))
       thrown.getMessage should equal("requirement failed: regParam should be greater than or equal to 0")
     }
 
