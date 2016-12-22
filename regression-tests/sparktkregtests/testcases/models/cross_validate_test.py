@@ -35,7 +35,7 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
                   ("actual", int)]
         self.frame = self.context.frame.import_csv(
             binomial_dataset, schema=schema, header=True)
-    @unittest.skip("")
+
     def test_all_results(self):
         """Test number of models created given 5 folds and 2 settings per model"""
         result = self.context.models.cross_validate(
@@ -60,7 +60,7 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             actual_num_models += len(fold.grid_points)
         expected_num_models = 5 * 2 * 2
         self.assertEquals(actual_num_models, expected_num_models)
-    @unittest.skip("")
+
     def test_default_num_fold(self):
         """Test cross validate with default num_fold parameter"""
         result = self.context.models.cross_validate(
@@ -85,7 +85,6 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         expected_num_models = 3 * 2 * 2
         self.assertEquals(actual_num_models, expected_num_models)
 
-    @unittest.skip("")
     def test_averages(self):
         """Test ouptut of cross validate averages"""
         result = self.context.models.cross_validate(
@@ -107,7 +106,6 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
 
         #validate num of models
         self.assertEqual(len(avg_models.grid_points), 4)
-
 
         #validate best model among all averages
         best_model = avg_models.find_best()
@@ -173,6 +171,7 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
                 "step_size": 0.001})],
                 num_folds=2.5,
                 verbose=False)
+
 if __name__=="__main__":
     unittest.main()
 
