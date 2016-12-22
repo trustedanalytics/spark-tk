@@ -58,7 +58,19 @@ case class WeightedDegree(edgeWeight: String, degreeOption: String, defaultWeigh
       case "out" => (lit(0), AggregateMessages.edge(edgeWeight))
       case "undirected" => (AggregateMessages.edge(edgeWeight), AggregateMessages.edge(edgeWeight))
     }
-    val weightedDegrees = graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(outputName))
-    new Frame(state.graphFrame.vertices.join(weightedDegrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(weightedDegrees(GraphFrame.ID)), "left").drop(weightedDegrees(GraphFrame.ID)).na.fill(0.0, Array(outputName)))
+    val weightedDegrees = graphFrame.aggregateMessages
+      .sendToDst(dstMsg)
+      .sendToSrc(srcMsg)
+      .agg(sum(AggregateMessages.msg).as(outputName))
+
+    // Join the isolated vertices into the return frame, set their degree to 0
+    // This is working around an anomolous property of the message sending system that
+    // isolated vertices(i.e. vertices with no edges) can not be sent, or send, messages
+    // which causes them to be dropped from the frame
+    val degreesJoinedWithIsolatedVertices = state.graphFrame.vertices
+      .join(weightedDegrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(weightedDegrees(GraphFrame.ID)), "left")
+      .drop(weightedDegrees(GraphFrame.ID))
+      .na.fill(0.0, Array(outputName))
+    new Frame(degreesJoinedWithIsolatedVertices)
   }
 }
