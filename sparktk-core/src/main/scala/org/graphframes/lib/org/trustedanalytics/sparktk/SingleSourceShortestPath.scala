@@ -83,6 +83,7 @@ object SingleSourceShortestPath {
         case x: Long => x.toDouble
         case x: Short => x.toDouble
         case x: Byte => x.toDouble
+        case x: Double => x
         case _ => throw new scala.ClassCastException(s"the edge weight type cannot be $edgeWeightType")
       })
     }
