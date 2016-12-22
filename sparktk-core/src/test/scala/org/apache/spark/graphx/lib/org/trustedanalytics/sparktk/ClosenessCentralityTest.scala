@@ -15,7 +15,7 @@
  */
 package org.apache.spark.graphx.lib.org.trustedanalytics.sparktk
 
-import org.apache.spark.graphx.{Edge, Graph}
+import org.apache.spark.graphx.{ Edge, Graph }
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
@@ -46,22 +46,22 @@ class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers 
 
     "calculate the closeness centrality with normalized values" in {
       val closenessCentrality = ClosenessCentrality.run(getGraph)
-      assert(closenessCentrality(3) == ClosenessCalculations(3,0.44999999999999996))
+      assert(closenessCentrality(3) == ClosenessCalculations(3, 0.44999999999999996))
     }
 
     "calculate the closeness centrality" in {
       val closenessCentrality = ClosenessCentrality.run(getGraph, None, normalized = false)
-      assert(closenessCentrality(3) == ClosenessCalculations(3,0.75))
+      assert(closenessCentrality(3) == ClosenessCalculations(3, 0.75))
     }
 
     "calculate the closeness centrality with edge weights normalized" in {
-      val closenessCentrality = ClosenessCentrality.run(getGraph, Some((x:Double) => x))
-      assert(closenessCentrality(3) == ClosenessCalculations(3,6.428571428571428E-4))
+      val closenessCentrality = ClosenessCentrality.run(getGraph, Some((x: Double) => x))
+      assert(closenessCentrality(3) == ClosenessCalculations(3, 6.428571428571428E-4))
     }
 
     "calculate the closeness centrality with edge weights" in {
-      val closenessCentrality = ClosenessCentrality.run(getGraph, Some((x:Double) => x), normalized = false)
-      assert(closenessCentrality(3) == ClosenessCalculations(3,0.0010714285714285715))
+      val closenessCentrality = ClosenessCentrality.run(getGraph, Some((x: Double) => x), normalized = false)
+      assert(closenessCentrality(3) == ClosenessCalculations(3, 0.0010714285714285715))
     }
   }
 }
