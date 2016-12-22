@@ -29,11 +29,12 @@ import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarizat
 
 trait DegreeCentralitySummarization extends BaseGraph {
   /**
-   * Returns a frame with annotations concerning the degree of each vertex,
-   * weighted by a given edge weight
+   * Returns a frame with annotations concerning the degree centrality of each vertex,
+   * which is simply the degree / (n-1) where n is the number of vertices in the graph.
+   * That is, the degree of a vertex divided by the maximum degree of that vertex.
    *
    * @param degreeOption One of "in", "out" or "undirected". Determines the edge direction for the degree
-   * @return The dataframe containing the vertices and their corresponding weights
+   * @return The dataframe containing the vertices and their degree centrality measures
    */
   def degreeCentrality(degreeOption: String = "undirected"): Frame = {
     execute[Frame](DegreeCentrality(degreeOption))
@@ -41,7 +42,10 @@ trait DegreeCentralitySummarization extends BaseGraph {
 }
 
 case class DegreeCentrality(degreeOption: String) extends GraphSummarization[Frame] {
-  require(degreeOption == "in" || degreeOption == "out" || degreeOption == "undirected", "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
+  require(degreeOption == "in" ||
+          degreeOption == "out" ||
+          degreeOption == "undirected",
+          "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 
   val outputName = "degree_centrality"
   val degreeName = "degree_centrality_degree"
@@ -55,8 +59,18 @@ case class DegreeCentrality(degreeOption: String) extends GraphSummarization[Fra
 
     val normalizationValue: Double = state.graphFrame.vertices.count() - 1.0
     val normalize = udf { degree: Double => (degree / normalizationValue).toDouble }
-    val degrees = state.graphFrame.aggregateMessages.sendToDst(dstMsg).sendToSrc(srcMsg).agg(sum(AggregateMessages.msg).as(degreeName)).withColumn(outputName, normalize(col(degreeName))).drop(degreeName)
 
-    new Frame(state.graphFrame.vertices.join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left").drop(degrees(GraphFrame.ID)).na.fill(0.0, Array(outputName)))
+    val degrees = state.graphFrame.aggregateMessages
+                    .sendToDst(dstMsg)
+                    .sendToSrc(srcMsg)
+                    .agg(sum(AggregateMessages.msg).as(degreeName))
+                    .withColumn(outputName, normalize(col(degreeName)))
+                    .drop(degreeName)
+
+    val degreesVertexJoinedIsolated = state.graphFrame.vertices
+                                        .join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left")
+                                        .drop(degrees(GraphFrame.ID))
+                                        .na.fill(0.0, Array(outputName))
+    new Frame(degreesVertexJoinedIsolated)
   }
 }
