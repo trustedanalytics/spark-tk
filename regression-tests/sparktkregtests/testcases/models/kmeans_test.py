@@ -100,17 +100,16 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
-    @unittest.skip("publish model not complete in dev")
     def test_publish(self):
         """Tests kmeans cluster publish."""
         kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
                                                              self.vectors,
                                                              scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
                                                              k=5)
-        path = kmodel.publish()
+        path = kmodel.export_to_mar(self.get_export_file(self.get_name("kmeans")))
 
         self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        self.assertIn("kmeans", path)
 
     def test_max_iterations_negative(self):
         """Check error on negative number of iterations."""
@@ -188,10 +187,9 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
             predicted_frame = kmodel.predict(self.frame_test, columns=["Vec1", "Vec2"])
 
-    @unittest.skip("sparktk: Model training with null frame should give a useful exception message")
     def test_null_frame(self):
         """Check error on null frame."""
-        with self.assertRaisesRegexp(Exception, "foo"):
+        with self.assertRaisesRegexp(Exception, "frame cannot be None"):
             self.context.models.clustering.kmeans.train(None,
                                                         self.vectors,
                                                         scalings=[0.01, 0.01, 0.01, 0.01, 0.01],

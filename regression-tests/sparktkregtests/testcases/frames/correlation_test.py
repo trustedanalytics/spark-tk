@@ -17,6 +17,7 @@
 
 """Test covariance and correlation on 2 columns, matrices on 400x1024 matric"""
 import unittest
+import math
 import numpy
 from sparktkregtests.lib import sparktk_test
 import math

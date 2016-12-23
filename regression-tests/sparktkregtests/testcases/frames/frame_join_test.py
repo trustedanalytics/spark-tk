@@ -111,7 +111,6 @@ class JoinTest(sparktk_test.SparkTKTestCase):
         join_frame = self.frame.join_inner(self.right_frame, "idnum")
         self.assertEquals(0, join_frame.count())
 
-    @unittest.skip("Compatibility check is changing")
     def test_type_compatible(self):
         """Check compatibility among the numeric types"""
         block_data = [
@@ -127,51 +126,19 @@ class JoinTest(sparktk_test.SparkTKTestCase):
             return block_data[int(row.idnum)]
 
         # Create a frame indexed by each of the numeric types
-        int32_frame = frame_utils.build_frame(
-            block_data,
-            [("idnum", int), ("count", str)],
-            self.prefix, file_format="list")
-        int64_frame = frame_utils.build_frame(
-            block_data,
-            [("idnum", int64), ("count", str)],
-            self.prefix, file_format="list")
-        flt32_frame = frame_utils.build_frame(
-            block_data,
-            [("idnum", float), ("count", str)],
-            self.prefix, file_format="list")
-        flt64_frame = frame_utils.build_frame(
-            block_data,
-            [("idnum", float), ("count", str)],
-            self.prefix, file_format="list")
+        int32_frame = self.context.frame.create(
+            block_data, [("idnum", int), ("count", str)])
+        flt32_frame = self.context.frame.create(
+            block_data, [("idnum", float), ("count", str)])
 
-        # Try each join combination;
-        #   make sure each type gets to be left & right at least once.
-        # float32 & float64,
-        #   int32 & int64 are compatible pairs.
-        join_i32_i64 = int32_frame.join(int64_frame, "idnum")
-        print join_i32_i64.inspect()
-        self.assertEquals(int32_frame.count(), join_i32_i64.count())
-        join_i32_f32 = int32_frame.join(flt32_frame, "idnum")
-        print join_i32_f32.inspect()
-        self.assertEquals(int32_frame.count(), join_i32_f32.count())
 
         # int and float are not compatible with each other.
         with(self.assertRaisesRegexp(
-                Exception,
-                "Join columns must have compatible data types")):
-            flt32_frame.join(int32_frame, "idnum")
+                Exception, "Join columns must have compatible data types")):
+            flt32_frame.join_right(int32_frame, "idnum")
         with(self.assertRaisesRegexp(
-                Exception,
-                "Join columns must have compatible data types")):
-            flt32_frame.join(int64_frame, "idnum")
-        with(self.assertRaisesRegexp(
-                Exception,
-                "Join columns must have compatible data types")):
-            flt64_frame.join(int32_frame, "idnum")
-        with(self.assertRaisesRegexp(
-                Exception,
-                "Join columns must have compatible data types")):
-            flt64_frame.join(int64_frame, "idnum")
+                Exception, "Join columns must have compatible data types")):
+            flt32_frame.join_right(int32_frame, "idnum")
 
     def test_type_fail(self):
         """test join fails on mismatched type"""
