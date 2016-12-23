@@ -22,7 +22,7 @@ import org.apache.spark.rdd.RDD
  * Computes Betweenness Centrality of each vertex on the given graph, returning a graph where each
  * vertex has an attribute with the betweenness centrality of that vertex.
  *
- * This calculates the exact betweenness centrality as presented in
+ * This calculates the exact betweenness centrality as presented in http://algo.uni-konstanz.de/publications/b-fabc-01.pdf
  */
 object BetweennessCentrality {
 
@@ -30,10 +30,10 @@ object BetweennessCentrality {
    * Computes Betweenness Centrality using GraphX Pregel API
    *
    * @param graph the graph to compute betweenness centrality on
-   * @param getEdgeWeight enable or disable the inclusion of the edge weights in the graph centrality (by default all edge weights are 1)
+   * @param getEdgeWeight function that extracts the edge weight from edge attribute (by default a function that returns 1.0)
    * @tparam VD vertex attribute, ignored
    * @tparam ED the edge attribute, potentially used for edge weight
-   * @return An RDD with a typle of vertex identity mapped to it's centrality
+   * @return An RDD with a tuple of vertex identity mapped to it's centrality
    */
   def run[VD, ED](graph: Graph[VD, ED],
                   getEdgeWeight: Option[ED => Double] = None): Graph[Double, Double] = {
@@ -49,19 +49,19 @@ object BetweennessCentrality {
     val graphVertices = graph.vertices.map({ case (id, _) => (id) }).collect()
 
     // We normalize against the pairwise number of possible paths in the graph
-    // This is ((n-1)*(n02))/2. However the return value of the ventrality
-    // algorithm is 2* the centrality value, so I drop the divide by 2
-    val normalize = (graphVertices.length - 1) * (graphVertices.length - 2)
+    // This is ((n-1)*(n-2))/2. The return value of the centrality algorithm is 
+    // 2*centrality, eliminating the need for the divide by 2
+    val normalizationValue = (graphVertices.length - 1) * (graphVertices.length - 2)
 
     // The current Id is used to initialize the fold
     // remainder is folded over
     val currentId = graphVertices.last
-    val remainder = graphVertices.init
+    val remainderVertexIds = graphVertices.init
 
     // Calculate the centrality of each vertex, each iteration calculates a partial
     // sum of a single vertex. THese partial sums are then summed and the result
     // Is the un-normalized ventrality value
-    val centralityVertexMap: VertexRDD[Double] = remainder.foldLeft(
+    val centralityVertexMap: VertexRDD[Double] = remainderVertexIds.foldLeft(
       calculateVertexCentrality(edgeWeightedGraph, currentId))(
         (accumulator, vertexIndex) => {
           val vertexPartialCentrality = calculateVertexCentrality(edgeWeightedGraph, vertexIndex)
@@ -71,18 +71,19 @@ object BetweennessCentrality {
         })
 
     // normalize the centrality value
-    Graph(centralityVertexMap.map({ case (id: VertexId, x: Double) => (id, x / normalize) }), edgeWeightedGraph.edges)
+    Graph(centralityVertexMap.map({ case (id: VertexId, x: Double) => (id, x / normalizationValue) }), edgeWeightedGraph.edges)
   }
 
   // Calculates the partial centrality of a graph from a single vertex. The sum over all vertices is the
   // Vertex centrality
-  private def calculateVertexCentrality[VD](initialGraph: Graph[VD, Double], start: VertexId): VertexRDD[Double] = {
+  private def calculateVertexCentrality[VD](initialGraph: Graph[VD, Double],
+                                            sourceVertexId: VertexId): VertexRDD[Double] = {
 
     // Initial graph
     // The source vertex has a distance of 0 from the initial vertex, all others
     // are infinite distance from the vertex
     val initializedGraph = initialGraph.mapVertices((id, _) => {
-      if (start == id)
+      if (sourceVertexId == id)
         VertexCentralityData(0, 1, false, 0)
       else
         VertexCentralityData(Double.PositiveInfinity, 0, false, 0)
@@ -92,13 +93,13 @@ object BetweennessCentrality {
     val shortestPathGraph = calculateShortestPaths(initializedGraph)
 
     // Initialize the graph to 0's for the partial centrality sum, find the initial horizion
-    // The horizon is the furthest most vertices that have not be calculated from the initial vertex
+    // The horizon is the furthest most vertices that have not be calculated from the source vertex
     val shortestPathGraphHorizon = shortestPathInitialHorizon(shortestPathGraph)
 
     // Sum the vertices from furthest vertex to closest vertex to the initial start vertex
-    val centralitiedGraph = partialCentralitySum(shortestPathGraphHorizon, start)
+    val centralityGraph = partialCentralitySum(shortestPathGraphHorizon, sourceVertexId)
 
-    centralitiedGraph.mapVertices({ case (id, x) => x.sigmaVal }).vertices
+    centralityGraph.mapVertices({ case (id, x) => x.sigmaVal }).vertices
   }
 
   // Calculates the single shortest paths from the given graph vertex
@@ -152,7 +153,7 @@ object BetweennessCentrality {
 
   // Find the initial set of vertices from the start vertex. Mark them as horizon vertices.
   private def shortestPathInitialHorizon(shortestPathGraph: Graph[VertexCentralityData, Double]): Graph[VertexCentralityData, Double] = {
-    val shortestPathGraphHorizon: Graph[VertexCentralityData, Double] = shortestPathGraph.pregel(VertexCentralityData(0, 0, false, 0), 2)(
+    val shortestPathHorizonGraph: Graph[VertexCentralityData, Double] = shortestPathGraph.pregel(VertexCentralityData(0, 0, false, 0), 2)(
       // If any neighbors have greater distance, this is not a horizon vertex
       (id, currentVertexValue, messageVertexValue) => {
         if (currentVertexValue.distance >= messageVertexValue.distance)
@@ -169,18 +170,19 @@ object BetweennessCentrality {
         else
           b
       })
-    shortestPathGraphHorizon
+    shortestPathHorizonGraph
   }
 
   // sums the recursive values that turn into the partial centrality sum for this
   // particular vertex
-  private def partialCentralitySum(shortestPathGraph: Graph[VertexCentralityData, Double], initialId: VertexId): Graph[VertexCentralityData, Double] = {
-    val centralitiedGraph = shortestPathGraph.pregel(VertexCentralityData(0, 0, false, 0))(
+  private def partialCentralitySum(shortestPathHorizonGraph: Graph[VertexCentralityData, Double],
+                                   sourceVertexId: VertexId): Graph[VertexCentralityData, Double] = {
+    val centralitiedGraph = shortestPathHorizonGraph.pregel(VertexCentralityData(0, 0, false, 0))(
       // Don't update anything on first iteration
-      // Don't update if you are set (not interior)
-      // Update if interior, but ALL incoming messages with > distance are marked as not interior (i.e. horizon is on you)
+      // Don't update if you horizon (i.e. an interior vertex)
+      // Update if interior, but ALL incoming messages with > distance are marked as not interior (i.e. horizon)
       (id, currentVertexValue, messageVertexValue) => {
-        //If the message recieved is a horizon message, the horizon is on the
+        //If the message received is a horizon message, the horizon is on the
         // current vertex, which needs to be updated
         if (messageVertexValue.horizon) {
           VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, true, messageVertexValue.sigmaVal)
@@ -193,41 +195,42 @@ object BetweennessCentrality {
       // Edge message is simple equation for recursive update
       edge => {
         // If the edges are horizon to horizon, send no message (horizon verices) 
-        // are resolved, they don't need information)
         if (edge.srcAttr.horizon && edge.dstAttr.horizon) {
           Iterator.empty
         }
-        // if neither the src vertex is in the previous set of the dst vertex
-        // nor the dst vertex is in the previous set of the src (i.e. neither is in
+        // if neither the src vertex is in the predecessor set of the dst vertex
+        // nor the dst vertex is in the predecessor set of the src (i.e. neither is in
         // a shortest path for the other)
         // Send no message
-        // This has to be tested both directions since edges are bidirectional
+        // Do not send message if neither the src or dst vertex is in the shortest
+        // path of the other. This has to be tested for both directions since edges are bidirectional
         else if (!(edge.srcAttr.distance - edge.attr == edge.dstAttr.distance) &&
           !(edge.dstAttr.distance - edge.attr == edge.srcAttr.distance)) {
           Iterator.empty
         }
         else {
-          // figure out the src is in the previous set of the dst vertex or vice versa
-          // if src distance is larger by exactly edges weight, it is in the previous of dst
-          // Otherwise (by fall through), the switch (dst is a previous vertex of src)
-          val (vertexMessageId, previousVertex, currentVertex) = if (edge.srcAttr.distance - edge.attr == edge.dstAttr.distance) {
+          // figure out the src is in the predecessor set of the dst vertex or vice versa
+          // if src distance is larger by exactly edges weight, it is in the predecessor set of dst
+          // Otherwise (by fall through), the switch (dst is a predecessor vertex of src)
+          val (vertexMessageId, predecessorVertex, currentVertex) = if (edge.srcAttr.distance - edge.attr == edge.dstAttr.distance) {
             (edge.dstId, edge.dstAttr, edge.srcAttr)
           }
           else {
             (edge.srcId, edge.srcAttr, edge.dstAttr)
           }
-          val sigmaUpdate = (previousVertex.pathCount / currentVertex.pathCount) * (1 + currentVertex.sigmaVal)
           // Never update the source vertex, you are calculating the membership of shortest paths between Other
           // Vertices
-          if (vertexMessageId == initialId)
+          if (vertexMessageId == sourceVertexId)
             Iterator.empty
-          else
+          else {
+            val sigmaUpdate = (predecessorVertex.pathCount / currentVertex.pathCount) * (1 + currentVertex.sigmaVal)
             Iterator((vertexMessageId, VertexCentralityData(0, 0, currentVertex.horizon, sigmaUpdate)))
+          }
         }
       },
       // sum the partial sums of the shortest path count
       // determine if this is now a horizon vertex (occurs if and only if ALL vertices
-      // for which a vertex is in the previous set are horizon
+      // for which a vertex is in the predecessor set are horizon
       (a, b) => { VertexCentralityData(0, 0, a.horizon && b.horizon, a.sigmaVal + b.sigmaVal) }
     )
     centralitiedGraph

@@ -29,7 +29,8 @@ import org.apache.spark.rdd.RDD
  */
 object BetweennessCentrality {
 
-  private val betweennessResults = "betweenness_results"
+  private val betweennessResults = "betweenness_centrality"
+
   /**
    * Computes the betweeness centrality for the vertices of the graph using Graphx-based betweenness centrality
    * algorithm

@@ -46,13 +46,13 @@ def betweenness_centrality(self, weight=None):
 
         >>> result = graph.betweenness_centrality()
         >>> result.inspect() 
-        [#]  id  betweenness_results
-        ============================
-        [0]   1       0.666666666667
-        [1]   2                  0.0
-        [2]   3                  0.0
-        [3]   4                  0.5
-        [4]   5                  0.0
+        [#]  id  betweenness_centrality
+        ===============================
+        [0]   1          0.666666666667
+        [1]   2                     0.0
+        [2]   3                     0.0
+        [3]   4                     0.5
+        [4]   5                     0.0
 
 
 
