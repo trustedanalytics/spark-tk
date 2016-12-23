@@ -27,6 +27,7 @@ import org.trustedanalytics.sparktk.saveload.TkSaveableObject
 
 class Graph(graphFrame: GraphFrame) extends BaseGraph with Serializable
     with ConnectedComponentsSummarization
+    with ClosenessCentralitySummarization
     with ClusteringCoefficientSummarization
     with DegreeSummarization
     with ExportToOrientdbSummarization
