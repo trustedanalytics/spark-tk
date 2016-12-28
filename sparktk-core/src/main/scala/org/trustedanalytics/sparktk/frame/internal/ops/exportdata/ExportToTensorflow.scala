@@ -15,12 +15,11 @@
  */
 package org.trustedanalytics.sparktk.frame.internal.ops.exportdata
 
-import org.apache.hadoop.io.{BytesWritable, NullWritable}
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.hadoop.io.{ BytesWritable, NullWritable }
 import org.tensorflow.hadoop.io.TFRecordFileOutputFormat
 import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.serde.DefaultTfRecordRowEncoder
-import org.trustedanalytics.sparktk.frame.internal.{BaseFrame, FrameState, FrameSummarization}
+import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, FrameSummarization }
 
 trait ExportToTensorflowSummarization extends BaseFrame {
   /**

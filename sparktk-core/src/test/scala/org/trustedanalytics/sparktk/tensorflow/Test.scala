@@ -15,9 +15,12 @@
  */
 package org.trustedanalytics.sparktk.tensorflow
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.catalyst.expressions.GenericRow
+import org.apache.spark.sql.{ Row, SQLContext }
 import org.scalatest.Matchers
-import org.trustedanalytics.sparktk.frame.internal.constructors.ImportTensorflow
+import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, Frame, FrameSchema }
+import org.trustedanalytics.sparktk.frame.internal.constructors.{ Import, ImportTensorflow }
+import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.ExportToTensorflow
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class TestProtoBuf extends TestingSparkContextWordSpec with Matchers {
@@ -25,19 +28,25 @@ class TestProtoBuf extends TestingSparkContextWordSpec with Matchers {
   "TestProtoBuf" should {
     "Test creating a TF record for .txt file" in {
 
-      val inputPath = "/home/kvadla/spark-tk/spark-tk/integration-tests/datasets/people.json"
-      val destPath = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output26.tfr"
-      val sqlContext = new SQLContext(sparkContext)
-      import sqlContext.implicits._
-      val sourceDf = sqlContext.read.json(inputPath)
-      ExportToTfRecord.exportToTfRecord(sourceDf, destPath)
-
+      val destPath = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output25.tfr"
+      val testRows: Array[Row] = Array(
+        new GenericRow(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "ram")),
+        new GenericRow(Array[Any](21, 2, 24L, 12.0F, 15.0, Vector(2.0, 2.0), "karthik")),
+        new GenericRow(Array[Any](31, 3, 25L, 13.0F, 16.0, Vector(3.0, 2.0), "chaitra")),
+        new GenericRow(Array[Any](41, 4, 26L, 17.0F, 17.0, Vector(4.0, 2.0), "sindh")))
+      val schema = new FrameSchema(List(Column("id", DataTypes.int32), Column("int32label", DataTypes.int32), Column("int64label", DataTypes.int64), Column("float32label", DataTypes.float32), Column("float64label", DataTypes.float64), Column("vectorlabel", DataTypes.vector(2)), Column("name", DataTypes.str)))
+      val rdd = sparkContext.parallelize(testRows)
+      val frame = new Frame(rdd, schema)
+      frame.exportToTensorflow(destPath)
+      frame.rowCount()
     }
 
     "read test tf" in {
-      val path = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output26.tfr"
+      val path = "/home/kvadla/spark-tk/spark-tk/integration-tests/tests/sandbox/output25.tfr"
       val frame = ImportTensorflow.importTensorflow(sparkContext, path)
-      frame
+      val count = frame.rowCount()
+      println(count)
+
     }
   }
 }

@@ -16,13 +16,15 @@
 package org.trustedanalytics.sparktk.frame.internal.constructors
 
 import org.apache.commons.lang.StringUtils
-import org.apache.hadoop.io.{BytesWritable, NullWritable}
+import org.apache.hadoop.io.{ BytesWritable, NullWritable }
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.types.StructType
 import org.tensorflow.example.Example
 import org.tensorflow.hadoop.io.TFRecordFileInputFormat
-import org.trustedanalytics.sparktk.frame.{DataTypes, Frame, Schema, _}
+import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.frame.internal.serde.DefaultTfRecordRowDecoder
+import scala.collection.JavaConverters._
+import org.trustedanalytics.sparktk.frame.TensorInferSchema
 
 object ImportTensorflow {
 
@@ -34,16 +36,16 @@ object ImportTensorflow {
     require(StringUtils.isNotEmpty(sourceTfRecordsPath), "path should not be null or empty.")
 
     val rdd = sc.newAPIHadoopFile(sourceTfRecordsPath, classOf[TFRecordFileInputFormat], classOf[BytesWritable], classOf[NullWritable])
-    val resultRdd = rdd.map {
+
+    val featuresMapRdd = rdd.map {
       case (bytesWritable, nullWritable) =>
         val example = Example.parseFrom(bytesWritable.getBytes)
-
-
-
-        val row = DefaultTfRecordRowDecoder.decodeTfRecord(example, schema)
-        row
+        example.getFeatures.getFeatureMap.asScala
     }
-    val frame = new Frame(resultRdd, tfSchema)
+
+    val inferedFrameSchema = TensorInferSchema(featuresMapRdd)
+    val resultRdd = featuresMapRdd.map(featureMap => DefaultTfRecordRowDecoder.decodeTfRecord(featureMap.toMap, inferedFrameSchema))
+    val frame = new Frame(resultRdd, inferedFrameSchema)
     frame
   }
 

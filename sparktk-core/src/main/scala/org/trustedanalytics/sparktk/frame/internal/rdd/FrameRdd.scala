@@ -691,7 +691,7 @@ object FrameRdd {
 
     val matrixType = classOf[MatrixUDT]
 
-//    val vectorType = ArrayType(DoubleType, containsNull = false).getClass
+    //    val vectorType = ArrayType(DoubleType, containsNull = false).getClass
 
     val a = dataType.getClass
     a match {
@@ -704,7 +704,7 @@ object FrameRdd {
       case `stringType` => DataTypes.string
       //case `dateType` => DataTypes.string
       case `byteType` => int32
-//      case `vectorType` => DataTypes.vector(5)
+      //      case `vectorType` => DataTypes.vector(5)
       //case `booleanType` => int32
       case `timeStampType` => DataTypes.datetime
       case `matrixType` => matrix

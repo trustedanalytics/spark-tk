@@ -16,46 +16,40 @@
 package org.trustedanalytics.sparktk.frame.internal.serde
 
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
 import org.tensorflow.example._
-import scala.collection.JavaConverters._
-import scala.collection.immutable.Vector
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-
-import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
-
-import scala.collection.mutable.ArrayBuffer
+import org.trustedanalytics.sparktk.frame.{ DataTypes, FrameSchema }
 
 trait TfRecordRowDecoder {
-  def decodeTfRecord(tfExample: Example, schema: Option[StructType] = None): Row
+  def decodeTfRecord(featureMap: Map[String, Feature], schema: FrameSchema): Row
 }
 
 object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
 
-  def decodeTfRecord(tfExample: Example, schema: Option[StructType] = None): Row = {
+  def decodeTfRecord(featureMap: Map[String, Feature], schema: FrameSchema): Row = {
     //maps each feature in Example to element in Row with DataType based on custom schema or default mapping of  Int64List, FloatList, BytesList to column data type
-    val featureMap = tfExample.getFeatures.getFeatureMap.asScala
-    val row = new ArrayBuffer[Any]()
-    val schema = new ArrayBuffer[StructField]()
 
+    val row = Array.fill[Any](schema.columns.length)(null)
     featureMap.foreach {
       case (featureName, feature) =>
-        feature.getKindCase.getNumber match {
-          case Feature.BYTES_LIST_FIELD_NUMBER => {
-            schema += new StructField(featureName, StringType)
-            row += feature.getBytesList.toString
+        val colDataType = schema.columnDataType(featureName)
+        colDataType match {
+          case x if x.equals(DataTypes.int32) | x.equals(DataTypes.int64) => {
+            row(schema.columnIndex(featureName)) = colDataType.parse(feature.getInt64List.getValue(0))
           }
-          case Feature.INT64_LIST_FIELD_NUMBER => {
-            schema += new StructField(featureName, FrameRdd.VectorType)
-            row += feature.getInt64List.getValueList.asScala.toArray
+          case x if x.equals(DataTypes.float64) => {
+            row(schema.columnIndex(featureName)) = colDataType.parse(feature.getFloatList.getValue(0))
           }
-          case Feature.FLOAT_LIST_FIELD_NUMBER => {
-            schema += new StructField(featureName, FrameRdd.VectorType)
-            row += feature.getFloatList.getValueList.asScala.toArray
+          case x if x.isVector => {
+            feature.getKindCase.getNumber match {
+              case Feature.INT64_LIST_FIELD_NUMBER => row(schema.columnIndex(featureName)) = colDataType.parse(feature.getInt64List.getValueList)
+              case Feature.FLOAT_LIST_FIELD_NUMBER => row(schema.columnIndex(featureName)) = colDataType.parse(feature.getFloatList.getValueList)
+            }
           }
-          case _ => throw new RuntimeException("unsupported type ...")
+          case x if x.equals(DataTypes.string) => {
+            row(schema.columnIndex(featureName)) = feature.getBytesList.toString
+          }
         }
     }
-    new GenericRowWithSchema(row.toArray, StructType(schema))
+    Row.fromSeq(row)
   }
 }
