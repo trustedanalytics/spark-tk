@@ -20,12 +20,14 @@ from sparktk.loggers import log_load; log_load(__name__); del log_load
 from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
+from sparktk.frame.frame import Frame
+from sparktk.arguments import affirm_type
 
 __all__ = ["train", "load", "SvmModel"]
 
 def train(frame,
-          label_column,
           observation_columns,
+          label_column,
           intercept = True,
           num_iterations = 100,
           step_size = 1.0,
@@ -39,8 +41,8 @@ def train(frame,
     ----------
 
     :param frame: (Frame) frame of training data
-    :param label_column: (str) Column containing the label for each observation
     :param observation_columns: (list(str)) Column(s) containing the observations
+    :param label_column: (str) Column containing the label for each observation
     :param intercept: (boolean) Flag indicating if the algorithm adds an intercept. Default is true
     :param num_iterations: (int) Number of iterations for SGD. Default is 100
     :param step_size: (float) Initial step size for SGD optimizer for the first step. Default is 1.0
@@ -64,9 +66,10 @@ def train(frame,
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
+    obs_columns = affirm_type.list_of_str(observation_columns, "observation_columns")
     scala_model = _scala_obj.train(frame._scala,
+                                   tc.jutils.convert.to_scala_list_string(obs_columns),
                                    label_column,
-                                   tc.jutils.convert.to_scala_list_string(observation_columns),
                                    intercept,
                                    num_iterations,
                                    step_size,
@@ -113,7 +116,7 @@ class SvmModel(PropertiesObject):
         [8]   78.0  0
         [9]   48.0  0
 
-        >>> model = tc.models.classification.svm.train(frame, 'label', ['data'])
+        >>> model = tc.models.classification.svm.train(frame, ['data'], 'label')
 
         >>> model.label_column
         u'label'
@@ -138,7 +141,7 @@ class SvmModel(PropertiesObject):
         [9]   48.0  0                    0
 
 
-        >>> test_metrics = model.test(predicted_frame)
+        >>> test_metrics = model.test(predicted_frame, ["data"], "label")
 
         >>> test_metrics
         accuracy         = 1.0
@@ -238,26 +241,28 @@ class SvmModel(PropertiesObject):
         """minimum batch fraction used to train the model"""
         return self._scala.miniBatchFraction()
 
-    def predict(self, frame, columns=None):
+    def predict(self, frame, observation_columns=None):
         """
-       Predicts the labels for the observation columns in the given input frame. Creates a new frame
-       with the existing columns and a new predicted column.
+        Predicts the labels for the observation columns in the given input frame. Creates a new frame
+        with the existing columns and a new predicted column.
 
-       Parameters
+        Parameters
        ----------
 
-       :param frame: (Frame) Frame used for predicting the values
-       :param c: (List[str]) Names of the observation columns.
-       :return: (Frame) A new frame containing the original frame's columns and a prediction column
-       """
-        c = self.__columns_to_option(columns)
-        from sparktk.frame.frame import Frame
-        return Frame(self._tc, self._scala.predict(frame._scala, c))
+        :param frame: (Frame) Frame used for predicting the values
+        :param observation_columns: (List[str]) Names of the observation columns.
+        :return: (Frame) A new frame containing the original frame's columns and a prediction column
+        """
+        columns_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(columns_list)
+        return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
-    def test(self, frame, columns=None):
+    def test(self, frame, observation_columns=None, label_column=None):
         """test the frame given the trained model"""
-        c = self.__columns_to_option(columns)
-        return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala, c))
+        scala_classification_metrics_object = self._scala.test(frame._scala,
+                self._tc.jutils.convert.to_scala_option_list_string(affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)),
+                self._tc.jutils.convert.to_scala_option(label_column))
+        return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
 
     def __columns_to_option(self, c):
         if c is not None:

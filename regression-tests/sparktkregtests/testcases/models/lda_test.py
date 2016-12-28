@@ -209,16 +209,17 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
             num_topics=5, seed=5, max_iterations=20,
             alpha=[-1.0], check_point_interval=1)
 
-    @unittest.skip("not implemented")
+    @unittest.skip("fails due to unknown bug")
     def test_lda_publish(self):
         """Test training for more iterations."""
         lda_model = self.context.models.clustering.lda.train(
             self.lda_frame, 'paper', 'word', 'count',
             num_topics=5, max_iterations=30, seed=5,
             check_point_interval=1)
-        path = lda_model.publish()
+        file_name = self.get_name("lda")
+        path = lda_model.export_to_mar(self.get_export_file(file_name))
         self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        self.assertIn("lda", path)
 
     def test_lda_max_iterations(self):
         """Test training for more iterations."""

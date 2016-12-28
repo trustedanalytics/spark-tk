@@ -302,24 +302,24 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * existing columns and a new predicted label's column.
    *
    * @param frame                     A frame whose labels are to be predicted. By default, predict is run on the same columns over which the model is trained.
-   * @param observationColumnsPredict Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
    * @return Frame containing the original frame's columns and a column with the predicted label.
    */
-  def predict(frame: Frame, observationColumnsPredict: Option[List[String]]): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
 
     //Running MLLib
-    if (observationColumnsPredict.isDefined) {
-      require(observationColumns.length == observationColumnsPredict.get.length,
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length,
         "Number of columns for train and predict should be same")
     }
-    val logRegColumns = observationColumnsPredict.getOrElse(observationColumns)
+    val observations = observationColumns.getOrElse(this.observationColumns)
 
     //predicting a label for the observation columns
     val predictColumn = Column(frame.schema.getNewColumnName("predicted_label"), DataTypes.int32)
 
     val predictMapper: RowWrapper => Row = row => {
-      val point = row.valuesAsDenseVector(logRegColumns)
+      val point = row.valuesAsDenseVector(observations)
       val prediction = sparkModel.predict(point).toInt
       Row.apply(prediction)
     }
@@ -371,8 +371,8 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * Get the predictions for observations in a test frame
    *
    * @param frame                  Frame whose labels are to be predicted.
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted and tested. Default is to test over the columns the SVM model was trained on.
    * @param labelColumn            Column containing the actual label for each observation.
-   * @param observationColumnsTest Column(s) containing the observations whose labels are to be predicted and tested. Default is to test over the columns the SVM model was trained on.
    * @return A dictionary with binary classification metrics.
    *         The data returned is composed of the following keys\:
    *         'accuracy' : double
@@ -385,17 +385,19 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    *         The proportion of predicted positive instances that are correctly identified
    *         'recall' : double
    *         The proportion of positive instances that are correctly identified.
+   * //
    */
-  def test(frame: Frame, labelColumn: String, observationColumnsTest: Option[List[String]]): ClassificationMetricValue = {
-    if (observationColumnsTest.isDefined) {
-      require(observationColumns.length == observationColumnsTest.get.length, "Number of columns for train and test should be same")
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None): ClassificationMetricValue = {
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val logRegColumns = observationColumnsTest.getOrElse(observationColumns)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
 
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     //predicting and testing
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(logRegColumns, labelColumn)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })

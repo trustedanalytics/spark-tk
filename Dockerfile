@@ -19,7 +19,11 @@ RUN apt-get -q clean && \
       bzip2 \
       gcc \
       gfortran \
+      libxml2-dev \ 
+      libxslt1-dev \
+      python-libxml2 \
       python-qt4 \
+      python-lxml \
       python-dev \
       wget \
       zip \

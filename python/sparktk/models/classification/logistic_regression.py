@@ -20,7 +20,7 @@ from sparktk.models.logistic_regression_summary_table import LogisticRegressionS
 from sparktk.loggers import log_load
 from sparktk.propobj import PropertiesObject
 from sparktk import TkContext
-
+from sparktk.arguments import affirm_type
 
 log_load(__name__)
 del log_load
@@ -100,7 +100,7 @@ def train(frame,
     if isinstance(observation_columns, basestring):
         observation_columns = [observation_columns]
 
-    scala_observation_columns = tc.jutils.convert.to_scala_vector_string(observation_columns)
+    scala_observation_columns = tc.jutils.convert.to_scala_list_string(observation_columns)
     scala_frequency_column = tc.jutils.convert.to_scala_option(frequency_column)
 
     if not isinstance(compute_covariance, bool):
@@ -226,7 +226,7 @@ class LogisticRegressionModel(PropertiesObject):
         [8]           7.2           5.8      2                2
         [9]           7.4           6.1      2                2
 
-        >>> test_metrics = model.test(frame, 'Class', ['Sepal_Length', 'Petal_Length'])
+        >>> test_metrics = model.test(frame, ['Sepal_Length', 'Petal_Length'], 'Class')
         <progress>
 
         >>> test_metrics
@@ -361,7 +361,7 @@ class LogisticRegressionModel(PropertiesObject):
         """Logistic regression summary table"""
         return LogisticRegressionSummaryTable(self._tc, self._scala.trainingSummary())
 
-    def predict(self, frame, observation_columns_predict):
+    def predict(self, frame, observation_columns=None):
         """
         Predict labels for data points using trained logistic regression model.
 
@@ -373,15 +373,15 @@ class LogisticRegressionModel(PropertiesObject):
 
         :param frame: (Frame) A frame whose labels are to be predicted. By default, predict is run on the same columns
                               over which the model is trained.
-        :param observation_columns_predict: (None or list[str]) Column(s) containing the observations whose labels are
+        :param observation_columns: (None or list[str]) Column(s) containing the observations whose labels are
                                             to be predicted. Default is the labels the model was trained on.
         :return: (Frame) Frame containing the original frame's columns and a column with the predicted label.
         """
-        columns_option = self._tc.jutils.convert.to_scala_option_list_string(observation_columns_predict)
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(self.__get_observation_columns(observation_columns))
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
-    def test(self, frame, label_column, observation_columns_test):
+    def test(self, frame, observation_columns=None, label_column=None):
         """
         Get the predictions for observations in a test frame
 
@@ -390,15 +390,23 @@ class LogisticRegressionModel(PropertiesObject):
 
         :param frame: (Frame) Frame whose labels are to be predicted.
         :param label_column: (str) Column containing the actual label for each observation.
-        :param observation_columns_test: (None or list[str]) Column(s) containing the observations whose labels are to
+        :param observation_columns: (None or list[str]) Column(s) containing the observations whose labels are to
                                          be predicted and tested. Default is to test over the columns the SVM model was
                                         trained on.
         :return: (ClassificationMetricsValue) Object with binary classification metrics
         """
-        scala_classification_metrics_object = self._scala.test(frame._scala, label_column,
-                                                               self._tc.jutils.convert.to_scala_option_list_string(
-                                                               observation_columns_test))
+        columns_list = self.__get_observation_columns(observation_columns)
+        scala_classification_metrics_object = self._scala.test(frame._scala,
+                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list),
+                                                               self._tc.jutils.convert.to_scala_option(label_column))
         return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
+
+    def __get_observation_columns(self, observation_columns):
+        if observation_columns is None:
+            return observation_columns
+        else:
+            return affirm_type.list_of_str(observation_columns, "observation_columns")
+
 
     def save(self, path):
         """

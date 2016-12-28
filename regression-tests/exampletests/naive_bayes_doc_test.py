@@ -92,7 +92,7 @@ class ClassifierTest(unittest.TestCase):
         # we give the model lots of information on both data and outcomes
         # in this way it learns which outcome to expect from data
         nb_model = context.models.classification.naive_bayes.train(
-            frame, "x" + str(numCoeffs - 1), obsCols)
+            frame, obsCols, "x" + str(numCoeffs - 1))
         # then we test the model
         # meaning we try to see how it behaves in predicting outcomes
         # from data that it has been trained to recognize patterns in

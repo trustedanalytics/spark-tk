@@ -53,8 +53,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
 
   /**
    * @param frame The frame containing the data to train on
-   * @param labelColumn Column name containing the label for each observation
    * @param observationColumns Column(s) containing the observations
+   * @param labelColumn Column name containing the label for each observation
    * @param numClasses Number of classes for classification. Default is 2
    *                   numClasses should not exceed the number of distinct values in labelColumn
    * @param numTrees Number of tress in the random forest. Default is 1
@@ -71,8 +71,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
    *                              ; if num_trees > 1, set to "sqrt"
    */
   def train(frame: Frame,
-            labelColumn: String,
             observationColumns: List[String],
+            labelColumn: String,
             numClasses: Int = 2,
             numTrees: Int = 1,
             impurity: String = "gini",
@@ -110,8 +110,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
       seed)
 
     RandomForestClassifierModel(randomForestModel,
-      labelColumn,
       observationColumns,
+      labelColumn,
       numClasses,
       numTrees,
       impurity,
@@ -129,8 +129,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
     val sparkModel = SparkRandomForestModel.load(sc, path)
 
     RandomForestClassifierModel(sparkModel,
-      m.labelColumn,
       m.observationColumns,
+      m.labelColumn,
       m.numClasses,
       m.numTrees,
       m.impurity,
@@ -155,8 +155,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
 /**
  * RandomForestClassifierModel
  * @param sparkModel Trained MLLib's RandomForestClassifier model
- * @param labelColumn Column name containing the label for each observation
  * @param observationColumns Column(s) containing the observations
+ * @param labelColumn Column name containing the label for each observation
  * @param numClasses Number of classes for classification. Default is 2
  * @param numTrees Number of tress in the random forest. Default is 1
  * @param impurity Criterion used for information gain calculation. Supported values "gini" or "entropy".
@@ -172,8 +172,8 @@ object RandomForestClassifierModel extends TkSaveableObject {
  *                              ; if num_trees > 1, set to "sqrt"
  */
 case class RandomForestClassifierModel private[random_forest_classifier] (sparkModel: SparkRandomForestModel,
-                                                                          labelColumn: String,
                                                                           observationColumns: List[String],
+                                                                          labelColumn: String,
                                                                           numClasses: Int,
                                                                           numTrees: Int,
                                                                           impurity: String,
@@ -192,21 +192,21 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
    * with existing columns and a new predicted label’s column.
    *
    * @param frame - frame to add predictions to
-   * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the RandomForestClassifierModel
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
+   *                By default, the same observation column names from training are used
    * @return A new frame consisting of the existing columns of the frame and a new column with predicted label
    *         for each observation.
    */
-  def predict(frame: Frame, columns: Option[List[String]] = None): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
-    if (columns.isDefined) {
-      require(columns.get.length == observationColumns.length, "Number of columns for train and predict should be same")
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = columns.getOrElse(observationColumns)
+    val observations = observationColumns.getOrElse(this.observationColumns)
     //predicting a label for the observation columns
     val predictMapper: RowWrapper => Row = row => {
-      val point = row.toDenseVector(rfColumns)
+      val point = row.toDenseVector(observations)
       val prediction = sparkModel.predict(point).toInt
       Row.apply(prediction)
     }
@@ -222,21 +222,24 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
    * Get the predictions for observations in a test frame
    *
    * @param frame Frame to test the RandomForestClassifier model
-   * @param columns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the RandomForestClassifierModel
+   * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
+   *                By default, the same observation column names from training are used
+   * @param labelColumn Column name containing the label for each observation
+   *                By default, the same label column name from training is used
    * @return ClassificationMetricValue describing the test metrics
    */
-  def test(frame: Frame, columns: Option[List[String]]): ClassificationMetricValue = {
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None): ClassificationMetricValue = {
 
-    if (columns.isDefined) {
-      require(columns.get.length == observationColumns.length, "Number of columns for train and test should be same")
+    if (observationColumns.isDefined) {
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val rfColumns = columns.getOrElse(observationColumns)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
 
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(rfColumns, labelColumn)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })
@@ -258,8 +261,8 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
-    val tkMetadata = RandomForestClassifierModelTkMetaData(labelColumn,
-      observationColumns,
+    val tkMetadata = RandomForestClassifierModelTkMetaData(observationColumns,
+      labelColumn,
       numClasses,
       numTrees,
       impurity,
@@ -313,8 +316,8 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
 
 /**
  * TK Metadata that will be stored as part of the model
- * @param labelColumn Column name containing the label for each observation
  * @param observationColumns Column(s) containing the observations
+ * @param labelColumn Column name containing the label for each observation
  * @param numClasses Number of classes for classification
  * @param numTrees Number of tress in the random forest
  * @param impurity Criterion used for information gain calculation. Supported values "gini" or "entropy".
@@ -325,8 +328,8 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
  *                                with 'k' categories indexed from 0:{0,1,...,k-1}
  * @param featureSubsetCategory Number of features to consider for splits at each node
  */
-case class RandomForestClassifierModelTkMetaData(labelColumn: String,
-                                                 observationColumns: List[String],
+case class RandomForestClassifierModelTkMetaData(observationColumns: List[String],
+                                                 labelColumn: String,
                                                  numClasses: Int,
                                                  numTrees: Int,
                                                  impurity: String,
