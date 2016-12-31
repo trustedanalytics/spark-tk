@@ -101,9 +101,12 @@ object BetweennessCentrality {
 
     // Initialize the graph to 0's for the partial centrality sum, find the initial horizion
     // The horizon is the furthest most vertices that have not be calculated from the source vertex
+    println("horizon")
     val shortestPathGraphHorizon = shortestPathInitialHorizon(shortestPathGraph)
+    println(shortestPathGraphHorizon.vertices.collect().toArray.toList)
 
     // Sum the vertices from furthest vertex to closest vertex to the initial start vertex
+    println("central")
     val centralityGraph = partialCentralitySum(shortestPathGraphHorizon, sourceVertexId)
 
     centralityGraph.mapVertices({ case (id, x) => x.sigmaVal }).vertices
@@ -112,7 +115,8 @@ object BetweennessCentrality {
   // Calculates the single shortest paths from the given graph vertex
   // Annotates the vertices with the number of shortest paths that go through each vertex
   private def calculateShortestPaths(initializedGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
-    val initialMessage = VertexCentralityData(Int.MaxValue, 0, false, 0)
+    println("shortest Path")
+    val initialMessage = VertexCentralityData(Int.MaxValue, 0, true, 0)
     // Calculate the shortest path using Dijkstra's algorithm
     val shortestPathGraph = Pregel(initializedGraph, initialMessage)(
       // vertex program
@@ -123,12 +127,12 @@ object BetweennessCentrality {
         else if (oldShortestPath.distance < newShortestPath.distance)
           oldShortestPath
         else
-          VertexCentralityData(newShortestPath.distance, oldShortestPath.pathCount + newShortestPath.pathCount, false, 0)
+          VertexCentralityData(newShortestPath.distance, oldShortestPath.pathCount + newShortestPath.pathCount, true, 0)
       },
       // Increase the search diameter by 1
       (edge) => {
-        val newDstPathCount = VertexCentralityData(edge.srcAttr.distance + edge.attr, edge.srcAttr.pathCount, false, 0.0)
-        val newSrcPathCount = VertexCentralityData(edge.dstAttr.distance + edge.attr, edge.dstAttr.pathCount, false, 0.0)
+        val newDstPathCount = VertexCentralityData(edge.srcAttr.distance + edge.attr, edge.srcAttr.pathCount, true, 0.0)
+        val newSrcPathCount = VertexCentralityData(edge.dstAttr.distance + edge.attr, edge.dstAttr.pathCount, true, 0.0)
         val toMsg = edge.srcAttr.distance < edge.dstAttr.distance - edge.attr
         val fromMsg = edge.dstAttr.distance < edge.srcAttr.distance - edge.attr
         if (toMsg && fromMsg) {
@@ -152,30 +156,35 @@ object BetweennessCentrality {
         else if (a.distance > b.distance)
           b
         else
-          VertexCentralityData(a.distance, a.pathCount + b.pathCount, false, 0)
+          VertexCentralityData(a.distance, a.pathCount + b.pathCount, true, 0)
       })
 
     shortestPathGraph
   }
 
   // Find the initial set of vertices from the start vertex. Mark them as horizon vertices.
+  // To do this, mark every 
   private def shortestPathInitialHorizon(shortestPathGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
-    val shortestPathHorizonGraph: Graph[VertexCentralityData, Int] = shortestPathGraph.pregel(VertexCentralityData(0, 0, false, 0), 2)(
+    val shortestPathHorizonGraph: Graph[VertexCentralityData, Int] = shortestPathGraph.pregel(false, 2)(
       // If any neighbors have greater distance, this is not a horizon vertex
-      (id, currentVertexValue, messageVertexValue) => {
-        if (currentVertexValue.distance >= messageVertexValue.distance)
-          VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, true, 0)
-        else
+      (id, currentVertexValue, previousValue) => {
+        if (previousValue)
           VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, false, 0)
+        else
+          currentVertexValue
       },
       // Send the src distance from source to each to neighbor
-      edge => Iterator((edge.dstId, edge.srcAttr), (edge.srcId, edge.dstAttr)),
+      edge => {
+        if (edge.srcAttr.distance - edge.attr == edge.dstAttr.distance)
+          Iterator((edge.dstId, true))
+        else if (edge.dstAttr.distance - edge.attr == edge.srcAttr.distance)
+          Iterator((edge.srcId, true))
+        else
+          Iterator.empty
+      },
       // Select the greatest of all distances
       (a, b) => {
-        if (a.distance > b.distance)
-          a
-        else
-          b
+        a
       })
     shortestPathHorizonGraph
   }

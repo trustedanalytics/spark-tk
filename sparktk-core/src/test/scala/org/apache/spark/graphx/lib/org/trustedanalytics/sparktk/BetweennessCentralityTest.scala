@@ -124,5 +124,34 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
         List((4, 0.8333333432674408), (0, 0.8333333432674408), (1, 0.8333333432674408), (3, 3.333333373069763), (5, 0.8333333432674408), (2, 3.333333373069763)))
     }
 
+    "calculate weighted betweenness centrality" in {
+      val vertices = Array(
+        (0L, "a"),
+        (1L, "d"),
+        (2L, "e"),
+        (3L, "j"),
+        (4L, "k"))
+      val vRDD = sparkContext.parallelize(vertices)
+      // create routes RDD with srcid, destid, distance
+      val edges = Array(
+        Edge(0L, 1L, 3),
+        Edge(0L, 2L, 2),
+        Edge(0L, 3L, 6),
+        Edge(0L, 4L, 4),
+        Edge(1L, 3L, 5),
+        Edge(1L, 5L, 5),
+        Edge(2L, 4L, 1),
+        Edge(3L, 4L, 2),
+        Edge(3L, 5L, 1),
+        Edge(4L, 5L, 4)
+      )
+      val eRDD = sparkContext.parallelize(edges)
+      // define the graph
+      val graph = Graph(vRDD, eRDD)
+      val betweennessGraph = BetweennessCentrality.run(graph, Some((x: Int) => x), normalize = false)
+      betweennessGraph.vertices.collect.toArray.toList should contain theSameElementsAs (
+        List((0, 2.0), (1, 0.0), (2, 4.0), (3, 3.0), (4, 4.0), (5, 0.0)))
+    }
+
   }
 }
