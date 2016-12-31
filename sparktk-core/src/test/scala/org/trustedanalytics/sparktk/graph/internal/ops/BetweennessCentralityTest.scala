@@ -61,9 +61,8 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
       new Graph(vertices, edges)
     }
 
-    "calculate betweenness centrality on the petersen graph" in {
+    "calculate betweenness centrality on the petersen graph in sparktk" in {
       val betweennessGraph = getGraph.betweennessCentrality()
-      println(betweennessGraph.collect().toArray.toList.toString)
       betweennessGraph.collect().toArray.toList should contain theSameElementsAs (
         List(new GenericRow(Array(4, "e", 0.08333333333333333)),
           new GenericRow(Array(0, "a", 0.08333333333333333)),
@@ -77,5 +76,91 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
           new GenericRow(Array(2, "c", 0.08333333333333333))))
     }
 
+    "calculate betweenness centrality on a 3 vertex line in sparktk" in {
+      val sqlContext = new SQLContext(sparkContext)
+      val vertices = sqlContext.createDataFrame(Array(
+        (1L, "d"),
+        (2L, "e"),
+        (3L, "j"))).toDF("id", "value")
+      // create routes RDD with srcid, destid, distance
+      val edges = sqlContext.createDataFrame(Array(
+        (1L, 2L, 1.0),
+        (2L, 3L, 1.0)
+      )).toDF("src", "dst", "weight")
+      // define the graph
+      val graph = new Graph(vertices, edges)
+      val betweennessGraph = graph.betweennessCentrality()
+      betweennessGraph.collect().toArray.toList should contain theSameElementsAs (
+        List(new GenericRow(Array(1, "d", 0.0)),
+          new GenericRow(Array(2, "e", 1.0)),
+          new GenericRow(Array(3, "j", 0.0))))
+    }
+
+    "calculate betweenness centrality on a 6 vertex grid (ladder graph) in sparktk" in {
+      val sqlContext = new SQLContext(sparkContext)
+      val vertices = sqlContext.createDataFrame(Array(
+        (0L, "d"),
+        (1L, "e"),
+        (2L, "f"),
+        (3L, "g"),
+        (4L, "h"),
+        (5L, "i"))).toDF("id", "value")
+
+      // create routes RDD with srcid, destid, distance
+      val edges = sqlContext.createDataFrame(Array(
+        (0L, 1L, 1.0),
+        (0L, 2L, 1.0),
+        (1L, 3L, 1.0),
+        (2L, 3L, 1.0),
+        (4L, 5L, 1.0),
+        (2L, 4L, 1.0),
+        (3L, 5L, 1.0)
+      )).toDF("src", "dst", "weight")
+      // define the graph
+      val graph = new Graph(vertices, edges)
+      val betweennessGraph = graph.betweennessCentrality(normalize = false)
+      betweennessGraph.collect().toArray.toList should contain theSameElementsAs (
+        List(new GenericRow(Array(4, "h", 0.8333333432674408D)),
+          new GenericRow(Array(0, "d", 0.8333333432674408D)),
+          new GenericRow(Array(1, "e", 0.8333333432674408D)),
+          new GenericRow(Array(5, "i", 0.8333333432674408D)),
+          new GenericRow(Array(3, "g", 3.3333333730697634D)),
+          new GenericRow(Array(2, "f", 3.3333333730697634D))))
+
+    }
+
+    "calculate weighted betweenness centrality in sparktk" in {
+      val sqlContext = new SQLContext(sparkContext)
+      val vertices = sqlContext.createDataFrame(Array(
+        (0L, "a"),
+        (1L, "d"),
+        (2L, "e"),
+        (3L, "j"),
+        (4L, "k"),
+        (5L, "l"))).toDF("id", "value")
+      // create routes RDD with srcid, destid, distance
+      val edges = sqlContext.createDataFrame(Array(
+        (0L, 1L, 3),
+        (0L, 2L, 2),
+        (0L, 3L, 6),
+        (0L, 4L, 4),
+        (1L, 3L, 5),
+        (1L, 5L, 5),
+        (2L, 4L, 1),
+        (3L, 4L, 2),
+        (3L, 5L, 1),
+        (4L, 5L, 4)
+      )).toDF("src", "dst", "weight")
+      // define the graph
+      val graph = new Graph(vertices, edges)
+      val betweennessGraph = graph.betweennessCentrality(Some("weight"), normalize = false)
+      betweennessGraph.collect().toArray.toList should contain theSameElementsAs (
+        List(new GenericRow(Array(0, "a", 2.0)),
+          new GenericRow(Array(1, "d", 0.0)),
+          new GenericRow(Array(2, "e", 4.0)),
+          new GenericRow(Array(3, "j", 3.0)),
+          new GenericRow(Array(4, "k", 4.0)),
+          new GenericRow(Array(5, "l", 0.0))))
+    }
   }
 }

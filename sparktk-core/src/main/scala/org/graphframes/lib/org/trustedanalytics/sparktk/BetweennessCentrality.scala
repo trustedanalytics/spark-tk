@@ -49,7 +49,7 @@ object BetweennessCentrality {
       case Some(edgeName) =>
         val edgeWeightType = graph.edges.schema(edgeName).dataType
         sparktk.BetweennessCentrality.run(graph.toGraphX, getEdgeWeightFunc(graph, edgePropName), normalize)
-      case None => sparktk.BetweennessCentrality.run(gf.toGraphX)
+      case None => sparktk.BetweennessCentrality.run(gf.toGraphX, normalize = normalize)
     }
     // return an RDD representing the betweenness value on vertices
     GraphXConversions.fromGraphX(graph, graphxBetweennessRDD, Seq(betweennessResults)).vertices
