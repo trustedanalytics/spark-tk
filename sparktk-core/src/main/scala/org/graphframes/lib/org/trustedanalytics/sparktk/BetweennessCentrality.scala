@@ -37,9 +37,10 @@ object BetweennessCentrality {
    *
    * @param graph the graph to compute betweenness centrality on
    * @param edgePropName optional edge column name to be used as edge weight
+   * @param normalize normalizes the betweenness centrality against the number of pairwise paths
    * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
    */
-  def run(graph: GraphFrame, edgePropName: Option[String] = None): DataFrame = {
+  def run(graph: GraphFrame, edgePropName: Option[String] = None, normalize: Boolean = true): DataFrame = {
     // Convert to grpahx
     val gf = GraphFrame(graph.vertices.select(GraphFrame.ID), graph.edges)
 
@@ -47,22 +48,22 @@ object BetweennessCentrality {
     val graphxBetweennessRDD = edgePropName match {
       case Some(edgeName) =>
         val edgeWeightType = graph.edges.schema(edgeName).dataType
-        sparktk.BetweennessCentrality.run(graph.toGraphX, getEdgeWeightFunc(graph, edgePropName))
+        sparktk.BetweennessCentrality.run(graph.toGraphX, getEdgeWeightFunc(graph, edgePropName), normalize)
       case None => sparktk.BetweennessCentrality.run(gf.toGraphX)
     }
     // return an RDD representing the betweenness value on vertices
     GraphXConversions.fromGraphX(graph, graphxBetweennessRDD, Seq(betweennessResults)).vertices
   }
 
-  private def getEdgeWeightFunc(graph: GraphFrame, edgePropName: Option[String]): Option[(Row) => Double] = {
+  private def getEdgeWeightFunc(graph: GraphFrame, edgePropName: Option[String]): Option[(Row) => Int] = {
     val edgeWeightFunc = if (edgePropName.isDefined) {
       val edgeWeightType = graph.edges.schema(edgePropName.get).dataType
       require(edgeWeightType.isInstanceOf[NumericType], "The edge weight type should be numeric")
       Some((row: Row) => row.getAs[Any](edgePropName.get) match {
-        case x: Int => x.toDouble
-        case x: Long => x.toDouble
-        case x: Short => x.toDouble
-        case x: Byte => x.toDouble
+        case x: Int => x.toInt
+        case x: Long => x.toInt
+        case x: Short => x.toInt
+        case x: Byte => x.toInt
         case _ => throw new scala.ClassCastException(s"the edge weight type cannot be $edgeWeightType")
       })
     }

@@ -31,27 +31,34 @@ object BetweennessCentrality {
    *
    * @param graph the graph to compute betweenness centrality on
    * @param getEdgeWeight function that extracts the edge weight from edge attribute (by default a function that returns 1.0)
+   * @param normalize if true normalizes the betweenness centrality against the pairwise number of edges
    * @tparam VD vertex attribute, ignored
    * @tparam ED the edge attribute, potentially used for edge weight
    * @return An RDD with a tuple of vertex identity mapped to it's centrality
    */
   def run[VD, ED](graph: Graph[VD, ED],
-                  getEdgeWeight: Option[ED => Double] = None): Graph[Double, Double] = {
+                  getEdgeWeight: Option[ED => Int] = None,
+                  normalize: Boolean = true): Graph[Double, Int] = {
 
     // Initialize the edge weights
     val edgeWeightedGraph = graph.mapEdges(
       e => getEdgeWeight match {
         case Some(func) => func(e.attr)
-        case None => 1.0
+        case None => 1
       })
 
     // Get the graph vertices to iterate over
     val graphVertices = graph.vertices.map({ case (id, _) => (id) }).collect()
 
-    // We normalize against the pairwise number of possible paths in the graph
-    // This is ((n-1)*(n-2))/2. The return value of the centrality algorithm is 
-    // 2*centrality, eliminating the need for the divide by 2
-    val normalizationValue = (graphVertices.length - 1) * (graphVertices.length - 2)
+    val normalizationValue = if (normalize)
+      // We normalize against the pairwise number of possible paths in the graph
+      // This is ((n-1)*(n-2))/2. The return value of the centrality algorithm is 
+      // 2*centrality, eliminating the need for the divide by 2
+      (graphVertices.length - 1) * (graphVertices.length - 2)
+    else
+      // Otherwise divide by 2 to account for the
+      // double count (a path s-t is counted twice, s-t and t-s)
+      2
 
     // The current Id is used to initialize the fold
     // remainder is folded over
@@ -76,7 +83,7 @@ object BetweennessCentrality {
 
   // Calculates the partial centrality of a graph from a single vertex. The sum over all vertices is the
   // Vertex centrality
-  private def calculateVertexCentrality[VD](initialGraph: Graph[VD, Double],
+  private def calculateVertexCentrality[VD](initialGraph: Graph[VD, Int],
                                             sourceVertexId: VertexId): VertexRDD[Double] = {
 
     // Initial graph
@@ -86,7 +93,7 @@ object BetweennessCentrality {
       if (sourceVertexId == id)
         VertexCentralityData(0, 1, false, 0)
       else
-        VertexCentralityData(Double.PositiveInfinity, 0, false, 0)
+        VertexCentralityData(Int.MaxValue, 0, false, 0)
     })
 
     // Calculate the shortest path using Dijkstra's algorithm
@@ -104,8 +111,8 @@ object BetweennessCentrality {
 
   // Calculates the single shortest paths from the given graph vertex
   // Annotates the vertices with the number of shortest paths that go through each vertex
-  private def calculateShortestPaths(initializedGraph: Graph[VertexCentralityData, Double]): Graph[VertexCentralityData, Double] = {
-    val initialMessage = VertexCentralityData(Double.PositiveInfinity, 1, false, 0)
+  private def calculateShortestPaths(initializedGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
+    val initialMessage = VertexCentralityData(Int.MaxValue, 0, false, 0)
     // Calculate the shortest path using Dijkstra's algorithm
     val shortestPathGraph = Pregel(initializedGraph, initialMessage)(
       // vertex program
@@ -152,8 +159,8 @@ object BetweennessCentrality {
   }
 
   // Find the initial set of vertices from the start vertex. Mark them as horizon vertices.
-  private def shortestPathInitialHorizon(shortestPathGraph: Graph[VertexCentralityData, Double]): Graph[VertexCentralityData, Double] = {
-    val shortestPathHorizonGraph: Graph[VertexCentralityData, Double] = shortestPathGraph.pregel(VertexCentralityData(0, 0, false, 0), 2)(
+  private def shortestPathInitialHorizon(shortestPathGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
+    val shortestPathHorizonGraph: Graph[VertexCentralityData, Int] = shortestPathGraph.pregel(VertexCentralityData(0, 0, false, 0), 2)(
       // If any neighbors have greater distance, this is not a horizon vertex
       (id, currentVertexValue, messageVertexValue) => {
         if (currentVertexValue.distance >= messageVertexValue.distance)
@@ -175,9 +182,9 @@ object BetweennessCentrality {
 
   // sums the recursive values that turn into the partial centrality sum for this
   // particular vertex
-  private def partialCentralitySum(shortestPathHorizonGraph: Graph[VertexCentralityData, Double],
-                                   sourceVertexId: VertexId): Graph[VertexCentralityData, Double] = {
-    val centralitiedGraph = shortestPathHorizonGraph.pregel(VertexCentralityData(0, 0, false, 0))(
+  private def partialCentralitySum(shortestPathHorizonGraph: Graph[VertexCentralityData, Int],
+                                   sourceVertexId: VertexId): Graph[VertexCentralityData, Int] = {
+    val centralityGraph = shortestPathHorizonGraph.pregel(VertexCentralityData(0, 0, false, 0))(
       // Don't update anything on first iteration
       // Don't update if you horizon (i.e. an interior vertex)
       // Update if interior, but ALL incoming messages with > distance are marked as not interior (i.e. horizon)
@@ -223,7 +230,7 @@ object BetweennessCentrality {
           if (vertexMessageId == sourceVertexId)
             Iterator.empty
           else {
-            val sigmaUpdate = (predecessorVertex.pathCount / currentVertex.pathCount) * (1 + currentVertex.sigmaVal)
+            val sigmaUpdate = (predecessorVertex.pathCount.toFloat / currentVertex.pathCount.toFloat) * (1f + currentVertex.sigmaVal)
             Iterator((vertexMessageId, VertexCentralityData(0, 0, currentVertex.horizon, sigmaUpdate)))
           }
         }
@@ -233,7 +240,7 @@ object BetweennessCentrality {
       // for which a vertex is in the predecessor set are horizon
       (a, b) => { VertexCentralityData(0, 0, a.horizon && b.horizon, a.sigmaVal + b.sigmaVal) }
     )
-    centralitiedGraph
+    centralityGraph
   }
 
   // Store all the information relevant to calculating the partial centrality of a particular vertex
@@ -241,6 +248,6 @@ object BetweennessCentrality {
   // first distance and pathcount is used,
   // Then the horizon vertices are marked
   // Then the sigmaVal (partial sum of centrality) is calculated
-  private case class VertexCentralityData(distance: Double, pathCount: Int, horizon: Boolean, sigmaVal: Double)
+  private case class VertexCentralityData(distance: Int, pathCount: Int, horizon: Boolean, sigmaVal: Double)
 }
 

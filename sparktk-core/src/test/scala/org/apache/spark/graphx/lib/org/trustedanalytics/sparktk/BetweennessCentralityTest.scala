@@ -77,5 +77,52 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
           (2, 0.08333333333333333)))
     }
 
+    "calculate betweenness centrality on a 3 vertex line" in {
+      val vertices = Array(
+        (1L, "d"),
+        (2L, "e"),
+        (3L, "j"))
+      val vRDD = sparkContext.parallelize(vertices)
+      // create routes RDD with srcid, destid, distance
+      val edges = Array(
+        Edge(1L, 2L, 1.0),
+        Edge(2L, 3L, 1.0)
+      )
+      val eRDD = sparkContext.parallelize(edges)
+      // define the graph
+      val graph = Graph(vRDD, eRDD)
+      val betweennessGraph = BetweennessCentrality.run(graph)
+      betweennessGraph.vertices.collect.toArray.toList should contain theSameElementsAs (
+        List((1, 0.0), (2, 1.0), (3, 0.0)))
+    }
+
+    "calculate betweenness centrality on a 6 vertex grid (ladder graph)" in {
+      val vertices = Array(
+        (0L, "d"),
+        (1L, "e"),
+        (2L, "f"),
+        (3L, "g"),
+        (4L, "h"),
+        (5L, "i"))
+
+      val vRDD = sparkContext.parallelize(vertices)
+      // create routes RDD with srcid, destid, distance
+      val edges = Array(
+        Edge(0L, 1L, 1.0),
+        Edge(0L, 2L, 1.0),
+        Edge(1L, 3L, 1.0),
+        Edge(2L, 3L, 1.0),
+        Edge(4L, 5L, 1.0),
+        Edge(2L, 4L, 1.0),
+        Edge(3L, 5L, 1.0)
+      )
+      val eRDD = sparkContext.parallelize(edges)
+      // define the graph
+      val graph = Graph(vRDD, eRDD)
+      val betweennessGraph = BetweennessCentrality.run(graph, normalize = false)
+      betweennessGraph.vertices.collect.toArray.toList should contain theSameElementsAs (
+        List((4, 0.8333333432674408), (0, 0.8333333432674408), (1, 0.8333333432674408), (3, 3.333333373069763), (5, 0.8333333432674408), (2, 3.333333373069763)))
+    }
+
   }
 }
