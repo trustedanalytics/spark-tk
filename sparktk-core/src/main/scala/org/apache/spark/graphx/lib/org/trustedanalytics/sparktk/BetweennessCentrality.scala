@@ -101,12 +101,9 @@ object BetweennessCentrality {
 
     // Initialize the graph to 0's for the partial centrality sum, find the initial horizion
     // The horizon is the furthest most vertices that have not be calculated from the source vertex
-    println("horizon")
     val shortestPathGraphHorizon = shortestPathInitialHorizon(shortestPathGraph)
-    println(shortestPathGraphHorizon.vertices.collect().toArray.toList)
 
     // Sum the vertices from furthest vertex to closest vertex to the initial start vertex
-    println("central")
     val centralityGraph = partialCentralitySum(shortestPathGraphHorizon, sourceVertexId)
 
     centralityGraph.mapVertices({ case (id, x) => x.sigmaVal }).vertices
@@ -115,7 +112,6 @@ object BetweennessCentrality {
   // Calculates the single shortest paths from the given graph vertex
   // Annotates the vertices with the number of shortest paths that go through each vertex
   private def calculateShortestPaths(initializedGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
-    println("shortest Path")
     val initialMessage = VertexCentralityData(Int.MaxValue, 0, true, 0)
     // Calculate the shortest path using Dijkstra's algorithm
     val shortestPathGraph = Pregel(initializedGraph, initialMessage)(
