@@ -21,11 +21,13 @@ import unittest
 import uuid
 import datetime
 import os
+from ConfigParser import SafeConfigParser
 
 import sparktk as stk
 
 import config
 from threading import Lock
+
 udf_lib_path = os.path.join(config.root, "regression-tests", "sparktkregtests", "lib" ,"udftestlib")
 udf_files = [os.path.join(udf_lib_path, f) for f in os.listdir(udf_lib_path)]
 
@@ -77,11 +79,18 @@ class SparkTKTestCase(unittest.TestCase):
     def tearDownClass(cls):
         pass
 
-    def get_file(self, filename):
+    def get_file(self, filename, performance_file=False):
         """Return the hdfs path to the given file"""
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
-        placed_path = config.hdfs_data_dir + "/" + filename
+        if performance_file:
+            config_reader = SafeConfigParser() 
+            filepath = os.path.abspath(os.path.join(
+                config.root, "regression-tests", "sparktkregtests", "lib", "performance.ini"))
+            config_reader.read(filepath)
+            placed_path = config.performance_data_dir + "/" + config_reader.get(config.test_size, filename)
+        else:
+            placed_path = config.hdfs_data_dir + "/" + filename
         return placed_path
 
     def get_export_file(self, filename):
