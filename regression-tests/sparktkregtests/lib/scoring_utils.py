@@ -32,6 +32,8 @@ class scorer(object):
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
+        self.port = None
+        self.scoring_process = None
 
     def __enter__(self):
         """Activate the Server"""
@@ -44,11 +46,6 @@ class scorer(object):
         self.port = port_config.get('port', port_id)
         self.scoring_process = None
 
-    def __enter__(self):
-        """Activate the Server"""
-        # change current working directory to point at scoring_engine dir
-        run_path = os.path.abspath(os.path.join(config.root, "scoring", "scoring_engine"))
-
         # make a new process group
         self.scoring_process = sp.Popen(
             ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
@@ -56,7 +53,7 @@ class scorer(object):
             preexec_fn=os.setsid)
 
         # wait for server to start
-        time.sleep(20)
+        time.sleep(10)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
