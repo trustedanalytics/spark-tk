@@ -159,10 +159,10 @@ object BetweennessCentrality {
   }
 
   // Find the initial set of vertices from the start vertex. Mark them as horizon vertices.
-  // To do this, mark every vertex initially as being a hozrion vertex. Then send a
+  // To do this, mark every vertex initially as being a horizon vertex. Then send a
   // message from a vertex to each value in it's previous set (as defined in 
   // implementation paper). If a vertex receives a message it is not a horizon vertex , but a vertex
-  // in a previous set for some vertex.
+  // in a previous set for some vertex, mark it as such.
   private def shortestPathInitialHorizon(shortestPathGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
     val shortestPathHorizonGraph: Graph[VertexCentralityData, Int] = shortestPathGraph.pregel(false, 2)(
       // If any neighbors have greater distance, this is not a horizon vertex
