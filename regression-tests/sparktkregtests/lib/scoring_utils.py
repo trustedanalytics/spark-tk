@@ -46,7 +46,7 @@ class scorer(object):
         """Activate the Server"""
         # make a new process group
         self.scoring_process = sp.Popen(
-            ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
+            [os.path.join(config.root, "scoring", "scoring_engine", "bin", "model-scoring.sh"), "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
              "-Dtrustedanalytics.scoring.port=%s" % self.port],
             preexec_fn=os.setsid)
 
