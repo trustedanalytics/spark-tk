@@ -16,7 +16,6 @@
 package org.trustedanalytics.sparktk.graph.internal.ops
 
 import org.apache.spark.graphx.lib.org.trustedanalytics.sparktk.ClosenessCalculations
-import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.internal.{ BaseGraph, GraphSummarization, GraphState }
 import org.graphframes.lib.org.trustedanalytics.{ sparktk => graphframeslib }
 
