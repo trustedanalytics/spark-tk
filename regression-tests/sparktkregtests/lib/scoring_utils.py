@@ -44,11 +44,20 @@ class scorer(object):
 
     def __enter__(self):
         """Activate the Server"""
+
+        # keep track of cwd for future
+        run_path = os.path.join(config.root, "scoring", "scoring_engine")
+        test_dir = os.getcwd()
+        os.chdir(run_path)
+
         # make a new process group
         self.scoring_process = sp.Popen(
-            [os.path.join(config.root, "scoring", "scoring_engine", "bin", "model-scoring.sh"), "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
+            ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
              "-Dtrustedanalytics.scoring.port=%s" % self.port],
             preexec_fn=os.setsid)
+
+        # restore cwd
+        os.chdir(test_dir)
 
         # wait for server to start
         time.sleep(10)
