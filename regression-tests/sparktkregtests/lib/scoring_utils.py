@@ -32,20 +32,18 @@ class scorer(object):
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
-        self.port = None
-        self.scoring_process = None
 
-    def __enter__(self):
-        """Activate the Server"""
-        # change current working directory to point at scoring_engine dir
-        # set port
+        # Fetch the appropriate port number from the config file
         port_config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
             config.root, "regression-tests", "sparktkregtests", "lib", "port.ini"))
         port_config.read(filepath)
         self.port = port_config.get('port', port_id)
+
         self.scoring_process = None
 
+    def __enter__(self):
+        """Activate the Server"""
         # make a new process group
         self.scoring_process = sp.Popen(
             ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
