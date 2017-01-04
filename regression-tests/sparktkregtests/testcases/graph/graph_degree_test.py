@@ -45,6 +45,38 @@ class WeightedDegreeTest(sparktk_test.SparkTKTestCase):
 
         self.graph = self.context.graph.create(self.vertices, self.frame)
 
+    def test_degree_isolated(self):
+        """Test degree with an isolated vertex"""
+        vertex_frame = self.context.frame.create(
+                          [[1],
+                           [2],
+                           [3],
+                           [4],
+                           [5]],
+                          [("id", int)])
+        edge_frame = self.context.frame.create(
+                          [[2, 3],
+                           [2, 1],
+                           [2, 5]],
+                          [("src", int),
+                           ("dst", int)])
+
+        graph = self.context.graph.create(vertex_frame, edge_frame)
+
+        degree = graph.degrees()
+
+        known_vals = {1: 1,
+                      2: 3,
+                      3: 1,
+                      4: 0,
+                      5: 1}
+        degree_pandas = degree.to_pandas(degree.count())
+
+        for _, row in degree_pandas.iterrows():
+            self.assertAlmostEqual(known_vals[row["id"]], row['degree'])
+            self.assertAlmostEqual(known_vals[row["id"]], row['degree'])
+            self.assertAlmostEqual(known_vals[row["id"]], row['degree'])
+
     def test_degree_out(self):
         """Test degree count for out edges"""
         graph_result = self.graph.degrees(degree_option="out")
