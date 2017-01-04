@@ -60,7 +60,7 @@ class scorer(object):
         os.chdir(test_dir)
 
         # wait for server to start
-        time.sleep(10)
+        time.sleep(20)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
