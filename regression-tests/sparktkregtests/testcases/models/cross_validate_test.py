@@ -37,7 +37,7 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             binomial_dataset, schema=schema, header=True)
 
     def test_all_results(self):
-        """Test number of models created given 5 folds and 2 settings per model"""
+        """Test number of models created given 5 folds """
         result = self.context.models.cross_validate(
             self.frame,
             [(self.context.models.classification.svm,
@@ -48,7 +48,7 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             (self.context.models.classification.logistic_regression,
             {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
             "label_column":"res",
-            "num_iterations": grid_values(2, 15),
+            "num_iterations": grid_values(2, 5, 15),
             "step_size": 0.001})],
             num_folds=5,
             verbose=False)
@@ -56,10 +56,20 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         #validate number of models
         all_models = result.all_results
         actual_num_models = 0
+        svm_count = 0
+        log_count = 0
         for fold in all_models:
-            actual_num_models += len(fold.grid_points)
-        expected_num_models = 5 * 2 * 2
+            grid_points = fold.grid_points
+            actual_num_models += len(grid_points)
+            for grid_point in grid_points:
+                if "svm" in grid_point.descriptor.model_type.__name__:
+                    svm_count += 1
+                else:
+                    log_count += 1
+        expected_num_models = 5 * (2 + 3)
         self.assertEquals(actual_num_models, expected_num_models)
+        self.assertEqual(svm_count, 10)
+        self.assertEqual(log_count, 15)
 
     def test_default_num_fold(self):
         """Test cross validate with default num_fold parameter"""
@@ -73,17 +83,29 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             (self.context.models.classification.logistic_regression,
             {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
             "label_column":"res",
-            "num_iterations": grid_values(2, 15),
+            "num_iterations": grid_values(2, 5, 15),
             "step_size": 0.001})],
             verbose=False)
 
         #validate number of models
         all_models = result.all_results
         actual_num_models = 0
+        svm_count = 0
+        log_count = 0
         for fold in all_models:
-            actual_num_models += len(fold.grid_points)
-        expected_num_models = 3 * 2 * 2
+            grid_points = fold.grid_points
+            actual_num_models += len(grid_points)
+            for grid_point in grid_points:
+                if "svm" in grid_point.descriptor.model_type.__name__:
+                    svm_count += 1
+                else:
+                    log_count += 1
+
+        expected_num_models = 3 * (2 + 3)
         self.assertEquals(actual_num_models, expected_num_models)
+        self.assertEqual(svm_count, 6)
+        self.assertEqual(log_count, 9)
+
 
     def test_averages(self):
         """Test ouptut of cross validate averages"""
