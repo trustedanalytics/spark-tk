@@ -44,22 +44,22 @@ object ClosenessCentrality {
    * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it
    *                   divided by the total number of nodes in the graph, this is effective in the case of disconnected
    *                   graph
-   * @tparam VD the vertex attribute that stores the shortest-path data
+   * @tparam VD the vertex attribute that stores the closeness centrality data
    * @tparam ED the edge attribute that contains the edge weight
-   * @return the graph vertex IDs and each corresponding closeness centrality value
+   * @return graph with the closeness data as the vertex attribute and the edge weight as the edge attribute
    */
   def run[VD, ED: ClassTag](graph: Graph[VD, ED],
                             getEdgeWeight: Option[ED => Double] = None,
-                            normalized: Boolean = true): Seq[ClosenessData] = {
+                            normalized: Boolean = true): Graph[Double, Double] = {
     val verticesCount = graph.vertices.count.toDouble
-    calculateShortestPaths(graph, getEdgeWeight).vertices.map {
-      case (id, spMap) =>
-        calculateCloseness(id, spMap, normalized, verticesCount)
-    }.collect().toSeq
+    calculateShortestPaths(graph, getEdgeWeight).mapVertices {
+      case (id, spMap) => calculateCloseness(id, spMap, normalized, verticesCount).closenessCentrality
+    }
   }
 
   /**
    * calculate the closeness centrality value per vertex
+   *
    * @param id the vertex ID
    * @param spMap the shortest-path calculations from that vertex to the rest of the nodes in the graph
    * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it
