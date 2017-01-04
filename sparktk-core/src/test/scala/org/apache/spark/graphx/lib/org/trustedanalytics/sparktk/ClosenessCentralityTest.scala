@@ -21,8 +21,9 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers {
 
-  "Single source shortest path" should {
-    def getGraph: Graph[String, Double] = {
+  "Closeness centrality" should {
+    // create a connected graph
+    def getConnectedGraph: Graph[String, Double] = {
       // create vertices RDD with ID and Name
       val vertices = Array((1L, "Ben"),
         (2L, "Anna"),
@@ -32,36 +33,77 @@ class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers 
         (6L, "Frank"))
       val vRDD = sparkContext.parallelize(vertices)
       // create routes RDD with srcid, destid, distance
-      val edges = Array(Edge(1L, 2L, 1800.0),
-        Edge(2L, 3L, 800.0),
-        Edge(3L, 4L, 600.0),
-        Edge(3L, 5L, 900.0),
-        Edge(4L, 5L, 1100.0),
-        Edge(4L, 6L, 700.0),
-        Edge(5L, 6L, 500.0))
+      val edges = Array(Edge(1L, 2L, 3.0),
+        Edge(2L, 3L, 12.0),
+        Edge(3L, 4L, 2.0),
+        Edge(3L, 5L, 5.0),
+        Edge(4L, 5L, 4.0),
+        Edge(4L, 6L, 8.0),
+        Edge(5L, 6L, 9.0))
+      val eRDD = sparkContext.parallelize(edges)
+      // create the graph
+      Graph(vRDD, eRDD)
+    }
+    // create disconnected graph
+    def getDisconnectedGraph: Graph[String, Double] = {
+      // create vertices RDD with ID and Name
+      val vertices = Array((1L, "Ben"),
+        (2L, "Anna"),
+        (3L, "Cara"),
+        (4L, "Dana"),
+        (5L, "Evan"),
+        (6L, "Frank"),
+        (7L, "Wafa"),
+        (8L, "Anna"))
+      val vRDD = sparkContext.parallelize(vertices)
+      // create routes RDD with srcid, destid, distance
+      val edges = Array(Edge(1L, 2L, 3.0),
+        Edge(2L, 3L, 12.0),
+        Edge(3L, 4L, 2.0),
+        Edge(3L, 5L, 5.0),
+        Edge(4L, 5L, 4.0),
+        Edge(4L, 6L, 8.0),
+        Edge(5L, 6L, 9.0),
+        Edge(7L, 8L, 10.0))
       val eRDD = sparkContext.parallelize(edges)
       // create the graph
       Graph(vRDD, eRDD)
     }
 
     "calculate the closeness centrality with normalized values" in {
-      val closenessCentrality = ClosenessCentrality.run(getGraph)
-      assert(closenessCentrality(3) == ClosenessCalculations(3, 0.44999999999999996))
+      val closenessCentrality = ClosenessCentrality.run(getConnectedGraph)
+      closenessCentrality(3).vertexId shouldBe 3L
+      closenessCentrality(3).closenessCentrality shouldBe (0.44999999999999996 +- 1E-6)
     }
 
     "calculate the closeness centrality" in {
-      val closenessCentrality = ClosenessCentrality.run(getGraph, None, normalized = false)
-      assert(closenessCentrality(3) == ClosenessCalculations(3, 0.75))
+      val closenessCentrality = ClosenessCentrality.run(getConnectedGraph, None, normalized = false)
+      closenessCentrality(3).vertexId shouldBe 3L
+      closenessCentrality(3).closenessCentrality shouldBe (0.75 +- 1E-6)
     }
 
-    "calculate the closeness centrality with edge weights normalized" in {
-      val closenessCentrality = ClosenessCentrality.run(getGraph, Some((x: Double) => x))
-      assert(closenessCentrality(3) == ClosenessCalculations(3, 6.428571428571428E-4))
+    "calculate the normalized closeness centrality with edge weights" in {
+      val closenessCentrality = ClosenessCentrality.run(getConnectedGraph, Some((x: Double) => x))
+      closenessCentrality(3).vertexId shouldBe 3L
+      closenessCentrality(3).closenessCentrality shouldBe (0.10588235294117647 +- 1E-6)
     }
 
     "calculate the closeness centrality with edge weights" in {
-      val closenessCentrality = ClosenessCentrality.run(getGraph, Some((x: Double) => x), normalized = false)
-      assert(closenessCentrality(3) == ClosenessCalculations(3, 0.0010714285714285715))
+      val closenessCentrality = ClosenessCentrality.run(getConnectedGraph, Some((x: Double) => x), normalized = false)
+      closenessCentrality(3).vertexId shouldBe 3L
+      closenessCentrality(3).closenessCentrality shouldBe (0.17647058823529413 +- 1E-6)
+    }
+
+    "calculate the closeness centrality for a disconnected graph" in {
+      val closenessCentrality = ClosenessCentrality.run(getDisconnectedGraph, None, normalized = false)
+      closenessCentrality(3).vertexId shouldBe 3L
+      closenessCentrality(3).closenessCentrality shouldBe (0.75 +- 1E-6)
+    }
+
+    "calculate the normalized closeness centrality for a disconnected graph" in {
+      val closenessCentrality = ClosenessCentrality.run(getDisconnectedGraph, None)
+      closenessCentrality(3).vertexId shouldBe 3L
+      closenessCentrality(3).closenessCentrality shouldBe (0.3214285714285714 +- 1E-6)
     }
   }
 }
