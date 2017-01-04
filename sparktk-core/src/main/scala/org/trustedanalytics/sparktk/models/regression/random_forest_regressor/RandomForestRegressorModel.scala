@@ -25,6 +25,7 @@ import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ RowWrapperFunctions, FrameRdd }
 import org.trustedanalytics.sparktk.models.regression.RegressionUtils._
+import org.trustedanalytics.sparktk.models.regression.RegressionColumnNames._
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
@@ -35,19 +36,18 @@ import org.apache.spark.mllib.linalg.Vectors
 import java.nio.file.{ Files, Path }
 import org.apache.commons.io.FileUtils
 import FrameImplicits._
+
 object RandomForestRegressorModel extends TkSaveableObject {
 
-  private def getFeatureSubsetCategory(featureSubsetCategory: Option[String], numTrees: Int): String = {
-    var value = "all"
-    value = featureSubsetCategory.getOrElse("all") match {
+  private def getFeatureSubsetCategory(featureSubsetCategory: String, numTrees: Int): String = {
+    featureSubsetCategory match {
       case "auto" =>
         numTrees match {
           case 1 => "all"
           case _ => "onethird"
         }
-      case _ => featureSubsetCategory.getOrElse("all")
+      case x => x
     }
-    value
   }
 
   /**
@@ -59,15 +59,15 @@ object RandomForestRegressorModel extends TkSaveableObject {
    * @param impurity Criterion used for information gain calculation. Default supported value is "variance"
    * @param maxDepth Maximum depth of the tree. Default is 4
    * @param maxBins Maximum number of bins used for splitting features. Default is 100
-   * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
-   * @param categoricalFeaturesInfo Arity of categorical features. Entry (name -> k) indicates that feature
-   *                                'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
-   * @param featureSubsetCategory Number of features to consider for splits at each node.
-   *                              Supported values "auto","all","sqrt","log2","onethird".
-   *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
-   *                              ; if num_trees > 1, set to "onethird"
-   * @param minInstancesPerNode Minimum number of instances each child must have after split. Default is 1
+   * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
    * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+   * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
+   *                              Supported values are "auto","all","sqrt","log2","onethird".
+   *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
+   *                              ; if num_trees > 1, set to "onethird". Default is "auto".
+   * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
+   * @param categoricalFeaturesInfo Optional arity of categorical features. Entry (name -> k) indicates that feature
+   *                                'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
    */
   def train(frame: Frame,
             observationColumns: List[String],
@@ -76,11 +76,11 @@ object RandomForestRegressorModel extends TkSaveableObject {
             impurity: String = "variance",
             maxDepth: Int = 4,
             maxBins: Int = 100,
+            minInstancesPerNode: Int = 1,
+            subSamplingRate: Double = 1.0,
+            featureSubsetCategory: String = "auto",
             seed: Int = scala.util.Random.nextInt(),
-            categoricalFeaturesInfo: Option[Map[String, Int]] = None,
-            featureSubsetCategory: Option[String] = None,
-            minInstancesPerNode: Option[Int] = Some(1),
-            subSamplingRate: Option[Double] = Some(1.0)): RandomForestRegressorModel = {
+            categoricalFeaturesInfo: Option[Map[String, Int]] = None): RandomForestRegressorModel = {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
     require(StringUtils.isNotEmpty(labelColumn), "labelColumn must not be null nor empty")
@@ -89,22 +89,19 @@ object RandomForestRegressorModel extends TkSaveableObject {
     require(StringUtils.equals(impurity, "variance"), "Only variance is a supported value for impurity " +
       "for Random Forest Regressor model")
     require(featureSubsetCategory.isEmpty ||
-      List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory.get),
+      List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory),
       "feature subset category can be either None or one of the values: auto, all, sqrt, log2, onethird")
-    require(minInstancesPerNode.isEmpty || minInstancesPerNode.get > 0, "minInstancesPerNode must be greater than 0")
-    require(subSamplingRate.isEmpty || (subSamplingRate.get > 0 && subSamplingRate.get <= 1),
-      "subSamplingRate must be in range (0, 1]")
+    require(minInstancesPerNode > 0, "minInstancesPerNode must be greater than 0")
+    require(subSamplingRate > 0 && subSamplingRate <= 1, "subSamplingRate must be in range (0, 1]")
     require(maxBins > 0, "maxBins must be greater than 0")
     frame.schema.validateColumnsExist(observationColumns :+ labelColumn)
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
-    val randomForestMinInstancesPerNode = minInstancesPerNode.getOrElse(1)
-    val randomForestSubSamplingRate = subSamplingRate.getOrElse(1.0)
 
     //create RDD from the frame
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val trainFrame = frameRdd.toLabeledDataFrame(observationColumns, labelColumn,
-      featuresName, categoricalFeaturesInfo)
+      featuresColName, categoricalFeaturesInfo)
 
     val randomForestRegressor = new SparkDeepRandomForestRegressor()
       .setNumTrees(numTrees)
@@ -113,10 +110,10 @@ object RandomForestRegressorModel extends TkSaveableObject {
       .setMaxDepth(maxDepth)
       .setMaxBins(maxBins)
       .setSeed(seed)
-      .setMinInstancesPerNode(randomForestMinInstancesPerNode)
-      .setSubsamplingRate(randomForestSubSamplingRate)
+      .setMinInstancesPerNode(minInstancesPerNode)
+      .setSubsamplingRate(subSamplingRate)
       .setLabelCol(labelColumn)
-      .setFeaturesCol(featuresName)
+      .setFeaturesCol(featuresColName)
       .setCacheNodeIds(true) //Enable cache to speed up training
     val randomForestModel = randomForestRegressor.fit(trainFrame)
 
@@ -127,11 +124,12 @@ object RandomForestRegressorModel extends TkSaveableObject {
       impurity,
       maxDepth,
       maxBins,
-      seed,
-      categoricalFeaturesInfo,
-      featureSubsetCategory,
       minInstancesPerNode,
-      subSamplingRate)
+      subSamplingRate,
+      featureSubsetCategory,
+      seed,
+      categoricalFeaturesInfo
+    )
   }
 
   /**
@@ -157,33 +155,33 @@ object RandomForestRegressorModel extends TkSaveableObject {
       m.impurity,
       m.maxDepth,
       m.maxBins,
-      m.seed,
-      m.categoricalFeaturesInfo,
-      m.featureSubsetCategory,
       m.minInstancesPerNode,
-      m.subSamplingRate
+      m.subSamplingRate,
+      m.featureSubsetCategory,
+      m.seed,
+      m.categoricalFeaturesInfo
     )
   }
 }
 
 /**
  * RandomForestRegressorModel
- * @param sparkModel Trained MLLib's RandomForestRegressor model
+ * @param sparkModel Trained Spark ML RandomForestRegressor model
  * @param observationColumns Column(s) containing the observations
  * @param labelColumn Column name containing the label for each observation
  * @param numTrees Number of tress in the random forest. Default is 1
  * @param impurity Criterion used for information gain calculation. Default is "variance"
  * @param maxDepth Maximum depth of the tree. Default is 4
  * @param maxBins Maximum number of bins used for splitting features. Default is 100
- * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
- * @param categoricalFeaturesInfo Arity of categorical features. Entry (n-> k) indicates that feature 'n' is name of
- *                                categorical feature with 'k' categories indexed from 0:{0,1,...,k-1}
- * @param featureSubsetCategory Number of features to consider for splits at each node.
- *                              Supported values "auto","all","sqrt","log2","onethird".
+ * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
+ * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+ * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
+ *                              Supported values are "auto","all","sqrt","log2","onethird".
  *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
  *                              ; if num_trees > 1, set to "onethird"
- * @param minInstancesPerNode Minimum number of instances each child must have after split. Default is 1
- * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+ * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
+ * @param categoricalFeaturesInfo Optional arity of categorical features. Entry (name -> k) indicates that feature
+ *                                'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
  */
 case class RandomForestRegressorModel private[random_forest_regressor] (sparkModel: SparkDeepRandomRegressionModel,
                                                                         observationColumns: List[String],
@@ -192,11 +190,11 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
                                                                         impurity: String,
                                                                         maxDepth: Int,
                                                                         maxBins: Int,
+                                                                        minInstancesPerNode: Int,
+                                                                        subSamplingRate: Double,
+                                                                        featureSubsetCategory: String,
                                                                         seed: Int,
-                                                                        categoricalFeaturesInfo: Option[Map[String, Int]],
-                                                                        featureSubsetCategory: Option[String],
-                                                                        minInstancesPerNode: Option[Int],
-                                                                        subSamplingRate: Option[Double]) extends Serializable with Model {
+                                                                        categoricalFeaturesInfo: Option[Map[String, Int]]) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -223,14 +221,14 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
 
     val observations = observationColumns.getOrElse(this.observationColumns).toArray
     frame.schema.validateColumnsExist(observations)
-    val assembler = new VectorAssembler().setInputCols(observations).setOutputCol(featuresName)
+    val assembler = new VectorAssembler().setInputCols(observations).setOutputCol(featuresColName)
     val testFrame = assembler.transform(frame.dataframe)
 
-    sparkModel.setFeaturesCol(featuresName)
-    sparkModel.setPredictionCol(predictionColumn)
+    sparkModel.setFeaturesCol(featuresColName)
+    sparkModel.setPredictionCol(predictionColName)
     val predictFrame = sparkModel.transform(testFrame)
 
-    new Frame(predictFrame.drop(col(featuresName)))
+    new Frame(predictFrame.drop(col(featuresColName)))
   }
 
   /**
@@ -262,18 +260,21 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     val observations = observationColumns.getOrElse(this.observationColumns)
     val label = labelColumn.getOrElse(this.labelColumn)
     frame.schema.validateColumnsExist(observations :+ label)
-    val assembler = new VectorAssembler().setInputCols(observations.toArray).setOutputCol(featuresName)
+    val assembler = new VectorAssembler().setInputCols(observations.toArray).setOutputCol(featuresColName)
     val testFrame = assembler.transform(frame.dataframe)
 
-    sparkModel.setFeaturesCol(featuresName)
-    sparkModel.setPredictionCol(predictionColumn)
+    sparkModel.setFeaturesCol(featuresColName)
+    sparkModel.setPredictionCol(predictionColName)
     val predictFrame = sparkModel.transform(testFrame)
 
-    getRegressionMetrics(predictFrame, predictionColumn, label)
+    getRegressionMetrics(predictFrame, predictionColName, label)
   }
 
   /**
    * Feature importances for trained model. Higher values indicate more important features.
+   *
+   * Each feature's importance is the average of its importance across all trees in the ensemble
+   * The importance vector is normalized to sum to 1.
    *
    * @return Map of feature names and importances.
    */
@@ -300,11 +301,11 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
       impurity,
       maxDepth,
       maxBins,
-      seed,
-      categoricalFeaturesInfo,
-      featureSubsetCategory,
       minInstancesPerNode,
-      subSamplingRate)
+      subSamplingRate,
+      featureSubsetCategory,
+      seed,
+      categoricalFeaturesInfo)
     TkSaveLoad.saveTk(sc, path, RandomForestRegressorModel.formatId, formatVersion, tkMetadata)
   }
 
@@ -356,12 +357,15 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
  * @param impurity Criterion used for information gain calculation. Default supported value is "variance"
  * @param maxDepth Maximum depth of the tree. Default is 4
  * @param maxBins Maximum number of bins used for splitting features
- * @param seed Random seed for bootstrapping and choosing feature subsets
- * @param categoricalFeaturesInfo Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
- *                                with 'k' categories indexed from 0:{0,1,...,k-1}
- * @param featureSubsetCategory Number of features to consider for splits at each node
- * @param minInstancesPerNode Minimum number of instances each child must have after split. Default is 1
+ * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
  * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+ * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
+ *                              Supported values are "auto","all","sqrt","log2","onethird".
+ *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
+ *                              ; if num_trees > 1, set to "onethird"
+ * @param seed Random seed for bootstrapping and choosing feature subsets
+ * @param categoricalFeaturesInfo Optional arity of categorical features. Entry (name -> k) indicates that feature
+ *                                'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
  */
 case class RandomForestRegressorModelTkMetaData(observationColumns: List[String],
                                                 labelColumn: String,
@@ -369,8 +373,8 @@ case class RandomForestRegressorModelTkMetaData(observationColumns: List[String]
                                                 impurity: String,
                                                 maxDepth: Int,
                                                 maxBins: Int,
+                                                minInstancesPerNode: Int,
+                                                subSamplingRate: Double,
+                                                featureSubsetCategory: String,
                                                 seed: Int,
-                                                categoricalFeaturesInfo: Option[Map[String, Int]],
-                                                featureSubsetCategory: Option[String],
-                                                minInstancesPerNode: Option[Int],
-                                                subSamplingRate: Option[Double]) extends Serializable
+                                                categoricalFeaturesInfo: Option[Map[String, Int]]) extends Serializable

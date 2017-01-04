@@ -26,6 +26,7 @@ import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.models.regression.RegressionUtils._
+import org.trustedanalytics.sparktk.models.regression.RegressionColumnNames._
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.spark.ml.regression.{ LinearRegressionModel => SparkLinearRegressionModel }
 import org.apache.commons.lang.StringUtils
@@ -71,7 +72,7 @@ object LinearRegressionModel extends TkSaveableObject {
 
     // Use DataFrames to run the linear regression
     val trainFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
-    val trainVectors = new VectorAssembler().setInputCols(observationColumns.toArray).setOutputCol(featuresName)
+    val trainVectors = new VectorAssembler().setInputCols(observationColumns.toArray).setOutputCol(featuresColName)
 
     val trainDataFrame: DataFrame = trainVectors.transform(trainFrame)
 
@@ -83,11 +84,11 @@ object LinearRegressionModel extends TkSaveableObject {
       .setStandardization(standardization)
       .setTol(convergenceTolerance)
       .setLabelCol(labelColumn)
-      .setFeaturesCol(featuresName)
+      .setFeaturesCol(featuresColName)
 
     val linRegModel = linReg.fit(trainDataFrame)
 
-    linRegModel.setPredictionCol(predictionColumn)
+    linRegModel.setPredictionCol(predictionColName)
 
     LinearRegressionModel(observationColumns,
       labelColumn,
@@ -192,15 +193,15 @@ case class LinearRegressionModel(observationColumns: Seq[String],
     val testFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
     val observations = observationColumns.getOrElse(this.observationColumns).toArray
     val label = labelColumn.getOrElse(this.labelColumn)
-    val trainVectors = new VectorAssembler().setInputCols(observations).setOutputCol(featuresName)
+    val trainVectors = new VectorAssembler().setInputCols(observations).setOutputCol(featuresColName)
 
     val testDataFrame: DataFrame = trainVectors.transform(testFrame)
 
-    sparkModel.setFeaturesCol(featuresName)
-    sparkModel.setPredictionCol(predictionColumn)
+    sparkModel.setFeaturesCol(featuresColName)
+    sparkModel.setPredictionCol(predictionColName)
 
     val predictFrame: DataFrame = sparkModel.transform(testDataFrame)
-    getRegressionMetrics(predictFrame, predictionColumn, label)
+    getRegressionMetrics(predictFrame, predictionColName, label)
   }
 
   /**
@@ -216,13 +217,13 @@ case class LinearRegressionModel(observationColumns: Seq[String],
 
     val predictFrame: DataFrame = new FrameRdd(frame.schema, frame.rdd).toDataFrame
     val observations = observationColumns.getOrElse(this.observationColumns).toArray
-    val trainVectors = new VectorAssembler().setInputCols(observations).setOutputCol(featuresName)
+    val trainVectors = new VectorAssembler().setInputCols(observations).setOutputCol(featuresColName)
 
     val predictDataFrame: DataFrame = trainVectors.transform(predictFrame)
 
     val fullPrediction: DataFrame = sparkModel.transform(predictDataFrame)
 
-    new Frame(fullPrediction.drop(col(featuresName)))
+    new Frame(fullPrediction.drop(col(featuresColName)))
   }
 
   /**

@@ -21,7 +21,7 @@ from sparktk.propobj import PropertiesObject
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
 from sparktk import TkContext
 from sparktk.frame.frame import Frame
-from sparktk.arguments import affirm_type
+from sparktk.arguments import affirm_type, require_type
 import os
 
 __all__ = ["train", "load", "RandomForestClassifierModel"]
@@ -34,11 +34,11 @@ def train(frame,
           impurity = "gini",
           max_depth = 4,
           max_bins = 100,
+          min_instances_per_node = 1,
+          sub_sampling_rate = 1.0,
+          feature_subset_category = "auto",
           seed = None,
-          categorical_features_info = None,
-          feature_subset_category = None,
-          min_instances_per_node = None,
-          sub_sampling_rate = None
+          categorical_features_info = None
           ):
     """
     Creates a Random Forest Classifier Model by training on the given frame
@@ -49,21 +49,21 @@ def train(frame,
     :param frame: (Frame) frame frame of training data
     :param observation_columns: (list(str)) Column(s) containing the observations
     :param label_column: (str) Column name containing the label for each observation
-    :param num_classes: (int) Number of classes for classification. Default is 2
-    :param num_trees: (int) Number of tress in the random forest. Default is 1
+    :param num_classes: (int) Number of classes for classification.
+    :param num_trees: (int) Number of trees in the random forest.
     :param impurity: (str) Criterion used for information gain calculation. Supported values "gini" or "entropy".
-                    Default is "gini"
-    :param max_depth: (int) Maximum depth of the tree. Default is 4
-    :param max_bins: (int) Maximum number of bins used for splitting features. Default is 100
-    :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
-    :param categorical_features_info: (Optional(Dict(str:int))) Arity of categorical features. Entry (name-> k) indicates
-                                      that feature 'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
-    :param feature_subset_category: (Optional(str)) Number of features to consider for splits at each node.
+    :param max_depth: (int) Maximum depth of the tree.
+    :param max_bins: (int) Maximum number of bins used for splitting features.
+    :param min_instances_per_node: (int) Minimum number of records each child node must have after a split.
+    :param sub_sampling_rate: (double) Fraction between 0..1 of the training data used for learning each decision tree.
+    :param feature_subset_category: (str) Subset of observation columns, i.e., features,
+                                 to consider to consider when looking for the best split.
                                  Supported values "auto","all","sqrt","log2","onethird".
                                  If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
-                                 ; if num_trees > 1, set to "sqrt"
-    :param min_instances_per_node: (Optional(int)) Minimum number of instances each child must have after split. Default is 1
-    :param sub_sampling_rate: (Optional(double)) Fraction of the training data used for learning each decision tree. Default is 1.0
+                                 ; if num_trees > 1, set to "sqrt".
+    :param seed: (Optional(int)) Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed.
+    :param categorical_features_info: (Optional(Dict(str:int))) Arity of categorical features. Entry (name-> k) indicates
+                                      that feature 'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
 
     :return: (RandomForestClassifierModel) The trained random forest classifier model
 
@@ -72,15 +72,26 @@ def train(frame,
     Random Forest is a supervised ensemble learning algorithm which can be used to perform binary and
     multi-class classification. The Random Forest Classifier model is initialized, trained on columns of a frame,
     used to predict the labels of observations in a frame, and tests the predicted labels against the true labels.
-    This model runs the MLLib implementation of Random Forest. During training, the decision trees are trained
+    This model runs the Spark ML implementation of Random Forest. During training, the decision trees are trained
     in parallel. During prediction, each tree's prediction is counted as vote for one class. The label is predicted
     to be the class which receives the most votes. During testing, labels of the observations are predicted and
     tested against the true labels using built-in binary and multi-class Classification Metrics.
-
-
     """
-    if frame is None:
-        raise ValueError("frame cannot be None")
+    require_type(Frame, frame, 'frame')
+    affirm_type.list_of_str(observation_columns, "observation_columns")
+    require_type.non_empty_str(label_column, "label_column")
+    require_type.non_negative_int(num_classes, "num_classes")
+    if num_classes < 2:
+        raise ValueError("'num_classes' parameter must be at least 2")
+    require_type.non_negative_int(num_trees, "num_trees")
+    require_type.non_empty_str(impurity, "impurity")
+    require_type.non_negative_int(max_depth, "max_depth")
+    require_type.non_negative_int(max_bins, "max_bins")
+    require_type.non_negative_int(min_instances_per_node, "min_instances_per_node")
+    require_type(float, sub_sampling_rate, "sub_sampling_rate")
+    if sub_sampling_rate > 1 or sub_sampling_rate < 0:
+        raise ValueError("'sub_sampling_rate' parameter must have a value between 0 and 1")
+    require_type.non_empty_str(feature_subset_category, "feature_subset_category")
 
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
@@ -93,11 +104,11 @@ def train(frame,
                                    impurity,
                                    max_depth,
                                    max_bins,
+                                   min_instances_per_node,
+                                   sub_sampling_rate,
+                                   feature_subset_category,
                                    seed,
-                                   __get_categorical_features_info(tc, categorical_features_info),
-                                   tc.jutils.convert.to_scala_option(feature_subset_category),
-                                   tc.jutils.convert.to_scala_option(min_instances_per_node),
-                                   tc.jutils.convert.to_scala_option(sub_sampling_rate))
+                                   __get_categorical_features_info(tc, categorical_features_info))
 
     return RandomForestClassifierModel(tc, scala_model)
 
@@ -140,7 +151,14 @@ class RandomForestClassifierModel(PropertiesObject):
         [4]      0  44.3117586448  3.3458963222
         [5]      0  34.6334526911  3.6429838715
 
-        >>> model = tc.models.classification.random_forest_classifier.train(frame, ['Dim_1', 'Dim_2'], 'Class', num_classes=2, num_trees=1, impurity="entropy", max_depth=4, max_bins=100)
+        >>> model = tc.models.classification.random_forest_classifier.train(frame,
+        ...                                                                ['Dim_1', 'Dim_2'],
+        ...                                                                'Class',
+        ...                                                                num_classes=2,
+        ...                                                                num_trees=1,
+        ...                                                                impurity="entropy",
+        ...                                                                max_depth=4,
+        ...                                                                max_bins=100)
 
         >>> model.feature_importances()
         {u'Dim_1': 1.0, u'Dim_2': 0.0}
@@ -204,7 +222,7 @@ class RandomForestClassifierModel(PropertiesObject):
 
     @property
     def label_column(self):
-        """column containing the label used for model training"""
+        """column containing the labels used for model training"""
         return self._scala.labelColumn()
 
     @property
@@ -224,7 +242,7 @@ class RandomForestClassifierModel(PropertiesObject):
 
     @property
     def impurity(self):
-        """impurity value of the trained model"""
+        """criterion used for calculating information gain in the trained model"""
         return self._scala.impurity()
 
     @property
@@ -244,7 +262,7 @@ class RandomForestClassifierModel(PropertiesObject):
 
     @property
     def categorical_features_info(self):
-        """categorical feature dictionary used during model training"""
+        """dictionary of categorical feature names and number of features per category used during model training"""
         s = self._tc.jutils.convert.from_scala_option(self._scala.categoricalFeaturesInfo())
         if s:
             return self._tc.jutils.convert.scala_map_to_python(s)
@@ -252,22 +270,26 @@ class RandomForestClassifierModel(PropertiesObject):
 
     @property
     def feature_subset_category(self):
-        """feature subset category of the trained model"""
-        return self._tc.jutils.convert.from_scala_option(self._scala.featureSubsetCategory())
+        """subset of observation columns, i.e., features, considered when splitting nodes in the trained model"""
+        return self._scala.featureSubsetCategory()
 
     @property
     def min_instances_per_node(self):
-        """minimum number of instances per node of the trained model"""
-        return self._tc.jutils.convert.from_scala_option(self._scala.minInstancesPerNode())
+        """minimum number of records in each child node of the trained model"""
+        return self._scala.minInstancesPerNode()
 
     @property
     def sub_sampling_rate(self):
-        """sub sampling rate of the trained model"""
-        return self._tc.jutils.convert.from_scala_option(self._scala.subSamplingRate())
+        """sub sampling rate in the trained model"""
+        return self._scala.subSamplingRate()
 
     def feature_importances(self):
         """
         Feature importances for trained model. Higher values indicate more important features.
+
+        Each feature's importance is the average of its importance across all trees in the ensemble.
+        The importance vector is normalized to sum to 1.
+
         :return: (Dict(str -> int)) A dictionary of feature names and importances
         """
         return self._tc.jutils.convert.scala_map_to_python(self._scala.featureImportances())
@@ -287,8 +309,9 @@ class RandomForestClassifierModel(PropertiesObject):
         :return: (Frame) A new frame consisting of the existing columns of the frame and a new column with predicted
                  label for each observation.
         """
-        columns_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
-        columns_option = self._tc.jutils.convert.to_scala_option_list_string(columns_list)
+        require_type(Frame, frame, 'frame')
+        affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
     def test(self, frame, observation_columns=None, label_column=None):
@@ -315,9 +338,11 @@ class RandomForestClassifierModel(PropertiesObject):
                 recall (double)
                 The proportion of positive instances that are correctly identified.
         """
-        columns_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+        require_type(Frame, frame, 'frame')
+        affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+
         return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala,
-                                                                     self._tc.jutils.convert.to_scala_option_list_string(columns_list),
+                                                                     self._tc.jutils.convert.to_scala_option_list_string(observation_columns),
                                                                      self._tc.jutils.convert.to_scala_option(label_column)))
 
     def save(self, path):
@@ -329,7 +354,7 @@ class RandomForestClassifierModel(PropertiesObject):
 
         :param path: (str) Path to save
         """
-
+        require_type.non_empty_str(path, "path")
         self._scala.save(self._tc._scala_sc, path, False)
 
     def export_to_mar(self, path):
@@ -343,10 +368,7 @@ class RandomForestClassifierModel(PropertiesObject):
         :return: (str) Full path to the saved .mar file
 
         """
-
-        if not isinstance(path, basestring):
-            raise TypeError("path parameter must be a str, but received %s" % type(path))
-
+        require_type.non_empty_str(path, "path")
         return self._scala.exportToMar(self._tc._scala_sc, path)
 
 del PropertiesObject

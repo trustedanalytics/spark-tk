@@ -25,11 +25,12 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with Matchers {
 
   val labeledPoint: Array[Row] = Array(
-    new GenericRow(Array[Any](1, 16.8973559126, 2.6933495054)),
-    new GenericRow(Array[Any](1, 5.5548729596, 2.7777687995)),
-    new GenericRow(Array[Any](0, 46.1810010826, 3.1611961917)),
-    new GenericRow(Array[Any](0, 44.3117586448, 3.3458963222)))
+    new GenericRow(Array[Any](1, 16.89, 2.69)),
+    new GenericRow(Array[Any](1, 5.55, 2.77)),
+    new GenericRow(Array[Any](0, 46.18, 3.16)),
+    new GenericRow(Array[Any](0, 44.31, 3.34)))
   val schema = new FrameSchema(List(Column("label", DataTypes.int32), Column("obs1", DataTypes.float64), Column("obs2", DataTypes.float64)))
+  val epsilon = 1e-6
 
   "RandomForestClassifierModel" should {
     "create a RandomForestClassifierModel" in {
@@ -37,31 +38,59 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
 
-      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 2, 1.0, seed = 10)
       val featureImp = model.featureImportances()
 
       model shouldBe a[RandomForestClassifierModel]
+      assert(model.observationColumns == List("obs1", "obs2"))
+      assert(model.labelColumn == "label")
+      assert(model.numClasses == 2)
+      assert(model.numTrees == 1)
+      assert(model.impurity == "gini")
+      assert(model.maxDepth == 4)
+      assert(model.maxBins == 100)
+      assert(model.minInstancesPerNode == 2)
+      assert(Math.abs(model.subSamplingRate - 1.0) <= epsilon)
+      assert(model.seed == 10)
+      assert(model.featureSubsetCategory == "auto")
+      assert(model.categoricalFeaturesInfo.isEmpty)
+
       assert(featureImp.size == 2)
       assert(featureImp("obs1") > featureImp("obs2"))
     }
 
     "create a RandomForestClassifierModel with some categorical features" in {
       val rows: Array[Row] = Array(
-        new GenericRow(Array[Any](1, 19.8446136104, 0)),
-        new GenericRow(Array[Any](1, 16.8973559126, 0)),
-        new GenericRow(Array[Any](0, 44.3117586448, 1)),
-        new GenericRow(Array[Any](0, 34.6334526911, 1)))
+        new GenericRow(Array[Any](1, 19.84, 0)),
+        new GenericRow(Array[Any](1, 16.89, 0)),
+        new GenericRow(Array[Any](0, 44.31, 1)),
+        new GenericRow(Array[Any](0, 34.63, 1)))
       val frameSchema = new FrameSchema(List(Column("label", DataTypes.int32), Column("continuous_obs", DataTypes.float64),
         Column("categorical_obs", DataTypes.int32)))
 
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, frameSchema)
-      val featureCategories = Map("categorical_obs" -> 2)
+      val categoricalFeatures = Map("categorical_obs" -> 2)
       val model = RandomForestClassifierModel.train(frame, List("continuous_obs", "categorical_obs"), "label", 2,
-        1, "gini", 4, 100, 10, Some(featureCategories), None)
+        1, "gini", 4, 100, seed = 10, categoricalFeaturesInfo = Some(categoricalFeatures))
       val featureImp = model.featureImportances()
 
       model shouldBe a[RandomForestClassifierModel]
+      assert(model.observationColumns == List("continuous_obs", "categorical_obs"))
+      assert(model.labelColumn == "label")
+      assert(model.numClasses == 2)
+      assert(model.numTrees == 1)
+      assert(model.impurity == "gini")
+      assert(model.maxDepth == 4)
+      assert(model.maxBins == 100)
+      assert(model.minInstancesPerNode == 1)
+      assert(Math.abs(model.subSamplingRate - 1.0) <= epsilon)
+      assert(model.seed == 10)
+      assert(model.featureSubsetCategory == "auto")
+      assert(model.categoricalFeaturesInfo.isDefined)
+      assert(model.categoricalFeaturesInfo.get.size == 1)
+      assert(model.categoricalFeaturesInfo.get("categorical_obs") == 2)
+
       assert(featureImp.size == 2)
       assert(featureImp("continuous_obs") > featureImp("categorical_obs"))
     }
@@ -70,7 +99,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
 
-      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, seed = 10)
       val predictFrame = model.predict(frame)
       val labelIndex = predictFrame.schema.columnIndex("label")
       val predictIndex = predictFrame.schema.columnIndex("predicted_class")
@@ -84,7 +113,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
 
-      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, seed = 10)
       val metrics = model.test(frame)
       val confusionMatrix = metrics.confusionMatrix
 
@@ -107,7 +136,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
 
-        val model = RandomForestClassifierModel.train(frame, List(), "label", 2, 1, "gini", 4, 100, 10, None, None)
+        val model = RandomForestClassifierModel.train(frame, List(), "label", 2, 1, "gini", 4, 100, seed = 10)
       }
     }
 
@@ -117,17 +146,17 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
 
-        val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "", 2, 1, "gini", 4, 100, 10, None, None)
+        val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "", 2, 1, "gini", 4, 100, seed = 10)
       }
     }
 
     "return predictions when calling the random forest classifier model score" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, seed = 10)
 
       // Test values for scoring
-      val inputValues = Array[Any](44.3117586448, 3.3458963222)
+      val inputValues = Array[Any](44.31, 3.34)
       val classLabel = 0.0
 
       // Score and check the results
@@ -144,7 +173,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
     "throw IllegalArgumentExceptions for invalid scoring parameters" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, 10, None, None)
+      val model = RandomForestClassifierModel.train(frame, List("obs1", "obs2"), "label", 2, 1, "gini", 4, 100, seed = 10)
 
       intercept[IllegalArgumentException] {
         model.score(null)
@@ -155,7 +184,7 @@ class RandomForestClassifierModelTest extends TestingSparkContextWordSpec with M
       }
 
       intercept[IllegalArgumentException] {
-        model.score(Array[Any](44.3117586448, 3.3458963222, "bogus"))
+        model.score(Array[Any](44.31, 3.34, "bogus"))
       }
     }
   }

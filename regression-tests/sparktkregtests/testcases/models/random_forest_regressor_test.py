@@ -36,11 +36,18 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Test random forest train method"""
         model = self.context.models.regression.random_forest_regressor.train(
             self.frame, ["feat1", "feat2"], "class", seed=0)
-        
+
+        self.assertItemsEqual(model.observation_columns, ["feat1", "feat2"])
+        self.assertEqual(model.label_column, "class")
         self.assertEqual(model.max_bins, 100)
         self.assertEqual(model.max_depth, 4)
         self.assertEqual(model.num_trees, 1)
-        self.assertEqual(model.impurity, 'variance')
+        self.assertEqual(model.impurity, "variance")
+        self.assertEqual(model.min_instances_per_node, 1)
+        self.assertEqual(model.feature_subset_category, "auto")
+        self.assertEqual(model.seed, 0)
+        self.assertAlmostEqual(model.sub_sampling_rate, 1.0)
+        self.assertIsNone(model.categorical_features_info)
 
     def test_predict(self):
         """Test predicted values are correct"""
@@ -81,7 +88,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_negative_max_bins(self):
         """Negative test for max_bins < 0"""
         with self.assertRaisesRegexp(
-                Exception, "maxBins must be greater than 0"):
+                Exception, "Found max_bins = -1.  Expected non-negative integer."):
             model = self.context.models.regression.random_forest_regressor.train(
                 self.frame, ["feat1", "feat2"], "class", max_bins=-1)
 
@@ -96,7 +103,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_negative_max_depth(self):
         """Negative test for max_depth < 0"""
         with self.assertRaisesRegexp(
-                Exception, "maxDepth must be non negative"):
+                Exception, "Found max_depth = -2.  Expected non-negative integer."):
             model = self.context.models.regression.random_forest_regressor.train(
                 self.frame, ["feat1", "feat2"], "class", max_depth=-2)
 
@@ -117,7 +124,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_negative_num_trees(self):
         """Negative test for num_trees<0"""
         with self.assertRaisesRegexp(
-                Exception, "numTrees must be greater than 0"):
+                Exception, "Found num_trees = -10.  Expected non-negative integer."):
             model = self.context.models.regression.random_forest_regressor.train(
                 self.frame, ["feat1", "feat2"], "class", num_trees=-10)
 
@@ -143,10 +150,17 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         path = self.get_name("test")
         model.save(path + "/randomforestregressor")
         restored = self.context.load(path +"/randomforestregressor")
+        self.assertItemsEqual(restored.observation_columns, ["feat1", "feat2"])
+        self.assertEqual(restored.label_column, "class")
         self.assertEqual(restored.max_bins, 100)
         self.assertEqual(restored.max_depth, 4)
         self.assertEqual(restored.num_trees, 1)
-        self.assertEqual(restored.impurity, 'variance')
+        self.assertEqual(restored.impurity, "variance")
+        self.assertEqual(restored.min_instances_per_node, 1)
+        self.assertEqual(restored.feature_subset_category, "auto")
+        self.assertEqual(restored.seed, 0)
+        self.assertAlmostEqual(restored.sub_sampling_rate, 1.0)
+        self.assertIsNone(restored.categorical_features_info)
 
 if __name__ == '__main__':
     unittest.main()
