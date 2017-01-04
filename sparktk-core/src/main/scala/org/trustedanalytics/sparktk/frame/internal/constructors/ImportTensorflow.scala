@@ -18,35 +18,41 @@ package org.trustedanalytics.sparktk.frame.internal.constructors
 import org.apache.commons.lang.StringUtils
 import org.apache.hadoop.io.{ BytesWritable, NullWritable }
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.types.StructType
 import org.tensorflow.example.Example
 import org.tensorflow.hadoop.io.TFRecordFileInputFormat
-import org.trustedanalytics.sparktk.frame.Frame
+import org.trustedanalytics.sparktk.frame.{ Frame, FrameSchema, TensorflowInferSchema }
 import org.trustedanalytics.sparktk.frame.internal.serde.DefaultTfRecordRowDecoder
-import scala.collection.JavaConverters._
-import org.trustedanalytics.sparktk.frame.TensorInferSchema
 
 object ImportTensorflow {
-
   /**
-   * Import tensorflow records as frame
+   * Creates a frame using TensorFlow Records path with specified schema
    *
+   * During Import, API parses TensorFlow DataTypes as below
+   *
+   * Int64List => IntegerType or LongType
+   * FloatList => FloatType or DoubleType
+   * Any other DataType (Ex: String) => BytesList
+   *
+   * @param sc sparkcontext
+   * @param sourceTfRecordsPath Full path to TensorFlow records on HDFS/Local filesystem
+   * @param schema Schema to use
+   * @return a frame
    */
-  def importTensorflow(sc: SparkContext, sourceTfRecordsPath: String, schema: Option[StructType] = None): Frame = {
+  def importTensorflow(sc: SparkContext, sourceTfRecordsPath: String, schema: Option[FrameSchema] = None): Frame = {
     require(StringUtils.isNotEmpty(sourceTfRecordsPath), "path should not be null or empty.")
 
     val rdd = sc.newAPIHadoopFile(sourceTfRecordsPath, classOf[TFRecordFileInputFormat], classOf[BytesWritable], classOf[NullWritable])
 
-    val featuresMapRdd = rdd.map {
-      case (bytesWritable, nullWritable) =>
-        val example = Example.parseFrom(bytesWritable.getBytes)
-        example.getFeatures.getFeatureMap.asScala
+    val exampleRdd = rdd.map {
+      case (bytesWritable, nullWritable) => Example.parseFrom(bytesWritable.getBytes)
     }
 
-    val inferedFrameSchema = TensorInferSchema(featuresMapRdd)
-    val resultRdd = featuresMapRdd.map(featureMap => DefaultTfRecordRowDecoder.decodeTfRecord(featureMap.toMap, inferedFrameSchema))
-    val frame = new Frame(resultRdd, inferedFrameSchema)
-    frame
+    var finalSchema = schema
+    if (finalSchema.isEmpty) {
+      finalSchema = Some(TensorflowInferSchema(exampleRdd))
+    }
+    val resultRdd = exampleRdd.map(example => DefaultTfRecordRowDecoder.decodeTfRecord(example, finalSchema.get))
+    new Frame(resultRdd, finalSchema.get)
   }
 
 }

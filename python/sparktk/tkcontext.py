@@ -168,7 +168,7 @@ class TkContext(object):
             for lib in self._other_libs:
                 lib_obj = lib.get_main_object(self)
                 setattr(self, lib.__name__, lib_obj)
-        loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
+        #loggers.set_spark(self._sc, "off")  # todo: undo this/move to config, I just want it outta my face most of the time
 
     from sparktk.arguments import implicit
 

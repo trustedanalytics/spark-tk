@@ -15,20 +15,14 @@
  */
 package org.trustedanalytics.sparktk.frame
 
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
-
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types._
 import org.tensorflow.example._
 import org.trustedanalytics.sparktk.frame.DataTypes.{ DataType, float32, float64, int32, int64 }
-import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
-
 import scala.collection.mutable.Map
 import scala.collection.JavaConverters._
 import scala.util.control.Exception._
 
-object TensorInferSchema {
+object TensorflowInferSchema {
 
   /**
    * Similar to the JSON schema inference.
@@ -37,42 +31,47 @@ object TensorInferSchema {
    *     2. Merge row types to find common type
    *     3. Replace any null types with string type
    */
-  def apply(featuresMapRdd: RDD[Map[String, Feature]]): FrameSchema = {
+  def apply(exampleRdd: RDD[Example]): FrameSchema = {
     val startType: Map[String, DataType] = Map.empty[String, DataType]
-    val rootTypes: Map[String, DataType] = featuresMapRdd.aggregate(startType)(inferRowType, mergeRowTypes)
-    val columnsList = rootTypes.map { case (featureName, featureType) => new Column(featureName, featureType) }
+    val rootTypes: Map[String, DataType] = exampleRdd.aggregate(startType)(inferRowType, mergeFieldTypes)
+    val columnsList = rootTypes.map {
+      case (featureName, featureType) =>
+        if (featureType == null) {
+          new Column(featureName, DataTypes.string)
+        }
+        else {
+          new Column(featureName, featureType)
+        }
+    }
     new FrameSchema(columnsList.toSeq)
   }
 
-  def inferRowType(rowSoFar: Map[String, DataType], next: Map[String, Feature]): Map[String, DataType] = {
-    next.map {
+  private def inferRowType(schemaSoFar: Map[String, DataType], next: Example): Map[String, DataType] = {
+    next.getFeatures.getFeatureMap.asScala.map {
       case (featureName, feature) => {
         val currentType = inferField(feature)
-        if (rowSoFar.contains(featureName)) {
-          val updatedType = findTightestCommonType(rowSoFar(featureName), currentType)
-          rowSoFar(featureName) = updatedType.getOrElse(null)
+        if (schemaSoFar.contains(featureName)) {
+          val updatedType = findTightestCommonType(schemaSoFar(featureName), currentType)
+          schemaSoFar(featureName) = updatedType.getOrElse(null)
         }
         else {
-          rowSoFar += (featureName -> currentType)
+          schemaSoFar += (featureName -> currentType)
         }
       }
     }
-    rowSoFar
+    schemaSoFar
   }
 
-  def mergeRowTypes(first: Map[String, DataType], second: Map[String, DataType]): Map[String, DataType] = {
+  private def mergeFieldTypes(first: Map[String, DataType], second: Map[String, DataType]): Map[String, DataType] = {
     //Merge two maps and do the comparision.
-    val immutMap = (first.keySet ++ second.keySet).map(key => (key, findTightestCommonType(first.getOrElse(key, null), second.getOrElse(key, null)).get)).toMap
-    val mutMap = collection.mutable.Map[String, DataType](immutMap.toSeq: _*)
+    val mutMap = collection.mutable.Map[String, DataType]((first.keySet ++ second.keySet).map(key => (key, findTightestCommonType(first.getOrElse(key, null), second.getOrElse(key, null)).get)).toSeq: _*)
     mutMap
-    //first.zipAll(second).map { case ((a, b)) => (a._1, findTightestCommonType(a._2, b).getOrElse(null))
   }
 
   /**
-   * Infer type of string field. Given known type Double, and a string "1", there is no
-   * point checking if it is an Int, as the final type must be Double or higher.
+   * Infer Feature datatype based on filed number
    */
-  def inferField(feature: Feature): DataType = {
+  private def inferField(feature: Feature): DataType = {
     feature.getKindCase.getNumber match {
       case Feature.BYTES_LIST_FIELD_NUMBER => {
         DataTypes.str
@@ -87,7 +86,7 @@ object TensorInferSchema {
     }
   }
 
-  def parseInt64List(feature: Feature): DataType = {
+  private def parseInt64List(feature: Feature): DataType = {
     val int64List = feature.getInt64List.getValueList.asScala.toArray
     val length = int64List.size
     if (length == 0) {
@@ -98,11 +97,11 @@ object TensorInferSchema {
     }
     else {
       val fieldValue = int64List(0).toString
-      tryParseInteger(fieldValue)
+      parseInteger(fieldValue)
     }
   }
 
-  def parseFloatList(feature: Feature): DataType = {
+  private def parseFloatList(feature: Feature): DataType = {
     val floatList = feature.getFloatList.getValueList.asScala.toArray
     val length = floatList.size
     if (length == 0) {
@@ -113,30 +112,30 @@ object TensorInferSchema {
     }
     else {
       val fieldValue = floatList(0).toString
-      tryParseDouble(fieldValue)
+      parseDouble(fieldValue)
     }
   }
 
-  def tryParseInteger(field: String): DataType = if ((allCatch opt field.toInt).isDefined) {
+  private def parseInteger(field: String): DataType = if (allCatch.opt(field.toInt).isDefined) {
     DataTypes.int32
   }
   else {
-    tryParseLong(field)
+    parseLong(field)
   }
 
-  def tryParseLong(field: String): DataType = if ((allCatch opt field.toLong).isDefined) {
+  private def parseLong(field: String): DataType = if (allCatch.opt(field.toLong).isDefined) {
     DataTypes.int64
   }
   else {
-    throw new RuntimeException()
+    throw new RuntimeException("Unable to parse filed datatype to int64...")
   }
 
-  def tryParseDouble(field: String): DataType = {
+  private def parseDouble(field: String): DataType = {
     if ((allCatch opt field.toDouble).isDefined) {
       DataTypes.float64
     }
     else {
-      throw new RuntimeException()
+      throw new RuntimeException("Unable to parse field datatype to float64...")
     }
   }
 
@@ -151,7 +150,7 @@ object TensorInferSchema {
       float64,
       DataTypes.str)
 
-  def getNumericPrecedence(dataType: DataType): Int = {
+  private def getNumericPrecedence(dataType: DataType): Int = {
     dataType match {
       case x if x.equals(DataTypes.int32) => 0
       case x if x.equals(DataTypes.int64) => 1
@@ -159,7 +158,7 @@ object TensorInferSchema {
       case x if x.equals(DataTypes.float64) => 3
       case x if x.isVector => 4
       case x if x.equals(DataTypes.string) => 5
-      case _ => throw new RuntimeException()
+      case _ => throw new RuntimeException("Unable to get the precedence for given datatype...")
     }
   }
 
@@ -167,9 +166,9 @@ object TensorInferSchema {
    * Copied from internal Spark api
    * [[org.apache.spark.sql.catalyst.analysis.HiveTypeCoercion]]
    */
-  val findTightestCommonType: (DataType, DataType) => Option[DataType] = {
+  private val findTightestCommonType: (DataType, DataType) => Option[DataType] = {
     case (t1, t2) if t1 == t2 => Some(t1)
-    case (null, t1) => Some(t1)
+    case (null, t2) => Some(t2)
     case (t1, null) => Some(t1)
     case (t1, t2) if t1.isVector && t2.isVector => Some(DataTypes.vector(Math.max(t1.length, t2.length)))
     case (DataTypes.string, t2) => Some(DataTypes.string)

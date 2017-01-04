@@ -16,12 +16,15 @@
 package org.trustedanalytics.sparktk.jvm
 
 import java.util
-import java.util.{ List => JList, Map => JMap, ArrayList => JArrayList }
+import java.util.{ ArrayList => JArrayList, List => JList, Map => JMap }
+
 import org.apache.spark.SparkContext
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.mllib.linalg.DenseMatrix
-import org.joda.time.{ DateTimeZone, DateTime }
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.apache.spark.org.trustedanalytics.sparktk.SparkAliases
+import org.trustedanalytics.sparktk.frame.{ Column, DataTypes, FrameSchema }
+
 import scala.collection.JavaConverters._
 //import scala.collection.mutable
 
@@ -85,26 +88,26 @@ object JConvert extends Serializable {
     seq.reduce(_ ++ _)
   }
 
-  //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): Schema = {
-  //    val columns = pythonSchema.asScala.map { item =>
-  //      val list = item.asScala.toList
-  //      require(list.length == 2, "Schema entries must be tuples of size 2 (name, dtype)")
-  //      Column(list.head, DataTypes.toDataType(list(1)))
-  //    }.toVector
-  //    FrameSchema(columns)
-  //  }
+  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): FrameSchema = {
+    val columns = pythonSchema.asScala.map { item =>
+      val list = item.asScala.toList
+      require(list.length == 2, "Schema entries must be tuples of size 2 (name, dtype)")
+      Column(list.head, DataTypes.toDataType(list(1)))
+    }.toVector
+    FrameSchema(columns)
+  }
   //
-  //  def frameSchemaToPython(scalaSchema: FrameSchema): JArrayList[JArrayList[String]] = {
-  //    val pythonSchema = new JArrayList[JArrayList[String]]()
-  //    scalaSchema.columns.map {
-  //      case Column(name, dtype) =>
-  //        val c = new JArrayList[String]()
-  //        c.add(name)
-  //        c.add(dtype.toString)
-  //        pythonSchema.add(c)
+  //    def frameSchemaToPython(scalaSchema: FrameSchema): JArrayList[JArrayList[String]] = {
+  //      val pythonSchema = new JArrayList[JArrayList[String]]()
+  //      scalaSchema.columns.map {
+  //        case Column(name, dtype) =>
+  //          val c = new JArrayList[String]()
+  //          c.add(name)
+  //          c.add(dtype.toString)
+  //          pythonSchema.add(c)
+  //      }
+  //      pythonSchema
   //    }
-  //    pythonSchema
-  //  }
 
   /**
    * Convert an RDD of Java objects to an RDD of serialized Python objects, that is usable by

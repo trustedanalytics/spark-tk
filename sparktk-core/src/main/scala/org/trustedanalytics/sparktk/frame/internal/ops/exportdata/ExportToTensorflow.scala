@@ -23,9 +23,16 @@ import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, FrameState, Fram
 
 trait ExportToTensorflowSummarization extends BaseFrame {
   /**
+   * Exports the current frame as TensorFlow records to HDFS/Local path.
    *
-   * Export the frame as tensorflow records
+   * During export, API parses Spark SQL DataTypes to TensorFlow compatible DataTypes as below
    *
+   * IntegerType or LongType =>  Int64List
+   * FloatType or DoubleType => FloatList
+   * ArrayType(Double) [Vector] => FloatList
+   * Any other DataType (Ex: String) => BytesList
+   *
+   * @param destinationPath Full path to HDFS/Local filesystem
    */
   def exportToTensorflow(destinationPath: String) = {
     execute(ExportToTensorflow(destinationPath))

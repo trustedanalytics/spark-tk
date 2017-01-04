@@ -15,8 +15,6 @@
  */
 package org.trustedanalytics.sparktk.frame.internal.serde
 
-import java.util
-
 import com.google.protobuf.ByteString
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -26,46 +24,54 @@ import org.trustedanalytics.sparktk.frame.DataTypes
 import scala.collection.mutable
 
 trait TfRecordRowEncoder {
+  /**
+   * Encodes each Row as TensorFlow "Example"
+   *
+   * Maps each column in Row to one of Int64List, FloatList, BytesList based on the column data type
+   *
+   * @param row a frame row
+   * @return TensorFlow Example
+   */
   def encodeTfRecord(row: Row): Example
 }
 
 object DefaultTfRecordRowEncoder extends TfRecordRowEncoder {
 
   def encodeTfRecord(row: Row): Example = {
-    //maps each column in Row to one of Int64List, FloatList, BytesList based on the column data type
+
     val features = Features.newBuilder()
     val example = Example.newBuilder()
 
     val schema = row.schema
     row.schema.zipWithIndex.map {
-      case (structFiled, index) =>
-        structFiled.dataType match {
+      case (structField, index) =>
+        structField.dataType match {
           case IntegerType => {
             val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getInt(index))).build()
-            features.putFeature(structFiled.name, Feature.newBuilder().setInt64List(intResult).build())
+            features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
           }
           case LongType => {
             val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getLong(index))).build()
-            features.putFeature(structFiled.name, Feature.newBuilder().setInt64List(intResult).build())
+            features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
           }
           case FloatType => {
             val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getFloat(index))).build()
-            features.putFeature(structFiled.name, Feature.newBuilder().setFloatList(floatResult).build())
+            features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
           }
           case DoubleType => {
             val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getDouble(index))).build()
-            features.putFeature(structFiled.name, Feature.newBuilder().setFloatList(floatResult).build())
+            features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
           }
           case ArrayType(DoubleType, false) => {
-            val wrappedAry = row.getAs[mutable.WrappedArray[Double]](index)
-            val floatlistbuilder = FloatList.newBuilder()
-            wrappedAry.foreach(x => floatlistbuilder.addValue(x.toFloat))
-            val floatResult = floatlistbuilder.build()
-            features.putFeature(structFiled.name, Feature.newBuilder().setFloatList(floatResult).build())
+            val wrappedArr = row.getAs[mutable.WrappedArray[Double]](index)
+            val floatListBuilder = FloatList.newBuilder()
+            wrappedArr.foreach(x => floatListBuilder.addValue(x.toFloat))
+            val floatList = floatListBuilder.build()
+            features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatList).build())
           }
           case _ => {
-            val strResult = BytesList.newBuilder().addValue(ByteString.copyFrom(row.getString(index).getBytes)).build()
-            features.putFeature(structFiled.name, Feature.newBuilder().setBytesList(strResult).build())
+            val byteList = BytesList.newBuilder().addValue(ByteString.copyFrom(row.getString(index).getBytes)).build()
+            features.putFeature(structField.name, Feature.newBuilder().setBytesList(byteList).build())
           }
         }
     }

@@ -18,16 +18,24 @@
 from sparktk import TkContext
 
 
-def import_tensorflow(source_tf_path, schema=None, tc=TkContext.implicit):
+def import_tensorflow(tf_path, schema=None, tc=TkContext.implicit):
+    """
+    Create a frame from TF Records
+
+    Parameters
+    ----------
+
+    :param tf_path:(str) Full path to TensorFlow records
+    :param schema: (Optional(list[list(str)])) User defined schema to create a frame from given TensorFlow records path
+    :return: a frame
     """
 
-    :param source_tf_path:
-    :param tc:
-    :param schema:
-    :return:
-    """
+    if schema is not None:
+        scala_frame_schema = tc.jutils.convert.to_scala_frame_schema(schema)
+    else:
+        scala_frame_schema = schema
 
-    scala_frame = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.constructors.ImportTensorflow.importTensorflow(tc._scala_sc, source_tf_path, schema)
+    scala_frame = tc.sc._jvm.org.trustedanalytics.sparktk.frame.internal.constructors.ImportTensorflow.importTensorflow(tc._scala_sc, tf_path, tc.jutils.convert.to_scala_option(scala_frame_schema))
 
     from sparktk.frame.frame import Frame
     return Frame(tc, scala_frame)

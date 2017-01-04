@@ -16,9 +16,14 @@
 #
 
 
-def export_to_tensorflow(self, destination_path):
+def export_to_tensorflow(self, path):
     """
-    Export to tensorflow
+    Write current frame as TensorFlow records to given path
+
+    Parameters
+    ----------
+
+    :param path: (str) HDFS/Local path to export current frame as TF record
 
     """
-    self._scala.exportToTensorflow(destination_path)
+    self._scala.exportToTensorflow(path)

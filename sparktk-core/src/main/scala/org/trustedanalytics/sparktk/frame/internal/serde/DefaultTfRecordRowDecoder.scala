@@ -17,37 +17,63 @@ package org.trustedanalytics.sparktk.frame.internal.serde
 
 import org.apache.spark.sql.Row
 import org.tensorflow.example._
+import scala.collection.JavaConverters._
 import org.trustedanalytics.sparktk.frame.{ DataTypes, FrameSchema }
 
 trait TfRecordRowDecoder {
-  def decodeTfRecord(featureMap: Map[String, Feature], schema: FrameSchema): Row
+  /**
+   * Decodes each TensorFlow "Example" as Frame "Row"
+   *
+   * Maps each feature in Example to element in Row with DataType based on custom schema or default mapping of Int64List, FloatList, BytesList to column data type
+   *
+   * @param example TensorFlow Example to decode
+   * @param schema Decode Example using specified schema
+   * @return a frame row
+   */
+  def decodeTfRecord(example: Example, schema: FrameSchema): Row
 }
 
 object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
 
-  def decodeTfRecord(featureMap: Map[String, Feature], schema: FrameSchema): Row = {
-    //maps each feature in Example to element in Row with DataType based on custom schema or default mapping of  Int64List, FloatList, BytesList to column data type
-
+  def decodeTfRecord(example: Example, schema: FrameSchema): Row = {
     val row = Array.fill[Any](schema.columns.length)(null)
-    featureMap.foreach {
+    example.getFeatures.getFeatureMap.asScala.foreach {
       case (featureName, feature) =>
         val colDataType = schema.columnDataType(featureName)
-        colDataType match {
+        row(schema.columnIndex(featureName)) = colDataType match {
           case x if x.equals(DataTypes.int32) | x.equals(DataTypes.int64) => {
-            row(schema.columnIndex(featureName)) = colDataType.parse(feature.getInt64List.getValue(0))
+            val dataList = feature.getInt64List.getValueList
+            if (dataList.size() == 1)
+              colDataType.parse(dataList.get(0))
+            else
+              throw new RuntimeException("Mismatch in schema type, expected int32 or int64")
           }
           case x if x.equals(DataTypes.float64) => {
-            row(schema.columnIndex(featureName)) = colDataType.parse(feature.getFloatList.getValue(0))
+            val dataList = feature.getFloatList.getValueList
+            if (dataList.size() == 1)
+              colDataType.parse(dataList.get(0))
+            else
+              throw new RuntimeException("Mismatch in schema type, expected float64")
           }
           case x if x.isVector => {
             feature.getKindCase.getNumber match {
-              case Feature.INT64_LIST_FIELD_NUMBER => row(schema.columnIndex(featureName)) = colDataType.parse(feature.getInt64List.getValueList)
-              case Feature.FLOAT_LIST_FIELD_NUMBER => row(schema.columnIndex(featureName)) = colDataType.parse(feature.getFloatList.getValueList)
+              case Feature.INT64_LIST_FIELD_NUMBER => {
+                val dataList = feature.getInt64List.getValueList
+                if (x.substring(7, 8).toInt.equals(dataList.size()))
+                  colDataType.parse(dataList)
+                else
+                  throw new RuntimeException("Mismatch in vector length...")
+              }
+              case Feature.FLOAT_LIST_FIELD_NUMBER => {
+                val dataList = feature.getFloatList.getValueList
+                if (x.substring(7, 8).toInt.equals(dataList.size()))
+                  colDataType.parse(dataList)
+                else
+                  throw new RuntimeException("Mismatch in vector length...")
+              }
             }
           }
-          case x if x.equals(DataTypes.string) => {
-            row(schema.columnIndex(featureName)) = feature.getBytesList.toString
-          }
+          case x if x.equals(DataTypes.string) => feature.getBytesList.toString
         }
     }
     Row.fromSeq(row)

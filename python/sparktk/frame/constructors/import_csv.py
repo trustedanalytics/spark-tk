@@ -40,7 +40,7 @@ def import_csv(path, delimiter=",", header=False, schema=None, datetime_format="
     :param schema: (Optional(list[tuple(str, type)] or list[str])) The are different options for specifying a schema:
 
     * Provide the full schema for the frame as a list of tuples (string column name and data type)
-    * Provide the column names as a list of strings.  Column data types will be inferred, based on thedata.  The column names specified will override column names that are found in the header row.
+    * Provide the column names as a list of strings.  Column data types will be inferred, based on the data.  The column names specified will override column names that are found in the header row.
     * None, where the schema is automatically inferred based on the data.  Columns are named based on the header, or will be named generically ("C0", "C1", "C2", etc).
 
     :param datetime_format: (str) String specifying how date/time columns are formatted, using the java.text.SimpleDateFormat

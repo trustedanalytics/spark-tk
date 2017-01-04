@@ -53,6 +53,9 @@ class JConvert(object):
     def to_scala_map(self, python_dict):
         return self.scala.toScalaMap(python_dict)
 
+    def to_scala_frame_schema(self, python_schema):
+        return self.scala.frameSchemaToScala(python_schema)
+
     def scala_map_to_python_with_iterable_values(self, m):
         result = self.scala_map_to_python(m)
         python_map_with_iterable_values = {}

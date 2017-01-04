@@ -43,9 +43,9 @@ trait DegreeCentralitySummarization extends BaseGraph {
 
 case class DegreeCentrality(degreeOption: String) extends GraphSummarization[Frame] {
   require(degreeOption == "in" ||
-          degreeOption == "out" ||
-          degreeOption == "undirected",
-          "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
+    degreeOption == "out" ||
+    degreeOption == "undirected",
+    "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 
   val outputName = "degree_centrality"
   val degreeName = "degree_centrality_degree"
@@ -61,16 +61,16 @@ case class DegreeCentrality(degreeOption: String) extends GraphSummarization[Fra
     val normalize = udf { degree: Double => (degree / normalizationValue).toDouble }
 
     val degrees = state.graphFrame.aggregateMessages
-                    .sendToDst(dstMsg)
-                    .sendToSrc(srcMsg)
-                    .agg(sum(AggregateMessages.msg).as(degreeName))
-                    .withColumn(outputName, normalize(col(degreeName)))
-                    .drop(degreeName)
+      .sendToDst(dstMsg)
+      .sendToSrc(srcMsg)
+      .agg(sum(AggregateMessages.msg).as(degreeName))
+      .withColumn(outputName, normalize(col(degreeName)))
+      .drop(degreeName)
 
     val degreesVertexJoinedIsolated = state.graphFrame.vertices
-                                        .join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left")
-                                        .drop(degrees(GraphFrame.ID))
-                                        .na.fill(0.0, Array(outputName))
+      .join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left")
+      .drop(degrees(GraphFrame.ID))
+      .na.fill(0.0, Array(outputName))
     new Frame(degreesVertexJoinedIsolated)
   }
 }
