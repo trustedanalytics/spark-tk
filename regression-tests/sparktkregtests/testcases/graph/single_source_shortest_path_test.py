@@ -142,7 +142,7 @@ class SSSP(sparktk_test.SparkTKTestCase):
         self._validate_result(result, expected_path, expected_cost)
 
 
-    @unittest.skip("bug in code")
+    @unittest.skip("Bug DPNG-14799")
     def test_diconnected_src(self):
         """Tests sssp with a disconnected node as source"""
         result_frame = self.graph.single_source_shortest_path("ne")
@@ -165,6 +165,42 @@ class SSSP(sparktk_test.SparkTKTestCase):
 
         self._validate_result(result, expected_path, expected_cost)
 
+    @unittest.skip("Bug DPNG-14800")
+    def test_graph_with_negative_weights(self):
+        """Tests SSSP on graph with negative weights"""
+        edges = self.context.frame.create(
+            [["1", "2", 2], ["2", "3", 2], ["2", "4", -1],
+            ["3", "4", -5], ["4", "1", -3]],
+            ['src', 'dst', 'weight'])
+        vertices = self.context.frame.create(
+            [["1"], ["2"], ["3"], ["4"]], ['id'])
+        graph = self.context.graph.create(vertices, edges)
+
+        result_frame = graph.single_source_shortest_path("1", "weight")
+        result = result_frame.to_pandas()
+
+        expected_path = [["1"], ["1", "2"], ["1", "2","3"], ["1", "2", "3", "4"]]
+        expected_cost = [0, 2, 4, -1]
+        self._validate_result(result, expected_path, expected_cost)
+
+    @unittest.skip("Bug DPNG 14817")
+    def test_int_src_vertex_id(self):
+        """Tests SSSP with integer src_vertex_ids"""
+        edges = self.context.frame.create(
+            [[1, 2], [2, 3], [2, 4],
+            [3, 4], [4, 1]],
+            ['src', 'dst'])
+        vertices = self.context.frame.create(
+            [[1], [2], [3], [4]], ['id'])
+        graph = self.context.graph.create(vertices, edges)
+
+        result_frame = graph.single_source_shortest_path(1)
+        result = result_frame.to_pandas()
+
+        expected_path = [[1], [1, 2], [1, 2, 3], [1, 2, 4]]
+        expected_cost = [0, 1, 2, 2]
+        self._validate_result(result, expected_path, expected_cost)
+        
     def test_bad_source_id(self):
         """Test sssp throws exception for bad source id"""
         with self.assertRaisesRegexp(
@@ -176,13 +212,6 @@ class SSSP(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "Field \"BAD\" does not exist"):
             self.graph.single_source_shortest_path("ar", "BAD")
-
-    @unittest.skip("behaviour not clear")
-    def test_bad_max_length(self):
-        """Test sssp throws exception for bad edge_prop_name"""
-        with self.assertRaisesRegexp(
-                Exception, "Field \"BAD\" does not exist"):
-            self.graph.single_source_shortest_path("ar", "distance", -1.0)
 
     def _validate_result(self, result, expected_path, expected_cost):
         for i, row in result.iterrows():
