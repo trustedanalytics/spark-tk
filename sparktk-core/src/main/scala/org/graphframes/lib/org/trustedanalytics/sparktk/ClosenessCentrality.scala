@@ -16,7 +16,6 @@
 package org.graphframes.lib.org.trustedanalytics.sparktk
 
 import org.apache.spark.graphx.lib.org.trustedanalytics._
-import org.apache.spark.graphx.lib.org.trustedanalytics.sparktk.ClosenessCalculations
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.graphframes.GraphFrame
