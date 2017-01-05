@@ -91,9 +91,9 @@ object BetweennessCentrality {
     // are infinite distance from the vertex
     val initializedGraph = initialGraph.mapVertices((id, _) => {
       if (sourceVertexId == id)
-        VertexCentralityData(0, 1, false, 0)
+        VertexCentralityData(0, 1, false, 0, 0)
       else
-        VertexCentralityData(Int.MaxValue, 0, false, 0)
+        VertexCentralityData(Int.MaxValue, 0, false, 0, -1)
     })
 
     // Calculate the shortest path using Dijkstra's algorithm
@@ -106,31 +106,40 @@ object BetweennessCentrality {
     // Sum the vertices from furthest vertex to closest vertex to the initial start vertex
     val centralityGraph = partialCentralitySum(shortestPathGraphHorizon, sourceVertexId)
 
-    centralityGraph.mapVertices({ case (id, x) => x.sigmaVal }).vertices
+    val retval = centralityGraph.mapVertices({ case (id, x) => x.sigmaVal }).vertices
+    retval
   }
 
   // Calculates the single shortest paths from the given graph vertex
   // Annotates the vertices with the number of shortest paths that go through each vertex
   private def calculateShortestPaths(initializedGraph: Graph[VertexCentralityData, Int]): Graph[VertexCentralityData, Int] = {
-    val initialMessage = VertexCentralityData(Int.MaxValue, 0, true, 0)
+    val initializedGraphZeros = initializedGraph.mapVertices((id, value) => {
+      (value, value.pathCount)
+    })
+
+    val initialMessage = (VertexCentralityData(Int.MaxValue, 0, true, 0, -2), 0)
     // Calculate the shortest path using Dijkstra's algorithm
-    val shortestPathGraph = Pregel(initializedGraph, initialMessage)(
+    val shortestPathGraph = Pregel(initializedGraphZeros, initialMessage)(
       // vertex program
       // This selects the shortest path and updates the number of shortest paths appropriately
       (id, oldShortestPath, newShortestPath) => {
-        if (oldShortestPath.distance > newShortestPath.distance)
+        val (oldPath, oldPathCount) = oldShortestPath
+        val (newPath, newPathCount) = newShortestPath
+        if (oldPath.distance > newPath.distance)
           newShortestPath
-        else if (oldShortestPath.distance < newShortestPath.distance)
+        else if (oldPath.distance < newPath.distance)
           oldShortestPath
         else
-          VertexCentralityData(newShortestPath.distance, oldShortestPath.pathCount + newShortestPath.pathCount, true, 0)
+          (VertexCentralityData(newPath.distance, oldPath.pathCount + newPathCount, true, 0, newPath.generation.max(oldPath.generation)), newPathCount)
       },
       // Increase the search diameter by 1
       (edge) => {
-        val newDstPathCount = VertexCentralityData(edge.srcAttr.distance + edge.attr, edge.srcAttr.pathCount, true, 0.0)
-        val newSrcPathCount = VertexCentralityData(edge.dstAttr.distance + edge.attr, edge.dstAttr.pathCount, true, 0.0)
-        val toMsg = edge.srcAttr.distance < edge.dstAttr.distance - edge.attr
-        val fromMsg = edge.dstAttr.distance < edge.srcAttr.distance - edge.attr
+        val (srcAttr, srcCount) = edge.srcAttr
+        val (dstAttr, dstCount) = edge.dstAttr
+        val newDstPathCount = (VertexCentralityData(srcAttr.distance + edge.attr, srcAttr.pathCount, true, 0.0, srcAttr.generation + 1), srcCount)
+        val newSrcPathCount = (VertexCentralityData(dstAttr.distance + edge.attr, dstAttr.pathCount, true, 0.0, dstAttr.generation + 1), dstCount)
+        val toMsg = (srcAttr.distance < dstAttr.distance - edge.attr) || (srcAttr.distance == dstAttr.distance - edge.attr && srcAttr.generation >= dstAttr.generation)
+        val fromMsg = (dstAttr.distance < srcAttr.distance - edge.attr) || (dstAttr.distance == srcAttr.distance - edge.attr && dstAttr.generation >= srcAttr.generation)
         if (toMsg && fromMsg) {
           Iterator((edge.dstId, newDstPathCount), (edge.srcId, newSrcPathCount))
         }
@@ -146,16 +155,21 @@ object BetweennessCentrality {
       },
       // merge message
       // Select the shortest path. If there is a tie, combine the number of ways to this vertex
-      (a: VertexCentralityData, b: VertexCentralityData) => {
-        if (a.distance < b.distance)
+      (a: (VertexCentralityData, Int), b: (VertexCentralityData, Int)) => {
+        val (aAttr, aCount) = a
+        val (bAttr, bCount) = b
+        if (aAttr.distance < bAttr.distance)
           a
-        else if (a.distance > b.distance)
+        else if (aAttr.distance > bAttr.distance)
           b
         else
-          VertexCentralityData(a.distance, a.pathCount + b.pathCount, true, 0)
+          (VertexCentralityData(aAttr.distance, aAttr.pathCount + bAttr.pathCount, true, 0, aAttr.generation), aCount + bCount)
       })
 
-    shortestPathGraph
+    shortestPathGraph.mapVertices((id, value: (VertexCentralityData, Int)) => {
+      val (retval, count) = value
+      retval
+    })
   }
 
   // Find the initial set of vertices from the start vertex. Mark them as horizon vertices.
@@ -168,7 +182,7 @@ object BetweennessCentrality {
       // If any neighbors have greater distance, this is not a horizon vertex
       (id, currentVertexValue, previousValue) => {
         if (previousValue)
-          VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, false, 0)
+          VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, false, 0, 0)
         else
           currentVertexValue
       },
@@ -192,7 +206,7 @@ object BetweennessCentrality {
   // particular vertex
   private def partialCentralitySum(shortestPathHorizonGraph: Graph[VertexCentralityData, Int],
                                    sourceVertexId: VertexId): Graph[VertexCentralityData, Int] = {
-    val centralityGraph = shortestPathHorizonGraph.pregel(VertexCentralityData(0, 0, false, 0))(
+    val centralityGraph = shortestPathHorizonGraph.pregel(VertexCentralityData(0, 0, false, 0, 0))(
       // Don't update anything on first iteration
       // Don't update if you horizon (i.e. an interior vertex)
       // Update if interior, but ALL incoming messages with > distance are marked as not interior (i.e. horizon)
@@ -200,7 +214,7 @@ object BetweennessCentrality {
         //If the message received is a horizon message, the horizon is on the
         // current vertex, which needs to be updated
         if (messageVertexValue.horizon) {
-          VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, true, messageVertexValue.sigmaVal)
+          VertexCentralityData(currentVertexValue.distance, currentVertexValue.pathCount, true, messageVertexValue.sigmaVal, 0)
         }
         // Horizon is not here, don't update
         else {
@@ -239,14 +253,14 @@ object BetweennessCentrality {
             Iterator.empty
           else {
             val sigmaUpdate = (predecessorVertex.pathCount.toFloat / currentVertex.pathCount.toFloat) * (1f + currentVertex.sigmaVal)
-            Iterator((vertexMessageId, VertexCentralityData(0, 0, currentVertex.horizon, sigmaUpdate)))
+            Iterator((vertexMessageId, VertexCentralityData(0, 0, currentVertex.horizon, sigmaUpdate, 0)))
           }
         }
       },
       // sum the partial sums of the shortest path count
       // determine if this is now a horizon vertex (occurs if and only if ALL vertices
       // for which a vertex is in the predecessor set are horizon
-      (a, b) => { VertexCentralityData(0, 0, a.horizon && b.horizon, a.sigmaVal + b.sigmaVal) }
+      (a, b) => { VertexCentralityData(0, 0, a.horizon && b.horizon, a.sigmaVal + b.sigmaVal, 0) }
     )
     centralityGraph
   }
@@ -256,6 +270,7 @@ object BetweennessCentrality {
   // first distance and pathcount is used,
   // Then the horizon vertices are marked
   // Then the sigmaVal (partial sum of centrality) is calculated
-  private case class VertexCentralityData(distance: Int, pathCount: Int, horizon: Boolean, sigmaVal: Double)
+  // Generation is a marker used to track whether or not new information is relevant. If it is from a later generation, it is new
+  private case class VertexCentralityData(distance: Int, pathCount: Int, horizon: Boolean, sigmaVal: Double, generation: Int)
 }
 
