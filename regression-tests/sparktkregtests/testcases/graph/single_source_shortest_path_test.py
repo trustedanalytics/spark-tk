@@ -69,60 +69,60 @@ class SSSP(sparktk_test.SparkTKTestCase):
     def test_default_weight(self):
         """Tests sssp with default weight"""
         result_frame = self.graph.single_source_shortest_path("bu")
-        print "DEFAULT"
-        print result_frame.inspect(100)
        
         #validate number of rows in the result
         self.assertEqual(result_frame.count(), 16)
 
         result = result_frame.to_pandas()
-        expected_path =\
-            [['bu', ' pi', ' rv'],
-            ['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti', ' ar',
-            ' ze', ' or'],
-            ['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti', ' ar'],
-            ['bu', ' pi', ' cr'],
-            ['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti'],
-            ['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti', ' ar', ' ze'],
-            ['bu', ' pi', ' cr', ' do', ' me'],
-            ['bu'], [''], ['bu', ' pi', ' rv', ' si'],
-            ['bu', ' pi', ' cr', ' do', ' me', ' lu'],
-            ['bu', ' gi'], ['bu', ' pi', ' rv', ' si', ' fa'], [''],
-            ['bu', ' pi'], ['bu', ' pi', ' cr', ' do']]
-        expected_cost = [2.0, 9.0, 7.0, 2.0, 6.0, 8.0, 4.0, 
-            0.0, float("inf"), 3.0, 5.0, 1.0, 4.0, float("inf"), 1.0, 3.0]
-        self._validate_result(result, expected_path, expected_cost)
+        expected_result={'rv':[['bu', ' pi', ' rv'], 2.0],
+            'or': [['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti', ' ar',' ze', ' or'], 9.0],
+            'ar': [['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti', ' ar'], 7.0],
+            'cr': [['bu', ' pi', ' cr'], 2.0],
+            'ti': [['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti'], 6.0],
+            'ze': [['bu', ' pi', ' cr', ' do', ' me', ' lu', ' ti', ' ar', ' ze'], 8.0],
+            'me': [['bu', ' pi', ' cr', ' do', ' me'], 4.0],
+            'bu': [['bu'], 0.0],
+            'ia': [[''], float('inf')],
+            'si': [['bu', ' pi', ' rv', ' si'], 3.0],
+            'lu': [['bu', ' pi', ' cr', ' do', ' me', ' lu'], 5.0],
+            'gi': [['bu', ' gi'], 1.0],
+            'fa': [['bu', ' pi', ' rv', ' si', ' fa'], 4.0],
+            'ne': [[''], float('inf')],
+            'pi': [['bu', ' pi'], 1.0],
+            'do': [['bu', ' pi', ' cr', ' do'], 3.0]}
+
+        self._validate_result(result, expected_result)
 
     def test_edge_weight(self):
         """Tests sssp with distance field as weight"""
         result_frame = self.graph.single_source_shortest_path("ar", "distance")
-        print "WEIGHTS"
-        print result_frame.inspect(100)
         #validate number of rows in the result
         self.assertEqual(result_frame.count(), 16)
 
         result = result_frame.to_pandas()
-        expected_path =\
-            [['ar', ' si', ' fa', ' bu', ' pi', ' rv'],
-            ['ar', ' ze', ' or'], ['ar'],
-            ['ar', ' si', ' fa', ' bu', ' pi', ' cr'],
-            ['ar', ' si', ' fa', ' bu', ' pi', ' cr',' do',
-            ' me', ' lu', ' ti'],
-            ['ar', ' ze'],
-            ['ar', ' si', ' fa', ' bu', ' pi', ' cr', ' do', ' me'], 
-            ['ar', ' si', ' fa', ' bu'], [''], ['ar', ' si'],
-            ['ar', ' si', ' fa', ' bu', ' pi', ' cr', ' do', ' me', ' lu'],
-            ['ar', ' si', ' fa', ' bu', ' gi'], ['ar', ' si', ' fa'], [''],
-            ['ar', ' si', ' fa', ' bu', ' pi'], ['ar', ' si', ' fa', ' bu',
-            ' pi', ' cr', ' do']]
+        expected_result = {'rv':[['ar', ' si', ' fa', ' bu', ' pi', ' rv'], 648.0],
+            'or': [['ar', ' ze', ' or'], 146.0],
+            'ar': [['ar'], 0.0],
+            'cr': [['ar', ' si', ' fa', ' bu', ' pi', ' cr'], 689.0],
+            'ti': [['ar', ' si', ' fa', ' bu', ' pi', ' cr',' do',
+                ' me', ' lu', ' ti'], 1065.0],
+            'ze': [['ar', ' ze'], 75.0],
+            'me': [['ar', ' si', ' fa', ' bu', ' pi', ' cr', ' do', ' me'],
+                884.0],
+            'bu': [['ar', ' si', ' fa', ' bu'], 450.0],
+            'ia': [[''], float('inf')],
+            'si': [['ar', ' si'], 140.0],
+            'lu': [['ar', ' si', ' fa', ' bu', ' pi',
+                ' cr', ' do', ' me', ' lu'], 954.0],
+            'gi': [['ar', ' si', ' fa', ' bu', ' gi'], 540.0],
+            'fa': [['ar', ' si', ' fa'], 239.0],
+            'ne': [[''], float('inf')],
+            'pi': [['ar', ' si', ' fa', ' bu', ' pi'], 551.0],
+            'do': [['ar', ' si', ' fa', ' bu',
+                ' pi', ' cr', ' do'], 809.0]}
 
-        expected_cost =\
-            [648.0, 146.0, 0.0, 689.0, 1065.0, 75.0,
-            884.0, 450.0, float("inf"), 140.0, 954.0,
-            540.0, 239.0, float("inf"), 551.0, 809.0]
-
-        self._validate_result(result, expected_path, expected_cost)
-
+        self._validate_result(result, expected_result)
+    
     def test_max_path_length(self):
         """Tests sssp with max_path_length of 500"""
         result_frame = self.graph.single_source_shortest_path("ar", "distance", 500.0)
@@ -131,18 +131,24 @@ class SSSP(sparktk_test.SparkTKTestCase):
         self.assertEqual(result_frame.count(), 16)
 
         result = result_frame.to_pandas()
-        expected_path =\
-            [[''], ['ar', ' ze', ' or'], ['ar'], [''], [''],
-            ['ar', ' ze'], [''], ['ar', ' si', ' fa', ' bu'],
-            [''], ['ar', ' si'], [''], [''], ['ar', ' si', ' fa'],
-            [''], [''], ['']]
+        expected_result = {'rv':[[''], float('inf')],
+            'or': [['ar', ' ze', ' or'], 146.0],
+            'ar': [['ar'], 0.0],
+            'cr': [[''], float('inf')],
+            'ti': [[''], float('inf')],
+            'ze': [['ar', ' ze'], 75.0],
+            'me': [[''], float('inf')],
+            'bu': [['ar', ' si', ' fa', ' bu'], 450.0],
+            'ia': [[''], float('inf')],
+            'si': [['ar', ' si'], 140.0],
+            'lu': [[''], float('inf')],
+            'gi': [[''],float('inf')],
+            'fa': [['ar', ' si', ' fa'], 239.0],
+            'ne': [[''], float('inf')],
+            'pi': [[''], float('inf')],
+            'do': [[''], float('inf')]}
 
-        expected_cost =\
-            [float("inf"), 146.0, 0.0, float("inf"), float("inf"), 75.0,
-            float("inf"), 450.0, float("inf"), 140.0, float("inf"),
-            float("inf"), 239.0, float("inf"), float("inf"), float("inf")]
-
-        self._validate_result(result, expected_path, expected_cost)
+        self._validate_result(result, expected_result)
 
 
     @unittest.skip("Bug DPNG-14799")
@@ -154,19 +160,24 @@ class SSSP(sparktk_test.SparkTKTestCase):
         self.assertEqual(result_frame.count(), 16)
 
         result = result_frame.to_pandas()
-        expected_path =\
-            [[''], [''], [''], [''], [''],
-            [''], [''], [''],
-            ['ne'], [''], [''], [''], [''],
-            [''], [''], ['']]
+        expected_result = {'rv':[[''], float('inf')],
+            'or': [[''], float('inf')],
+            'ar': [[''], float('inf')],
+            'cr': [[''], float('inf')],
+            'ti': [[''], float('inf')],
+            'ze': [[''], float('inf')],
+            'me': [[''], float('inf')],
+            'bu': [[''], float('inf')],
+            'ia': [[''], float('inf')],
+            'si': [[''], float('inf')],
+            'lu': [[''], float('inf')],
+            'gi': [[''],float('inf')],
+            'fa': [[''], float('inf')],
+            'ne': [['ne'], 0.0],
+            'pi': [[''], float('inf')],
+            'do': [[''], float('inf')]}
 
-
-        expected_cost =\
-            [float("inf"), float("inf"), float("inf"), float("inf"), float("inf"),
-            float("inf"), float("inf"), float("inf"), 0.0, float("inf"),
-            float("inf"), float("inf"), float("inf"), float("inf"), float("inf")]
-
-        self._validate_result(result, expected_path, expected_cost)
+        self._validate_result(result, expected_result)
 
     @unittest.skip("Bug DPNG-14800")
     def test_graph_with_negative_weights(self):
@@ -181,10 +192,11 @@ class SSSP(sparktk_test.SparkTKTestCase):
 
         result_frame = graph.single_source_shortest_path("1", "weight")
         result = result_frame.to_pandas()
-
-        expected_path = [["1"], ["1", "2"], ["1", "2","3"], ["1", "2", "3", "4"]]
-        expected_cost = [0, 2, 4, -1]
-        self._validate_result(result, expected_path, expected_cost)
+        expected_result = {"1": [['1'], 0.0],
+            "2": [['1', ' 2'], 2.0],
+            "3": [['1', ' 2', ' 3'], 4.0],
+            "4": [['1', ' 2', ' 3', ' 4'], -1]}
+        self._validate_result(result, expected_result)
 
     @unittest.skip("Bug DPNG 14817")
     def test_int_src_vertex_id(self):
@@ -199,10 +211,15 @@ class SSSP(sparktk_test.SparkTKTestCase):
 
         result_frame = graph.single_source_shortest_path(1)
         result = result_frame.to_pandas()
+        
+        expected_result = {1: [['1'], 0.0],
+            2: [['1', ' 2'], 1.0],
+            3: [['1', ' 2', ' 3'], 2.0],
+            4: [['1', ' 2', ' 4'], 2.0]}
 
         expected_path = [[1], [1, 2], [1, 2, 3], [1, 2, 4]]
         expected_cost = [0, 1, 2, 2]
-        self._validate_result(result, expected_path, expected_cost)
+        self._validate_result(result, expected_result)
         
     def test_bad_source_id(self):
         """Test sssp throws exception for bad source id"""
@@ -216,12 +233,13 @@ class SSSP(sparktk_test.SparkTKTestCase):
                 Exception, "Field \"BAD\" does not exist"):
             self.graph.single_source_shortest_path("ar", "BAD")
 
-    def _validate_result(self, result, expected_path, expected_cost):
+    def _validate_result(self, result, expected_result):
         
         for i, row in result.iterrows():
+            id = row['id']
             path = str(row["path"]).strip("[]").split(",")
-            self.assertItemsEqual(path, expected_path[i])
-            self.assertEqual(row["cost"], expected_cost[i])
+            self.assertItemsEqual(path, expected_result[id][0])
+            self.assertEqual(row["cost"], expected_result[id][1])
         
 if __name__ == "__main__":
     unittest.main()
