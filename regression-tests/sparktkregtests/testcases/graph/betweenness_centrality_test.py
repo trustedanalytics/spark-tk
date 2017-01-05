@@ -22,7 +22,6 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
 
         self.graph = self.context.graph.create(vertices, edges)
 
-    @unittest.skip("")
     def test_default(self):
         """Test default settings"""
         result_frame = self.graph.betweenness_centrality()
@@ -36,18 +35,6 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
                 row["betweenness_centrality"],
                 expected_value[i],
                 delta = 0.001)
-
-    def weighted_G(self):
-        G=nx.Graph()
-        G.add_edge(0,1,weight=1)
-        G.add_edge(0,2,weight=1)
-        G.add_edge(2,3,weight=2)
-        G.add_edge(2,4,weight=4)
-        G.add_edge(3,4,weight=2)
-        G.add_edge(3,5,weight=4)
-        G.add_edge(4,5,weight=2)
-        G.add_edge(4,6,weight=1)
-        return G
 
     def test_weights_single_shortest_path(self):
         """Tests weighted betweenness when only one shortest path present""" 
@@ -72,18 +59,42 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
                 expected_values[i],
                 delta = 0.1)
 
-    @unittest.skip("")
+    @unittest.skip("Bug:DPNG-14802")
     def test_weights(self):
         """Test betweenness with weighted cost"""
         result_frame = self.graph.betweenness_centrality("weights", False)
-        G = self.weighted_G()
-        b = nx.betweenness_centrality(G,
-                weight='weight',
-                normalized=False)
-        b_n = nx.betweenness_centrality(G,
-                weight='weight',
-                normalized=True)
-        #print "Networkx:\nUnnormalized:{0}\nNormalized:{1}\nSparktk:\n{2}".format(b, b_n, result_frame.inspect(10))
+
+        #validate betweenness centrality values
+        expected_values = [ 0.0, 5.0, 0.0, 0.0, 8.0, 5.0, 7.5]
+        result = result_frame.to_pandas()
+        for i, row in result.iterrows():
+            self.assertAlmostEqual(
+                row["betweenness_centrality"],
+                expected_values[i],
+                delta = 0.1)
+
+    def test_disconnected_edges(self):
+        """Test betweenness on graph with disconnected edges"""
+        edges = self.context.frame.create(
+            [['a', 'b'], ['a', 'c'],
+            ['c', 'd'], ['c', 'e'],
+            ['f', 'g'], ['g', 'h']],            
+            ['src', 'dst'])
+        vertices = self.context.frame.create(
+            [['a'], ['b'], ['c'], ['d'], ['e'], ['f'], ['g'], ['h']],
+            ['id'])
+        graph = self.context.graph.create(vertices, edges)
+
+        result_frame = graph.betweenness_centrality(normalize=False)
+
+        #validate betweenness centrality values
+        expected_values = [0.0, 3.0, 0.0, 0.0, 1.0, 5.0, 0.0, 0.0]
+        result = result_frame.to_pandas()
+        for i, row in result.iterrows():
+            self.assertAlmostEqual(
+                row["betweenness_centrality"],
+                expected_values[i],
+                delta = 0.1)
 
     def test_normalize(self):
         """Test unnomallized betweenness crentrality"""
@@ -103,5 +114,6 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "Field \"BAD\" does not exist"):
             self.graph.betweenness_centrality("BAD")
+
 if __name__ == "__main__":
     unittest.main()
