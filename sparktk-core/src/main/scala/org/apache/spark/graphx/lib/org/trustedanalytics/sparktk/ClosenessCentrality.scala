@@ -37,43 +37,57 @@ object ClosenessCentrality {
 
   /**
    * computes the closeness centrality
+   *
    * @param graph the graph to compute the closeness centrality for its nodes
    * @param getEdgeWeight optional user-defined function that enables the inclusion of the edge weights in the
    *                      shortest-path calculations by converting the edge attribute type to Double.
-   * @param normalized normalizes the closeness centrality value to the number of nodes connected to it divided by
-   *                   the rest number of nodes in the graph, this is effective in the case of disconnected graph
-   * @tparam VD the vertex attribute that is used here to store the shortest-path attributes
-   * @tparam ED the edge attribute that is used here as the edge weight
-   * @return the graph vertex IDs and each corresponding closeness centrality value
+   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it
+   *                   divided by the total number of nodes in the graph, this is effective in the case of disconnected
+   *                   graph
+   * @tparam VD the vertex attribute that stores the closeness centrality data
+   * @tparam ED the edge attribute that contains the edge weight
+   * @return graph with the closeness data as the vertex attribute and the edge weight as the edge attribute
    */
   def run[VD, ED: ClassTag](graph: Graph[VD, ED],
-                            getEdgeWeight: Option[ED => Double] = None, normalized: Boolean = true): Seq[ClosenessCalculations] = {
+                            getEdgeWeight: Option[ED => Double] = None,
+                            normalized: Boolean = true): Graph[Double, Double] = {
     val verticesCount = graph.vertices.count.toDouble
-    calculateShortestPaths(graph, getEdgeWeight).vertices.map {
-      case (id, spMap) =>
-        calculateCloseness(normalized, verticesCount, id, spMap)
-    }.collect().toSeq
+    calculateShortestPaths(graph, getEdgeWeight).mapVertices {
+      case (id, spMap) => calculateCloseness(id, spMap, normalized, verticesCount).closenessCentrality
+    }
   }
 
   /**
    * calculate the closeness centrality value per vertex
+   *
+   * @param id the vertex ID
+   * @param spMap the shortest-path calculations from that vertex to the rest of the nodes in the graph
+   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it
+   *                   divided by the total number of nodes in the graph, this is effective in the case of
+   *                   disconnected graph
+   * @param verticesCount the number of vertices in the graph
+   * @return closeness centrality for the given vertex ID
    */
-  private def calculateCloseness(normalized: Boolean, verticesCount: Double, id: VertexId, spMap: SPMap): ClosenessCalculations = {
-    val connectedVerticesCount = spMap.values.toSeq.length.toDouble
+  private def calculateCloseness(id: VertexId,
+                                 spMap: SPMap,
+                                 normalized: Boolean,
+                                 verticesCount: Double): ClosenessData = {
+    val connectedVerticesCount = spMap.size.toDouble
     val totalCost = spMap.values.sum
     val closenessValue = if (totalCost > 0.0 && verticesCount > 1.0) {
+      val closenessCentrality = (connectedVerticesCount - 1.0) / totalCost
       if (normalized) {
         val factor = (connectedVerticesCount - 1.0) / (verticesCount - 1.0)
-        (connectedVerticesCount - 1.0) * factor / totalCost
+        closenessCentrality * factor
       }
       else {
-        (connectedVerticesCount - 1.0) / totalCost
+        closenessCentrality
       }
     }
     else {
       0.0
     }
-    ClosenessCalculations(id, closenessValue)
+    ClosenessData(id, closenessValue)
   }
 
   /**
@@ -104,6 +118,7 @@ object ClosenessCentrality {
 
   /**
    * Calculates the single source shortest path for each vertex in the graph.
+   *
    * @param graph the graph to compute the shortest-paths for its vertices
    * @param getEdgeWeight optional user-defined function that enables the inclusion of the edge weights in the
    *                      shortest-paths calculations by converting the edge attribute type to Double.
@@ -139,8 +154,9 @@ object ClosenessCentrality {
 
 /**
  * The closeness centrality calculations
+ *
  * @param vertexId the vertex ID
  * @param closenessCentrality the closeness centrality value
  */
-case class ClosenessCalculations(vertexId: VertexId, closenessCentrality: Double)
+case class ClosenessData(vertexId: VertexId, closenessCentrality: Double)
 

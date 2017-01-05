@@ -19,6 +19,7 @@ import org.trustedanalytics.sparktk.frame.Frame
 import org.apache.spark.sql.functions.{ sum, array, col, count, explode, struct }
 import org.graphframes.GraphFrame
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions._
 import org.graphframes.lib.AggregateMessages
 
 import org.apache.spark.sql.Column
@@ -26,48 +27,50 @@ import org.apache.spark.sql.functions.lit
 
 import org.trustedanalytics.sparktk.graph.internal.{ GraphState, GraphSummarization, BaseGraph }
 
-trait DegreeSummarization extends BaseGraph {
+trait DegreeCentralitySummarization extends BaseGraph {
   /**
-   * Returns a frame with annotations concerning the degree of each vertex,
-   * weighted by a given edge weight
+   * Returns a frame with annotations concerning the degree centrality of each vertex,
+   * which is simply the degree / (n-1) where n is the number of vertices in the graph.
+   * That is, the degree of a vertex divided by the maximum degree of that vertex.
    *
    * @param degreeOption One of "in", "out" or "undirected". Determines the edge direction for the degree
-   * @return The dataframe containing the vertices and their corresponding weights
+   * @return The dataframe containing the vertices and their degree centrality measures
    */
-  def degree(degreeOption: String = "undirected"): Frame = {
-    execute[Frame](Degree(degreeOption))
+  def degreeCentrality(degreeOption: String = "undirected"): Frame = {
+    execute[Frame](DegreeCentrality(degreeOption))
   }
 }
 
-case class Degree(degreeOption: String) extends GraphSummarization[Frame] {
+case class DegreeCentrality(degreeOption: String) extends GraphSummarization[Frame] {
   require(degreeOption == "in" ||
     degreeOption == "out" ||
     degreeOption == "undirected",
     "Invalid degree option, please choose \"in\", \"out\", or \"undirected\"")
 
-  val outputName = "degree"
+  val outputName = "degree_centrality"
+  val degreeName = "degree_centrality_degree"
 
   override def work(state: GraphState): Frame = {
     val (dstMsg, srcMsg) = degreeOption match {
-      case "in" => (lit(1), lit(0))
-      case "out" => (lit(0), lit(1))
-      case "undirected" => (lit(1), lit(1))
+      case "in" => (lit(1.0), lit(0.0))
+      case "out" => (lit(0.0), lit(1.0))
+      case "undirected" => (lit(1.0), lit(1.0))
     }
-    val degrees = state.graphFrame
-      .aggregateMessages
+
+    val normalizationValue: Double = state.graphFrame.vertices.count() - 1.0
+    val normalize = udf { degree: Double => (degree / normalizationValue).toDouble }
+
+    val degrees = state.graphFrame.aggregateMessages
       .sendToDst(dstMsg)
       .sendToSrc(srcMsg)
-      .agg(sum(AggregateMessages.msg)
-        .as(outputName))
+      .agg(sum(AggregateMessages.msg).as(degreeName))
+      .withColumn(outputName, normalize(col(degreeName)))
+      .drop(degreeName)
 
-    // Join the isolated vertices into the return frame, set their degree to 0
-    // This is working around an anomolous property of the message sending system that
-    // isolated vertices(i.e. vertices with no edges) can not be sent, or send, messages
-    // which causes them to be dropped from the frame
-    val degreesWithIsolatedVertices = state.graphFrame.vertices
+    val degreesVertexJoinedIsolated = state.graphFrame.vertices
       .join(degrees, state.graphFrame.vertices(GraphFrame.ID).equalTo(degrees(GraphFrame.ID)), "left")
       .drop(degrees(GraphFrame.ID))
       .na.fill(0.0, Array(outputName))
-    new Frame(degreesWithIsolatedVertices)
+    new Frame(degreesVertexJoinedIsolated)
   }
 }

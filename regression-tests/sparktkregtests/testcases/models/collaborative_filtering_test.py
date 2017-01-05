@@ -90,7 +90,6 @@ class CollabFilterTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(model.checkpoint_iterations, 8)
         self.assertEqual(model.target_rmse, 0.4)
 
-    @unittest.skip("many steps fails, likely a checkpointing issue")
     def test_als_collaborative_filtering_many_steps(self):
         """ Test collaborative filtering with many steps"""
         model = self.context.models.recommendation \
