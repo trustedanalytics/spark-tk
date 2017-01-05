@@ -55,5 +55,10 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, Some((x: Double) => x), None, (t: String) => t)
       singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2700.0, List("SFO", "ORD", "PDX"), "PDX"))
     }
+    "calculate the single source shortest path for a disconnected node" in {
+      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 7, None, None, (x: String) => x)
+      println(singleSourceShortestPathGraph.vertices.collect.mkString("\n"))
+      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(Double.PositiveInfinity, List(), "PDX"))
+    }
   }
 }

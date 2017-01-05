@@ -68,7 +68,7 @@ object SingleSourceShortestPath {
     def sendMessage[T](edge: EdgeTriplet[PathCalculation[T], Double]): Iterator[(VertexId, PathCalculation[T])] = {
       val (newShortestPath, weight) = updateShortestPath(edge)
       if ((maxPathLength.isDefined && edge.srcAttr.cost + weight > maxPathLength.get) ||
-        (edge.srcAttr.cost + weight > edge.dstAttr.cost)) {
+        (edge.srcAttr.cost + weight >= edge.dstAttr.cost)) {
         Iterator.empty
       }
       else {
