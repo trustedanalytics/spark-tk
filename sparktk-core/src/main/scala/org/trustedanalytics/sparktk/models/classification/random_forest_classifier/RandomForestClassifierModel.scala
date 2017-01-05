@@ -64,7 +64,7 @@ object RandomForestClassifierModel extends TkSaveableObject {
    * @param maxBins Maximum number of bins used for splitting features. Default is 100
    * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
    * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
-   * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider to consider when looking for the best split.
+   * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
    *                              Supported values "auto","all","sqrt","log2","onethird".
    *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
    *                              ; if num_trees > 1, set to "sqrt". Default is "auto"

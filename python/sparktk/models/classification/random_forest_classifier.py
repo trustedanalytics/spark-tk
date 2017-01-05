@@ -57,7 +57,7 @@ def train(frame,
     :param min_instances_per_node: (int) Minimum number of records each child node must have after a split.
     :param sub_sampling_rate: (double) Fraction between 0..1 of the training data used for learning each decision tree.
     :param feature_subset_category: (str) Subset of observation columns, i.e., features,
-                                 to consider to consider when looking for the best split.
+                                 to consider when looking for the best split.
                                  Supported values "auto","all","sqrt","log2","onethird".
                                  If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
                                  ; if num_trees > 1, set to "sqrt".
@@ -78,7 +78,7 @@ def train(frame,
     tested against the true labels using built-in binary and multi-class Classification Metrics.
     """
     require_type(Frame, frame, 'frame')
-    affirm_type.list_of_str(observation_columns, "observation_columns")
+    column_list = affirm_type.list_of_str(observation_columns, "observation_columns")
     require_type.non_empty_str(label_column, "label_column")
     require_type.non_negative_int(num_classes, "num_classes")
     if num_classes < 2:
@@ -97,7 +97,7 @@ def train(frame,
     _scala_obj = get_scala_obj(tc)
     seed = int(os.urandom(2).encode('hex'), 16) if seed is None else seed
     scala_model = _scala_obj.train(frame._scala,
-                                   tc.jutils.convert.to_scala_list_string(observation_columns),
+                                   tc.jutils.convert.to_scala_list_string(column_list),
                                    label_column,
                                    num_classes,
                                    num_trees,
@@ -310,8 +310,8 @@ class RandomForestClassifierModel(PropertiesObject):
                  label for each observation.
         """
         require_type(Frame, frame, 'frame')
-        affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
-        columns_option = self._tc.jutils.convert.to_scala_option_list_string(observation_columns)
+        column_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+        columns_option = self._tc.jutils.convert.to_scala_option_list_string(column_list)
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
     def test(self, frame, observation_columns=None, label_column=None):
@@ -339,10 +339,10 @@ class RandomForestClassifierModel(PropertiesObject):
                 The proportion of positive instances that are correctly identified.
         """
         require_type(Frame, frame, 'frame')
-        affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
+        column_list = affirm_type.list_of_str(observation_columns, "observation_columns", allow_none=True)
 
         return ClassificationMetricsValue(self._tc, self._scala.test(frame._scala,
-                                                                     self._tc.jutils.convert.to_scala_option_list_string(observation_columns),
+                                                                     self._tc.jutils.convert.to_scala_option_list_string(column_list),
                                                                      self._tc.jutils.convert.to_scala_option(label_column)))
 
     def save(self, path):
