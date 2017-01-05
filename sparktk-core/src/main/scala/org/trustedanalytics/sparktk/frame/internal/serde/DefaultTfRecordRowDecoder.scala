@@ -41,39 +41,39 @@ object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
       case (featureName, feature) =>
         val colDataType = schema.columnDataType(featureName)
         row(schema.columnIndex(featureName)) = colDataType match {
-          case x if x.equals(DataTypes.int32) | x.equals(DataTypes.int64) => {
+          case vtype if vtype.equals(DataTypes.int32) | vtype.equals(DataTypes.int64) => {
             val dataList = feature.getInt64List.getValueList
             if (dataList.size() == 1)
-              colDataType.parse(dataList.get(0))
+              colDataType.parse(dataList.get(0)).get
             else
               throw new RuntimeException("Mismatch in schema type, expected int32 or int64")
           }
-          case x if x.equals(DataTypes.float64) => {
+          case vtype if vtype.equals(DataTypes.float64) => {
             val dataList = feature.getFloatList.getValueList
             if (dataList.size() == 1)
-              colDataType.parse(dataList.get(0))
+              colDataType.parse(dataList.get(0)).get
             else
               throw new RuntimeException("Mismatch in schema type, expected float64")
           }
-          case x if x.isVector => {
+          case vtype: DataTypes.vector => {
             feature.getKindCase.getNumber match {
               case Feature.INT64_LIST_FIELD_NUMBER => {
                 val dataList = feature.getInt64List.getValueList
-                if (x.substring(7, 8).toInt.equals(dataList.size()))
-                  colDataType.parse(dataList)
+                if (vtype.length == dataList.size())
+                  vtype.parse(dataList.asScala.toList).get
                 else
                   throw new RuntimeException("Mismatch in vector length...")
               }
               case Feature.FLOAT_LIST_FIELD_NUMBER => {
                 val dataList = feature.getFloatList.getValueList
-                if (x.substring(7, 8).toInt.equals(dataList.size()))
-                  colDataType.parse(dataList)
+                if (vtype.length == dataList.size())
+                  vtype.parse(dataList.asScala.toList).get
                 else
                   throw new RuntimeException("Mismatch in vector length...")
               }
             }
           }
-          case x if x.equals(DataTypes.string) => feature.getBytesList.toString
+          case x if x.equals(DataTypes.string) => feature.getBytesList.toByteString.toStringUtf8.trim
         }
     }
     Row.fromSeq(row)

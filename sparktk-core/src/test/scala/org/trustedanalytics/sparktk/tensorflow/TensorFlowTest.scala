@@ -15,6 +15,9 @@
  */
 package org.trustedanalytics.sparktk.tensorflow
 
+import java.io.File
+
+import org.apache.commons.io.FileUtils
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.Row
 import org.scalatest.Matchers
@@ -28,6 +31,7 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
     "Export frame as TF Records to given dest path" in {
 
       val destPath = "../integration-tests/tests/sandbox/output25.tfr"
+      FileUtils.deleteQuietly(new File(destPath))
       val testRows: Array[Row] = Array(
         new GenericRow(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1")),
         new GenericRow(Array[Any](21, 2, 24L, 12.0F, 15.0, Vector(2.0, 2.0), "r2")),
