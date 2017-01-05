@@ -45,12 +45,19 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
         result = result_frame.to_pandas()
 
         #validate centrality values
-        expected_value = [0.1, 0.333, 0.433, 0.0, 0.0, 0.0, 0.533]
+        expected_value = {0 : 0.333,
+            1: 0.0,
+            2: 0.533,
+            3: 0.1,
+            4: 0.433,
+            5: 0.0,
+            6: 0.0}
 
         for i, row in result.iterrows():
+            id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_value[i],
+                expected_value[id],
                 delta = 0.001)
 
     def test_weights_single_shortest_path(self):
@@ -66,14 +73,20 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
         graph = self.context.graph.create(vertices, edges)
 
         #validate against values from networkx betweenness centrality
-        expected_values = [0.0, 2.0, 0.0, 4.0, 3.0, 4.0]
         result_frame = graph.betweenness_centrality("weights", False)
         result = result_frame.to_pandas()
+        expected_values = {0 : 2.0,
+            1: 0.0,
+            2: 4.0,
+            3: 3.0,
+            4: 4.0,
+            5: 0.0}
 
         for i, row in result.iterrows():
+            id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[i],
+                expected_values[id],
                 delta = 0.1)
 
     @unittest.skip("Bug:DPNG-14802")
@@ -105,25 +118,37 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
         result_frame = graph.betweenness_centrality(normalize=False)
 
         #validate betweenness centrality values
-        expected_values = [0.0, 3.0, 0.0, 0.0, 1.0, 5.0, 0.0, 0.0]
+        expected_values = {'a': 3.0,
+            'b': 0.0, 'c': 5.0, 'd': 0.0,
+            'e': 0.0, 'f': 0.0, 'g': 1.0, 'h':0.0}
+    
         result = result_frame.to_pandas()
         for i, row in result.iterrows():
+            id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[i],
+                expected_values[id],
                 delta = 0.1)
 
     def test_normalize(self):
         """Test unnomallized betweenness crentrality"""
         result_frame = self.graph.betweenness_centrality(normalize=False)
         result = result_frame.to_pandas()
-
+        
         #validate centrality values
-        expected_values = [0.0, 5.0, 0.0, 0.0, 8.0, 1.5, 6.5]
+        expected_values = {0 : 5.0,
+            1: 0.0,
+            2: 8.0,
+            3: 1.5,
+            4: 6.5,
+            5: 0.0,
+            6: 0.0}
+
         for i, row in result.iterrows():
+            id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[i],
+                expected_values[id],
                 delta = 0.1)
 
     def test_bad_weights_column_name(self):
