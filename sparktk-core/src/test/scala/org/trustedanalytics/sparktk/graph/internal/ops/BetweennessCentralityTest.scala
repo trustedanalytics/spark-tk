@@ -20,8 +20,19 @@ import org.apache.spark.sql.{ SQLContext, Row }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.trustedanalytics.sparktk.graph.Graph
+import org.scalautils._
+import Tolerance._
 
 class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matchers {
+
+  implicit val rowEq = new Equality[Row] {
+    def areEqual(a: Row, b: Any): Boolean = {
+      b match {
+        case b1: Row => b1(0) == a(0) && b1(1) == a(1) && b1(2).asInstanceOf[Double] === a(2).asInstanceOf[Double] +- 0.01
+        case _ => false
+      }
+    }
+  }
 
   "Betweenness Centrality" should {
     def getGraph: Graph = {
@@ -64,16 +75,16 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
     "calculate betweenness centrality on the petersen graph in sparktk" in {
       val betweennessGraph = getGraph.betweennessCentrality()
       betweennessGraph.collect().toArray.toList should contain theSameElementsAs (
-        List(new GenericRow(Array(4, "e", 0.08333333333333333)),
-          new GenericRow(Array(0, "a", 0.08333333333333333)),
-          new GenericRow(Array(1, "b", 0.08333333333333333)),
-          new GenericRow(Array(6, "g", 0.08333333333333333)),
-          new GenericRow(Array(3, "d", 0.08333333333333333)),
-          new GenericRow(Array(7, "h", 0.08333333333333333)),
-          new GenericRow(Array(9, "j", 0.08333333333333333)),
-          new GenericRow(Array(8, "i", 0.08333333333333333)),
-          new GenericRow(Array(5, "f", 0.08333333333333333)),
-          new GenericRow(Array(2, "c", 0.08333333333333333))))
+        List(new GenericRow(Array(4, "e", 0.083)),
+          new GenericRow(Array(0, "a", 0.083)),
+          new GenericRow(Array(1, "b", 0.083)),
+          new GenericRow(Array(6, "g", 0.083)),
+          new GenericRow(Array(3, "d", 0.083)),
+          new GenericRow(Array(7, "h", 0.083)),
+          new GenericRow(Array(9, "j", 0.083)),
+          new GenericRow(Array(8, "i", 0.083)),
+          new GenericRow(Array(5, "f", 0.083)),
+          new GenericRow(Array(2, "c", 0.083))))
     }
 
     "calculate betweenness centrality on a 3 vertex line in sparktk" in {
@@ -120,12 +131,12 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
       val graph = new Graph(vertices, edges)
       val betweennessGraph = graph.betweennessCentrality(normalize = false)
       betweennessGraph.collect().toArray.toList should contain theSameElementsAs (
-        List(new GenericRow(Array(4, "h", 0.8333333432674408D)),
-          new GenericRow(Array(0, "d", 0.8333333432674408D)),
-          new GenericRow(Array(1, "e", 0.8333333432674408D)),
-          new GenericRow(Array(5, "i", 0.8333333432674408D)),
-          new GenericRow(Array(3, "g", 3.3333333730697634D)),
-          new GenericRow(Array(2, "f", 3.3333333730697634D))))
+        List(new GenericRow(Array(4, "h", 0.83)),
+          new GenericRow(Array(0, "d", 0.83)),
+          new GenericRow(Array(1, "e", 0.83)),
+          new GenericRow(Array(5, "i", 0.83)),
+          new GenericRow(Array(3, "g", 3.33)),
+          new GenericRow(Array(2, "f", 3.33))))
 
     }
 
