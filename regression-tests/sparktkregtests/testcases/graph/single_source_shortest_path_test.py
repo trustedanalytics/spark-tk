@@ -69,7 +69,9 @@ class SSSP(sparktk_test.SparkTKTestCase):
     def test_default_weight(self):
         """Tests sssp with default weight"""
         result_frame = self.graph.single_source_shortest_path("bu")
-        
+        print "DEFAULT"
+        print result_frame.inspect(100)
+       
         #validate number of rows in the result
         self.assertEqual(result_frame.count(), 16)
 
@@ -94,7 +96,8 @@ class SSSP(sparktk_test.SparkTKTestCase):
     def test_edge_weight(self):
         """Tests sssp with distance field as weight"""
         result_frame = self.graph.single_source_shortest_path("ar", "distance")
-
+        print "WEIGHTS"
+        print result_frame.inspect(100)
         #validate number of rows in the result
         self.assertEqual(result_frame.count(), 16)
 
@@ -122,7 +125,7 @@ class SSSP(sparktk_test.SparkTKTestCase):
 
     def test_max_path_length(self):
         """Tests sssp with max_path_length of 500"""
-        result_frame = self.graph.single_source_shortest_path("ar", "distance", 500)
+        result_frame = self.graph.single_source_shortest_path("ar", "distance", 500.0)
 
         #validate number of rows in the result
         self.assertEqual(result_frame.count(), 16)
@@ -214,11 +217,11 @@ class SSSP(sparktk_test.SparkTKTestCase):
             self.graph.single_source_shortest_path("ar", "BAD")
 
     def _validate_result(self, result, expected_path, expected_cost):
+        
         for i, row in result.iterrows():
             path = str(row["path"]).strip("[]").split(",")
             self.assertItemsEqual(path, expected_path[i])
             self.assertEqual(row["cost"], expected_cost[i])
-            expected_cost.append(row['cost'])
         
 if __name__ == "__main__":
     unittest.main()
