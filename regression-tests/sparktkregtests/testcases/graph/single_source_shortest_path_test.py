@@ -151,7 +151,6 @@ class SSSP(sparktk_test.SparkTKTestCase):
         self._validate_result(result, expected_result)
 
 
-    @unittest.skip("Bug DPNG-14799")
     def test_diconnected_src(self):
         """Tests sssp with a disconnected node as source"""
         result_frame = self.graph.single_source_shortest_path("ne")
@@ -179,7 +178,6 @@ class SSSP(sparktk_test.SparkTKTestCase):
 
         self._validate_result(result, expected_result)
 
-    @unittest.skip("Bug DPNG-14800")
     def test_graph_with_negative_weights(self):
         """Tests SSSP on graph with negative weights"""
         edges = self.context.frame.create(
@@ -198,7 +196,6 @@ class SSSP(sparktk_test.SparkTKTestCase):
             "4": [['1', ' 2', ' 3', ' 4'], -1]}
         self._validate_result(result, expected_result)
 
-    @unittest.skip("Bug DPNG 14817")
     def test_int_src_vertex_id(self):
         """Tests SSSP with integer src_vertex_ids"""
         edges = self.context.frame.create(
