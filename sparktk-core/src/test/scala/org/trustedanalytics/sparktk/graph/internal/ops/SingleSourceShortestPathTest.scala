@@ -49,6 +49,31 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       // create sparktk graph
       new Graph(v, e)
     }
+    //create Graph of friends in a social network with integer vertex IDs.
+    def getNewGraph: Graph = {
+      val sqlContext: SQLContext = new SQLContext(sparkContext)
+      val v = sqlContext.createDataFrame(List(
+        (1, "Alice", 34),
+        (2, "Bob", 36),
+        (3, "Charlie", 30),
+        (4, "David", 29),
+        (5, "Esther", 32),
+        (6, "Fanny", 36),
+        (7, "Gabby", 60)
+      )).toDF("id", "name", "age")
+      val e = sqlContext.createDataFrame(List(
+        (1, 2, "friend", 12),
+        (2, 3, "follow", 2),
+        (3, 2, "follow", 5),
+        (6, 3, "follow", 4),
+        (5, 6, "follow", 8),
+        (5, 4, "friend", 9),
+        (4, 1, "friend", 10),
+        (1, 5, "friend", 3)
+      )).toDF("src", "dst", "relationship", "distance")
+      // Create a a sparktk graph
+      new Graph(v, e)
+    }
 
     "calculate the single source shortest path" in {
       val singleSourceShortestPathFrame = getGraph.singleSourceShortestPath("a")
@@ -70,6 +95,11 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
         Row("c", "Charlie", 30, 2.0, "[" + Seq("a", "b", "c").mkString(", ") + "]"),
         Row("e", "Esther", 32, 1.0, "[" + Seq("a", "e").mkString(", ") + "]"),
         Row("g", "Gabby", 60, Double.PositiveInfinity, "[" + Seq().mkString(", ") + "]"))
+    }
+
+    "calculate the single source shortest path for a graph with integer vertex IDs" in {
+      val singleSourceShortestPathFrame = getNewGraph.singleSourceShortestPath(1)
+      singleSourceShortestPathFrame.collect().head shouldBe Row(4, "David", 29, 2.0, "[" + Seq(1, 5, 4).mkString(", ") + "]")
     }
   }
 }

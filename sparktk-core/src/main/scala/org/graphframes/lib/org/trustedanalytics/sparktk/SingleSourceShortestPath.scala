@@ -45,7 +45,7 @@ object SingleSourceShortestPath {
           edgePropName: Option[String] = None,
           maxPathLength: Option[Double] = None): DataFrame = {
     val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgePropName)
-    val origVertexIdFunc = (x: Row) => x.getAs[String](GraphFrame.ID)
+    val origVertexIdFunc = (x: Row) => x.get(x.fieldIndex(GraphFrame.ID)).toString
     val ssspGraphx = sparktk.SingleSourceShortestPath.run(graph.toGraphX,
       GraphXConversions.integralId(graph, srcVertexId),
       edgeWeightFunc,
@@ -70,6 +70,7 @@ object SingleSourceShortestPath {
   /**
    * Get the edge weight function that enables the inclusion of the edge weights in the SSSP
    * calculations by converting the edge attribute type to Double
+   *
    * @param graph graph to compute SSSP against
    * @param edgePropName column name for the edge weight
    * @return edge weight function
@@ -83,6 +84,7 @@ object SingleSourceShortestPath {
         case x: Long => x.toDouble
         case x: Short => x.toDouble
         case x: Byte => x.toDouble
+        case x: Double => x
         case _ => throw new scala.ClassCastException(s"the edge weight type cannot be $edgeWeightType")
       })
     }
