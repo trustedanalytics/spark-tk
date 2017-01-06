@@ -47,11 +47,14 @@ class SparkTkModelAdapter() extends ModelReader {
    * @return loads and returns the sparktk model
    */
   override def read(modelZipStreamInput: ZipInputStream, classLoader: URLClassLoader, jsonMap: Map[String, String]): Model = {
-    logger.info("Sparktk model Adapter called")
+    logger.info("Sparktk model Adapter called.")
     val sparktkObject = classLoader.loadClass(jsonMap(MODEL_NAME) + "$").getField("MODULE$").get(null).asInstanceOf[TkSaveableObject]
     Thread.currentThread().setContextClassLoader(classLoader)
     val tc = createSimpleContext(modelZipStreamInput)
-    sparktkObject.load(tc, getModelPath(modelZipStreamInput)).asInstanceOf[Model]
+    val model = sparktkObject.load(tc, getModelPath(modelZipStreamInput)).asInstanceOf[Model]
+    tc.sc.stop()
+    logger.info("Spark context is stopped after reading model.")
+    model
   }
 
   /**
