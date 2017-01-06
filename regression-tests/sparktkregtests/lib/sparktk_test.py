@@ -32,25 +32,42 @@ udf_files = [os.path.join(udf_lib_path, f) for f in os.listdir(udf_lib_path)]
 lock = Lock()
 global_tc = None
 
-
 def get_context():
     global global_tc
     with lock:
         if global_tc is None:
             sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
-                                'spark.ui.enabled': 'false',
                                 'spark.driver.maxResultSize': '2g',
+                                'spark.ui.enabled': 'false',
+                                'spark.port.maxRetries': 50,
                                 'spark.dynamicAllocation.enabled': 'true',
-                                'spark.dynamicAllocation.maxExecutors': '16',
+                                'spark.dynamicAllocation.maxExecutors': '24',
                                 'spark.dynamicAllocation.minExecutors': '1',
                                 'spark.executor.cores': '10',
-                                'spark.executor.memory': '2g',
+                                'spark.executor.memory': '3712m',
                                 'spark.shuffle.io.preferDirectBufs': 'true',
                                 'spark.shuffle.service.enabled': 'true',
                                 'spark.yarn.am.waitTime': '1000000',
+                                'spark.yarn.submit.file.replication': 1,
                                 'spark.yarn.executor.memoryOverhead': '384',
                                 'spark.eventLog.enabled': 'false',
                                 'spark.sql.shuffle.partitions': '6'}
+
+            if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
+                sparktkconf_dict['spark.driver.extraJavaOptions'] =  ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
+                
+            if 'SPARK_DRIVER_EXTRAJAVAOPTIONS' in os.environ:
+                sparktkconf_dict['spark.executor.extraJavaOptions'] = ' ' + os.environ['SPARK_DRIVER_EXTRAJAVAOPTIONS']
+
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+               sparktkconf_dict['spark.driver.port'] = config.find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+                sparktkconf_dict['spark.fileserver.port'] = config.find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+
+            if 'SPARK_PORT_BOTTOM' in os.environ and 'SPARK_PORT_TOP' in os.environ:
+                sparktkconf_dict['spark.ui.port'] = config.find_open_port(os.environ['SPARK_PORT_BOTTOM'], os.environ['SPARK_PORT_TOP'])
+
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict, py_files=udf_files)
             else:
