@@ -15,6 +15,7 @@
  */
 package org.graphframes.lib.org.trustedanalytics.sparktk
 
+import org.apache.spark.graphx.{ Edge, Graph }
 import org.apache.spark.sql.{ Row, SQLContext }
 import org.graphframes._
 import org.scalatest.Matchers
@@ -49,6 +50,25 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       // Create a GraphFrame
       GraphFrame(v, e)
     }
+
+    // create graph with negative weights and a cycle
+    def getGameGraph: GraphFrame = {
+      val sqlContext: SQLContext = new SQLContext(sparkContext)
+      // Vertex DataFrame
+      val v = sqlContext.createDataFrame(List(
+        ("a", "app"),
+        ("b", "bot"),
+        ("c", "cat"),
+        ("d", "dos"))).toDF("id", "name")
+      val e = sqlContext.createDataFrame(List(
+        ("a", "b", 2),
+        ("b", "c", 2),
+        ("b", "d", -1),
+        ("d", "a", -2),
+        ("c", "d", -5))).toDF("src", "dst", "distance")
+      // Create a GraphFrame
+      GraphFrame(v, e)
+    }
     "calculate the single source shortest path" in {
       val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGraph, "a")
       singleSourceShortestPathFrame.collect.head shouldBe Row("b", "Bob", 36, 1.0, "[" + Seq("a", "b").mkString(", ") + "]")
@@ -69,6 +89,11 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
         Row("c", "Charlie", 30, 2.0, "[" + Seq("a", "b", "c").mkString(", ") + "]"),
         Row("e", "Esther", 32, 1.0, "[" + Seq("a", "e").mkString(", ") + "]"),
         Row("g", "Gabby", 60, Double.PositiveInfinity, "[" + Seq().mkString(", ") + "]"))
+    }
+
+    "calculate the single source shortest path with negative values for edge weights" in {
+      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGameGraph, "a", Some("distance"))
+      singleSourceShortestPathFrame.collect.head shouldBe Row("b", "bot", 2.0, "[" + Seq("a", "b").mkString(", ") + "]")
     }
   }
 }

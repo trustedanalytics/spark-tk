@@ -47,7 +47,7 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       Graph(vRDD, eRDD)
     }
 
-    // create graph with negative weights
+    // create graph with negative weights and a cycle
     def getGameGraph: Graph[String, Int] = {
       // create vertices RDD with ID and Name
       val vertices = Array((1L, "app"),
@@ -78,8 +78,8 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(Double.PositiveInfinity, List(), "PDX"))
     }
     "calculate the single source shortest path with negative values for edge weights" in {
-      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGameGraph, 1, None, None, (x: String) => x)
-      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2.0, List("app", "bot", "dos"), "dos"))
+      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGameGraph, 1, Some((x: Int) => x.toDouble), None, (x: String) => x)
+      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(-1.0, List("app", "bot", "cat", "dos"), "dos"))
     }
   }
 }

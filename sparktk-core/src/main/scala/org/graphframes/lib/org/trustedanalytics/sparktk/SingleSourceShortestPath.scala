@@ -49,7 +49,8 @@ object SingleSourceShortestPath {
     val ssspGraphx = sparktk.SingleSourceShortestPath.run(graph.toGraphX,
       GraphXConversions.integralId(graph, srcVertexId),
       edgeWeightFunc,
-      maxPathLength, origVertexIdFunc)
+      maxPathLength,
+      origVertexIdFunc)
     val ssspGraphFrame = GraphXConversions.fromGraphX(graph, ssspGraphx, Seq(SSSP_RESULTS))
     getSingleSourceShortestPathFrame(ssspGraphFrame)
   }
