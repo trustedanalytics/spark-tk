@@ -42,9 +42,9 @@ class TestAffirmType(unittest.TestCase):
         x = 3.14
         try:
             affirm_type.list_of_str(x, "a")
-        except TypeError as e:
+        except ValueError as e:
             msg = str(e)
-            expected = "Expected type str or list of str."
+            expected = "Expected str or list of str."
             self.assertTrue(expected in msg, "\nexpected=%s\nmessage =%s" % (expected, msg))
         else:
             self.fail("A TypeError should have been raised")
@@ -65,7 +65,7 @@ class TestAffirmType(unittest.TestCase):
            affirm_type.list_of_str(["a", "b", "c"], "a", length=2)
         except ValueError as e:
             msg = str(e)
-            expected = "Expected list of str of length 2."
+            expected = "Expected list of length 2."
             self.assertTrue(msg.endswith(expected), "expected error message should have ended with '%s', message =%s" % (expected, msg))
         else:
             self.fail("A ValueError should have been raised")
@@ -113,7 +113,7 @@ class TestAffirmType(unittest.TestCase):
            affirm_type.list_of_float([1.0, 2.0, 5.0], "a", length=4)
         except ValueError as e:
             msg = str(e)
-            expected = "Expected list of float of length 4."
+            expected = "Expected list of length 4."
             self.assertTrue(msg.endswith(expected), "expected error message should have ended with '%s', message =%s" % (expected, msg))
         else:
             self.fail("A ValueError should have been raised")
