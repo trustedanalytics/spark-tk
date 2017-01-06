@@ -45,8 +45,8 @@ object NaiveBayesModel extends TkSaveableObject {
    * @param lambdaParameter Additive smoothing parameter Default is 1.0
    */
   def train(frame: Frame,
-            labelColumn: String,
             observationColumns: List[String],
+            labelColumn: String,
             lambdaParameter: Double = 1.0): NaiveBayesModel = {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
@@ -69,7 +69,7 @@ object NaiveBayesModel extends TkSaveableObject {
     val m: NaiveBayesModelTkMetaData = SaveLoad.extractFromJValue[NaiveBayesModelTkMetaData](tkMetadata)
     val sparkModel = SparkNaiveBayesModel.load(sc, path)
 
-    NaiveBayesModel(sparkModel, m.observationColumnNames, m.labelColumnName, m.lambdaParameter)
+    NaiveBayesModel(sparkModel, m.observationColumns, m.labelColumn, m.lambdaParameter)
   }
 
   /**
@@ -86,13 +86,13 @@ object NaiveBayesModel extends TkSaveableObject {
 /**
  * NaiveBayesModel
  * @param sparkModel Trained MLLib's Naive Bayes model
- * @param observationColumnNames Handle to the observation columns of the data frame
- * @param labelColumnName Label column for trained model
+ * @param observationColumns Handle to the observation columns of the data frame
+ * @param labelColumn Label column for trained model
  * @param lambdaParameter Smoothing parameter used during model training
  */
 case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesModel,
-                                                 observationColumnNames: List[String],
-                                                 labelColumnName: String,
+                                                 observationColumns: List[String],
+                                                 labelColumn: String,
                                                  lambdaParameter: Double) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
@@ -109,12 +109,12 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and predict should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val naiveBayesColumns = observationColumns.getOrElse(observationColumnNames)
+    val observations = observationColumns.getOrElse(this.observationColumns)
     val predictMapper: RowWrapper => Row = row => {
-      val point = row.toDenseVector(naiveBayesColumns)
+      val point = row.toDenseVector(observations)
       val prediction = sparkModel.predict(point)
       Row.apply(prediction)
     }
@@ -134,17 +134,18 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    *                By default, we predict the labels over columns the NaiveBayesModel
    * @return ClassificationMetricValue describing the test metrics
    */
-  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]] = None): ClassificationMetricValue = {
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None): ClassificationMetricValue = {
 
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and test should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val naiveBayesColumns = observationColumns.getOrElse(observationColumnNames)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
 
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(naiveBayesColumns, labelColumn)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })
@@ -162,7 +163,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
   def save(sc: SparkContext, path: String): Unit = {
     sparkModel.save(sc, path)
     val formatVersion: Int = 1
-    val tkMetadata = NaiveBayesModelTkMetaData(observationColumnNames, labelColumnName, lambdaParameter)
+    val tkMetadata = NaiveBayesModelTkMetaData(observationColumns, labelColumn, lambdaParameter)
     TkSaveLoad.saveTk(sc, path, NaiveBayesModel.formatId, formatVersion, tkMetadata)
   }
 
@@ -184,7 +185,7 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
    */
   def input(): Array[Field] = {
     var input = Array[Field]()
-    observationColumnNames.foreach { name =>
+    observationColumns.foreach { name =>
       input = input :+ Field(name, "Double")
     }
     input
@@ -227,10 +228,10 @@ case class NaiveBayesModel private[naive_bayes] (sparkModel: SparkNaiveBayesMode
 
 /**
  * TK Metadata that will be stored as part of the model
- * @param observationColumnNames Handle to the observation columns of the data frame
- * @param labelColumnName Label column for trained model
+ * @param observationColumns Handle to the observation columns of the data frame
+ * @param labelColumn Label column for trained model
  * @param lambdaParameter Smoothing parameter used during model training
  */
-case class NaiveBayesModelTkMetaData(observationColumnNames: List[String],
-                                     labelColumnName: String,
+case class NaiveBayesModelTkMetaData(observationColumns: List[String],
+                                     labelColumn: String,
                                      lambdaParameter: Double) extends Serializable

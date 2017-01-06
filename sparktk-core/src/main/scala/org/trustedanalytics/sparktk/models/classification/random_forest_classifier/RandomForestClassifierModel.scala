@@ -16,31 +16,31 @@
 package org.trustedanalytics.sparktk.models.classification.random_forest_classifier
 
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.tree.RandomForest
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
-import org.apache.spark.mllib.tree.model.{ RandomForestModel => SparkRandomForestModel }
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.sql.functions._
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classification.{ RandomForestClassifier => SparkDeepRandomForestClassifier }
+import org.apache.spark.ml.org.trustedanalytics.sparktk.deeptrees.classification.{ RandomForestClassificationModel => SparkDeepRandomClassificationModel }
 import org.trustedanalytics.sparktk.TkContext
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.RowWrapper
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ ClassificationMetricsFunctions, ClassificationMetricValue }
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ ScoreAndLabel, RowWrapperFunctions, FrameRdd }
+import org.trustedanalytics.sparktk.models.regression.RegressionColumnNames._
 import org.trustedanalytics.sparktk.saveload.{ SaveLoad, TkSaveLoad, TkSaveableObject }
 import org.apache.commons.lang3.StringUtils
 import org.trustedanalytics.scoring.interfaces.{ ModelMetaData, Field, Model }
-import org.trustedanalytics.sparktk.models.{ SparkTkModelAdapter, ScoringModelUtils }
+import org.trustedanalytics.sparktk.models.{ FrameImplicits, SparkTkModelAdapter, ScoringModelUtils }
 import scala.language.implicitConversions
 import org.json4s.JsonAST.JValue
 import org.apache.spark.mllib.linalg.Vectors
 import java.nio.file.{ Files, Path }
 import org.apache.commons.io.FileUtils
+import FrameImplicits._
 
 object RandomForestClassifierModel extends TkSaveableObject {
 
-  private def getFeatureSubsetCategory(featureSubsetCategory: Option[String], numTrees: Int): String = {
-    var value = "all"
-    value = featureSubsetCategory.getOrElse("all") match {
+  private def getFeatureSubsetCategory(featureSubsetCategory: String, numTrees: Int): String = {
+    featureSubsetCategory match {
       case "auto" =>
         numTrees match {
           case 1 => "all"
@@ -48,13 +48,13 @@ object RandomForestClassifierModel extends TkSaveableObject {
         }
       case x => x
     }
-    value
   }
 
   /**
+   * Train a RandomForestClassifierModel
    * @param frame The frame containing the data to train on
-   * @param labelColumn Column name containing the label for each observation
    * @param observationColumns Column(s) containing the observations
+   * @param labelColumn Column name containing the label for each observation
    * @param numClasses Number of classes for classification. Default is 2
    *                   numClasses should not exceed the number of distinct values in labelColumn
    * @param numTrees Number of tress in the random forest. Default is 1
@@ -62,25 +62,29 @@ object RandomForestClassifierModel extends TkSaveableObject {
    *                 Default is "gini"
    * @param maxDepth Maximum depth of the tree. Default is 4
    * @param maxBins Maximum number of bins used for splitting features. Default is 100
-   * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
-   * @param categoricalFeaturesInfo Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
-   *                                with 'k' categories indexed from 0:{0,1,...,k-1}
-   * @param featureSubsetCategory Number of features to consider for splits at each node.
+   * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
+   * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+   * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
    *                              Supported values "auto","all","sqrt","log2","onethird".
    *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
-   *                              ; if num_trees > 1, set to "sqrt"
+   *                              ; if num_trees > 1, set to "sqrt". Default is "auto"
+   * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
+   * @param categoricalFeaturesInfo Optional arity of categorical features. Entry (name -> k) indicates that feature
+   *                                'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
    */
   def train(frame: Frame,
-            labelColumn: String,
             observationColumns: List[String],
+            labelColumn: String,
             numClasses: Int = 2,
             numTrees: Int = 1,
             impurity: String = "gini",
             maxDepth: Int = 4,
             maxBins: Int = 100,
+            minInstancesPerNode: Int = 1,
+            subSamplingRate: Double = 1.0,
+            featureSubsetCategory: String = "auto",
             seed: Int = scala.util.Random.nextInt(),
-            categoricalFeaturesInfo: Option[Map[Int, Int]] = None,
-            featureSubsetCategory: Option[String] = None): RandomForestClassifierModel = {
+            categoricalFeaturesInfo: Option[Map[String, Int]] = None): RandomForestClassifierModel = {
     require(frame != null, "frame is required")
     require(observationColumns != null && observationColumns.nonEmpty, "observationColumn must not be null nor empty")
     require(StringUtils.isNotEmpty(labelColumn), "labelColumn must not be null nor empty")
@@ -88,57 +92,49 @@ object RandomForestClassifierModel extends TkSaveableObject {
     require(maxDepth >= 0, "maxDepth must be non negative")
     require(numClasses >= 2, "numClasses must be at least 2")
     require(featureSubsetCategory.isEmpty ||
-      List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory.get),
+      List("auto", "all", "sqrt", "log2", "onethird").contains(featureSubsetCategory),
       "feature subset category can be either None or one of the values: auto, all, sqrt, log2, onethird")
     require(List("gini", "entropy").contains(impurity), "Supported values for impurity are gini or entropy")
+    require(minInstancesPerNode > 0, "minInstancesPerNode must be greater than 0")
+    require(subSamplingRate > 0 && subSamplingRate <= 1, "subSamplingRate must be in range (0, 1]")
+    require(maxBins > 0, "maxBins must be greater than 0")
+    frame.schema.validateColumnsExist(observationColumns :+ labelColumn)
 
     val randomForestFeatureSubsetCategories = getFeatureSubsetCategory(featureSubsetCategory, numTrees)
-    val randomForestCategoricalFeaturesInfo = categoricalFeaturesInfo.getOrElse(Map[Int, Int]())
 
     //create RDD from the frame
-    val labeledTrainRdd: RDD[LabeledPoint] = FrameRdd.toLabeledPointRDD(new FrameRdd(frame.schema, frame.rdd),
-      labelColumn,
-      observationColumns)
-    val randomForestModel = RandomForest.trainClassifier(labeledTrainRdd,
-      numClasses,
-      randomForestCategoricalFeaturesInfo,
-      numTrees,
-      randomForestFeatureSubsetCategories,
-      impurity,
-      maxDepth,
-      maxBins,
-      seed)
+    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val trainFrame = frameRdd.toLabeledDataFrame(observationColumns, labelColumn,
+      featuresColName, categoricalFeaturesInfo, Some(numClasses))
+
+    val randomForestClassifier = new SparkDeepRandomForestClassifier()
+      .setNumTrees(numTrees)
+      .setFeatureSubsetStrategy(randomForestFeatureSubsetCategories)
+      .setImpurity(impurity)
+      .setMaxDepth(maxDepth)
+      .setMaxBins(maxBins)
+      .setSeed(seed)
+      .setMinInstancesPerNode(minInstancesPerNode)
+      .setSubsamplingRate(subSamplingRate)
+      .setLabelCol(labelColumn)
+      .setFeaturesCol(featuresColName)
+      .setCacheNodeIds(true) //Enable cache to speed up training
+    val randomForestModel = randomForestClassifier.fit(trainFrame)
 
     RandomForestClassifierModel(randomForestModel,
-      labelColumn,
       observationColumns,
+      labelColumn,
       numClasses,
       numTrees,
       impurity,
       maxDepth,
       maxBins,
+      minInstancesPerNode,
+      subSamplingRate,
+      featureSubsetCategory,
       seed,
-      categoricalFeaturesInfo,
-      featureSubsetCategory)
-  }
-
-  def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
-
-    validateFormatVersion(formatVersion, 1)
-    val m: RandomForestClassifierModelTkMetaData = SaveLoad.extractFromJValue[RandomForestClassifierModelTkMetaData](tkMetadata)
-    val sparkModel = SparkRandomForestModel.load(sc, path)
-
-    RandomForestClassifierModel(sparkModel,
-      m.labelColumnName,
-      m.observationColumnNames,
-      m.numClasses,
-      m.numTrees,
-      m.impurity,
-      m.maxDepth,
-      m.maxBins,
-      m.seed,
-      m.categoricalFeaturesInfo,
-      m.featureSubsetCategory)
+      categoricalFeaturesInfo
+    )
   }
 
   /**
@@ -150,38 +146,64 @@ object RandomForestClassifierModel extends TkSaveableObject {
   def load(tc: TkContext, path: String): RandomForestClassifierModel = {
     tc.load(path).asInstanceOf[RandomForestClassifierModel]
   }
+
+  override def loadTkSaveableObject(sc: SparkContext, path: String, formatVersion: Int, tkMetadata: JValue): Any = {
+
+    validateFormatVersion(formatVersion, 1)
+    val m: RandomForestClassifierModelTkMetaData = SaveLoad.extractFromJValue[RandomForestClassifierModelTkMetaData](tkMetadata)
+    val sparkModel = SparkDeepRandomClassificationModel.load(path)
+
+    RandomForestClassifierModel(sparkModel,
+      m.observationColumns,
+      m.labelColumn,
+      m.numClasses,
+      m.numTrees,
+      m.impurity,
+      m.maxDepth,
+      m.maxBins,
+      m.minInstancesPerNode,
+      m.subSamplingRate,
+      m.featureSubsetCategory,
+      m.seed,
+      m.categoricalFeaturesInfo
+    )
+  }
 }
 
 /**
  * RandomForestClassifierModel
  * @param sparkModel Trained MLLib's RandomForestClassifier model
- * @param labelColumnName Column name containing the label for each observation
- * @param observationColumnNames Column(s) containing the observations
+ * @param observationColumns Column(s) containing the observations
+ * @param labelColumn Column name containing the label for each observation
  * @param numClasses Number of classes for classification. Default is 2
  * @param numTrees Number of tress in the random forest. Default is 1
  * @param impurity Criterion used for information gain calculation. Supported values "gini" or "entropy".
  *                 Default is "gini"
  * @param maxDepth Maximum depth of the tree. Default is 4
  * @param maxBins Maximum number of bins used for splitting features. Default is 100
- * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
- * @param categoricalFeaturesInfo Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
- *                                with 'k' categories indexed from 0:{0,1,...,k-1}
- * @param featureSubsetCategory Number of features to consider for splits at each node.
+ * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
+ * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+ * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
  *                              Supported values "auto","all","sqrt","log2","onethird".
  *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
- *                              ; if num_trees > 1, set to "sqrt"
+ *                              ; if num_trees > 1, set to "sqrt".
+ * @param seed Random seed for bootstrapping and choosing feature subsets. Default is a randomly chosen seed
+ * @param categoricalFeaturesInfo Optional arity of categorical features. Entry (n-> k) indicates that feature 'n' is name of
+ *                                categorical feature with 'k' categories indexed from 0:{0,1,...,k-1}
  */
-case class RandomForestClassifierModel private[random_forest_classifier] (sparkModel: SparkRandomForestModel,
-                                                                          labelColumnName: String,
-                                                                          observationColumnNames: List[String],
+case class RandomForestClassifierModel private[random_forest_classifier] (sparkModel: SparkDeepRandomClassificationModel,
+                                                                          observationColumns: List[String],
+                                                                          labelColumn: String,
                                                                           numClasses: Int,
                                                                           numTrees: Int,
                                                                           impurity: String,
                                                                           maxDepth: Int,
                                                                           maxBins: Int,
+                                                                          minInstancesPerNode: Int,
+                                                                          subSamplingRate: Double,
+                                                                          featureSubsetCategory: String,
                                                                           seed: Int,
-                                                                          categoricalFeaturesInfo: Option[Map[Int, Int]],
-                                                                          featureSubsetCategory: Option[String]) extends Serializable with Model {
+                                                                          categoricalFeaturesInfo: Option[Map[String, Int]]) extends Serializable with Model {
 
   implicit def rowWrapperToRowWrapperFunctions(rowWrapper: RowWrapper): RowWrapperFunctions = {
     new RowWrapperFunctions(rowWrapper)
@@ -193,29 +215,30 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
    *
    * @param frame - frame to add predictions to
    * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the RandomForestClassifierModel
+   *                By default, the same observation column names from training are used
    * @return A new frame consisting of the existing columns of the frame and a new column with predicted label
    *         for each observation.
    */
   def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and predict should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and predict should be same")
     }
 
-    val rfColumns = observationColumns.getOrElse(observationColumnNames)
-    //predicting a label for the observation columns
-    val predictMapper: RowWrapper => Row = row => {
-      val point = row.toDenseVector(rfColumns)
-      val prediction = sparkModel.predict(point).toInt
-      Row.apply(prediction)
-    }
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    frame.schema.validateColumnsExist(observations)
+    val frameRdd = new FrameRdd(frame.schema, frame.rdd)
+    val trainFrame = frameRdd.toLabeledDataFrame(observations, labelColumn,
+      featuresColName, labelNumClasses = Some(numClasses))
+    val assembler = new VectorAssembler().setInputCols(observations.toArray).setOutputCol(featuresColName)
+    val testFrame = assembler.transform(frame.dataframe)
 
-    val predictSchema = frame.schema.addColumn(Column("predicted_class", DataTypes.int32))
-    val wrapper = new RowWrapper(predictSchema)
-    val predictRdd = frame.rdd.map(row => Row.merge(row, predictMapper(wrapper(row))))
+    sparkModel.setFeaturesCol(featuresColName)
+    sparkModel.setPredictionCol("predicted_class")
+    val toIntUdf = udf { s: Double => s.toInt }
+    val predictFrame = sparkModel.transform(testFrame).withColumn("predicted_class", toIntUdf(col("predicted_class")))
 
-    new Frame(predictRdd, predictSchema)
+    new Frame(predictFrame.drop(col(featuresColName)))
   }
 
   /**
@@ -223,20 +246,23 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
    *
    * @param frame Frame to test the RandomForestClassifier model
    * @param observationColumns Column(s) containing the observations whose labels are to be predicted.
-   *                By default, we predict the labels over columns the RandomForestClassifierModel
+   *                By default, the same observation column names from training are used
+   * @param labelColumn Column name containing the label for each observation
+   *                By default, the same label column name from training is used
    * @return ClassificationMetricValue describing the test metrics
    */
-  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]]): ClassificationMetricValue = {
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None): ClassificationMetricValue = {
 
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and test should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val rfColumns = observationColumns.getOrElse(observationColumnNames)
-
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
+    frame.schema.validateColumnsExist(observations :+ label)
     //predicting and testing
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(rfColumns, labelColumnName)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })
@@ -251,23 +277,42 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
   }
 
   /**
+   * Feature importances for trained model. Higher values indicate more important features.
+   *
+   * Each feature's importance is the average of its importance across all trees in the ensemble
+   * The importance vector is normalized to sum to 1.
+   *
+   * @return Map of feature names and importances.
+   */
+  def featureImportances(): Map[String, Double] = {
+    val featureImportances = sparkModel.featureImportances
+    observationColumns.zip(featureImportances.toArray).toMap
+  }
+
+  /**
    * Saves this model to a file
    * @param sc active SparkContext
    * @param path save to path
+   * @param overwrite Boolean indicating if the directory will be overwritten, if it already exists.
    */
-  def save(sc: SparkContext, path: String): Unit = {
-    sparkModel.save(sc, path)
+  def save(sc: SparkContext, path: String, overwrite: Boolean = false): Unit = {
+    if (overwrite)
+      sparkModel.write.overwrite().save(path)
+    else
+      sparkModel.write.save(path)
     val formatVersion: Int = 1
-    val tkMetadata = RandomForestClassifierModelTkMetaData(labelColumnName,
-      observationColumnNames,
+    val tkMetadata = RandomForestClassifierModelTkMetaData(observationColumns,
+      labelColumn,
       numClasses,
       numTrees,
       impurity,
       maxDepth,
       maxBins,
+      minInstancesPerNode,
+      subSamplingRate,
+      featureSubsetCategory,
       seed,
-      categoricalFeaturesInfo,
-      featureSubsetCategory)
+      categoricalFeaturesInfo)
     TkSaveLoad.saveTk(sc, path, RandomForestClassifierModel.formatId, formatVersion, tkMetadata)
   }
 
@@ -285,7 +330,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
   }
 
   override def input(): Array[Field] = {
-    val obsCols = observationColumnNames
+    val obsCols = observationColumns
     var input = Array[Field]()
     obsCols.foreach { name =>
       input = input :+ Field(name, "Double")
@@ -302,7 +347,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     var tmpDir: Path = null
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
-      save(sc, tmpDir.toString)
+      save(sc, tmpDir.toString, overwrite = true)
       ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestClassifierModel].getName, tmpDir)
     }
     finally {
@@ -313,25 +358,32 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
 
 /**
  * TK Metadata that will be stored as part of the model
- * @param labelColumnName Column name containing the label for each observation
- * @param observationColumnNames Column(s) containing the observations
+ * @param observationColumns Column(s) containing the observations
+ * @param labelColumn Column name containing the label for each observation
  * @param numClasses Number of classes for classification
  * @param numTrees Number of tress in the random forest
  * @param impurity Criterion used for information gain calculation. Supported values "gini" or "entropy".
  * @param maxDepth Maximum depth of the tree. Default is 4
  * @param maxBins Maximum number of bins used for splitting features
+ * @param minInstancesPerNode Minimum number of records each child node must have after a split. Default is 1
+ * @param subSamplingRate Fraction of the training data used for learning each decision tree. Default is 1.0
+ * @param featureSubsetCategory Subset of observation columns, i.e., features, to consider when looking for the best split.
+ *                              Supported values are "auto","all","sqrt","log2","onethird".
+ *                              If "auto" is set, this is based on num_trees: if num_trees == 1, set to "all"
+ *                              ; if num_trees > 1, set to "sqrt"
  * @param seed Random seed for bootstrapping and choosing feature subsets
- * @param categoricalFeaturesInfo Arity of categorical features. Entry (n-> k) indicates that feature 'n' is categorical
- *                                with 'k' categories indexed from 0:{0,1,...,k-1}
- * @param featureSubsetCategory Number of features to consider for splits at each node
+ * @param categoricalFeaturesInfo Optional arity of categorical features. Entry (name -> k) indicates that feature
+ *                                'name' is categorical with 'k' categories indexed from 0:{0,1,...,k-1}
  */
-case class RandomForestClassifierModelTkMetaData(labelColumnName: String,
-                                                 observationColumnNames: List[String],
+case class RandomForestClassifierModelTkMetaData(observationColumns: List[String],
+                                                 labelColumn: String,
                                                  numClasses: Int,
                                                  numTrees: Int,
                                                  impurity: String,
                                                  maxDepth: Int,
                                                  maxBins: Int,
+                                                 minInstancesPerNode: Int,
+                                                 subSamplingRate: Double,
+                                                 featureSubsetCategory: String,
                                                  seed: Int,
-                                                 categoricalFeaturesInfo: Option[Map[Int, Int]],
-                                                 featureSubsetCategory: Option[String]) extends Serializable
+                                                 categoricalFeaturesInfo: Option[Map[String, Int]]) extends Serializable

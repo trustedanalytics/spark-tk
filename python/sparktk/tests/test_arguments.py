@@ -33,13 +33,18 @@ class TestAffirmType(unittest.TestCase):
         result = affirm_type.list_of_str(x, "a")
         self.assertEqual([x], result)
 
+    def test_list_of_str_none(self):
+        x = None
+        result = affirm_type.list_of_str(x, "a", allow_none=True)
+        self.assertEqual(x, result)
+
     def test_list_of_str_type_error(self):
         x = 3.14
         try:
             affirm_type.list_of_str(x, "a")
-        except TypeError as e:
+        except ValueError as e:
             msg = str(e)
-            expected = "Expected type str or list of str."
+            expected = "Expected str or list of str."
             self.assertTrue(expected in msg, "\nexpected=%s\nmessage =%s" % (expected, msg))
         else:
             self.fail("A TypeError should have been raised")
@@ -60,7 +65,7 @@ class TestAffirmType(unittest.TestCase):
            affirm_type.list_of_str(["a", "b", "c"], "a", length=2)
         except ValueError as e:
             msg = str(e)
-            expected = "Expected list of str of length 2."
+            expected = "Expected list of length 2."
             self.assertTrue(msg.endswith(expected), "expected error message should have ended with '%s', message =%s" % (expected, msg))
         else:
             self.fail("A ValueError should have been raised")
@@ -87,6 +92,11 @@ class TestAffirmType(unittest.TestCase):
         result = affirm_type.list_of_float(x, "a")
         self.assertEqual([10.0], result)
 
+    def test_list_of_float_none(self):
+        x = None
+        result = affirm_type.list_of_str(x, "a", allow_none=True)
+        self.assertEqual(x, result)
+
     def test_list_of_float_value_error(self):
         x = [2, "whoops", 4]
         try:
@@ -103,10 +113,21 @@ class TestAffirmType(unittest.TestCase):
            affirm_type.list_of_float([1.0, 2.0, 5.0], "a", length=4)
         except ValueError as e:
             msg = str(e)
-            expected = "Expected list of float of length 4."
+            expected = "Expected list of length 4."
             self.assertTrue(msg.endswith(expected), "expected error message should have ended with '%s', message =%s" % (expected, msg))
         else:
             self.fail("A ValueError should have been raised")
+
+    def test_list_of_float_none_error(self):
+        try:
+            affirm_type.list_of_float(None, "a")
+        except ValueError as e:
+            msg = str(e)
+            expected = "Found a = None.  Expected a non-None value."
+            self.assertTrue(msg == expected, "expected error message should have ended with '%s', message =%s" % (expected, msg))
+        else:
+            self.fail("A ValueError should have been raised")
+
 
 class TestRequireType(unittest.TestCase):
 

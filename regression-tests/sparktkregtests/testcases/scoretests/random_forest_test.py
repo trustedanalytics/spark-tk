@@ -29,7 +29,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         """Build the required frame"""
         super(RandomForest, self).setUp()
 
-        schema = [("feat1", int), ("feat2", int), ("class", str)]
+        schema = [("feat1", float), ("feat2", float), ("class", int)]
         filename = self.get_file("rand_forest_class.csv")
 
         self.frame = self.context.frame.import_csv(filename, schema=schema)
@@ -37,7 +37,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_class_scoring(self):
         """Test random forest classifier scoring model"""
         rfmodel = self.context.models.classification.random_forest_classifier.train(
-            self.frame, "class", ["feat1", "feat2"], seed=0)
+            self.frame, ["feat1", "feat2"], "class", seed=0)
         
         result_frame = rfmodel.predict(self.frame)
         preddf = result_frame.to_pandas(result_frame.count())
@@ -57,7 +57,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
     def test_reg_scoring(self):
         """Test random forest regressor scoring  model"""
         rfmodel = self.context.models.regression.random_forest_regressor.train(
-            self.frame, "class", ["feat1", "feat2"], seed=0)
+            self.frame, ["feat1", "feat2"], "class", seed=0)
 
         predresult = rfmodel.predict(self.frame)
         preddf = predresult.to_pandas(predresult.count())

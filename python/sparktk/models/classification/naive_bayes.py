@@ -24,13 +24,13 @@ from sparktk.arguments import affirm_type
 
 __all__ = ["train", "load", "NaiveBayesModel"]
 
-def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
+def train(frame, observation_columns, label_column, lambda_parameter = 1.0):
     """
     Creates a Naive Bayes by training on the given frame
 
     :param frame: (Frame) frame of training data
-    :param label_column: (str) Column containing the label for each observation
     :param observation_columns: (List[str]) Column(s) containing the observations
+    :param label_column: (str) Column containing the label for each observation
     :param lambda_parameter: (float) Additive smoothing parameter Default is 1.0
 
     :return: (NaiveBayesModel) Trained Naive Bayes model
@@ -41,8 +41,8 @@ def train(frame, label_column, observation_columns, lambda_parameter = 1.0):
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_model = _scala_obj.train(frame._scala,
-                                   label_column,
                                    tc.jutils.convert.to_scala_list_string(observation_columns),
+                                   label_column,
                                    lambda_parameter)
     return NaiveBayesModel(tc, scala_model)
 
@@ -73,7 +73,7 @@ class NaiveBayesModel(PropertiesObject):
         ...                          [0,34.6334526911,3.6429838715]],
         ...                          [('Class', int), ('Dim_1', float), ('Dim_2', float)])
 
-        >>> model = tc.models.classification.naive_bayes.train(frame, 'Class', ['Dim_1', 'Dim_2'], 0.9)
+        >>> model = tc.models.classification.naive_bayes.train(frame, ['Dim_1', 'Dim_2'], 'Class', 0.9)
 
         >>> model.label_column
         u'Class'
@@ -109,7 +109,7 @@ class NaiveBayesModel(PropertiesObject):
         >>> set(restored.observation_columns) == set(model.observation_columns)
         True
 
-        >>> metrics = model.test(frame, "Class", ["Dim_1", "Dim_2"])
+        >>> metrics = model.test(frame, ["Dim_1", "Dim_2"], "Class")
 
         >>> metrics.precision
         1.0
@@ -148,42 +148,15 @@ class NaiveBayesModel(PropertiesObject):
 
     @property
     def label_column(self):
-        return self._scala.labelColumnName()
+        return self._scala.labelColumn()
 
     @property
     def observation_columns(self):
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
 
     @property
     def lambda_parameter(self):
         return self._scala.lambdaParameter()
-
-
-    def predict(self, future_periods = 0, ts = None):
-        """
-        Forecasts future periods using ARIMA.
-
-        Provided fitted values of the time series as 1-step ahead forecasts, based on current model parameters, then
-        provide future periods of forecast.  We assume AR terms prior to the start of the series are equal to the
-        model's intercept term (or 0.0, if fit without an intercept term).  Meanwhile, MA terms prior to the start
-        are assumed to be 0.0.  If there is differencing, the first d terms come from the original series.
-
-        :param future_periods: (int) Periods in the future to forecast (beyond length of time series that the
-                               model was trained with).
-        :param ts: (Optional(List[float])) Optional list of time series values to use as golden values.  If no time
-                   series values are provided, the values used during training will be used during forecasting.
-
-        """
-        if not isinstance(future_periods, int):
-            raise TypeError("'future_periods' parameter must be an integer.")
-        if ts is not None:
-            if not isinstance(ts, list):
-                raise TypeError("'ts' parameter must be a list of float values." )
-
-        ts_predict_values = self._tc.jutils.convert.to_scala_option_list_double(ts)
-
-        return list(self._tc.jutils.convert.from_scala_seq(self._scala.predict(future_periods, ts_predict_values)))
-
 
     def predict(self, frame, observation_columns=None):
         """
@@ -201,12 +174,12 @@ class NaiveBayesModel(PropertiesObject):
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, c))
 
-    def test(self, frame, label_column, observation_columns=None):
+    def test(self, frame, observation_columns=None, label_column=None):
         """test the frame given the trained model"""
         columns_list = self.__get_observation_columns(observation_columns)
         scala_classification_metrics_object = self._scala.test(frame._scala,
-                                                               label_column,
-                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list))
+                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list),
+                                                               self._tc.jutils.convert.to_scala_option(label_column))
         return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
 
     def __get_observation_columns(self, observation_columns):

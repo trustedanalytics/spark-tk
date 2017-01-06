@@ -34,7 +34,7 @@ class NaiveBayesModelTest extends TestingSparkContextWordSpec with Matchers {
     "create a NaiveBayesModel" in {
       val rdd = sparkContext.parallelize(labeledPoint)
       val frame = new Frame(rdd, schema)
-      val model = NaiveBayesModel.train(frame, "col0", List("col1", "col2"))
+      val model = NaiveBayesModel.train(frame, List("col1", "col2"), "col0")
 
       model shouldBe a[NaiveBayesModel]
     }
@@ -44,7 +44,7 @@ class NaiveBayesModelTest extends TestingSparkContextWordSpec with Matchers {
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
 
-        val model = NaiveBayesModel.train(frame, "", List("col1", "col2"))
+        val model = NaiveBayesModel.train(frame, List("col1", "col2"), "")
       }
     }
 
@@ -53,7 +53,7 @@ class NaiveBayesModelTest extends TestingSparkContextWordSpec with Matchers {
         val rdd = sparkContext.parallelize(labeledPoint)
         val frame = new Frame(rdd, schema)
 
-        val model = NaiveBayesModel.train(frame, "col0", List())
+        val model = NaiveBayesModel.train(frame, List(), "col0")
       }
     }
   }

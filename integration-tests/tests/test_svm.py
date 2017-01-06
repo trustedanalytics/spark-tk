@@ -50,7 +50,7 @@ def test_svm(tc):
     logger.info(f.inspect())
 
     logger.info("training the model on the frame")
-    model = tc.models.classification.svm.train(f, 'label', ['data'])
+    model = tc.models.classification.svm.train(f, ['data'], 'label')
     logger.info("predicting the class using the model and the frame")
     predicted_frame = model.predict(f)
     assert(set(predicted_frame.column_names) == set(['data', 'label', 'predicted_label']))

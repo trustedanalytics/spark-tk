@@ -226,7 +226,7 @@ class LogisticRegressionModel(PropertiesObject):
         [8]           7.2           5.8      2                2
         [9]           7.4           6.1      2                2
 
-        >>> test_metrics = model.test(frame, 'Class', ['Sepal_Length', 'Petal_Length'])
+        >>> test_metrics = model.test(frame, ['Sepal_Length', 'Petal_Length'], 'Class')
         <progress>
 
         >>> test_metrics
@@ -270,12 +270,12 @@ class LogisticRegressionModel(PropertiesObject):
     @property
     def observation_columns(self):
         """Column(s) containing the observations."""
-        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumnNames())
+        return self._tc.jutils.convert.from_scala_seq(self._scala.observationColumns())
 
     @property
     def label_column(self):
         """Column name containing the label for each observation."""
-        return self._scala.labelColumnName()
+        return self._scala.labelColumn()
 
     @property
     def frequency_column(self):
@@ -381,7 +381,7 @@ class LogisticRegressionModel(PropertiesObject):
         from sparktk.frame.frame import Frame
         return Frame(self._tc, self._scala.predict(frame._scala, columns_option))
 
-    def test(self, frame, label_column, observation_columns=None):
+    def test(self, frame, observation_columns=None, label_column=None):
         """
         Get the predictions for observations in a test frame
 
@@ -397,8 +397,8 @@ class LogisticRegressionModel(PropertiesObject):
         """
         columns_list = self.__get_observation_columns(observation_columns)
         scala_classification_metrics_object = self._scala.test(frame._scala,
-                                                               label_column,
-                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list))
+                                                               self._tc.jutils.convert.to_scala_option_list_string(columns_list),
+                                                               self._tc.jutils.convert.to_scala_option(label_column))
         return ClassificationMetricsValue(self._tc, scala_classification_metrics_object)
 
     def __get_observation_columns(self, observation_columns):

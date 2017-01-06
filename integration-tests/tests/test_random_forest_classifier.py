@@ -57,7 +57,7 @@ def test_random_forest_classifier(tc):
     logger.info(f.inspect())
 
     logger.info("training the model on the frame")
-    model = tc.models.classification.random_forest_classifier.train(f, 'Class', ['Dim_1', 'Dim_2'], num_classes=2)
+    model = tc.models.classification.random_forest_classifier.train(f, ['Dim_1', 'Dim_2'], 'Class', num_classes=2)
     logger.info("predicting the class using the model and the frame")
     predict_frame = model.predict(f)
     assert(set(predict_frame.column_names) == set(['Class', 'Dim_1', 'Dim_2','predicted_class']))

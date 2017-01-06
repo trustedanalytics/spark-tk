@@ -113,8 +113,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         # train the model on the data
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["x", "y"])
+                                                                 ["x", "y"],
+                                                                 "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -169,8 +169,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         training_frame = self.context.frame.create(train_data,
                                                    schema=schema)
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["d1", "d2", "d3"])
+                                                                 ["d1", "d2", "d3"],
+                                                                 "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -212,8 +212,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         training_frame = self.lattice2frame(train_lattice)
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["x", "y"])
+                                                                 ["x", "y"],
+                                                                 "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -229,7 +229,6 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         self.assertGreaterEqual(test_obj.accuracy, 8.0/9.0)
 
-    @unittest.skip("publish model does not exist yet")
     def test_pca_publish(self):
         """ validate publish"""
         # Test set is a lattice of points, a few outliers, large gap.
@@ -245,12 +244,13 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         training_frame = self.lattice2frame(train_lattice)
 
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["x", "y"])
-        path = svm_model.publish()
+                                                                 ["x", "y"],
+                                                                 "model_class")
+        file_name = self.get_name("svm")
+        path = svm_model.export_to_mar(self.get_export_file(file_name))
 
         self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        self.assertIn("svm", path)
 
     def test_biased_line(self):
         """ Verify that SvmModel operates as expected"""
@@ -267,8 +267,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         training_frame = self.lattice2frame(train_lattice)
 
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["x", "y"])
+                                                                 ["x", "y"],
+                                                                 "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -303,8 +303,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         training_frame = self.lattice2frame(train_lattice)
 
         svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 "model_class",
-                                                                 ["x", "y"])
+                                                                 ["x", "y"],
+                                                                 "model_class")
 
         outer_square = self.lattice2frame(test_lattice)
         predicted_frame = svm_model.predict(outer_square, ["x", "y"])
@@ -343,8 +343,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         train_frame.drop_columns("input_line")
 
         svm_model = self.context.models.classification.svm.train(train_frame,
-                                                                 "class",
-                                                                 observe_list)
+                                                                 observe_list,
+                                                                 "class")
 
         # Build testing frame and test the model
         test_frame = self.context.frame.import_csv(self.shuttle_file_te,
@@ -378,28 +378,32 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         """ Verify that 3-class model raises an exception.  """
         with self.assertRaisesRegexp(Exception, "Input validation failed"):
             self.context.models.classification.svm.train(self.training_frame,
-                                                         "model_class",
-                                                         ["x", "y"])
+                                                         ["x", "y"],
+                                                         "model_class")
 
     def test_bad_class_column(self):
         """Try a bad classification column"""
         with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.context.models.classification.svm.train(self.training_frame,
-                                                         "no_such_col",
-                                                         ["x", "y"])
+                                                         ["x", "y"],
+                                                         "no_such_col")
 
     def test_bad_data_column(self):
         """Try a bad data column"""
         with self.assertRaisesRegexp(Exception, "Invalid column name"):
             self.context.models.classification.svm.train(
-                self.training_frame, "model_class", ["no_such_col", "y"])
+                self.training_frame, ["no_such_col", "y"], "model_class")
 
     def test_null_column(self):
         """Try a null data column"""
-        with self.assertRaisesRegexp(Exception, "Invalid column name"):
+        try:
             self.context.models.classification.svm.train(self.training_frame,
-                                                         "model_class",
-                                                         ["x", None])
+                                                         ["x", None],
+                                                         "model_class")
+        except Exception as e:
+            assert "Found observation_columns = ['x', None].  Expected str or list of str." in str(e)
+        else:
+            raise RuntimeError("Expected exception not raised")
 
     def test_bad_data(self):
         """ Verify that invalid models raise exceptions.  """
@@ -417,8 +421,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         with self.assertRaisesRegexp(Exception, "Frame is empty"):
             self.context.models.classification.svm.train(training_frame,
-                                                         "model_class",
-                                                         ["x", "y"])
+                                                         ["x", "y"],
+                                                         "model_class")
 
 
 if __name__ == "__main__":

@@ -281,8 +281,10 @@ class Graph(object):
         return Frame(self._tc, self._scala.graphFrame().edges())
 
     # Graph Operations
+    from sparktk.graph.ops.betweenness_centrality import betweenness_centrality
     from sparktk.graph.ops.connected_components import connected_components
     from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
+    from sparktk.graph.ops.degree_centrality import degree_centrality
     from sparktk.graph.ops.degrees import degrees
     from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
     from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient
@@ -290,6 +292,7 @@ class Graph(object):
     from sparktk.graph.ops.loopy_belief_propagation import loopy_belief_propagation
     from sparktk.graph.ops.page_rank import page_rank
     from sparktk.graph.ops.save import save
+    from sparktk.graph.ops.single_source_shortest_path import single_source_shortest_path
     from sparktk.graph.ops.triangle_count import triangle_count
     from sparktk.graph.ops.vertex_count import vertex_count
     from sparktk.graph.ops.weighted_degrees import weighted_degrees

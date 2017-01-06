@@ -181,10 +181,10 @@ object LogisticRegressionModel extends TkSaveableObject {
       case other => Some(new DenseMatrix(m.hessianMatrixRows, m.hessianMatrixCols, m.hessianMatrixData))
     }
 
-    val finalSummaryTable = buildSummaryTable(sc, sparkLogRegModel, m.observationColumnNames, m.intercept, hessianMatrixNew)
+    val finalSummaryTable = buildSummaryTable(sc, sparkLogRegModel, m.observationColumns, m.intercept, hessianMatrixNew)
 
-    LogisticRegressionModel(m.observationColumnNames,
-      m.labelColumnName,
+    LogisticRegressionModel(m.observationColumns,
+      m.labelColumn,
       m.frequencyColumn,
       m.numClasses,
       m.optimizer,
@@ -242,8 +242,8 @@ object LogisticRegressionModel extends TkSaveableObject {
 /**
  * Logistic Regression Model
  *
- * @param observationColumnNames   Column(s) containing the observations.
- * @param labelColumnName          Column name containing the label for each observation.
+ * @param observationColumns   Column(s) containing the observations.
+ * @param labelColumn          Column name containing the label for each observation.
  * @param frequencyColumn      Optional column containing the frequency of observations.
  * @param numClasses           Number of classes
  * @param optimizer            Set type of optimizer.
@@ -271,8 +271,8 @@ object LogisticRegressionModel extends TkSaveableObject {
  * @param hessianMatrix        hessianMatrix
  * @param sparkModel           Spark LogisticRegressionModel
  */
-case class LogisticRegressionModel private[logistic_regression] (observationColumnNames: List[String],
-                                                                 labelColumnName: String,
+case class LogisticRegressionModel private[logistic_regression] (observationColumns: List[String],
+                                                                 labelColumn: String,
                                                                  frequencyColumn: Option[String],
                                                                  numClasses: Int,
                                                                  optimizer: String,
@@ -305,21 +305,21 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * @param observationColumns Column(s) containing the observations whose labels are to be predicted. Default is the labels the model was trained on.
    * @return Frame containing the original frame's columns and a column with the predicted label.
    */
-  def predict(frame: Frame, observationColumns: Option[List[String]]): Frame = {
+  def predict(frame: Frame, observationColumns: Option[List[String]] = None): Frame = {
     require(frame != null, "frame is required")
 
     //Running MLLib
     if (observationColumns.isDefined) {
-      require(observationColumnNames.length == observationColumns.get.length,
+      require(observationColumns.get.length == this.observationColumns.length,
         "Number of columns for train and predict should be same")
     }
-    val logRegColumns = observationColumns.getOrElse(observationColumnNames)
+    val observations = observationColumns.getOrElse(this.observationColumns)
 
     //predicting a label for the observation columns
     val predictColumn = Column(frame.schema.getNewColumnName("predicted_label"), DataTypes.int32)
 
     val predictMapper: RowWrapper => Row = row => {
-      val point = row.valuesAsDenseVector(logRegColumns)
+      val point = row.valuesAsDenseVector(observations)
       val prediction = sparkModel.predict(point).toInt
       Row.apply(prediction)
     }
@@ -344,8 +344,8 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
       case Some(matrix) => (matrix.rows, matrix.cols, matrix.data)
       case None => (0, 0, null)
     }
-    val tkMetaData = LogisticRegressionModelMetaData(observationColumnNames.toList,
-      labelColumnName,
+    val tkMetaData = LogisticRegressionModelMetaData(observationColumns.toList,
+      labelColumn,
       frequencyColumn,
       numClasses,
       optimizer,
@@ -371,8 +371,8 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    * Get the predictions for observations in a test frame
    *
    * @param frame                  Frame whose labels are to be predicted.
-   * @param labelColumn            Column containing the actual label for each observation.
    * @param observationColumns Column(s) containing the observations whose labels are to be predicted and tested. Default is to test over the columns the SVM model was trained on.
+   * @param labelColumn            Column containing the actual label for each observation.
    * @return A dictionary with binary classification metrics.
    *         The data returned is composed of the following keys\:
    *         'accuracy' : double
@@ -387,18 +387,17 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
    *         The proportion of positive instances that are correctly identified.
    * //
    */
-  def test(frame: Frame, labelColumn: String, observationColumns: Option[List[String]] = None): ClassificationMetricValue = {
+  def test(frame: Frame, observationColumns: Option[List[String]] = None, labelColumn: Option[String] = None): ClassificationMetricValue = {
     if (observationColumns.isDefined) {
-      require(observationColumns.get.length == observationColumnNames.length, "Number of columns for train and test should be same")
+      require(observationColumns.get.length == this.observationColumns.length, "Number of columns for train and test should be same")
     }
-    val logRegColumns = observationColumns.getOrElse(observationColumnNames)
+    val observations = observationColumns.getOrElse(this.observationColumns)
+    val label = labelColumn.getOrElse(this.labelColumn)
 
-    //def test(frame: Frame, observationColumns: List[String], labelColumn: String): ClassificationMetricValue = {
-    //  val logRegColumns = observationColumns
     val frameRdd = new FrameRdd(frame.schema, frame.rdd)
     //predicting and testing
     val scoreAndLabelRdd = frameRdd.toScoreAndLabelRdd(row => {
-      val labeledPoint = row.valuesAsLabeledPoint(logRegColumns, labelColumn)
+      val labeledPoint = row.valuesAsLabeledPoint(observations, label)
       val score = sparkModel.predict(labeledPoint.features)
       ScoreAndLabel(score, labeledPoint.label)
     })
@@ -425,7 +424,7 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
   }
 
   override def input(): Array[Field] = {
-    val obsCols = observationColumnNames
+    val obsCols = observationColumns
     var input = Array[Field]()
     obsCols.foreach { name =>
       input = input :+ Field(name, "Double")
@@ -454,8 +453,8 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
 /**
  * Logistic Regression Meta data
  *
- * @param observationColumnNames   Column(s) containing the observations.
- * @param labelColumnName          Column name containing the label for each observation.
+ * @param observationColumns   Column(s) containing the observations.
+ * @param labelColumn          Column name containing the label for each observation.
  * @param frequencyColumn      Optional column containing the frequency of observations.
  * @param numClasses           Number of classes
  * @param optimizer            Set type of optimizer.
@@ -483,8 +482,8 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
  * @param hessianMatrixCols    hessian matrix cols count
  * @param hessianMatrixData    hessian matrix data array
  */
-case class LogisticRegressionModelMetaData(observationColumnNames: List[String],
-                                           labelColumnName: String,
+case class LogisticRegressionModelMetaData(observationColumns: List[String],
+                                           labelColumn: String,
                                            frequencyColumn: Option[String],
                                            numClasses: Int,
                                            optimizer: String,
@@ -507,7 +506,7 @@ case class LogisticRegressionModelMetaData(observationColumnNames: List[String],
  * Input arguments for logistic regression train plugin
  */
 case class LogisticRegressionTrainArgs(frame: Frame,
-                                       observationColumn: List[String],
+                                       observationColumns: List[String],
                                        labelColumn: String,
                                        frequencyColumn: Option[String],
                                        numClasses: Int,

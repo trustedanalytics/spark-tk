@@ -33,10 +33,11 @@ object SingleSourceShortestPath {
    * @param edge the graph edge
    * @return SSSP attribute which contains the shortest path and the corresponding cost
    */
-  private def updateShortestPath(edge: EdgeTriplet[PathCalculation, Double]): (PathCalculation, Double) = {
-    val newPath = edge.srcAttr.path :+ edge.dstId
+  private def updateShortestPath[T](edge: EdgeTriplet[PathCalculation[T], Double]): (PathCalculation[T], Double) = {
+
+    val newPath = edge.srcAttr.path :+ edge.dstAttr.origVertexId
     val newCost = edge.srcAttr.cost + edge.attr
-    (new PathCalculation(newCost, newPath), edge.attr)
+    (new PathCalculation(newCost, newPath, edge.dstAttr.origVertexId), edge.attr)
   }
 
   /**
@@ -47,14 +48,16 @@ object SingleSourceShortestPath {
    * @param getEdgeWeight optional user-defined function that enables the inclusion of the edge weights in the SSSP
    *                      calculations by converting the edge attribute type to Double.
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
+   * @param getOrigVertexId user-defined function that converts the vertex attribute to a given type
    * @tparam VD vertex attribute that is used here to store the SSSP attributes
    * @tparam ED the edge attribute that is used here as the edge weight
    * @return the SSSP graph
    */
-  def run[VD, ED: ClassTag](graph: Graph[VD, ED],
-                            srcVertexId: Long,
-                            getEdgeWeight: Option[ED => Double] = None,
-                            maxPathLength: Option[Double] = None): Graph[PathCalculation, Double] = {
+  def run[VD, ED: ClassTag, T](graph: Graph[VD, ED],
+                               srcVertexId: Long,
+                               getEdgeWeight: Option[ED => Double] = None,
+                               maxPathLength: Option[Double] = None,
+                               getOrigVertexId: VD => T): Graph[PathCalculation[T], Double] = {
     require(srcVertexId.toString != null, "Source vertex ID is required to calculate the single source shortest path")
     /**
      * Prepares the message to be used in the next iteration
@@ -62,10 +65,10 @@ object SingleSourceShortestPath {
      * @param edge  the edge
      * @return the destination vertex ID, SSSP and the corresponding path cost
      */
-    def sendMessage(edge: EdgeTriplet[PathCalculation, Double]): Iterator[(VertexId, PathCalculation)] = {
+    def sendMessage[T](edge: EdgeTriplet[PathCalculation[T], Double]): Iterator[(VertexId, PathCalculation[T])] = {
       val (newShortestPath, weight) = updateShortestPath(edge)
-      if ((maxPathLength.isDefined && edge.srcAttr.cost >= maxPathLength.get) ||
-        (edge.srcAttr.cost + weight > edge.dstAttr.cost)) {
+      if ((maxPathLength.isDefined && edge.srcAttr.cost + weight > maxPathLength.get) ||
+        (edge.srcAttr.cost + weight >= edge.dstAttr.cost)) {
         Iterator.empty
       }
       else {
@@ -73,31 +76,37 @@ object SingleSourceShortestPath {
       }
     }
     //Initial graph
-    val ShortestPathGraph = graph.mapVertices((id, _) => {
+    val ShortestPathGraph = graph.mapVertices((id, attr) => {
+      val origVertexId = getOrigVertexId(attr)
       if (id == srcVertexId) {
-        PathCalculation(0.0, List[VertexId](srcVertexId))
+        PathCalculation(0.0, List[T](origVertexId), origVertexId)
       }
       else {
-        PathCalculation(Double.PositiveInfinity, List[VertexId]())
+        PathCalculation(Double.PositiveInfinity, List[T](), origVertexId)
       }
     }).mapEdges(e => getEdgeWeight match {
       case Some(func) => func(e.attr)
       case _ => 1.0
     })
     //Initial message
-    val initialMessage = PathCalculation(Double.PositiveInfinity, List[VertexId]())
+    val initialMessage = PathCalculation[T](Double.PositiveInfinity, List[T](), null.asInstanceOf[T])
     Pregel(ShortestPathGraph, initialMessage, Int.MaxValue, EdgeDirection.Out)(
       // vertex program
       (id, oldShortestPath, newShortestPath) => {
-        if (oldShortestPath.cost < newShortestPath.cost)
+        if (oldShortestPath.cost <= newShortestPath.cost)
           oldShortestPath
         else
           newShortestPath
       },
       // send message
-      sendMessage,
+      sendMessage[T],
       // merge message
-      (a: PathCalculation, b: PathCalculation) => if (a.cost < b.cost) a else b)
+      (a: PathCalculation[T], b: PathCalculation[T]) => if (a.cost < b.cost) {
+        a
+      }
+      else {
+        b
+      })
   }
 }
 
@@ -106,5 +115,6 @@ object SingleSourceShortestPath {
  *
  * @param cost the shortest path cost/length
  * @param path the shortest path
+ * @param origVertexId the original vertex ID
  */
-case class PathCalculation(cost: Double, path: List[VertexId])
+case class PathCalculation[T](cost: Double, path: List[T], origVertexId: T)

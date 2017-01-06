@@ -42,22 +42,22 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(Exception,
                                      "observationColumn must not be null nor empty"):
             self.context.models.classification.naive_bayes.train(self.frame,
-                                                                 "label",
-                                                                 "")
+                                                                 "",
+                                                                 "label")
 
     def test_model_train_empty_label_coloum(self):
         """Test empty string for label coloum throws error."""
         with self.assertRaisesRegexp(Exception,
                                      "labelColumn must not be null nor empty"):
             self.context.models.classification.naive_bayes.train(self.frame,
-                                                                 "",
-                                                                 "['f1', 'f2', 'f3']")
+                                                                 "['f1', 'f2', 'f3']",
+                                                                 "")
 
     def test_model_test(self):
         """Test training intializes theta, pi and labels"""
         model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     "label",
-                                                                     ['f1', 'f2', 'f3'])
+                                                                     ['f1', 'f2', 'f3'],
+                                                                     "label")
 
         res = model.test(self.frame)
         true_pos = float(res.confusion_matrix["Predicted_Pos"]["Actual_Pos"])
@@ -73,15 +73,16 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(res.f_measure, f_measure)
         self.assertAlmostEqual(res.accuracy, accuracy)
 
-    @unittest.skip("model publish does not yet exist in dev")
     def test_model_publish_bayes(self):
         """Test training intializes theta, pi and labels"""
         model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     "label",
-                                                                     ['f1', 'f2', 'f3'])
-        path = model.publish()
+                                                                     ['f1', 'f2', 'f3'],
+                                                                     "label")
+        file_name = self.get_name("naive_bayes")
+        path = model.export_to_mar(self.get_export_file(file_name))
         self.assertIn("hdfs", path)
-        self.assertIn("tar", path)
+        self.assertIn("naive_bayes", path)
+
 
     def test_model_test_paramater_initiation(self):
         """Test training intializes theta, pi and labels"""
@@ -112,8 +113,8 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         # create a pyspark model from the data and a sparktk model
         pyspark_model = classification.NaiveBayes.train(dataframe, 1.0)
         model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     "label",
-                                                                     ['f1', 'f2', 'f3'])
+                                                                     ['f1', 'f2', 'f3'],
+                                                                     "label")
 
         # use our sparktk model to predict, download to pandas for 
         # ease of comparison
