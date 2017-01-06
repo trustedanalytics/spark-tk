@@ -65,7 +65,6 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       // create the graph
       Graph(vRDD, eRDD)
     }
-
     "calculate the single source shortest path" in {
       val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, None, None, (x: String) => x)
       singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2.0, List("SFO", "ORD", "PDX"), "PDX"))
