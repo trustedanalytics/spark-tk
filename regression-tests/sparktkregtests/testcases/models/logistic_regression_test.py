@@ -58,7 +58,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
             'res', num_classes=2)
         with self.assertRaisesRegexp(
                 Exception,
-                "Value for observation_columns is of type <type 'int'>.  Expected type str or list of str."):
+                "Found observation_columns = [7].  Expected str or list of str"):
             log_model.predict(self.binomial_frame, 7)
 
     def test_bad_predict_observation_value(self):
