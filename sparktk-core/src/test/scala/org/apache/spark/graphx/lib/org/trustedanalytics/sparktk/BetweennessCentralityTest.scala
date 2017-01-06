@@ -18,6 +18,11 @@ package org.apache.spark.graphx.lib.org.trustedanalytics.sparktk
 import org.apache.spark.graphx._
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
+<<<<<<< HEAD
+
+class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matchers {
+
+=======
 import org.scalautils._
 import Tolerance._
 
@@ -34,6 +39,7 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
       }
   }
 
+>>>>>>> origin
   "Betweenness Centrality" should {
     def getGraph: Graph[String, Double] = {
       // Creates an unlabeled petersen graph
@@ -78,6 +84,18 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
     "calculate betweenness centrality on the petersen graph" in {
       val betweennessGraph = BetweennessCentrality.run(getGraph)
       betweennessGraph.vertices.collect().toArray.toList should contain theSameElementsAs (
+<<<<<<< HEAD
+        List((4, 0.08333333333333333),
+          (0, 0.08333333333333333),
+          (1, 0.08333333333333333),
+          (6, 0.08333333333333333),
+          (3, 0.08333333333333333),
+          (7, 0.08333333333333333),
+          (9, 0.08333333333333333),
+          (8, 0.08333333333333333),
+          (5, 0.08333333333333333),
+          (2, 0.08333333333333333)))
+=======
         List((4, 0.083),
           (0, 0.083),
           (1, 0.083),
@@ -88,6 +106,7 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
           (8, 0.083),
           (5, 0.083),
           (2, 0.083)))
+>>>>>>> origin
     }
 
     "calculate betweenness centrality on a 3 vertex line" in {
@@ -106,7 +125,11 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
       val graph = Graph(vRDD, eRDD)
       val betweennessGraph = BetweennessCentrality.run(graph)
       betweennessGraph.vertices.collect.toArray.toList should contain theSameElementsAs (
+<<<<<<< HEAD
+        List((1, 0.0), (2, 1.0), (3, 0.0)))
+=======
         List((1, 0.0), (3, 0.0), (2, 1.0)))
+>>>>>>> origin
     }
 
     "calculate betweenness centrality on a 6 vertex grid (ladder graph)" in {
@@ -134,12 +157,16 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
       val graph = Graph(vRDD, eRDD)
       val betweennessGraph = BetweennessCentrality.run(graph, normalize = false)
       betweennessGraph.vertices.collect.toArray.toList should contain theSameElementsAs (
+<<<<<<< HEAD
+        List((4, 0.8333333432674408), (0, 0.8333333432674408), (1, 0.8333333432674408), (3, 3.333333373069763), (5, 0.8333333432674408), (2, 3.333333373069763)))
+=======
         List((4, 0.83),
           (0, 0.83),
           (1, 0.83),
           (3, 3.33),
           (5, 0.83),
           (2, 3.33)))
+>>>>>>> origin
     }
 
     "calculate weighted betweenness centrality" in {
@@ -168,7 +195,11 @@ class BetweennessCentralityTest extends TestingSparkContextWordSpec with Matcher
       val graph = Graph(vRDD, eRDD)
       val betweennessGraph = BetweennessCentrality.run(graph, Some((x: Int) => x), normalize = false)
       betweennessGraph.vertices.collect.toArray.toList should contain theSameElementsAs (
+<<<<<<< HEAD
+        List((0, 2.0), (1, 0.0), (2, 4.0), (3, 3.0), (4, 4.0), (5, 0.0)))
+=======
         List((4, 4.0), (0, 2.0), (1, 0.0), (3, 3.0), (5, 0.0), (2, 4.0)))
+>>>>>>> origin
     }
 
   }
