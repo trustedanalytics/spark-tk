@@ -48,7 +48,7 @@ object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
             else
               throw new RuntimeException("Mismatch in schema type, expected int32 or int64")
           }
-          case vtype if vtype.equals(DataTypes.float64) => {
+          case vtype if vtype.equals(DataTypes.float32) | vtype.equals(DataTypes.float64) => {
             val dataList = feature.getFloatList.getValueList
             if (dataList.size() == 1)
               colDataType.parse(dataList.get(0)).get
