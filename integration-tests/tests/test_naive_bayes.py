@@ -42,7 +42,7 @@ def test_naive_bayes(tc):
     assert(set(predicted_frame.column_names) == set(['Class', 'Dim_1', 'Dim_2', 'Dim_3','predicted_class']))
     assert(len(predicted_frame.column_names) == 5)
     assert(len(f.column_names) == 4)
-    metrics = model.test(predicted_frame, 'Class')
+    metrics = model.test(predicted_frame)
     assert(metrics.accuracy == 1.0)
     assert(metrics.f_measure == 1.0)
     assert(metrics.precision == 1.0)
