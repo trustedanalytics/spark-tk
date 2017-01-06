@@ -172,7 +172,7 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
     def test_empty_tuple_list(self):
         """Test empty list of tuples throws exception"""
         with self.assertRaisesRegexp(
-                Exception, "tuple index out of range"):
+                Exception, "Expected list requires tuples of len 2"):
             self.context.models.grid_search(
                 self.frame, self.frame,
                 [()])

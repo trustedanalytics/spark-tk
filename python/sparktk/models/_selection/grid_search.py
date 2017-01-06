@@ -16,10 +16,11 @@
 #
 
 
+import inspect
+from collections import namedtuple
 from sparktk import TkContext
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
-from collections import namedtuple
-from sparktk.arguments import extract_call, validate_call
+from sparktk.arguments import extract_call, validate_call, affirm_type, require_type, value_error
 from sparktk.frame.frame import Frame
 from sparktk import arguments
 
@@ -147,11 +148,18 @@ def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implic
 
     """
 
-    #validate input
+    # validate input
     TkContext.validate(tc)
-    if not isinstance(train_descriptors, list):
-        train_descriptors = [train_descriptors]
-    descriptors = [TrainDescriptor(x[0], x[1]) for x in train_descriptors if not isinstance(x, TrainDescriptor)]
+    descriptors = affirm_type.list_of_anything(train_descriptors, "train_descriptors")
+    for i in xrange(len(descriptors)):
+        item = descriptors[i]
+        if not isinstance(item, TrainDescriptor):
+            require_type(tuple, item, "item", "grid_search needs a list of items which are either of type TrainDescriptor or tuples of (model, train_kwargs)")
+            if len(item) != 2:
+                raise value_error("list requires tuples of len 2", item, "item in train_descriptors")
+            if not hasattr(item[0], 'train'):
+                raise value_error("first item in tuple needs to be a object with a 'train' function", item, "item in train_descriptors")
+            descriptors[i] = TrainDescriptor(item[0], item[1])
 
     arguments.require_type(Frame, train_frame, "frame")
     arguments.require_type(Frame, test_frame, "frame")
@@ -221,9 +229,17 @@ class Metrics(ClassificationMetricsValue):
 
 GridValues = namedtuple('GridValues', ['args'])
 
+
 class TrainDescriptor(object):
+    """Describes a train operation: a model type and the arguments for its train method"""
 
     def __init__(self, model_type, kwargs):
+        """
+        Creates a TrainDescriptor
+
+        :param model_type: type object representing the model in question
+        :param kwargs: dict of key-value-pairs holding values for the train method's parameters
+        """
         self.model_type = model_type
         self.kwargs = kwargs
 

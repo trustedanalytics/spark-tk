@@ -63,29 +63,30 @@ class _AffirmType(object):
 
     def list_of_str(self, value, name, extra_msg=None, length=None, allow_none=False):
         """Note: converts str to list of str"""
-        if value is None:
-            return self._allow_none(value, name, extra_msg, allow_none)
-        if isinstance(value, basestring):
-            return [value]
-        if length is not None and len(value) != length:
-            raise value_error("list of str of length %s" % length, value, name, extra_msg)
-        if not isinstance(value, list):
-            raise type_error("str or list of str", type(value), name, extra_msg)
-        if not all(isinstance(c, basestring) for c in value):
-            raise value_error("str or list of str", value, name, extra_msg)
-        return value
+        values = self.list_of_anything(value, name, extra_msg, length, allow_none)
+        if values and not all(isinstance(c, basestring) for c in values):
+            raise value_error("str or list of str", values, name, extra_msg)
+        return values
 
     def list_of_float(self, value, name, extra_msg=None, length=None, allow_none=False):
-        if value is None:
-            return self._allow_none(value, name, extra_msg, allow_none)
-        values = value if isinstance(value, list) else [value]
-        if length is not None and len(values) != length:
-            raise value_error("list of float of length %s" % length, value, name, extra_msg)
+        values = self.list_of_anything(value, name, extra_msg, length, allow_none)
+        if not values:
+            return values
         try:
             x = [float(f) for f in values]
         except ValueError:
             raise value_error("list of float", value, name, extra_msg)
         return x
+
+    def list_of_anything(self, value, name, extra_msg=None, length=None, allow_none=False):
+        if value is None:
+            return self._allow_none(value, name, extra_msg, allow_none)
+        values = value if isinstance(value, list) else [value]
+        if length is not None and len(values) != length:
+            raise value_error("list of length %s" % length, values, name, extra_msg)
+        if not isinstance(values, list):
+            raise type_error("list", type(values), name, extra_msg)
+        return values
 
     @staticmethod
     def _allow_none(value, name, extra_msg, allow_none):
