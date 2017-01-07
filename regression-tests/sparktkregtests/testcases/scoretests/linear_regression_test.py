@@ -40,7 +40,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
     def test_model_scoring(self):
         """Test publishing a linear regression model"""
-        model = self.context.models.regression.linear_regression.train(self.frame, "label", ['c1', 'c2', 'c3', 'c4'])
+        model = self.context.models.regression.linear_regression.train(self.frame, ['c1', 'c2', 'c3', 'c4'], "label")
 
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         test_rows = predict.to_pandas(predict.count())

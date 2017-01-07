@@ -27,7 +27,7 @@ import sparktk as stk
 
 import config
 from threading import Lock
-udf_lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"udftestlib")
+udf_lib_path = os.path.join(config.root, "regression-tests", "sparktkregtests", "lib" ,"udftestlib")
 udf_files = [os.path.join(udf_lib_path, f) for f in os.listdir(udf_lib_path)]
 
 lock = Lock()
@@ -44,7 +44,7 @@ def get_context():
                                 'spark.dynamicAllocation.enabled': 'true',
                                 'spark.dynamicAllocation.maxExecutors': '16',
                                 'spark.dynamicAllocation.minExecutors': '1',
-                                'spark.executor.cores': '10',
+                                'spark.executor.cores': '2',
                                 'spark.executor.memory': '2g',
                                 'spark.shuffle.io.preferDirectBufs': 'true',
                                 'spark.shuffle.service.enabled': 'true',

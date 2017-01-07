@@ -41,7 +41,7 @@ if [ $EXIT -ne 0 ]; then
     echo "Please review and correct any errors before using spark-tk."
 fi
 
-graphframes=$(find `pwd`/lib/ -name "graphframes*.jar")
+graphframes=$(find `pwd`/dependencies/ -name "graphframes*.jar")
 unzip -o $graphframes "graphframes/*" .
 
 

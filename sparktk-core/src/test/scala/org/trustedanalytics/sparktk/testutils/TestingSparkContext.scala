@@ -32,7 +32,7 @@ import org.apache.log4j.{ Logger, Level }
  *
  * You can't have more than one local SparkContext running at the same time.
  */
-private[testutils] object TestingSparkContext {
+object TestingSparkContext {
 
   /** lock allows non-Spark tests to still run concurrently */
   private val lock = new Lock()

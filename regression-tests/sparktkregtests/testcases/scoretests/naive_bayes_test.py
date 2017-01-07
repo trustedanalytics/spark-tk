@@ -38,7 +38,7 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
 
     def test_model_scoring(self):
         """Test training intializes theta, pi and labels"""
-        model = self.context.models.classification.naive_bayes.train(self.frame, "label", ['f1', 'f2', 'f3'])
+        model = self.context.models.classification.naive_bayes.train(self.frame, ['f1', 'f2', 'f3'], "label")
 
         res = model.predict(self.frame, ['f1', 'f2', 'f3'])
 

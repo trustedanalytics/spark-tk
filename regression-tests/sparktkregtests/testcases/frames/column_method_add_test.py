@@ -20,13 +20,8 @@ import unittest
 
 from sparktkregtests.lib import sparktk_test
 
-udf_int_val = -77     # placeholder data value for added column
+udf_int_val = -78     # placeholder data value for added column
 udf_col_count = 1000  # length of list for column add
-
-
-def global_udf(row):
-    """This method is to test different sources of functions with udf"""
-    return [udf_int_val for _ in range(0, udf_col_count)]
 
 
 class ColumnMethodTest(sparktk_test.SparkTKTestCase):
@@ -59,20 +54,6 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(
             len(self.new_col_schema)+3, len((self.frame.take(1))[0]))
 
-        columns = self.frame.take(self.frame.count())
-        for i in columns:
-            self.assertEqual(i[-1], udf_int_val)
-
-    @unittest.skip("DPNG-11909")
-    def test_add_col_names(self):
-        """Tests adding a column name with a global method"""
-        self.frame.add_columns(global_udf, self.new_col_schema)
-        self.assertEqual(self.frame.column_names, self.expected_header)
-
-        self.assertEqual(
-            len(self.new_col_schema)+3, len((self.frame.take(1))[0]))
-
-        self.frame.inspect()
         columns = self.frame.take(self.frame.count())
         for i in columns:
             self.assertEqual(i[-1], udf_int_val)

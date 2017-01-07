@@ -39,7 +39,7 @@ class LinearRegressionModelTest extends TestingSparkContextWordSpec with Matcher
     "create a LinearRegressionModel from training" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "y", List("x1"))
+      val model = LinearRegressionModel.train(frame, List("x1"), "y")
 
       model shouldBe a[LinearRegressionModel]
     }
@@ -49,7 +49,7 @@ class LinearRegressionModelTest extends TestingSparkContextWordSpec with Matcher
       val frame = new Frame(rdd, schema)
 
       intercept[IllegalArgumentException] {
-        LinearRegressionModel.train(frame, "y", List())
+        LinearRegressionModel.train(frame, List(), "y")
       }
     }
 
@@ -58,7 +58,7 @@ class LinearRegressionModelTest extends TestingSparkContextWordSpec with Matcher
       val frame = new Frame(rdd, schema)
 
       intercept[IllegalArgumentException] {
-        LinearRegressionModel.train(frame, "", List("x1"))
+        LinearRegressionModel.train(frame, List("x1"), "")
       }
     }
   }
@@ -67,7 +67,7 @@ class LinearRegressionModelTest extends TestingSparkContextWordSpec with Matcher
     "return predictions when calling the linear regression model score" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "y", List("x1"))
+      val model = LinearRegressionModel.train(frame, List("x1"), "y")
 
       // Test values, just grabbed from the second row the of the training frame
       val x1 = 1.0
@@ -87,7 +87,7 @@ class LinearRegressionModelTest extends TestingSparkContextWordSpec with Matcher
     "throw IllegalArgumentExceptions for invalid score parameters" in {
       val rdd = sparkContext.parallelize(rows)
       val frame = new Frame(rdd, schema)
-      val model = LinearRegressionModel.train(frame, "y", List("x1"))
+      val model = LinearRegressionModel.train(frame, List("x1"), "y")
 
       // Wrong number of args (should match the number of observation columns)
       intercept[IllegalArgumentException] {

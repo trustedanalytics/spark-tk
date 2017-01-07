@@ -17,9 +17,9 @@
 
 from sparktk.propobj import PropertiesObject
 
-class LinearRegressionTestMetrics(PropertiesObject):
+class RegressionTestMetrics(PropertiesObject):
     """
-    RegressionMetrics class used to hold the data returned from linear regression test
+    RegressionMetrics class used to hold the data returned from regression tests
     """
     def __init__(self, scala_result):
         self._explained_variance = scala_result.explainedVariance()
