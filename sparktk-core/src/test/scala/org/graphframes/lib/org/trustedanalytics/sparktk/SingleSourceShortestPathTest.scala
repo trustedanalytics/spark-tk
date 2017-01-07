@@ -77,6 +77,24 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       GraphFrame(v, e)
     }
 
+    // create graph with negative weights and a cycle
+    def getGameGraph: GraphFrame = {
+      val sqlContext: SQLContext = new SQLContext(sparkContext)
+      // Vertex DataFrame
+      val v = sqlContext.createDataFrame(List(
+        ("a", "app"),
+        ("b", "bot"),
+        ("c", "cat"),
+        ("d", "dos"))).toDF("id", "name")
+      val e = sqlContext.createDataFrame(List(
+        ("a", "b", 2),
+        ("b", "c", 2),
+        ("b", "d", -1),
+        ("d", "a", -2),
+        ("c", "d", -5))).toDF("src", "dst", "distance")
+      // Create a GraphFrame
+      GraphFrame(v, e)
+    }
     "calculate the single source shortest path" in {
       val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGraph, "a")
       singleSourceShortestPathFrame.collect.head shouldBe Row("b", "Bob", 36, 1.0, "[" + Seq("a", "b").mkString(", ") + "]")
@@ -102,6 +120,11 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
     "calculate the single source shortest path for a graph with integer vertex IDs" in {
       val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getNewGraph, 1)
       singleSourceShortestPathFrame.collect.head shouldBe Row(4, "David", 29, 2.0, "[" + Seq(1, 5, 4).mkString(", ") + "]")
+    }
+
+    "calculate the single source shortest path with negative values for edge weights" in {
+      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGameGraph, "a", Some("distance"))
+      singleSourceShortestPathFrame.collect.head shouldBe Row("b", "bot", 2.0, "[" + Seq("a", "b").mkString(", ") + "]")
     }
   }
 }
