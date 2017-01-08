@@ -18,8 +18,11 @@
 from setup import tc, rm, get_sandbox_path
 
 import logging
+import pytest
 logger = logging.getLogger(__name__)
 
+
+@pytest.mark.xfail
 def test_svm(tc):
 
     logger.info("define schema")
