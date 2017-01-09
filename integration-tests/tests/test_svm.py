@@ -59,7 +59,7 @@ def test_svm(tc):
     assert(set(predicted_frame.column_names) == set(['data', 'label', 'predicted_label']))
     assert(len(predicted_frame.column_names) == 3)
     assert(len(f.column_names) == 2)
-    metrics = model.test(predicted_frame, 'label')
+    metrics = model.test(predicted_frame)
     assert(metrics.accuracy == 1.0)
     assert(metrics.f_measure == 1.0)
     assert(metrics.precision == 1.0)
