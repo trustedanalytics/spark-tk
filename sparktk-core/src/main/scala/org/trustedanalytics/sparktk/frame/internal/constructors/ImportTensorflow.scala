@@ -26,7 +26,11 @@ import org.trustedanalytics.sparktk.frame.internal.serde.DefaultTfRecordRowDecod
 object ImportTensorflow {
   /**
    * Creates a frame using TensorFlow Records path with specified schema
-   *
+    *
+   * TensorFlow records are the standard data format for TensorFlow. The recommended format for TensorFlow is a TFRecords file
+    * containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
+    * https://www.tensorflow.org/how_tos/reading_data
+    *
    * During Import, API parses TensorFlow DataTypes as below
    *
    * Int64List => IntegerType or LongType
@@ -35,8 +39,8 @@ object ImportTensorflow {
    *
    * @param sc sparkcontext
    * @param sourceTfRecordsPath Full path to TensorFlow records on HDFS/Local filesystem
-   * @param schema Schema to use
-   * @return a frame
+   * @param schema Optional frame schema to use during import. If not defined, then the schema is inferred from the TensorFlow records
+   * @return frame with data from TensorFlow records
    */
   def importTensorflow(sc: SparkContext, sourceTfRecordsPath: String, schema: Option[FrameSchema] = None): Frame = {
     require(StringUtils.isNotEmpty(sourceTfRecordsPath), "path should not be null or empty.")
@@ -47,12 +51,11 @@ object ImportTensorflow {
       case (bytesWritable, nullWritable) => Example.parseFrom(bytesWritable.getBytes)
     }
 
-    var finalSchema = schema
-    if (finalSchema.isEmpty) {
-      finalSchema = Some(TensorflowInferSchema(exampleRdd))
-    }
-    val resultRdd = exampleRdd.map(example => DefaultTfRecordRowDecoder.decodeTfRecord(example, finalSchema.get))
-    new Frame(resultRdd, finalSchema.get)
+
+    var finalSchema = if (schema.isEmpty) Some(TensorflowInferSchema(exampleRdd)).get else schema.get
+
+    val resultRdd = exampleRdd.map(example => DefaultTfRecordRowDecoder.decodeTfRecord(example, finalSchema))
+    new Frame(resultRdd, finalSchema)
   }
 
 }

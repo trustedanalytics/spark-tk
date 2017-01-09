@@ -18,12 +18,23 @@
 
 def export_to_tensorflow(self, path):
     """
-    Write current frame as TensorFlow records to given path
+    Export frame to TensorFlow Records file on given path
+
+    TensorFlow records are the standard data format for TensorFlow. The recommended format for TensorFlow is a TFRecords file
+    containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
+    https://www.tensorflow.org/how_tos/reading_data
+
+    During export, API parses Spark SQL DataTypes to TensorFlow compatible DataTypes as below
+
+    * IntegerType or LongType =>  Int64List
+    * FloatType or DoubleType => FloatList
+    * ArrayType(Double) [Vector] => FloatList
+    * Any other DataType (Ex: String) => BytesList
 
     Parameters
     ----------
 
-    :param path: (str) HDFS/Local path to export current frame as TF record
+    :param path: (str) HDFS/Local path to export current frame as TensorFlow records
 
     """
     self._scala.exportToTensorflow(path)
