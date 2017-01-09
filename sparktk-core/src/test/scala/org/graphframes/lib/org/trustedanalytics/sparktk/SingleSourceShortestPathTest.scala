@@ -49,6 +49,52 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       // Create a GraphFrame
       GraphFrame(v, e)
     }
+
+    //create Graph of friends in a social network with integer vertex IDs.
+    def getNewGraph: GraphFrame = {
+      val sqlContext: SQLContext = new SQLContext(sparkContext)
+      // Vertex DataFrame
+      val v = sqlContext.createDataFrame(List(
+        (1, "Alice", 34),
+        (2, "Bob", 36),
+        (3, "Charlie", 30),
+        (4, "David", 29),
+        (5, "Esther", 32),
+        (6, "Fanny", 36),
+        (7, "Gabby", 60)
+      )).toDF("id", "name", "age")
+      val e = sqlContext.createDataFrame(List(
+        (1, 2, "friend", 12),
+        (2, 3, "follow", 2),
+        (3, 2, "follow", 5),
+        (6, 3, "follow", 4),
+        (5, 6, "follow", 8),
+        (5, 4, "friend", 9),
+        (4, 1, "friend", 10),
+        (1, 5, "friend", 3)
+      )).toDF("src", "dst", "relationship", "distance")
+      // Create a GraphFrame
+      GraphFrame(v, e)
+    }
+
+    // create graph with negative weights and a cycle
+    def getGameGraph: GraphFrame = {
+      val sqlContext: SQLContext = new SQLContext(sparkContext)
+      // Vertex DataFrame
+      val v = sqlContext.createDataFrame(List(
+        ("a", "app"),
+        ("b", "bot"),
+        ("c", "cat"),
+        ("d", "dos"))).toDF("id", "name")
+      val e = sqlContext.createDataFrame(List(
+        ("a", "b", 2),
+        ("b", "c", 2),
+        ("b", "d", -1),
+        ("d", "a", -2),
+        ("c", "d", -5))).toDF("src", "dst", "distance")
+      // Create a GraphFrame
+      GraphFrame(v, e)
+    }
     "calculate the single source shortest path" in {
       val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGraph, "a")
       singleSourceShortestPathFrame.collect.head shouldBe Row("b", "Bob", 36, 1.0, "[" + Seq("a", "b").mkString(", ") + "]")
@@ -69,6 +115,16 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
         Row("c", "Charlie", 30, 2.0, "[" + Seq("a", "b", "c").mkString(", ") + "]"),
         Row("e", "Esther", 32, 1.0, "[" + Seq("a", "e").mkString(", ") + "]"),
         Row("g", "Gabby", 60, Double.PositiveInfinity, "[" + Seq().mkString(", ") + "]"))
+    }
+
+    "calculate the single source shortest path for a graph with integer vertex IDs" in {
+      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getNewGraph, 1)
+      singleSourceShortestPathFrame.collect.head shouldBe Row(4, "David", 29, 2.0, "[" + Seq(1, 5, 4).mkString(", ") + "]")
+    }
+
+    "calculate the single source shortest path with negative values for edge weights" in {
+      val singleSourceShortestPathFrame = SingleSourceShortestPath.run(getGameGraph, "a", Some("distance"))
+      singleSourceShortestPathFrame.collect.head shouldBe Row("b", "bot", 2.0, "[" + Seq("a", "b").mkString(", ") + "]")
     }
   }
 }
