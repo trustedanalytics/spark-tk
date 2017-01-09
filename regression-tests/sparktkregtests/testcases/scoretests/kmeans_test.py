@@ -89,9 +89,6 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
                 res = scorer.score(
                     [dict(zip(["Vec1", "Vec2", "Vec3", "Vec4"],
                     list(i[0:4])))])
-                #print result_revised.inspect(10)
-                #print result_frame.inspect(10)
-                print res.json()
                 self.assertEqual(i["cluster"], res.json()["data"][0]['score'])
 
 if __name__ == '__main__':
