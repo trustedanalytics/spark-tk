@@ -16,10 +16,10 @@
 package org.graphframes.lib.org.trustedanalytics.sparktk
 
 import org.apache.spark.graphx.lib.org.trustedanalytics._
-import org.apache.spark.graphx.lib.org.trustedanalytics.sparktk.ClosenessCalculations
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.graphframes.GraphFrame
+import org.graphframes.lib.GraphXConversions
 
 /**
  * Compute closeness centrality for nodes.
@@ -43,13 +43,14 @@ object ClosenessCentrality {
    *
    * @param graph the graph to compute the closeness centrality for its nodes
    * @param edgePropName optional edge column name to be used as edge weight
-   * @param normalized normalizes the closeness centrality value to the number of nodes connected to it divided by
+   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it divided by
    *                   the rest number of nodes in the graph, this is effective in the case of disconnected graph
-   * @return the graph vertex IDs and each corresponding closeness centrality value
+   * @return graph frame with an additional vertex property for the closeness centrality data
    */
-  def run(graph: GraphFrame, edgePropName: Option[String] = None, normalized: Boolean = true): Seq[ClosenessCalculations] = {
+  def run(graph: GraphFrame, edgePropName: Option[String] = None, normalized: Boolean = true): GraphFrame = {
     val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgePropName)
-    sparktk.ClosenessCentrality.run(graph.toGraphX, edgeWeightFunc, normalized)
+    val closenessCentralityGraphx = sparktk.ClosenessCentrality.run(graph.toGraphX, edgeWeightFunc, normalized)
+    GraphXConversions.fromGraphX(graph, closenessCentralityGraphx, Seq(CC_RESULTS))
   }
 
   /**
@@ -78,4 +79,6 @@ object ClosenessCentrality {
     }
     edgeWeightFunc
   }
+
+  private val CC_RESULTS = "ClosenessCentrality"
 }

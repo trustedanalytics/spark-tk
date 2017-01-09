@@ -281,9 +281,11 @@ class Graph(object):
         return Frame(self._tc, self._scala.graphFrame().edges())
 
     # Graph Operations
+    from sparktk.graph.ops.betweenness_centrality import betweenness_centrality
     from sparktk.graph.ops.closeness_centrality import closeness_centrality
     from sparktk.graph.ops.connected_components import connected_components
     from sparktk.graph.ops.clustering_coefficient import clustering_coefficient
+    from sparktk.graph.ops.degree_centrality import degree_centrality
     from sparktk.graph.ops.degrees import degrees
     from sparktk.graph.ops.export_to_orientdb import export_to_orientdb
     from sparktk.graph.ops.global_clustering_coefficient import global_clustering_coefficient

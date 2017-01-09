@@ -47,6 +47,24 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
       Graph(vRDD, eRDD)
     }
 
+    // create graph with negative weights and a cycle
+    def getGameGraph: Graph[String, Int] = {
+      // create vertices RDD with ID and Name
+      val vertices = Array((1L, "app"),
+        (2L, "bot"),
+        (3L, "cat"),
+        (4L, "dos"))
+      val vRDD = sparkContext.parallelize(vertices)
+      // create routes RDD with srcid, destid, distance
+      val edges = Array(Edge(1L, 2L, 2),
+        Edge(2L, 3L, 2),
+        Edge(2L, 4L, -1),
+        Edge(4L, 1L, -2),
+        Edge(3L, 4L, -5))
+      val eRDD = sparkContext.parallelize(edges)
+      // create the graph
+      Graph(vRDD, eRDD)
+    }
     "calculate the single source shortest path" in {
       val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, None, None, (x: String) => x)
       singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2.0, List("SFO", "ORD", "PDX"), "PDX"))
@@ -54,6 +72,14 @@ class SingleSourceShortestPathTest extends TestingSparkContextWordSpec with Matc
     "calculate the single source shortest paths with edge weights" in {
       val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 1, Some((x: Double) => x), None, (t: String) => t)
       singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(2700.0, List("SFO", "ORD", "PDX"), "PDX"))
+    }
+    "calculate the single source shortest path for a disconnected node" in {
+      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGraph, 7, None, None, (x: String) => x)
+      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(Double.PositiveInfinity, List(), "PDX"))
+    }
+    "calculate the single source shortest path with negative values for edge weights" in {
+      val singleSourceShortestPathGraph = SingleSourceShortestPath.run(getGameGraph, 1, Some((x: Int) => x.toDouble), None, (x: String) => x)
+      singleSourceShortestPathGraph.vertices.collect.head shouldBe (4, PathCalculation(-1.0, List("app", "bot", "cat", "dos"), "dos"))
     }
   }
 }

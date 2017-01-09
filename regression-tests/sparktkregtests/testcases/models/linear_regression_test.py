@@ -38,19 +38,19 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_save(self):
         """Test saving a linear regression model"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'])
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label")
         model_path = self.get_name("LinearRegression")
         model.save(model_path)
         reloaded_model = self.context.load(model_path)
-        output = reloaded_model.test(self.frame, "label")
+        output = reloaded_model.test(self.frame, label_column="label")
         self.assertAlmostEqual(
             reloaded_model.mean_squared_error, output.mean_squared_error)
 
     def test_model_test(self):
         """Test test functionality"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'])
-        output = model.test(self.frame, "label")
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label")
+        output = model.test(self.frame, label_column="label")
         self.assertAlmostEqual(
             model.mean_squared_error, output.mean_squared_error)
         self.assertAlmostEqual(
@@ -63,14 +63,14 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_predict_output(self):
         """Test output format of predict"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'])
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label")
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
     def test_model_elastic_net(self):
         """Test elastic net argument"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
             elastic_net_parameter=0.3)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
@@ -78,7 +78,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_fix_intercept(self):
         """Test fix intercept argument"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
             fit_intercept=False)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
@@ -86,7 +86,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_max_iterations(self):
         """Test max iterations argument"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
                           max_iterations=70)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
@@ -94,7 +94,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_reg_param(self):
         """Test regularization parameter argument"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
                           reg_param=0.000000002)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
@@ -102,7 +102,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_standardization(self):
         """Test test non-standardized data"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
                           standardization=False)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
@@ -110,7 +110,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_tolerance(self):
         """Test test a different model tolerance"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, "label", ['c1', 'c2', 'c3', 'c4'],
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
                           convergence_tolerance=0.0000000000000000001)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
@@ -121,7 +121,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(res.root_mean_squared_error, 0.0)
         self.assertAlmostEqual(res.mean_squared_error, 0.0)
         self.assertAlmostEqual(res.intercept, 0.0)
-        self.assertEqual(res.value_column, "label")
+        self.assertEqual(res.label_column, "label")
         self.assertItemsEqual(
             res.observation_columns, ['c1', 'c2', 'c3', 'c4'])
         self.assertLess(res.iterations, 150)
