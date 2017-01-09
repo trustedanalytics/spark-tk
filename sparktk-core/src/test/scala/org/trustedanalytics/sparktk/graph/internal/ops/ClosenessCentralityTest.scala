@@ -15,56 +15,53 @@
  */
 package org.trustedanalytics.sparktk.graph.internal.ops
 
-import org.apache.spark.graphx.lib.org.trustedanalytics.sparktk.ClosenessCalculations
 import org.apache.spark.sql.SQLContext
-import org.graphframes.GraphFrame
-import org.graphframes.lib.org.trustedanalytics.sparktk.ClosenessCentrality
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.graph.Graph
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 
 class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers {
 
-  "Single source shortest path" should {
+  "Closeness Centrality" should {
     def getGraph: Graph = {
       val sqlContext: SQLContext = new SQLContext(sparkContext)
       // Vertex DataFrame
-      val v = sqlContext.createDataFrame(List((1L, "Ben"),
-        (2L, "Anna"),
-        (3L, "Cara"),
-        (4L, "Dana"),
-        (5L, "Evan"),
-        (6L, "Frank"))).toDF("id", "name")
+      val v = sqlContext.createDataFrame(List(("a", "Ben"),
+        ("b", "Anna"),
+        ("c", "Cara"),
+        ("d", "Dana"),
+        ("e", "Evan"),
+        ("f", "Frank"))).toDF("id", "name")
       val e = sqlContext.createDataFrame(List(
-        (1L, 2L, 1800.0),
-        (2L, 3L, 800.0),
-        (3L, 4L, 600.0),
-        (3L, 5L, 900.0),
-        (4L, 5L, 1100.0),
-        (4L, 6L, 700.0),
-        (5L, 6L, 500.0))).toDF("src", "dst", "distance")
+        ("a", "b", 1800.0),
+        ("b", "c", 800.0),
+        ("c", "d", 600.0),
+        ("c", "e", 900.0),
+        ("d", "e", 1100.0),
+        ("d", "f", 700.0),
+        ("e", "f", 500.0))).toDF("src", "dst", "distance")
       // create sparktk graph
       new Graph(v, e)
     }
 
     "calculate the closeness centrality with normalized values" in {
-      val closenessCentrality = getGraph.closenessCentrality()
-      assert(closenessCentrality.apply(3) == 0.44999999999999996)
+      val closenessCentralityFrame = getGraph.closenessCentrality()
+      closenessCentralityFrame.collect().head.getDouble(2) shouldBe (0.4 +- 1E-6)
     }
 
     "calculate the closeness centrality" in {
-      val closenessCentrality = getGraph.closenessCentrality(None, normalized = false)
-      assert(closenessCentrality.apply(3) == 0.75)
+      val closenessCentralityFrame = getGraph.closenessCentrality(None, normalized = false)
+      closenessCentralityFrame.collect().head.getDouble(2) shouldBe (0.5 +- 1E-6)
     }
 
     "calculate the closeness centrality with edge weights normalized" in {
-      val closenessCentrality = getGraph.closenessCentrality(Some("distance"))
-      assert(closenessCentrality.apply(3) == 6.428571428571428E-4)
+      val closenessCentralityFrame = getGraph.closenessCentrality(Some("distance"))
+      closenessCentralityFrame.collect().head.getDouble(2) shouldBe (5.333333333333334E-4 +- 1E-6)
     }
 
     "calculate the closeness centrality with edge weights" in {
-      val closenessCentrality = getGraph.closenessCentrality(Some("distance"), normalized = false)
-      assert(closenessCentrality.apply(3) == 0.0010714285714285715)
+      val closenessCentralityFrame = getGraph.closenessCentrality(Some("distance"), normalized = false)
+      closenessCentralityFrame.collect().head.getDouble(2) shouldBe (6.666666666666666E-4 +- 1E-6)
     }
   }
 }

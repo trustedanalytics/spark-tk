@@ -37,15 +37,14 @@ def closeness_centrality(self, edge_prop_name=None, normalized=True):
     ----------
 
     :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
-    :param normalized: (boolean) normalizes the closeness centrality value to the number of nodes connected to it
-    divided by the rest number of nodes in the graph, this is effective in the case of disconnected graph
+    :param normalized: (boolean) if true, normalizes the closeness centrality value to the number of nodes connected to
+           it divided by the total number of nodes in the graph, this is effective in the case of disconnected graph
 
-    :return: (dict) dictionary of the graph vertex IDs and each corresponding closeness centrality value
+    :return: (Frame) frame with a column for the closeness centrality data
 
 
     Examples
     --------
-
 
         >>> v = tc.frame.create([(1, "Alice"),
         ...     (2, "Bob"),
@@ -66,15 +65,17 @@ def closeness_centrality(self, edge_prop_name=None, normalized=True):
 
         >>> result = graph.closeness_centrality(edge_prop_name="distance", normalized=False)
 
-        >>> result
-        {5L: 0.1111111111111111,
-        1L: 0.0625,
-        6L: 0.0,
-        2L: 0.06153846153846154,
-        3L: 0.17647058823529413,
-        4L: 0.16666666666666666}
+        >>> result.inspect()
+        [#]  id  name     ClosenessCentrality
+        =====================================
+        [0]   1  Alice                 0.0625
+        [1]   2  Bob          0.0615384615385
+        [2]   3  Charlie       0.176470588235
+        [3]   4  David         0.166666666667
+        [4]   5  Esther        0.111111111111
+        [5]   6  Fanny                    0.0
 
     """
-    to_python_dict = self._tc.jutils.convert.scala_map_to_python
-    return to_python_dict(self._scala.closenessCentrality(self._tc.jutils.convert.to_scala_option(edge_prop_name),
-                                                          normalized))
+    from sparktk.frame.frame import Frame
+    return Frame(self._tc,
+                 self._scala.closenessCentrality(self._tc.jutils.convert.to_scala_option(edge_prop_name), normalized))

@@ -43,8 +43,9 @@ object ClosenessCentrality {
    *
    * @param graph the graph to compute the closeness centrality for its nodes
    * @param edgePropName optional edge column name to be used as edge weight
-   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it divided by
-   *                   the rest number of nodes in the graph, this is effective in the case of disconnected graph
+   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it
+   *                   divided by the total number of nodes in the graph, this is effective in the case of
+   *                   disconnected graph
    * @return graph frame with an additional vertex property for the closeness centrality data
    */
   def run(graph: GraphFrame, edgePropName: Option[String] = None, normalized: Boolean = true): GraphFrame = {

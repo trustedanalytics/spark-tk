@@ -15,7 +15,7 @@
  */
 package org.trustedanalytics.sparktk.graph.internal.ops
 
-import org.apache.spark.graphx.lib.org.trustedanalytics.sparktk.ClosenessCalculations
+import org.trustedanalytics.sparktk.frame.Frame
 import org.trustedanalytics.sparktk.graph.internal.{ BaseGraph, GraphSummarization, GraphState }
 import org.graphframes.lib.org.trustedanalytics.{ sparktk => graphframeslib }
 
@@ -37,22 +37,21 @@ trait ClosenessCentralitySummarization extends BaseGraph {
    * http://leonidzhukov.ru/hse/2013/socialnetworks/papers/freeman79-centrality.pdf
    *
    * @param edgePropName optional edge column name to be used as edge weight
-   * @param normalized normalizes the closeness centrality value to the number of nodes connected to it divided by
-   *                   the rest number of nodes in the graph, this is effective in the case of disconnected graph
-   * @return dictionary of the graph vertex IDs and each corresponding closeness centrality value
+   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it
+   *                   divided by the total number of nodes in the graph, this is effective in the case of
+   *                   disconnected graph
+   * @return frame with an additional column for the closeness centrality data
    */
   def closenessCentrality(edgePropName: Option[String] = None,
-                          normalized: Boolean = true): Map[Long, Double] = {
-    execute[Map[Long, Double]](ClosenessCentrality(edgePropName, normalized))
+                          normalized: Boolean = true): Frame = {
+    execute[Frame](ClosenessCentrality(edgePropName, normalized))
   }
 }
 case class ClosenessCentrality(edgePropName: Option[String] = None,
-                               normalized: Boolean = true) extends GraphSummarization[Map[Long, Double]] {
+                               normalized: Boolean = true) extends GraphSummarization[Frame] {
 
-  override def work(state: GraphState): Map[Long, Double] = {
-    graphframeslib.ClosenessCentrality.run(state.graphFrame, edgePropName, normalized).map {
-      case ClosenessCalculations(id, value) => (id, value)
-    }.toMap
+  override def work(state: GraphState): Frame = {
+    new Frame(graphframeslib.ClosenessCentrality.run(state.graphFrame, edgePropName, normalized).vertices)
   }
 }
 
