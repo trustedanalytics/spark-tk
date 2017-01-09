@@ -17,22 +17,22 @@
 
 
 from sparktk import TkContext
-from collections import namedtuple
 from sparktk.frame.frame import Frame
 from sparktk import arguments
-from grid_search import grid_values, expand_kwarg_grids, grid_search, GridPoint, GridSearchResults
+from grid_search import grid_search
 
 
 def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkContext.implicit):
     """
     Computes k-fold cross validation on model with the given frame and parameter values
     :param frame: The frame to perform cross-validation on
-    :param model_type: The model reference
-    :param descriptor: Dictionary of model parameters and their value/values in list of type grid_values
+    :param train_descriptors: Tuple of model and Dictionary of model parameters and their value/values as singleton
+            values or a list of type grid_values
     :param num_folds: Number of folds to run the cross-validator on
     :param verbose: Flag indicating if the results of each fold are to be viewed. Default is set to False
-    :param tc: spark-tk context
-    :return: Summary of model's performance
+    :param tc: spark-tk context (provided implicitly)
+    :return: Summary of model's performance consisting of metrics of each combination of train_descriptor values per fold
+            and averages across all folds
 
     Example
     -------
@@ -193,8 +193,8 @@ def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkCo
 
     all_grid_search_results = []
     grid_search_results_accumulator = None
-    for validate_frame, train_frame in split_data(frame, num_folds , tc):
-        scores = grid_search(train_frame, validate_frame, train_descriptors, tc)
+    for train_frame, test_frame in split_data(frame, num_folds , tc):
+        scores = grid_search(train_frame, test_frame, train_descriptors, tc)
         if grid_search_results_accumulator is None:
             grid_search_results_accumulator = scores
         else:
@@ -213,8 +213,8 @@ def split_data(frame, num_folds, tc=TkContext.implicit):
     Randomly split data based on num_folds specified. Implementation logic borrowed from pyspark.
     :param frame: The frame to be split into train and validation frames
     :param num_folds: Number of folds to be split into
-    :param tc: spark-tk context
-    :return: validation frame and train frame for each fold
+    :param tc: spark-tk context passed implicitly
+    :return: train frame and test frame for each fold
     """
     from pyspark.sql.functions import rand
     df = frame.dataframe
@@ -222,26 +222,46 @@ def split_data(frame, num_folds, tc=TkContext.implicit):
     rand_col = "rand_1"
     df_indexed = df.select("*", rand(0).alias(rand_col))
     for i in xrange(num_folds):
-        validation_lower_bound = i*h
-        validation_upper_bound = (i+1)*h
-        condition = (df_indexed[rand_col] >= validation_lower_bound) & (df_indexed[rand_col] < validation_upper_bound)
-        validation_df = df_indexed.filter(condition)
+        test_lower_bound = i*h
+        test_upper_bound = (i+1)*h
+        condition = (df_indexed[rand_col] >= test_lower_bound) & (df_indexed[rand_col] < test_upper_bound)
+        test_df = df_indexed.filter(condition)
         train_df = df_indexed.filter(~condition)
         train_frame = tc.frame.create(train_df)
-        validation_frame = tc.frame.create(validation_df)
-        yield validation_frame, train_frame
+        test_frame = tc.frame.create(test_df)
+        yield train_frame, test_frame
 
 
 class CrossValidateClassificationResults(object):
+    """
+    Class storing the results of cross validation for classification
+    """
     def __init__(self, all_grid_search_results, averages, verbose=False):
+        """
+        Initializes the CrossValidateClassificationResults object with all the results, averages across folds and
+        verbosity desired
+        :param all_grid_search_results: Metrics for all models and their configurations on each fold
+        :param averages: Average metrics for each model and configurations across all folds
+        :param verbose: The verbosity desired.
+        If false, only the averages are displayed.
+        If true all the results and averages are displayed
+        """
         self.all_results = all_grid_search_results
         self.averages = averages
         self.verbose = verbose
 
     def _get_all_str(self):
+        """
+        Method to print all the metrics
+        :return: All the metrics
+        """
         return "\n".join(["\n".join([str(point) for point in cm.grid_points]) for cm in self.all_results])
 
     def show_all(self):
+        """
+        Method to show the results for all models and configurations across each fold
+        :return: The classification metrics for all models and configurations across each fold
+        """
         return self._get_all_str()
 
     def __repr__(self):
