@@ -26,11 +26,11 @@ import org.trustedanalytics.sparktk.frame.internal.serde.DefaultTfRecordRowDecod
 object ImportTensorflow {
   /**
    * Creates a frame using TensorFlow Records path with specified schema
-    *
+   *
    * TensorFlow records are the standard data format for TensorFlow. The recommended format for TensorFlow is a TFRecords file
-    * containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
-    * https://www.tensorflow.org/how_tos/reading_data
-    *
+   * containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
+   * https://www.tensorflow.org/how_tos/reading_data
+   *
    * During Import, API parses TensorFlow DataTypes as below
    *
    * Int64List => IntegerType or LongType
@@ -50,7 +50,6 @@ object ImportTensorflow {
     val exampleRdd = rdd.map {
       case (bytesWritable, nullWritable) => Example.parseFrom(bytesWritable.getBytes)
     }
-
 
     var finalSchema = if (schema.isEmpty) Some(TensorflowInferSchema(exampleRdd)).get else schema.get
 

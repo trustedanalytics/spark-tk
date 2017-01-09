@@ -88,14 +88,14 @@ object JConvert extends Serializable {
     seq.reduce(_ ++ _)
   }
 
-  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): FrameSchema = {
-    val columns = pythonSchema.asScala.map { item =>
-      val list = item.asScala.toList
-      require(list.length == 2, "Schema entries must be tuples of size 2 (name, dtype)")
-      Column(list.head, DataTypes.toDataType(list(1)))
-    }.toVector
-    FrameSchema(columns)
-  }
+  //  def frameSchemaToScala(pythonSchema: JArrayList[JArrayList[String]]): FrameSchema = {
+  //    val columns = pythonSchema.asScala.map { item =>
+  //      val list = item.asScala.toList
+  //      require(list.length == 2, "Schema entries must be tuples of size 2 (name, dtype)")
+  //      Column(list.head, DataTypes.toDataType(list(1)))
+  //    }.toVector
+  //    FrameSchema(columns)
+  //  }
   //
   //    def frameSchemaToPython(scalaSchema: FrameSchema): JArrayList[JArrayList[String]] = {
   //      val pythonSchema = new JArrayList[JArrayList[String]]()

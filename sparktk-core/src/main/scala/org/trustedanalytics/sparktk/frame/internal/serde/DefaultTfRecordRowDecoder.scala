@@ -41,35 +41,37 @@ object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
       case (featureName, feature) =>
         val colDataType = schema.columnDataType(featureName)
         row(schema.columnIndex(featureName)) = colDataType match {
-          case vtype if vtype.equals(DataTypes.int32) | vtype.equals(DataTypes.int64) => {
+          case dtype if dtype.equals(DataTypes.int32) | dtype.equals(DataTypes.int64) => {
             val dataList = feature.getInt64List.getValueList
             if (dataList.size() == 1)
               colDataType.parse(dataList.get(0)).get
             else
               throw new RuntimeException("Mismatch in schema type, expected int32 or int64")
           }
-          case vtype if vtype.equals(DataTypes.float32) | vtype.equals(DataTypes.float64) => {
+          case dtype if dtype.equals(DataTypes.float32) | dtype.equals(DataTypes.float64) => {
             val dataList = feature.getFloatList.getValueList
             if (dataList.size() == 1)
               colDataType.parse(dataList.get(0)).get
             else
-              throw new RuntimeException("Mismatch in schema type, expected float64")
+              throw new RuntimeException("Mismatch in schema type, expected float32 or float64")
           }
           case vtype: DataTypes.vector => {
             feature.getKindCase.getNumber match {
               case Feature.INT64_LIST_FIELD_NUMBER => {
                 val dataList = feature.getInt64List.getValueList
-                if (vtype.length == dataList.size())
+                val actualSize = dataList.size()
+                if (vtype.length == actualSize)
                   vtype.parse(dataList.asScala.toList).get
                 else
-                  throw new RuntimeException("Mismatch in vector length...")
+                  throw new RuntimeException("Mismatch in vector length: expected length = $(vtype.length) but found length = $actualSize")
               }
               case Feature.FLOAT_LIST_FIELD_NUMBER => {
                 val dataList = feature.getFloatList.getValueList
-                if (vtype.length == dataList.size())
+                val actualSize = dataList.size()
+                if (vtype.length == actualSize)
                   vtype.parse(dataList.asScala.toList).get
                 else
-                  throw new RuntimeException("Mismatch in vector length...")
+                  throw new RuntimeException("Mismatch in vector length: expected length = $(vtype.length) but found length = $actualSize")
               }
             }
           }

@@ -64,7 +64,9 @@ object TensorflowInferSchema {
 
   private def mergeFieldTypes(first: Map[String, DataType], second: Map[String, DataType]): Map[String, DataType] = {
     //Merge two maps and do the comparision.
-    val mutMap = collection.mutable.Map[String, DataType]((first.keySet ++ second.keySet).map(key => (key, findTightestCommonType(first.getOrElse(key, null), second.getOrElse(key, null)).get)).toSeq: _*)
+    val mutMap = collection.mutable.Map[String, DataType]((first.keySet ++ second.keySet)
+      .map(key => (key, findTightestCommonType(first.getOrElse(key, null), second.getOrElse(key, null)).get))
+      .toSeq: _*)
     mutMap
   }
 

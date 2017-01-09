@@ -18,13 +18,13 @@ package org.trustedanalytics.sparktk.tensorflow
 import java.io.File
 
 import org.apache.commons.io.FileUtils
-import org.apache.spark.sql.catalyst.expressions.{GenericRow, GenericRowWithSchema}
+import org.apache.spark.sql.catalyst.expressions.{ GenericRow, GenericRowWithSchema }
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DataTypes => _, _}
+import org.apache.spark.sql.types.{ DataTypes => _, _ }
 import org.scalatest.Matchers
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.constructors.ImportTensorflow
-import org.trustedanalytics.sparktk.frame.internal.serde.{DefaultTfRecordRowDecoder, DefaultTfRecordRowEncoder}
+import org.trustedanalytics.sparktk.frame.internal.serde.{ DefaultTfRecordRowDecoder, DefaultTfRecordRowEncoder }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.sparktk.frame.DataTypes._
 
@@ -58,10 +58,10 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
         StructField("int64label", LongType),
         StructField("float32label", FloatType),
         StructField("float64label", DoubleType),
-//        StructField("vectorlabel", ArrayType(DoubleType, false)), -- Throwing exception while converting immutable.Vector as mutable.WrappedArray
+        //        StructField("vectorlabel", ArrayType(DoubleType, false)), -- Throwing exception while converting immutable.Vector as mutable.WrappedArray
         StructField("name", StringType)
       ))
-//      val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1"), schemaStructType)
+      //      val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1"), schemaStructType)
       val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, "r1"), schemaStructType)
 
       //Encode Sql Row to TensorFlow example
@@ -69,14 +69,14 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       import org.tensorflow.example.Feature
 
       //Verify each Datatype converted to TensorFlow datatypes
-      example.getFeatures.getFeatureMap.asScala.foreach{
-        case(featureName, feature) =>
+      example.getFeatures.getFeatureMap.asScala.foreach {
+        case (featureName, feature) =>
           featureName match {
             case "id" | "int32label" | "int64label" => assert(feature.getKindCase.getNumber == Feature.INT64_LIST_FIELD_NUMBER)
             case "float32label" | "float64label" => assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
             case "name" => assert(feature.getKindCase.getNumber == Feature.BYTES_LIST_FIELD_NUMBER)
           }
-        }
+      }
     }
 
     "Decode given TensorFlow Example as Row" in {
