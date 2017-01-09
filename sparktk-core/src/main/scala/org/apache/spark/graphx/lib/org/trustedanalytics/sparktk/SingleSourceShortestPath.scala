@@ -71,6 +71,9 @@ object SingleSourceShortestPath {
         (edge.srcAttr.cost + weight >= edge.dstAttr.cost)) {
         Iterator.empty
       }
+      else if (edge.srcAttr.path.toSet.contains(edge.dstAttr.origVertexId)) { // Avoid cycles
+        Iterator.empty
+      }
       else {
         Iterator((edge.dstId, newShortestPath))
       }
