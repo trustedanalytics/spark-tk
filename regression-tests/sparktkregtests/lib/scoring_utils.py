@@ -100,7 +100,7 @@ class scorer(object):
     def start_pipeline_server(self, pipeline_filename):
         host = "0.0.0.0"
         port = "45000"
-        scoring_pipeline_location = os.path.join(config.root, "scoring-pipelines", "scoring_pipelines", "scoringExecutor.py")
+        scoring_pipeline_location = os.path.join(config.root, "scoring_pipelines", "scoring_pipelines", "scoringExecutor.py")
         self.pipeline_process = sp.Popen(
             ["python2.7", scoring_pipeline_location, pipeline_filename, port],
             preexec_fn=os.setsid)
