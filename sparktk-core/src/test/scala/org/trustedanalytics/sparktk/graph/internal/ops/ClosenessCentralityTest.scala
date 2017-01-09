@@ -50,17 +50,17 @@ class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers 
     }
 
     "calculate the closeness centrality" in {
-      val closenessCentralityFrame = getGraph.closenessCentrality(None, normalized = false)
+      val closenessCentralityFrame = getGraph.closenessCentrality(None, normalize = false)
       closenessCentralityFrame.collect().head.getDouble(2) shouldBe (0.5 +- 1E-6)
     }
 
-    "calculate the closeness centrality with edge weights normalized" in {
+    "calculate the normalized closeness centrality with edge weights" in {
       val closenessCentralityFrame = getGraph.closenessCentrality(Some("distance"))
       closenessCentralityFrame.collect().head.getDouble(2) shouldBe (5.333333333333334E-4 +- 1E-6)
     }
 
     "calculate the closeness centrality with edge weights" in {
-      val closenessCentralityFrame = getGraph.closenessCentrality(Some("distance"), normalized = false)
+      val closenessCentralityFrame = getGraph.closenessCentrality(Some("distance"), normalize = false)
       closenessCentralityFrame.collect().head.getDouble(2) shouldBe (6.666666666666666E-4 +- 1E-6)
     }
   }

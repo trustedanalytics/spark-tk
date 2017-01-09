@@ -19,10 +19,11 @@ from sparktk.tkcontext import TkContext
 tc = TkContext.implicit
 
 
-def closeness_centrality(self, edge_prop_name=None, normalized=True):
+def closeness_centrality(self, edge_prop_name=None, normalize=True):
     """
 
-     Compute closeness centrality for nodes.
+     Computes the closeness centrality for the graph nodes.
+
      Closeness centrality of a node is the reciprocal of the sum of the shortest path distances from this node to all
      other nodes in the graph. Since the sum of distances depends on the number of nodes in the
      graph, closeness is normalized by the sum of minimum possible distances.
@@ -37,7 +38,7 @@ def closeness_centrality(self, edge_prop_name=None, normalized=True):
     ----------
 
     :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
-    :param normalized: (boolean) if true, normalizes the closeness centrality value to the number of nodes connected to
+    :param normalize: (boolean) if true, normalizes the closeness centrality value to the number of nodes connected to
            it divided by the total number of nodes in the graph, this is effective in the case of disconnected graph
 
     :return: (Frame) frame with a column for the closeness centrality data
@@ -63,10 +64,10 @@ def closeness_centrality(self, edge_prop_name=None, normalized=True):
 
         >>> graph = tc.graph.create(v, e)
 
-        >>> result = graph.closeness_centrality(edge_prop_name="distance", normalized=False)
+        >>> result = graph.closeness_centrality(edge_prop_name="distance", normalize=False)
 
         >>> result.inspect()
-        [#]  id  name     ClosenessCentrality
+        [#]  id  name     closeness_centrality
         =====================================
         [0]   1  Alice                 0.0625
         [1]   2  Bob          0.0615384615385
@@ -78,4 +79,4 @@ def closeness_centrality(self, edge_prop_name=None, normalized=True):
     """
     from sparktk.frame.frame import Frame
     return Frame(self._tc,
-                 self._scala.closenessCentrality(self._tc.jutils.convert.to_scala_option(edge_prop_name), normalized))
+                 self._scala.closenessCentrality(self._tc.jutils.convert.to_scala_option(edge_prop_name), normalize))
