@@ -46,6 +46,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
         #self.config.read(filepath)
 
+    @unittest.skip("")
     def test_model_scoring(self):
         """Tests standard usage of the kmeans cluster algorithm."""
         kmodel = self.context.models.clustering.kmeans.train(
@@ -64,6 +65,34 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
                 self.assertEqual(i["cluster"], res.json()["data"][0]['score'])
 
+    def test_revise_model(self):
+        """Tests revise api in scoring engine"""
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, ["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"], 5)
+
+        result_frame = kmodel.predict(self.frame_test)
+        old_model_path = kmodel.export_to_mar(self.get_export_file(self.get_name("kmeans")))
+
+        #create a revised model
+        kmodel_revised = self.context.models.clustering.kmeans.train(self.frame_train,
+                     ["Vec1", "Vec2", "Vec3", "Vec4"], 4, max_iterations=10)
+        result_revised = kmodel_revised.predict(self.frame_test)
+        test_rows = result_revised.to_pandas(50)
+        revised_model_path = kmodel_revised.export_to_mar(self.get_export_file(self.get_name("kmeans_revised")))
+
+        with scoring_utils.scorer(
+               old_model_path, self.id()) as scorer:
+            res = scorer.revise(revised_model_path)
+            self.assertEqual(res.json()["status"], "success")
+
+            for _, i in test_rows.iterrows():
+                res = scorer.score(
+                    [dict(zip(["Vec1", "Vec2", "Vec3", "Vec4"],
+                    list(i[0:4])))])
+                #print result_revised.inspect(10)
+                #print result_frame.inspect(10)
+                print res.json()
+                self.assertEqual(i["cluster"], res.json()["data"][0]['score'])
 
 if __name__ == '__main__':
     unittest.main()
