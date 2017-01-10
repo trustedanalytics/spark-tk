@@ -84,10 +84,8 @@ class scorer(object):
 
     def revise(self, model_path):
         """revises the scoring engine model"""
-        headers = {'Content-type': 'application/json'}
         scoring_host = self.host + ":" + self.port
         submit_string = 'http://'+scoring_host+'/v2/revise'
-        data_string = """{"model-path":"%s", "force":"true"}"""% model_path
-
-        response = requests.post(submit_string, data=data_string)
+        response = requests.post(
+            submit_string, json={"model-path":model_path, "force":"true"})
         return response
