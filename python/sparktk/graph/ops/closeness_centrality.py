@@ -68,13 +68,13 @@ def closeness_centrality(self, edge_prop_name=None, normalize=True):
 
         >>> result.inspect()
         [#]  id  name     closeness_centrality
-        =====================================
-        [0]   1  Alice                 0.0625
-        [1]   2  Bob          0.0615384615385
-        [2]   3  Charlie       0.176470588235
-        [3]   4  David         0.166666666667
-        [4]   5  Esther        0.111111111111
-        [5]   6  Fanny                    0.0
+        ======================================
+        [0]   1  Alice          0.384615384615
+        [1]   2  Bob                       0.4
+        [2]   3  Charlie                  0.45
+        [3]   4  David                     0.4
+        [4]   5  Esther                    0.2
+        [5]   6  Fanny                     0.0
 
     """
     from sparktk.frame.frame import Frame
