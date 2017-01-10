@@ -21,8 +21,11 @@ echo "$NAME DIR=$DIR"
 
 # make sure the model scoring servers get deleted
 sleep 10
-ps -ef | grep
-for pid in $(ps -ef | grep "model-scor" | awk '{print $2}'); do kill -9 $pid; done
+echo "cleanup"
+echo $(ps -ef | grep "model-scor")
+for pid in $(ps -ef | grep "model-scor" | grep -v 'grep' | awk '{print $2}'); do kill -9 $pid; done
+echo $(ps -ef | grep "scoring-pipe")
+for pid in $(ps -ef | grep "scoring-pipe" | grep -v 'grep' | awk '{print $2}'); do kill -9 $pid; done
 
 
 echo "return was" $?
