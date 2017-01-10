@@ -11,3 +11,5 @@ sklearn
 lxml
 psutil
 flask
+flask_api
+kafka
