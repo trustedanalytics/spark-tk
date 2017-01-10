@@ -90,5 +90,4 @@ class scorer(object):
         data_string = """{"model-path":"%s", "force":"true"}"""% model_path
 
         response = requests.post(submit_string, data=data_string)
-        print response.text
         return response
