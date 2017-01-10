@@ -10,3 +10,6 @@ glob2
 sklearn
 lxml
 psutil
+flask
+flask_api
+kafka
