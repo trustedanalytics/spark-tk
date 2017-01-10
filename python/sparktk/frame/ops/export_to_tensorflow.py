@@ -24,7 +24,7 @@ def export_to_tensorflow(self, path):
     containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
     https://www.tensorflow.org/how_tos/reading_data
 
-    During export, API parses Spark SQL DataTypes to TensorFlow compatible DataTypes as below
+    During export, the API parses Spark SQL DataTypes to TensorFlow compatible DataTypes as below:
 
     * IntegerType or LongType =>  Int64List
     * FloatType or DoubleType => FloatList

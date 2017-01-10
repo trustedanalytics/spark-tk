@@ -27,7 +27,7 @@ def import_tensorflow(tf_path, schema=None, tc=TkContext.implicit):
     containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
     https://www.tensorflow.org/how_tos/reading_data
 
-    During Import, API parses TensorFlow DataTypes as below
+    During Import, the API parses TensorFlow DataTypes as below:
 
     * Int64List => IntegerType or LongType
     * FloatList => FloatType or DoubleType
@@ -37,7 +37,7 @@ def import_tensorflow(tf_path, schema=None, tc=TkContext.implicit):
     ----------
 
     :param tf_path:(str) Full path to TensorFlow records
-    :param schema: (Optional(list[tuple(str, type)] or list[str])) The are different options for specifying a schema:
+    :param schema: (Optional(list[tuple(str, type)] or list[str])) There are different options for specifying a schema:
 
     * Provide the full schema for the frame as a list of tuples (string column name and data type)
     * Provide the column names as a list of strings.  Column data types will be inferred, based on the data.
@@ -74,8 +74,7 @@ def import_tensorflow(tf_path, schema=None, tc=TkContext.implicit):
         >>> destPath = "../tests/sandbox/output26.tfr"
 
         >>> import os
-
-        >>> os.remove(destPath)
+        ... if os.path.exists(filename) os.remove(destPath)
 
         >>> frame.export_to_tensorflow(destPath)
 
@@ -106,7 +105,7 @@ def import_tensorflow(tf_path, schema=None, tc=TkContext.implicit):
 
     if schema is not None:
         schema_as_list_of_lists = [list(elem) for elem in schema]
-        scala_frame_schema = schema_to_scala(schema_as_list_of_lists)
+        scala_frame_schema = schema_to_scala(tc.sc, schema_as_list_of_lists)
     else:
         scala_frame_schema = schema
 

@@ -31,7 +31,7 @@ object ImportTensorflow {
    * containing tf.train.Example protocol buffers. The tf.train.Example protocol buffers encodes (which contain Features as a field).
    * https://www.tensorflow.org/how_tos/reading_data
    *
-   * During Import, API parses TensorFlow DataTypes as below
+   * During Import, the API parses TensorFlow DataTypes as below:
    *
    * Int64List => IntegerType or LongType
    * FloatList => FloatType or DoubleType
@@ -51,7 +51,7 @@ object ImportTensorflow {
       case (bytesWritable, nullWritable) => Example.parseFrom(bytesWritable.getBytes)
     }
 
-    var finalSchema = if (schema.isEmpty) Some(TensorflowInferSchema(exampleRdd)).get else schema.get
+    val finalSchema = schema.getOrElse(TensorflowInferSchema(exampleRdd))
 
     val resultRdd = exampleRdd.map(example => DefaultTfRecordRowDecoder.decodeTfRecord(example, finalSchema))
     new Frame(resultRdd, finalSchema)

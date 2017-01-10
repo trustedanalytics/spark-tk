@@ -75,7 +75,7 @@ object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
               }
             }
           }
-          case x if x.equals(DataTypes.string) => feature.getBytesList.toByteString.toStringUtf8.trim
+          case dtype if dtype.equals(DataTypes.string) => feature.getBytesList.toByteString.toStringUtf8.trim
         }
     }
     Row.fromSeq(row)

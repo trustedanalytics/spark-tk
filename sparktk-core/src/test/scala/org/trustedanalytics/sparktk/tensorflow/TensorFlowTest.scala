@@ -17,18 +17,21 @@ package org.trustedanalytics.sparktk.tensorflow
 
 import java.io.File
 
+import com.google.protobuf.ByteString
 import org.apache.commons.io.FileUtils
-import org.apache.spark.sql.catalyst.expressions.{ GenericRow, GenericRowWithSchema }
+import org.apache.spark.sql.catalyst.expressions.{GenericRow, GenericRowWithSchema}
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{ DataTypes => _, _ }
+import org.apache.spark.sql.types.{DataTypes => _, _}
 import org.scalatest.Matchers
+import org.tensorflow.example._
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.constructors.ImportTensorflow
-import org.trustedanalytics.sparktk.frame.internal.serde.{ DefaultTfRecordRowDecoder, DefaultTfRecordRowEncoder }
+import org.trustedanalytics.sparktk.frame.internal.serde.{DefaultTfRecordRowDecoder, DefaultTfRecordRowEncoder}
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.sparktk.frame.DataTypes._
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
 
@@ -45,7 +48,6 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       val frame = new Frame(rdd, schema)
       frame.exportToTensorflow(path)
       val importedFrame = ImportTensorflow.importTensorflow(sparkContext, path)
-      importedFrame.rowCount()
       val expectedRows = frame.dataframe.collect()
       val actualDf = importedFrame.dataframe.select("id", "int32label", "int64label", "float32label", "float64label", "vectorlabel", "name")
       val actualRows = actualDf.collect()
@@ -58,10 +60,12 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
         StructField("int64label", LongType),
         StructField("float32label", FloatType),
         StructField("float64label", DoubleType),
-        //        StructField("vectorlabel", ArrayType(DoubleType, false)), -- Throwing exception while converting immutable.Vector as mutable.WrappedArray
+        //StructField("vectorlabel", ArrayType(DoubleType, false)),
         StructField("name", StringType)
       ))
-      //      val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1"), schemaStructType)
+      //val doubleArray = Array(1.1, null, 111.1, null, 11111.1)
+      //val doubleGenericArray =
+      //val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, doubleGenericArray, "r1"), schemaStructType)
       val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, "r1"), schemaStructType)
 
       //Encode Sql Row to TensorFlow example
@@ -86,7 +90,49 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       val schema = new FrameSchema(List(Column("id", int32), Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("name", string)))
       val rdd = sparkContext.parallelize(testRows)
       val frame = new Frame(rdd, schema)
-      val exampleRDD = frame.dataframe.map(row => DefaultTfRecordRowEncoder.encodeTfRecord(row))
+
+      //Build example RDD for the frame
+      val exampleRDD = frame.dataframe.map{ row =>
+        val features = Features.newBuilder()
+        val example = Example.newBuilder()
+
+        val schema = row.schema
+        row.schema.zipWithIndex.map {
+          case (structField, index) =>
+            structField.dataType match {
+              case IntegerType => {
+                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getInt(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
+              }
+              case LongType => {
+                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getLong(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
+              }
+              case FloatType => {
+                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getFloat(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
+              }
+              case DoubleType => {
+                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getDouble(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
+              }
+              case ArrayType(DoubleType, false) => {
+                val wrappedArr = row.getAs[mutable.WrappedArray[Double]](index)
+                val floatListBuilder = FloatList.newBuilder()
+                wrappedArr.foreach(x => floatListBuilder.addValue(x.toFloat))
+                val floatList = floatListBuilder.build()
+                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatList).build())
+              }
+              case _ => {
+                val byteList = BytesList.newBuilder().addValue(ByteString.copyFrom(row.getString(index).getBytes)).build()
+                features.putFeature(structField.name, Feature.newBuilder().setBytesList(byteList).build())
+              }
+            }
+        }
+        features.build()
+        example.setFeatures(features)
+        example.build()
+      }
 
       //Decode TensorFlow example to Sql Row
       val rowRDD = exampleRDD.map(example => DefaultTfRecordRowDecoder.decodeTfRecord(example, schema))
@@ -100,8 +146,49 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       val schema = new FrameSchema(List(Column("id", int32), Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("name", string)))
       val rdd = sparkContext.parallelize(testRows)
       val frame = new Frame(rdd, schema)
-      val exampleRDD = frame.dataframe.map(row => DefaultTfRecordRowEncoder.encodeTfRecord(row))
-      val actualSchema = Some(TensorflowInferSchema(exampleRDD)).get
+      //Build example RDD for the frame
+      val exampleRDD = frame.dataframe.map{ row =>
+        val features = Features.newBuilder()
+        val example = Example.newBuilder()
+
+        val schema = row.schema
+        row.schema.zipWithIndex.map {
+          case (structField, index) =>
+            structField.dataType match {
+              case IntegerType => {
+                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getInt(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
+              }
+              case LongType => {
+                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getLong(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
+              }
+              case FloatType => {
+                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getFloat(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
+              }
+              case DoubleType => {
+                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getDouble(index))).build()
+                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
+              }
+              case ArrayType(DoubleType, false) => {
+                val wrappedArr = row.getAs[mutable.WrappedArray[Double]](index)
+                val floatListBuilder = FloatList.newBuilder()
+                wrappedArr.foreach(x => floatListBuilder.addValue(x.toFloat))
+                val floatList = floatListBuilder.build()
+                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatList).build())
+              }
+              case _ => {
+                val byteList = BytesList.newBuilder().addValue(ByteString.copyFrom(row.getString(index).getBytes)).build()
+                features.putFeature(structField.name, Feature.newBuilder().setBytesList(byteList).build())
+              }
+            }
+        }
+        features.build()
+        example.setFeatures(features)
+        example.build()
+      }
+      val actualSchema = TensorflowInferSchema(exampleRDD)
 
       //Verify each TensorFlow Datatype is inferred as one of our Datatype
       actualSchema.columns.map { colum =>
