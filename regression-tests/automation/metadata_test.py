@@ -39,39 +39,11 @@ class MetadataTest(sparktk_test.SparkTKTestCase):
             datasets.append(file)
         datasets.remove('metadata.txt')
         duplicates = len(meta_list) - len(set(meta_list))
-
-        self.assertEqual(duplicates, 0)
-
-    def test_metadata_has_all_datasets(self):
-        """Test metadata has every dataset in the dataset directory"""
-        meta_list = []
-        filename = self.get_local_dataset('metadata.txt')
-        with open(filename, 'r') as f:
-            for line in f:
-                alpha = line.split(',', 2)
-                meta_list.append(alpha[0])
-        datasets = []
-        for file in os.listdir(config.dataset_directory):
-            datasets.append(file)
-        datasets.remove('metadata.txt')
         is_not_documented = list(set(datasets) - set(meta_list))
-
-        self.assertEqual(is_not_documented, [])
-
-    def test_metadata_does_not_have_nonexistent_dataset(self):
-        """Test metadata does not have datasets listed that do not exist in the datasets directory"""
-        meta_list = []
-        filename = self.get_local_dataset('metadata.txt')
-        with open(filename, 'r') as f:
-            for line in f:
-                alpha = line.split(',', 2)
-                meta_list.append(alpha[0])
-        datasets = []
-        for file in os.listdir(config.dataset_directory):
-            datasets.append(file)
-        datasets.remove('metadata.txt')
         does_not_exist = list(set(meta_list) - set(datasets))
 
+        self.assertEqual(duplicates, 0)
+        self.assertEqual(is_not_documented, [])
         self.assertListEqual(does_not_exist, [])
 
 if __name__ == '__main__':
