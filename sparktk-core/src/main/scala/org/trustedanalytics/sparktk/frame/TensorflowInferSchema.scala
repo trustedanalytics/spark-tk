@@ -114,7 +114,7 @@ object TensorflowInferSchema {
     }
     else {
       val fieldValue = floatList(0).toString
-      parseDouble(fieldValue)
+      parseFloat(fieldValue)
     }
   }
 
@@ -132,15 +132,21 @@ object TensorflowInferSchema {
     throw new RuntimeException("Unable to parse field datatype to int64...")
   }
 
-  private def parseDouble(field: String): DataType = {
-    if ((allCatch opt field.toDouble).isDefined) {
-      DataTypes.float64
+  private def parseFloat(field: String): DataType = {
+    if ((allCatch opt field.toFloat).isDefined) {
+      DataTypes.float32
     }
     else {
-      throw new RuntimeException("Unable to parse field datatype to float64...")
+      parseDouble(field)
     }
   }
 
+  private def parseDouble(field: String): DataType = if (allCatch.opt(field.toDouble).isDefined) {
+    DataTypes.float64
+  }
+  else {
+    throw new RuntimeException("Unable to parse field datatype to float64...")
+  }
   /**
    * Copied from internal Spark api
    * [[org.apache.spark.sql.catalyst.analysis.HiveTypeCoercion]]
