@@ -32,7 +32,6 @@ import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.sparktk.frame.DataTypes._
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 
 class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
 
@@ -61,13 +60,13 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
         StructField("int64label", LongType),
         StructField("float32label", FloatType),
         StructField("float64label", DoubleType),
-        //StructField("vectorlabel", ArrayType(DoubleType, false)),
+        StructField("vectorlabel", ArrayType(DoubleType, false)),
         StructField("strlabel", StringType)
       ))
-      //val doubleArray = Array(1.1, null, 111.1, null, 11111.1)
-      //val doubleGenericArray =
-      //val rowWithSchema = new GenericRowWithSchema(Array[Any](1, 23L, 10.0F, 14.0, doubleGenericArray, "r1"), schemaStructType)
-      val rowWithSchema = new GenericRowWithSchema(Array[Any](1, 23L, 10.0F, 14.0, "r1"), schemaStructType)
+      val doubleArray = Array(1.1, 111.1, 11111.1)
+      val expectedFloatArray = Array(1.1F, 111.1F, 11111.1F)
+
+      val rowWithSchema = new GenericRowWithSchema(Array[Any](1, 23L, 10.0F, 14.0, doubleArray, "r1"), schemaStructType)
 
       //Encode Sql Row to TensorFlow example
       val example = DefaultTfRecordRowEncoder.encodeTfRecord(rowWithSchema)
@@ -93,6 +92,10 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
               assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
               assert(feature.getFloatList.getValue(0) == 14.0F)
             }
+            case "vectorlabel" => {
+              assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
+              assert(feature.getFloatList.getValueList.toArray === expectedFloatArray)
+            }
             case "strlabel" => {
               assert(feature.getKindCase.getNumber == Feature.BYTES_LIST_FIELD_NUMBER)
               assert(feature.getBytesList.toByteString.toStringUtf8.trim == "r1")
@@ -101,8 +104,23 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       }
     }
 
+    "Throw null pointer exception for a vector with null values during Encode" in {
+      intercept[NullPointerException] {
+        val schemaStructType = StructType(Array(
+          StructField("vectorlabel", ArrayType(DoubleType, false))
+        ))
+        val doubleArray = Array(1.1, null, 111.1, null, 11111.1)
+
+        val rowWithSchema = new GenericRowWithSchema(Array[Any](doubleArray), schemaStructType)
+
+        //Throws NullPointerException
+        DefaultTfRecordRowEncoder.encodeTfRecord(rowWithSchema)
+      }
+    }
+
     "Decode given TensorFlow Example as Row" in {
 
+      //Here Vector with null's are not supported
       val expectedRow = new GenericRow(Array[Any](1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1"))
       val schema = new FrameSchema(List(Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("strlabel", string)))
 
@@ -132,14 +150,14 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
 
     "Check infer schema" in {
       val testRows: Array[Row] = Array(
-        new GenericRow(Array[Any](1, 23L, 10.0F, 14.0F, Vector(1.0, 2.0), "r1")),
-        new GenericRow(Array[Any](2, 24, 12.0F, 15.0, Vector(2.0, 2.0), "r2")))
+        new GenericRow(Array[Any](1, Int.MaxValue +10L, 10.0F, 14.0F, Vector(1.0, 2.0), "r1")),
+        new GenericRow(Array[Any](2, 24, 12.0F, 15F, Vector(2.0, 2.0), "r2")))
 
       val schema = new FrameSchema(List(Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("name", string)))
 
       //Build example1
       val intFeature1 = Int64List.newBuilder().addValue(1)
-      val longFeature1 = Int64List.newBuilder().addValue(23L)
+      val longFeature1 = Int64List.newBuilder().addValue(Int.MaxValue+10L)
       val floatFeature1 = FloatList.newBuilder().addValue(10.0F)
       val doubleFeature1 = FloatList.newBuilder().addValue(14.0F)
       val vectorFeature1 = FloatList.newBuilder().addValue(1F).addValue(2F).build()
@@ -160,7 +178,7 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       val intFeature2 = Int64List.newBuilder().addValue(2)
       val longFeature2 = Int64List.newBuilder().addValue(24)
       val floatFeature2 = FloatList.newBuilder().addValue(12.0F)
-      val doubleFeature2 = FloatList.newBuilder().addValue(15)
+      val doubleFeature2 = FloatList.newBuilder().addValue(15F)
       val vectorFeature2= FloatList.newBuilder().addValue(2F).addValue(2F).build()
       val strFeature2 = BytesList.newBuilder().addValue(ByteString.copyFrom("r2".getBytes)).build()
       val features2 = Features.newBuilder()
@@ -176,19 +194,19 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
         .build()
 
       //println(example2)
-      //val exampleRDD: RDD[Example] = sparkContext.parallelize(List(example1, example2))
+      val exampleRDD: RDD[Example] = sparkContext.parallelize(List(example1, example2))
 
       //println(exampleRDD.count())
-//      val actualSchema = TensorflowInferSchema(exampleRDD)
-//
-//      //Verify each TensorFlow Datatype is inferred as one of our Datatype
-//      actualSchema.columns.map { colum =>
-//        colum.name match {
-//          case "id" | "int32label" | "int64label" => colum.dataType.equalsDataType(DataTypes.int32)
-//          case "float32label" | "float64label" | "vectorlabel" => colum.dataType.equalsDataType(DataTypes.float64)
-//          case "name" => colum.dataType.equalsDataType(DataTypes.string)
-//        }
-//      }
+      val actualSchema = TensorflowInferSchema(exampleRDD)
+
+      //Verify each TensorFlow Datatype is inferred as one of our Datatype
+      actualSchema.columns.map { colum =>
+        colum.name match {
+          case "id" | "int32label" | "int64label" => colum.dataType.equalsDataType(DataTypes.int32)
+          case "float32label" | "float64label" | "vectorlabel" => colum.dataType.equalsDataType(DataTypes.float64)
+          case "name" => colum.dataType.equalsDataType(DataTypes.string)
+        }
+      }
     }
   }
 }
