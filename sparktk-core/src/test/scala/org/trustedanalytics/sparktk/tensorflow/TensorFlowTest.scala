@@ -176,9 +176,9 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
         .build()
 
       //println(example2)
-      val exampleRDD: RDD[Example] = sparkContext.parallelize(List(example1, example2))
+      //val exampleRDD: RDD[Example] = sparkContext.parallelize(List(example1, example2))
 
-      println(exampleRDD.count())
+      //println(exampleRDD.count())
 //      val actualSchema = TensorflowInferSchema(exampleRDD)
 //
 //      //Verify each TensorFlow Datatype is inferred as one of our Datatype
