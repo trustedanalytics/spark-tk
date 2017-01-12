@@ -76,6 +76,7 @@ object DefaultTfRecordRowDecoder extends TfRecordRowDecoder {
             }
           }
           case dtype if dtype.equals(DataTypes.string) => feature.getBytesList.toByteString.toStringUtf8.trim
+          case _ => throw new RuntimeException("Unsupported dataype...!!")
         }
     }
     Row.fromSeq(row)

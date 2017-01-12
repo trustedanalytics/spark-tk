@@ -19,6 +19,7 @@ import java.io.File
 
 import com.google.protobuf.ByteString
 import org.apache.commons.io.FileUtils
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.{GenericRow, GenericRowWithSchema}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DataTypes => _, _}
@@ -55,18 +56,18 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
     }
 
     "Encode given Row as TensorFlow example" in {
-      val schemaStructType = StructType(Array(StructField("id", IntegerType),
+      val schemaStructType = StructType(Array(
         StructField("int32label", IntegerType),
         StructField("int64label", LongType),
         StructField("float32label", FloatType),
         StructField("float64label", DoubleType),
         //StructField("vectorlabel", ArrayType(DoubleType, false)),
-        StructField("name", StringType)
+        StructField("strlabel", StringType)
       ))
       //val doubleArray = Array(1.1, null, 111.1, null, 11111.1)
       //val doubleGenericArray =
-      //val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, doubleGenericArray, "r1"), schemaStructType)
-      val rowWithSchema = new GenericRowWithSchema(Array[Any](11, 1, 23L, 10.0F, 14.0, "r1"), schemaStructType)
+      //val rowWithSchema = new GenericRowWithSchema(Array[Any](1, 23L, 10.0F, 14.0, doubleGenericArray, "r1"), schemaStructType)
+      val rowWithSchema = new GenericRowWithSchema(Array[Any](1, 23L, 10.0F, 14.0, "r1"), schemaStructType)
 
       //Encode Sql Row to TensorFlow example
       val example = DefaultTfRecordRowEncoder.encodeTfRecord(rowWithSchema)
@@ -76,128 +77,118 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       example.getFeatures.getFeatureMap.asScala.foreach {
         case (featureName, feature) =>
           featureName match {
-            case "id" | "int32label" | "int64label" => assert(feature.getKindCase.getNumber == Feature.INT64_LIST_FIELD_NUMBER)
-            case "float32label" | "float64label" => assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
-            case "name" => assert(feature.getKindCase.getNumber == Feature.BYTES_LIST_FIELD_NUMBER)
+            case "int32label" =>{
+              assert(feature.getKindCase.getNumber == Feature.INT64_LIST_FIELD_NUMBER)
+              assert(feature.getInt64List.getValue(0).toInt == 1)
+            }
+            case "int64label" =>{
+              assert(feature.getKindCase.getNumber == Feature.INT64_LIST_FIELD_NUMBER)
+              assert(feature.getInt64List.getValue(0).toInt == 23)
+            }
+            case "float32label" =>{
+              assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
+              assert(feature.getFloatList.getValue(0) == 10.0F)
+            }
+            case "float64label" =>{
+              assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
+              assert(feature.getFloatList.getValue(0) == 14.0F)
+            }
+            case "strlabel" => {
+              assert(feature.getKindCase.getNumber == Feature.BYTES_LIST_FIELD_NUMBER)
+              assert(feature.getBytesList.toByteString.toStringUtf8.trim == "r1")
+            }
           }
       }
     }
 
     "Decode given TensorFlow Example as Row" in {
-      val testRows: Array[Row] = Array(
-        new GenericRow(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1")),
-        new GenericRow(Array[Any](21, 2, 24L, 12.0F, 15.0, Vector(2.0, 2.0), "r2")))
-      val schema = new FrameSchema(List(Column("id", int32), Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("name", string)))
-      val rdd = sparkContext.parallelize(testRows)
-      val frame = new Frame(rdd, schema)
 
-      //Build example RDD for the frame
-      val exampleRDD = frame.dataframe.map{ row =>
-        val features = Features.newBuilder()
-        val example = Example.newBuilder()
+      val expectedRow = new GenericRow(Array[Any](1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1"))
+      val schema = new FrameSchema(List(Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("strlabel", string)))
 
-        val schema = row.schema
-        row.schema.zipWithIndex.map {
-          case (structField, index) =>
-            structField.dataType match {
-              case IntegerType => {
-                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getInt(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
-              }
-              case LongType => {
-                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getLong(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
-              }
-              case FloatType => {
-                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getFloat(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
-              }
-              case DoubleType => {
-                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getDouble(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
-              }
-              case ArrayType(DoubleType, false) => {
-                val wrappedArr = row.getAs[mutable.WrappedArray[Double]](index)
-                val floatListBuilder = FloatList.newBuilder()
-                wrappedArr.foreach(x => floatListBuilder.addValue(x.toFloat))
-                val floatList = floatListBuilder.build()
-                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatList).build())
-              }
-              case _ => {
-                val byteList = BytesList.newBuilder().addValue(ByteString.copyFrom(row.getString(index).getBytes)).build()
-                features.putFeature(structField.name, Feature.newBuilder().setBytesList(byteList).build())
-              }
-            }
-        }
-        features.build()
-        example.setFeatures(features)
-        example.build()
-      }
+      //Build example
+      val intFeature = Int64List.newBuilder().addValue(1)
+      val longFeature = Int64List.newBuilder().addValue(23L)
+      val floatFeature = FloatList.newBuilder().addValue(10.0F)
+      val doubleFeature = FloatList.newBuilder().addValue(14.0F)
+      val vectorFeature = FloatList.newBuilder().addValue(1F).addValue(2F).build()
+      val strFeature = BytesList.newBuilder().addValue(ByteString.copyFrom("r1".getBytes)).build()
+      val features = Features.newBuilder()
+        .putFeature("int32label", Feature.newBuilder().setInt64List(intFeature).build())
+        .putFeature("int64label", Feature.newBuilder().setInt64List(longFeature).build())
+        .putFeature("float32label", Feature.newBuilder().setFloatList(floatFeature).build())
+        .putFeature("float64label", Feature.newBuilder().setFloatList(doubleFeature).build())
+        .putFeature("vectorlabel", Feature.newBuilder().setFloatList(vectorFeature).build())
+        .putFeature("strlabel", Feature.newBuilder().setBytesList(strFeature).build())
+        .build()
+      val example = Example.newBuilder()
+        .setFeatures(features)
+        .build()
 
       //Decode TensorFlow example to Sql Row
-      val rowRDD = exampleRDD.map(example => DefaultTfRecordRowDecoder.decodeTfRecord(example, schema))
-      frame.rdd.collect() should equal(rowRDD.collect())
+      val actualRow= DefaultTfRecordRowDecoder.decodeTfRecord(example, schema)
+      actualRow should equal(expectedRow)
     }
 
     "Check infer schema" in {
       val testRows: Array[Row] = Array(
-        new GenericRow(Array[Any](11, 1, 23L, 10.0F, 14.0, Vector(1.0, 2.0), "r1")),
-        new GenericRow(Array[Any](21, 2, 24L, 12.0F, 15.0, Vector(2.0, 2.0), "r2")))
-      val schema = new FrameSchema(List(Column("id", int32), Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("name", string)))
-      val rdd = sparkContext.parallelize(testRows)
-      val frame = new Frame(rdd, schema)
-      //Build example RDD for the frame
-      val exampleRDD = frame.dataframe.map{ row =>
-        val features = Features.newBuilder()
-        val example = Example.newBuilder()
+        new GenericRow(Array[Any](1, 23L, 10.0F, 14.0F, Vector(1.0, 2.0), "r1")),
+        new GenericRow(Array[Any](2, 24, 12.0F, 15.0, Vector(2.0, 2.0), "r2")))
 
-        val schema = row.schema
-        row.schema.zipWithIndex.map {
-          case (structField, index) =>
-            structField.dataType match {
-              case IntegerType => {
-                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getInt(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
-              }
-              case LongType => {
-                val intResult = Int64List.newBuilder().addValue(DataTypes.toLong(row.getLong(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setInt64List(intResult).build())
-              }
-              case FloatType => {
-                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getFloat(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
-              }
-              case DoubleType => {
-                val floatResult = FloatList.newBuilder().addValue(DataTypes.toFloat(row.getDouble(index))).build()
-                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
-              }
-              case ArrayType(DoubleType, false) => {
-                val wrappedArr = row.getAs[mutable.WrappedArray[Double]](index)
-                val floatListBuilder = FloatList.newBuilder()
-                wrappedArr.foreach(x => floatListBuilder.addValue(x.toFloat))
-                val floatList = floatListBuilder.build()
-                features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatList).build())
-              }
-              case _ => {
-                val byteList = BytesList.newBuilder().addValue(ByteString.copyFrom(row.getString(index).getBytes)).build()
-                features.putFeature(structField.name, Feature.newBuilder().setBytesList(byteList).build())
-              }
-            }
-        }
-        features.build()
-        example.setFeatures(features)
-        example.build()
-      }
-      val actualSchema = TensorflowInferSchema(exampleRDD)
+      val schema = new FrameSchema(List(Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("name", string)))
 
-      //Verify each TensorFlow Datatype is inferred as one of our Datatype
-      actualSchema.columns.map { colum =>
-        colum.name match {
-          case "id" | "int32label" | "int64label" => colum.dataType.equalsDataType(DataTypes.int32)
-          case "float32label" | "float64label" | "vectorlabel" => colum.dataType.equalsDataType(DataTypes.float64)
-          case "name" => colum.dataType.equalsDataType(DataTypes.string)
-        }
-      }
+      //Build example1
+      val intFeature1 = Int64List.newBuilder().addValue(1)
+      val longFeature1 = Int64List.newBuilder().addValue(23L)
+      val floatFeature1 = FloatList.newBuilder().addValue(10.0F)
+      val doubleFeature1 = FloatList.newBuilder().addValue(14.0F)
+      val vectorFeature1 = FloatList.newBuilder().addValue(1F).addValue(2F).build()
+      val strFeature1 = BytesList.newBuilder().addValue(ByteString.copyFrom("r1".getBytes)).build()
+      val features1 = Features.newBuilder()
+        .putFeature("int32label", Feature.newBuilder().setInt64List(intFeature1).build())
+        .putFeature("int64label", Feature.newBuilder().setInt64List(longFeature1).build())
+        .putFeature("float32label", Feature.newBuilder().setFloatList(floatFeature1).build())
+        .putFeature("float64label", Feature.newBuilder().setFloatList(doubleFeature1).build())
+        .putFeature("vectorlabel", Feature.newBuilder().setFloatList(vectorFeature1).build())
+        .putFeature("strlabel", Feature.newBuilder().setBytesList(strFeature1).build())
+        .build()
+      val example1 = Example.newBuilder()
+        .setFeatures(features1)
+        .build()
+
+      //Build example2
+      val intFeature2 = Int64List.newBuilder().addValue(2)
+      val longFeature2 = Int64List.newBuilder().addValue(24)
+      val floatFeature2 = FloatList.newBuilder().addValue(12.0F)
+      val doubleFeature2 = FloatList.newBuilder().addValue(15)
+      val vectorFeature2= FloatList.newBuilder().addValue(2F).addValue(2F).build()
+      val strFeature2 = BytesList.newBuilder().addValue(ByteString.copyFrom("r2".getBytes)).build()
+      val features2 = Features.newBuilder()
+        .putFeature("int32label", Feature.newBuilder().setInt64List(intFeature2).build())
+        .putFeature("int64label", Feature.newBuilder().setInt64List(longFeature2).build())
+        .putFeature("float32label", Feature.newBuilder().setFloatList(floatFeature2).build())
+        .putFeature("float64label", Feature.newBuilder().setFloatList(doubleFeature2).build())
+        .putFeature("vectorlabel", Feature.newBuilder().setFloatList(vectorFeature2).build())
+        .putFeature("strlabel", Feature.newBuilder().setBytesList(strFeature2).build())
+        .build()
+      val example2 = Example.newBuilder()
+        .setFeatures(features2)
+        .build()
+
+      //println(example2)
+      val exampleRDD: RDD[Example] = sparkContext.parallelize(List(example1, example2))
+
+      println(exampleRDD.count())
+//      val actualSchema = TensorflowInferSchema(exampleRDD)
+//
+//      //Verify each TensorFlow Datatype is inferred as one of our Datatype
+//      actualSchema.columns.map { colum =>
+//        colum.name match {
+//          case "id" | "int32label" | "int64label" => colum.dataType.equalsDataType(DataTypes.int32)
+//          case "float32label" | "float64label" | "vectorlabel" => colum.dataType.equalsDataType(DataTypes.float64)
+//          case "name" => colum.dataType.equalsDataType(DataTypes.string)
+//        }
+//      }
     }
   }
 }

@@ -71,7 +71,7 @@ object TensorflowInferSchema {
   }
 
   /**
-   * Infer Feature datatype based on filed number
+   * Infer Feature datatype based on field number
    */
   private def inferField(feature: Feature): DataType = {
     feature.getKindCase.getNumber match {
@@ -129,7 +129,7 @@ object TensorflowInferSchema {
     DataTypes.int64
   }
   else {
-    throw new RuntimeException("Unable to parse filed datatype to int64...")
+    throw new RuntimeException("Unable to parse field datatype to int64...")
   }
 
   private def parseDouble(field: String): DataType = {
