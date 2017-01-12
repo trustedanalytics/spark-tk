@@ -41,16 +41,16 @@ def get_context():
                                 'spark.ui.enabled': 'false',
                                 'spark.driver.maxResultSize': '2g',
                                 'spark.dynamicAllocation.enabled': 'true',
-                                'spark.dynamicAllocation.maxExecutors': '16',
+                                'spark.dynamicAllocation.maxExecutors': '37',
                                 'spark.dynamicAllocation.minExecutors': '1',
-                                'spark.executor.cores': '2',
-                                'spark.executor.memory': '2g',
-                                'spark.shuffle.io.preferDirectBufs': 'true',
+                                'spark.executor.cores': '15',
+                                'spark.executor.memory': '16g',
                                 'spark.shuffle.service.enabled': 'true',
                                 'spark.yarn.am.waitTime': '1000000',
-                                'spark.yarn.executor.memoryOverhead': '384',
+                                'spark.yarn.executor.memoryOverhead': '1024',
                                 'spark.eventLog.enabled': 'false',
-                                'spark.sql.shuffle.partitions': '6'}
+                                'spark.scheduler.mode': "FAIR",
+                                'spark.sql.shuffle.partitions': '10'}
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict, py_files=udf_files)
             else:
