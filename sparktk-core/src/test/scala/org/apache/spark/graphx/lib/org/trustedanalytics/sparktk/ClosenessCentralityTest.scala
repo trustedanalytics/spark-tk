@@ -76,7 +76,7 @@ class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers 
     }
 
     "calculate the closeness centrality" in {
-      val closenessCentralityGraph = ClosenessCentrality.run(getConnectedGraph, None, normalized = false)
+      val closenessCentralityGraph = ClosenessCentrality.run(getConnectedGraph, None, normalize = false)
       closenessCentralityGraph.vertices.collect().toMap.get(3).get shouldBe (0.75 +- 1E-6)
     }
 
@@ -86,12 +86,12 @@ class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers 
     }
 
     "calculate the closeness centrality with edge weights" in {
-      val closenessCentralityGraph = ClosenessCentrality.run(getConnectedGraph, Some((x: Double) => x), normalized = false)
+      val closenessCentralityGraph = ClosenessCentrality.run(getConnectedGraph, Some((x: Double) => x), normalize = false)
       closenessCentralityGraph.vertices.collect().toMap.get(3).get shouldBe (0.17647058823529413 +- 1E-6)
     }
 
     "calculate the closeness centrality for a disconnected graph" in {
-      val closenessCentralityGraph = ClosenessCentrality.run(getDisconnectedGraph, None, normalized = false)
+      val closenessCentralityGraph = ClosenessCentrality.run(getDisconnectedGraph, None, normalize = false)
       closenessCentralityGraph.vertices.collect().toMap.get(3).get shouldBe (0.75 +- 1E-6)
     }
 
