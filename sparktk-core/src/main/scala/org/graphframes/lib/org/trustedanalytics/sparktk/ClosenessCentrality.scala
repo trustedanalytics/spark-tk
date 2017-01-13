@@ -22,7 +22,7 @@ import org.graphframes.GraphFrame
 import org.graphframes.lib.GraphXConversions
 
 /**
- * Compute closeness centrality for nodes.
+ * Compute the closeness centrality for each node in the graph.
  *
  * Closeness centrality of a node is the reciprocal of the sum of the shortest path distances from this node to all
  * other nodes in the graph. Since the sum of distances depends on the number of nodes in the

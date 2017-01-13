@@ -19,7 +19,7 @@ import org.apache.spark.graphx._
 import scala.reflect.ClassTag
 
 /**
- * Compute closeness centrality for nodes.
+ * Compute the closeness centrality for each node in the graph.
  *
  * Closeness centrality of a node is the reciprocal of the sum of the shortest path distances from this node to all
  * other nodes in the graph. Since the sum of distances depends on the number of nodes in the
@@ -105,6 +105,7 @@ object ClosenessCentrality {
    */
   private def incrementMap(edge: EdgeTriplet[SPMap, Double]): SPMap = {
     val weight = edge.attr
+    require(weight >= 0.0, s"The edge weight cannot be negative, found $weight")
     edge.dstAttr.map { case (v, d) => v -> (d + weight) }
   }
 
@@ -131,10 +132,11 @@ object ClosenessCentrality {
     //Initial shortest-path graph
     val shortestPathGraph = graph.mapVertices((id, _) => {
       makeMap(id -> 0)
-    }).mapEdges(e => getEdgeWeight match {
-      case Some(func) => func(e.attr)
-      case _ => 1.0
-    })
+    }).mapEdges(e =>
+      getEdgeWeight match {
+        case Some(func) => func(e.attr)
+        case _ => 1.0
+      })
     //Initial message
     val initialMessage = makeMap()
     //Vertex program
