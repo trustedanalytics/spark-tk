@@ -150,17 +150,15 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
 
     "Check infer schema" in {
       val testRows: Array[Row] = Array(
-        new GenericRow(Array[Any](1, Int.MaxValue +10L, 10.0F, 14.0F, Vector(1.0, 2.0), "r1")),
+        new GenericRow(Array[Any](1, Int.MaxValue +10L, 10.0F, 14.0F, Vector(1.0), "r1")),
         new GenericRow(Array[Any](2, 24, 12.0F, Float.MaxValue+15, Vector(2.0, 2.0), "r2")))
-
-      val schema = new FrameSchema(List(Column("int32label", int32), Column("int64label", int64), Column("float32label", float32), Column("float64label", float64), Column("vectorlabel", vector(2)), Column("strlabel", string)))
 
       //Build example1
       val intFeature1 = Int64List.newBuilder().addValue(1)
       val longFeature1 = Int64List.newBuilder().addValue(Int.MaxValue+10L)
       val floatFeature1 = FloatList.newBuilder().addValue(10.0F)
       val doubleFeature1 = FloatList.newBuilder().addValue(14.0F)
-      val vectorFeature1 = FloatList.newBuilder().addValue(1F).addValue(2F).build()
+      val vectorFeature1 = FloatList.newBuilder().addValue(1F).build()
       val strFeature1 = BytesList.newBuilder().addValue(ByteString.copyFrom("r1".getBytes)).build()
       val features1 = Features.newBuilder()
         .putFeature("int32label", Feature.newBuilder().setInt64List(intFeature1).build())
@@ -192,7 +190,7 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       val example2 = Example.newBuilder()
         .setFeatures(features2)
         .build()
-      
+
       val exampleRDD: RDD[Example] = sparkContext.parallelize(List(example1, example2))
 
       val actualSchema = TensorflowInferSchema(exampleRDD)
