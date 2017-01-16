@@ -20,14 +20,14 @@ import java.io.File
 import com.google.protobuf.ByteString
 import org.apache.commons.io.FileUtils
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.catalyst.expressions.{GenericRow, GenericRowWithSchema}
+import org.apache.spark.sql.catalyst.expressions.{ GenericRow, GenericRowWithSchema }
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DataTypes => _, _}
+import org.apache.spark.sql.types.{ DataTypes => _, _ }
 import org.scalatest.Matchers
 import org.tensorflow.example._
 import org.trustedanalytics.sparktk.frame._
 import org.trustedanalytics.sparktk.frame.internal.constructors.ImportTensorflow
-import org.trustedanalytics.sparktk.frame.internal.serde.{DefaultTfRecordRowDecoder, DefaultTfRecordRowEncoder}
+import org.trustedanalytics.sparktk.frame.internal.serde.{ DefaultTfRecordRowDecoder, DefaultTfRecordRowEncoder }
 import org.trustedanalytics.sparktk.testutils.TestingSparkContextWordSpec
 import org.trustedanalytics.sparktk.frame.DataTypes._
 
@@ -76,19 +76,19 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       example.getFeatures.getFeatureMap.asScala.foreach {
         case (featureName, feature) =>
           featureName match {
-            case "int32label" =>{
+            case "int32label" => {
               assert(feature.getKindCase.getNumber == Feature.INT64_LIST_FIELD_NUMBER)
               assert(feature.getInt64List.getValue(0).toInt == 1)
             }
-            case "int64label" =>{
+            case "int64label" => {
               assert(feature.getKindCase.getNumber == Feature.INT64_LIST_FIELD_NUMBER)
               assert(feature.getInt64List.getValue(0).toInt == 23)
             }
-            case "float32label" =>{
+            case "float32label" => {
               assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
               assert(feature.getFloatList.getValue(0) == 10.0F)
             }
-            case "float64label" =>{
+            case "float64label" => {
               assert(feature.getKindCase.getNumber == Feature.FLOAT_LIST_FIELD_NUMBER)
               assert(feature.getFloatList.getValue(0) == 14.0F)
             }
@@ -144,18 +144,18 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
         .build()
 
       //Decode TensorFlow example to Sql Row
-      val actualRow= DefaultTfRecordRowDecoder.decodeTfRecord(example, schema)
+      val actualRow = DefaultTfRecordRowDecoder.decodeTfRecord(example, schema)
       actualRow should equal(expectedRow)
     }
 
     "Check infer schema" in {
       val testRows: Array[Row] = Array(
-        new GenericRow(Array[Any](1, Int.MaxValue +10L, 10.0F, 14.0F, Vector(1.0), "r1")),
-        new GenericRow(Array[Any](2, 24, 12.0F, Float.MaxValue+15, Vector(2.0, 2.0), "r2")))
+        new GenericRow(Array[Any](1, Int.MaxValue + 10L, 10.0F, 14.0F, Vector(1.0), "r1")),
+        new GenericRow(Array[Any](2, 24, 12.0F, Float.MaxValue + 15, Vector(2.0, 2.0), "r2")))
 
       //Build example1
       val intFeature1 = Int64List.newBuilder().addValue(1)
-      val longFeature1 = Int64List.newBuilder().addValue(Int.MaxValue+10L)
+      val longFeature1 = Int64List.newBuilder().addValue(Int.MaxValue + 10L)
       val floatFeature1 = FloatList.newBuilder().addValue(10.0F)
       val doubleFeature1 = FloatList.newBuilder().addValue(14.0F)
       val vectorFeature1 = FloatList.newBuilder().addValue(1F).build()
@@ -176,8 +176,8 @@ class TensorFlowTest extends TestingSparkContextWordSpec with Matchers {
       val intFeature2 = Int64List.newBuilder().addValue(2)
       val longFeature2 = Int64List.newBuilder().addValue(24)
       val floatFeature2 = FloatList.newBuilder().addValue(12.0F)
-      val doubleFeature2 = FloatList.newBuilder().addValue(Float.MaxValue+15)
-      val vectorFeature2= FloatList.newBuilder().addValue(2F).addValue(2F).build()
+      val doubleFeature2 = FloatList.newBuilder().addValue(Float.MaxValue + 15)
+      val vectorFeature2 = FloatList.newBuilder().addValue(2F).addValue(2F).build()
       val strFeature2 = BytesList.newBuilder().addValue(ByteString.copyFrom("r2".getBytes)).build()
       val features2 = Features.newBuilder()
         .putFeature("int32label", Feature.newBuilder().setInt64List(intFeature2).build())

@@ -20,9 +20,6 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.tensorflow.example._
 import org.trustedanalytics.sparktk.frame.DataTypes
-import scala.reflect.ClassTag
-
-import scala.collection.mutable
 
 trait TfRecordRowEncoder {
   /**
@@ -64,16 +61,18 @@ object DefaultTfRecordRowEncoder extends TfRecordRowEncoder {
             features.putFeature(structField.name, Feature.newBuilder().setFloatList(floatResult).build())
           }
           case ArrayType(DoubleType, false) => {
+
             val wrappedArr = row.get(index) match {
-              case x:mutable.WrappedArray[Any] => x.toArray
-              case x:Array[_] => x
+              case x: scala.collection.mutable.WrappedArray[_] => x.toArray[Any]
+              case x: Array[_] => x
               case _ => throw new RuntimeException("Unable to cast to Array[Double]")
             }
             val floatListBuilder = FloatList.newBuilder()
             wrappedArr.foreach(x => {
-              val y:Float = if(x ==null) {
+              val y: Float = if (x == null) {
                 throw new NullPointerException("FloatList with null values are not supported")
-              } else {
+              }
+              else {
                 DataTypes.toFloat(x)
               }
               floatListBuilder.addValue(y)
