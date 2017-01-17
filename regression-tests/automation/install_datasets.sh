@@ -36,3 +36,4 @@ sudo -u hdfs hdfs dfs -chown $USER:$USER $target/sparktk_export
 sudo -u hdfs hdfs dfs -chown $USER:$USER $target/qa_data
 
 hdfs dfs -put -f $DIR/../datasets/* $target/qa_data
+
