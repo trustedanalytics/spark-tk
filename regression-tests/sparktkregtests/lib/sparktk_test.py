@@ -22,11 +22,12 @@ import uuid
 import datetime
 import os
 from ConfigParser import SafeConfigParser
+from threading import Lock
 
 import sparktk as stk
 
 import config
-from threading import Lock
+import spark_context_config
 
 udf_lib_path = os.path.join(config.root, "regression-tests", "sparktkregtests", "lib" ,"udftestlib")
 udf_files = [os.path.join(udf_lib_path, f) for f in os.listdir(udf_lib_path)]
@@ -39,20 +40,7 @@ def get_context():
     global global_tc
     with lock:
         if global_tc is None:
-            sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
-                                'spark.ui.enabled': 'false',
-                                'spark.driver.maxResultSize': '2g',
-                                'spark.dynamicAllocation.enabled': 'true',
-                                'spark.dynamicAllocation.maxExecutors': '16',
-                                'spark.dynamicAllocation.minExecutors': '1',
-                                'spark.executor.cores': '2',
-                                'spark.executor.memory': '2g',
-                                'spark.shuffle.io.preferDirectBufs': 'true',
-                                'spark.shuffle.service.enabled': 'true',
-                                'spark.yarn.am.waitTime': '1000000',
-                                'spark.yarn.executor.memoryOverhead': '384',
-                                'spark.eventLog.enabled': 'false',
-                                'spark.sql.shuffle.partitions': '6'}
+            sparktkconf_dict = spark_context_config.get_spark_conf()
             if config.run_mode:
                 global_tc = stk.TkContext(master='yarn-client', extra_conf_dict=sparktkconf_dict, py_files=udf_files)
             else:
