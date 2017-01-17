@@ -70,7 +70,7 @@ object TestingSparkContext {
 
   private def createLocalSparkContext(
     serializer: String = "org.apache.spark.serializer.JavaSerializer",
-    registrator: String = "org.trustedanalytics.sparktk.frame.internal.serde.CustomKryoRegistrator"): SparkContext = {
+    registrator: String = "org.apache.spark.serializer.KryoSerializer"): SparkContext = {
     // LogUtils.silenceSpark()
     System.setProperty("spark.driver.allowMultipleContexts", "true")
     val conf = new SparkConf()

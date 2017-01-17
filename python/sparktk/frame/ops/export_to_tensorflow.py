@@ -45,6 +45,8 @@ def export_to_tensorflow(self, path):
         >>> frame = tc.frame.import_csv(file_path, "|", header=True)
         -etc-
 
+        >>> frame.sort("rank")
+
         >>> frame.inspect()
         [#]  rank  city         population_2013  population_2010  change  county
         ============================================================================
