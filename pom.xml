@@ -962,7 +962,7 @@
             <dependency>
                 <groupId>org.tensorflow</groupId>
                 <artifactId>tensorflow-hadoop</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0-01172017-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
