@@ -42,7 +42,7 @@ if [ $EXIT -ne 0 ]; then
 fi
 
 graphframes=$(find `pwd`/dependencies/ -name "graphframes*.jar")
-unzip -o $graphframes "graphframes/*" .
+unzip -o $graphframes "graphframes/*"
 
 
 PYTHON=python
