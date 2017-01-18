@@ -36,22 +36,22 @@ trait ClosenessCentralitySummarization extends BaseGraph {
    * Reference: Linton C. Freeman: Centrality in networks: I.Conceptual clarification. Social Networks 1:215-239, 1979.
    * http://leonidzhukov.ru/hse/2013/socialnetworks/papers/freeman79-centrality.pdf
    *
-   * @param edgePropName optional edge column name to be used as edge weight
+   * @param edgeWeight optional edge column name to be used as edge weight
    * @param normalize if true, normalizes the closeness centrality value to the number of nodes connected to it
    *                   divided by the total number of nodes in the graph, this is effective in the case of
    *                   disconnected graph
    * @return frame with an additional column for the closeness centrality data
    */
-  def closenessCentrality(edgePropName: Option[String] = None,
+  def closenessCentrality(edgeWeight: Option[String] = None,
                           normalize: Boolean = true): Frame = {
-    execute[Frame](ClosenessCentrality(edgePropName, normalize))
+    execute[Frame](ClosenessCentrality(edgeWeight, normalize))
   }
 }
-case class ClosenessCentrality(edgePropName: Option[String] = None,
+case class ClosenessCentrality(edgeWeight: Option[String] = None,
                                normalize: Boolean = true) extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(graphframeslib.ClosenessCentrality.run(state.graphFrame, edgePropName, normalize).vertices)
+    new Frame(graphframeslib.ClosenessCentrality.run(state.graphFrame, edgeWeight, normalize).vertices)
   }
 }
 

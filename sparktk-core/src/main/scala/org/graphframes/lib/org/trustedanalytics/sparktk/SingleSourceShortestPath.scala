@@ -36,15 +36,15 @@ object SingleSourceShortestPath {
    *
    * @param graph graph to compute SSSP against
    * @param srcVertexId source vertex ID
-   * @param edgePropName optional edge column name to be used as edge weight
+   * @param edgeWeight optional edge column name to be used as edge weight
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
    * @return dataframe with the shortest path and corresponding cost from the source vertex to each target vertex ID.
    */
   def run(graph: GraphFrame,
           srcVertexId: Any,
-          edgePropName: Option[String] = None,
+          edgeWeight: Option[String] = None,
           maxPathLength: Option[Double] = None): DataFrame = {
-    val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgePropName)
+    val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgeWeight)
     val origVertexIdFunc = (x: Row) => x.get(x.fieldIndex(GraphFrame.ID)).toString
     val ssspGraphx = sparktk.SingleSourceShortestPath.run(graph.toGraphX,
       GraphXConversions.integralId(graph, srcVertexId),
@@ -73,14 +73,14 @@ object SingleSourceShortestPath {
    * calculations by converting the edge attribute type to Double
    *
    * @param graph graph to compute SSSP against
-   * @param edgePropName column name for the edge weight
+   * @param edgeWeight column name for the edge weight
    * @return edge weight function
    */
-  def getEdgeWeightFunc(graph: GraphFrame, edgePropName: Option[String]): Option[(Row) => Double] = {
-    val edgeWeightFunc = if (edgePropName.isDefined) {
-      val edgeWeightType = graph.edges.schema(edgePropName.get).dataType
+  def getEdgeWeightFunc(graph: GraphFrame, edgeWeight: Option[String]): Option[(Row) => Double] = {
+    val edgeWeightFunc = if (edgeWeight.isDefined) {
+      val edgeWeightType = graph.edges.schema(edgeWeight.get).dataType
       require(edgeWeightType.isInstanceOf[NumericType], "The edge weight type should be numeric")
-      Some((row: Row) => row.getAs[Any](edgePropName.get) match {
+      Some((row: Row) => row.getAs[Any](edgeWeight.get) match {
         case x: Int => x.toDouble
         case x: Long => x.toDouble
         case x: Short => x.toDouble

@@ -34,14 +34,14 @@ trait BetweennessCentralitySummarization extends BaseGraph {
    *
    * @return The dataframe containing the vertices and their corresponding betweenness scores
    */
-  def betweennessCentrality(edgePropName: Option[String] = None, normalize: Boolean = true): Frame = {
-    execute[Frame](BetweennessCentrality(edgePropName, normalize))
+  def betweennessCentrality(edgeWeight: Option[String] = None, normalize: Boolean = true): Frame = {
+    execute[Frame](BetweennessCentrality(edgeWeight, normalize))
   }
 }
 
-case class BetweennessCentrality(edgePropName: Option[String], normalize: Boolean) extends GraphSummarization[Frame] {
+case class BetweennessCentrality(edgeWeight: Option[String], normalize: Boolean) extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(graphframeslib.BetweennessCentrality.run(state.graphFrame, edgePropName, normalize))
+    new Frame(graphframeslib.BetweennessCentrality.run(state.graphFrame, edgeWeight, normalize))
   }
 }

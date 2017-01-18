@@ -16,7 +16,7 @@
 #
 
 
-def betweenness_centrality(self, weight=None, normalize=True):
+def betweenness_centrality(self, edge_weight=None, normalize=True):
     """
     **Betweenness Centrality**
 
@@ -27,7 +27,7 @@ def betweenness_centrality(self, weight=None, normalize=True):
     Parameters
     ----------
 
-    :param weight: (Optional String) string name of the weight parameters. If none supplied a uniform weight is assumed
+    :param edge_weight: (Optional String) string name of the weight parameters. If none supplied a uniform weight is assumed
     :param normalize: (Optional Boolean) if true will normalize the betweenness centrality results by the number of pairwise paths possible
 
     :return: (Frame) Frame containing the vertex id's an their betweenness centrality value
@@ -59,4 +59,4 @@ def betweenness_centrality(self, weight=None, normalize=True):
 
     """
     from sparktk.frame.frame import Frame
-    return Frame(self._tc, self._scala.betweennessCentrality(self._tc.jutils.convert.to_scala_option(weight), normalize))
+    return Frame(self._tc, self._scala.betweennessCentrality(self._tc.jutils.convert.to_scala_option(edge_weight), normalize))
