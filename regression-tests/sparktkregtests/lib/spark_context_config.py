@@ -19,27 +19,44 @@
 """Different configs for the different scales of tests"""
 import config
 
-sparktkconf_dict = {'spark.driver.maxPermSize': '512m',
-                    'spark.ui.enabled': 'false',
-                    'spark.driver.maxResultSize': '1g',
-                    'spark.driver.memory': '2g',
-                    'spark.dynamicAllocation.enabled': 'true',
-                    'spark.dynamicAllocation.maxExecutors': '16',
-                    'spark.dynamicAllocation.minExecutors': '1',
-                    'spark.executor.cores': '2',
-                    'spark.executor.memory': '2g',
-                    'spark.shuffle.io.preferDirectBufs': 'true',
-                    'spark.shuffle.service.enabled': 'true',
-                    'spark.yarn.am.waitTime': '1000000',
-                    'spark.yarn.executor.memoryOverhead': '384',
-                    'spark.eventLog.enabled': 'false',
-                    'spark.sql.shuffle.partitions': '16'}
+sparktkconf_dict_small = {'spark.driver.maxPermSize': '512m',
+                          'spark.ui.enabled': 'false',
+                          'spark.driver.maxResultSize': '1g',
+                          'spark.driver.memory': '2g',
+                          'spark.dynamicAllocation.enabled': 'true',
+                          'spark.dynamicAllocation.maxExecutors': '16',
+                          'spark.dynamicAllocation.minExecutors': '1',
+                          'spark.executor.cores': '2',
+                          'spark.executor.memory': '2g',
+                          'spark.shuffle.io.preferDirectBufs': 'true',
+                          'spark.shuffle.service.enabled': 'true',
+                          'spark.yarn.am.waitTime': '1000000',
+                          'spark.yarn.executor.memoryOverhead': '384',
+                          'spark.eventLog.enabled': 'false',
+                          'spark.sql.shuffle.partitions': '16'}
+
+sparktk_dict_performance = {'spark.driver.maxPermSize': "512m",
+                            'spark.yarn.am.memoryOverhead': "2293",
+                            'spark.driver.memory': "30475m",
+                            'spark.driver.cores': 1,
+                            'spark.yarn.executor.memoryOverhead': "2293",
+                            'spark.shuffle.service.enabled': 'true',
+                            'spark.dynamicAllocation.maxExecutors': 38,
+                            'spark.driver.maxResultSize': "2g",
+                            'spark.executor.cores': 15,
+                            'spark.dynamicAllocation.minExecutors': 1,
+                            'spark.shuffle.io.preferDirectBufs': 'true',
+                            'spark.yarn.am.waitTime': 1000000,
+                            'spark.executor.memory': "30475m",
+                            'spark.dynamicAllocation.enabled': 'true',
+                            'spark.sql.shuffle.partitions': 200,
+                            'spark.kryoserializer.buffer.max.mb': "256"}
 
 
-def get_spark_conf():
+def get_spark_conf(additional_config={}):
     if config.test_size == "test":
-        return sparktkconf_dict
+        return sparktkconf_dict_small.update(additonal_config)
     elif config.test_size == "performance":
-        return sparktkconf_dict
+        return sparktkconf_dict_performance.update(additonal_config)
     else:
-        return sparktkconf_dict
+        return sparktkconf_dict_performance.update(additonal_config)
