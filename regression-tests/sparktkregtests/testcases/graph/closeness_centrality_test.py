@@ -79,7 +79,7 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
 
 
     def test_weights_multiple_shortest_paths(self):
-        """Test weighted cost multiple shortest paths exist"""
+        """Test cetality when multiple shortest paths exist"""
         result_frame = self.graph.closeness_centrality("weights", False)
 
         #validate centrality values
