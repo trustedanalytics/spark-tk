@@ -44,7 +44,7 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
         result = result_frame.to_pandas()
         
         #validate centrality values
-        expected_value = {0 : 0.5,
+        expected_values = {0 : 0.5,
             1: 0.0,
             2: 0.667,
             3: 0.75,
@@ -52,12 +52,7 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
             5: 0.0,
             6: 0.0}
 
-        for i, row in result.iterrows():
-            id = row['id']
-            self.assertAlmostEqual(
-                row["closeness_centrality"],
-                expected_value[id],
-                delta = 0.001)
+        self._validate_result(result, expected_values)
 
     def test_weights_single_shortest_path(self):
         """Tests weighted closeness when only one shortest path present""" 
@@ -80,13 +75,8 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
             3: 0.667,
             4: 0.25,
             5: 0.0}
+        self._validate_result(result, expected_values)
 
-        for i, row in result.iterrows():
-            id = row['id']
-            self.assertAlmostEqual(
-                row["closeness_centrality"],
-                expected_values[id],
-                delta = 0.001)
 
     def test_weights_multiple_shortest_paths(self):
         """Test weighted cost multiple shortest paths exist"""
@@ -101,12 +91,7 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
             5: 0.0,
             6: 0.0}
         result = result_frame.to_pandas()
-        for i, row in result.iterrows():
-            id = row['id']
-            self.assertAlmostEqual(
-                row["closeness_centrality"],
-                expected_values[id],
-                delta = 0.001)
+        self._validate_result(result, expected_values)
 
     def test_disconnected_edges(self):
         """Test closeness on graph with disconnected edges"""
@@ -127,17 +112,11 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
             'e': 0.0, 'f': 0.667, 'g': 1.0, 'h':0.0}
     
         result = result_frame.to_pandas()
-        for i, row in result.iterrows():
-            id = row['id']
-            self.assertAlmostEqual(
-                row["closeness_centrality"],
-                expected_values[id],
-                delta = 0.1)
-    
+        self._validate_result(result, expected_values)
+ 
     def test_normalize(self):
         """Test normalized centrality"""
         result_frame = self.graph.closeness_centrality(normalize=True)
-        print result_frame.inspect()
         result = result_frame.to_pandas()
         
         #validate centrality values
@@ -148,13 +127,8 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
             4: 0.333,
             5: 0.0,
             6: 0.0}
+        self._validate_result(result, expected_values)
 
-        for i, row in result.iterrows():
-            id = row['id']
-            self.assertAlmostEqual(
-                row["closeness_centrality"],
-                expected_values[id],
-                delta = 0.1)
 
     def test_negative_edges(self):
         """Test closeness on graph with disconnected edges"""
@@ -179,6 +153,13 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
                 Exception, "Field \"BAD\" does not exist"):
             self.graph.closeness_centrality("BAD")
 
+    def _validate_result(self, result, expected_values):
+        for i, row in result.iterrows():
+            id = row['id']
+            self.assertAlmostEqual(
+                row["closeness_centrality"],
+                expected_values[id],
+                delta = 0.1)
 if __name__ == "__main__":
     unittest.main()
 
