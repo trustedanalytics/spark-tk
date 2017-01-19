@@ -19,16 +19,16 @@ import org.apache.spark.graphx._
 import scala.reflect.ClassTag
 
 /**
- * Compute closeness centrality for nodes.
+ * Compute the closeness centrality for each node in the graph.
  *
  * Closeness centrality of a node is the reciprocal of the sum of the shortest path distances from this node to all
  * other nodes in the graph. Since the sum of distances depends on the number of nodes in the
  * graph, closeness is normalize by the sum of minimum possible distances.
  *
- * In the case of disconnected graph, the algorithm computes the closeness centrality for each connected part.
+ * In the case of a disconnected graph, the algorithm computes the closeness centrality for each connected part.
  *
- * If the edge weight is considered then the shortest-path length will be computed using Dijkstra's algorithm with
- * that edge weight.
+ * In the case of a weighted graph, the algorithm handles only positive edge weights and uses Dijkstra's algorithm for
+ * the shortest-path calculations
  *
  * Reference: Linton C. Freeman: Centrality in networks: I.Conceptual clarification. Social Networks 1:215-239, 1979.
  * http://leonidzhukov.ru/hse/2013/socialnetworks/papers/freeman79-centrality.pdf
@@ -105,6 +105,7 @@ object ClosenessCentrality {
    */
   private def incrementMap(edge: EdgeTriplet[SPMap, Double]): SPMap = {
     val weight = edge.attr
+    require(weight >= 0.0, s"The edge weight cannot be negative, found $weight")
     edge.dstAttr.map { case (v, d) => v -> (d + weight) }
   }
 
@@ -131,10 +132,11 @@ object ClosenessCentrality {
     //Initial shortest-path graph
     val shortestPathGraph = graph.mapVertices((id, _) => {
       makeMap(id -> 0)
-    }).mapEdges(e => getEdgeWeight match {
-      case Some(func) => func(e.attr)
-      case _ => 1.0
-    })
+    }).mapEdges(e =>
+      getEdgeWeight match {
+        case Some(func) => func(e.attr)
+        case _ => 1.0
+      })
     //Initial message
     val initialMessage = makeMap()
     //Vertex program
