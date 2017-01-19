@@ -55,8 +55,11 @@ sparktk_dict_performance = {'spark.driver.maxPermSize': "512m",
 
 def get_spark_conf(additional_config={}):
     if config.test_size == "test":
-        return sparktkconf_dict_small.update(additional_config)
+        sparktkconf_dict_small.update(additional_config)
+        return sparktkconf_dict_small
     elif config.test_size == "performance":
-        return sparktkconf_dict_performance.update(additional_config)
+        sparktkconf_dict_performance.update(additional_config)
+        return sparktkconf_dict_performance
     else:
-        return sparktkconf_dict_performance.update(additional_config)
+        sparktkconf_dict_performance.update(additional_config)
+        return sparktkconf_dict_performance
