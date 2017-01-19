@@ -28,9 +28,9 @@ import org.graphframes.lib.GraphXConversions
  * other nodes in the graph. Since the sum of distances depends on the number of nodes in the
  * graph, closeness is normalized by the sum of minimum possible distances.
  *
- * In the case of disconnected graph, the algorithm computes the closeness centrality for each connected part.
+ * In the case of a disconnected graph, the algorithm computes the closeness centrality for each connected part.
  *
- * In the case of weighted graph, the algorithm handles only positive edge weights and uses Dijkstra's algorithm for
+ * In the case of a weighted graph, the algorithm handles only positive edge weights and uses Dijkstra's algorithm for
  * the shortest-path calculations
  *
  * Reference: Linton C. Freeman: Centrality in networks: I.Conceptual clarification. Social Networks 1:215-239, 1979.
