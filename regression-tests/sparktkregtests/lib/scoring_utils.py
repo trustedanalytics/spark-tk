@@ -32,20 +32,21 @@ class scorer(object):
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
-        # set port
+
+        # Fetch the appropriate port number from the config file
         port_config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
             config.root, "regression-tests", "sparktkregtests", "lib", "port.ini"))
         port_config.read(filepath)
         self.port = port_config.get('port', port_id)
+
         self.scoring_process = None
 
     def __enter__(self):
         """Activate the Server"""
-        # change current working directory to point at scoring_engine dir
-        run_path = os.path.abspath(os.path.join(config.root, "scoring", "scoring_engine"))
 
         # keep track of cwd for future
+        run_path = os.path.join(config.root, "scoring", "scoring_engine")
         test_dir = os.getcwd()
         os.chdir(run_path)
 
@@ -62,11 +63,13 @@ class scorer(object):
         time.sleep(20)
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, exc_type, exc_value, traceback):
         """Teardown the server"""
         # Get the process group to kill all of the suprocesses
         pgrp = os.getpgid(self.scoring_process.pid)
         os.killpg(pgrp, signal.SIGKILL)
+
+        return False
 
     def score(self, data_val):
         """score the json set data_val"""
