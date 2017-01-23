@@ -33,7 +33,9 @@ from sparktk.frame.constructors.import_csv_raw import import_csv_raw
 from sparktk.frame.constructors.import_hbase import import_hbase
 from sparktk.frame.constructors.import_hive import import_hive
 from sparktk.frame.constructors.import_jdbc import import_jdbc
+from sparktk.frame.constructors.import_json import import_json
 from sparktk.frame.constructors.import_pandas import import_pandas
+from sparktk.frame.constructors.import_xml import import_xml
 
 __all__ = ["create",
            "Frame",
@@ -42,7 +44,9 @@ __all__ = ["create",
            "import_hbase",
            "import_hive",
            "import_jdbc",
+           "import_json",
            "import_pandas",
+           "import_xml",
            "load"]
 
 

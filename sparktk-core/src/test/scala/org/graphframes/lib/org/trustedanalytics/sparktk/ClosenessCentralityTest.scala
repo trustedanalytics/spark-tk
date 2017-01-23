@@ -70,32 +70,32 @@ class ClosenessCentralityTest extends TestingSparkContextWordSpec with Matchers 
 
     "calculate the closeness centrality with normalized values" in {
       val closenessCentralityGraph = ClosenessCentrality.run(getGraph)
-      closenessCentralityGraph.vertices.collect().head.getAs[Double]("ClosenessCentrality") shouldBe (0.4 +- 1E-6)
+      closenessCentralityGraph.vertices.collect().head.getAs[Double]("closeness_centrality") shouldBe (0.4 +- 1E-6)
     }
 
     "calculate the closeness centrality" in {
-      val closenessCentralityGraph = ClosenessCentrality.run(getGraph, None, normalized = false)
-      closenessCentralityGraph.vertices.collect().head.getAs[Double]("ClosenessCentrality") shouldBe (0.5 +- 1E-6)
+      val closenessCentralityGraph = ClosenessCentrality.run(getGraph, None, normalize = false)
+      closenessCentralityGraph.vertices.collect().head.getAs[Double]("closeness_centrality") shouldBe (0.5 +- 1E-6)
     }
 
     "calculate the normalized closeness centrality with edge weights" in {
       val closenessCentralityGraph = ClosenessCentrality.run(getGraph, Some("distance"))
-      closenessCentralityGraph.vertices.collect().head.getAs[Double]("ClosenessCentrality") shouldBe (0.04923076923076924 +- 1E-6)
+      closenessCentralityGraph.vertices.collect().head.getAs[Double]("closeness_centrality") shouldBe (0.04923076923076924 +- 1E-6)
     }
 
     "calculate the closeness centrality with edge weights" in {
-      val closenessCentralityGraph = ClosenessCentrality.run(getGraph, Some("distance"), normalized = false)
-      closenessCentralityGraph.vertices.collect().head.getAs[Double]("ClosenessCentrality") shouldBe (0.06153846153846154 +- 1E-6)
+      val closenessCentralityGraph = ClosenessCentrality.run(getGraph, Some("distance"), normalize = false)
+      closenessCentralityGraph.vertices.collect().head.getAs[Double]("closeness_centrality") shouldBe (0.06153846153846154 +- 1E-6)
     }
 
     "calculate the closeness centrality for a disconnected graph" in {
-      val closenessCentralityGraph = ClosenessCentrality.run(getDisconnectedGraph, None, normalized = false)
-      closenessCentralityGraph.vertices.collect().head.getAs[Double]("ClosenessCentrality") shouldBe (0.5 +- 1E-6)
+      val closenessCentralityGraph = ClosenessCentrality.run(getDisconnectedGraph, None, normalize = false)
+      closenessCentralityGraph.vertices.collect().head.getAs[Double]("closeness_centrality") shouldBe (0.5 +- 1E-6)
     }
 
     "calculate the normalized closeness centrality for a disconnected graph" in {
       val closenessCentralityGraph = ClosenessCentrality.run(getDisconnectedGraph, None)
-      closenessCentralityGraph.vertices.collect().head.getAs[Double]("ClosenessCentrality") shouldBe (0.2857142857142857 +- 1E-6)
+      closenessCentralityGraph.vertices.collect().head.getAs[Double]("closeness_centrality") shouldBe (0.2857142857142857 +- 1E-6)
     }
   }
 }

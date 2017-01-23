@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +15,18 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
+from record import Record
 
-MAINDIR="$(dirname $DIR)"
-MAINDIR="$(dirname $MAINDIR)"
+def string_to_numeric(row):
+    result = []
+    for element in row:
+        result.append(int(element[1]))
+    return result
 
-sparktkpackage=$MAINDIR/sparktkinstall
+def evaluate(data):
+    schema = [("f1", int), ("f2", int), ("f3", int)]
+    numeric_record = Record(schema, string_to_numeric(data))
+    r = numeric_record.score("localhost:9114") #This is not a generic URL. It is hardcoded to match the scoring engine created for this test.
+    return str(r)
 
 
-echo "Python path"
-export PYTHONPATH=$MAINDIR/regression-tests:$MAINDIR/regression-tests/sparktkregtests/lib/udftestlib:/opt/cloudera/parcels/CDH/lib/spark/python/pyspark:$MAINDIR/graphframes:/usr/lib/python2.7/site-packages/:$PYTHONPATH
-echo $PYTHONPATH
-
-#export SPARKTK_HOME=$MAINDIR/regression-tests/automation/sparktk-core/
-export SPARKTK_HOME=$sparktkpackage/
-
-echo "spark tk home"
-echo $SPARKTK_HOME
-
-py.test --boxed -n26 -v $MAINDIR/regression-tests
