@@ -58,3 +58,4 @@ virtpy
 scoring
 graphframes
 *.coverage*
+scoring-pipelines
