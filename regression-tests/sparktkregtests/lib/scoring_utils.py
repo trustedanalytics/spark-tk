@@ -22,26 +22,30 @@ import time
 import signal
 import os
 import config
+from multiprocessing import Process
 from ConfigParser import SafeConfigParser
 
 
 class scorer(object):
 
-    def __init__(self, model_path, port_id, host=config.scoring_engine_host):
+    def __init__(self, model_path, port_id, host=config.scoring_engine_host, pipeline=False, pipeline_filename=None):
         """Set up the server location, port and model file"""
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
         self.host = host
-        # set port
+        self.pipeline = pipeline
+        self.pipeline_filename = pipeline_filename
         port_config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
             config.root, "regression-tests", "sparktkregtests", "lib", "port.ini"))
         port_config.read(filepath)
         self.port = port_config.get('port', port_id)
-        self.scoring_process = None
 
     def __enter__(self):
         """Activate the Server"""
+        if self.pipeline == True:
+            self.start_pipeline_server(self.pipeline_filename)
+            time.sleep(30)
         # change current working directory to point at scoring_engine dir
         run_path = os.path.abspath(os.path.join(config.root, "scoring", "scoring_engine"))
 
@@ -65,8 +69,11 @@ class scorer(object):
     def __exit__(self, *args):
         """Teardown the server"""
         # Get the process group to kill all of the suprocesses
-        pgrp = os.getpgid(self.scoring_process.pid)
-        os.killpg(pgrp, signal.SIGKILL)
+        pgrp_engine = os.getpgid(self.scoring_process.pid)
+        os.killpg(pgrp_engine, signal.SIGKILL)
+        if self.pipeline == True:
+            pgrp_pipeline = os.getpgid(self.pipeline_process.pid)
+            os.killpg(pgrp_pipeline, signal.SIGKILL)
 
     def score(self, data_val):
         """score the json set data_val"""
@@ -77,7 +84,22 @@ class scorer(object):
                    'Accept': 'application/json,text/plain'}
 
         scoring_host = self.host + ":" + self.port
-        submit_string = 'http://'+scoring_host+'/v2/score'
-        response = requests.post(
-            submit_string, json={"records": data_val}, headers=headers)
+        if self.pipeline == True:
+            submit_string = 'http://localhost:45000/v1/score'
+            munged_data = ','.join(map(str,data_val[0].values()))
+            response = requests.post(
+                submit_string, json={"message": munged_data}, headers=headers)
+        else:
+            submit_string = 'http://'+scoring_host+'/v2/score'
+            response = requests.post(
+                submit_string, json={"records": data_val}, headers=headers)
+
         return response
+
+    def start_pipeline_server(self, pipeline_filename):
+        host = "0.0.0.0"
+        port = "45000"
+        scoring_pipeline_location = os.path.join(config.root, "scoring_pipelines", "scoring_pipelines", "scoringExecutor.py")
+        self.pipeline_process = sp.Popen(
+            ["python2.7", scoring_pipeline_location, pipeline_filename, port],
+            preexec_fn=os.setsid)
