@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+# vim: set encoding=utf-8
+
 #  Copyright (c) 2016 Intel Corporation 
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +15,18 @@
 #  limitations under the License.
 #
 
-NAME="[`basename $BASH_SOURCE[0]`]"
-DIR="$( cd "$( dirname "$BASH_SOURCE[0]" )" && pwd )"
-echo "$NAME DIR=$DIR"
+from record import Record
 
-# make sure the model scoring servers get deleted
-sleep 10
-echo "cleanup"
-echo $(ps -ef | grep "model-scor")
-for pid in $(ps -ef | grep "model-scor" | grep -v 'grep' | awk '{print $2}'); do kill -9 $pid; done
-echo $(ps -ef | grep "scoring-pipe")
-for pid in $(ps -ef | grep "scoring-pipe" | grep -v 'grep' | awk '{print $2}'); do kill -9 $pid; done
+def string_to_numeric(row):
+    result = []
+    for element in row:
+        result.append(int(element[1]))
+    return result
+
+def evaluate(data):
+    schema = [("f1", int), ("f2", int), ("f3", int)]
+    numeric_record = Record(schema, string_to_numeric(data))
+    r = numeric_record.score("localhost:9114") #This is not a generic URL. It is hardcoded to match the scoring engine created for this test.
+    return str(r)
 
 
-echo "return was" $?

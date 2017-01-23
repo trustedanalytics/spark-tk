@@ -6,7 +6,16 @@ statsmodels
 pydicom
 pytest-cov
 pytest-xdist
+requests
+requests[security]
 glob2
 sklearn
 lxml
 psutil
+pip
+pyopenssl
+ndg-httpsclient
+pyasn1
+flask
+flask_api
+kafka

@@ -22,16 +22,16 @@ import org.graphframes.GraphFrame
 import org.graphframes.lib.GraphXConversions
 
 /**
- * Compute closeness centrality for nodes.
+ * Compute the closeness centrality for each node in the graph.
  *
  * Closeness centrality of a node is the reciprocal of the sum of the shortest path distances from this node to all
  * other nodes in the graph. Since the sum of distances depends on the number of nodes in the
  * graph, closeness is normalized by the sum of minimum possible distances.
  *
- * In the case of disconnected graph, the algorithm computes the closeness centrality for each connected part.
+ * In the case of a disconnected graph, the algorithm computes the closeness centrality for each connected part.
  *
- * If the edge weight is considered then the shortest-path length will be computed using Dijkstra's algorithm with
- * that edge weight.
+ * In the case of a weighted graph, the algorithm handles only positive edge weights and uses Dijkstra's algorithm for
+ * the shortest-path calculations
  *
  * Reference: Linton C. Freeman: Centrality in networks: I.Conceptual clarification. Social Networks 1:215-239, 1979.
  * http://leonidzhukov.ru/hse/2013/socialnetworks/papers/freeman79-centrality.pdf
@@ -43,13 +43,14 @@ object ClosenessCentrality {
    *
    * @param graph the graph to compute the closeness centrality for its nodes
    * @param edgePropName optional edge column name to be used as edge weight
-   * @param normalized if true, normalizes the closeness centrality value to the number of nodes connected to it divided by
-   *                   the rest number of nodes in the graph, this is effective in the case of disconnected graph
+   * @param normalize if true, normalizes the closeness centrality value to the number of nodes connected to it
+   *                   divided by the total number of nodes in the graph, this is effective in the case of
+   *                   disconnected graph
    * @return graph frame with an additional vertex property for the closeness centrality data
    */
-  def run(graph: GraphFrame, edgePropName: Option[String] = None, normalized: Boolean = true): GraphFrame = {
+  def run(graph: GraphFrame, edgePropName: Option[String] = None, normalize: Boolean = true): GraphFrame = {
     val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgePropName)
-    val closenessCentralityGraphx = sparktk.ClosenessCentrality.run(graph.toGraphX, edgeWeightFunc, normalized)
+    val closenessCentralityGraphx = sparktk.ClosenessCentrality.run(graph.toGraphX, edgeWeightFunc, normalize)
     GraphXConversions.fromGraphX(graph, closenessCentralityGraphx, Seq(CC_RESULTS))
   }
 
@@ -80,5 +81,5 @@ object ClosenessCentrality {
     edgeWeightFunc
   }
 
-  private val CC_RESULTS = "ClosenessCentrality"
+  private val CC_RESULTS = "closeness_centrality"
 }
