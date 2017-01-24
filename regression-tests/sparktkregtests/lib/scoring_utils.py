@@ -22,13 +22,13 @@ import time
 import signal
 import os
 import config
-from multiprocessing import Process
 from ConfigParser import SafeConfigParser
 
 
 class scorer(object):
 
-    def __init__(self, model_path, port_id, host=config.scoring_engine_host, pipeline=False, pipeline_filename=None):
+    def __init__(self, model_path, port_id, host=config.scoring_engine_host,
+                 pipeline=False, pipeline_filename=None):
         """Set up the server location, port and model file"""
         self.hdfs_path = model_path
         self.name = host.split('.')[0]
@@ -37,25 +37,29 @@ class scorer(object):
         self.pipeline_filename = pipeline_filename
         port_config = SafeConfigParser()
         filepath = os.path.abspath(os.path.join(
-            config.root, "regression-tests", "sparktkregtests", "lib", "port.ini"))
+            config.root, "regression-tests",
+            "sparktkregtests", "lib", "port.ini"))
         port_config.read(filepath)
         self.port = port_config.get('port', port_id)
 
     def __enter__(self):
         """Activate the Server"""
-        if self.pipeline == True:
+        if self.pipeline:
             self.start_pipeline_server(self.pipeline_filename)
             time.sleep(30)
         # change current working directory to point at scoring_engine dir
-        run_path = os.path.abspath(os.path.join(config.root, "scoring", "scoring_engine"))
+        run_path = os.path.abspath(
+            os.path.join(config.root, "scoring", "scoring_engine"))
 
         # keep track of cwd for future
         test_dir = os.getcwd()
         os.chdir(run_path)
 
+        path = self.hdfs_path
         # make a new process group
         self.scoring_process = sp.Popen(
-            ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
+            ["./bin/model-scoring.sh",
+             "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % path,
              "-Dtrustedanalytics.scoring.port=%s" % self.port],
             preexec_fn=os.setsid)
 
@@ -71,7 +75,7 @@ class scorer(object):
         # Get the process group to kill all of the suprocesses
         pgrp_engine = os.getpgid(self.scoring_process.pid)
         os.killpg(pgrp_engine, signal.SIGKILL)
-        if self.pipeline == True:
+        if self.pipeline:
             pgrp_pipeline = os.getpgid(self.pipeline_process.pid)
             os.killpg(pgrp_pipeline, signal.SIGKILL)
 
@@ -84,9 +88,9 @@ class scorer(object):
                    'Accept': 'application/json,text/plain'}
 
         scoring_host = self.host + ":" + self.port
-        if self.pipeline == True:
+        if self.pipeline:
             submit_string = 'http://localhost:45000/v1/score'
-            munged_data = ','.join(map(str,data_val[0].values()))
+            munged_data = ','.join(map(str, data_val[0].values()))
             response = requests.post(
                 submit_string, json={"message": munged_data}, headers=headers)
         else:
@@ -97,9 +101,11 @@ class scorer(object):
         return response
 
     def start_pipeline_server(self, pipeline_filename):
-        host = "0.0.0.0"
+        # host = "0.0.0.0"
         port = "45000"
-        scoring_pipeline_location = os.path.join(config.root, "scoring_pipelines", "scoring_pipelines", "scoringExecutor.py")
+        scoring_pipeline_location = os.path.join(
+            config.root, "scoring_pipelines",
+            "scoring_pipelines", "scoringExecutor.py")
         self.pipeline_process = sp.Popen(
             ["python2.7", scoring_pipeline_location, pipeline_filename, port],
             preexec_fn=os.setsid)

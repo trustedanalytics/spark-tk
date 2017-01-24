@@ -22,6 +22,7 @@ import unittest
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import performance_utils as profiler
 
+
 class PerformanceKMeans(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
@@ -40,11 +41,11 @@ class PerformanceKMeans(sparktk_test.SparkTKTestCase):
 
     def test_kmeans_5by5(self):
         """Train a 5-feature, 5-class KMeans model"""
-        with profiler.Timer("profile." + self.id() + "_train") as tmr:
+        with profiler.Timer("profile." + self.id() + "_train"):
             kmodel = self.context.models.clustering.kmeans.train(
                 self.frame_train, ["Vec1", "Vec2", "Vec3", "Vec4", "Vec5"], 5)
 
-        with profiler.Timer("profile." + self.id() + "_predict") as tmr:
+        with profiler.Timer("profile." + self.id() + "_predict"):
             kmodel.predict(self.frame_train)
 
 
