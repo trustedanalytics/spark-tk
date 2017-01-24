@@ -33,4 +33,8 @@ hdfs_data_dir = hdfs_user_root + "/qa_data"
 checkpoint_dir = hdfs_user_root + "/sparktk_checkpoint"
 export_dir = "hdfs://"+hostname+":8020"+hdfs_user_root+"/sparktk_export"
 
+# Performance test information
+test_size = os.getenv("PERFORMANCE_SIZE", "test")
+performance_data_dir = hdfs_data_dir if test_size == "test" else "/performance"
+
 scoring_engine_host = os.getenv("SCORING_ENGINE_HOST", "127.0.0.1")

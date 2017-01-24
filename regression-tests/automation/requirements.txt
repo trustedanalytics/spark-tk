@@ -16,3 +16,6 @@ pip
 pyopenssl
 ndg-httpsclient
 pyasn1
+flask
+flask_api
+kafka
