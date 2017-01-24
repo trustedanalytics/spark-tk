@@ -50,8 +50,8 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
 
         # the BulkData location element of the metadata xml will be different
         # since the dicom may load the data from a differnet location then
-        # where we loaded our files. We will remove this element from the metadata
-        # before we compare
+        # where we loaded our files. We will remove this element from the
+        # metadata before we compare
         metadata_pandas = self.dicom.metadata.to_pandas()
         for dcm_file in metadata_pandas["metadata"]:
             dcm_file = dcm_file.encode("ascii", "ignore")
@@ -59,20 +59,23 @@ class CreateDicomTest(sparktk_test.SparkTKTestCase):
             dcm_bulk_data = dcm_xml_root.xpath("//BulkData")[0]
             dcm_bulk_data.getparent().remove(dcm_bulk_data)
             self.assertTrue(etree.tostring(dcm_xml_root) in files)
-            
+
     def test_image_content_import_dcm_basic(self):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result
         files = []
         for filename in os.listdir(self.image_directory):
-            pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
+            pixel_data = dicom.read_file(
+                self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_pandas = self.dicom.pixeldata.to_pandas()["imagematrix"]
         for dcm_image in image_pandas:
-            result = any(numpy.array_equal(dcm_image, file_image) for file_image in files)
+            result = any(
+                numpy.array_equal(
+                    dcm_image, file_image) for file_image in files)
             self.assertTrue(result)
 
     def test_import_dicom_invalid_files(self):

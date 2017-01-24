@@ -18,7 +18,6 @@
 """Tests svd on dicom frame"""
 
 import unittest
-from sparktk import dtypes
 from sparktkregtests.lib import sparktk_test
 from numpy.linalg import svd
 from numpy.testing import assert_almost_equal
@@ -37,18 +36,18 @@ class SVDDicomTest(sparktk_test.SparkTKTestCase):
         """Test the output of svd"""
         self.frame.matrix_svd("imagematrix")
 
-        #get pandas frame of the output
+        # get pandas frame of the output
         results = self.frame.to_pandas(self.frame.count())
 
-        #compare U,V and s matrices for each image against numpy's output
+        # compare U,V and s matrices for each image against numpy's output
         for i, row in results.iterrows():
             actual_U = row['U_imagematrix']
             actual_V = row['Vt_imagematrix']
             actual_s = row['SingularVectors_imagematrix']
 
-            #expected ouput using numpy's svd
+            # expected ouput using numpy's svd
             U, s, V = svd(row['imagematrix'])
-            
+
             assert_almost_equal(actual_U, U, decimal=4, err_msg="U incorrect")
             assert_almost_equal(actual_V, V, decimal=4, err_msg="V incorrect")
             assert_almost_equal(
@@ -65,6 +64,7 @@ class SVDDicomTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "svd\(\) takes exactly 2 arguments"):
             self.frame.matrix_svd("imagematrix", True)
+
+
 if __name__ == "__main__":
     unittest.main()
-

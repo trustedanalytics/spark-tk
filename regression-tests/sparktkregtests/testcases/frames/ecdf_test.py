@@ -39,7 +39,8 @@ class ecdfTest(sparktk_test.SparkTKTestCase):
         # call sparktk ecdf function on the data and get as pandas df
         ecdf_sparktk_result = self.frame.ecdf("C0")
         pd_ecdf = ecdf_sparktk_result.to_pandas(ecdf_sparktk_result.row_count)
-        # get the original frame as pandas df so we can calculate our own result
+        # get the original frame as pandas df so we can calculate our
+        # own result
         pd_original_frame = self.frame.to_pandas(self.frame.row_count)
 
         # the formula for calculating ecdf is
@@ -52,7 +53,8 @@ class ecdfTest(sparktk_test.SparkTKTestCase):
         grouped = pd_original_frame.groupby("C0").size()
         our_result = grouped.sort_index().cumsum()*1.0/len(pd_original_frame)
 
-        # finaly we iterate through the sparktk result and compare it with our result
+        # finaly we iterate through the sparktk result and
+        # compare it with our result
         for index, row in pd_ecdf.iterrows():
             self.assertAlmostEqual(row["C0"+'_ecdf'],
                                    our_result[int(row["C0"])])

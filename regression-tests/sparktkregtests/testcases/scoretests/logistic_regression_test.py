@@ -17,7 +17,6 @@
 
 """ Tests Logistic Regression scoring engine """
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -42,9 +41,10 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
 
     def test_model_scoring(self):
         """Test publishing a logistic regression model"""
+        vectors = ["vec0", "vec1", "vec2", "vec3", "vec4"]
+
         model = self.context.models.classification.logistic_regression.train(
-            self.frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
-            'res')
+            self.frame, vectors, 'res')
 
         predict = model.predict(
             self.frame,
@@ -57,11 +57,12 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         with scoring_utils.scorer(
                 model_path, self.id()) as scorer:
             for i, row in test_rows.iterrows():
-                res = scorer.score(
-                    [dict(zip(["vec0", "vec1", "vec2", "vec3", "vec4"], list(row[0:5])))])
+                res = scorer.score([dict(zip(vectors, list(row[0:5])))])
 
                 self.assertEqual(
-                    row["predicted_label"], res.json()["data"][0]['PredictedLabel'])
+                    row["predicted_label"],
+                    res.json()["data"][0]['PredictedLabel'])
+
 
 if __name__ == '__main__':
     unittest.main()

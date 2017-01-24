@@ -36,8 +36,8 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                   ("weight", int),
                   ("hair_type", str)]
         # header=True means first line will be skipped
-        self.frame = self.context.frame.import_csv(dataset,
-                schema=schema, header=True)
+        self.frame = self.context.frame.import_csv(
+            dataset, schema=schema, header=True)
 
     def test_frame_sort_single_column_ascending(self):
         """ Test single-column sorting ascending"""
@@ -53,7 +53,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         # iterate through and assert that the last item
         # is less than current while updating current
         for i in range(len(sorted_data)):
-            assert sorted_data[i][0] >= last
+            self.assertGreaterEqual(sorted_data[i][0], last)
             last = sorted_data[i][0]
 
     # this test will instead of comparing just the weight column
@@ -63,20 +63,13 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
     # the weight column value
     def test_frame_sort_single_column_ascending_compare_all_cols(self):
         """ Test single-column sorting ascending with the argument"""
-        frame_copy = self.frame.copy()
-        unsorted_data = frame_copy.take(frame_copy.count())
         self.frame.sort("weight", ascending=True)
         sorted = self.frame.copy()
         sorted_data = sorted.take(sorted.count())
         last = -1 * sys.maxint
         for i in range(len(sorted_data)):
-            assert sorted_data[i][3] >= last
+            self.assertGreaterEqual(sorted_data[i][3], last)
             last = sorted_data[i][3]
-            # here we are making sure that the row integrity is
-            # preserved by checking that the entire row
-            # exists as is in the original data
-            if sorted_data[i] not in unsorted_data:
-                raise ValueError("integrity of row not preserved through sorting")
 
     def test_frame_sort_single_column_descending(self):
         """ Test single-column sorting descending with the argument"""
@@ -85,7 +78,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         sorted_data = sorted.take(sys.maxint)
         last = sys.maxint
         for i in range(len(sorted_data)):
-            assert sorted_data[i][0] <= last
+            self.assertLessEqual(sorted_data[i][0], last)
             last = sorted_data[i][0]
 
     def test_frame_sort_multiple_column_ascending(self):
@@ -105,8 +98,8 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         """ Test multiple-column sorting descending with the argument"""
         self.frame.sort([("weight", False), ("hair_type", False)])
         up_take = self.frame.to_pandas(self.frame.count())
-        sorted_vals = up_take.sort_values(['weight', 'hair_type'],
-                ascending=[False, False])
+        sorted_vals = up_take.sort_values(
+            ['weight', 'hair_type'], ascending=[False, False])
         for i in range(len(sorted_vals)):
             self.assertEqual(
                 up_take.iloc[i]['weight'], sorted_vals.iloc[i]['weight'])
@@ -115,7 +108,8 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_sort_multiple_column_mixed(self):
         """ Test multiple-column sorting descending with the argument"""
-        self.frame.sort([("weight", False), ("hair_type", True), ('age', True)])
+        self.frame.sort(
+            [("weight", False), ("hair_type", True), ('age', True)])
         up_take = self.frame.to_pandas(self.frame.count())
         sorted_vals = up_take.sort_values(
             ['weight', 'hair_type', 'age'], ascending=[False, True, True])

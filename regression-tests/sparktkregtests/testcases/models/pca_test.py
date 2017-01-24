@@ -15,23 +15,6 @@
 #  limitations under the License.
 #
 
-# vim: set encoding=utf-8
-
-#  Copyright (c) 2016 Intel Corporation 
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-#
-
 ''' test cases for Pricipal Components Analysis'''
 import unittest
 import numpy as np
@@ -135,7 +118,7 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
               0.2941181, -0.2494827]]
 
         # expected singular values
-        expected_singular_val= \
+        expected_singular_val = \
             [596.5517, 590.2738, 588.3024, 582.7042, 579.1695,
              576.3667, 569.8798, 568.0740, 563.0158, 560.6463]
 
@@ -171,7 +154,7 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
             vec2 = value[10:]
             dot_product = [sum([(r1)*(r2) for r1, r2 in zip(vec1, k)])
                            for k in actual_R_singular_vec]
-            for v,d  in zip(vec2, dot_product):
+            for v, d in zip(vec2, dot_product):
                 self.assertAlmostEqual(v, d)
 
     def test_pca_train(self):
@@ -235,10 +218,10 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "k.*number of observation columns"):
             self.context.models.dimreduction.pca.train(
-            self.frame,
-            ["X1", "X2", "X3", "X4", "X5",
-             "X6", "X7", "X8", "X9", "X10"],
-            False, 11)
+                self.frame,
+                ["X1", "X2", "X3", "X4", "X5",
+                 "X6", "X7", "X8", "X9", "X10"],
+                False, 11)
 
     def test_pca_invalid_k(self):
         """Test k < 1 in train"""
@@ -295,6 +278,7 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
 
         for val in actual_singular_val:
             self.assertGreaterEqual(val, 0)
+
 
 if __name__ == '__main__':
     unittest.main()

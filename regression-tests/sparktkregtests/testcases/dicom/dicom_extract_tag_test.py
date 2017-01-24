@@ -30,15 +30,14 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         super(DicomExtractTagsTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.count = self.dicom.metadata.count()
 
     def test_extract_one_column_basic(self):
         """test extract tag one col"""
         # generate our expected result using keywords
         # we will also get the tag numbers for the keywords
-        expected_result, equivalent_tags = self._get_expected_column_data_from_xml(["PatientID"])
+        expected_result, equivalent_tags = self._get_column_data_from_xml(
+            ["PatientID"])
         self.dicom.extract_tags(equivalent_tags)
 
         columns = self.dicom.metadata.column_names
@@ -46,7 +45,8 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
             if tag not in columns:
                 raise Exception("tag was not added to columns")
 
-        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags)
+        take_result = self.dicom.metadata.take(
+            self.count, columns=equivalent_tags)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_multiple_columns_basic(self):
@@ -54,7 +54,8 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         # generate our expected result using keywords
         # we also get the equivalent tags for our keywords
         keywords = ["PatientID", "SOPInstanceUID"]
-        expected_result, equivalent_tags = self._get_expected_column_data_from_xml(keywords)
+        expected_result, equivalent_tags = self._get_column_data_from_xml(
+            keywords)
 
         self.dicom.extract_tags(equivalent_tags)
 
@@ -63,7 +64,8 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
             if tag not in columns:
                 raise Exception("tag was not added to columns")
 
-        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags)
+        take_result = self.dicom.metadata.take(
+            self.count, columns=equivalent_tags)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_invalid_column(self):
@@ -74,7 +76,8 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         if u'invalid' not in columns:
             raise Exception("Invalid column not added")
 
-        invalid_column = self.dicom.metadata.take(self.count, columns=['invalid'])
+        invalid_column = self.dicom.metadata.take(
+            self.count, columns=['invalid'])
         expected_result = [[None] for x in range(0, self.count)]
         self.assertEqual(invalid_column, expected_result)
 
@@ -88,13 +91,15 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         if u'another_invalid_col' not in columns:
             raise Exception("another_invalid_col not added to columns")
 
-        invalid_columns = self.dicom.metadata.take(self.count, columns=['invalid', 'another_invalid_col'])
+        invalid_columns = self.dicom.metadata.take(
+            self.count, columns=['invalid', 'another_invalid_col'])
         expected_result = [[None, None] for x in range(0, self.count)]
         self.assertEqual(invalid_columns, expected_result)
 
     def test_extract_invalid_valid_col_mix(self):
         """test extract tag mix of invalid and valid tags"""
-        expected_result, equivalent_tags = self._get_expected_column_data_from_xml(["PatientID", "invalid"])
+        expected_result, equivalent_tags = self._get_column_data_from_xml(
+            ["PatientID", "invalid"])
         equivalent_tags.append("invalid")
 
         self.dicom.extract_tags(equivalent_tags)
@@ -105,15 +110,17 @@ class DicomExtractTagsTest(sparktk_test.SparkTKTestCase):
         if u'invalid' not in columns:
             raise Exception("invalid column not added to columns")
 
-        take_result = self.dicom.metadata.take(self.count, columns=equivalent_tags)
+        take_result = self.dicom.metadata.take(
+            self.count, columns=equivalent_tags)
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_invalid_type(self):
         """test extract tags with invalid param type"""
-        with self.assertRaisesRegexp(Exception, "should be either str or list"):
+        with self.assertRaisesRegexp(
+                Exception, "should be either str or list"):
             self.dicom.extract_tags(1)
 
-    def _get_expected_column_data_from_xml(self, keywords):
+    def _get_column_data_from_xml(self, keywords):
         # we will generate the expected result by
         # extracting the col data ourselves
         expected_column_data = []

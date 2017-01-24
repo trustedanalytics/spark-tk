@@ -110,5 +110,6 @@ class GraphCreate(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(ValueError, "\'id\' missing"):
             self.context.graph.create(self.vertices, self.edges)
 
+
 if __name__ == "__main__":
     unittest.main()

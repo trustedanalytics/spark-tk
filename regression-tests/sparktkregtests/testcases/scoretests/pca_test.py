@@ -36,14 +36,15 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
                   ("X9", int),
                   ("X10", int)]
         pca_traindata = self.get_file("pcadata.csv")
-        self.frame = self.context.frame.import_csv(pca_traindata, schema=schema)
+        self.frame = self.context.frame.import_csv(
+            pca_traindata, schema=schema)
 
     def test_model_scoring(self):
         """Test pca scoring"""
         model = self.context.models.dimreduction.pca.train(
             self.frame,
             ["X1", "X2", "X3", "X4", "X5",
-            "X6", "X7", "X8", "X9", "X10"],
+             "X6", "X7", "X8", "X9", "X10"],
             False, 10)
 
         file_name = self.get_name("pca")
@@ -58,8 +59,9 @@ class PrincipalComponent(sparktk_test.SparkTKTestCase):
                 r = scorer.score(
                     [dict(zip(["X1", "X2", "X3", "X4", "X5",
                                "X6", "X7", "X8", "X9", "X10"],
-                    map(lambda x: x, i[0:10])))])
-                map(lambda x, y: self.assertAlmostEqual(float(x),float(y)),
+                              map(lambda x: x, i[0:10])))])
+                map(
+                    lambda x, y: self.assertAlmostEqual(float(x), float(y)),
                     r.json()["data"][-1]["principal_components"], i[10:])
 
 

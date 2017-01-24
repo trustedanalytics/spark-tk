@@ -80,7 +80,8 @@ class ExportDicomTest(sparktk_test.SparkTKTestCase):
             actual = etree.tostring(actual_root)
             self.assertTrue(actual in original_formatted)
         for actual in loaded_imagedata:
-            result = any(numpy.array_equal(actual, original) for original in original_imagedata)
+            result = any(numpy.array_equal(
+                actual, original) for original in original_imagedata)
             self.assertTrue(result)
 
 

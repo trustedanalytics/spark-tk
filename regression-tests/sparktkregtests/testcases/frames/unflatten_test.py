@@ -27,17 +27,16 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         super(Unflatten, self).setUp()
         self.datafile_unflatten = self.get_file("unflatten_data_no_spaces.csv")
         self.schema_unflatten = [("user", str),
-                            ("day", str),
-                            ("time", str),
-                            ("reading", int)]
+                                 ("day", str),
+                                 ("time", str),
+                                 ("reading", int)]
 
     def test_unflatten_one_column(self):
         """ test for unflatten comma-separated rows """
-        frame = self.context.frame.import_csv(self.datafile_unflatten,
-                schema=self.schema_unflatten)
+        frame = self.context.frame.import_csv(
+            self.datafile_unflatten, schema=self.schema_unflatten)
         # get as a pandas frame to access data
         pandas_frame = frame.to_pandas(frame.count())
-        pandas_data = []
         # use this dictionary to store expected results by name
         name_lookup = {}
 
@@ -53,12 +52,13 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                 # append each item in the row to a comma
                 # delineated string
                 for index in range(1, len(row_copy)):
-                    row_copy[index] = str(row_copy[index]) + "," + str(row[index])
+                    row_copy[index] = str(
+                        row_copy[index]) + "," + str(row[index])
                 name_lookup[row['user']] = row_copy
 
         # now we unflatten the columns using sparktk
         frame.unflatten_columns(['user'])
-        
+
         # finally we iterate through what we got
         # from sparktk unflatten and compare
         # it to the expected results we created
@@ -66,14 +66,18 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         for index, row in unflatten_pandas.iterrows():
             self.assertEqual(row['user'], name_lookup[row['user']]['user'])
             self.assertEqual(row['day'], name_lookup[row['user']]['day'])
-            self.assertItemsEqual(row['time'].split(','), name_lookup[row['user']]['time'].split(','))
-            self.assertItemsEqual(row['reading'].split(','), name_lookup[row['user']]['reading'].split(','))
+            self.assertItemsEqual(
+                row['time'].split(','),
+                name_lookup[row['user']]['time'].split(','))
+            self.assertItemsEqual(
+                row['reading'].split(','),
+                name_lookup[row['user']]['reading'].split(','))
 
         self.assertEqual(frame.count(), 5)
 
     def test_unflatten_multiple_cols(self):
-        frame = self.context.frame.import_csv(self.datafile_unflatten,
-                schema=self.schema_unflatten)
+        frame = self.context.frame.import_csv(
+            self.datafile_unflatten, schema=self.schema_unflatten)
         # get a pandas frame of the data
         pandas_frame = frame.to_pandas(frame.count())
 
@@ -92,8 +96,10 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                     # (which is day, see the schema above)
                     # to also be flattened
                     # so we only append data if it isn't already there
-                    if index is not 1 or str(row[index]) not in str(row_copy[index]):
-                        row_copy[index] = str(row_copy[index]) + "," + str(row[index])
+                    if index is not 1 or str(
+                            row[index]) not in str(row_copy[index]):
+                        row_copy[index] = str(
+                            row_copy[index]) + "," + str(row[index])
                 name_lookup[row['user']] = row_copy
 
         # now we unflatten using sparktk
@@ -105,8 +111,12 @@ class Unflatten(sparktk_test.SparkTKTestCase):
         for index, row in unflatten_pandas.iterrows():
             self.assertEqual(row['user'], name_lookup[row['user']]['user'])
             self.assertEqual(row['day'], name_lookup[row['user']]['day'])
-            self.assertItemsEqual(row['time'].split(','), name_lookup[row['user']]['time'].split(','))
-            self.assertItemsEqual(row['reading'].split(','), name_lookup[row['user']]['reading'].split(','))
+            self.assertItemsEqual(
+                row['time'].split(','),
+                name_lookup[row['user']]['time'].split(','))
+            self.assertItemsEqual(
+                row['reading'].split(','),
+                name_lookup[row['user']]['reading'].split(','))
 
     # same logic as single column but with sparse data
     # because there are so many rows in this data
@@ -135,7 +145,7 @@ class Unflatten(sparktk_test.SparkTKTestCase):
                     len(str(row['time']).split(",")),
                     len(str(row['reading']).split(",")))
         self.assertEqual(frame_sparse.count(), 100)
-        
+
 
 if __name__ == "__main__":
     unittest.main()

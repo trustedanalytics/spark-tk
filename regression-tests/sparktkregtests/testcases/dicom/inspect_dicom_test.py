@@ -36,9 +36,11 @@ class InspectDicomTest(sparktk_test.SparkTKTestCase):
         self.image_directory = self.get_local_dataset("dicom_uncompressed/")
 
     def test_metadata_imagedata_row_count_same(self):
-        """test that the row count are the same for inspect pixeldate/metadata"""
-        metadata_result = self.dicom.metadata.inspect(self.dicom.metadata.count())
-        image_result = self.dicom.pixeldata.inspect(self.dicom.pixeldata.count())
+        """test row count are the same for inspect pixeldate/metadata"""
+        metadata_result = self.dicom.metadata.inspect(
+            self.dicom.metadata.count())
+        image_result = self.dicom.pixeldata.inspect(
+            self.dicom.pixeldata.count())
         self.assertEqual(len(metadata_result.rows), len(image_result.rows))
 
     def test_metadata_content_inspect_dcm_basic(self):
@@ -56,8 +58,8 @@ class InspectDicomTest(sparktk_test.SparkTKTestCase):
 
         # the BulkData location element of the metadata xml will be different
         # since the dicom may load the data from a differnet location then
-        # where we loaded our files. We will remove this element from the metadata
-        # before we compare
+        # where we loaded our files. We will remove this element from
+        # the metadata before we compare
         metadata_inspect = self.dicom.metadata.inspect().rows
         for dcm_file in metadata_inspect:
             dcm_file = dcm_file[1].encode("ascii", "ignore")
@@ -71,14 +73,17 @@ class InspectDicomTest(sparktk_test.SparkTKTestCase):
         # load the files so we can compare with the dicom result
         files = []
         for filename in os.listdir(self.image_directory):
-            pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
+            pixel_data = dicom.read_file(
+                self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_inspect = self.dicom.pixeldata.inspect().rows
         for dcm_image in image_inspect:
-            result = any(numpy.array_equal(dcm_image[1], file_image) for file_image in files)
+            result = any(
+                numpy.array_equal(
+                    dcm_image[1], file_image) for file_image in files)
             self.assertTrue(result)
 
 

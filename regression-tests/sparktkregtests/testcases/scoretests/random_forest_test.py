@@ -18,7 +18,6 @@
 
 """ test cases for random forest"""
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -36,9 +35,10 @@ class RandomForest(sparktk_test.SparkTKTestCase):
 
     def test_class_scoring(self):
         """Test random forest classifier scoring model"""
-        rfmodel = self.context.models.classification.random_forest_classifier.train(
+        classification_models = self.context.models.classification
+        rfmodel = classification_models.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", seed=0)
-        
+
         result_frame = rfmodel.predict(self.frame)
         preddf = result_frame.to_pandas(result_frame.count())
 
@@ -50,9 +50,10 @@ class RandomForest(sparktk_test.SparkTKTestCase):
             for i, row in preddf.iterrows():
                 res = scorer.score(
                     [dict(zip(["feat1", "feat2"],
-                    map(lambda x: x,row[0:2])))])
+                     map(lambda x: x, row[0:2])))])
                 self.assertAlmostEqual(
-                    float(row[3]), float(res.json()["data"][0]['PredictedClass']))
+                    float(row[3]),
+                    float(res.json()["data"][0]['PredictedClass']))
 
     def test_reg_scoring(self):
         """Test random forest regressor scoring  model"""
@@ -69,7 +70,8 @@ class RandomForest(sparktk_test.SparkTKTestCase):
                 model_path, self.id()) as scorer:
             for i, row in preddf.iterrows():
                 res = scorer.score(
-                    [dict(zip(["feat1", "feat2"], map(lambda x: x,row[0:2])))])
+                    [dict(zip(["feat1", "feat2"],
+                     map(lambda x: x, row[0:2])))])
 
                 self.assertAlmostEqual(
                     float(row[3]), float(res.json()["data"][0]['Prediction']))

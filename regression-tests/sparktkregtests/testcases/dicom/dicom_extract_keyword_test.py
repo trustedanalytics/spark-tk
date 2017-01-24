@@ -30,8 +30,6 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
         super(DicomExtractKeywordsTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.count = self.dicom.metadata.count()
 
     def test_extract_one_column_basic(self):
@@ -44,8 +42,10 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
             raise Exception("PatientID not added to columns")
 
         # compare expected results with extract_keywords result
-        expected_result = self._get_expected_column_data_from_xml(["PatientID"])
-        take_result = self.dicom.metadata.take(self.count, columns=['PatientID'])
+        expected_result = self._get_expected_column_data_from_xml(
+            ["PatientID"])
+        take_result = self.dicom.metadata.take(
+            self.count, columns=['PatientID'])
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_multiple_columns_basic(self):
@@ -75,7 +75,8 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
             raise Exception("Invalid column not added")
 
         # compare expected and actual result
-        invalid_column = self.dicom.metadata.take(self.count, columns=[u'invalid'])
+        invalid_column = self.dicom.metadata.take(
+            self.count, columns=[u'invalid'])
         expected_result = [[None] for x in range(0, self.count)]
         self.assertEqual(invalid_column, expected_result)
 
@@ -92,7 +93,8 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
             raise Exception("another_invalid_col not added to columns")
 
         # compare actual with expected result
-        invalid_columns = self.dicom.metadata.take(self.count, columns=keywords)
+        invalid_columns = self.dicom.metadata.take(
+            self.count, columns=keywords)
         expected_result = [[None, None] for x in range(0, self.count)]
         self.assertEqual(invalid_columns, expected_result)
 
@@ -113,7 +115,8 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
         numpy.testing.assert_equal(take_result, expected_result)
 
     def test_extract_invalid_type(self):
-        with self.assertRaisesRegexp(Exception, "should be either str or list"):
+        with self.assertRaisesRegexp(
+                Exception, "should be either str or list"):
             self.dicom.extract_keywords(1)
 
     def test_extract_unicode_columns(self):
@@ -151,14 +154,16 @@ class DicomExtractKeywordsTest(sparktk_test.SparkTKTestCase):
                 # attribute keyword equal to our keyword
                 # then get the value element underneath it and extract the
                 # inner text
-                tag_query = ".//DicomAttribute[@keyword='" + tag + "']/Value/text()"
+                tag_query = (".//DicomAttribute[@keyword='" +
+                             tag + "']/Value/text()")
                 query_result = xml_root.xpath(tag_query)
 
                 # if result is [] use None, otherwise format in unicode
-                result = query_result[0].decode("ascii", "ignore") if query_result else None
+                result = query_result[0].decode(
+                    "ascii", "ignore") if query_result else None
                 expected_row.append(result)
 
-                #expected_row.append(query_result)
+                # expected_row.append(query_result)
             expected_column_data.append(expected_row)
         return expected_column_data
 

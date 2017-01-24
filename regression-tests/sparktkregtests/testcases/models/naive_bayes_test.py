@@ -19,7 +19,6 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
-from pyspark import SparkContext
 from pyspark.mllib import classification
 from pyspark.mllib.regression import LabeledPoint
 
@@ -39,25 +38,22 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
 
     def test_model_train_empty_feature(self):
         """Test empty string for training features throws errors."""
-        with self.assertRaisesRegexp(Exception,
-                                     "observationColumn must not be null nor empty"):
-            self.context.models.classification.naive_bayes.train(self.frame,
-                                                                 "",
-                                                                 "label")
+        with self.assertRaisesRegexp(
+                Exception, "observationColumn must not be null nor empty"):
+            self.context.models.classification.naive_bayes.train(
+                self.frame, "", "label")
 
     def test_model_train_empty_label_coloum(self):
         """Test empty string for label coloum throws error."""
         with self.assertRaisesRegexp(Exception,
                                      "labelColumn must not be null nor empty"):
-            self.context.models.classification.naive_bayes.train(self.frame,
-                                                                 "['f1', 'f2', 'f3']",
-                                                                 "")
+            self.context.models.classification.naive_bayes.train(
+                self.frame, "['f1', 'f2', 'f3']", "")
 
     def test_model_test(self):
         """Test training intializes theta, pi and labels"""
-        model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     ['f1', 'f2', 'f3'],
-                                                                     "label")
+        model = self.context.models.classification.naive_bayes.train(
+            self.frame, ['f1', 'f2', 'f3'], "label")
 
         res = model.test(self.frame)
         true_pos = float(res.confusion_matrix["Predicted_Pos"]["Actual_Pos"])
@@ -75,14 +71,12 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
 
     def test_model_publish_bayes(self):
         """Test training intializes theta, pi and labels"""
-        model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     ['f1', 'f2', 'f3'],
-                                                                     "label")
+        model = self.context.models.classification.naive_bayes.train(
+            self.frame, ['f1', 'f2', 'f3'], "label")
         file_name = self.get_name("naive_bayes")
         path = model.export_to_mar(self.get_export_file(file_name))
         self.assertIn("hdfs", path)
         self.assertIn("naive_bayes", path)
-
 
     def test_model_test_paramater_initiation(self):
         """Test training intializes theta, pi and labels"""
@@ -91,13 +85,12 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
         points = []
         # the location of the dataset
         location = self.get_local_dataset("naive_bayes.csv")
-        
+
         # we have to build a dataset for pyspark
         # pyspark expects an rdd of LabelPoints for
         # its NaiveBayes model
         with open(location, 'r') as datafile:
             lines = datafile.read().split('\n')
-            dataset = []
             # for each line, split into columns and
             # create a label point object out of each line
             for line in lines:
@@ -109,18 +102,17 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
                     points.append(lp)
         # use pyspark context to parallelize
         dataframe = self.context.sc.parallelize(points)
-        
+
         # create a pyspark model from the data and a sparktk model
         pyspark_model = classification.NaiveBayes.train(dataframe, 1.0)
-        model = self.context.models.classification.naive_bayes.train(self.frame,
-                                                                     ['f1', 'f2', 'f3'],
-                                                                     "label")
+        model = self.context.models.classification.naive_bayes.train(
+            self.frame, ['f1', 'f2', 'f3'], "label")
 
-        # use our sparktk model to predict, download to pandas for 
+        # use our sparktk model to predict, download to pandas for
         # ease of comparison
         predicted_frame = model.predict(self.frame, ['f1', 'f2', 'f3'])
         analysis = predicted_frame.to_pandas()
-        
+
         # iterate through the sparktk result and compare the prediction
         # with pyspark's prediction
         for index, row in analysis.iterrows():

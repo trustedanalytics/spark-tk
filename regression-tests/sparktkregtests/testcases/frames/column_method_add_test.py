@@ -85,7 +85,9 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
         def bad_divide(row):
             return float(row.float) / 0
 
-        with self.assertRaisesRegexp(ValueError, "schema expected to contain tuples, encountered type <type 'str'>"):
+        with self.assertRaisesRegexp(
+                ValueError,
+                "schema expected to contain tuples"):
             self.frame.add_columns(
                 bad_divide, schema=["result", float])
             self.assertEqual(schema_before, self.frame.schema)
@@ -95,19 +97,22 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
     def test_add_columns_add_existing_name(self):
         """Test adding columns with existing names errors"""
         with self.assertRaisesRegexp(
-                Exception, "requirement failed: Schemas have conflicting column names. Please rename before merging. Left Schema: int, str, float Right Schema: str"):
+                Exception,
+                "requirement failed: Schemas have conflicting column names"):
             self.frame.add_columns(lambda row: udf_int_val, ('str', int))
             self.frame.inspect()
 
     def test_add_column_with_empty_name(self):
         """Test adding a column with an empty name errors"""
-        with self.assertRaisesRegexp(Exception, "requirement failed: column name can't be empty"):
+        with self.assertRaisesRegexp(
+                Exception, "requirement failed: column name can't be empty"):
             self.frame.add_columns(lambda row: udf_int_val, ('', int))
             self.frame.inspect()
 
     def test_add_column_null_schema_no_force(self):
         """Test adding a column with a null schema errors, don't force eval"""
-        with self.assertRaisesRegexp(ValueError, "schema expected to contain tuples, encountered type <type 'NoneType'>"):
+        with self.assertRaisesRegexp(
+                ValueError, "schema expected to contain tuples"):
             self.frame.add_columns(lambda row: udf_int_val, None)
 
     def test_add_column_empty_schema_no_force(self):
@@ -118,7 +123,7 @@ class ColumnMethodTest(sparktk_test.SparkTKTestCase):
     def test_add_column_null_schema(self):
         """Test adding a column with a null schema errors"""
         with self.assertRaisesRegexp(
-                ValueError, "schema expected to contain tuples, encountered type <type 'NoneType'>"):
+                ValueError, "schema expected to contain tuples"):
             self.frame.add_columns(lambda row: udf_int_val, None)
             self.frame.inspect()
 

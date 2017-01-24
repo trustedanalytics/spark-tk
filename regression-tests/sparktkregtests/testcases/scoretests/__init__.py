@@ -15,21 +15,3 @@
 #  limitations under the License.
 #
 
-from record import Record
-
-
-def string_to_numeric(row):
-    result = []
-    for element in row:
-        result.append(int(element[1]))
-    return result
-
-
-def evaluate(data):
-    schema = [("f1", int), ("f2", int), ("f3", int)]
-    numeric_record = Record(schema, string_to_numeric(data))
-
-    # This is not a generic URL. It is hardcoded to match the
-    # scoring engine created for this test.
-    r = numeric_record.score("localhost:9114")
-    return str(r)

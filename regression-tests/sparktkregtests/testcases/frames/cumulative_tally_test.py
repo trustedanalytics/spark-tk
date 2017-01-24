@@ -34,8 +34,8 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
                         ("splits", str),
                         ("count", int),
                         ("percent_count", float)]
-        self.tally_frame = self.context.frame.import_csv(data_tally,
-                schema=schema_tally)
+        self.tally_frame = self.context.frame.import_csv(
+            data_tally, schema=schema_tally)
 
     def test_tally_and_tally_percent(self):
         """Test tally and tally percent"""
@@ -88,12 +88,14 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
 
     def test_tally_none(self):
         """Test tally none column errors"""
-        with self.assertRaisesRegexp(Exception,
+        with self.assertRaisesRegexp(
+                Exception,
                 "column name for sample is required"):
             self.tally_frame.tally(None, '5')
 
     def test_tally_none_percent(self):
-        with self.assertRaisesRegexp(Exception,
+        with self.assertRaisesRegexp(
+                Exception,
                 "column name for sample is required"):
             self.tally_frame.tally_percent(None, '5')
 
@@ -108,12 +110,14 @@ class TestCumulativeTally(sparktk_test.SparkTKTestCase):
 
     def test_tally_value_none(self):
         """Test tally on none errors"""
-        with self.assertRaisesRegexp(Exception,
+        with self.assertRaisesRegexp(
+                Exception,
                 "count value for the sample is required"):
             self.tally_frame.tally("rating", None)
 
     def test_tally_value_none_percent(self):
-        with self.assertRaisesRegexp(Exception,
+        with self.assertRaisesRegexp(
+                Exception,
                 "count value for the sample is required"):
             self.tally_frame.tally_percent("rating", None)
 

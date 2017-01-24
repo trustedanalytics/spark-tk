@@ -41,10 +41,8 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
     def test_binary_classification_metrics(self):
         """test binary classification metrics with normal data"""
         # call the binary classification metrics function
-        class_metrics = self.frame.binary_classification_metrics("labels",
-                                                                 "predictions",
-                                                                 1,
-                                                                 1)
+        class_metrics = self.frame.binary_classification_metrics(
+            "labels", "predictions", 1, 1)
         # get the confusion matrix values
         conf_matrix = class_metrics.confusion_matrix.values
         # labeling each of the cells in our confusion matrix
@@ -93,34 +91,27 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         """Test binary classification metrics with negative beta"""
         # should throw an error because beta must be >0
         with self.assertRaisesRegexp(Exception, "greater than or equal to 0"):
-            class_metrics = self.frame.binary_classification_metrics("labels",
-                                                                     "predictions",
-                                                                     1,
-                                                                     beta=-1)
+            self.frame.binary_classification_metrics(
+                "labels", "predictions", 1, beta=-1)
 
     def test_binary_classification_metrics_valid_beta(self):
         """test binary class metrics with a valid value for beta"""
         # this is a valid value for beta so this should not throw an error
-        class_metrics = self.frame.binary_classification_metrics("labels",
-                                                                 "predictions",
-                                                                 1,
-                                                                 beta=2)
+        self.frame.binary_classification_metrics(
+            "labels", "predictions", 1, beta=2)
 
     def test_binary_classification_matrics_with_invalid_beta_type(self):
         """Test binary class metrics with a beta of invalid type"""
-        with self.assertRaisesRegexp(Exception, "could not convert string to float"):
-            class_metrics = self.frame.binary_classification_metrics("labels",
-                                                                     "predictions",
-                                                                     1,
-                                                                     beta="bla")
+        with self.assertRaisesRegexp(
+                Exception, "could not convert string to float"):
+            self.frame.binary_classification_metrics(
+                "labels", "predictions", 1, beta="bla")
 
     def test_binary_classification_metrics_with_invalid_pos_label(self):
         """Test binary class metrics with a pos label that does not exist"""
         # should not error but should return no pos predictions
-        class_metrics = self.frame.binary_classification_metrics("labels",
-                                                                 "predictions",
-                                                                 "bla",
-                                                                 1)
+        class_metrics = self.frame.binary_classification_metrics(
+            "labels", "predictions", "bla", 1)
 
         # assert that no positive results were found since
         # there are no labels in the data with "bla"
@@ -143,11 +134,8 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
                   ("frequency", int)]
         frame = self.context.frame.create(dataset, schema=schema)
 
-        class_metrics = frame.binary_classification_metrics("labels",
-                                                            "predictions",
-                                                            1,
-                                                            1,
-                                                            frequency_column="frequency")
+        class_metrics = frame.binary_classification_metrics(
+            "labels", "predictions", 1, 1, frequency_column="frequency")
 
         conf_matrix = class_metrics.confusion_matrix.values
 
@@ -197,11 +185,8 @@ class BinaryClassificationMetrics(sparktk_test.SparkTKTestCase):
         # this should throw an error because the frequency col
         # we provided is of type str but should be of type int
         with self.assertRaisesRegexp(Exception, "NumberFormatException"):
-            class_metrics = frame.binary_classification_metrics("labels",
-                                                                "predictions",
-                                                                1,
-                                                                1,
-                                                                frequency_column="frequency")
+            frame.binary_classification_metrics(
+                "labels", "predictions", 1, 1, frequency_column="frequency")
 
 
 if __name__ == '__main__':

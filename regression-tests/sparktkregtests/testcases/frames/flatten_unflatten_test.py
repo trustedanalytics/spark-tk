@@ -17,8 +17,6 @@
 
 """ Tests that flatten and unflatten work in multi-column mode """
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktk import dtypes
 
@@ -169,6 +167,7 @@ class FlattenUnflatten(sparktk_test.SparkTKTestCase):
         frame = self.context.frame.create(block_data, schema=block_schema)
         with self.assertRaisesRegexp(Exception, "Invalid column"):
             frame.flatten_columns("col1")
+
 
 if __name__ == "__main__":
     unittest.main()

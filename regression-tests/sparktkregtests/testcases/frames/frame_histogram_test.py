@@ -30,8 +30,8 @@ class FrameHistogramTest(sparktk_test.SparkTKTestCase):
         schema = [("value", int)]
 
         # Big data frame from data with 33% correct predicted ratings
-        self.frame_histogram = self.context.frame.import_csv(histogram_file,
-                schema=schema)
+        self.frame_histogram = self.context.frame.import_csv(
+            histogram_file, schema=schema)
         result = self.frame_histogram.histogram("value", num_bins=10)
 
         # verified known results based on data crafted

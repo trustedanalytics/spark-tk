@@ -19,10 +19,6 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
-import os
-import dicom
-import numpy
-import random
 from lxml import etree
 import datetime
 
@@ -34,8 +30,6 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         super(DicomFilterTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.query = ".//DicomAttribute[@keyword='KEYWORD']/Value/text()"
         self.count = self.dicom.metadata.count()
 
@@ -47,10 +41,10 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
 
         # ask dicom to filter using our key-value filter function
-        self.dicom.filter(self._filter_key_values({ "PatientID" : patient_id }))
+        self.dicom.filter(self._filter_key_values({"PatientID": patient_id}))
 
         # we generate our own result to compare to dicom's
-        expected_result = self._filter({ "PatientID" : patient_id })
+        expected_result = self._filter({"PatientID": patient_id})
 
         # ensure results match
         self._compare_dicom_with_expected_result(expected_result)
@@ -63,7 +57,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
         sopi_id = xml.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
-        key_val = { "PatientID" : patient_id, "SOPInstanceUID" : sopi_id }
+        key_val = {"PatientID": patient_id, "SOPInstanceUID": sopi_id}
 
         # we use our filter function and ask dicom to filter
         self.dicom.filter(self._filter_key_values(key_val))
@@ -79,8 +73,7 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         # we give dicom a filter function which filters by
         # key-value and give it a key-value pair which will
         # return 0 records
-        pandas = self.dicom.metadata.to_pandas()
-        self.dicom.filter(self._filter_key_values({ "PatientID" : -6 }))
+        self.dicom.filter(self._filter_key_values({"PatientID": -6}))
         self.assertEqual(0, self.dicom.metadata.count())
 
     def test_filter_nothing(self):
@@ -112,15 +105,18 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         for index, row in pandas.iterrows():
             ascii_row = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(ascii_row)
-            study_date = xml_root.xpath(self.query.replace("KEYWORD", "StudyDate"))[0]
-            datetime_study_date = datetime.datetime.strptime(study_date, "%Y%m%d")
-            if datetime_study_date > begin_date and datetime_study_date < end_date:
+            study_date = xml_root.xpath(
+                self.query.replace("KEYWORD", "StudyDate"))[0]
+            datetime_study_date = datetime.datetime.strptime(
+                study_date, "%Y%m%d")
+            if (datetime_study_date > begin_date and
+                    datetime_study_date < end_date):
                 expected_result.append(ascii_row)
-        
+
         # now we ask dicom to use our filter function below to return
         # all records with a StudyDate within our specified range
         self.dicom.filter(self._filter_timestamp_range(begin_date, end_date))
-        
+
         # ensure that expected result matches actual
         self._compare_dicom_with_expected_result(expected_result)
 
@@ -143,8 +139,9 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
     def test_filter_invalid_param(self):
         """test filter with an invalid param type"""
         # should fail because filter takes a function not a keyvalue pair
-        with self.assertRaisesRegexp(Exception, "'dict' object is not callable"):
-            self.dicom.filter({ "PatientID" : "bla" })
+        with self.assertRaisesRegexp(
+                Exception, "'dict' object is not callable"):
+            self.dicom.filter({"PatientID": "bla"})
             self.dicom.metadata.count()
 
     def test_filter_invalid_function(self):
@@ -159,7 +156,9 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
             metadata = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(metadata)
             for key in key_val:
-                xml_element_value = xml_root.xpath(".//DicomAttribute[@keyword='" + key + "']/Value/text()")[0]
+                xml_element_value = xml_root.xpath(
+                    ".//DicomAttribute[@keyword='" + key +
+                    "']/Value/text()")[0]
                 if xml_element_value != key_val[key]:
                     return False
                 else:
@@ -183,7 +182,8 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
         def _filter_timestamp_range(row):
             metadata = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(metadata)
-            timestamp = xml_root.xpath(".//DicomAttribute[@keyword='StudyDate']/Value/text()")[0]
+            timestamp = xml_root.xpath(
+                ".//DicomAttribute[@keyword='StudyDate']/Value/text()")[0]
             timestamp = datetime.datetime.strptime(timestamp, "%Y%m%d")
             if begin_date < timestamp and timestamp < end_date:
                 return True
@@ -227,12 +227,13 @@ class DicomFilterTest(sparktk_test.SparkTKTestCase):
             ascii_xml = row.encode("ascii", "ignore")
             xml = etree.fromstring(row.encode("ascii", "ignore"))
             for keyword in keywords:
-                this_row_keyword_value = xml.xpath(self.query.replace("KEYWORD", keyword))
+                this_row_keyword_value = xml.xpath(
+                    self.query.replace("KEYWORD", keyword))
                 if this_row_keyword_value == keyword:
                     matching_records.append(ascii_xml)
 
         return matching_records
-                
+
     def _compare_dicom_with_expected_result(self, expected_result):
         """compare expected result with actual result"""
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]

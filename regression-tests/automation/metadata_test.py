@@ -19,10 +19,10 @@
 """ Test accuracy of metadata file """
 
 import unittest
-import sys
 import os
 from sparktkregtests.lib import sparktk_test
 import sparktkregtests.lib.config as config
+
 
 class MetadataTest(sparktk_test.SparkTKTestCase):
 
@@ -45,6 +45,7 @@ class MetadataTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(duplicates, 0)
         self.assertEqual(is_not_documented, [])
         self.assertListEqual(does_not_exist, [])
+
 
 if __name__ == '__main__':
     unittest.main()

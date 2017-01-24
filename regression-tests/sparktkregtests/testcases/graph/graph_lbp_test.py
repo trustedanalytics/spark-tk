@@ -115,7 +115,6 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
 
         graph = self.context.graph.create(vertex_frame, edge_frame)
 
-
         potts = graph.loopy_belief_propagation("vertex_weight", "weight", 2)
 
         known_vals = {1: (1.0, 0.0),
@@ -166,7 +165,6 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
 
-
     def test_lbp_double_cross(self):
         """Test lbp on a double cross"""
         vertex_frame = self.context.frame.create(
@@ -180,7 +178,7 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
                            ["8", "1.0 0.0", 1, "1.0 0.0"]],
                           [("id", str),
                            ("vertex_weight", str),
-                           ("is_observed",int), ("label", str)])
+                           ("is_observed", int), ("label", str)])
         edge_frame = self.context.frame.create(
                           [["2", "3", 1.0],
                            ["2", "1", 1.0],
@@ -197,7 +195,6 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
 
         potts = graph.loopy_belief_propagation("vertex_weight", "weight", 2)
 
-
         known_vals = {"1": (1.0, 0.0),
                       "2": (0.6378903114, 0.36210968),
                       "3": (1.0, 0.0),
@@ -212,7 +209,6 @@ class LbpPottsModel(sparktk_test.SparkTKTestCase):
             values = map(float, row["posterior"][1:-1].split(","))
             self.assertAlmostEqual(known_vals[row["id"]][0], values[0])
             self.assertAlmostEqual(known_vals[row["id"]][1], values[1])
-
 
 
 if __name__ == '__main__':

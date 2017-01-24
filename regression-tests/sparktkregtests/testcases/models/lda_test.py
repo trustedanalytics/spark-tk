@@ -49,7 +49,6 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
             max_iterations=20, alpha=[-1.0], check_point_interval=1)
         self._confirm_model_valid(lda_model)
 
-
     def test_lda_predict(self):
         """Standard test for the LDA Model predict."""
         # Add a new column
@@ -160,7 +159,7 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         """Test training on a None frame errors."""
         with(self.assertRaisesRegexp(
                 Exception, "frame cannot be None")):
-            lda_model = self.context.models.clustering.lda.train(
+            self.context.models.clustering.lda.train(
                 None, 'paper', 'word', 'count', num_topics=5)
 
     def test_lda_column_bad_type(self):

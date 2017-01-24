@@ -40,9 +40,8 @@ class LbpGraphx(sparktk_test.SparkTKTestCase):
                           [("src", str), ("dst", str)])
 
         graph = self.context.graph.create(vertex_frame, edge_frame)
-        baseline = { 4: [u'vertex4', u'vertex5', u'vertex1', u'vertex3'],
-                     1: [u'vertex2']}
-
+        baseline = {4: [u'vertex4', u'vertex5', u'vertex1', u'vertex3'],
+                    1: [u'vertex2']}
 
         community = graph.label_propagation(3)
         communities = community.to_pandas(5).groupby("label")

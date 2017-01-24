@@ -41,12 +41,15 @@ class CovarianceTest(sparktk_test.SparkTKTestCase):
     def test_covar_matrix(self):
         """Verify covariance matrix on all columns"""
         # create covariance matrix using sparktk
-        covar_matrix = self.base_frame.covariance_matrix(self.base_frame.column_names)
+        covar_matrix = self.base_frame.covariance_matrix(
+            self.base_frame.column_names)
 
         # convert to list for ease of comparison
-        covar_flat = list(numpy.array(covar_matrix.take(covar_matrix.count())).flat)
-        numpy_covar_result = list(numpy.cov(list(self.base_frame.take(self.base_frame.count())),
-                                            rowvar=False))
+        covar_flat = list(numpy.array(covar_matrix.take(
+            covar_matrix.count())).flat)
+        numpy_covar_result = list(
+            numpy.cov(list(
+                self.base_frame.take(self.base_frame.count())), rowvar=False))
         # flatten the numpy result
         numpy_covar_result = list(numpy.array(numpy_covar_result).flat)
 

@@ -18,7 +18,6 @@
 
 """ Tests Naive Bayes Model against known values.  """
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -38,7 +37,8 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
 
     def test_model_scoring(self):
         """Test training intializes theta, pi and labels"""
-        model = self.context.models.classification.naive_bayes.train(self.frame, ['f1', 'f2', 'f3'], "label")
+        model = self.context.models.classification.naive_bayes.train(
+            self.frame, ['f1', 'f2', 'f3'], "label")
 
         res = model.predict(self.frame, ['f1', 'f2', 'f3'])
 
@@ -50,7 +50,7 @@ class NaiveBayes(sparktk_test.SparkTKTestCase):
             for _, i in analysis.iterrows():
                 r = scorer.score(
                     [dict(zip(['f1', 'f2', 'f3'],
-                    map(lambda x: int(x), (i[1:4]))))])
+                              map(lambda x: int(x), (i[1:4]))))])
                 self.assertEqual(
                     r.json()["data"][0]['Score'], i['predicted_class'])
 

@@ -18,8 +18,6 @@
 """ test CoxPH  model """
 import unittest
 from numpy import exp
-import sys
-import os
 
 from sparktkregtests.lib import sparktk_test
 
@@ -66,12 +64,12 @@ class CoxPH(sparktk_test.SparkTKTestCase):
         model = self.context.models.survivalanalysis.cox_ph.train(
             self.frame, "time", ["x1", "x2", "x3"], "censor")
 
-        data = [[66, 6, 36, 2, 1], [87, 0, 88, 3, 1], [90, 13, 26, 5,1]]
+        data = [[66, 6, 36, 2, 1], [87, 0, 88, 3, 1], [90, 13, 26, 5, 1]]
         comp_frame = self.context.frame.create(data, schema=self.schema)
         predict_frame = model.predict(
             frame=self.frame, comparison_frame=comp_frame)
-        
-        #update mean to comparison frame's mean
+
+        # update mean to comparison frame's mean
         correct_mean = [81.0, 6.33333333333, 50.0]
         self._validate_predictions(model, predict_frame, correct_mean)
 
@@ -80,15 +78,17 @@ class CoxPH(sparktk_test.SparkTKTestCase):
         model = self.context.models.survivalanalysis.cox_ph.train(
             self.frame, "time", ["x1"], "censor")
 
-        #test trained parameters
+        # test trained parameters
         self.assertAlmostEqual(model.mean[0], 74.5, delta=0.01)
         self.assertAlmostEqual(model.beta[0], 0.00122, delta=.0001)
 
-        #test predicted hazard ratios
+        # test predicted hazard ratios
         predict_frame = model.predict(self.frame)
         df_predict = predict_frame.to_pandas(predict_frame.count())
         for i, row in df_predict.iterrows():
-            self.assertAlmostEqual(exp((row['x1'] - model.mean[0])*model.beta[0]), row['hazard_ratio'])
+            self.assertAlmostEqual(
+                exp((row['x1'] - model.mean[0])*model.beta[0]),
+                row['hazard_ratio'])
 
     def test_max_steps(self):
         """ Tests whether coxPH model converges in given max_steps"""
@@ -102,9 +102,9 @@ class CoxPH(sparktk_test.SparkTKTestCase):
             self.assertAlmostEqual(
                 value, expected_betas[i], delta=0.0001)
             self.assertAlmostEqual(
-                model.mean[i], expected_means[i],delta=0.01)
+                model.mean[i], expected_means[i], delta=0.01)
 
-        #test predicted hazard ratios
+        # test predicted hazard ratios
         predict_frame = model.predict(self.frame)
         self._validate_predictions(model, predict_frame)
 
@@ -121,9 +121,9 @@ class CoxPH(sparktk_test.SparkTKTestCase):
             self.assertAlmostEqual(
                 value, expected_betas[i], delta=0.0001)
             self.assertAlmostEqual(
-                model.mean[i], expected_means[i],delta=0.01)
+                model.mean[i], expected_means[i], delta=0.01)
 
-        #test predicted hazard ratios
+        # test predicted hazard ratios
         predict_frame = model.predict(self.frame)
         self._validate_predictions(model, predict_frame)
 
@@ -188,7 +188,7 @@ class CoxPH(sparktk_test.SparkTKTestCase):
             self.assertAlmostEqual(
                 value, expected_betas[i], delta=0.0001)
             self.assertAlmostEqual(
-                model.mean[i], expected_means[i],delta=0.01)
+                model.mean[i], expected_means[i], delta=0.01)
 
     def test_predict_with_censor(self):
         """Tests correctness of hazard ratios with censored data"""
@@ -228,7 +228,7 @@ class CoxPH(sparktk_test.SparkTKTestCase):
                            for row in pred_results]
 
         for actual, expected in zip(actual_ratios, expected_ratios):
-            self.assertAlmostEqual(actual, expected, delta = 0.0001)
+            self.assertAlmostEqual(actual, expected, delta=0.0001)
 
 
 if __name__ == '__main__':

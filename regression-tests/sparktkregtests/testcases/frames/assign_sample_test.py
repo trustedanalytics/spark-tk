@@ -18,8 +18,6 @@
 """ Test assign sample functionality """
 
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
 

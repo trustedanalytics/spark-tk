@@ -39,7 +39,6 @@ class GroupByTest(sparktk_test.SparkTKTestCase):
 
     atk_cols_str = ['_COUNT', '_COUNT_DISTINCT', '_MAX', '_MIN']
 
-
     pd_cols = ['mean', 'size', '<lambda>', 'max',
                'min', 'std', 'nansum', 'var']
 

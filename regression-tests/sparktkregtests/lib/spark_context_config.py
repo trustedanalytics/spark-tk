@@ -58,8 +58,8 @@ def get_spark_conf(additional_config={}):
         sparktkconf_dict_small.update(additional_config)
         return sparktkconf_dict_small
     elif config.test_size == "performance":
-        sparktkconf_dict_performance.update(additional_config)
-        return sparktkconf_dict_performance
+        sparktk_dict_performance.update(additional_config)
+        return sparktk_dict_performance
     else:
-        sparktkconf_dict_performance.update(additional_config)
-        return sparktkconf_dict_performance
+        sparktk_dict_performance.update(additional_config)
+        return sparktk_dict_performance

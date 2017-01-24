@@ -45,19 +45,22 @@ class FrameQuantileTest(sparktk_test.SparkTKTestCase):
 
     def test_histogram_exceed_quantile_range(self):
         """Tests the behaviour when a quantile > 100 is requested"""
-        with self.assertRaisesRegexp(Exception, "Quantile cutoffs must be less than equal to 100"):
+        with self.assertRaisesRegexp(
+                Exception, "Quantile cutoffs must be less than equal to 100"):
             self.frame_histogram.quantiles(
                 "value", [101])
 
     def test_histogram_negative_quantiles(self):
         """Tests the behavior when negative quantiles provided"""
-        with self.assertRaisesRegexp(Exception, "Quantile cutoffs must be positive"):
+        with self.assertRaisesRegexp(
+                Exception, "Quantile cutoffs must be positive"):
             self.frame_histogram.quantiles(
                 "value", [-10, -5])
 
     def test_histogram_bad_quantiles(self):
         """Tests the behavior when string quantiles provided"""
-        with self.assertRaisesRegexp(ValueError, "could not convert string to float"):
+        with self.assertRaisesRegexp(
+                ValueError, "could not convert string to float"):
             self.frame_histogram.quantiles(
                 "value", ['str'])
 

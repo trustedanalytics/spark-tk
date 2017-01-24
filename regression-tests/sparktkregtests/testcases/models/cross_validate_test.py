@@ -21,6 +21,7 @@ import unittest
 from sparktk.models import grid_values
 from sparktkregtests.lib import sparktk_test
 
+
 class CrossValidateTest(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
@@ -43,19 +44,19 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         result = self.context.models.cross_validate(
             self.frame,
             [(self.context.models.classification.svm,
-            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "label_column":"res",
-            "num_iterations": grid_values(5, 100),
-            "step_size": 0.01}),
-            (self.context.models.classification.logistic_regression,
-            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "label_column":"res",
-            "num_iterations": grid_values(2, 5, 15),
-            "step_size": 0.001})],
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(5, 100),
+              "step_size": 0.01}),
+             (self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(2, 5, 15),
+              "step_size": 0.001})],
             num_folds=5,
             verbose=False)
 
-        #validate number of models
+        # validate number of models
         all_models = result.all_results
         actual_num_models = 0
         svm_count = 0
@@ -78,18 +79,18 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         result = self.context.models.cross_validate(
             self.frame,
             [(self.context.models.classification.svm,
-            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "label_column":"res",
-            "num_iterations": grid_values(5, 100),
-            "step_size": 0.01}),
-            (self.context.models.classification.logistic_regression,
-            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "label_column":"res",
-            "num_iterations": grid_values(2, 5, 15),
-            "step_size": 0.001})],
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(5, 100),
+              "step_size": 0.01}),
+             (self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(2, 5, 15),
+              "step_size": 0.001})],
             verbose=False)
 
-        #validate number of models
+        # validate number of models
         all_models = result.all_results
         actual_num_models = 0
         svm_count = 0
@@ -108,53 +109,53 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(svm_count, 6)
         self.assertEqual(log_count, 9)
 
-
     def test_averages(self):
         """Test ouptut of cross validate averages"""
         result = self.context.models.cross_validate(
             self.frame,
             [(self.context.models.classification.svm,
-            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "label_column":"res",
-            "num_iterations": grid_values(5, 100),
-            "step_size": 0.01}),
-            (self.context.models.classification.logistic_regression,
-            {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-            "label_column":"res",
-            "num_iterations": grid_values(2, 15),
-            "step_size": 0.001})],
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(5, 100),
+              "step_size": 0.01}),
+             (self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(2, 15),
+              "step_size": 0.001})],
             num_folds=3,
             verbose=False)
 
         avg_models = result.averages
 
-        #validate num of models
+        # validate num of models
         self.assertEqual(len(avg_models.grid_points), 4)
 
-        #validate best model among all averages
+        # validate best model among all averages
         best_model = avg_models.find_best()
         self.assertEqual(
             best_model.descriptor.model_type.__name__,
             "sparktk.models.classification.logistic_regression")
         self.assertAlmostEqual(
-            best_model.metrics.accuracy, .87, delta = 0.01)
+            best_model.metrics.accuracy, .87, delta=0.01)
 
     def test_invalid_num_fold(self):
         """Test cross validate with num_fold > number of data points"""
-        with self.assertRaisesRegexp(
-                Exception, "empty collection"):
-            result = self.context.models.cross_validate(
+        with self.assertRaisesRegexp(Exception, "empty collection"):
+            self.context.models.cross_validate(
                 self.frame,
                 [(self.context.models.classification.svm,
-                {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-                "label_column":"res",
-                "num_iterations": grid_values(5, 100),
-                "step_size": 0.01}),
-                (self.context.models.classification.logistic_regression,
-                {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-                "label_column":"res",
-                "num_iterations": grid_values(2, 15),
-                "step_size": 0.001})],
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values(5, 100),
+                  "step_size": 0.01}),
+                 (self.context.models.classification.logistic_regression,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values(2, 15),
+                  "step_size": 0.001})],
                 num_folds=1000000,
                 verbose=False)
 
@@ -162,40 +163,43 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         """Test cross validate with float num_fold"""
         with self.assertRaisesRegexp(
                 Exception, "integer argument expected, got float"):
-            result = self.context.models.cross_validate(
+            self.context.models.cross_validate(
                 self.frame,
                 [(self.context.models.classification.svm,
-                {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-                "label_column":"res",
-                "num_iterations": grid_values(5, 100),
-                "step_size": 0.01}),
-                (self.context.models.classification.logistic_regression,
-                {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-                "label_column":"res",
-                "num_iterations": grid_values(2, 15),
-                "step_size": 0.001})],
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values(5, 100),
+                  "step_size": 0.01}),
+                 (self.context.models.classification.logistic_regression,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values(2, 15),
+                  "step_size": 0.001})],
                 num_folds=2.5,
                 verbose=False)
 
     def test_invalid_model(self):
         """Test cross validate with invalid model"""
-        with self.assertRaisesRegexp(
-                Exception, "no attribute \'BAD\'"):
-            result = self.context.models.cross_validate(
+        with self.assertRaisesRegexp(Exception, "no attribute \'BAD\'"):
+            self.context.models.cross_validate(
                 self.frame,
                 [(self.context.models.classification.BAD,
-                {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-                "label_column":"res",
-                "num_iterations": grid_values(5, 100),
-                "step_size": 0.01}),
-                (self.context.models.classification.logistic_regression,
-                {"observation_columns":["vec0", "vec1", "vec2", "vec3", "vec4"],
-                "label_column":"res",
-                "num_iterations": grid_values(2, 15),
-                "step_size": 0.001})],
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column":"res",
+                  "num_iterations": grid_values(5, 100),
+                  "step_size": 0.01}),
+                 (self.context.models.classification.logistic_regression,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column":"res",
+                  "num_iterations": grid_values(2, 15),
+                  "step_size": 0.001})],
                 num_folds=2.5,
                 verbose=False)
 
-if __name__=="__main__":
-    unittest.main()
 
+if __name__ == "__main__":
+    unittest.main()

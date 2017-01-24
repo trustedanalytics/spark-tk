@@ -16,7 +16,6 @@
 #
 
 """Test power iteration Clustering against known values"""
-import math
 import unittest
 from sparktkregtests.lib import sparktk_test
 
@@ -35,49 +34,52 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
 
     def test_doc_example(self):
         """ Example from the API documentation """
-        data = [[1,2,1.0],
-                [1,3,0.3],
-                [2,3,0.3],
-                [3,0,0.03],
-                [0,5,0.01],
-                [5,4,0.3],
-                [5,6,1.0],
-                [4,6,0.3]]
+        data = [[1, 2, 1.0],
+                [1, 3, 0.3],
+                [2, 3, 0.3],
+                [3, 0, 0.03],
+                [0, 5, 0.01],
+                [5, 4, 0.3],
+                [5, 6, 1.0],
+                [4, 6, 0.3]]
 
         frame = self.context.frame.create(data, schema=self.schema)
         result = frame.power_iteration_clustering(
             "Source", "Destination", "Similarity", k=3, max_iterations=20)
 
-        #check cluster sizes
+        # check cluster sizes
         actual_cluster_sizes = sorted(result.cluster_sizes.values())
         expected_cluster_sizes = [1, 3, 3]
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
-        #check values assigned to each cluster
+        # check values assigned to each cluster
         actual_assignment = result.frame.to_pandas(
             result.frame.count()).groupby("cluster")
-        grouped_assignment = [list(val["id"]) for index, val in actual_assignment]
+        grouped_assignment = [list(val["id"]) for index, val in
+                              actual_assignment]
 
         expected_assignment = [[4, 5, 6], [1, 2, 3], [0]]
-        self.assertEqual(sorted(map(sorted, grouped_assignment)), sorted(map(sorted, expected_assignment)))
+        self.assertEqual(
+            sorted(map(sorted, grouped_assignment)),
+            sorted(map(sorted, expected_assignment)))
 
     def test_circles_default(self):
         """ Test pic on similarity matrix for two concentric cicles """
         result = self.frame.power_iteration_clustering(
             "Source", "Destination", "Similarity", k=2)
 
-        #check cluster sizes
+        # check cluster sizes
         actual_cluster_sizes = sorted(result.cluster_sizes.values())
         expected_cluster_sizes = [5, 15]
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
-        #check values assigned to each cluster
+        # check values assigned to each cluster
         actual_assignment = result.frame.to_pandas(
             result.frame.count()).values.tolist()
         expected_assignment = \
-            [[4,1], [16,1], [14,1], [0,1], [6,1], [8,1],
-            [12,1], [18,1], [10,1], [2,1], [13,2], [19,2],
-            [15,2], [11,2], [1,1], [17,2], [3,1], [7,1], [9,1], [5,1]]
+            [[4, 1], [16, 1], [14, 1], [0, 1], [6, 1], [8, 1],
+             [12, 1], [18, 1], [10, 1], [2, 1], [13, 2], [19, 2],
+             [15, 2], [11, 2], [1, 1], [17, 2], [3, 1], [7, 1], [9, 1], [5, 1]]
         self.assertItemsEqual(actual_assignment, expected_assignment)
 
     def test_circles_max_iterations(self):
@@ -85,20 +87,19 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         result = self.frame.power_iteration_clustering(
             "Source", "Destination", "Similarity", k=2, max_iterations=40)
 
-        #check cluster sizes
+        # check cluster sizes
         actual_cluster_sizes = sorted(result.cluster_sizes.values())
         expected_cluster_sizes = [10, 10]
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
-        #check values assigned to each cluster
+        # check values assigned to each cluster
         actual_assignment = result.frame.to_pandas(
             result.frame.count()).values.tolist()
         expected_assignment = \
-            [[4,1], [16,2], [14,2], [0,1], [6,1], [8,1],
-            [12,2], [18,2], [10,2], [2,1], [13,2], [19,2],
-            [15,2], [11,2], [1,1], [17,2], [3,1], [7,1], [9,1], [5,1]]  
+            [[4, 1], [16, 2], [14, 2], [0, 1], [6, 1], [8, 1],
+             [12, 2], [18, 2], [10, 2], [2, 1], [13, 2], [19, 2],
+             [15, 2], [11, 2], [1, 1], [17, 2], [3, 1], [7, 1], [9, 1], [5, 1]]
         self.assertItemsEqual(actual_assignment, expected_assignment)
-
 
     def test_neg_similarity(self):
         """ Test pic with negative similarity values """
@@ -107,14 +108,14 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
 
         with self.assertRaisesRegexp(
                 Exception, "Similarity must be nonnegative but found .*"):
-            result = bad_frame.power_iteration_clustering(
+            bad_frame.power_iteration_clustering(
                 "Source", "Destination", "Similarity", k=2, max_iterations=10)
 
     def test_bad_column_name(self):
         """ Test behavior for bad source column name """
         with self.assertRaisesRegexp(
                 Exception, "Invalid column name ERR .*"):
-            result = self.frame.power_iteration_clustering(
+            self.frame.power_iteration_clustering(
                 "ERR", "Destination", "Similarity")
 
     def test_bad_k_value(self):
@@ -122,7 +123,7 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 "Number of clusters must be must be greater than 1"):
-            result = self.frame.power_iteration_clustering(
+            self.frame.power_iteration_clustering(
                 "Source", "Destination", "Similarity", k=0)
 
     def test_bad_max_iterations(self):
@@ -130,8 +131,10 @@ class PowerIterationTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 "Maximum number of iterations must be greater than 0"):
-            result = self.frame.power_iteration_clustering(
+            self.frame.power_iteration_clustering(
                 "Source", "Destination", "Similarity", k=2,
                 max_iterations=-1)
+
+
 if __name__ == "__main__":
     unittest.main()

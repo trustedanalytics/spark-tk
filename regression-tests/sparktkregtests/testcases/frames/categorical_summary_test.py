@@ -81,25 +81,25 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
 
     def test_cat_summary_multi_column(self):
         """Categorical summary using multiple columns"""
-        stats = self.frame.categorical_summary(['movie', 'user', 'age', 'rating', 'weight'],
-                                               top_k=[None, 10, None, 10, 10],
-                                               threshold=[None, None, 0.02, 0.02, None])
+        stats = self.frame.categorical_summary(
+            ['movie', 'user', 'age', 'rating', 'weight'],
+            top_k=[None, 10, None, 10, 10],
+            threshold=[None, None, 0.02, 0.02, None])
         self.assertEqual(len(stats), 5)
         for i in stats:
             if i.column_name == 'age':
-                self.assertTrue(self._compare_equal(i.column_name,
-                                                    {"categorical_summary": [i]},
-                                                    None,
-                                                    threshold=0.02))
+                self.assertTrue(self._compare_equal(
+                    i.column_name,
+                    {"categorical_summary": [i]}, None, threshold=0.02))
             elif i.column_name == 'rating':
-                self.assertTrue(self._compare_equal(i.column_name,
-                                                    {"categorical_summary": [i]},
-                                                    10,
-                                                    threshold=0.02))
+                self.assertTrue(
+                    self._compare_equal(
+                        i.column_name,
+                        {"categorical_summary": [i]}, 10, threshold=0.02))
             else:
-                self.assertTrue(self._compare_equal(i.column_name,
-                                                    {"categorical_summary": [i]},
-                                                    10))
+                self.assertTrue(
+                    self._compare_equal(
+                        i.column_name, {"categorical_summary": [i]}, 10))
 
     def test_cat_summary_invalid_column_name_error(self):
         """Bad column name errors"""
@@ -126,14 +126,16 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         pf = self.frame.to_pandas(self.frame.count())
         # here we do our own analysis to compare
         # with the results of the categorical summary
-        pandas_frame_sorted = pf.fillna("").groupby(column).size().sort_values(ascending=False)
+        pandas_frame_sorted = pf.fillna("").groupby(column).size().sort_values(
+            ascending=False)
 
         sum = float(self.frame.count())
         nones = pandas_frame_sorted.get("", 0)
         pandas_frame_sorted = pandas_frame_sorted.drop("", errors="ignore")
 
         # the way in which the stats result is returned is inconsistent
-        # sometimes we have to get it by the key, othertimes there is no categorical_summary key
+        # sometimes we have to get it by the key, othertimes there is no
+        # categorical_summary key
         if "categorical_summary" in catsum_result:
             catsum_result = catsum_result["categorical_summary"]
         else:
@@ -146,7 +148,8 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
         level_values = []
         self.assertEqual(catsum_result[0].column_name, column)
         if k is None:
-            size = filter(lambda x: x/sum > threshold, pandas_frame_sorted.values)
+            size = filter(
+                lambda x: x/sum > threshold, pandas_frame_sorted.values)
             self.assertEqual(len(size), num_levels)
         else:
             self.assertLessEqual(num_levels, k)
@@ -158,11 +161,15 @@ class CategoricalSummaryTest(sparktk_test.SparkTKTestCase):
                 self.assertEqual(i.frequency, nones)
                 self.assertAlmostEqual(i.percentage, nones/sum)
             elif str(i.level) == "<Other>":
-                self.assertEqual(i.frequency, pandas_frame_sorted[num_levels:].sum())
-                self.assertEqual(i.percentage, pandas_frame_sorted[num_levels:].sum()/sum)
+                self.assertEqual(
+                    i.frequency, pandas_frame_sorted[num_levels:].sum())
+                self.assertEqual(
+                    i.percentage, pandas_frame_sorted[num_levels:].sum()/sum)
             else:
-                self.assertEqual(i.frequency, pandas_frame_sorted[int(i.level)])
-                self.assertEqual(i.percentage, pandas_frame_sorted[int(i.level)]/sum)
+                self.assertEqual(
+                    i.frequency, pandas_frame_sorted[int(i.level)])
+                self.assertEqual(
+                    i.percentage, pandas_frame_sorted[int(i.level)]/sum)
                 level_values.append(i.frequency)
         if threshold is not None:
             for i in level_values:

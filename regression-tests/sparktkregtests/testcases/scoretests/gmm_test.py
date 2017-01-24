@@ -18,7 +18,6 @@
 
 """ Tests GMM scoring engine """
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -55,6 +54,7 @@ class GMM(sparktk_test.SparkTKTestCase):
                     [dict(zip(["x1", "x2"], list(row[0:2])))])
                 self.assertEqual(
                     row["predicted_cluster"], res.json()["data"][0]['Score'])
+
 
 if __name__ == '__main__':
     unittest.main()

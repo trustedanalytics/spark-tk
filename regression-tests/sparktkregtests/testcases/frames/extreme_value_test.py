@@ -19,8 +19,6 @@
 import unittest
 import numpy as np
 import math
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
 
@@ -47,7 +45,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
             return new_val.get(row["col_A"], row["col_A"])
 
         master.add_columns(add_extremes, ("col_D", float))
-        
+
         proj_3col = master.copy(['col_D', 'Double', 'Text'])
         self.assertEqual(proj_3col.count(), master.count())
         self.assertEqual(len(proj_3col.column_names), 3)
@@ -56,7 +54,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(proj_1col.count(), master.count())
         self.assertEqual(len(proj_1col.column_names), 1)
 
-        #check if NaN/inf values are present
+        # check if NaN/inf values are present
         test_extreme = master.to_pandas()
         for index, row in test_extreme.iterrows():
             if(row['col_A'] == 123456 or row['col_A'] == 777):
@@ -110,8 +108,8 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
                                ('neg_root', float)])
         extake = extreme64.to_pandas(extreme64.count())
 
-        #check for inf when values exceed 64-bit range;
-        #double the value if outside the range [0,1)
+        # check for inf when values exceed 64-bit range;
+        # double the value if outside the range [0,1)
         for index, row in extake.iterrows():
             if row['col_A'] >= 1 or row['col_A'] < 0:
                 self.assertTrue(math.isinf(row['twice']))
@@ -137,7 +135,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
 
         self.assertEqual(stats.mode_count, 2)
         self.assertEqual(stats.total_weight, 1749)
-        self.assertIn(60 , stats.modes)
+        self.assertIn(60, stats.modes)
 
     def test_extreme_col_summary(self):
         """ Test column_summary_stats with Inf / NaN data """
@@ -201,6 +199,7 @@ class ExtremeValueTest(sparktk_test.SparkTKTestCase):
         self.assertTrue([math.isnan(stats.maximum),
                          stats.good_row_count,
                          stats.geometric_mean], expected_stats)
+
 
 if __name__ == "__main__":
     unittest.main()

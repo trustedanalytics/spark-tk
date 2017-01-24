@@ -87,7 +87,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         """Test max iterations argument"""
         model = self.context.models.regression.linear_regression.train(
             self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
-                          max_iterations=70)
+            max_iterations=70)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
@@ -95,7 +95,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         """Test regularization parameter argument"""
         model = self.context.models.regression.linear_regression.train(
             self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
-                          reg_param=0.000000002)
+            reg_param=0.000000002)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
@@ -103,7 +103,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         """Test test non-standardized data"""
         model = self.context.models.regression.linear_regression.train(
             self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
-                          standardization=False)
+            standardization=False)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
@@ -111,7 +111,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         """Test test a different model tolerance"""
         model = self.context.models.regression.linear_regression.train(
             self.frame, ['c1', 'c2', 'c3', 'c4'], "label",
-                          convergence_tolerance=0.0000000000000000001)
+            convergence_tolerance=0.0000000000000000001)
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         self._validate_results(model, predict)
 
@@ -131,7 +131,8 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
         pd_res = predict.to_pandas(predict.count())
         for index, row in pd_res.iterrows():
-            self.assertAlmostEqual(row["label"], row["predicted_value"], places=4)
+            self.assertAlmostEqual(
+                row["label"], row["predicted_value"], places=4)
 
 
 if __name__ == '__main__':

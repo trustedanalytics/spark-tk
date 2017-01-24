@@ -19,9 +19,7 @@
 
 import unittest
 from sparktkregtests.lib import sparktk_test
-import dicom
 import numpy
-import datetime
 
 
 class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
@@ -42,26 +40,32 @@ class SaveLoadDicomTest(sparktk_test.SparkTKTestCase):
         load_dicom = self.context.load(self.location)
         original_metadata = self.dicom.metadata.to_pandas()["metadata"]
         load_metadata = load_dicom.metadata.to_pandas()["metadata"]
-        
+
         # compare the loaded dicom object with the dicom object we created
         for (load_row, original_row) in zip(original_metadata, load_metadata):
             original_file = original_row.encode("ascii", "ignore")
-            
-            # extract and remove bulk data element from metadata since we don't care about it
-            # bulk data records the file's location, so it may differ
+
+            # extract and remove bulk data element from metadata
+            # since we don't care about it bulk data records the file's
+            # location, so it may differ
             loaded_file = load_row.encode("ascii", "ignore")
             bulk_data_index = original_file.index("<BulkData")
-            load_bulk_data = loaded_file[bulk_data_index:bulk_data_index + loaded_file[bulk_data_index:].index(">") + 1]
-            original_bulk_data = original_file[bulk_data_index:bulk_data_index + original_file[bulk_data_index:].index(">") + 1]                                                                                                                        
+            load_bulk_data = loaded_file[
+                bulk_data_index:bulk_data_index + loaded_file[
+                    bulk_data_index:].index(">") + 1]
+            original_bulk_data = original_file[
+                bulk_data_index:bulk_data_index + original_file[
+                    bulk_data_index:].index(">") + 1]
             loaded_file = loaded_file.replace(load_bulk_data, "")
             original_file = original_file.replace(original_bulk_data, "")
-  
+
             self.assertEqual(loaded_file, original_file)
- 
+
         # now we check that the pixel data matches
         original_image = self.dicom.pixeldata.to_pandas()
         loaded_image = load_dicom.pixeldata.to_pandas()
-        for (dcm_image, pixel_image) in zip(original_image["imagematrix"], loaded_image["imagematrix"]):
+        for (dcm_image, pixel_image) in zip(
+                original_image["imagematrix"], loaded_image["imagematrix"]):
             numpy.testing.assert_equal(pixel_image, dcm_image)
 
     def test_save_invalid_long_unicode_name(self):

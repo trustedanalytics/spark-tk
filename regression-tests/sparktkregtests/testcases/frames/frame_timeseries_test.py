@@ -18,26 +18,13 @@
 """Tests frame timeseries tests """
 
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
-import random
-
-import pandas
 import numpy as np
 import statsmodels.stats.stattools as smst
 import statsmodels.tsa.stattools as smtsa
-from scipy import stats
-import statsmodels.api as sm
-import statsmodels.stats.diagnostic as smd
-import statsmodels.formula.api as smf
-import statsmodels.regression.linear_model as smrl
-import sklearn.metrics
 from sklearn import linear_model
 
-#Change filename to the location of the csv file used for the test
-filename = "../datasets/timeseriesstats.csv"
 
 class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
 
@@ -55,7 +42,7 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
                   ("logSpp", float)]
 
         self.frame = self.context.frame.import_csv(
-            dataset, delimiter= ' ', header=True, schema=schema)
+            dataset, delimiter=' ', header=True, schema=schema)
         self.pandaframe = self.frame.to_pandas()
         self.pandaframe.logM = self.pandaframe.logM.astype(np.float64)
         self.pandaframe.Rs = self.pandaframe.Rs.astype(np.float64)
@@ -70,38 +57,48 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_timeseries_dickey_fuller_constant(self):
         """Test Augmented Dickey Fuller with constant regression"""
-        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=0, regression="c")
-        df_c_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=0, regression="c")
+        result = self.frame.timeseries_augmented_dickey_fuller_test(
+            "logM", max_lag=0, regression="c")
+        df_c_result = smtsa.adfuller(
+            self.pandaframe["logM"], maxlag=0, regression="c")
 
         self.assertAlmostEqual(result.p_value, df_c_result[1], delta=0.0001)
         self.assertAlmostEqual(result.test_stat, df_c_result[0], delta=0.01)
 
     def test_frame_timeseries_dickey_fuller_no_constant(self):
         """Test Augmented Dickey Fuller with no constant regression"""
-        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=1, regression="nc")
-        df_nc_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=1, regression="nc")
+        result = self.frame.timeseries_augmented_dickey_fuller_test(
+            "logM", max_lag=1, regression="nc")
+        df_nc_result = smtsa.adfuller(
+            self.pandaframe["logM"], maxlag=1, regression="nc")
 
         self.assertAlmostEqual(result.p_value, df_nc_result[1], delta=0.0001)
         self.assertAlmostEqual(result.test_stat, df_nc_result[0], delta=0.01)
 
     def test_frame_timeseries_dickey_fuller_constant_and_trend(self):
         """Test Augmented Dickey Fuller with constant and trend regression"""
-        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=1, regression="ct")
-        df_ct_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=1, regression="ct")
+        result = self.frame.timeseries_augmented_dickey_fuller_test(
+            "logM", max_lag=1, regression="ct")
+        df_ct_result = smtsa.adfuller(
+            self.pandaframe["logM"], maxlag=1, regression="ct")
 
         self.assertAlmostEqual(result.p_value, df_ct_result[1], delta=0.0001)
         self.assertAlmostEqual(result.test_stat, df_ct_result[0], delta=0.01)
 
     def test_frame_timeseries_dickey_fuller_constant_trend_squared(self):
-        """Test Augmented Dickey Fuller with constant, trend, and trend squared regression"""
-        result = self.frame.timeseries_augmented_dickey_fuller_test("logM", max_lag=1, regression="ctt")
-        df_ctt_result = smtsa.adfuller(self.pandaframe["logM"], maxlag=1, regression="ctt")
+        """Augmented Dickey Fuller constant, trend, trend squared regression"""
+        result = self.frame.timeseries_augmented_dickey_fuller_test(
+            "logM", max_lag=1, regression="ctt")
+        df_ctt_result = smtsa.adfuller(
+            self.pandaframe["logM"], maxlag=1, regression="ctt")
 
         self.assertAlmostEqual(result.p_value, df_ctt_result[1], delta=0.0001)
         self.assertAlmostEqual(result.test_stat, df_ctt_result[0], delta=0.01)
 
     def test_frame_timeseries_breusch_pagan(self):
-        """Test Breusch Pagan using the regression determined according to page 5 of this paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
+        """Test Breusch Pagan
+            using the regression determined according to page 5 of this
+            paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
         dataset = self.get_file("breusch.csv")
         schema = [("time", float),
                   ("heteroskedastic", float),
@@ -109,8 +106,9 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
                   ("uniform", float)]
 
         frame = self.context.frame.import_csv(
-            dataset, delimiter= ' ', header=True, schema=schema)
-        het_result = frame.timeseries_breusch_pagan_test("heteroskedastic", "time")
+            dataset, delimiter=' ', header=True, schema=schema)
+        het_result = frame.timeseries_breusch_pagan_test(
+            "heteroskedastic", "time")
         uni_result = frame.timeseries_breusch_pagan_test("uniform", "time")
 
         time = frame.take(frame.count(), columns=['time'])
@@ -139,11 +137,13 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
                   ("heteroskedastic", float),
                   ("sine", float),
                   ("uniform", float)]
-        max_lag=1
+        max_lag = 1
         frame = self.context.frame.import_csv(
-            dataset, delimiter= ' ', header=True, schema=schema)
-        sine_result = frame.timeseries_breusch_godfrey_test("sine", ['time'], max_lag)
-        uni_result = frame.timeseries_breusch_godfrey_test("uniform", ['time'], max_lag)
+            dataset, delimiter=' ', header=True, schema=schema)
+        sine_result = frame.timeseries_breusch_godfrey_test(
+            "sine", ['time'], max_lag)
+        uni_result = frame.timeseries_breusch_godfrey_test(
+            "uniform", ['time'], max_lag)
 
         time_data = frame.take(frame.count(), columns=['time'])
         time = [item for sublist in time_data for item in sublist]
@@ -154,7 +154,8 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
         sine_factors = np.column_stack((time, lagged_sine_residuals))
         sine_reg = linear_model.LinearRegression()
         sineOLS = sine_reg.fit(sine_factors, sine_residual)
-        sine_stat = (frame.count()-max_lag)*sineOLS.score(sine_factors, sine_residual)
+        sine_stat = (frame.count()-max_lag)*sineOLS.score(
+            sine_factors, sine_residual)
 
         uni_data = frame.take(frame.count(), columns="uniform")
         uni_residual = [item for sublist in uni_data for item in sublist]
@@ -162,12 +163,14 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
         uni_factors = np.column_stack((time, lagged_uni_residuals))
         uni_reg = linear_model.LinearRegression()
         uniOLS = uni_reg.fit(uni_factors, uni_residual)
-        uni_stat = (frame.count()-max_lag)*uniOLS.score(uni_factors, uni_residual)
+        uni_stat = (frame.count()-max_lag)*uniOLS.score(
+            uni_factors, uni_residual)
 
         self.assertLess(sine_result.p_value, 0.05)
         self.assertAlmostEqual(sine_result.test_stat, sine_stat, delta=1)
         self.assertGreater(uni_result.p_value, 0.05)
         self.assertAlmostEqual(uni_result.test_stat, uni_stat, delta=1)
+
 
 if __name__ == "__main__":
     unittest.main()
