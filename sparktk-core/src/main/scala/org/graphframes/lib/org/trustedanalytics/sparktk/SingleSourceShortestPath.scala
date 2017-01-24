@@ -36,9 +36,9 @@ object SingleSourceShortestPath {
    *
    * @param graph graph to compute SSSP against
    * @param srcVertexId source vertex ID
-   * @param edgeWeight optional edge column name to be used as edge weight
+   * @param edgeWeight the name of the column containing the edge weights. If none, every edge is assigned a weight of 1
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
-   * @return dataframe with the shortest path and corresponding cost from the source vertex to each target vertex ID.
+   * @return data frame with the shortest path and corresponding cost from the source vertex to each target vertex ID.
    */
   def run(graph: GraphFrame,
           srcVertexId: Any,

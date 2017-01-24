@@ -27,8 +27,8 @@ trait SingleSourceShortestPathSummarization extends BaseGraph {
    * This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
    * Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
    *
-   * @param srcVertexId source vertex ID
-   * @param edgeWeight optional edge column name to be used as edge weight
+   * @param srcVertexId the source vertex ID
+   * @param edgeWeight the name of the column containing the edge weights. If none, every edge is assigned a weight of 1
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
    * @return frame with the shortest path and corresponding cost from the source vertex to each target vertex ID.
    */

@@ -36,11 +36,10 @@ trait ClosenessCentralitySummarization extends BaseGraph {
    * Reference: Linton C. Freeman: Centrality in networks: I.Conceptual clarification. Social Networks 1:215-239, 1979.
    * http://leonidzhukov.ru/hse/2013/socialnetworks/papers/freeman79-centrality.pdf
    *
-   * @param edgeWeight optional edge column name to be used as edge weight
-   * @param normalize if true, normalizes the closeness centrality value to the number of nodes connected to it
-   *                   divided by the total number of nodes in the graph, this is effective in the case of
-   *                   disconnected graph
-   * @return frame with an additional column for the closeness centrality data
+   * @param edgeWeight the name of the column containing the edge weights. If none, every edge is assigned a weight of 1
+   * @param normalize if true, normalizes the closeness centrality value by the number of nodes in the connected
+   *                  part of the graph.
+   * @return frame with an additional column for the closeness centrality values.
    */
   def closenessCentrality(edgeWeight: Option[String] = None,
                           normalize: Boolean = true): Frame = {

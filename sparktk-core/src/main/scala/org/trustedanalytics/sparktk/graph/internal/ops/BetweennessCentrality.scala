@@ -32,7 +32,7 @@ trait BetweennessCentralitySummarization extends BaseGraph {
    * Returns a dataframe containing a tuple of the vertex ID to the betweenness centrality of that
    * vertex
    *
-   * @return The dataframe containing the vertices and their corresponding betweenness scores
+   * @return The dataframe containing the vertices and their corresponding betweenness values
    */
   def betweennessCentrality(edgeWeight: Option[String] = None, normalize: Boolean = true): Frame = {
     execute[Frame](BetweennessCentrality(edgeWeight, normalize))

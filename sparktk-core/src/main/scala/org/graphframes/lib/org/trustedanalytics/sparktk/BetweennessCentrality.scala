@@ -36,8 +36,9 @@ object BetweennessCentrality {
    * algorithm
    *
    * @param graph the graph to compute betweenness centrality on
-   * @param edgeWeight optional edge column name to be used as edge weight
-   * @param normalize normalizes the betweenness centrality against the number of pairwise paths
+   * @param edgeWeight the name of the column containing the edge weights. If none, every edge is assigned a weight of 1
+   * @param normalize If true, normalize the betweenness centrality values
+   *                  by the number of pairwise paths possible
    * @return the target vertexID, the shortest path from the source vertex and the corresponding cost
    */
   def run(graph: GraphFrame, edgeWeight: Option[String] = None, normalize: Boolean = true): DataFrame = {
