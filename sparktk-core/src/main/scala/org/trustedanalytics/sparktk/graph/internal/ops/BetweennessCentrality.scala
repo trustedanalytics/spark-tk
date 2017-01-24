@@ -32,16 +32,16 @@ trait BetweennessCentralitySummarization extends BaseGraph {
    * Returns a dataframe containing a tuple of the vertex ID to the betweenness centrality of that
    * vertex
    *
-   * @return The dataframe containing the vertices and their corresponding betweenness scores
+   * @return The dataframe containing the vertices and their corresponding betweenness values
    */
-  def betweennessCentrality(edgePropName: Option[String] = None, normalize: Boolean = true): Frame = {
-    execute[Frame](BetweennessCentrality(edgePropName, normalize))
+  def betweennessCentrality(edgeWeight: Option[String] = None, normalize: Boolean = true): Frame = {
+    execute[Frame](BetweennessCentrality(edgeWeight, normalize))
   }
 }
 
-case class BetweennessCentrality(edgePropName: Option[String], normalize: Boolean) extends GraphSummarization[Frame] {
+case class BetweennessCentrality(edgeWeight: Option[String], normalize: Boolean) extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(graphframeslib.BetweennessCentrality.run(state.graphFrame, edgePropName, normalize))
+    new Frame(graphframeslib.BetweennessCentrality.run(state.graphFrame, edgeWeight, normalize))
   }
 }

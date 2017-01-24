@@ -27,23 +27,23 @@ trait SingleSourceShortestPathSummarization extends BaseGraph {
    * This implementation utilizes a distributed version of Dijkstra's shortest path algorithm.
    * Some optional parameters, e.g., maximum path length, constrain the computations for large graphs.
    *
-   * @param srcVertexId source vertex ID
-   * @param edgePropName optional edge column name to be used as edge weight
+   * @param srcVertexId the source vertex ID
+   * @param edgeWeight the name of the column containing the edge weights. If none, every edge is assigned a weight of 1
    * @param maxPathLength optional maximum path length or cost to limit the SSSP computations
    * @return frame with the shortest path and corresponding cost from the source vertex to each target vertex ID.
    */
   def singleSourceShortestPath(srcVertexId: Any,
-                               edgePropName: Option[String] = None,
+                               edgeWeight: Option[String] = None,
                                maxPathLength: Option[Double] = None): Frame = {
-    execute[Frame](SingleSourceShortestPath(srcVertexId, edgePropName, maxPathLength))
+    execute[Frame](SingleSourceShortestPath(srcVertexId, edgeWeight, maxPathLength))
   }
 }
 case class SingleSourceShortestPath(srcVertexId: Any,
-                                    edgePropName: Option[String] = None,
+                                    edgeWeight: Option[String] = None,
                                     maxPathLength: Option[Double] = None) extends GraphSummarization[Frame] {
 
   override def work(state: GraphState): Frame = {
-    new Frame(graphframeslib.SingleSourceShortestPath.run(state.graphFrame, srcVertexId, edgePropName, maxPathLength))
+    new Frame(graphframeslib.SingleSourceShortestPath.run(state.graphFrame, srcVertexId, edgeWeight, maxPathLength))
   }
 }
 
