@@ -1,0 +1,15 @@
+{ "file_name":"pipeline_funcs.py", "func_name":"evaluate", "input_schema": {
+        "columns": [
+          {
+            "name":"f1",
+            "type":"str"
+          },
+          {
+            "name":"f2",
+            "type":"str"
+          },
+          {
+            "name":"f3",
+            "type":"str"
+          }
+        ]}, "src_topic":"", "sink_topic":""}
