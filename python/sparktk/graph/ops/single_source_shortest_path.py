@@ -30,11 +30,13 @@ def single_source_shortest_path(self, src_vertex_id, edge_weight=None, max_path_
     Parameters
     ----------
 
-    :param src_vertex_id: (any) source vertex ID
-    :param edge_weight: (Optional(str)) optional edge column name to be used as edge weight
-    :param max_path_length: (Optional(float))optional maximum path length or cost to limit the SSSP computations
+    :param src_vertex_id: (any) The source vertex ID
+    :param edge_weight: (Optional(str)) The name of the column containing the edge weights,
+           If none, every edge is assigned a weight of 1.
+    :param max_path_length: (Optional(float)) The maximum path length or cost to limit the SSSP computations.
 
-    :return: (Frame) the target vertexID, he shortest path from the source vertex and the corresponding cost
+    :return: (Frame) Frame containing the target vertexIDs, their properties, the shortest path from the source vertex
+             and the corresponding cost.
 
 
     Examples

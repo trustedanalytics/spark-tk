@@ -37,11 +37,12 @@ def closeness_centrality(self, edge_weight=None, normalize=True):
     Parameters
     ----------
 
-    :param edge_weight: (Optional(str)) optional edge column name to be used as edge weight
-    :param normalize: (boolean) if true, normalizes the closeness centrality value to the number of nodes connected to
-           it divided by the total number of nodes in the graph, this is effective in the case of disconnected graph
+    :param edge_weight: (Optional(str)) The name of the column containing the edge weights,
+           If none, every edge is assigned a weight of 1.
+    :param normalize: (bool) If true, normalizes the closeness centrality value to the number of nodes connected to
+           it divided by the total number of nodes in the graph. This is effective in the case of disconnected graph.
 
-    :return: (Frame) frame with a column for the closeness centrality data
+    :return: (Frame) Frame containing the vertex IDs, properties and their corresponding closeness centrality values.
 
 
     Examples

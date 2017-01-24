@@ -27,10 +27,12 @@ def betweenness_centrality(self, edge_weight=None, normalize=True):
     Parameters
     ----------
 
-    :param edge_weight: (Optional String) string name of the weight parameters. If none supplied a uniform weight is assumed
-    :param normalize: (Optional Boolean) if true will normalize the betweenness centrality results by the number of pairwise paths possible
+    :param edge_weight: (Optional(str)) The name of the column containing the edge weights,
+           If none, every edge is assigned a weight of 1.
+    :param normalize: (Optional(bool)) If true, normalize the betweenness centrality values
+           by the number of pairwise paths possible
 
-    :return: (Frame) Frame containing the vertex id's an their betweenness centrality value
+    :return: (Frame) Frame containing the vertex IDs and their corresponding betweenness centrality value
 
     Examples
     --------
