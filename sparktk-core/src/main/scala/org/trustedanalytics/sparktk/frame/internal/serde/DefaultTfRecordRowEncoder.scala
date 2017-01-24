@@ -15,7 +15,7 @@
  */
 package org.trustedanalytics.sparktk.frame.internal.serde
 
-import com.google.protobuf.ByteString
+import org.tensorflow.hadoop.shaded.protobuf.ByteString
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.tensorflow.example._

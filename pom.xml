@@ -953,16 +953,11 @@
                 <artifactId>paranamer</artifactId>
                 <version>2.6</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
-            <dependency>
-                <groupId>com.google.protobuf</groupId>
-                <artifactId>protobuf-java</artifactId>
-                <version>3.1.0</version>
-            </dependency>
             <dependency>
                 <groupId>org.tensorflow</groupId>
                 <artifactId>tensorflow-hadoop</artifactId>
-                <version>1.0-01172017-SNAPSHOT</version>
+                <version>1.0-01232017-SNAPSHOT</version>
+                <classifier>shaded-protobuf</classifier>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>

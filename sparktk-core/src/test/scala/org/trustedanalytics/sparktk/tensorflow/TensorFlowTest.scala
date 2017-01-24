@@ -17,7 +17,7 @@ package org.trustedanalytics.sparktk.tensorflow
 
 import java.io.File
 
-import com.google.protobuf.ByteString
+import org.tensorflow.hadoop.shaded.protobuf.ByteString
 import org.apache.commons.io.FileUtils
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.expressions.{ GenericRow, GenericRowWithSchema }
