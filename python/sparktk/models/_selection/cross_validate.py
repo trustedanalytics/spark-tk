@@ -194,7 +194,7 @@ def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkCo
     all_grid_search_results = []
     grid_search_results_accumulator = None
     for train_frame, test_frame in split_data(frame, num_folds , tc):
-        scores = grid_search(train_frame, test_frame, train_descriptors, tc)
+        scores = grid_search(train_frame, test_frame, train_descriptors, tc=tc)
         if grid_search_results_accumulator is None:
             grid_search_results_accumulator = scores
         else:
@@ -203,9 +203,9 @@ def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkCo
 
     # make the accumulator hold averages
     grid_search_results_accumulator._divide_metrics(num_folds)
-    return CrossValidateClassificationResults(all_grid_search_results,
-                                              grid_search_results_accumulator.copy(),
-                                              verbose)
+    return CrossValidationResults(all_grid_search_results,
+                                  grid_search_results_accumulator.copy(),
+                                  verbose)
 
 
 def split_data(frame, num_folds, tc=TkContext.implicit):
@@ -232,9 +232,9 @@ def split_data(frame, num_folds, tc=TkContext.implicit):
         yield train_frame, test_frame
 
 
-class CrossValidateClassificationResults(object):
+class CrossValidationResults(object):
     """
-    Class storing the results of cross validation for classification
+    Class storing the results of cross validation for classification/regression models
     """
     def __init__(self, all_grid_search_results, averages, verbose=False):
         """
@@ -260,7 +260,7 @@ class CrossValidateClassificationResults(object):
     def show_all(self):
         """
         Method to show the results for all models and configurations across each fold
-        :return: The classification metrics for all models and configurations across each fold
+        :return: The classification/regression metrics for all models and configurations across each fold
         """
         return self._get_all_str()
 

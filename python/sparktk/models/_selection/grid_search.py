@@ -18,6 +18,7 @@
 
 from sparktk import TkContext
 from sparktk.frame.ops.classification_metrics_value import ClassificationMetricsValue
+from sparktk.models.regression.regression_test_metrics import RegressionTestMetrics
 from collections import namedtuple
 from sparktk.arguments import extract_call, validate_call, require_type, affirm_type, value_error
 from sparktk.frame.frame import Frame
@@ -33,13 +34,15 @@ def grid_values(*args):
     return GridValues(args)
 
 
-def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implicit):
+def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=None, tc= TkContext.implicit):
     """
     Implements grid search by training the specified model on all combinations of descriptor and testing on test frame
     :param train_frame: The frame to train the model on
     :param test_frame: The frame to test the model on
     :param train_descriptors: Tuple of model and Dictionary of model parameters and their value/values as singleton
             values or a list of type grid_values
+    :param metrics_eval_func: Custom function to compare metrics when determining best results.
+            Default metric for classifiers is greater accuracy and for regressors is greater r2
     :param tc: spark-tk context passed implicitly
     :return: Summary of metrics for different combinations of the grid and the best performing parameter combination
 
@@ -186,43 +189,7 @@ def grid_search(train_frame, test_frame, train_descriptors, tc= TkContext.implic
             test_kwargs = extract_call(model.test, test_kwargs, ignore_self=True)
             metrics = model.test(**test_kwargs)
             grid_points.append(GridPoint(descriptor=TrainDescriptor(descriptor.model_type, train_kwargs), metrics=metrics))
-    return GridSearchResults(grid_points)
-
-
-class MetricsCompare(object):
-    """
-    Class to compare the classification metrics and pick the best performing model configuration based on 'accuracy'
-    """
-
-    def __init__(self, emphasis="accuracy", compare=None):
-        """
-        Initializes the object of class MetricsCompare
-        :param emphasis: The metric to be compared on. We are initializing this to 'accuracy'
-        :param compare: The objects to be compared
-        """
-        self.compare = compare or self._get_compare(emphasis)
-
-    def is_a_better_than_b(self, a, b):
-        """
-        Method to compare two metrics objects
-        :param a: First object
-        :param b: Second object
-        :return: Determines if a is better than b
-        """
-        result = self.compare(a, b)
-        return result > 0
-
-    @staticmethod
-    def _get_compare(emphasis):
-        def default_compare(a, b):
-            a_value = getattr(a, emphasis)
-            b_value = getattr(b, emphasis)
-            if a_value > b_value:
-                return 1
-            if a_value < b_value:
-                return -1
-            return 0
-        return default_compare
+    return GridSearchResults(grid_points, metrics_eval_func)
 
 
 class GridSearchClassificationMetrics(ClassificationMetricsValue):
@@ -232,6 +199,19 @@ class GridSearchClassificationMetrics(ClassificationMetricsValue):
 
     def __init__(self):
         super(GridSearchClassificationMetrics, self).__init__(None, None)
+
+    @staticmethod
+    def _default_eval_func(a, b):
+        """
+        Default evaluation function to pick model with higher accuracy
+        :param a: ClassificationMetrics of first model
+        :param b: ClassificationMetrics of second model
+        :return: Model with higher accuracy
+        """
+        emphasis = "accuracy"
+        a_value = getattr(a, emphasis)
+        b_value = getattr(b, emphasis)
+        return a_value > b_value
 
     def _divide(self, denominator):
         """
@@ -260,6 +240,69 @@ class GridSearchClassificationMetrics(ClassificationMetricsValue):
         metric_sum.confusion_matrix = a.confusion_matrix + b.confusion_matrix
         return metric_sum
 
+    def get_metrics_class(self):
+        """
+        Method that gets the metrics class
+        :return: ClassificationMetricsValue
+        """
+        return ClassificationMetricsValue
+
+
+class GridSearchRegressionMetrics(RegressionTestMetrics):
+    """
+    Class containing the results of grid_search for regression
+    """
+
+    def __init__(self):
+        super(GridSearchRegressionMetrics, self).__init__(None)
+
+    @staticmethod
+    def _default_eval_func(a, b):
+        """
+        Default evaluation function to pick model with higher r2
+        :param a: RegressionTestMetrics of first model
+        :param b: RegressionTestMetrics of second model
+        :return: Model with higher r2
+        """
+        emphasis = "r2"
+        a_value = getattr(a, emphasis)
+        b_value = getattr(b, emphasis)
+        return a_value > b_value
+
+    def _divide(self, denominator):
+        """
+        Divides the regression metrics with a value for averaging
+        :param denominator: The number used to compute the average
+        :return: Average values for the regression metric
+        """
+        self.explained_variance = (self.explained_variance / float(denominator))
+        self.mean_absolute_error = (self.mean_absolute_error / float(denominator))
+        self.mean_squared_error = (self.mean_squared_error / float(denominator))
+        self.r2 = (self.r2 / float(denominator))
+        self.root_mean_squared_error = (self.root_mean_squared_error / float(denominator))
+
+    @staticmethod
+    def _create_metric_sum(a,b):
+        """
+        Computes the sum of the regression metrics
+        :param a: First element
+        :param b: Second element
+        :return: Sum of the RegressionMetrics of a and b
+        """
+        metric_sum = GridSearchRegressionMetrics()
+        metric_sum.explained_variance = a.explained_variance + b.explained_variance
+        metric_sum.mean_absolute_error = a.mean_absolute_error + b.mean_absolute_error
+        metric_sum.mean_squared_error = a.mean_squared_error + b.mean_squared_error
+        metric_sum.r2 = a.r2 + b.r2
+        metric_sum.root_mean_squared_error = a.root_mean_squared_error + b.root_mean_squared_error
+        return metric_sum
+
+    def get_metrics_class(self):
+        """
+        Method that gets the metrics class
+        :return: ClassificationMetricsValue
+        """
+        return RegressionTestMetrics
 
 GridValues = namedtuple('GridValues', ['args'])
 
@@ -270,7 +313,6 @@ class TrainDescriptor(object):
     def __init__(self, model_type, kwargs):
         """
         Creates a TrainDescriptor
-
         :param model_type: type object representing the model in question
         :param kwargs: dict of key-value-pairs holding values for the train method's parameters
         """
@@ -316,38 +358,62 @@ class GridSearchResults(object):
     Class that stores the results of grid_search. The classification metrics of all model configurations are stored.
     """
 
-    def __init__(self, grid_points, metrics_compare=None):
+    def __init__(self, grid_points, metrics_eval_func=None):
         """
         Initializes the GridSearchResults class object with the grid_points and the metric to compare the results
         :param grid_points: The results of the grid_search computation
-        :param metrics_compare: The user specified metric to compare the results on
+        :param metrics_eval_func: The user specified metric to compare the results on
         """
         self.grid_points = grid_points
-        # add require_type for metrics_compare
-        self.metrics_compare = metrics_compare or MetricsCompare()
+        self.metrics_eval_func = metrics_eval_func or self._create_default_metrics_eval_func(grid_points)
+
+    def _create_default_metrics_eval_func(self, grid_points):
+        """
+        Evaluate the GridPoints metrics and create the default evaluation function
+        :param grid_points: List of GridPoints
+        :return: Evaluation function depending on the type of the metrics object
+        """
+        eval_func = set([self._get_default_eval_func(point.metrics) for point in grid_points])
+        if len(eval_func) != 1:
+            raise RuntimeError("Error in retrieving evaluation function")
+        return list(eval_func)[0]
+
+    @staticmethod
+    def _get_default_eval_func(metrics):
+        """
+        Based on the metrics object, return the default evaluation function
+        :param metrics: Metrics object
+        :return: The deafult evaluation function based on the type of metrics object
+        """
+        if isinstance(metrics, ClassificationMetricsValue):
+            return GridSearchClassificationMetrics._default_eval_func
+        elif isinstance(metrics, RegressionTestMetrics):
+            return GridSearchRegressionMetrics._default_eval_func
+        else:
+            raise ValueError("Incorrect metrics object passed")
 
     def copy(self):
         """
         Copies the GridSearchResults into the desired format
         :return: GridSearchResults object
         """
-        return GridSearchResults([GridPoint(gp.descriptor, gp.metrics) for gp in self.grid_points], self.metrics_compare)
+        return GridSearchResults([GridPoint(gp.descriptor, gp.metrics) for gp in self.grid_points], self.metrics_eval_func)
 
     def __repr__(self):
         return "\n".join([str(gp) for gp in self.grid_points])
 
-    def find_best(self, metrics_compare=None):
+    def find_best(self, metrics_eval_func=None):
         """
         Method to compare the list of all GridPoints and return the one with best accuracy
-        :param metrics_compare: List of GridPoints to compare
+        :param metrics_eval_func: List of GridPoints to compare
         :return: The GridPoint with best accuracy
         """
-        comparator = metrics_compare or self.metrics_compare
+        eval_func = metrics_eval_func or self.metrics_eval_func
         if not self.grid_points:
             raise RuntimeError("GridSearchResults are empty, cannot find a best point")
         best = self.grid_points[0]
         for point in self.grid_points:
-            if comparator.is_a_better_than_b(point.metrics, best.metrics):
+            if eval_func(point.metrics, best.metrics):
                 best = point
         return best
 
@@ -380,10 +446,14 @@ class GridSearchResults(object):
         """
         if len(self.grid_points) != len(points):
             raise ValueError("Expected list of points of len %s, got %s" % (len(self.grid_points), len(points)))
-
         for index in xrange(len(self.grid_points)):
             self._validate_descriptors_are_equal(self.grid_points[index].descriptor, points[index].descriptor, ["frame"])
-            m = GridSearchClassificationMetrics._create_metric_sum(self.grid_points[index].metrics, points[index].metrics)
+            if isinstance(points[index].metrics, ClassificationMetricsValue):
+                m = GridSearchClassificationMetrics._create_metric_sum(self.grid_points[index].metrics, points[index].metrics)
+            elif isinstance(points[index].metrics,  RegressionTestMetrics):
+                m = GridSearchRegressionMetrics._create_metric_sum(self.grid_points[index].metrics, points[index].metrics)
+            else:
+                raise ValueError("Incorrect Metrics Class for '%s'", m)
             self.grid_points[index] = GridPoint(self.grid_points[index].descriptor, m)
 
     def _divide_metrics(self, denominator):

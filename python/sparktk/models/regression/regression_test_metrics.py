@@ -22,33 +22,60 @@ class RegressionTestMetrics(PropertiesObject):
     RegressionMetrics class used to hold the data returned from regression tests
     """
     def __init__(self, scala_result):
-        self._explained_variance = scala_result.explainedVariance()
-        self._mean_absolute_error = scala_result.meanAbsoluteError()
-        self._mean_squared_error = scala_result.meanSquaredError()
-        self._r2 = scala_result.r2()
-        self._root_mean_squared_error = scala_result.rootMeanSquaredError()
+        if scala_result:
+            self._explained_variance = scala_result.explainedVariance()
+            self._mean_absolute_error = scala_result.meanAbsoluteError()
+            self._mean_squared_error = scala_result.meanSquaredError()
+            self._r2 = scala_result.r2()
+            self._root_mean_squared_error = scala_result.rootMeanSquaredError()
+        else:
+            self._explained_variance = 0.0
+            self._mean_absolute_error = 0.0
+            self._mean_squared_error = 0.0
+            self._r2 = 0.0
+            self._root_mean_squared_error = 0.0
 
     @property
     def explained_variance(self):
         """The explained variance regression score"""
         return self._explained_variance
 
+    @explained_variance.setter
+    def explained_variance(self, value):
+        self._explained_variance = value
+
     @property
     def mean_absolute_error(self):
         """The risk function corresponding to the expected value of the absolute error loss or l1-norm loss"""
         return self._mean_absolute_error
+
+    @mean_absolute_error.setter
+    def mean_absolute_error(self, value):
+        self._mean_absolute_error = value
 
     @property
     def mean_squared_error(self):
         """The risk function corresponding to the expected value of the squared error loss or quadratic loss"""
         return self._mean_squared_error
 
+    @mean_squared_error.setter
+    def mean_squared_error(self, value):
+        self._mean_squared_error = value
+
     @property
     def r2(self):
         """The coefficient of determination"""
         return self._r2
 
+    @r2.setter
+    def r2(self, value):
+        self._r2 = value
+
     @property
     def root_mean_squared_error(self):
         """The square root of the mean squared error"""
         return self._root_mean_squared_error
+
+    @root_mean_squared_error.setter
+    def root_mean_squared_error(self, value):
+        self._root_mean_squared_error = value

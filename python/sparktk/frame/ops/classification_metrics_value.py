@@ -66,6 +66,7 @@ class ClassificationMetricsValue(PropertiesObject):
     @confusion_matrix.setter
     def confusion_matrix(self, value):
         self._confusion_matrix = value
+
     @property
     def f_measure(self):
         return self._f_measure
