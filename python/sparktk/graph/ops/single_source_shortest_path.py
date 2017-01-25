@@ -19,7 +19,7 @@ from sparktk.tkcontext import TkContext
 tc = TkContext.implicit
 
 
-def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_path_length=None):
+def single_source_shortest_path(self, src_vertex_id, edge_weight=None, max_path_length=None):
     """
 
     Computes the Single Source Shortest Path (SSSP) for the graph starting from the given vertex ID to every vertex
@@ -30,11 +30,13 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
     Parameters
     ----------
 
-    :param src_vertex_id: (any) source vertex ID
-    :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
-    :param max_path_length: (Optional(float))optional maximum path length or cost to limit the SSSP computations
+    :param src_vertex_id: (any) The source vertex ID
+    :param edge_weight: (Optional(str)) The name of the column containing the edge weights,
+           If none, every edge is assigned a weight of 1.
+    :param max_path_length: (Optional(float)) The maximum path length or cost to limit the SSSP computations.
 
-    :return: (Frame) the target vertexID, he shortest path from the source vertex and the corresponding cost
+    :return: (Frame) Frame containing the target vertexIDs, their properties, the shortest path from the source vertex
+             and the corresponding cost.
 
 
     Examples
@@ -76,5 +78,5 @@ def single_source_shortest_path(self, src_vertex_id, edge_prop_name=None, max_pa
     from sparktk.frame.frame import Frame
     return Frame(self._tc,
                  self._scala.singleSourceShortestPath(src_vertex_id,
-                                                      self._tc.jutils.convert.to_scala_option(edge_prop_name),
+                                                      self._tc.jutils.convert.to_scala_option(edge_weight),
                                                       self._tc.jutils.convert.to_scala_option(max_path_length)))

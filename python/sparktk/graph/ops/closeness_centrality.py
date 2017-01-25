@@ -19,7 +19,7 @@ from sparktk.tkcontext import TkContext
 tc = TkContext.implicit
 
 
-def closeness_centrality(self, edge_prop_name=None, normalize=True):
+def closeness_centrality(self, edge_weight=None, normalize=True):
     """
 
      Computes the closeness centrality for the graph nodes.
@@ -37,11 +37,12 @@ def closeness_centrality(self, edge_prop_name=None, normalize=True):
     Parameters
     ----------
 
-    :param edge_prop_name: (Optional(str)) optional edge column name to be used as edge weight
-    :param normalize: (boolean) if true, normalizes the closeness centrality value to the number of nodes connected to
-           it divided by the total number of nodes in the graph, this is effective in the case of disconnected graph
+    :param edge_weight: (Optional(str)) The name of the column containing the edge weights,
+           If none, every edge is assigned a weight of 1.
+    :param normalize: (bool) If true, normalizes the closeness centrality value by the number of nodes in the connected
+           part of the graph.
 
-    :return: (Frame) frame with a column for the closeness centrality data
+    :return: (Frame) Frame containing the vertex IDs, properties and their corresponding closeness centrality value.
 
 
     Examples
@@ -64,7 +65,7 @@ def closeness_centrality(self, edge_prop_name=None, normalize=True):
 
         >>> graph = tc.graph.create(v, e)
 
-        >>> result = graph.closeness_centrality(edge_prop_name="distance", normalize=False)
+        >>> result = graph.closeness_centrality(edge_weight="distance", normalize=False)
 
         >>> result.inspect()
         [#]  id  name     closeness_centrality
@@ -79,4 +80,4 @@ def closeness_centrality(self, edge_prop_name=None, normalize=True):
     """
     from sparktk.frame.frame import Frame
     return Frame(self._tc,
-                 self._scala.closenessCentrality(self._tc.jutils.convert.to_scala_option(edge_prop_name), normalize))
+                 self._scala.closenessCentrality(self._tc.jutils.convert.to_scala_option(edge_weight), normalize))

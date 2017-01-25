@@ -42,14 +42,13 @@ object ClosenessCentrality {
    * Compute the closeness centrality
    *
    * @param graph the graph to compute the closeness centrality for its nodes
-   * @param edgePropName optional edge column name to be used as edge weight
-   * @param normalize if true, normalizes the closeness centrality value to the number of nodes connected to it
-   *                   divided by the total number of nodes in the graph, this is effective in the case of
-   *                   disconnected graph
-   * @return graph frame with an additional vertex property for the closeness centrality data
+   * @param edgeWeight the name of the column containing the edge weights. If none, every edge is assigned a weight of 1.
+   * @param normalize if true, normalizes the closeness centrality value by the number of nodes in the connected
+   *                  part of the graph.
+   * @return graph frame with an additional vertex property for the closeness centrality values
    */
-  def run(graph: GraphFrame, edgePropName: Option[String] = None, normalize: Boolean = true): GraphFrame = {
-    val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgePropName)
+  def run(graph: GraphFrame, edgeWeight: Option[String] = None, normalize: Boolean = true): GraphFrame = {
+    val edgeWeightFunc: Option[(Row) => Double] = getEdgeWeightFunc(graph, edgeWeight)
     val closenessCentralityGraphx = sparktk.ClosenessCentrality.run(graph.toGraphX, edgeWeightFunc, normalize)
     GraphXConversions.fromGraphX(graph, closenessCentralityGraphx, Seq(CC_RESULTS))
   }
@@ -59,14 +58,14 @@ object ClosenessCentrality {
    * calculations by converting the edge attribute type to Double
    *
    * @param graph graph to compute shortest-paths against
-   * @param edgePropName column name for the edge weight
+   * @param edgeWeight column name for the edge weight
    * @return edge weight function
    */
-  def getEdgeWeightFunc(graph: GraphFrame, edgePropName: Option[String]): Option[(Row) => Double] = {
-    val edgeWeightFunc = if (edgePropName.isDefined) {
-      val edgeWeightType = graph.edges.schema(edgePropName.get).dataType
+  def getEdgeWeightFunc(graph: GraphFrame, edgeWeight: Option[String]): Option[(Row) => Double] = {
+    val edgeWeightFunc = if (edgeWeight.isDefined) {
+      val edgeWeightType = graph.edges.schema(edgeWeight.get).dataType
       require(edgeWeightType.isInstanceOf[NumericType], "The edge weight type should be numeric")
-      Some((row: Row) => row.getAs[Any](edgePropName.get) match {
+      Some((row: Row) => row.getAs[Any](edgeWeight.get) match {
         case x: Int => x.toDouble
         case x: Long => x.toDouble
         case x: Short => x.toDouble

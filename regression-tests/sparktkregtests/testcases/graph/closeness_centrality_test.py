@@ -79,7 +79,7 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
 
 
     def test_weights_multiple_shortest_paths(self):
-        """Test cetality when multiple shortest paths exist"""
+        """Test centrality when multiple shortest paths exist"""
         result_frame = self.graph.closeness_centrality("weights", False)
 
         #validate centrality values
@@ -144,7 +144,7 @@ class ClosenessCentrality(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "edge weight cannot be negative"):
             graph.closeness_centrality(
-                edge_prop_name='weight',
+                edge_weight='weight',
                 normalize=False)
 
     def test_bad_weights_column_name(self):
