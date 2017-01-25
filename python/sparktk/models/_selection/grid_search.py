@@ -36,7 +36,7 @@ def grid_values(*args):
 
 def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=None, tc= TkContext.implicit):
     """
-    Implements grid search by training the specified model on all combinations of descriptor and testing on test frame
+    Implements grid search by training the specified classification or regression model on all combinations of descriptor and testing on test frame
     :param train_frame: The frame to train the model on
     :param test_frame: The frame to test the model on
     :param train_descriptors: Tuple of model and Dictionary of model parameters and their value/values as singleton
@@ -49,9 +49,9 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
     Example
     -------
 
-        >>> frame = tc.frame.create([[1,0],[2,0],[3,0],[4,0],[5,0],[6,1],[7,1],[8,1],[9,1],[10,1]],[("data", float),("label",int)])
+        >>> classification_frame = tc.frame.create([[1,0],[2,0],[3,0],[4,0],[5,0],[6,1],[7,1],[8,1],[9,1],[10,1]],[("data", float),("label",int)])
 
-        >>> frame.inspect()
+        >>> classification_frame.inspect()
         [#]  data  label
         ================
         [0]     1      0
@@ -67,7 +67,7 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
 
         >>> from sparktk.models import grid_values
 
-        >>> grid_result = tc.models.grid_search(frame, frame,
+        >>> classification_grid = tc.models.grid_search(classification_frame, classification_frame,
         ...                                    [(tc.models.classification.svm,
         ...                                     {"observation_columns":"data",
         ...                                      "label_column":"label",
@@ -79,7 +79,7 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
         ...                                      "num_iterations": grid_values(2, 10),
         ...                                      "step_size": 0.01})])
 
-        >>> grid_result
+        >>> classification_grid
         GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
@@ -109,7 +109,7 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
         precision        = 1.0
         recall           = 1.0)
 
-        >>> grid_result.find_best()
+        >>> classification_grid.find_best()
         GridPoint(descriptor=sparktk.models.classification.logistic_regression: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 1.0
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
@@ -118,7 +118,7 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
         precision        = 1.0
         recall           = 1.0)
 
-        >>> grid_result.grid_points
+        >>> classification_grid.grid_points
         [GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 2, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
@@ -148,7 +148,7 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
         precision        = 1.0
         recall           = 1.0)]
 
-        >>> grid_result.grid_points[1]
+        >>> classification_grid.grid_points[1]
         GridPoint(descriptor=sparktk.models.classification.svm: {'num_iterations': 10, 'step_size': 0.01, 'observation_columns': 'data', 'label_column': 'label'}, metrics=accuracy         = 0.5
         confusion_matrix =             Predicted_Pos  Predicted_Neg
         Actual_Pos              5              0
@@ -156,6 +156,61 @@ def grid_search(train_frame, test_frame, train_descriptors, metrics_eval_func=No
         f_measure        = 0.666666666667
         precision        = 0.5
         recall           = 1.0)
+
+        >>> regression_frame = tc.frame.create([[0, 0],[1,2.5],[2,5],[3,7.5],[4,10],[5,12.5],[6,13],[7,17.5],[8,18.5],[9,23.5]],[("x", float),("y",float)])
+
+        >>> regression_frame.inspect()
+        [#]  x  y
+        ============
+        [0]  0     0
+        [1]  1   2.5
+        [2]  2     5
+        [3]  3   7.5
+        [4]  4    10
+        [5]  5  12.5
+        [6]  6    13
+        [7]  7  17.5
+        [8]  8  18.5
+        [9]  9  23.5
+
+        >>> regression_grid = tc.models.grid_search(regression_frame, regression_frame,[(tc.models.regression.linear_regression,
+        ...                                {"observation_columns":["x"], "label_column":"y",
+        ...                                "max_iterations": grid_values(2, 10), "reg_param": 0.01}),
+        ...                                (tc.models.regression.random_forest_regressor,
+        ...                                {"observation_columns":"x", "label_column":"y",
+        ...                                "num_trees": grid_values(1, 2), "max_depth": 4})],
+        ...                                lambda a,b: getattr(a,"explained_variance")<getattr(b,"explained_variance"))
+
+        <skip>
+        >>> regression_grid
+        GridPoint(descriptor=sparktk.models.regression.linear_regression: {'label_column': 'y', 'reg_param': 0.01, 'observation_columns': ['x'], 'max_iterations': 2}, metrics=explained_variance      = 49.5647448503
+        mean_absolute_error     = 0.551091157145
+        mean_squared_error      = 0.645552985861
+        r2                      = 0.987178689457
+        root_mean_squared_error = 0.803463120412)
+        GridPoint(descriptor=sparktk.models.regression.linear_regression: {'label_column': 'y', 'reg_param': 0.01, 'observation_columns': ['x'], 'max_iterations': 10}, metrics=explained_variance      = 49.5647448503
+        mean_absolute_error     = 0.551091157145
+        mean_squared_error      = 0.645552985861
+        r2                      = 0.987178689457
+        root_mean_squared_error = 0.803463120412)
+        GridPoint(descriptor=sparktk.models.regression.random_forest_regressor: {'label_column': 'y', 'max_depth': 4, 'observation_columns': 'x', 'num_trees': 1}, metrics=explained_variance      = 50.35
+        mean_absolute_error     = 0.0
+        mean_squared_error      = 0.0
+        r2                      = 1.0
+        root_mean_squared_error = 0.0)
+        GridPoint(descriptor=sparktk.models.regression.random_forest_regressor: {'label_column': 'y', 'max_depth': 4, 'observation_columns': 'x', 'num_trees': 2}, metrics=explained_variance      = 23.24375
+        mean_absolute_error     = 2.875
+        mean_squared_error      = 18.24375
+        r2                      = 0.637661370407
+        root_mean_squared_error = 4.27127030285)
+
+        >>> regression_grid.find_best()
+        GridPoint(descriptor=sparktk.models.regression.random_forest_regressor: {'label_column': 'y', 'max_depth': 4, 'observation_columns': 'x', 'num_trees': 2}, metrics=explained_variance      = 23.24375
+        mean_absolute_error     = 2.875
+        mean_squared_error      = 18.24375
+        r2                      = 0.637661370407
+        root_mean_squared_error = 4.27127030285)
+        </skip>
 
     """
 

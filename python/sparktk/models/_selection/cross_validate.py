@@ -24,7 +24,7 @@ from grid_search import grid_search
 
 def cross_validate(frame, train_descriptors, num_folds=3, verbose=False, tc=TkContext.implicit):
     """
-    Computes k-fold cross validation on model with the given frame and parameter values
+    Computes k-fold cross validation on classification and regression models with the given frame and parameter values
     :param frame: The frame to perform cross-validation on
     :param train_descriptors: Tuple of model and Dictionary of model parameters and their value/values as singleton
             values or a list of type grid_values
