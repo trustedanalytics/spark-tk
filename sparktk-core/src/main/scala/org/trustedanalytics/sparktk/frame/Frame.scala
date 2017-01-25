@@ -25,10 +25,10 @@ import org.trustedanalytics.sparktk.frame.internal.{ BaseFrame, ValidationReport
 import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ BinaryClassificationMetricsSummarization, MultiClassClassificationMetricsSummarization }
-import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist.{ CumulativePercentTransform, CumulativeSumTransform, EcdfSummarization, TallyPercentTransform, TallyTransform }
+import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist._
 import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinInnerSummarization, JoinLeftSummarization, JoinOuterSummarization, JoinRightSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
-import org.trustedanalytics.sparktk.frame.internal.ops.exportdata.{ ExportToCsvSummarization, ExportToHbaseSummarization, ExportToHiveSummarization, ExportToJdbcSummarization, ExportToJsonSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.exportdata._
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.groupby.GroupBySummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.RenameColumnsTransform
@@ -38,7 +38,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops.statistics.correlation.{ 
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.covariance.{ CovarianceMatrixSummarization, CovarianceSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.descriptives.{ CategoricalSummarySummarization, ColumnMedianSummarization, ColumnModeSummarization, ColumnSummaryStatisticsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.statistics.quantiles.QuantilesSummarization
-import org.trustedanalytics.sparktk.frame.internal.ops.timeseries.{ TimeSeriesFromObseravationsSummarization, TimeSeriesSliceSummarization, TimeSeriesDurbinWatsonTestSummarization, TimeSeriesAugmentedDickeyFullerTestSummarization, TimeSeriesBreuschGodfreyTestSummarization, TimeSeriesBreuschPaganTestSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.timeseries._
 import org.trustedanalytics.sparktk.frame.internal.ops.topk.TopKSummarization
 import org.trustedanalytics.sparktk.frame.internal.ops.unflatten.UnflattenColumnsTransform
 import org.trustedanalytics.sparktk.frame.internal.rdd.{ FrameRdd, PythonJavaRdd }
@@ -75,6 +75,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with ExportToHiveSummarization
     with ExportToJdbcSummarization
     with ExportToJsonSummarization
+    with ExportToTensorflowSummarization
     with FilterTransform
     with FlattenColumnsTransform
     with GroupBySummarization
