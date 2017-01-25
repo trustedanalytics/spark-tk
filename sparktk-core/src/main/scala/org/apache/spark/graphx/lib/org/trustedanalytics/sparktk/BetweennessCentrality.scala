@@ -31,7 +31,7 @@ object BetweennessCentrality {
    *
    * @param graph the graph to compute betweenness centrality on
    * @param getEdgeWeight function that extracts the edge weight from edge attribute (by default a function that returns 1.0)
-   * @param normalize if true normalizes the betweenness centrality against the pairwise number of edges
+   * @param normalize if true, normalizes the betweenness centrality against the pairwise number of edges
    * @tparam VD vertex attribute, ignored
    * @tparam ED the edge attribute, potentially used for edge weight
    * @return An RDD with a tuple of vertex identity mapped to it's centrality

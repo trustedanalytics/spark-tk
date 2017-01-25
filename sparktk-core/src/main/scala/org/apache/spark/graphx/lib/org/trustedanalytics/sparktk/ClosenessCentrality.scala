@@ -41,12 +41,11 @@ object ClosenessCentrality {
    * @param graph the graph to compute the closeness centrality for its nodes
    * @param getEdgeWeight optional user-defined function that enables the inclusion of the edge weights in the
    *                      shortest-path calculations by converting the edge attribute type to Double.
-   * @param normalize if true, normalizes the closeness centrality value to the number of nodes connected to it
-   *                   divided by the total number of nodes in the graph, this is effective in the case of disconnected
-   *                   graph
+   * @param normalize if true, normalizes the closeness centrality value by the number of nodes in the connected
+   * part of the graph.
    * @tparam VD the vertex attribute that stores the closeness centrality data
    * @tparam ED the edge attribute that contains the edge weight
-   * @return graph with the closeness data as the vertex attribute and the edge weight as the edge attribute
+   * @return graph with the closeness centrality values as the vertex attribute and the edge weight as the edge attribute
    */
   def run[VD, ED: ClassTag](graph: Graph[VD, ED],
                             getEdgeWeight: Option[ED => Double] = None,
@@ -60,13 +59,12 @@ object ClosenessCentrality {
   /**
    * calculate the closeness centrality value per vertex
    *
-   * @param id the vertex ID
-   * @param spMap the shortest-path calculations from that vertex to the rest of the nodes in the graph
-   * @param normalize if true, normalizes the closeness centrality value to the number of nodes connected to it
-   *                   divided by the total number of nodes in the graph, this is effective in the case of
-   *                   disconnected graph
-   * @param verticesCount the number of vertices in the graph
-   * @return closeness centrality for the given vertex ID
+   * @param id the vertex ID.
+   * @param spMap the shortest-path calculations from that vertex to the rest of the nodes in the graph.
+   * @param normalize if true, normalizes the closeness centrality value by the number of nodes in the connected
+   * part of the graph.
+   * @param verticesCount the number of vertices in the graph.
+   * @return the closeness centrality value for the given vertex ID.
    */
   private def calculateCloseness(id: VertexId,
                                  spMap: SPMap,
@@ -123,7 +121,7 @@ object ClosenessCentrality {
    * @param graph the graph to compute the shortest-paths for its vertices
    * @param getEdgeWeight optional user-defined function that enables the inclusion of the edge weights in the
    *                      shortest-paths calculations by converting the edge attribute type to Double.
-   * @tparam VD vertex attribute that is used here to store the shortest-paths attributes
+   * @tparam VD the vertex attribute that is used here to store the shortest-paths attributes
    * @tparam ED the edge attribute that is used here as the edge weight
    * @return the shortest-paths graph
    */
