@@ -69,18 +69,6 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             verbose=False)
 
         # validate number of models
-        #all_models = result.all_results
-        #actual_num_models = 0
-        #svm_count = 0
-        #log_count = 0
-        #for fold in all_models:
-        #    grid_points = fold.grid_points
-        #    actual_num_models += len(grid_points)
-        #    for grid_point in grid_points:
-        #        if "svm" in grid_point.descriptor.model_type.__name__:
-        #            svm_count += 1
-        #        else:
-        #            log_count += 1
         (svm_count, log_count, num_models) = self._get_model_counts(
                 result, "svm")
         expected_num_models = 5 * (2 + 3)
@@ -110,18 +98,6 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             verbose=False)
 
         # validate number of models
-        #all_models = result.all_results
-        #actual_num_models = 0
-        #rf_count = 0
-        #linreg_count = 0
-        #for fold in all_models:
-        #    grid_points = fold.grid_points
-        #    actual_num_models += len(grid_points)
-        #    for grid_point in grid_points:
-        #        if "random" in grid_point.descriptor.model_type.__name__:
-        #            rf_count += 1
-        #        else:
-        #            linreg_count += 1
         (rf_count, linreg_count, num_models) = self._get_model_counts(
             result, "random_forest")
         expected_num_models = 5 * (5 + 3)
@@ -152,19 +128,6 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             verbose=False)
 
         # validate number of models
-        #all_models = result.all_results
-        #actual_num_models = 0
-        #svm_count = 0
-        #log_count = 0
-        #for fold in all_models:
-        #    grid_points = fold.grid_points
-        #    actual_num_models += len(grid_points)
-        #    for grid_point in grid_points:
-        #        if "svm" in grid_point.descriptor.model_type.__name__:
-        #            svm_count += 1
-        #        else:
-        #            log_count += 1
-
         (svm_count, log_count, num_models) = self._get_model_counts(
                 result, "svm")
         expected_num_models = 3 * (2 + 3)
@@ -173,48 +136,29 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(log_count, 9)
 
     def test_single_fold(self):
-        """Test cross validate with num_folds = 1"""
-        result = self.context.models.cross_validate(
-            self.regressor_frame,
-            [(
-             self.context.models.regression.linear_regression,
-             {
-                "observation_columns":
-                ["feat1", "feat2"],
-                "label_column": "class",
-                "max_iterations": grid_values(5, 100),
-                "reg_param": 0.0001}),
-             (
-             self.context.models.regression.random_forest_regressor,
-             {
-                "observation_columns":
-                ["feat1", "feat2"],
-                "label_column": "class",
-                "num_trees": grid_values(2, 5, 8),
-                "max_depth": 5})],
-            verbose=False,
-            num_folds=1)
-
-        # validate number of models
-        #all_models = result.all_results
-        #actual_num_models = 0
-        #rf_count = 0
-        #linreg_count = 0
-        #for fold in all_models:
-        #    grid_points = fold.grid_points
-        #    actual_num_models += len(grid_points)
-        #    for grid_point in grid_points:
-        #        if "random" in grid_point.descriptor.model_type.__name__:
-        #            rf_count += 1
-        #        else:
-        #            linreg_count += 1
-
-        (rf_count, linreg_count, num_models) = self._get_model_counts(
-                result, "random")
-        expected_num_models = 1 * (2 + 3)
-        self.assertEquals(num_models, expected_num_models)
-        self.assertEqual(rf_count, 3)
-        self.assertEqual(linreg_count, 2)
+        """Test cross validate with num_folds = 1; should throw exception"""
+        with self.assertRaisesRegexp(
+                Exception, "Frame is empty"):
+            self.context.models.cross_validate(
+                self.regressor_frame,
+                [(
+                self.context.models.regression.linear_regression,
+                {
+                    "observation_columns":
+                    ["feat1", "feat2"],
+                    "label_column": "class",
+                    "max_iterations": grid_values(5, 100),
+                    "reg_param": 0.0001}),
+                (
+                self.context.models.regression.random_forest_regressor,
+                {
+                    "observation_columns":
+                    ["feat1", "feat2"],
+                    "label_column": "class",
+                    "num_trees": grid_values(2, 5, 8),
+                    "max_depth": 5})],
+                verbose=False,
+                num_folds=1)
 
     def test_two_folds(self):
         """Test cross validate with num_folds = 2"""
@@ -240,21 +184,9 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             num_folds=2)
 
         # validate number of models
-        #all_models = result.all_results
-        #actual_num_models = 0
-        #rf_count = 0
-        #linreg_count = 0
-        #for fold in all_models:
-        #    grid_points = fold.grid_points
-        #    actual_num_models += len(grid_points)
-        #    for grid_point in grid_points:
-        #        if "random" in grid_point.descriptor.model_type.__name__:
-        #            rf_count += 1
-        #        else:
-        #            linreg_count += 1
         (rf_count, linreg_count, num_models) = self._get_model_counts(
                 result, "random")
-        expected_num_models = 1 * (2 + 3)
+        expected_num_models = 2 * (2 + 3)
         self.assertEquals(num_models, expected_num_models)
         self.assertEqual(rf_count, 3)
         self.assertEqual(linreg_count, 2)
