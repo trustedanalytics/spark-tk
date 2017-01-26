@@ -86,7 +86,7 @@ class SparkTKTestCase(unittest.TestCase):
             placed_path = (config.performance_data_dir + "/" +
                            config_reader.get(config.test_size, module_name))
         else:
-            placed_path = config.hdfs_data_dir + "/" + filename
+            placed_path = config.hdfs_data_dir + "/" + identifier
         return placed_path
 
     def get_export_file(self, filename):
