@@ -70,7 +70,7 @@ def train(frame, ts_column, x_columns, y_max_lag, x_max_lag, no_intercept=False)
     tc = frame._tc
     _scala_obj = get_scala_obj(tc)
     scala_x_columns = tc.jutils.convert.to_scala_vector_string(x_columns)
-    scala_model = _scala_obj.train(frame._scala, ts_column, scala_x_columns, x_max_lag, y_max_lag, no_intercept)
+    scala_model = _scala_obj.train(frame._scala, ts_column, scala_x_columns, y_max_lag, x_max_lag, no_intercept)
 
     return ArxModel(tc, scala_model)
 
