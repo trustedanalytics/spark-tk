@@ -140,6 +140,7 @@ class CoxProportionalHazardsModelTest extends TestingSparkContextWordSpec with M
 
       val model_path = model.exportToMar(sparkContext, "sandbox/coxph_load_test.mar")
       model_path shouldBe a[String]
+      FileUtils.deleteQuietly(new java.io.File(model_path))
     }
   }
 }
