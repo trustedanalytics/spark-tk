@@ -81,9 +81,10 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         #            svm_count += 1
         #        else:
         #            log_count += 1
-        (svm_count, log_count) = self._get_model_counts(result, "svm")
+        (svm_count, log_count, num_models) = self._get_model_counts(
+                result, "svm")
         expected_num_models = 5 * (2 + 3)
-        self.assertEquals(svm_count + log_count, expected_num_models)
+        self.assertEquals(num_models, expected_num_models)
         self.assertEqual(svm_count, 10)
         self.assertEqual(log_count, 15)
 
@@ -121,10 +122,10 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         #            rf_count += 1
         #        else:
         #            linreg_count += 1
-        (rf_count, linreg_count) = self._get_model_counts(
+        (rf_count, linreg_count, num_models) = self._get_model_counts(
             result, "random_forest")
         expected_num_models = 5 * (5 + 3)
-        self.assertEquals(rf_count + lin_reg_count, expected_num_models)
+        self.assertEquals(rf_count + linreg_count, expected_num_models)
         self.assertEqual(rf_count, 15)
         self.assertEqual(linreg_count, 25)
 
@@ -151,21 +152,23 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             verbose=False)
 
         # validate number of models
-        all_models = result.all_results
-        actual_num_models = 0
-        svm_count = 0
-        log_count = 0
-        for fold in all_models:
-            grid_points = fold.grid_points
-            actual_num_models += len(grid_points)
-            for grid_point in grid_points:
-                if "svm" in grid_point.descriptor.model_type.__name__:
-                    svm_count += 1
-                else:
-                    log_count += 1
+        #all_models = result.all_results
+        #actual_num_models = 0
+        #svm_count = 0
+        #log_count = 0
+        #for fold in all_models:
+        #    grid_points = fold.grid_points
+        #    actual_num_models += len(grid_points)
+        #    for grid_point in grid_points:
+        #        if "svm" in grid_point.descriptor.model_type.__name__:
+        #            svm_count += 1
+        #        else:
+        #            log_count += 1
 
+        (svm_count, log_count, num_models) = self._get_model_counts(
+                result, "svm")
         expected_num_models = 3 * (2 + 3)
-        self.assertEquals(actual_num_models, expected_num_models)
+        self.assertEquals(num_models, expected_num_models)
         self.assertEqual(svm_count, 6)
         self.assertEqual(log_count, 9)
 
@@ -193,21 +196,23 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             num_folds=1)
 
         # validate number of models
-        all_models = result.all_results
-        actual_num_models = 0
-        rf_count = 0
-        linreg_count = 0
-        for fold in all_models:
-            grid_points = fold.grid_points
-            actual_num_models += len(grid_points)
-            for grid_point in grid_points:
-                if "random" in grid_point.descriptor.model_type.__name__:
-                    rf_count += 1
-                else:
-                    linreg_count += 1
+        #all_models = result.all_results
+        #actual_num_models = 0
+        #rf_count = 0
+        #linreg_count = 0
+        #for fold in all_models:
+        #    grid_points = fold.grid_points
+        #    actual_num_models += len(grid_points)
+        #    for grid_point in grid_points:
+        #        if "random" in grid_point.descriptor.model_type.__name__:
+        #            rf_count += 1
+        #        else:
+        #            linreg_count += 1
 
+        (rf_count, linreg_count, num_models) = self._get_model_counts(
+                result, "random")
         expected_num_models = 1 * (2 + 3)
-        self.assertEquals(actual_num_models, expected_num_models)
+        self.assertEquals(num_models, expected_num_models)
         self.assertEqual(rf_count, 3)
         self.assertEqual(linreg_count, 2)
 
@@ -235,21 +240,22 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
             num_folds=2)
 
         # validate number of models
-        all_models = result.all_results
-        actual_num_models = 0
-        rf_count = 0
-        linreg_count = 0
-        for fold in all_models:
-            grid_points = fold.grid_points
-            actual_num_models += len(grid_points)
-            for grid_point in grid_points:
-                if "random" in grid_point.descriptor.model_type.__name__:
-                    rf_count += 1
-                else:
-                    linreg_count += 1
-
+        #all_models = result.all_results
+        #actual_num_models = 0
+        #rf_count = 0
+        #linreg_count = 0
+        #for fold in all_models:
+        #    grid_points = fold.grid_points
+        #    actual_num_models += len(grid_points)
+        #    for grid_point in grid_points:
+        #        if "random" in grid_point.descriptor.model_type.__name__:
+        #            rf_count += 1
+        #        else:
+        #            linreg_count += 1
+        (rf_count, linreg_count, num_models) = self._get_model_counts(
+                result, "random")
         expected_num_models = 1 * (2 + 3)
-        self.assertEquals(actual_num_models, expected_num_models)
+        self.assertEquals(num_models, expected_num_models)
         self.assertEqual(rf_count, 3)
         self.assertEqual(linreg_count, 2)
 
@@ -405,13 +411,15 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
         all_models = result.all_results
         model1_count = 0
         model2_count = 0
+        num_models = 0
         for fold in all_models:
             grid_points = fold.grid_points
+            num_models += len(grid_points)
             for grid_point in grid_points:
                 if model_name in grid_point.descriptor.model_type.__name__:
                     model1_count += 1
                 else:
                     model2_count += 1
-        return (model1_count, model2_count)
+        return (model1_count, model2_count, num_models)
 if __name__ == "__main__":
     unittest.main()
