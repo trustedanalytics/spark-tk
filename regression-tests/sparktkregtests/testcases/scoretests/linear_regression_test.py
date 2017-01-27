@@ -62,7 +62,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         old_model_path = model.export_to_mar(
             self.get_export_file(self.get_name("lin_reg")))
 
-        #create a revised model
+        # create a revised model
         model_revised = self.context.models.regression.linear_regression.train(
                 self.frame,
                 ['c1', 'c2', 'c3'], 'label',
@@ -79,10 +79,9 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
             for _, i in test_rows.iterrows():
                 res = scorer.score(
-                    [dict(zip(["c1", "c2", "c3"],
-                    list(i[0:3])))])
-                self.assertEqual(i['predicted_value'],
-                    res.json()["data"][0]['Prediction'])
+                    [dict(zip(["c1", "c2", "c3"], list(i[0:3])))])
+                self.assertEqual(
+                    i['predicted_value'], res.json()["data"][0]['Prediction'])
 
 
 if __name__ == '__main__':
