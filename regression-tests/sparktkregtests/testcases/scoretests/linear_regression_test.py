@@ -40,10 +40,11 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
     def test_model_scoring(self):
         """Test publishing a linear regression model"""
-        model = self.context.models.regression.linear_regression.train(self.frame, ['c1', 'c2', 'c3', 'c4'], "label")
+        model = self.context.models.regression.linear_regression.train(
+            self.frame, ['c1', 'c2', 'c3', 'c4'], 'label')
 
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
-        test_rows = predict.to_pandas(predict.count())
+        test_rows = predict.to_pandas(50)
 
         file_name = self.get_name("linear_regression")
         model_path = model.export_to_mar(self.get_export_file(file_name))
@@ -53,9 +54,36 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
                 res = scorer.score(
                     [dict(zip(["c1", "c2", "c3", "c4"], list(i[0:4])))])
                 self.assertEqual(
-                    i["predicted_value"], res.json()["data"][0]['Prediction'])
+                    i['predicted_value'], res.json()["data"][0]['Prediction'])
 
-            
+    def test_revise_model(self):
+        """Tests revise api in scoring engine"""
+        model = self.context.models.regression.linear_regression.train(
+            self.frame, ['c1', 'c2', 'c3', 'c4'], 'label')
+        old_model_path = model.export_to_mar(
+            self.get_export_file(self.get_name("lin_reg")))
+
+        #create a revised model
+        model_revised = self.context.models.regression.linear_regression.train(
+                self.frame,
+                ['c1', 'c2', 'c3'], 'label',
+                max_iterations=10)
+        result_revised = model_revised.predict(self.frame, ['c1', 'c2', 'c3'])
+        test_rows = result_revised.to_pandas(50)
+        revised_model_path = model_revised.export_to_mar(
+            self.get_export_file(self.get_name("lin_reg_revised")))
+
+        with scoring_utils.scorer(
+               old_model_path, self.id()) as scorer:
+            res = scorer.revise(revised_model_path)
+            self.assertEqual(res.json()["status"], "success")
+
+            for _, i in test_rows.iterrows():
+                res = scorer.score(
+                    [dict(zip(["c1", "c2", "c3"],
+                    list(i[0:3])))])
+                self.assertEqual(i['predicted_value'],
+                    res.json()["data"][0]['Prediction'])
 
 
 if __name__ == '__main__':
