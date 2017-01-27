@@ -137,8 +137,8 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
 
     def test_single_fold(self):
         """Test cross validate with num_folds = 1; should throw exception"""
-        with self.assertRaisesRegexp(
-                Exception, "Frame is empty"):
+        with self.assertRaises(
+                Exception):
             self.context.models.cross_validate(
                 self.regressor_frame,
                 [(
@@ -188,8 +188,8 @@ class CrossValidateTest(sparktk_test.SparkTKTestCase):
                 result, "random")
         expected_num_models = 2 * (2 + 3)
         self.assertEquals(num_models, expected_num_models)
-        self.assertEqual(rf_count, 3)
-        self.assertEqual(linreg_count, 2)
+        self.assertEqual(rf_count, 6)
+        self.assertEqual(linreg_count, 4)
 
     def test_averages_classifiers(self):
         """Test ouptut of cross validatation averages for classifiers"""
