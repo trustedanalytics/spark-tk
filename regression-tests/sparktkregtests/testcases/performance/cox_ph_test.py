@@ -51,7 +51,7 @@ class CoxPerformance(sparktk_test.SparkTKTestCase):
         with profiler.Timer("profile." + self.id() + "_predict"):
             cox_ph.predict(self.frame_train)
     
-    unittest.skip("fails due convergence error")
+    @unittest.skip("fails due convergence error")
     def test_cox_ph_wide(self):
         """Train and predict on an 100 covariate time series"""
         train_vecs = ["Vec"+str(i) for i in xrange(100)]
@@ -69,7 +69,7 @@ class CoxPerformance(sparktk_test.SparkTKTestCase):
         with profiler.Timer("profile." + self.id() + "_predict"):
             cox_ph.predict(self.frame_train)
 
-    unittest.skip("fails due to out of memory")
+    @unittest.skip("fails due to out of memory")
     def test_cox_ph_ultra_wide(self):
         """Train and predict on an 100 covariate time series"""
         train_vecs = ["Vec"+str(i) for i in xrange(1000)]
