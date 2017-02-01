@@ -55,10 +55,10 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
             6: 0.0}
 
         for i, row in result.iterrows():
-            id = row['id']
+            vertex_id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_value[id],
+                expected_value[vertex_id],
                 delta=0.001)
 
     def test_weights_single_shortest_path(self):
@@ -86,24 +86,31 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
             5: 0.0}
 
         for i, row in result.iterrows():
-            id = row['id']
+            vertex_id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[id],
+                expected_values[vertex_id],
                 delta=0.1)
 
-    @unittest.skip("Bug:DPNG-14802")
     def test_weights(self):
         """Test betweenness with weighted cost"""
         result_frame = self.graph.betweenness_centrality("weights", False)
 
         # validate betweenness centrality values
-        expected_values = [0.0, 5.0, 0.0, 0.0, 8.0, 5.0, 7.5]
+        expected_values = {
+            1: 0.0,
+            0: 5.0,
+            5: 0.0,
+            6: 0.0,
+            2: 8.0,
+            3: 5.0,
+            4: 7.5}
         result = result_frame.to_pandas()
         for i, row in result.iterrows():
+            vertex_id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[i],
+                expected_values[vertex_id],
                 delta=0.1)
 
     def test_disconnected_edges(self):
@@ -124,15 +131,20 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
         # validate betweenness centrality values
         expected_values = {
             'a': 3.0,
-            'b': 0.0, 'c': 5.0, 'd': 0.0,
-            'e': 0.0, 'f': 0.0, 'g': 1.0, 'h': 0.0}
+            'b': 0.0,
+            'c': 5.0,
+            'd': 0.0,
+            'e': 0.0,
+            'f': 0.0,
+            'g': 1.0,
+            'h': 0.0}
 
         result = result_frame.to_pandas()
         for i, row in result.iterrows():
-            id = row['id']
+            vertex_id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[id],
+                expected_values[vertex_id],
                 delta=0.1)
 
     def test_normalize(self):
@@ -151,10 +163,10 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
             6: 0.0}
 
         for i, row in result.iterrows():
-            id = row['id']
+            vertex_id = row['id']
             self.assertAlmostEqual(
                 row["betweenness_centrality"],
-                expected_values[id],
+                expected_values[vertex_id],
                 delta=0.1)
 
     def test_bad_weights_column_name(self):
