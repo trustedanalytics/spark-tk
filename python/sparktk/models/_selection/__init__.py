@@ -15,3 +15,16 @@
 #  limitations under the License.
 #
 
+# _selection is meant to be a private place to implement functionality for
+# auto- model and parameter selection.  The functions will be imported to
+# the desired locations and namespaces rather than referenced here.
+
+# These import statements and __all__ declaration are ONLY intended for use
+# by pdoc which will generate the API python documentation.  This solution
+# is one approach, there may well be a more appropriate method.  Since this
+# file (module) is considered private, it is deemed OK for such tomfoolery.
+
+from cross_validate import cross_validate
+from grid_search import grid_search
+
+__all__ = ['cross_validate', 'grid_search']
