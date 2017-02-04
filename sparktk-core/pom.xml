@@ -192,7 +192,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow-hadoop</artifactId>
+            <classifier>shaded-protobuf</classifier>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -285,10 +289,6 @@
             <artifactId>spark-launcher_${tap.scala.short.version}</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.cloudera.sparkts</groupId>
             <artifactId>sparkts</artifactId>
         </dependency>
@@ -306,4 +306,3 @@
         </dependency>
     </dependencies>
 </project>
-

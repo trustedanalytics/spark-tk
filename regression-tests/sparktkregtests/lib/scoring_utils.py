@@ -100,6 +100,14 @@ class scorer(object):
 
         return response
 
+    def revise(self, model_path):
+        """revises the scoring engine model"""
+        scoring_host = self.host + ":" + self.port
+        submit_string = 'http://'+scoring_host+'/v2/revise'
+        response = requests.post(
+            submit_string, json={"model-path":model_path, "force":"true"})
+        return response
+      
     def start_pipeline_server(self, pipeline_filename):
         # host = "0.0.0.0"
         port = "45000"
