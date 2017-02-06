@@ -66,6 +66,10 @@ def join_cross(self, right):
 
         >>> result = frame.join_cross(right)
 
+    <hide>
+        >>> result.sort(["id","char"])
+    </hide>
+
         >>> result.inspect()
         [#]  id  char
         =============
@@ -84,6 +88,10 @@ def join_cross(self, right):
     itself, it will result in a frame that has two columns: 'id' and 'id_R'.
 
         >>> self_cross_join = frame.join_cross(frame)
+
+    <hide>
+        >>> self_cross_join.sort(["id","id_R"])
+    </hide>
 
         >>> self_cross_join.inspect()
         [#]  id  id_R
