@@ -18,8 +18,9 @@ package org.trustedanalytics.sparktk.frame.internal.ops.join
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.trustedanalytics.sparktk.frame.{ SchemaHelper, FrameSchema }
+import org.trustedanalytics.sparktk.frame.{ SchemaHelper, FrameSchema, Column => SparkTkColumn }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.frame.Frame
 import scala.language.implicitConversions
 
 /**
@@ -34,6 +35,34 @@ object JoinRddFunctions extends Serializable {
 
   implicit def joinRddToBroadcastJoinRddFunctions(joinParam: RddJoinParam): BroadcastJoinRddFunctions =
     new BroadcastJoinRddFunctions(joinParam)
+
+  /**
+   * Perform cross join and return a FrameRdd with the cartesian product of the right and left frames.
+   *
+   * @param left Left frame for cross join
+   * @param right Right frame for cross join
+   * @return Result frame with the cartesian product of the left and right frames
+   */
+  def crossJoin(left: FrameRdd, right: FrameRdd): Frame = {
+    val leftDataFrame = left.toDataFrame
+    val rightDataFrame = right.toDataFrame
+
+    val joinedFrame = leftDataFrame.join(rightDataFrame)
+
+    var joinedSchema = left.frameSchema
+
+    right.frameSchema.columns.map(c => {
+      if (joinedSchema.hasColumn(c.name)) {
+        val rName = c.name + "_R"
+        joinedSchema = joinedSchema.addColumnFixName(SparkTkColumn(rName, c.dataType))
+      }
+      else {
+        joinedSchema = joinedSchema.addColumn(c)
+      }
+    })
+
+    new Frame(joinedFrame.rdd, joinedSchema)
+  }
 
   /**
    * Perform inner join
