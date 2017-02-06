@@ -61,6 +61,17 @@ pdoc --html --html-no-source --overwrite readme.py
 echo $NAME mv readme.m.html html/readme.m.html
 mv readme.m.html html/readme.m.html
 
+# **special handling for the functions in models/_selection
+TMP_MODELS_DIR=$TMP_SPARKTK_DIR/models
+TMP_SELECTION_DIR=$TMP_MODELS_DIR/_selection
+pushd $TMP_MODELS_DIR > /dev/null
+echo $NAME PYTHONPATH=$TMP_SPARKTK_PARENT_DIR:$TMP_SELECTION_DIR pdoc --only-pypath --html --html-dir=$TMP_SELECTION_DIR/html --template-dir $TEMPLATE_DIR --overwrite _selection
+PYTHONPATH=$TMP_SPARKTK_PARENT_DIR:$TMP_SELECTION_DIR pdoc --only-pypath --html --html-dir=$TMP_SELECTION_DIR/html --template-dir $TEMPLATE_DIR --overwrite _selection
+# copy the special index.html file out of tmp and up to a spot in the output that's easy to find by docgen for post-proc
+echo $NAME cp $TMP_SELECTION_DIR/html/_selection/index.html $HTML_DIR/selection.html
+cp $TMP_SELECTION_DIR/html/_selection/index.html $HTML_DIR/selection.html
+popd > /dev/null
+
 # Post-processing:  Patch the "Up" links
 echo $NAME post-processing the HTML
 python2.7 -m docgen -html=$HTML_DIR -main

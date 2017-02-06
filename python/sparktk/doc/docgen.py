@@ -316,6 +316,8 @@ class MainApiDocs(object):
         except:
             pass
 
+        self._patch_models_index_html()
+
         logger.debug("os.rename('%s', '%s')", self.html_dir, self.tmp_html_dir)
         os.rename(self.html_dir, self.tmp_html_dir)
         logger.debug("os.mkdir('%s')" % self.html_dir)
@@ -474,7 +476,6 @@ object in order to work with Spark. It also provides the entry point to the main
         # don't need to have a Class variables label
         process_file(dst, self._get_tag_remover('<h3>Class variables</h3>', 'div'))
 
-
     def _patch_full_index_html(self):
         # put back reference to main index in the full index
         # needs to happen AFTER the main index is created
@@ -495,6 +496,96 @@ object in order to work with Spark. It also provides the entry point to the main
 
         dst = os.path.join(self.tmp_html_dir, "sparktk/index.html")
         process_file(dst, full_html_index_processor)
+
+    def _patch_models_index_html(self):
+        """
+        Takes content from the extra "selection.html" file and adds it to the "models/index.html file"
+
+        An extra selection.html file is purposefully generated to create HTML for the functions in the models/_selection
+        folder, which are otherwise hidden from the auto-doc gen pdoc.  This is hacky and fragile to our dismay, and
+        works in tandem with the builddoc.sh.  If you have to work on this code, pay attention to the coordination and
+        role-splitting between these two files (the builddoc.sh and this docgen.py, if they're still named that).  Also
+        note that the models/_selection/__init__.py file an explicit __all__ defined exclusively for pdoc, forcing it
+        to create what latter becomes the "selection.html" file (see builddoc.sh)
+        """
+        selection_path = os.path.join(self.html_dir, 'selection.html')
+        remove_show_source(selection_path)
+
+        # create function to define new local variable scope for the state machine...
+        def get_extra_content():
+            """extracts what we want out of the selection.html  --Note: this is fragile :( """
+
+            # We need to copy two snippets:  the sidebar links and the main body content
+            WATCH_SIDEBAR = 0
+            COPY_SIDEBAR = 1
+            WATCH_BODY = 2
+            COPY_BODY = 3
+            state = WATCH_SIDEBAR
+            body = []
+            sidebar = []
+
+            # *** probably the most fragile part: ***
+            sidebar_start_count = 2  # lines to skip before collecting the sidebar
+            sidebar_copy_count = 10  # lines to collect
+
+            with open(selection_path, "r") as reader:
+                for line in reader.readlines():
+                    if state == WATCH_SIDEBAR:
+                        if '<div id="sidebar"' in line.strip():
+                            state = COPY_SIDEBAR
+                    elif state == COPY_SIDEBAR:
+                        if sidebar_start_count > 0:
+                            sidebar_start_count -= 1
+                        elif sidebar_copy_count > 0:
+                            sidebar.append(line)
+                            sidebar_copy_count -= 1
+                        else:
+                            state = WATCH_BODY
+                    elif state == WATCH_BODY:
+                        if '</header>' in line.strip():
+                            state = COPY_BODY
+                    elif state == COPY_BODY:
+                        if '</section>' in line.strip():
+                            break  # ALL DONE with everything
+                        body.append(line)
+
+            return ''.join(sidebar), ''.join(body)
+
+        extra_sidebar_content, extra_body_content = get_extra_content()
+
+        # Now take the context and insert it appropriately into the models/index.html
+        models_index_path = os.path.join(self.html_dir, 'sparktk', 'models', 'index.html')
+
+        def _models_index_patch(full_name, reader, writer):
+            """Inserts the extra content into the models/index.html"""
+            WATCH_SIDEBAR = 0
+            INSERT_SIDEBAR = 1
+            FINISH = 2
+            state = WATCH_SIDEBAR
+
+            # **fragile **
+            # we want to insert the sidebar content just before the second </ul> in the <li class="set">
+            skip_ul_count = 1  # this is the number of other </ul> tags we'll encounter before hitting the right one
+
+            for line in reader.readlines():
+                if state == WATCH_SIDEBAR:
+                    if '<li class="set"><h3>' in line:
+                      state = INSERT_SIDEBAR
+                elif state == INSERT_SIDEBAR:
+                    if '</ul>' in line:
+                        if skip_ul_count > 0:
+                            skip_ul_count -= 1
+                        else:
+                            # Insert the sidebar content
+                            writer.write(extra_sidebar_content)
+                            state = FINISH
+                elif '</section>' in line:  # i.e. state == FINISH, we're just looking for the end of the main section
+                    writer.write(extra_body_content)
+                writer.write(line)
+
+        process_file(models_index_path, _models_index_patch)
+
+        os.remove(selection_path)  # we don't want the selection.html file anymore
 
     @staticmethod
     def _get_show_source_remover(extra_line_processor=None):
