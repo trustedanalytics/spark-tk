@@ -255,7 +255,7 @@ case class ArimaxModel private[arimax] (timeseriesColumn: String,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaxModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[ArimaxModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

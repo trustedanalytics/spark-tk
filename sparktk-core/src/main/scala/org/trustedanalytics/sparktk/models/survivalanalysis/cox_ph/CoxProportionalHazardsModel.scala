@@ -239,7 +239,7 @@ case class CoxProportionalHazardsModel private[cox_ph] (sparkModel: CoxPhModel,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString, overwrite = true)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[CoxProportionalHazardsModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[CoxProportionalHazardsModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

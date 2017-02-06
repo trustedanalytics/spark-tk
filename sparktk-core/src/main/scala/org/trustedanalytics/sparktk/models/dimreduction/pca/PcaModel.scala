@@ -211,7 +211,7 @@ case class PcaModel private[pca] (columns: Seq[String],
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[PcaModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[PcaModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

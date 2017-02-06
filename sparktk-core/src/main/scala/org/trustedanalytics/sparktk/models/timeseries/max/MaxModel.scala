@@ -250,7 +250,7 @@ case class MaxModel private[max] (timeseriesColumn: String,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[MaxModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[MaxModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

@@ -442,7 +442,7 @@ case class LogisticRegressionModel private[logistic_regression] (observationColu
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[LogisticRegressionModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[LogisticRegressionModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

@@ -296,7 +296,7 @@ case class LdaModel private[lda] (documentColumnName: String,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[LdaModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[LdaModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

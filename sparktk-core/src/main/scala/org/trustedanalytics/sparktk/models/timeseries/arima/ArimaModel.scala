@@ -267,7 +267,7 @@ case class ArimaModel private[arima] (ts: DenseVector,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[ArimaModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[ArimaModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
