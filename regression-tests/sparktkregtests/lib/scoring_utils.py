@@ -52,7 +52,10 @@ class scorer(object):
         # keep track of cwd for future
         test_dir = os.getcwd()
         os.chdir(run_path)
-
+        print "hdfs path: " + str(self.hdfs_path)
+        print "full command: " + str("./bin/model-scoring.sh" + "-Dtrustedanalytics.scoring-engine.archive-mar=" + self.hdfs_path + 
+            "-Dtrustedanalytics.scoring.port=" + self.port)
+            
         # make a new process group
         self.scoring_process = sp.Popen(
             ["./bin/model-scoring.sh", "-Dtrustedanalytics.scoring-engine.archive-mar=%s" % self.hdfs_path,
