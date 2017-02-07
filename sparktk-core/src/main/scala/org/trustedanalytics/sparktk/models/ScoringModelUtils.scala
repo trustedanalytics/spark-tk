@@ -116,14 +116,12 @@ object ScoringModelUtils {
         val x = new TkSearchPath(absolutePath.substring(0, absolutePath.lastIndexOf("/")))
         var jarFileList = x.jarsInSearchPath.values.toList
 
-        val protocol = getProtocol(marSavePath)
+        val protocol = SaveLoad.getProtocol(marSavePath)
 
         if ("file".equalsIgnoreCase(protocol)) {
-          print("Local")
           jarFileList = jarFileList ::: List(new File(modelSrcDir.toString))
         }
         else {
-          print("not local")
           val modelFile = Files.createTempDirectory("localModel")
           val localModelPath = new org.apache.hadoop.fs.Path(modelFile.toString)
           val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(modelFile.toString), new Configuration())
@@ -138,59 +136,5 @@ object ScoringModelUtils {
       FileUtils.deleteQuietly(zipFile)
       IOUtils.closeQuietly(zipOutStream)
     }
-  }
-
-  /**
-   * Returns the protocol for a given URI or filename.
-   *
-   * @param source Determine the protocol for this URI or filename.
-   *
-   * @return The protocol for the given source.
-   */
-  def getProtocol(source: String): String = {
-    require(source != null, "marfile source must not be null")
-
-    var protocol: String = null
-    try {
-      val uri = new URI(source)
-
-      if (uri.isAbsolute) {
-        protocol = uri.getScheme
-      }
-      else {
-        val url = new URL(source)
-        protocol = url.getProtocol
-      }
-
-    }
-    catch {
-      case ex: Exception =>
-        if (source.startsWith("//")) {
-          throw new IllegalArgumentException("Relative context: " + source)
-        }
-        else {
-          val file = new File(source)
-          protocol = getProtocol(file)
-        }
-    }
-    protocol
-  }
-
-  /**
-   * Returns the protocol for a given file.
-   *
-   * @param file Determine the protocol for this file.
-   *
-   * @return The protocol for the given file.
-   */
-  private def getProtocol(file: File): String = {
-    var result: String = null
-    try {
-      result = file.toURI.toURL.getProtocol
-    }
-    catch {
-      case ex: Exception => result = "unknown"
-    }
-    result
   }
 }

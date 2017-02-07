@@ -19,7 +19,7 @@ import java.io.File
 import java.nio.file.Files
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.fs.Path
-import java.net.URI
+import java.net.{ URL, URI }
 import org.apache.hadoop.fs.permission.{ FsPermission, FsAction }
 import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkContext
@@ -60,10 +60,9 @@ object SaveLoad {
    */
   def saveMar(sc: SparkContext, storagePath: String, zipFile: File): String = {
 
-    val protocol = ScoringModelUtils.getProtocol(storagePath)
+    val protocol = getProtocol(storagePath)
 
     if ("file".equalsIgnoreCase(protocol)) {
-      print("Local")
       val file = new File(storagePath)
       FileUtils.copyFile(zipFile, file)
       file.getCanonicalPath
@@ -76,6 +75,41 @@ object SaveLoad {
       hdfsFileSystem.setPermission(hdfsPath, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.NONE))
       storagePath
     }
+  }
+
+  /**
+   * Returns the protocol for a given URI or filename.
+   *
+   * @param source Determine the protocol for this URI or filename.
+   *
+   * @return The protocol for the given source.
+   */
+  def getProtocol(source: String): String = {
+    require(source != null && !source.isEmpty, "marfile source must not be null")
+
+    val protocol: String = try {
+      val uri = new URI(source)
+
+      if (uri.isAbsolute) {
+        uri.getScheme
+      }
+      else {
+        val url = new URL(source)
+        url.getProtocol
+      }
+
+    }
+    catch {
+      case ex: Exception =>
+        if (source.startsWith("//")) {
+          throw new IllegalArgumentException("Does not support Relative context starting with // : " + source)
+        }
+        else {
+          val file = new File(source)
+          file.toURI.toURL.getProtocol
+        }
+    }
+    protocol
   }
 
   /**
