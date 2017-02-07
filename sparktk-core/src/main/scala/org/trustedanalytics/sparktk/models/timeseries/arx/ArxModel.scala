@@ -234,7 +234,7 @@ case class ArxModel private[arx] (timeseriesColumn: String,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[ArxModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[ArxModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

@@ -16,9 +16,10 @@
 package org.trustedanalytics.sparktk.saveload
 
 import java.io.File
+import java.nio.file.Files
 import org.apache.commons.io.FileUtils
 import org.apache.hadoop.fs.Path
-import java.net.URI
+import java.net.{ URL, URI }
 import org.apache.hadoop.fs.permission.{ FsPermission, FsAction }
 import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkContext
@@ -28,6 +29,7 @@ import org.json4s.jackson.Serialization
 import org.json4s.{ NoTypeHints, Extraction, DefaultFormats }
 import org.json4s.jackson.JsonMethods._
 import org.json4s.JsonDSL._
+import org.trustedanalytics.sparktk.models.ScoringModelUtils
 
 /**
  * Simple save/load library which uses json4s to read/write text files, including info for format validation
@@ -56,21 +58,58 @@ object SaveLoad {
    * @param zipFile the MAR file to be stored
    * @return full path to the location of the MAR file
    */
-  def saveMar(storagePath: String, zipFile: File): String = {
-    if (storagePath.startsWith("hdfs")) {
+  def saveMar(sc: SparkContext, storagePath: String, zipFile: File): String = {
+
+    val protocol = getProtocol(storagePath)
+
+    if ("file".equalsIgnoreCase(protocol)) {
+      val file = new File(storagePath)
+      FileUtils.copyFile(zipFile, file)
+      file.getCanonicalPath
+    }
+    else {
       val hdfsPath = new Path(storagePath)
-      val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(storagePath), new Configuration())
+      val hdfsFileSystem: org.apache.hadoop.fs.FileSystem = org.apache.hadoop.fs.FileSystem.get(new URI(storagePath), sc.hadoopConfiguration)
       val localPath = new Path(zipFile.getAbsolutePath)
       hdfsFileSystem.copyFromLocalFile(false, true, localPath, hdfsPath)
       hdfsFileSystem.setPermission(hdfsPath, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.NONE))
       storagePath
     }
-    else {
-      val file = new File(storagePath)
-      FileUtils.copyFile(zipFile, file)
-      file.getCanonicalPath
-    }
+  }
 
+  /**
+   * Returns the protocol for a given URI or filename.
+   *
+   * @param source Determine the protocol for this URI or filename.
+   *
+   * @return The protocol for the given source.
+   */
+  def getProtocol(source: String): String = {
+    require(source != null && !source.isEmpty, "marfile source must not be null")
+
+    val protocol: String = try {
+      val uri = new URI(source)
+
+      if (uri.isAbsolute) {
+        uri.getScheme
+      }
+      else {
+        val url = new URL(source)
+        url.getProtocol
+      }
+
+    }
+    catch {
+      case ex: Exception =>
+        if (source.startsWith("//")) {
+          throw new IllegalArgumentException("Does not support Relative context starting with // : " + source)
+        }
+        else {
+          val file = new File(source)
+          file.toURI.toURL.getProtocol
+        }
+    }
+    protocol
   }
 
   /**

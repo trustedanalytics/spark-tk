@@ -312,7 +312,7 @@ case class KMeansModel private[kmeans] (columns: Seq[String],
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[KMeansModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[KMeansModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

@@ -341,7 +341,7 @@ case class RandomForestRegressorModel private[random_forest_regressor] (sparkMod
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString, overwrite = true)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestRegressorModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[RandomForestRegressorModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

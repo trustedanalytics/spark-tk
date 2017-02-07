@@ -244,7 +244,7 @@ case class GaussianMixtureModel private[gmm] (observationColumns: Seq[String],
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[GaussianMixtureModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[GaussianMixtureModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

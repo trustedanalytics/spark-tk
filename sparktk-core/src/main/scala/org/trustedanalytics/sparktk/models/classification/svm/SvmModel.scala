@@ -281,7 +281,7 @@ case class SvmModel private[svm] (sparkModel: SparkSvmModel,
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[SvmModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[SvmModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

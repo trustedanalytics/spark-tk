@@ -348,7 +348,7 @@ case class RandomForestClassifierModel private[random_forest_classifier] (sparkM
     try {
       tmpDir = Files.createTempDirectory("sparktk-scoring-model")
       save(sc, tmpDir.toString, overwrite = true)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[RandomForestClassifierModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[RandomForestClassifierModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit

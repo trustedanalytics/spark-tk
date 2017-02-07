@@ -291,7 +291,7 @@ case class LinearRegressionModel(observationColumns: Seq[String],
       // The spark linear regression model save will fail, if we don't specify the "overwrite", since the temp
       // directory has already been created.
       save(sc, tmpDir.toString, overwrite = true)
-      ScoringModelUtils.saveToMar(marSavePath, classOf[LinearRegressionModel].getName, tmpDir)
+      ScoringModelUtils.saveToMar(sc, marSavePath, classOf[LinearRegressionModel].getName, tmpDir)
     }
     finally {
       sys.addShutdownHook(FileUtils.deleteQuietly(tmpDir.toFile)) // Delete temporary directory on exit
