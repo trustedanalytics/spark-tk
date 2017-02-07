@@ -18,10 +18,8 @@
 """tests covariance of dicom images"""
 
 import unittest
-from sparktk import dtypes
 from sparktkregtests.lib import sparktk_test
 from numpy import cov
-from numpy.linalg import svd
 from numpy.testing import assert_almost_equal
 
 
@@ -33,20 +31,20 @@ class DicomCovarianceMatrixTest(sparktk_test.SparkTKTestCase):
         dataset = self.get_file("dicom_uncompressed")
         dicom = self.context.dicom.import_dcm(dataset)
         self.frame = dicom.pixeldata
-       
+
     def test_covariance_matrix(self):
         """Test the output of dicom_covariance_matrix"""
         self.frame.matrix_covariance_matrix("imagematrix")
 
         results = self.frame.to_pandas(self.frame.count())
 
-        #compare result
+        # compare result
         for i, row in results.iterrows():
             actual_cov = row['CovarianceMatrix_imagematrix']
 
-            #expected ouput using numpy's covariance method
+            # expected ouput using numpy's covariance method
             expected_cov = cov(row['imagematrix'])
-            
+
             assert_almost_equal(actual_cov, expected_cov,
                                 decimal=4, err_msg="cov incorrect")
 
@@ -61,6 +59,7 @@ class DicomCovarianceMatrixTest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "takes exactly 2 arguments"):
             self.frame.matrix_covariance_matrix("imagematrix", True)
+
 
 if __name__ == "__main__":
     unittest.main()

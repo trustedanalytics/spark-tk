@@ -43,21 +43,21 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
         actual_sigma = [g.sigma for g in model.gaussians]
         expected_mu = \
             [[7.0206, -10.1706],
-            [7.8322, -10.2383],
-            [-1.3816, 6.7215],
-            [-0.04184, 5.8039],
-            [-4.1743, 8.5564]]
+             [7.8322, -10.2383],
+             [-1.3816, 6.7215],
+             [-0.04184, 5.8039],
+             [-4.1743, 8.5564]]
         expected_sigma = \
             [[[0.2471, -0.3325],
-            [-0.3325, 0.5828]],
-            [[2.3005, 0.6906],
-            [0.6906, 2.1103]],
-            [[1.5941, -3.5325],
-            [-3.5325, 7.8424]],
-            [[0.9849, 0.04328],
-            [0.04328, 0.3736]],
-            [[0.1168, 0.1489],
-            [0.1489, 0.9757]]]
+              [-0.3325, 0.5828]],
+             [[2.3005, 0.6906],
+              [0.6906, 2.1103]],
+             [[1.5941, -3.5325],
+              [-3.5325, 7.8424]],
+             [[0.9849, 0.04328],
+              [0.04328, 0.3736]],
+             [[0.1168, 0.1489],
+              [0.1489, 0.9757]]]
         assert_almost_equal(actual_mu, expected_mu, decimal=3)
         assert_almost_equal(actual_sigma, expected_sigma, decimal=3)
 
@@ -72,41 +72,42 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
         predicted_frame = model.predict(self.frame)
         results_df = predicted_frame.to_pandas(self.frame.count())
 
-        actual_cluster_sizes = Counter(results_df["predicted_cluster"].tolist())
+        actual_cluster_sizes = Counter(
+            results_df["predicted_cluster"].tolist())
         expected_cluster_sizes = {2: 27, 0: 17, 1: 6}
         self.assertItemsEqual(actual_cluster_sizes, expected_cluster_sizes)
 
     def test_gmm_1_cluster(self):
         """Test gmm doesn't error on k=1"""
-        model = self.context.models.clustering.gmm.train(
+        self.context.models.clustering.gmm.train(
             self.frame, ["x1", "x2"], [1.0, 1.0], k=1)
 
     def test_gmm_1_iteration(self):
         """Train on 1 iteration only, shouldn't throw exception"""
-        model = self.context.models.clustering.gmm.train(
+        self.context.models.clustering.gmm.train(
             self.frame, ["x1"], column_scalings=[1.0],
             max_iterations=1)
 
     def test_gmm_high_convergence(self):
         """Train on high convergence, should not throw exception"""
-        model = self.context.models.clustering.gmm.train(
+        self.context.models.clustering.gmm.train(
             self.frame, ["x1", "x2"], column_scalings=[1.0, 1.0],
             convergence_tol=1e6)
 
     def test_gmm_negative_seed(self):
         """Train on negative seed, shouldn't throw exception"""
-        model = self.context.models.clustering.gmm.train(
+        self.context.models.clustering.gmm.train(
             self.frame, ["x1", "x2"], column_scalings=[1.0, 1.0],
             seed=-20)
 
     def test_gmm_0_scalings(self):
         """all-zero column scalings, shouldn't throw exception"""
-        model = self.context.models.clustering.gmm.train(
+        self.context.models.clustering.gmm.train(
             self.frame, ["x1", "x2"], column_scalings=[0.0, 0.0])
 
     def test_gmm_negative_scalings(self):
         """negative column scalings, shouldn't throw exception"""
-        model = self.context.models.clustering.gmm.train(
+        self.context.models.clustering.gmm.train(
             self.frame, ["x1", "x2"], column_scalings=[-1.0, -1.0])
 
     def test_gmm_empty_frame(self):
@@ -170,9 +171,10 @@ class GMMModelTest(sparktk_test.SparkTKTestCase):
     def test_missing_column_scalings(self):
         """Missing column scalings, should error"""
         with self.assertRaisesRegexp(
-            TypeError, "train\(\) takes at least 3 arguments.*"):
+                TypeError, "train\(\) takes at least 3 arguments.*"):
             self.context.models.clustering.gmm.train(
                 self.frame, ["x1", "x2"], k=2)
+
 
 if __name__ == "__main__":
     unittest.main()

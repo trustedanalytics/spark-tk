@@ -120,9 +120,10 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
              ['c', 'd'], ['c', 'e'],
              ['f', 'g'], ['g', 'h']],
             ['src', 'dst'])
+
         vertices = self.context.frame.create(
-            [['a'], ['b'], ['c'], ['d'], ['e'], ['f'], ['g'], ['h']],
-            ['id'])
+            [['a'], ['b'], ['c'], ['d'], ['e'], ['f'], ['g'], ['h']], ['id'])
+
         graph = self.context.graph.create(vertices, edges)
 
         result_frame = graph.betweenness_centrality(normalize=False)
@@ -173,6 +174,7 @@ class BetweennessCentrality(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception, "Field \"BAD\" does not exist"):
             self.graph.betweenness_centrality("BAD")
+
 
 if __name__ == "__main__":
     unittest.main()

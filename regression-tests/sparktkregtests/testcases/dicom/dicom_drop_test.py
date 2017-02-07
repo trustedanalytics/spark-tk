@@ -31,15 +31,14 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         super(DicomDropTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         self.query = ".//DicomAttribute[@keyword='KEYWORD']/Value/text()"
         self.count = self.dicom.metadata.count()
 
     def test_drop_one_key(self):
         """test drop with basic drop function"""
-        # we are going to identify the patient id for a row in our dicom metadata
-        # this way we have a real-time key-value pair to use to give our drop function
+        # we are going to identify the patient id for a row in our dicom
+        # metadata this way we have a real-time key-value pair
+        # to use to give our drop function
         first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml = etree.fromstring(first_row.encode("ascii", "ignore"))
         patient_id = xml.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
@@ -113,9 +112,12 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         for (metadata, pixeldata) in zip(pandas_metadata, pandas_pixeldata):
             ascii_row = metadata.encode("ascii", "ignore")
             xml_root = etree.fromstring(ascii_row)
-            study_date = xml_root.xpath(self.query.replace("KEYWORD", "StudyDate"))[0]
-            datetime_study_date = datetime.datetime.strptime(study_date, "%Y%m%d")
-            if datetime_study_date < begin_date or datetime_study_date > end_date:
+            study_date = xml_root.xpath(self.query.replace(
+                "KEYWORD", "StudyDate"))[0]
+            datetime_study_date = datetime.datetime.strptime(
+                study_date, "%Y%m%d")
+            if (datetime_study_date < begin_date or
+                    datetime_study_date > end_date):
                 expected_result["metadata"].append(ascii_row)
                 expected_result["pixeldata"].append(pixeldata)
 
@@ -135,7 +137,8 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
     def test_drop_invalid_param(self):
         """test drop with an invalid param type"""
         # should fail because drop takes a function not a keyvalue pair
-        with self.assertRaisesRegexp(Exception, "'dict' object is not callable"):
+        with self.assertRaisesRegexp(
+                Exception, "'dict' object is not callable"):
             self.dicom.drop_rows({"PatientID": "bla"})
             self.dicom.metadata.count()
 
@@ -151,7 +154,9 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
             metadata = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(metadata)
             for key in key_val:
-                xml_element_value = xml_root.xpath(".//DicomAttribute[@keyword='" + key + "']/Value/text()")[0]
+                xml_element_value = xml_root.xpath(
+                    ".//DicomAttribute[@keyword='" +
+                    key + "']/Value/text()")[0]
                 if xml_element_value != key_val[key]:
                     return False
                 else:
@@ -175,7 +180,8 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         def _drop_timestamp_range(row):
             metadata = row["metadata"].encode("ascii", "ignore")
             xml_root = etree.fromstring(metadata)
-            timestamp = xml_root.xpath(".//DicomAttribute[@keyword='StudyDate']/Value/text()")[0]
+            timestamp = xml_root.xpath(
+                ".//DicomAttribute[@keyword='StudyDate']/Value/text()")[0]
             timestamp = datetime.datetime.strptime(timestamp, "%Y%m%d")
             if begin_date < timestamp and timestamp < end_date:
                 return True
@@ -221,7 +227,8 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
             ascii_xml = metadata.encode("ascii", "ignore")
             xml = etree.fromstring(ascii_xml)
             for keyword in keywords:
-                keyword_search = xml.xpath(self.query.replace("KEYWORD", keyword))
+                keyword_search = xml.xpath(self.query.replace(
+                    "KEYWORD", keyword))
                 if len(keyword_search) != 0:
                     if keyword_search[0] != keyword:
                         matching_metadata.append(ascii_xml)
@@ -236,12 +243,16 @@ class DicomDropTest(sparktk_test.SparkTKTestCase):
         pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
         pandas_pixeldata = self.dicom.pixeldata.to_pandas()["imagematrix"]
 
-        self.assertEqual(len(expected_result["metadata"]), len(pandas_metadata))
-        self.assertEqual(len(expected_result["pixeldata"]), len(pandas_pixeldata))
-        for (expected, actual) in zip(expected_result["metadata"], pandas_metadata):
+        self.assertEqual(len(
+            expected_result["metadata"]), len(pandas_metadata))
+        self.assertEqual(len(
+            expected_result["pixeldata"]), len(pandas_pixeldata))
+        for (expected, actual) in zip(
+                expected_result["metadata"], pandas_metadata):
             actual_ascii = actual.encode("ascii", "ignore")
             self.assertEqual(actual_ascii, expected)
-        for (expected, actual) in zip(expected_result["pixeldata"], pandas_pixeldata):
+        for (expected, actual) in zip(
+                expected_result["pixeldata"], pandas_pixeldata):
             numpy.testing.assert_equal(expected, actual)
 
 

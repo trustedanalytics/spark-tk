@@ -38,7 +38,8 @@ class GraphClusteringCoefficient(sparktk_test.SparkTKTestCase):
                                    ("labeled", str)]
 
         main_edge_frame = self.context.frame.import_csv(
-            self.get_file("clustering_graph_edges.csv"), schema=schema_undirected_label)
+            self.get_file("clustering_graph_edges.csv"),
+            schema=schema_undirected_label)
 
         graph = self.context.graph.create(node_frame, main_edge_frame)
 

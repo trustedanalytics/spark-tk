@@ -17,8 +17,6 @@
 
 """Test bin_columns, manual cutoffs"""
 import unittest
-import pandas as pd
-import numpy as np
 import math
 
 from sparktkregtests.lib import sparktk_test
@@ -148,7 +146,7 @@ class BinColTest(sparktk_test.SparkTKTestCase):
         # number of columns is sqrt(1000)
         self.assertEqual(
             math.floor(math.sqrt(self.frame.count())), len(diff))
-        
+
         # difference between each bin should be (nearly) the same
         diff_diffs = [j-i for i, j in zip(diff[:-1], diff[1:])]
         for i in diff_diffs:
@@ -156,7 +154,9 @@ class BinColTest(sparktk_test.SparkTKTestCase):
 
     def test_bin_column_cutoff_mixed(self):
         """Test error cutoffs are not monotonic """
-        with self.assertRaisesRegexp(Exception, "the cutoff points of the bins must be monotonically increasing"):
+        with self.assertRaisesRegexp(
+                Exception,
+                "the bins must be monotonically increasing"):
             self.frame.bin_column(
                 "index", self.cutoff_list+[-5511], bin_column_name="no_bin")
 
@@ -165,7 +165,7 @@ class BinColTest(sparktk_test.SparkTKTestCase):
         cutoff_desc = self.cutoff_list[::-1]
 
         with self.assertRaisesRegexp(
-                Exception, "the cutoff points of the bins must be monotonically increasing"):
+                Exception, "the bins must be monotonically increasing"):
             self.frame.bin_column("index", cutoff_desc)
             self.frame.inspect()
 

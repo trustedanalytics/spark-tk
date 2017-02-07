@@ -38,7 +38,8 @@ class GraphClusteringCoefficient(sparktk_test.SparkTKTestCase):
                                    ("labeled", str)]
 
         main_edge_frame = self.context.frame.import_csv(
-            self.get_file("clustering_graph_edges.csv"), schema=schema_undirected_label)
+            self.get_file("clustering_graph_edges.csv"),
+            schema=schema_undirected_label)
 
         graph = self.context.graph.create(node_frame, main_edge_frame)
 
@@ -49,7 +50,9 @@ class GraphClusteringCoefficient(sparktk_test.SparkTKTestCase):
         # The local coefficient was calculated by hand and added as an
         # attribute to the nodes.
         for index, vertex in results.iterrows():
-            self.assertAlmostEqual(vertex['unlabeled_coeff'], vertex['clustering_coefficient'], delta=.01)
+            self.assertAlmostEqual(
+                vertex['unlabeled_coeff'],
+                vertex['clustering_coefficient'], delta=.01)
 
 
 if __name__ == "__main__":

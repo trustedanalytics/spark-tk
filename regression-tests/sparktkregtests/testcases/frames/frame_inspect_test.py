@@ -18,8 +18,6 @@
 """Tests frame.inspect() """
 
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
 
@@ -80,13 +78,14 @@ class FrameInspectTest(sparktk_test.SparkTKTestCase):
         inspect = self.frame.inspect(n=row_count*10)
         self.assertEqual(len(inspect.rows), row_count)
 
-        #compare 'inspect' with the actual entire frame RowInspection object
-        self.assertEqual(str(inspect), 
+        # compare 'inspect' with the actual entire frame RowInspection object
+        self.assertEqual(str(inspect),
                          str(self.frame.inspect(n=row_count)))
 
     def test_negative_offset(self):
         """Test a negative offset errors"""
-        with self.assertRaisesRegexp(ValueError, "Expected non-negative integer"):
+        with self.assertRaisesRegexp(
+                ValueError, "Expected non-negative integer"):
             self.frame.inspect(n=5, offset=-1)
 
     def test_negative_count(self):

@@ -18,7 +18,6 @@
 
 """svm model test for scoring"""
 import unittest
-import os
 from sparktkregtests.lib import scoring_utils
 from sparktkregtests.lib import sparktk_test
 
@@ -84,7 +83,7 @@ class SvmScoreTest(sparktk_test.SparkTKTestCase):
         model_path = svm_model.export_to_mar(self.get_export_file(file_name))
 
         test_rows = training_frame.to_pandas(training_frame.count())
-        
+
         with scoring_utils.scorer(
                 model_path, self.id()) as scorer:
             for _, i in test_rows.iterrows():

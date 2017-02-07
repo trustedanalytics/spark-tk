@@ -17,11 +17,7 @@
 
 """Test column naming and quantity of joins"""
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
-from sparktk import dtypes
-from py4j.protocol import Py4JJavaError
 
 
 class JoinTest(sparktk_test.SparkTKTestCase):
@@ -130,7 +126,6 @@ class JoinTest(sparktk_test.SparkTKTestCase):
             block_data, [("idnum", int), ("count", str)])
         flt32_frame = self.context.frame.create(
             block_data, [("idnum", float), ("count", str)])
-
 
         # int and float are not compatible with each other.
         with(self.assertRaisesRegexp(

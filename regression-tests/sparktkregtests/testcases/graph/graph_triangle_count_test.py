@@ -52,7 +52,8 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
         triangles = result.to_pandas(result.count())
         # Create a dictionary of triangle count per triangle:
         dictionary_of_triangle_count = {vertex['id']: (vertex['count'])
-                                        for (index, vertex) in triangles.iterrows()}
+                                        for (index, vertex) in
+                                        triangles.iterrows()}
 
         edge_list = self.frame.take(
             n=self.frame.count(), columns=['src', 'dst'])
@@ -64,6 +65,7 @@ class TriangleCount(sparktk_test.SparkTKTestCase):
 
         self.assertEqual(
             dictionary_of_triangle_count, triangle_counts_from_networkx)
+
 
 if __name__ == '__main__':
     unittest.main()

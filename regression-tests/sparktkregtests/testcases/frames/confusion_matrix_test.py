@@ -41,5 +41,6 @@ class ConfusionMatrix(sparktk_test.SparkTKTestCase):
                                   conf_matrix[1][1]]
         self.assertEqual(actual_result, cumulative_matrix_list)
 
+
 if __name__ == '__main__':
     unittest.main()

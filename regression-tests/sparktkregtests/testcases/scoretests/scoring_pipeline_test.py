@@ -25,6 +25,7 @@ from sparktkregtests.lib import config
 import subprocess
 import tarfile
 
+
 class PipelineNaiveBayes(sparktk_test.SparkTKTestCase):
 
     def setUp(self):
@@ -40,32 +41,40 @@ class PipelineNaiveBayes(sparktk_test.SparkTKTestCase):
 
     def test_scoring_pipeline(self):
         """Test scoring_pipeline"""
-        model = self.context.models.classification.naive_bayes.train(self.frame, ['f1', 'f2', 'f3'], "label")
+        model = self.context.models.classification.naive_bayes.train(
+            self.frame, ['f1', 'f2', 'f3'], "label")
         res = model.predict(self.frame, ['f1', 'f2', 'f3'])
         analysis = res.to_pandas()
         file_name = self.get_name("naive_bayes")
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
         self.tarfile = "pipeline.tar"
-        pipeline_funcs = os.path.join(config.root, "regression-tests", "sparktkregtests", "testcases", "scoretests","pipeline_funcs.py")
-        pipeline_config = os.path.join(config.root, "regression-tests", "sparktkregtests", "testcases", "scoretests","pipeline_config.json")
+        pipeline_funcs = os.path.join(
+            config.root, "regression-tests", "sparktkregtests",
+            "testcases", "scoretests", "pipeline_funcs.py")
+        pipeline_config = os.path.join(
+            config.root, "regression-tests", "sparktkregtests",
+            "testcases", "scoretests", "pipeline_config.json")
+
         tar = tarfile.open(self.tarfile, "w:gz")
         tar.add(pipeline_funcs, "pipeline_funcs.py")
         tar.add(pipeline_config, "pipeline_config.json")
         tar.close()
 
         with scoring_utils.scorer(
-                model_path, self.id(), pipeline=True, pipeline_filename=self.tarfile) as scorer:
+                model_path, self.id(), pipeline=True,
+                pipeline_filename=self.tarfile) as scorer:
             for _, i in analysis.iterrows():
                 r = scorer.score(
                     [dict(zip(['f1', 'f2', 'f3'],
-                    map(lambda x: int(x), (i[1:4]))))])
+                          map(lambda x: int(x), (i[1:4]))))])
                 self.assertEqual(
                     r.json(), i['predicted_class'])
 
     def tearDown(self):
         super(PipelineNaiveBayes, self).tearDown()
         subprocess.call(['rm', self.tarfile])
+
 
 if __name__ == '__main__':
     unittest.main()

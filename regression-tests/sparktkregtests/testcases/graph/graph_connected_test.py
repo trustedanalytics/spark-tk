@@ -43,7 +43,6 @@ class ConnectedComponents(sparktk_test.SparkTKTestCase):
         self.vertices.drop_duplicates()
         self.vertices.sort("id")
 
-
         self.frame.add_columns(lambda x: 2, ("value", int))
 
         self.graph = self.context.graph.create(self.vertices, self.frame)

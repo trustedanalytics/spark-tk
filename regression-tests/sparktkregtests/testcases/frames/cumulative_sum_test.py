@@ -31,8 +31,8 @@ class TestCumulativeSum(sparktk_test.SparkTKTestCase):
                       ("col1", int),
                       ("cumulative_sum", int),
                       ("percent_sum", float)]
-        self.sum_frame = self.context.frame.import_csv(data_sum,
-                schema=schema_sum)
+        self.sum_frame = self.context.frame.import_csv(
+            data_sum, schema=schema_sum)
 
     def test_cumulative_sum_and_percent(self):
         """Test cumulative sum and cumulative percent"""
@@ -81,13 +81,13 @@ class TestCumulativeSum(sparktk_test.SparkTKTestCase):
 
     def test_cumulative_none_column_sum(self):
         """Test none for column errors"""
-        with self.assertRaisesRegexp(Exception,
-                "column name for sample is required"):
+        with self.assertRaisesRegexp(
+                Exception, "column name for sample is required"):
             self.sum_frame.cumulative_sum(None)
 
     def test_cumulative_none_column_percent(self):
-        with self.assertRaisesRegexp(Exception,
-                "column name for sample is required"):
+        with self.assertRaisesRegexp(
+                Exception, "column name for sample is required"):
             self.sum_frame.cumulative_percent(None)
 
 

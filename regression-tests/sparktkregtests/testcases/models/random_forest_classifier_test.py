@@ -31,9 +31,11 @@ class RandomForest(sparktk_test.SparkTKTestCase):
 
         self.frame = self.context.frame.import_csv(filename, schema=schema)
 
+        self.classification = self.context.models.classification
+
     def test_classifier_train(self):
         """ Test train method """
-        model = self.context.models.classification.random_forest_classifier.train(
+        model = self.classification.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", seed=0)
         self.assertItemsEqual(model.observation_columns, ["feat1", "feat2"])
         self.assertEqual(model.label_column, "class")
@@ -50,7 +52,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
 
     def test_classifier_predict(self):
         """Test binomial classification of random forest model"""
-        model = self.context.models.classification.random_forest_classifier.train(
+        model = self.classification.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", seed=0)
 
         result_frame = model.predict(self.frame)
@@ -60,7 +62,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
 
     def test_classifier_test(self):
         """Test test() method"""
-        model = self.context.models.classification.random_forest_classifier.train(
+        model = self.classification.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", seed=0)
         test_res = model.test(self.frame)
 
@@ -80,35 +82,37 @@ class RandomForest(sparktk_test.SparkTKTestCase):
 
     def test_negative_seed(self):
         """Test training with negative seed does not throw exception"""
-        model = self.context.models.classification.random_forest_classifier.train(
+        self.classification.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", seed=-10)
 
     def test_bad_class_col_name(self):
         """Negative test to check behavior for bad class column"""
         with self.assertRaisesRegexp(
                 Exception, "Invalid column name ERR provided"):
-            model = self.context.models.classification.random_forest_classifier.train(
+            self.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "ERR")
 
     def test_bad_feature_col_name(self):
         """Negative test to check behavior for feature class column"""
         with self.assertRaisesRegexp(
                 Exception, ".*Invalid column name ERR provided"):
-            model = self.context.models.classification.random_forest_classifier.train(
+            self.context.models.classification.random_forest_classifier.train(
                 self.frame, ["ERR", "feat2"], "class")
 
     def test_invalid_impurity(self):
         """Negative test for invalid impurity value"""
         with self.assertRaisesRegexp(
-                Exception, "Supported values for impurity are gini or entropy"):
-            model = self.context.models.classification.random_forest_classifier.train(           
+                Exception,
+                "Supported values for impurity are gini or entropy"):
+            self.context.models.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", impurity="variance")
 
     def test_negative_max_bins(self):
         """Negative test for max_bins < 0"""
         with self.assertRaisesRegexp(
-                Exception, "Found max_bins = -1.  Expected non-negative integer."):
-            model = self.context.models.classification.random_forest_classifier.train(
+                Exception,
+                "Found max_bins = -1.  Expected non-negative integer."):
+            self.context.models.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", max_bins=-1)
 
     def test_max_bins_0(self):
@@ -116,59 +120,61 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 "maxBins must be greater than 0"):
-            model = self.context.models.classification.random_forest_classifier.train(
+            self.context.models.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", max_bins=0)
 
     def test_negative_max_depth(self):
         """Negative test for max_depth < 0"""
         with self.assertRaisesRegexp(
-                Exception, "Found max_depth = -2.  Expected non-negative integer."):
-            model = self.context.models.classification.random_forest_classifier.train(
+                Exception,
+                "Found max_depth = -2.  Expected non-negative integer."):
+            self.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", max_depth=-2)
 
     def test_max_depth_0(self):
         """Negative test for max_depth=0"""
-        model = self.context.models.classification.random_forest_classifier.train(
+        model = self.classification.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", max_depth=0)
 
-        #check predicted values for depth 0
+        # check predicted values for depth 0
         result_frame = model.predict(self.frame)
         preddf = result_frame.to_pandas(self.frame.count())
 
         expected_pred_labels = [0]*self.frame.count()
         actual_pred_labels = preddf['predicted_class'].tolist()
-        
+
         self.assertItemsEqual(actual_pred_labels, expected_pred_labels)
 
     def test_negative_num_trees(self):
         """Negative test for num_trees<0"""
         with self.assertRaisesRegexp(
-                Exception, "Found num_trees = -10.  Expected non-negative integer."):
-            model = self.context.models.classification.random_forest_classifier.train(
+                Exception,
+                "Found num_trees = -10.  Expected non-negative integer."):
+            self.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", num_trees=-10)
 
     def test_num_trees_0(self):
         """Negative test for num_trees=0"""
         with self.assertRaisesRegexp(
                 Exception, "numTrees must be greater than 0"):
-            model = self.context.models.classification.random_forest_classifier.train(
+            self.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class", num_trees=0)
 
     def test_invalid_feature_subset_category(self):
         """Negative test for feature subset category"""
         with self.assertRaisesRegexp(
                 Exception, "feature subset category"):
-            model = self.context.models.classification.random_forest_classifier.train(
+            self.classification.random_forest_classifier.train(
                 self.frame, ["feat1", "feat2"], "class",
                 feature_subset_category="any")
 
     def test_rand_forest_save(self):
         """Tests save plugin"""
-        model = self.context.models.classification.random_forest_classifier.train(
+        model = self.classification.random_forest_classifier.train(
             self.frame, ["feat1", "feat2"], "class", seed=0)
         path = self.get_name("test")
         model.save(path + "/randomforestclassifier")
-        restored = self.context.load(path +"/randomforestclassifier")
+        restored = self.context.load(path + "/randomforestclassifier")
         self.assertItemsEqual(restored.observation_columns, ["feat1", "feat2"])
         self.assertEqual(restored.label_column, "class")
         self.assertEqual(restored.max_bins, 100)
@@ -181,6 +187,7 @@ class RandomForest(sparktk_test.SparkTKTestCase):
         self.assertEqual(restored.seed, 0)
         self.assertAlmostEqual(restored.sub_sampling_rate, 1.0)
         self.assertIsNone(restored.categorical_features_info)
+
 
 if __name__ == '__main__':
     unittest.main()

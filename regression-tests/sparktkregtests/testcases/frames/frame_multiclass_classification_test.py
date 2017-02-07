@@ -26,12 +26,17 @@ class ClassificationMetrics(sparktk_test.SparkTKTestCase):
     def test_multinomial_frame_classification(self):
         """Tests the confusion matrix functionality"""
         schema = [("actual", int), ("predicted", int), ("count", int)]
-        class_csv = self.get_file("class_data.csv") # the name of our data file, needs to be in hdfs for the test to run
-        frame = self.context.frame.import_csv(class_csv, schema=schema) # uploading our data file, will return a frame
+        # the name of our data file, needs to be in hdfs for the test to run
+        class_csv = self.get_file("class_data.csv")
+        # uploading our data file, will return a frame
+        frame = self.context.frame.import_csv(class_csv, schema=schema)
 
-        actual_result = [5, 2, 3, 0, 5, 3, 0, 2, 5] # the values we expect to get from our test
+        # the values we expect to get from our test
+        actual_result = [5, 2, 3, 0, 5, 3, 0, 2, 5]
 
-        classMetrics = frame.multiclass_classification_metrics('actual', 'predicted', frequency_column='count') # the label column, result column, and frequency column are the params
+        # the label column, result column, and frequency column are the params
+        classMetrics = frame.multiclass_classification_metrics(
+            'actual', 'predicted', frequency_column='count')
         conf_matrix = classMetrics.confusion_matrix.values
         cumulative_matrix_list = [conf_matrix[0][0],
                                   conf_matrix[0][1],

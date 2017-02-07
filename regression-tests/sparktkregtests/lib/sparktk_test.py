@@ -75,9 +75,9 @@ class SparkTKTestCase(unittest.TestCase):
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
         if performance_file:
-            
+
             module_name = '.'.join(identifier.split('.')[-2:])
-            
+
             config_reader = SafeConfigParser()
             filepath = os.path.abspath(os.path.join(
                 config.root, "regression-tests", "sparktkregtests",

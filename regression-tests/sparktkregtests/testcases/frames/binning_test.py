@@ -18,10 +18,7 @@
 """ Test Binning against a separate implemenation """
 
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
-from sparktk import dtypes
 
 
 class BinningHarness(sparktk_test.SparkTKTestCase):
@@ -162,9 +159,10 @@ class BinningHarness(sparktk_test.SparkTKTestCase):
         self.assertEqual(sorted(groupby_frame.take(10)), baseline)
 
     def test_negative_bin_number(self):
-        with self.assertRaisesRegexp(Exception, "number of bins must be 1 or greater"):
-            self.frame_5ratings.bin_column(
-                "rating", -1)
+        with self.assertRaisesRegexp(
+                Exception, "number of bins must be 1 or greater"):
+            self.frame_5ratings.bin_column("rating", -1)
+
 
 if __name__ == '__main__':
     unittest.main()

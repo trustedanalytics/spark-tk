@@ -18,7 +18,6 @@
 
 """ Tests Linear Regression scoring engine """
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -41,15 +40,15 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
     def test_model_scoring(self):
         """Test publishing a linear regression model"""
         model = self.context.models.regression.linear_regression.train(
-            self.frame, ['c1', 'c2', 'c3', 'c4'], 'label')
+            self.frame, ['c1', 'c2', 'c3', 'c4'], "label")
 
         predict = model.predict(self.frame, ['c1', 'c2', 'c3', 'c4'])
         test_rows = predict.to_pandas(50)
 
         file_name = self.get_name("linear_regression")
         model_path = model.export_to_mar(self.get_export_file(file_name))
-        with scoring_utils.scorer(
-                model_path, self.id()) as scorer:
+
+        with scoring_utils.scorer(model_path, self.id()) as scorer:
             for _, i in test_rows.iterrows():
                 res = scorer.score(
                     [dict(zip(["c1", "c2", "c3", "c4"], list(i[0:4])))])
@@ -63,7 +62,7 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
         old_model_path = model.export_to_mar(
             self.get_export_file(self.get_name("lin_reg")))
 
-        #create a revised model
+        # create a revised model
         model_revised = self.context.models.regression.linear_regression.train(
                 self.frame,
                 ['c1', 'c2', 'c3'], 'label',
@@ -80,10 +79,9 @@ class LinearRegression(sparktk_test.SparkTKTestCase):
 
             for _, i in test_rows.iterrows():
                 res = scorer.score(
-                    [dict(zip(["c1", "c2", "c3"],
-                    list(i[0:3])))])
-                self.assertEqual(i['predicted_value'],
-                    res.json()["data"][0]['Prediction'])
+                    [dict(zip(["c1", "c2", "c3"], list(i[0:3])))])
+                self.assertEqual(
+                    i['predicted_value'], res.json()["data"][0]['Prediction'])
 
 
 if __name__ == '__main__':

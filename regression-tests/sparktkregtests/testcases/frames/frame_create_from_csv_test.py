@@ -52,7 +52,8 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         """CsvFile creation fails with duplicate names, different type."""
         # double num1's same type
         bad = [("num1", int), ("num1", str), ("num2", int)]
-        with self.assertRaisesRegexp(Exception, "schema has duplicate column names: \[\'num1\'\]"):
+        with self.assertRaisesRegexp(
+                Exception, "schema has duplicate column names: \[\'num1\'\]"):
             self.context.frame.import_csv(self.dataset, schema=bad)
 
     def test_given_schema_is_honored(self):
@@ -71,13 +72,17 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
     def test_schema_invalid_type(self):
         """CsvFile cration with a schema of invalid type fails."""
         bad_schema = -77
-        with self.assertRaisesRegexp(Exception, "Unsupported type <type \'int\'> for schema parameter"):
+        with self.assertRaisesRegexp(
+                Exception,
+                "Unsupported type <type \'int\'> for schema parameter"):
             self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
     def test_schema_invalid_format(self):
         """CsvFile creation fails with a malformed schema."""
         bad_schema = [int, int, float, float, str]
-        with self.assertRaisesRegexp(Exception, "schema expected to contain tuples, encountered type <type \'type\'>"):
+        with self.assertRaisesRegexp(
+                Exception,
+                "schema expected to contain tuples"):
             self.context.frame.import_csv(self.dataset, schema=bad_schema)
 
     def test_frame_delim_colon(self):
@@ -147,7 +152,9 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
         # what we got from reading the csv file directly
         delim_frame_data = tab_delim_frame.take(tab_delim_frame.count())
 
-        for (frame_row, csv_line) in zip(delim_frame_data, numpy.array(csv_list)):
+        iterate = zip(delim_frame_data, numpy.array(csv_list))
+
+        for (frame_row, csv_line) in iterate:
             for (frame_item, csv_item) in zip(frame_row, csv_line):
                 if type(frame_item) is float:
                     self.assertAlmostEqual(frame_item, float(csv_item))
@@ -172,23 +179,24 @@ class FrameImportCSVTest(sparktk_test.SparkTKTestCase):
 
     def test_header(self):
         """Test header = True"""
-        frame_with_header = self.context.frame.import_csv(self.dataset,
-                                                          schema=self.schema,
-                                                          header=True)
-        frame_without_header = self.context.frame.import_csv(self.dataset,
-                                                             schema=self.schema,
-                                                             header=False)
+        frame_with_header = self.context.frame.import_csv(
+            self.dataset, schema=self.schema, header=True)
+        frame_without_header = self.context.frame.import_csv(
+            self.dataset, schema=self.schema, header=False)
 
         # the frame with the header should have one less row
         # because it should have skipped the first line
-        self.assertEqual(len(frame_with_header.take(frame_with_header.count())),
-                         len(frame_without_header.take(frame_without_header.count())) - 1)
+        self.assertEqual(
+            len(frame_with_header.take(frame_with_header.count())),
+            len(frame_without_header.take(frame_without_header.count())) - 1)
         # comparing the content of the frame with header and without
         # they should have the same rows with the only differnce being the
         # frame with the header should not have the first row
         for index in xrange(0, frame_with_header.count()):
-            self.assertEqual(str(frame_with_header.take(frame_with_header.count())[index]),
-                             str(frame_without_header.take(frame_without_header.count())[index + 1]))
+            self.assertEqual(
+                str(frame_with_header.take(frame_with_header.count())[index]),
+                str(frame_without_header.take(
+                    frame_without_header.count())[index + 1]))
 
     def test_without_schema(self):
         """Test import_csv without a specified schema"""

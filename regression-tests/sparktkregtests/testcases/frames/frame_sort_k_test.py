@@ -19,9 +19,6 @@
 import unittest
 from sparktkregtests.lib import sparktk_test
 
-# Related bugs:
-# @DPNG-9405 - multiple params with different ascending/descending values
-# @DPNG-9407 - tuples
 
 class FrameSortTest(sparktk_test.SparkTKTestCase):
 
@@ -33,7 +30,8 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
                   ("owner", str),
                   ("weight", int),
                   ("hair_type", str)]
-        self.frame = self.context.frame.import_csv(dataset, schema=schema, header=True)
+        self.frame = self.context.frame.import_csv(
+            dataset, schema=schema, header=True)
 
     def test_frame_sortedk_col_single_descending(self):
         """ Test single-column sorting descending"""
@@ -62,8 +60,7 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
         for i in range(0, len(up_take) - 1):
             # If 1st sort key is equal, compare the 2nd
             if up_take[i][3] == up_take[i + 1][3]:
-                self.assertLessEqual(up_take[i][4],
-                        up_take[i + 1][4])
+                self.assertLessEqual(up_take[i][4], up_take[i + 1][4])
             else:
                 self.assertLessEqual(
                     up_take[i][3], up_take[i + 1][3])
@@ -110,17 +107,20 @@ class FrameSortTest(sparktk_test.SparkTKTestCase):
 
     def test_frame_sortedk_negative_k(self):
         """Test sortedk with a negative k value"""
-        with self.assertRaisesRegexp(Exception, "k should be greater than zero"):
+        with self.assertRaisesRegexp(
+                Exception, "k should be greater than zero"):
             self.frame.sorted_k(-1, [("weight", False)])
 
     def test_frame_sortedk_k_0(self):
         """Test sorted k with k equal to 0"""
-        with self.assertRaisesRegexp(Exception, "k should be greater than zero"):
+        with self.assertRaisesRegexp(
+                Exception, "k should be greater than zero"):
             self.frame.sorted_k(0, [("weight", False)])
 
     def test_frame_sortedk_bad_depth(self):
         """Test sorted k with a tree depth type error"""
-        with self.assertRaisesRegexp(Exception, "does not exist"):
+        with self.assertRaisesRegexp(
+                Exception, "does not exist"):
             self.frame.sorted_k(5, [("weight", False)], reduce_tree_depth="5")
 
     def test_frame_sortedk_negative_depth(self):

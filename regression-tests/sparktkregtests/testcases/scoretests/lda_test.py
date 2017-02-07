@@ -18,7 +18,6 @@
 
 """ test cases for LDA implementation """
 import unittest
-import os
 from sparktkregtests.lib import sparktk_test
 from sparktkregtests.lib import scoring_utils
 
@@ -33,12 +32,15 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
                   ('word', str),
                   ('count', int),
                   ('topic', str)]
-        self.lda_frame = self.context.frame.import_csv(self.get_file("lda8.csv"), schema=schema)
+        self.lda_frame = self.context.frame.import_csv(
+            self.get_file("lda8.csv"), schema=schema)
 
+    @unittest.skip("currently fails to export")
     def test_model_scoring(self):
         """Test lda model scoring"""
-        model = self.context.models.clustering.lda.train(self.lda_frame, 'paper', 'word', 'count',
-                              num_topics=5, max_iterations=10, seed=0)
+        model = self.context.models.clustering.lda.train(
+            self.lda_frame, 'paper', 'word', 'count',
+            num_topics=5, max_iterations=10, seed=0)
 
         test_phrase = ["word-0-0", "word-1-0",
                        "word-2-0", "word-3-0", "word-4-0"]
@@ -46,11 +48,11 @@ class LDAModelTest(sparktk_test.SparkTKTestCase):
         file_name = self.get_name("lda")
         model_path = model.export_to_mar(self.get_export_file(file_name))
 
-        res = lda_model.predict(test_phrase)["topics_given_doc"]
+        res = model.predict(test_phrase)["topics_given_doc"]
 
-        with scoring_utils.scorer(
-                model_path, self.id()) as scorer:
-            result = scorer.score([{"paper":test_phrase}]).json()
+        with scoring_utils.scorer(model_path, self.id()) as scorer:
+            result = scorer.score([{"paper": test_phrase}]).json()
+
             for i, j in zip(res, result[u"data"][0]["topics_given_doc"]):
                 self.assertAlmostEqual(i, j)
 

@@ -63,5 +63,6 @@ class CumSumTest(unittest.TestCase):
                      [1, 25, 125],
                      [2, 90, 215]])
 
+
 if __name__ == '__main__':
     unittest.main()

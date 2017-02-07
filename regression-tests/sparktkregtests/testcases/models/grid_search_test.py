@@ -49,6 +49,19 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
     def test_grid_points_classifiers(self):
         """Test output of grid search on svm and logistic regression"""
         grid_result = self.context.models.grid_search(
+<<<<<<< HEAD
+            self.frame, self.frame,
+            [(self.context.models.classification.svm,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(5, 100),
+              "step_size": 0.01}),
+             (self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(2, 15),
+              "step_size": 0.001})])
+=======
             self.classifier_frame, self.classifier_frame,
             [(
              self.context.models.classification.svm,
@@ -66,6 +79,7 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                 "label_column": "res",
                 "num_iterations": grid_values(2, 15),
                 "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
         grid_points = grid_result.grid_points
 
@@ -104,7 +118,11 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
             lr_kwargs_0['observation_columns'],
             ["vec0", "vec1", "vec2", "vec3", "vec4"])
 
+<<<<<<< HEAD
+        # validate grid values of the third model
+=======
         # validate grid values of the fourth model
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
         lr_kwargs_1 = grid_points[3].descriptor.kwargs
         self.assertEqual(lr_kwargs_1['num_iterations'], 15)
         self.assertEqual(lr_kwargs_1['step_size'], 0.001)
@@ -112,6 +130,11 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
         self.assertItemsEqual(
             lr_kwargs_1['observation_columns'],
             ["vec0", "vec1", "vec2", "vec3", "vec4"])
+<<<<<<< HEAD
+
+        # validate accuracy metric of one of the models
+        self.assertEquals(grid_points[2].metrics.accuracy, 0.8745)
+=======
 
         # validate accuracy metric of one of the models
         self.assertEquals(grid_points[2].metrics.accuracy, 0.8745)
@@ -170,10 +193,29 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
             grid_points[1].metrics.r2,
             1.59183568639e-05,
             delta=1e-04)
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_multiple_models(self):
         """Test output of grid search on muliple classifiers"""
         grid_result = self.context.models.grid_search(
+<<<<<<< HEAD
+            self.frame, self.frame,
+            [(self.context.models.classification.svm,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": 5,
+              "step_size": 0.01}),
+             (self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": 15,
+              "step_size": 0.001}),
+             (self.context.models.classification.random_forest_classifier,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_classes": 2,
+              "num_trees": 1})])
+=======
             self.classifier_frame, self.classifier_frame,
             [(
              self.context.models.classification.svm,
@@ -199,6 +241,7 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                 "label_column": "res",
                 "num_classes": 2,
                 "num_trees": 1})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
         grid_points = grid_result.grid_points
 
@@ -217,16 +260,36 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
             "sparktk.models.classification.random_forest_classifier")
 
         # validate kwargs
+<<<<<<< HEAD
+        self.assertEqual(grid_points[0].descriptor.kwargs['num_iterations'], 5)
+        self.assertEqual(
+            grid_points[1].descriptor.kwargs['num_iterations'], 15)
+        self.assertEqual(grid_points[2].descriptor.kwargs['num_classes'], 2)
+=======
         self.assertEqual(
             grid_points[0].descriptor.kwargs['num_iterations'], 5)
         self.assertEqual(
             grid_points[1].descriptor.kwargs['num_iterations'], 15)
         self.assertEqual(
             grid_points[2].descriptor.kwargs['num_classes'], 2)
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_find_best_classifier_default(self):
         """Test find best in grid_search with default eval function"""
         grid_result = self.context.models.grid_search(
+<<<<<<< HEAD
+            self.frame, self.frame,
+            [(self.context.models.classification.svm,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(5, 10),
+              "step_size": 0.01}),
+             (self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(*xrange(2, 15)),
+              "step_size": 0.001})])
+=======
             self.classifier_frame, self.classifier_frame,
             [(
              self.context.models.classification.svm,
@@ -244,12 +307,16 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                 "label_column": "res",
                 "num_iterations": grid_values(*xrange(2, 15)),
                 "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
         best_model = grid_result.find_best()
         self.assertEqual(
             best_model.descriptor.model_type.__name__,
             "sparktk.models.classification.logistic_regression")
         self.assertAlmostEqual(
+<<<<<<< HEAD
+            best_model.metrics.accuracy, 0.87688, delta=0.01)
+=======
             best_model.metrics.accuracy,
             0.87688,
             delta=0.01)
@@ -284,10 +351,19 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
             best_model.metrics.root_mean_squared_error,
             0.37,
             delta=0.01)
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_grid_values_with_xrange(self):
         """Test grid values with xrange"""
         grid_result = self.context.models.grid_search(
+<<<<<<< HEAD
+            self.frame, self.frame,
+            [(self.context.models.classification.logistic_regression,
+             {"observation_columns": ["vec0", "vec1", "vec2", "vec3", "vec4"],
+              "label_column": "res",
+              "num_iterations": grid_values(*xrange(5, 10)),
+              "step_size": 0.001})])
+=======
             self.classifier_frame, self.classifier_frame,
             [(
              self.context.models.classification.logistic_regression,
@@ -297,6 +373,7 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                 "label_column": "res",
                 "num_iterations": grid_values(*xrange(5, 10)),
                 "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
         # validate number of models in the grid
         self.assertEquals(len(grid_result.grid_points), 5)
@@ -311,9 +388,23 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
 
     def test_incorect_hyper_parameter(self):
         """Test incorrect hyper parameter name for a model throws exception"""
-        with self.assertRaisesRegexp(
-                Exception, "unknown args named: BAD"):
+        with self.assertRaisesRegexp(Exception, "unknown args named: BAD"):
             self.context.models.grid_search(
+<<<<<<< HEAD
+                self.frame, self.frame,
+                [(self.context.models.classification.svm,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "BAD": "res",
+                  "num_iterations": grid_values(5, 100),
+                  "step_size": 0.01}),
+                 (self.context.models.classification.logistic_regression,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "BAD": "res",
+                  "num_iterations": grid_values(2, 15),
+                  "step_size": 0.001})])
+=======
                 self.classifier_frame, self.classifier_frame,
                 [(
                  self.context.models.classification.svm,
@@ -331,12 +422,21 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                     "BAD": "res",
                     "num_iterations": grid_values(2, 15),
                     "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_bad_data_type_in_grid_values(self):
         """Test invalid parameter to grid_values throws exception"""
-        with self.assertRaisesRegexp(
-                Exception, "Method .* does not exist"):
+        with self.assertRaisesRegexp(Exception, "Method .* does not exist"):
             self.context.models.grid_search(
+<<<<<<< HEAD
+                self.frame, self.frame,
+                [(self.context.models.classification.svm,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values("one"),
+                  "step_size": 0.001})])
+=======
                 self.classifier_frame, self.classifier_frame,
                 [(
                  self.context.models.classification.svm,
@@ -346,12 +446,21 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                     "label_column": "res",
                     "num_iterations": grid_values("one"),
                     "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_missing_test_frame(self):
         """Test grid search throws exception for missing test frame"""
-        with self.assertRaisesRegexp(
-                Exception, "takes at least 3 arguments"):
+        with self.assertRaisesRegexp(Exception, "takes at least 3 arguments"):
             self.context.models.grid_search(
+<<<<<<< HEAD
+                self.frame,
+                [(self.context.models.classification.svm,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values(1, 4),
+                  "step_size": 0.001})])
+=======
                 self.classifier_frame,
                 [(
                  self.context.models.classification.svm,
@@ -361,12 +470,21 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                     "label_column": "res",
                     "num_iterations": grid_values(1, 4),
                     "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_bad_model_name(self):
         """Test grid search throws exception for invalid model name"""
-        with self.assertRaisesRegexp(
-                Exception, "no attribute \'BAD\'"):
+        with self.assertRaisesRegexp(Exception, "no attribute \'BAD\'"):
             self.context.models.grid_search(
+<<<<<<< HEAD
+                self.frame,
+                [(self.context.models.classification.BAD,
+                 {"observation_columns": ["vec0", "vec1", "vec2",
+                                          "vec3", "vec4"],
+                  "label_column": "res",
+                  "num_iterations": grid_values(1, 4),
+                  "step_size": 0.001})])
+=======
                 self.classifier_frame,
                 [(
                  self.context.models.classification.BAD,
@@ -376,6 +494,7 @@ class GridSearchTest(sparktk_test.SparkTKTestCase):
                     "label_column": "res",
                     "num_iterations": grid_values(1, 4),
                     "step_size": 0.001})])
+>>>>>>> 5548fc925b5c278263cbdebbd9e8c7593320c2f4
 
     def test_invalid_eval_name(self):
         """Test grid search throws exception for invalid model name"""

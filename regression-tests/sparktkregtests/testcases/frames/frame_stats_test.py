@@ -18,10 +18,7 @@
 '''Test that Frame statistic methods'''
 
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
-from sparktk import dtypes
 
 
 class FrameStatsTest(sparktk_test.SparkTKTestCase):
@@ -61,7 +58,7 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
             schema=schema)
         with self.assertRaisesRegexp(
                 Exception, "Could not parse .* as a Double"):
-            stats = frame.column_median("item")
+            frame.column_median("item")
 
     def test_summary_statistics(self):
         """Valiadate results of summary statistics"""
@@ -85,6 +82,7 @@ class FrameStatsTest(sparktk_test.SparkTKTestCase):
                                stats.mean_confidence_upper,
                                stats.minimum,
                                stats.standard_deviation], expected_stats)
+
 
 if __name__ == "__main__":
     unittest.main()

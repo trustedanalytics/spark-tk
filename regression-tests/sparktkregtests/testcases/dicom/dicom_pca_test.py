@@ -18,7 +18,6 @@
 """tests pca on dicom frame"""
 
 import unittest
-from sparktk import dtypes
 from sparktkregtests.lib import sparktk_test
 from numpy.linalg import svd
 from numpy.testing import assert_almost_equal
@@ -33,7 +32,7 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
         dicom = self.context.dicom.import_dcm(dataset)
         self.frame = dicom.pixeldata
 
-        #perform svd on the frame to get V matrix
+        # perform svd on the frame to get V matrix
         self.frame.matrix_svd("imagematrix")
 
     def test_PCA(self):
@@ -42,11 +41,11 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
 
         results = self.frame.to_pandas(self.frame.count())
 
-        #compare against expected output
+        # compare against expected output
         for i, row in results.iterrows():
             actual_pcs = row['PrincipalComponents_imagematrix']
 
-            #V matrix from numpy's svd
+            # V matrix from numpy's svd
             U, s, V = svd(row['imagematrix'])
             expected_pcs = row['imagematrix'].dot(V.T)
 
@@ -71,6 +70,6 @@ class DicomPCATest(sparktk_test.SparkTKTestCase):
                 Exception, "column V was not found"):
             self.frame.matrix_pca("imagematrix", "V")
 
+
 if __name__ == "__main__":
     unittest.main()
-

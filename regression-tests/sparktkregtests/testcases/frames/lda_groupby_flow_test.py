@@ -28,19 +28,29 @@ class LDAExample(sparktk_test.SparkTKTestCase):
 
         # this is a full worked example of lda and groupby
         # with known correct values
-        data = [['nytimes', 'harry', 3], ['nytimes', 'economy', 35], ['nytimes', 'jobs', 40], ['nytimes', 'magic', 1],
-                ['nytimes', 'realestate', 15], ['nytimes', 'movies', 6], ['economist', 'economy', 50],
-                ['economist', 'jobs', 35], ['economist', 'realestate', 20], ['economist', 'movies', 1],
-                ['economist', 'harry', 1], ['economist', 'magic', 1], ['harrypotter', 'harry', 40],
-                ['harrypotter', 'magic', 30], ['harrypotter', 'chamber', 20], ['harrypotter', 'secrets', 30]]
+        data = [['nytimes', 'harry', 3],
+                ['nytimes', 'economy', 35],
+                ['nytimes', 'jobs', 40],
+                ['nytimes', 'magic', 1],
+                ['nytimes', 'realestate', 15],
+                ['nytimes', 'movies', 6],
+                ['economist', 'economy', 50],
+                ['economist', 'jobs', 35],
+                ['economist', 'realestate', 20],
+                ['economist', 'movies', 1],
+                ['economist', 'harry', 1],
+                ['economist', 'magic', 1],
+                ['harrypotter', 'harry', 40],
+                ['harrypotter', 'magic', 30],
+                ['harrypotter', 'chamber', 20],
+                ['harrypotter', 'secrets', 30]]
         frame = self.context.frame.create(
             data,
-            schema=[('doc_id', str),
-                    ('word_id', str),
-                    ('word_count', long)])
+            schema=[('doc_id', str), ('word_id', str), ('word_count', long)])
 
         model = self.context.models.clustering.lda.train(
-                frame, "doc_id", "word_id", "word_count", max_iterations=3, num_topics=2)
+            frame, "doc_id", "word_id", "word_count",
+            max_iterations=3, num_topics=2)
 
         doc_results = model.topics_given_doc_frame
         word_results = model.word_given_topics_frame
@@ -72,7 +82,9 @@ class LDAExample(sparktk_test.SparkTKTestCase):
 
         for (index, row) in pandas.iterrows():
             if str(row["word_id_L"]) == "magic":
-                numpy.testing.assert_equal(list(row["word_count_HISTOGRAM"]), [float(2.0/3.0), 0, float(1.0/3.0), 0])
+                numpy.testing.assert_equal(
+                    list(row["word_count_HISTOGRAM"]),
+                    [float(2.0/3.0), 0, float(1.0/3.0), 0])
 
 
 if __name__ == "__main__":

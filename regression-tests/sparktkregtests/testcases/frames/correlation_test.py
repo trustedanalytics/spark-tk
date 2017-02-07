@@ -17,7 +17,6 @@
 
 """Test covariance and correlation on 2 columns, matrices on 400x1024 matric"""
 import unittest
-import math
 import numpy
 from sparktkregtests.lib import sparktk_test
 import math
@@ -44,9 +43,10 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
 
     def test_correl_matrix(self):
         """Verify correlation matrix on all columns"""
-        correl_matrix = self.base_frame.correlation_matrix(self.base_frame.column_names).take(self.count)
-        numpy_correl = numpy.ma.corrcoef(list(self.base_frame.take(self.base_frame.count())),
-                                              rowvar=False)
+        correl_matrix = self.base_frame.correlation_matrix(
+            self.base_frame.column_names).take(self.count)
+        numpy_correl = numpy.ma.corrcoef(
+            list(self.base_frame.take(self.base_frame.count())), rowvar=False)
 
         # compare the correl matrix values with the expected results
         for i in range(0, len(correl_matrix)):
@@ -56,7 +56,8 @@ class CorrelationTest(sparktk_test.SparkTKTestCase):
                 elif numpy_correl[i][j] is numpy.ma.masked:
                     self.assertTrue(math.isnan(correl_matrix[i][j]))
                 else:
-                    self.assertAlmostEqual(correl_matrix[i][j], numpy_correl[i][j])
+                    self.assertAlmostEqual(
+                        correl_matrix[i][j], numpy_correl[i][j])
 
 
 if __name__ == "__main__":

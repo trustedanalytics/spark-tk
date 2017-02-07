@@ -39,12 +39,10 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
     def test_different_columns(self):
         """Tests kmeans cluster algorithm with more iterations."""
-        kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                             self.vectors,
-                                                             scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                             k=5,
-                                                             max_iterations=300)
- 
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, self.vectors, scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
+            k=5, max_iterations=300)
+
         # change the column names
         self.frame_test.rename_columns(
             {"Vec1": 'Dim1', "Vec2": 'Dim2', "Vec3": "Dim3",
@@ -64,112 +62,102 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
     def test_kmeans_standard(self):
         """Tests standard usage of the kmeans cluster algorithm."""
-        kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                             self.vectors,
-                                                             scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                             k=5)
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, self.vectors,
+            scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
     def test_column_weights(self):
         """Tests kmeans cluster algorithm with weighted values."""
-        kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                             self.vectors,
-                                                             scalings=[0.1, 0.1, 0.1, 0.1, 0.1],
-                                                             k=5)
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, self.vectors,
+            scalings=[0.1, 0.1, 0.1, 0.1, 0.1], k=5)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
     def test_max_iterations(self):
         """Tests kmeans cluster algorithm with more iterations."""
-        kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                             self.vectors,
-                                                             scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                             k=5,
-                                                             max_iterations=35)
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, self.vectors,
+            scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5, max_iterations=35)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
     def test_convergence_tolerance_assign(self):
         """Tests kmeans cluster with an arbitrary convergence tol. """
-        kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                             self.vectors,
-                                                             scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                             k=5,
-                                                             convergence_tolerance=.000000000001)
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, self.vectors,
+            scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5,
+            convergence_tolerance=.000000000001)
         predicted_frame = kmodel.predict(self.frame_test)
         self._validate(kmodel, predicted_frame)
 
     def test_publish(self):
         """Tests kmeans cluster publish."""
-        kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                             self.vectors,
-                                                             scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                             k=5)
-        path = kmodel.export_to_mar(self.get_export_file(self.get_name("kmeans")))
+        kmodel = self.context.models.clustering.kmeans.train(
+            self.frame_train, self.vectors,
+            scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5)
+        path = kmodel.export_to_mar(
+            self.get_export_file(self.get_name("kmeans")))
 
         self.assertIn("hdfs", path)
         self.assertIn("kmeans", path)
 
     def test_max_iterations_negative(self):
         """Check error on negative number of iterations."""
-        with self.assertRaisesRegexp(Exception, "maxIterations must be a positive value"):
-            self.context.models.clustering.kmeans.train(self.frame_train,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=5,
-                                                        max_iterations=-3)
+        with self.assertRaisesRegexp(
+                Exception, "maxIterations must be a positive value"):
+            self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
+                k=5, max_iterations=-3)
 
     def test_max_iterations_bad_type(self):
         """Check error on invalid number of iterations."""
         with self.assertRaisesRegexp(Exception, "does not exist"):
-            self.context.models.clustering.kmeans.train(self.frame_train,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=5,
-                                                        max_iterations=[])
+            self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01], k=5,
+                max_iterations=[])
 
     def test_k_negative(self):
         """Check error on negative number of clusters."""
         with self.assertRaisesRegexp(Exception, "k must be at least 1"):
-            self.context.models.clustering.kmeans.train(self.frame_train,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=-5)
+            self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01], k=-5)
 
     def test_k_bad_type(self):
         """Check error on invalid number of clusters."""
         with self.assertRaisesRegexp(Exception, "does not exist"):
-            self.context.models.clustering.kmeans.train(self.frame_train,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=[])
+            self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01], k=[])
 
     def test_convergence_tol_negative(self):
         """Check error on negative convergence_tol value."""
-        with self.assertRaisesRegexp(Exception, "convergence tolerance must be a positive value"):
-            self.context.models.clustering.kmeans.train(self.frame_train,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=5,
-                                                        convergence_tolerance=-0.05)
+        with self.assertRaisesRegexp(
+                Exception, "convergence tolerance must be a positive value"):
+            self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01], k=5,
+                convergence_tolerance=-0.05)
 
     def test_convergence_tol_bad_type(self):
         """Check error on bad convergence_tol type."""
         with self.assertRaisesRegexp(Exception, "does not exist"):
-            self.context.models.clustering.kmeans.train(self.frame_train,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=5,
-                                                        convergence_tolerance=[])
+            self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01], k=5,
+                convergence_tolerance=[])
 
     def test_invalid_columns_predict(self):
         """Check error with invalid columns"""
         with self.assertRaisesRegexp(Exception, "Invalid column name"):
-            kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                                 self.vectors,
-                                                                 scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                                 k=5)
+            kmodel = self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5)
 
             self.frame_test.rename_columns(
                 {"Vec1": 'Dim1', "Vec2": 'Dim2', "Vec3": "Dim3",
@@ -179,21 +167,21 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
 
     def test_too_few_columns(self):
         """Check error on invalid num of columns"""
-        with self.assertRaisesRegexp(Exception, "Number of columns for train and predict should be same"):
-            kmodel = self.context.models.clustering.kmeans.train(self.frame_train,
-                                                                 self.vectors,
-                                                                 scalings=[1.0, 1.0, 1.0, 1.0, 1.0],
-                                                                 k=5)
+        with self.assertRaisesRegexp(
+                Exception,
+                "Number of columns for train and predict should be same"):
+            kmodel = self.context.models.clustering.kmeans.train(
+                self.frame_train, self.vectors,
+                scalings=[1.0, 1.0, 1.0, 1.0, 1.0], k=5)
 
-            predicted_frame = kmodel.predict(self.frame_test, columns=["Vec1", "Vec2"])
+            kmodel.predict(self.frame_test, columns=["Vec1", "Vec2"])
 
     def test_null_frame(self):
         """Check error on null frame."""
         with self.assertRaisesRegexp(Exception, "frame cannot be None"):
-            self.context.models.clustering.kmeans.train(None,
-                                                        self.vectors,
-                                                        scalings=[0.01, 0.01, 0.01, 0.01, 0.01],
-                                                        k=5)
+            self.context.models.clustering.kmeans.train(
+                None, self.vectors,
+                scalings=[0.01, 0.01, 0.01, 0.01, 0.01], k=5)
 
     def _validate(self, kmodel, frame, val=83379.0):
         """ensure that clusters are correct"""
@@ -201,7 +189,7 @@ class KMeansClustering(sparktk_test.SparkTKTestCase):
         # term is the expected result
         grouped = frame.group_by(['cluster', 'term'])
         groups = grouped.take(grouped.count())
- 
+
         # iterate through the groups
         # and assert that the expected group ("term")
         # maps 1:1 with the resulting cluster

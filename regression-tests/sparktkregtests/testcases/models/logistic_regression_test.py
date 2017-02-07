@@ -18,7 +18,6 @@
 """ Tests Logistic Regression Model against known values, calculated in R"""
 import unittest
 from sparktkregtests.lib import sparktk_test
-from numpy import array
 
 
 class LogisticRegression(sparktk_test.SparkTKTestCase):
@@ -38,9 +37,11 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         self.binomial_frame = self.context.frame.import_csv(
             binomial_dataset, schema=schema, header=True)
 
+        self.classification = self.context.models.classification
+
     def test_predict(self):
         """test predict works as expected"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             'res')
         predict_frame = log_model.predict(
@@ -53,7 +54,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
 
     def test_bad_predict_observation(self):
         """test invalid observations on predict"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             'res', num_classes=2)
         with self.assertRaisesRegexp(
@@ -63,7 +64,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
 
     def test_bad_predict_observation_value(self):
         """test invalid observation value on predict"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             'res', num_classes=2)
         with self.assertRaisesRegexp(
@@ -75,34 +76,33 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid feature column type"""
         with self.assertRaisesRegexp(
                 TypeError, "\'int\' object is not iterable"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, 7, 'res', num_classes=2)
 
     def test_no_such_feature_column_train(self):
         """test invalid feature column name while training"""
         with self.assertRaisesRegexp(
                 Exception, "Invalid column name blah provided"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "blah", "vec3", "vec4"],
                 'res', num_classes=2)
 
     def test_no_feature_column_test(self):
         """test invalid feature column name in test"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             'res', num_classes=2)
         with self.assertRaisesRegexp(
                 Exception, "Invalid column name blah provided"):
-            test_result = log_model.test(
+            log_model.test(
                 self.binomial_frame,
-                ["vec0", "vec1", "blah", "vec3", "vec4"],
-                'res')
+                ["vec0", "vec1", "blah", "vec3", "vec4"], 'res')
 
     def test_label_column_type_train(self):
         """test invalid label column type name in train"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 7, num_classes=2)
 
@@ -110,7 +110,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid optimizer type train"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 'res', num_classes=2, optimizer=7)
 
@@ -118,7 +118,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid optmizer value train"""
         with self.assertRaisesRegexp(
                 Exception, "optimizer name must be 'LBFGS' or 'SGD'"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 'res', num_classes=2, optimizer="err")
 
@@ -126,7 +126,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test bad num_classes data type in train"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 'res', num_classes="err")
 
@@ -134,7 +134,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid frame type train"""
         with self.assertRaisesRegexp(
                 Exception, "'str' object has no attribute '_tc'"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 "ERR", ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", num_classes=2)
 
@@ -143,7 +143,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         with self.assertRaisesRegexp(
                 Exception,
                 "multinomial logistic regression not supported for SGD"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "count", num_classes=4, optimizer="SGD")
 
@@ -151,20 +151,20 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid covariance type"""
         with self.assertRaisesRegexp(
                 ValueError, "compute_covariance must be a bool"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", num_classes=2, compute_covariance=7)
 
     def test_covariance_false(self):
         """test not computing covariance"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res", compute_covariance=False)
         self.assertIsNone(log_model.training_summary.covariance_matrix)
 
     def test_intercept_false(self):
         """test not having an intercept"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res", intercept=False)
         self.assertNotIn(
@@ -174,7 +174,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid intercept type"""
         with self.assertRaisesRegexp(
                 ValueError, "intercept must be a bool"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", intercept=7)
 
@@ -182,7 +182,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test feature scaling type"""
         with self.assertRaisesRegexp(
                 ValueError, "feature_scaling must be a bool"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", feature_scaling=7)
 
@@ -190,7 +190,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid num corrections type"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", num_corrections="ERR")
 
@@ -198,7 +198,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid threshold type"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", threshold="ERR")
 
@@ -206,7 +206,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test regularization parameter"""
         with self.assertRaisesRegexp(
                 Exception, "regularization type must be 'L1' or 'L2'"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", reg_type="ERR")
 
@@ -214,7 +214,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid num iterations type"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", num_iterations="ERR")
 
@@ -222,7 +222,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid regularization value"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", reg_param="ERR")
 
@@ -230,7 +230,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid convergence type"""
         with self.assertRaisesRegexp(
                 Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", convergence_tolerance="ERR")
 
@@ -238,7 +238,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid reg type type"""
         with self.assertRaisesRegexp(
                  Exception, "Method train.* does not exist"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", reg_type=7)
 
@@ -246,13 +246,13 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
         """test invalid step size type"""
         with self.assertRaisesRegexp(
                 Exception, "could not convert string to float: ERR"):
-            log_model = self.context.models.classification.logistic_regression.train(
+            self.classification.logistic_regression.train(
                 self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
                 "res", step_size="ERR")
 
     def test_logistic_regression_test(self):
         """test the default happy path of logistic regression test"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res")
         values = log_model.test(
@@ -296,21 +296,21 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
 
     def test_logistic_regression_train(self):
         """test logistic regression train"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res")
         self._standard_summary(log_model.training_summary, False)
 
     def test_logistic_regression_train_sgd(self):
         """test logistic regression train with sgd"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res", num_classes=2, optimizer="SGD", step_size=30)
         self._standard_summary(log_model.training_summary, False)
 
     def test_logistic_regression_train_count_column(self):
         """test logistic regression train with count"""
-        log_model = self.context.models.classification.logistic_regression.train(
+        log_model = self.classification.logistic_regression.train(
             self.binomial_frame, ["vec0", "vec1", "vec2", "vec3", "vec4"],
             "res", "count")
         self._standard_summary(log_model.training_summary, True)
@@ -406,7 +406,7 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
                 summary.p_value["vec4"], 0,
                 delta=0.02)
 
-            #covariance matrix obtained from R
+            # covariance matrix obtained from R
             r_cov = [
                 [1.495461e-04, 1.460983e-05, 2.630870e-05,
                  3.369595e-05, 9.938721e-06, 5.580564e-05],
@@ -421,11 +421,11 @@ class LogisticRegression(sparktk_test.SparkTKTestCase):
                 [5.580564e-05, 2.206105e-05, 4.022959e-05,
                  5.243129e-05, 1.776645e-05, 9.572358e-05]]
 
-            #covariance matrix as in log_model summary
+            # covariance matrix as in log_model summary
             summ_cov = summary.covariance_matrix.take(
                 summary.covariance_matrix.count())
 
-            #compare all corresponding values in both matrices
+            # compare all corresponding values in both matrices
             for (r_list, summ_list) in zip(r_cov, summ_cov):
                 for (r_val, summ_val) in zip(r_list, summ_list):
                     self.assertAlmostEqual(r_val, summ_val)

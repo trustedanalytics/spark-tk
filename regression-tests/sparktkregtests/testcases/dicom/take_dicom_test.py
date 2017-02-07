@@ -38,8 +38,10 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
 
     def test_metadata_imagedata_row_count_same(self):
         """test metadata pixeldata row count"""
-        metadata_result = self.dicom.metadata.inspect(self.dicom.metadata.count())
-        image_result = self.dicom.pixeldata.inspect(self.dicom.pixeldata.count())
+        metadata_result = self.dicom.metadata.inspect(
+            self.dicom.metadata.count())
+        image_result = self.dicom.pixeldata.inspect(
+            self.dicom.pixeldata.count())
         self.assertEqual(len(metadata_result.rows), len(image_result.rows))
 
     def test_metadata_content_take_dcm_basic(self):
@@ -57,30 +59,31 @@ class TakeDicomTest(sparktk_test.SparkTKTestCase):
 
         # the BulkData location element of the metadata xml will be different
         # since the dicom may load the data from a differnet location then
-        # where we loaded our files. We will remove this element from the metadata
-        # before we compare
+        # where we loaded our files. We will remove this element from the
+        # metadata before we compare
         metadata_take = self.dicom.metadata.take(self.count)
-        dicom_metadata = []
         for dcm_file in metadata_take:
             dcm_file = dcm_file[1].encode("ascii", "ignore")
             dcm_xml_root = etree.fromstring(dcm_file)
             dcm_bulk_data = dcm_xml_root.xpath("//BulkData")[0]
             dcm_bulk_data.getparent().remove(dcm_bulk_data)
             self.assertTrue(etree.tostring(dcm_xml_root) in files)
-             
+
     def test_image_content_take_dcm_basic(self):
         """content test of image data for dicom"""
         # load the files so we can compare with the dicom result
         files = []
         for filename in os.listdir(self.image_directory):
-            pixel_data = dicom.read_file(self.image_directory + filename).pixel_array
+            pixel_data = dicom.read_file(
+                self.image_directory + filename).pixel_array
             files.append(pixel_data)
 
         # iterate through the data in the files and in the dicom frame
         # and ensure that they match
         image_inspect = self.dicom.pixeldata.take(self.count)
         for dcm_image in image_inspect:
-            result = any(numpy.array_equal(dcm_image[1], file_image) for file_image in files)
+            result = any(numpy.array_equal(
+                dcm_image[1], file_image) for file_image in files)
             self.assertTrue(result)
 
 

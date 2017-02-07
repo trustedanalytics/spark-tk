@@ -112,9 +112,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         training_frame = self.lattice2frame(train_lattice)
 
         # train the model on the data
-        svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 ["x", "y"],
-                                                                 "model_class")
+        svm_model = self.context.models.classification.svm.train(
+            training_frame, ["x", "y"], "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -168,9 +167,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         # create a frame from the training data and train the model
         training_frame = self.context.frame.create(train_data,
                                                    schema=schema)
-        svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 ["d1", "d2", "d3"],
-                                                                 "model_class")
+        svm_model = self.context.models.classification.svm.train(
+            training_frame, ["d1", "d2", "d3"], "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -211,9 +209,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                         ]
 
         training_frame = self.lattice2frame(train_lattice)
-        svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 ["x", "y"],
-                                                                 "model_class")
+        svm_model = self.context.models.classification.svm.train(
+            training_frame, ["x", "y"], "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -243,9 +240,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         training_frame = self.lattice2frame(train_lattice)
 
-        svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 ["x", "y"],
-                                                                 "model_class")
+        svm_model = self.context.models.classification.svm.train(
+            training_frame, ["x", "y"], "model_class")
         file_name = self.get_name("svm")
         path = svm_model.export_to_mar(self.get_export_file(file_name))
 
@@ -266,9 +262,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         training_frame = self.lattice2frame(train_lattice)
 
-        svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 ["x", "y"],
-                                                                 "model_class")
+        svm_model = self.context.models.classification.svm.train(
+            training_frame, ["x", "y"], "model_class")
 
         # Test against the original training data;
         # this should match almost perfectly.
@@ -302,9 +297,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
         training_frame = self.lattice2frame(train_lattice)
 
-        svm_model = self.context.models.classification.svm.train(training_frame,
-                                                                 ["x", "y"],
-                                                                 "model_class")
+        svm_model = self.context.models.classification.svm.train(
+            training_frame, ["x", "y"], "model_class")
 
         outer_square = self.lattice2frame(test_lattice)
         predicted_frame = svm_model.predict(outer_square, ["x", "y"])
@@ -335,8 +329,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
             return full_line
 
         # Build training frame and train the model
-        train_frame = self.context.frame.import_csv(self.shuttle_file_tr,
-                                                    schema=[("input_line", str)])
+        train_frame = self.context.frame.import_csv(
+            self.shuttle_file_tr, schema=[("input_line", str)])
 
         train_frame.add_columns(split_input_line,
                                 self.shuttle_schema)
@@ -347,8 +341,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
                                                                  "class")
 
         # Build testing frame and test the model
-        test_frame = self.context.frame.import_csv(self.shuttle_file_te,
-                                                   schema=[("input_line", str)])
+        test_frame = self.context.frame.import_csv(
+            self.shuttle_file_te, schema=[("input_line", str)])
 
         test_frame.add_columns(split_input_line,
                                self.shuttle_schema)
@@ -364,8 +358,8 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
         self.assertLess((fp+fn)/total_row_count, 0.01)
 
         # Build prediction frame and use the model to forecast
-        pred_frame = self.context.frame.import_csv(self.shuttle_file_va,
-                                                   schema=[("input_line", str)])
+        pred_frame = self.context.frame.import_csv(
+            self.shuttle_file_va, schema=[("input_line", str)])
 
         pred_frame.add_columns(split_input_line,
                                self.shuttle_schema)
@@ -396,14 +390,10 @@ class SvmModelTest(sparktk_test.SparkTKTestCase):
 
     def test_null_column(self):
         """Try a null data column"""
-        try:
-            self.context.models.classification.svm.train(self.training_frame,
-                                                         ["x", None],
-                                                         "model_class")
-        except Exception as e:
-            assert "Found observation_columns = ['x', None].  Expected str or list of str." in str(e)
-        else:
-            raise RuntimeError("Expected exception not raised")
+        with self.assertRaisesRegexp(
+                Exception, "Expected str or list of str"):
+            self.context.models.classification.svm.train(
+                self.training_frame, ["x", None], "model_class")
 
     def test_bad_data(self):
         """ Verify that invalid models raise exceptions.  """

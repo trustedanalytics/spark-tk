@@ -26,10 +26,11 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
     def setUp(self):
         """Build frames to be exercised and establish known baselines"""
         super(FrameCreateTest, self).setUp()
-        self.dataset = [["Bob", 30, 8], ["Jim", 45, 9.5], ["Sue", 25, 7], ["George", 15, 6], ["Jennifer", 18, 8.5]]
+        self.dataset = [["Bob", 30, 8], ["Jim", 45, 9.5], ["Sue", 25, 7],
+                        ["George", 15, 6], ["Jennifer", 18, 8.5]]
         self.schema = [("C0", str), ("C1", int), ("C2", float)]
-        self.frame = self.context.frame.create(self.dataset,
-                                               schema=self.schema)
+        self.frame = self.context.frame.create(
+            self.dataset, schema=self.schema)
 
     def test_frame_invalid_column(self):
         """Tests retrieving an invalid column errors."""
@@ -94,8 +95,8 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
                                           schema=self.schema)
         self.assertEqual(frame.schema, self.schema)
 
-    def test_validate_schema_with_invalid_schema_all_columns_same_datatype(self):
-        """Test with validate_schema=True and invalid schema, columns same type"""
+    def test_schema_with_invalid_schema_all_columns_same_datatype(self):
+        """Test validate_schema=True and invalid schema, columns same type"""
         invalid_schema = [("col1", int), ("col2", int), ("col3", int)]
         validated_frame = self.context.frame.create(self.dataset,
                                                     validate_schema=True,
@@ -109,9 +110,8 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         """Test with validate schema true and column datatypes inconsistent"""
         dataset = [(98, 55), (3, 24), ("Bob", 30)]
         schema = [("col1", int), ("col2", int)]
-        frame = self.context.frame.create(dataset,
-                                              schema=schema,
-                                              validate_schema=True)
+        frame = self.context.frame.create(
+            dataset, schema=schema, validate_schema=True)
         for row in frame.take(frame.count()):
             for item in row:
                 if type(item) is not int:
@@ -125,7 +125,8 @@ class FrameCreateTest(sparktk_test.SparkTKTestCase):
         # datatype validate schema should just cast it
         # since ints and floats can be cast to string
         # it should not error but should cast all of the data to strings
-        frame = self.context.frame.create(self.dataset, schema=schema, validate_schema=True)
+        frame = self.context.frame.create(
+            self.dataset, schema=schema, validate_schema=True)
         for row in frame.take(frame.count()):
             # the data should all be cast to str by validate_schema=True
             for item in row:

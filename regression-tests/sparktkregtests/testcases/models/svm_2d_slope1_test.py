@@ -40,9 +40,8 @@ class Svm2DSlope1(sparktk_test.SparkTKTestCase):
 
     def test_svm_model_test(self):
         """Test with train and test data generated with same hyperplane"""
-        model = self.context.models.classification.svm.train(self.trainer,
-                                                             ["Dim_1", "Dim_2"],
-                                                             "Class")
+        model = self.context.models.classification.svm.train(
+            self.trainer, ["Dim_1", "Dim_2"], "Class")
         results = model.test(self.frame)
 
         # assert that model reports acceptable accuracy, etc.
@@ -60,9 +59,8 @@ class Svm2DSlope1(sparktk_test.SparkTKTestCase):
 
     def test_svm_model_predict(self):
         """Test the predict function"""
-        model = self.context.models.classification.svm.train(self.trainer,
-                                                             ["Dim_1", "Dim_2"],
-                                                             "Class")
+        model = self.context.models.classification.svm.train(
+            self.trainer, ["Dim_1", "Dim_2"], "Class")
         predicted_frame = model.predict(self.frame)
 
         outcome = predicted_frame.to_pandas()

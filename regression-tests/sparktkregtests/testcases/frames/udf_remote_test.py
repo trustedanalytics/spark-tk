@@ -17,8 +17,12 @@
 
 """ Test UDF implementation."""
 import unittest
+
 from sparktkregtests.lib import sparktk_test
-import udf_remote_utils_direct, udf_remote_utils_indirect, udf_remote_utils_select
+
+import udf_remote_utils_direct
+import udf_remote_utils_indirect
+import udf_remote_utils_select
 
 
 class UDFTest(sparktk_test.SparkTKTestCase):
@@ -84,7 +88,8 @@ class UDFTest(sparktk_test.SparkTKTestCase):
         udf_remote_utils_select.add_select_col(self.frame)
 
         frame_take = self.frame.take(self.frame.count())
-        letter_col_take = self.frame.take(self.frame.count(), columns=['letter'])
+        letter_col_take = self.frame.take(
+            self.frame.count(), columns=['letter'])
 
         letter = [x[0].encode("ascii", "ignore") for x in letter_col_take]
 
@@ -95,9 +100,12 @@ class UDFTest(sparktk_test.SparkTKTestCase):
 
     def test_udf_indirect_missing(self):
         """Use a function that is missing with udf remote"""
-        with self.assertRaisesRegexp(Exception, "column name must be alpha-numeric"):
-            self.frame.add_columns(lambda row: udf_remote_utils_indirect.not_exist(row.letter) + row.num2,
-                                  ("new column", int))
+        with self.assertRaisesRegexp(
+                Exception, "column name must be alpha-numeric"):
+            self.frame.add_columns(
+                lambda row:
+                    udf_remote_utils_indirect.not_exist(row.letter) + row.num2,
+                ("new column", int))
             self.frame.count()
 
 

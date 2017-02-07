@@ -31,8 +31,6 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         super(DicomDropKeywordsTest, self).setUp()
         self.dataset = self.get_file("dicom_uncompressed")
         self.dicom = self.context.dicom.import_dcm(self.dataset)
-        self.xml_directory = "../../../datasets/dicom/dicom_uncompressed/xml/"
-        self.image_directory = "../../../datasets/dicom/dicom_uncompressed/imagedata/"
         # query for the text value of that keyword from xml
         self.query = ".//DicomAttribute[@keyword='KEYWORD']/Value/text()"
         self.count = self.dicom.metadata.count()
@@ -46,12 +44,14 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         random_row_index = random.randint(0, self.dicom.metadata.count() - 1)
         random_row = metadata["metadata"][random_row_index]
         xml_data = etree.fromstring(random_row.encode("ascii", "ignore"))
-        random_row_sopi_id = xml_data.xpath(self.query.replace("KEYWORD", "SOPInstanceUID"))[0]
+        random_row_sopi_id = xml_data.xpath(self.query.replace(
+            "KEYWORD", "SOPInstanceUID"))[0]
         expected_result = self._drop({"SOPInstanceUID": random_row_sopi_id})
         # get all of the records with our randomly selected sopinstanceuid
         # since sopinstanceuid is supposed to be unique for each record
         # we should only get back the record which we randomly selected above
-        self.dicom.drop_rows_by_keywords({"SOPInstanceUID": random_row_sopi_id})
+        self.dicom.drop_rows_by_keywords(
+            {"SOPInstanceUID": random_row_sopi_id})
 
         # check that our result is correct
         # we should have gotten back from drop the row
@@ -67,7 +67,8 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         # grab a random row and extract the patient id
         first_row = metadata["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
+        first_row_patient_id = xml_data.xpath(self.query.replace(
+            "KEYWORD", "PatientID"))[0]
 
         # drop the records ourselves to get the expected result
         expected_result = self._drop({"PatientID": first_row_patient_id})
@@ -79,8 +80,10 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
         # ensure that our expected result matches what dicom returned
-        self.assertEqual(len(expected_result["metadata"]), self.dicom.metadata.count())
-        self.assertEqual(len(expected_result["pixeldata"]), self.dicom.pixeldata.count())
+        self.assertEqual(len(
+            expected_result["metadata"]), self.dicom.metadata.count())
+        self.assertEqual(len(
+            expected_result["pixeldata"]), self.dicom.pixeldata.count())
         for record, droped_record in zip(expected_result, pandas_result):
             self.assertEqual(record, droped_record.encode("ascii", "ignore"))
 
@@ -92,8 +95,10 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         metadata = self.dicom.metadata.to_pandas()["metadata"]
         first_row = metadata[0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
-        first_row_institution_name = xml_data.xpath(self.query.replace("KEYWORD", "BodyPartExamined"))[0]
+        first_row_patient_id = xml_data.xpath(self.query.replace(
+            "KEYWORD", "PatientID"))[0]
+        first_row_institution_name = xml_data.xpath(self.query.replace(
+            "KEYWORD", "BodyPartExamined"))[0]
         keyword_drop["PatientID"] = first_row_patient_id
         keyword_drop["BodyPartExamined"] = first_row_institution_name
 
@@ -104,10 +109,14 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         self.dicom.drop_rows_by_keywords(keyword_drop)
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
-        # finally we check to ensure that dicom's result matches our expected result
-        self.assertEqual(len(matching_records["metadata"]), self.dicom.metadata.count())
-        self.assertEqual(len(matching_records["pixeldata"]), self.dicom.pixeldata.count())
-        for expected_record, actual_record in zip(matching_records, pandas_result):
+        # finally we check to ensure that dicom's
+        # result matches our expected result
+        self.assertEqual(len(
+            matching_records["metadata"]), self.dicom.metadata.count())
+        self.assertEqual(len(
+            matching_records["pixeldata"]), self.dicom.pixeldata.count())
+        for expected_record, actual_record in zip(
+                matching_records, pandas_result):
             ascii_actual_result = actual_record.encode("ascii", "ignore")
             self.assertEqual(ascii_actual_result, expected_record)
 
@@ -119,7 +128,8 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
 
     def test_drop_multiple_invalid_columns(self):
         """test drop mult invalid keys"""
-        self.dicom.drop_rows_by_keywords({"invalid": "bla", "another_invalid_col": "bla"})
+        self.dicom.drop_rows_by_keywords(
+            {"invalid": "bla", "another_invalid_col": "bla"})
         self.assertEqual(self.count, self.dicom.metadata.count())
         self.assertEqual(self.count, self.dicom.pixeldata.count())
 
@@ -135,11 +145,13 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         # and extracting its patient id
         first_row = self.dicom.metadata.to_pandas()["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
+        patient_id = xml_data.xpath(self.query.replace(
+            "KEYWORD", "PatientID"))[0]
 
-        # now we ask dicom to drop using a filter which is a mix of a valid key-value
-        # pair and an invalid key-value pair
-        self.dicom.drop_rows_by_keywords({"PatientID": patient_id, "Invalid": "bla"})
+        # now we ask dicom to drop using a filter which is a mix of a valid
+        # key-value pair and an invalid key-value pair
+        self.dicom.drop_rows_by_keywords(
+            {"PatientID": patient_id, "Invalid": "bla"})
 
         # since there are no records which meet BOTH key value criterias
         # we assert that 0 records were returned
@@ -160,15 +172,18 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         metadata = self.dicom.metadata.to_pandas()
         first_row = metadata["metadata"][0]
         xml_data = etree.fromstring(first_row.encode("ascii", "ignore"))
-        first_row_patient_id = xml_data.xpath(self.query.replace("KEYWORD", "PatientID"))[0]
+        first_row_patient_id = xml_data.xpath(self.query.replace(
+            "KEYWORD", "PatientID"))[0]
 
         expected_result = self._drop({"PatientID": first_row_patient_id})
 
         self.dicom.drop_rows_by_keywords({u'PatientID': first_row_patient_id})
         pandas_result = self.dicom.metadata.to_pandas()["metadata"]
 
-        self.assertEqual(len(expected_result["metadata"]), self.dicom.metadata.count())
-        self.assertEqual(len(expected_result["pixeldata"]), self.dicom.pixeldata.count())
+        self.assertEqual(len(
+            expected_result["metadata"]), self.dicom.metadata.count())
+        self.assertEqual(len(
+            expected_result["pixeldata"]), self.dicom.pixeldata.count())
         for record, droped_record in zip(expected_result, pandas_result):
             self.assertEqual(record, droped_record.encode("ascii", "ignore"))
 
@@ -187,7 +202,8 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
             ascii_xml = metadata.encode("ascii", "ignore")
             xml = etree.fromstring(ascii_xml)
             for keyword in keywords:
-                this_row_keyword_value = xml.xpath(self.query.replace("KEYWORD", keyword))[0]
+                this_row_keyword_value = xml.xpath(self.query.replace(
+                    "KEYWORD", keyword))[0]
                 if this_row_keyword_value != keywords[keyword]:
                     matching_metadata.append(ascii_xml)
                     matching_pixeldata.append(pixeldata)
@@ -198,10 +214,12 @@ class DicomDropKeywordsTest(sparktk_test.SparkTKTestCase):
         """compare expected result with actual result"""
         pandas_metadata = self.dicom.metadata.to_pandas()["metadata"]
         pandas_pixeldata = self.dicom.pixeldata.to_pandas()["imagematrix"]
-        for expected, actual in zip(expected_result["metadata"], pandas_metadata):
+        for expected, actual in zip(
+                expected_result["metadata"], pandas_metadata):
             actual_ascii = actual.encode("ascii", "ignore")
             self.assertEqual(actual_ascii, expected)
-        for expected, actual in zip(expected_result["pixeldata"], pandas_pixeldata):
+        for expected, actual in zip(
+                expected_result["pixeldata"], pandas_pixeldata):
             numpy.testing.assert_equal(expected, actual)
 
 

@@ -18,8 +18,6 @@
 """Tests frame_copy with various parameters """
 
 import unittest
-import sys
-import os
 from sparktkregtests.lib import sparktk_test
 
 
@@ -36,7 +34,6 @@ class FrameCopyTest(sparktk_test.SparkTKTestCase):
 
         self.frame = self.context.frame.import_csv(
             dataset, schema=schema)
-
 
     def test_frame_copy_default(self):
         """Validate explicit copy with frame.copy()"""
@@ -83,6 +80,7 @@ class FrameCopyTest(sparktk_test.SparkTKTestCase):
         self.assertItemsEqual(
             copy_frame.take(copy_frame.count()),
             self.frame.take(self.frame.count(), columns=col_choice))
+
 
 if __name__ == "__main__":
     unittest.main()
