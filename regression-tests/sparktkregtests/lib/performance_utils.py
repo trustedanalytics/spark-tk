@@ -19,6 +19,7 @@
 import datetime
 import time
 
+
 class Timer(object):
     """ Profiles a section of code using an execution context (with statement).
     If teamcity is installed will return a test with a specified name.
@@ -38,11 +39,12 @@ class Timer(object):
         return self
 
     def __exit__(self, *args):
-        """ End profiling, print run time, if teamcity is installed return a test """
+        """ End profiling, print run time, report to teamcity if installed """
         self.end = datetime.datetime.now()
         self.end_time = time.time()
 
-        self.run_time = time.strftime('%H:%M:%S', time.gmtime(self.end_time - self.start_time))
+        self.run_time = time.strftime(
+            '%H:%M:%S', time.gmtime(self.end_time - self.start_time))
 
         self.diff = self.end - self.start
         self.seconds = self.end_time - self.start_time
@@ -51,14 +53,16 @@ class Timer(object):
         # If teamcity messages is installed, use it
         try:
             import teamcity.messages as tc
-            if self.name is not None and self.flowid is not None and self.tc_report:
+            report = (self.name is not None and
+                      self.flowid is not None and
+                      self.tc_report)
+            if report:
                 tsvc = tc.TeamcityServiceMessages()
-                # If there's a better way of doing this I don't know it
-                with tsvc.test(self.name, testDuration=self.diff, flowId=self.flowid):
+
+                with tsvc.test(
+                        self.name, testDuration=self.diff, flowId=self.flowid):
                     pass
 
         except ImportError, e:
             if e.message != "No module named teamcity.messages":
                 raise
-
-
