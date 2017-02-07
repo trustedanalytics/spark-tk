@@ -15,16 +15,16 @@
 #  limitations under the License.
 #
 
-# _selection is meant to be a private place to implement functionality for
-# auto- model and parameter selection.  The functions will be imported to
-# the desired locations and namespaces rather than referenced here.
 
-# These import statements and __all__ declaration are ONLY intended for use
-# by pdoc which will generate the API python documentation.  This solution
-# is one approach, there may well be a more appropriate method.  Since this
-# file (module) is considered private, it is deemed OK for such tomfoolery.
+import random
 
-from cross_validate import cross_validate
-from grid_search import grid_search
+def perf_val(count, width, filename):
+    widthcount = range(width)
+    
+    with open(filename, 'w') as filewr:
+        for i in xrange(count):
+            filewr.write(",".join(map(str, ["1", i] + [random.uniform(-100, 100) for j in widthcount])) + '\n')
 
-__all__ = ['cross_validate', 'grid_search']
+
+if __name__ == "__main__":
+    perf_val(10 ** 7, 100, "cox_perf10M_wide.csv")
