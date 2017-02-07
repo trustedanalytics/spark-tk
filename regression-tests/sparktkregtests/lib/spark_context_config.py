@@ -36,20 +36,21 @@ sparktkconf_dict_small = {'spark.driver.maxPermSize': '512m',
                           'spark.sql.shuffle.partitions': '16'}
 
 sparktk_dict_performance = {'spark.driver.maxPermSize': "512m",
-                            'spark.yarn.am.memoryOverhead': "2293",
-                            'spark.driver.memory': "30475m",
+                            # 'spark.yarn.am.memoryOverhead': "2293",
+                            'spark.ui.enabled': 'true',
+                            'spark.driver.memory': "40475m",
                             'spark.driver.cores': 1,
-                            'spark.yarn.executor.memoryOverhead': "2293",
+                            # 'spark.yarn.executor.memoryOverhead': "2293",
                             'spark.shuffle.service.enabled': 'true',
                             'spark.dynamicAllocation.maxExecutors': 38,
                             'spark.driver.maxResultSize': "2g",
                             'spark.executor.cores': 15,
                             'spark.dynamicAllocation.minExecutors': 1,
-                            'spark.shuffle.io.preferDirectBufs': 'true',
+                            'spark.shuffle.io.preferDirectBufs': 'false',
                             'spark.yarn.am.waitTime': 1000000,
-                            'spark.executor.memory': "30475m",
+                            'spark.executor.memory': "40475m",
                             'spark.dynamicAllocation.enabled': 'true',
-                            'spark.sql.shuffle.partitions': 200,
+                            'spark.sql.shuffle.partitions': 2000,
                             'spark.kryoserializer.buffer.max.mb': "256"}
 
 

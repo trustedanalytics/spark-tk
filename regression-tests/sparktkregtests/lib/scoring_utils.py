@@ -40,7 +40,8 @@ class scorer(object):
             config.root, "regression-tests",
             "sparktkregtests", "lib", "port.ini"))
         port_config.read(filepath)
-        self.port = port_config.get('port', port_id)
+        self.port = port_config.get(
+            'port', ('.'.join(port_id.split('.')[-2:])))
 
     def __enter__(self):
         """Activate the Server"""

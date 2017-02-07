@@ -18,8 +18,9 @@ package org.trustedanalytics.sparktk.frame.internal.ops.join
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.expressions.GenericRow
-import org.trustedanalytics.sparktk.frame.{ SchemaHelper, FrameSchema }
+import org.trustedanalytics.sparktk.frame.{ SchemaHelper, FrameSchema, Column => SparkTkColumn }
 import org.trustedanalytics.sparktk.frame.internal.rdd.FrameRdd
+import org.trustedanalytics.sparktk.frame.Frame
 import scala.language.implicitConversions
 
 /**
@@ -34,6 +35,40 @@ object JoinRddFunctions extends Serializable {
 
   implicit def joinRddToBroadcastJoinRddFunctions(joinParam: RddJoinParam): BroadcastJoinRddFunctions =
     new BroadcastJoinRddFunctions(joinParam)
+
+  /**
+   * Perform cross join and return a FrameRdd with the cartesian product of the right and left frames.
+   *
+   * If the right frame has a column with the same name as the left frame, the result frame will have a column with the
+   * "_R" suffix added to the end of the column name with the right frame's column data.
+   *
+   * @param left Left frame for cross join
+   * @param right Right frame for cross join
+   * @return Result frame with the cartesian product of the left and right frames
+   */
+  def crossJoin(left: FrameRdd, right: FrameRdd): Frame = {
+    val leftDataFrame = left.toDataFrame
+    val rightDataFrame = right.toDataFrame
+
+    // Perform cross join using the data frames
+    val joinedFrame = leftDataFrame.join(rightDataFrame)
+
+    // Create the new schema by starting with the left frame's schema
+    var joinedSchema = left.frameSchema
+
+    // Add columns from the right frame to the new new schema, while checking for duplicate column names
+    right.frameSchema.columns.map(c => {
+      if (joinedSchema.hasColumn(c.name)) {
+        val rName = c.name + "_R"
+        joinedSchema = joinedSchema.addColumnFixName(SparkTkColumn(rName, c.dataType))
+      }
+      else {
+        joinedSchema = joinedSchema.addColumn(c)
+      }
+    })
+
+    new Frame(joinedFrame.rdd, joinedSchema)
+  }
 
   /**
    * Perform inner join

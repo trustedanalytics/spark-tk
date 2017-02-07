@@ -70,20 +70,23 @@ class SparkTKTestCase(unittest.TestCase):
     def tearDownClass(cls):
         pass
 
-    def get_file(self, filename, performance_file=False):
+    def get_file(self, identifier, performance_file=False):
         """Return the hdfs path to the given file"""
         # Note this is an HDFS path, not a userspace path. os.path library
         # may be wrong
         if performance_file:
+            
+            module_name = '.'.join(identifier.split('.')[-2:])
+            
             config_reader = SafeConfigParser()
             filepath = os.path.abspath(os.path.join(
                 config.root, "regression-tests", "sparktkregtests",
                 "lib", "performance.ini"))
             config_reader.read(filepath)
             placed_path = (config.performance_data_dir + "/" +
-                           config_reader.get(config.test_size, filename))
+                           config_reader.get(config.test_size, module_name))
         else:
-            placed_path = config.hdfs_data_dir + "/" + filename
+            placed_path = config.hdfs_data_dir + "/" + identifier
         return placed_path
 
     def get_export_file(self, filename):
