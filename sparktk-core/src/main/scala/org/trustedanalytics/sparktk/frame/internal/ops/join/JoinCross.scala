@@ -23,7 +23,7 @@ trait JoinCrossSummarization extends BaseFrame {
 
   /**
    * JoinCross returns a frame with the Cartesian product of the rows from the specified frames.  Each row from the
-   * current frame is combined with each row from the other frame.
+   * current frame is combined with each row from the right frame.
    *
    * @param right   The right frame in the cross join operation
    */

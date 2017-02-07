@@ -19,19 +19,14 @@ from sparktk.arguments import require_type
 
 def join_cross(self, right):
     """
-    join_cross performs a cross join operation on two frames and returns a frame that contains the cartesian product
-    of the two frames.
-
+    The join_cross operation performs a cross join operation on two frames, and returns a frame that contains the
+    cartesian product of the two frames. Each row from the current frame is combined with each row from the right frame.
 
     Parameters
     ----------
 
     :param right: (Frame) The right frame in the cross join operation.
-
-    :returns: (Frame) A new frame with the results of the join
-
-    The cross join operation returns a frame with the Cartesian product of the rows from the specified frames.  Each
-    row from the current frame is combined with each row from the other frame.
+    :returns: (Frame) A new frame with the results of the cross join.
 
     Notes
     -----

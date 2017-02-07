@@ -39,6 +39,9 @@ object JoinRddFunctions extends Serializable {
   /**
    * Perform cross join and return a FrameRdd with the cartesian product of the right and left frames.
    *
+   * If the right frame has a column with the same name as the left frame, the result frame will have a column with the
+   * "_R" suffix added to the end of the column name with the right frame's column data.
+   *
    * @param left Left frame for cross join
    * @param right Right frame for cross join
    * @return Result frame with the cartesian product of the left and right frames
@@ -47,10 +50,13 @@ object JoinRddFunctions extends Serializable {
     val leftDataFrame = left.toDataFrame
     val rightDataFrame = right.toDataFrame
 
+    // Perform cross join using the data frames
     val joinedFrame = leftDataFrame.join(rightDataFrame)
 
+    // Create the new schema by starting with the left frame's schema
     var joinedSchema = left.frameSchema
 
+    // Add columns from the right frame to the new new schema, while checking for duplicate column names
     right.frameSchema.columns.map(c => {
       if (joinedSchema.hasColumn(c.name)) {
         val rName = c.name + "_R"

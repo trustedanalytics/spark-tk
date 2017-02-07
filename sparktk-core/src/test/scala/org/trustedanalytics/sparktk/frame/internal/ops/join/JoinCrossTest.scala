@@ -125,7 +125,5 @@ class JoinCrossTest extends TestingSparkContextWordSpec with Matchers {
 
       results should contain theSameElementsAs expectedResults
     }
-
   }
-
 }
