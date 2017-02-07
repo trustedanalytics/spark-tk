@@ -385,6 +385,7 @@ class Frame(object):
     from sparktk.frame.ops.group_by import group_by
     from sparktk.frame.ops.histogram import histogram
     from sparktk.frame.ops.inspect import inspect
+    from sparktk.frame.ops.join_cross import join_cross
     from sparktk.frame.ops.join_inner import join_inner
     from sparktk.frame.ops.join_left import join_left
     from sparktk.frame.ops.join_right import join_right

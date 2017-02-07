@@ -26,7 +26,7 @@ import org.trustedanalytics.sparktk.frame.internal.ops._
 import org.trustedanalytics.sparktk.frame.internal.ops.binning.{ BinColumnTransformWithResult, HistogramSummarization, QuantileBinColumnTransformWithResult }
 import org.trustedanalytics.sparktk.frame.internal.ops.classificationmetrics.{ BinaryClassificationMetricsSummarization, MultiClassClassificationMetricsSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.cumulativedist._
-import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinInnerSummarization, JoinLeftSummarization, JoinOuterSummarization, JoinRightSummarization }
+import org.trustedanalytics.sparktk.frame.internal.ops.join.{ JoinCrossSummarization, JoinInnerSummarization, JoinLeftSummarization, JoinOuterSummarization, JoinRightSummarization }
 import org.trustedanalytics.sparktk.frame.internal.ops.sample.AssignSampleTransform
 import org.trustedanalytics.sparktk.frame.internal.ops.exportdata._
 import org.trustedanalytics.sparktk.frame.internal.ops.flatten.FlattenColumnsTransform
@@ -80,6 +80,7 @@ class Frame(frameRdd: RDD[Row], frameSchema: Schema, validateSchema: Boolean = f
     with FlattenColumnsTransform
     with GroupBySummarization
     with HistogramSummarization
+    with JoinCrossSummarization
     with JoinInnerSummarization
     with JoinLeftSummarization
     with JoinOuterSummarization
