@@ -91,7 +91,7 @@ def import_csv(path, delimiter=",", header=False, schema=None, datetime_format="
         >>> frame = tc.frame.import_csv(file_path, schema=schema, header=False)
         -etc-
 
-        >>> frame.inspect()
+        >>> print unicode(frame.get_inspect()).encode('utf-8')  # because this file if UT8 and this docstring is str
         [#]  a  b  c
         ============
         [0]  à  ë  ñ

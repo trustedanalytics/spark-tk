@@ -233,6 +233,9 @@ class ATable(object):
     def __repr__(self):
         return self._repr()
 
+    def __unicode__(self):
+        return unicode(self._repr())
+
     def _repr_wrap(self):
         """print rows in a 'clumps' style"""
         row_index_str_format = '[%s]' + ' ' * spaces_between_cols
@@ -315,7 +318,9 @@ class ATable(object):
 
     @staticmethod
     def _get_wrap_entry(data, size, formatter, relative_column_index, extra_tuples):
-        entry = unicode(formatter(data)).encode('utf-8')
+        if isinstance(data, str):
+            data =  data.decode('utf-8')
+        entry = unicode(formatter(data))
         if isinstance(data, basestring):
             lines = entry.splitlines()
             if len(lines) > 1:
@@ -427,7 +432,11 @@ def _get_col_sizes(rows, row_index, row_count, header_sizes, formatters):
             row = rows[r]
             for c in xrange(len(sizes)):
                 value = row[c]
-                entry = unicode(formatters[c](value))
+                entry = formatters[c](value)
+                if isinstance(entry, str):
+                    entry = entry.decode('utf-8')
+                else:
+                    entry = unicode(entry)
                 lines = entry.splitlines()
                 max = 0
                 for line in lines:

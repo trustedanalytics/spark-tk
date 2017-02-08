@@ -69,7 +69,7 @@ def test_back_and_forth_py_scala(tc):
     f.bin_column("a", [5, 8, 10.0, 30.0, 50, 80])
     # python
     f.filter(lambda row: row.a > 5)
-    results = str(f.inspect())
+    results = str(f.get_inspect())
     expected = """[#]  a   b      c   a_binned
 ============================
 [0]   6  six    10         0

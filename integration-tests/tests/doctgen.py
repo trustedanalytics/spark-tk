@@ -107,7 +107,7 @@ model/rename.rst
 def filter_exemptions(paths):
     """returns the given paths with the exemptions removed"""
     chop = len(path_to_frameops) + 1  # the + 1 is for the extra forward slash
-    filtered_paths = [p for p in paths if p[chop:] not in exemptions]
+    filtered_paths = [p for p in paths if p and p[chop:] not in exemptions]
     return filtered_paths
 
 
@@ -228,6 +228,15 @@ def main():
         pass
     else:
         print "[%s] Removed pre-existing .pyc file %s" % (this_script_name, pyc)
+
+    if '--skiplong' in sys.argv:
+        print "[%s] --skiplong argument found, skipping dicom, graph tests, maybe more" % this_script_name
+        global path_to_dicom, path_to_dicomops, path_to_graph, path_to_graphops
+        path_to_dicom = ''
+        path_to_dicomops = ''
+        path_to_graph = ''
+        path_to_graphops = ''
+
 
     # Python flatmap --> [item for list in listoflists for item in list]
     test_paths = [test_path for folder_path in [path_to_frameops,

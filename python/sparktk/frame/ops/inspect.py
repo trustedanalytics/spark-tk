@@ -119,6 +119,28 @@ def inspect(self,
         with_types    False
 
     """
+    atable = self.get_inspect(n=n,
+                              offset=offset,
+                              columns=columns,
+                              wrap=wrap,
+                              truncate=truncate,
+                              round=round,
+                              width=width,
+                              margin=margin,
+                              with_types=with_types)
+    print unicode(atable)
+
+
+def get_inspect(self,
+                n=10,
+                offset=0,
+                columns=None,
+                wrap=inspect_settings._unspecified,
+                truncate=inspect_settings._unspecified,
+                round=inspect_settings._unspecified,
+                width=inspect_settings._unspecified,
+                margin=inspect_settings._unspecified,
+                with_types=inspect_settings._unspecified):
     from sparktk.frame.ops.take import take_rich
     format_settings = inspect_settings.copy(wrap, truncate, round, width, margin, with_types)
     result = take_rich(self, n, offset, columns)
