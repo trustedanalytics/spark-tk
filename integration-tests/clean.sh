@@ -28,3 +28,6 @@ rm -f tests/test_docs_generated.py
 
 echo "$NAME rm -r tests/sandbox/*"
 rm -rf tests/sandbox/*
+
+echo "$NAME rm -r tests/.coverage*"
+rm -f tests/.coverage*

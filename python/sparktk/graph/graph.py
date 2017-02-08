@@ -155,9 +155,9 @@ class Graph(object):
 
         >>> assert str(graph) == str(example)
 
-        >>> assert str(example.create_vertices_frame().inspect(20)) == str(vertices.inspect(20))
+        >>> assert str(example.create_vertices_frame().get_inspect(20)) == str(vertices.get_inspect(20))
 
-        >>> assert str(example.create_edges_frame().inspect(20)) == str(edges.inspect(20))
+        >>> assert str(example.create_edges_frame().get_inspect(20)) == str(edges.get_inspect(20))
 
         </hide>
 

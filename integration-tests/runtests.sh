@@ -34,13 +34,22 @@ if [ -z "$HADOOP_CONF_DIR" ]; then
 fi
 echo $NAME HADOOP_CONF_DIR=$HADOOP_CONF_DIR
 
+doctgen_args=""
+other_args=""
+if [ $1 = "--skiplong" ]; then
+    doctgen_args="--skiplong"
+    shift
+    other_args="--ignore=test_dicom.py --ignore=test_graph.py"
+fi
+
 echo "$NAME Calling clean.sh"
 ./clean.sh
 
 cd tests
 
+
 echo "$NAME Generating the doctests test file"
-python2.7 doctgen.py
+python2.7 doctgen.py $doctgen_args
 GEN_DOCTESTS_SUCCESS=$?
 if [[ $GEN_DOCTESTS_SUCCESS != 0 ]]
 then
@@ -55,4 +64,4 @@ fi
 #python2.7 -m pytest -k test_kmeans  # example to run individual test
 #python2.7 -m pytest -k test_docs_python_sparktk_frame_ops_drop_columns_py  # example to run individual doc test
 export COVERAGE_FILE=$DIR/../coverage/integration_test_coverage.dat
-py.test --cov-config=$DIR/pycoverage.ini --cov=$DIR/../python --cov-report=html:$DIR/../coverage/pytest_integration $@
+py.test --cov-config=$DIR/pycoverage.ini --cov=$DIR/../python --cov-report=html:$DIR/../coverage/pytest_integration $other_args $@
