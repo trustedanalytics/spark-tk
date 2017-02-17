@@ -1,0 +1,16 @@
+{ "obj": {
+    "color": "blue",
+    "size": 3,
+    "shape": "square" }
+}
+{ "obj": {
+    "color": "green",
+    "size": 7,
+    "shape": "triangle" }
+}
+{ "obj": {
+    "color": "orange",
+    "size": 10,
+    "shape": "square" }
+}
+

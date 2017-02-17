@@ -1,0 +1,19 @@
+{ "obj": {
+    "color": "blue",
+    "size": 3,
+    "color": "cyan",
+    "shape": "square" }
+}
+{ "obj": {
+    "size": 7,
+    "color": "green",
+    "shape": "triangle",
+    "size": "6 sqrt 3" }
+}
+{ "obj": {
+    "color": "orange",
+    "size": 10,
+    "shape": "square" }
+)
+Note that the last closure is a Rparen, not Rbrace.
+
