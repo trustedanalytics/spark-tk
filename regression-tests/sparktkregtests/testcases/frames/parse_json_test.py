@@ -101,111 +101,89 @@ class JSONReadTest(sparktk_test.SparkTKTestCase):
         second_record = ast.literal_eval(str(ftake[1][0]))["obj"]
         self.assertEqual(second_record["size"], "6 sqrt 3")
 
-#    def test_json_bad_incomplete_record(self):
-#        """ Validate JSON object with incomplete record at end of file."""
-#        json_file = ia.JsonFile(self.bad1_json)
-#        jframe = ia.Frame(json_file)
-#
-#        def extract_github_json(row):
-#            my_json = json.loads(row[0])
-#            obj = my_json['obj']
-#            return obj['color'], obj['size'], obj['shape']
-#
-#        jframe.add_columns(extract_github_json, [("color", str),
-#                                                 ("size", str),
-#                                                 ("shape", str)])
-#
-#        # Now that we have parsed our desired values it is safe to drop
-#        # the source XML fragment::
-#        jframe.drop_columns(['data_lines'])
-#        ftake = jframe.take(jframe.row_count)
-#        self.assertEqual(len(ftake), 2)
-#        self.assertEqual(ftake[0][0], "cyan")
-#        self.assertEqual(ftake[1][1], "6 sqrt 3")
-#
-#    def test_json_bad_extra_close(self):
-#        """ Validate JSON object with extra closing braces and empty braces"""
-#        json_file = ia.JsonFile(self.bad2_json)
-#        jframe = ia.Frame(json_file)
-#
-#        def extract_github_json(row):
-#            my_json = json.loads(row[0])
-#            obj = my_json['obj']
-#            return obj['color'], obj['size'], obj['shape']
-#
-#        jframe.add_columns(extract_github_json, [("color", str),
-#                                                 ("size", str),
-#                                                 ("shape", str)])
-#
-#        # Now that we have parsed our desired values it is safe
-#        # to drop the source XML fragment::
-#        jframe.drop_columns(['data_lines'])
-#        ftake = jframe.take(jframe.row_count)
-#        self.assertEqual(len(ftake), 3)
-#        self.assertEqual(ftake[1][2], "triangle")
-#        self.assertEqual(ftake[2][0], "orange")
-#
-#    def test_json_extract(self):
-#        """Test extracting json code"""
-#
-#        def extract_domain_fields(row):
-#            """
-#            Split domain lines into 3 columns: (domain, ips, error)
-#            This is a more robust and complicated parse than the above.
-#            """
-#            try:
-#                line = row[0].encode('utf-8').strip()
-#                if line:
-#                    # see if we can close over this compiled date_pattern :^)
-#                    date_pattern = re.compile("Date\(\s*(\d+)\s*\)")
-#                    ipaddr_pattern = \
-#                        re.compile("\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?")
-#                    line = date_pattern.sub("\\1", line)
-#
-#                    d = json.loads(line)
-#                    domain = d['_id'].lower()
-#                    if ipaddr_pattern.match(domain):
-#                        return None, None, "BAD1"
-#                    try:
-#                        ip_data = d['ip_data']
-#                    except KeyError:
-#                        return None, None, "BAD2"
-#                    addrs = []
-#                    for table in ip_data:
-#                        ipaddr = table['_id']
-#                        if not ipaddr_pattern.match(ipaddr):
-#                            return None, None, "BAD3"
-#                        addrs.append(ipaddr)
-#                    ips = ",".join(addrs)
-#                    return domain, ips, None
-#                else:
-#                    return None, None, None
-#            except Exception as e:
-#                return None, str(e), "BAD0"   # + str(e) + "\n" + str(tb))
-#
-#        line_file = ia.LineFile(self.domain_json)
-#        frame_domain = ia.Frame(line_file)
-#
-#        frame_domain.add_columns(extract_domain_fields, [("domain", str),
-#                                                         ("ips", str),
-#                                                         ("error", str)])
-#
-#        stats = frame_domain.group_by("error", {"error": ia.agg.count})
-#        # don't care about stable order of return
-#        stats_take = sorted(stats.take(stats.row_count))
-#
-#        good_count = 97
-#        bad2_count = 901
-#        bad3_count = 2
-#        self.assertEqual(stats_take[0][0], None)
-#        self.assertEqual(stats_take[1][0], "BAD2")
-#        self.assertEqual(stats_take[2][0], "BAD3")
-#        self.assertEqual(stats_take[0][1], good_count)
-#        self.assertEqual(stats_take[1][1], bad2_count)
-#        self.assertEqual(stats_take[2][1], bad3_count)
-#
-#        ia.drop_frames([stats, frame_domain])
-#
+    def test_json_bad_incomplete_record(self):
+        """ Validate JSON object with incomplete record at end of file."""
+        jframe = self.context.frame.import_json(self.bad1_json)
+        
+        ftake = jframe.take(jframe.count())
+        self.assertEqual(len(ftake), 2)
+        first_record = ast.literal_eval(str(ftake[0][0]))["obj"]
+        self.assertEqual(first_record["color"], "cyan")
+        second_record = ast.literal_eval(str(ftake[1][0]))["obj"]
+        self.assertEqual(second_record["size"], "6 sqrt 3")
+
+    def test_json_bad_extra_close(self):
+        """ Validate JSON object with extra closing braces and empty braces"""
+        jframe = self.context.frame.import_json(self.bad2_json)
+
+        ftake = jframe.take(jframe.count())
+        self.assertEqual(len(ftake), 3)
+        second_record = ast.literal_eval(str(ftake[1][0]))["obj"]
+        self.assertEqual(second_record["shape"], "triangle")
+        third_record = ast.literal_eval(str(ftake[2][0]))["obj"]
+        self.assertEqual(third_record["color"], "orange")
+
+    @unittest.skip("sparktk: calling groupby on a frame created from json causes weird errors")
+    def test_json_extract(self):
+        """Test extracting json code"""
+
+        def extract_domain_fields(row):
+            """
+            Split domain lines into 3 columns: (domain, ips, error)
+            This is a more robust and complicated parse than the above.
+            """
+            try:
+                line = row[0].encode('utf-8').strip()
+                if line:
+                    # see if we can close over this compiled date_pattern :^)
+                    date_pattern = re.compile("Date\(\s*(\d+)\s*\)")
+                    ipaddr_pattern = \
+                        re.compile("\d\d?\d?\.\d\d?\d?\.\d\d?\d?\.\d\d?\d?")
+                    line = date_pattern.sub("\\1", line)
+
+                    d = json.loads(line)
+                    domain = d['_id'].lower()
+                    if ipaddr_pattern.match(domain):
+                        return None, None, "BAD1"
+                    try:
+                        ip_data = d['ip_data']
+                    except KeyError:
+                        return None, None, "BAD2"
+                    addrs = []
+                    for table in ip_data:
+                        ipaddr = table['_id']
+                        if not ipaddr_pattern.match(ipaddr):
+                            return None, None, "BAD3"
+                        addrs.append(ipaddr)
+                    ips = ",".join(addrs)
+                    return domain, ips, None
+                else:
+                    return None, None, None
+            except Exception as e:
+                return None, str(e), "BAD0"   # + str(e) + "\n" + str(tb))
+
+        frame_domain = self.context.frame.import_json(self.domain_json)
+
+        frame_domain.add_columns(extract_domain_fields, [("domain", str),
+                                                         ("ips", str),
+                                                         ("error", str)])
+
+        stats = frame_domain.group_by("error", {"error": self.context.agg.count})
+        # don't care about stable order of return
+        stats_take = sorted(stats.take(stats.count()))
+
+        good_count = 97
+        bad2_count = 901
+        bad3_count = 2
+        self.assertEqual(stats_take[0][0], None)
+        self.assertEqual(stats_take[1][0], "BAD2")
+        self.assertEqual(stats_take[2][0], "BAD3")
+        self.assertEqual(stats_take[0][1], good_count)
+        self.assertEqual(stats_take[1][1], bad2_count)
+        self.assertEqual(stats_take[2][1], bad3_count)
+
+        ia.drop_frames([stats, frame_domain])
+
 
 if __name__ == "__main__":
     unittest.main()

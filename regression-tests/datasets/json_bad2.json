@@ -1,0 +1,20 @@
+{ "obj": {
+    "color": "blue",
+    "size": 3,
+    "color": "cyan",
+    "shape": "square" },
+  "error": "extra close brace" }
+}
+{ "obj": {
+    "size": 7,
+    "color": "green",
+    "shape": "triangle",
+    "size": "6 sqrt 3" },
+  "error": "extra close brace" }
+}
+{ "obj": {
+    "color": "orange",
+    "size": 10,
+    "shape": "square" }
+}
+
