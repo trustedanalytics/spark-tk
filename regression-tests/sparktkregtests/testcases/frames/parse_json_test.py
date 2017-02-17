@@ -41,8 +41,6 @@ class JSONReadTest(sparktk_test.SparkTKTestCase):
 
     def test_json_big(self):
         """ Check basic happy-path XML input """
-
-        #json_file = ia.JsonFile(self.big_json)
         frame = self.context.frame.import_json(self.big_json)
 
         # Desired parsing is done; it is safe to drop the source XML fragment.
@@ -56,7 +54,7 @@ class JSONReadTest(sparktk_test.SparkTKTestCase):
         #   some lines run over the character limit.
         # Now we create a frame using this JsonFile
         f = self.context.frame.import_json(self.doc_json)
-        
+
         ftake = f.take(f.count())
         first_record = ast.literal_eval(str(ftake[0][0]))["obj"]
         self.assertEqual(first_record["color"], "blue")
@@ -104,7 +102,7 @@ class JSONReadTest(sparktk_test.SparkTKTestCase):
     def test_json_bad_incomplete_record(self):
         """ Validate JSON object with incomplete record at end of file."""
         jframe = self.context.frame.import_json(self.bad1_json)
-        
+
         ftake = jframe.take(jframe.count())
         self.assertEqual(len(ftake), 2)
         first_record = ast.literal_eval(str(ftake[0][0]))["obj"]
@@ -181,8 +179,6 @@ class JSONReadTest(sparktk_test.SparkTKTestCase):
         self.assertEqual(stats_take[0][1], good_count)
         self.assertEqual(stats_take[1][1], bad2_count)
         self.assertEqual(stats_take[2][1], bad3_count)
-
-        ia.drop_frames([stats, frame_domain])
 
 
 if __name__ == "__main__":
