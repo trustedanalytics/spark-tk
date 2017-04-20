@@ -100,8 +100,8 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
         self.assertAlmostEqual(result.p_value, df_ctt_result[1], delta=0.0001)
         self.assertAlmostEqual(result.test_stat, df_ctt_result[0], delta=0.01)
 
-    def test_frame_timeseries_breusch_pagan(self):
-        """Test Breusch Pagan using the regression determined according to page 5 of this paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
+    def test_frame_timeseries_breusch_pagan_het(self):
+        """Test Breusch Pagan on heteroskedastic data using the regression determined according to page 5 of this paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
         dataset = self.get_file("breusch.csv")
         schema = [("time", float),
                   ("heteroskedastic", float),
@@ -110,30 +110,45 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
 
         frame = self.context.frame.import_csv(
             dataset, delimiter= ' ', header=True, schema=schema)
-        het_result = frame.timeseries_breusch_pagan_test("heteroskedastic", "time")
-        uni_result = frame.timeseries_breusch_pagan_test("uniform", "time")
+        result = frame.timeseries_breusch_pagan_test("heteroskedastic", "time")
 
         time = frame.take(frame.count(), columns=['time'])
 
-        het_data = frame.take(frame.count(), columns="heteroskedastic")
-        het_residual = [item**2 for sublist in het_data for item in sublist]
-        het_reg = linear_model.LinearRegression()
-        hetOLS = het_reg.fit(time, het_residual)
-        het_stat = hetOLS.score(time, het_residual) * frame.count()
+        data = frame.take(frame.count(), columns="heteroskedastic")
+        residual = [item**2 for sublist in data for item in sublist]
+        reg = linear_model.LinearRegression()
+        OLS = reg.fit(time, residual)
+        stat = OLS.score(time, residual) * frame.count()
 
-        uni_data = frame.take(frame.count(), columns="uniform")
-        uni_residual = [item**2 for sublist in uni_data for item in sublist]
-        reg2 = linear_model.LinearRegression()
-        uniOLS = reg2.fit(time, uni_residual)
-        uni_stat = uniOLS.score(time, uni_residual) * frame.count()
 
-        self.assertLess(het_result.p_value, 0.05)
-        self.assertAlmostEqual(het_result.test_stat, het_stat)
-        self.assertGreater(uni_result.p_value, 0.05)
-        self.assertAlmostEqual(uni_result.test_stat, uni_stat)
+        self.assertLess(result.p_value, 0.05)
+        self.assertAlmostEqual(result.test_stat, stat)
 
-    def test_frame_timeseries_breusch_godfrey(self):
-        """Test Breusch Godfrey"""
+    def test_frame_timeseries_breusch_pagan_uni(self):
+        """Test Breusch Pagan on a uniform distribution using the regression determined according to page 5 of this paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
+        dataset = self.get_file("breusch.csv")
+        schema = [("time", float),
+                  ("heteroskedastic", float),
+                  ("sine", float),
+                  ("uniform", float)]
+
+        frame = self.context.frame.import_csv(
+            dataset, delimiter= ' ', header=True, schema=schema)
+        result = frame.timeseries_breusch_pagan_test("uniform", "time")
+
+        time = frame.take(frame.count(), columns=['time'])
+
+        data = frame.take(frame.count(), columns="uniform")
+        residual = [item**2 for sublist in data for item in sublist]
+        reg = linear_model.LinearRegression()
+        OLS = reg.fit(time, residual)
+        stat = OLS.score(time, residual) * frame.count()
+
+        self.assertGreater(result.p_value, 0.05)
+        self.assertAlmostEqual(result.test_stat, stat)
+
+    def test_frame_timeseries_breusch_godfrey_sine(self):
+        """Test Breusch Godfrey on a samples from a sine wave using the regression determined according to page 5 of this paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
         dataset = self.get_file("breusch.csv")
         schema = [("time", float),
                   ("heteroskedastic", float),
@@ -142,32 +157,47 @@ class FrameTimeseriesTest(sparktk_test.SparkTKTestCase):
         max_lag=1
         frame = self.context.frame.import_csv(
             dataset, delimiter= ' ', header=True, schema=schema)
-        sine_result = frame.timeseries_breusch_godfrey_test("sine", ['time'], max_lag)
-        uni_result = frame.timeseries_breusch_godfrey_test("uniform", ['time'], max_lag)
+        result = frame.timeseries_breusch_godfrey_test("sine", ['time'], max_lag)
 
         time_data = frame.take(frame.count(), columns=['time'])
         time = [item for sublist in time_data for item in sublist]
 
-        sine_data = frame.take(frame.count(), columns="sine")
-        sine_residual = [item for sublist in sine_data for item in sublist]
-        lagged_sine_residuals = [0]+sine_residual[:-1]
-        sine_factors = np.column_stack((time, lagged_sine_residuals))
-        sine_reg = linear_model.LinearRegression()
-        sineOLS = sine_reg.fit(sine_factors, sine_residual)
-        sine_stat = (frame.count()-max_lag)*sineOLS.score(sine_factors, sine_residual)
+        data = frame.take(frame.count(), columns="sine")
+        residual = [item for sublist in data for item in sublist]
+        lagged_residuals = [0]+residual[:-1]
+        factors = np.column_stack((time, lagged_residuals))
+        reg = linear_model.LinearRegression()
+        OLS = reg.fit(factors, residual)
+        stat = (frame.count()-max_lag)*OLS.score(factors, residual)
 
-        uni_data = frame.take(frame.count(), columns="uniform")
-        uni_residual = [item for sublist in uni_data for item in sublist]
-        lagged_uni_residuals = [0]+uni_residual[:-1]
-        uni_factors = np.column_stack((time, lagged_uni_residuals))
-        uni_reg = linear_model.LinearRegression()
-        uniOLS = uni_reg.fit(uni_factors, uni_residual)
-        uni_stat = (frame.count()-max_lag)*uniOLS.score(uni_factors, uni_residual)
+        self.assertLess(result.p_value, 0.05)
+        self.assertAlmostEqual(result.test_stat, stat, delta=1)
 
-        self.assertLess(sine_result.p_value, 0.05)
-        self.assertAlmostEqual(sine_result.test_stat, sine_stat, delta=1)
-        self.assertGreater(uni_result.p_value, 0.05)
-        self.assertAlmostEqual(uni_result.test_stat, uni_stat, delta=1)
+    def test_frame_timeseries_breusch_godfrey_uni(self):
+        """Test Breusch Godfrey on a uniform distribution using the regression determined according to page 5 of this paper: http://people.stfx.ca/tleo/econ370term2lec1.pdf"""
+        dataset = self.get_file("breusch.csv")
+        schema = [("time", float),
+                  ("heteroskedastic", float),
+                  ("sine", float),
+                  ("uniform", float)]
+        max_lag=1
+        frame = self.context.frame.import_csv(
+            dataset, delimiter= ' ', header=True, schema=schema)
+        result = frame.timeseries_breusch_godfrey_test("uniform", ['time'], max_lag)
+
+        time_data = frame.take(frame.count(), columns=['time'])
+        time = [item for sublist in time_data for item in sublist]
+
+        data = frame.take(frame.count(), columns="uniform")
+        residual = [item for sublist in data for item in sublist]
+        lagged_residuals = [0]+residual[:-1]
+        factors = np.column_stack((time, lagged_residuals))
+        reg = linear_model.LinearRegression()
+        OLS = reg.fit(factors, residual)
+        stat = (frame.count()-max_lag)*OLS.score(factors, residual)
+
+        self.assertGreater(result.p_value, 0.05)
+        self.assertAlmostEqual(result.test_stat, stat, delta=1)
 
 if __name__ == "__main__":
     unittest.main()
