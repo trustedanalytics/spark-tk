@@ -157,7 +157,7 @@ class DegreeCentrality(sparktk_test.SparkTKTestCase):
         # are no valid vertices
         pandas_res = res.to_pandas()
         for (index, row) in pandas_res.iterrows():
-            self.asertAlmostEqual(row["degree_centrality"], 0)
+            self.assertAlmostEqual(row["degree_centrality"], 0)
 
     def _calculate_degree_centrality(self, vertices, edges):
         """calc the deg cen for a graph given by vert and edge frames"""
